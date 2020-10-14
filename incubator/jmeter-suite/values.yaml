@@ -1,0 +1,15 @@
+# Default values for jmeter-helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+distributed-jmeter:
+  enabled: true
+  server:
+    replicaCount: 3
+
+grafana:
+  enabled: true
+
+influxdb:
+  enabled: true
+
