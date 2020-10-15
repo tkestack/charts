@@ -1,5 +1,5 @@
 
-# JMeter suit Chart
+# JMeter suite Chart
 
 * This scheme provides the visualization interface of Grafana and the capacity of Influx storage
 
