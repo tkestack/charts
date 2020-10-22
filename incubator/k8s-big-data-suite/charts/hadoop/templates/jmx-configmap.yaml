@@ -1,0 +1,119 @@
+{{- if and .Values.global.metrics.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "hdfs-k8s.fullname" . }}-jmx-configmap
+  labels:
+    app: {{ template "hdfs-k8s.name" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name }}
+data:
+  hdfs-nn-config.yml: |-
+    hostPort: localhost:{{ .Values.global.namenodeJmxPort }}
+    lowercaseOutputName: {{ .Values.global.metrics.lowercaseOutputName }}
+    rules:
+      - pattern: "Hadoop<service=NameNode, name=FSNamesystemState><>FSState: Operational"
+        name: Hadoop_NameNode_FSState
+        value: 0
+      - pattern: "Hadoop<service=NameNode, name=FSNamesystemState><>FSState: Safemode"
+        name: Hadoop_NameNode_FSState
+        value: 1
+      - pattern: "Hadoop<service=NameNode, name=FSNamesystem><>tag.HAState: active"
+        name: Hadoop_NameNode_HAState
+        value: 0
+      - pattern: "Hadoop<service=NameNode, name=FSNamesystem><>tag.HAState: standby"
+        name: Hadoop_NameNode_HAState
+        value: 1
+      - pattern: "Hadoop<service=NameNode, name=FSNamesystem><>tag.HAState: initializing"
+        name: Hadoop_NameNode_HAState
+        value: 2
+      - pattern: "Hadoop<service=NameNode, name=FSNamesystem><>tag.HAState: stopping"
+        name: Hadoop_NameNode_HAState
+        value: 3
+      - pattern: "Hadoop<service=NameNode(.*)"
+      - pattern: "java.lang<type=OperatingSystem><>(\\w+)"
+        name: "Hadoop_NameNode_OS_$1"
+      - pattern: "java.lang<type=GarbageCollector, name=(.*)><>(\\w+)"
+        name: "Hadoop_NameNode_GC_$2"
+        labels:
+          name: $1
+      - pattern: "java.lang<type=GarbageCollector, name=(.*)><LastGcInfo>(\\w+)"
+        name: "Hadoop_NameNode_GC_LastGcInfo_$2"
+        labels:
+          name: $1
+      - pattern: "java.lang<type=GarbageCollector, name=(.*), key=(.*)><LastGcInfo, memoryUsageAfterGc>(\\w+)"
+        name: "Hadoop_NameNode_GC_LastGcInfo_memoryUsageAfterGc_$3"
+        labels:
+          name: $1
+          key: $2
+      - pattern: "java.lang<type=Threading><>(\\w+)"
+        name: "Hadoop_NameNode_Threading_$1"
+      - pattern: "java.lang<type=(\\w+)><>(\\w+)"
+        name: "Hadoop_NameNode_$1_$2"
+      - pattern: "java.lang<type=(\\w+), name=(.*)><>(\\w+)"
+        name: "Hadoop_NameNode_$1_$3"
+        labels:
+          name: $2
+    ssl: false
+    startDelaySeconds: {{ .Values.global.metrics.startDelaySeconds }}
+  hdfs-dd-config.yml: |-
+    hostPort: localhost:{{ .Values.global.datanodeJmxPort }}
+    lowercaseOutputName: {{ .Values.global.metrics.lowercaseOutputName }}
+    rules:
+      - pattern: "Hadoop<service=DataNode(.*)"
+      - pattern: "java.lang<type=OperatingSystem><>(\\w+)"
+        name: "Hadoop_DataNode_OS_$1"
+      - pattern: "java.lang<type=GarbageCollector, name=(.*)><>(\\w+)"
+        name: "Hadoop_DataNode_GC_$2"
+        labels:
+          name: $1
+      - pattern: "java.lang<type=GarbageCollector, name=(.*)><LastGcInfo>(\\w+)"
+        name: "Hadoop_DataNode_GC_LastGcInfo_$2"
+        labels:
+          name: $1
+      - pattern: "java.lang<type=GarbageCollector, name=(.*), key=(.*)><LastGcInfo, memoryUsageAfterGc>(\\w+)"
+        name: "Hadoop_DataNode_GC_LastGcInfo_memoryUsageAfterGc_$3"
+        labels:
+          name: $1
+          key: $2
+      - pattern: "java.lang<type=Threading><>(\\w+)"
+        name: "Hadoop_DataNode_Threading_$1"
+      - pattern: "java.lang<type=(\\w+)><>(\\w+)"
+        name: "Hadoop_DataNode_$1_$2"
+      - pattern: "java.lang<type=(\\w+), name=(.*)><>(\\w+)"
+        name: "Hadoop_DataNode_$1_$3"
+        labels:
+          name: $2
+    ssl: false
+    startDelaySeconds: {{ .Values.global.metrics.startDelaySeconds }}
+  hdfs-jn-config.yml: |-
+    hostPort: localhost:{{ .Values.global.journalJmxPort }}
+    lowercaseOutputName: {{ .Values.global.metrics.lowercaseOutputName }}
+    rules:
+      - pattern: "Hadoop<service=JournalNode(.*)"
+      - pattern: "java.lang<type=OperatingSystem><>(\\w+)"
+        name: "Hadoop_JournalNode_OS_$1"
+      - pattern: "java.lang<type=GarbageCollector, name=(.*)><>(\\w+)"
+        name: "Hadoop_JournalNode_GC_$2"
+        labels:
+          name: $1
+      - pattern: "java.lang<type=GarbageCollector, name=(.*)><LastGcInfo>(\\w+)"
+        name: "Hadoop_JournalNode_GC_LastGcInfo_$2"
+        labels:
+          name: $1
+      - pattern: "java.lang<type=GarbageCollector, name=(.*), key=(.*)><LastGcInfo, memoryUsageAfterGc>(\\w+)"
+        name: "Hadoop_JournalNode_GC_LastGcInfo_memoryUsageAfterGc_$3"
+        labels:
+          name: $1
+          key: $2
+      - pattern: "java.lang<type=Threading><>(\\w+)"
+        name: "Hadoop_JournalNode_Threading_$1"
+      - pattern: "java.lang<type=(\\w+)><>(\\w+)"
+        name: "Hadoop_JournalNode_$1_$2"
+      - pattern: "java.lang<type=(\\w+), name=(.*)><>(\\w+)"
+        name: "Hadoop_JournalNode_$1_$3"
+        labels:
+          name: $2
+    ssl: false
+    startDelaySeconds: {{ .Values.global.metrics.startDelaySeconds }}
+{{- end }}

@@ -1,0 +1,61 @@
+{{- if .Values.sparkOperator.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "prometheus-operator.fullname" . }}-spark-operator
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    app: {{ template "prometheus-operator.name" . }}-spark-operator
+{{ include "prometheus-operator.labels" . | indent 4 }}
+spec:
+  jobLabel: {{ .Values.sparkOperator.jobLabel }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sparkoperator
+  endpoints:
+  - port: metrics
+    {{- if .Values.sparkOperator.serviceMonitor.interval }}
+    interval: {{ .Values.sparkOperator.serviceMonitor.interval }}
+    {{- end }}
+    {{- if .Values.sparkOperator.serviceMonitor.scrapeTimeout }}
+    scrapeTimeout: {{ .Values.sparkOperator.serviceMonitor.scrapeTimeout }}
+    {{- end }}
+{{- if .Values.sparkOperator.serviceMonitor.metricRelabelings }}
+    metricRelabelings:
+{{ tpl (toYaml .Values.sparkOperator.serviceMonitor.metricRelabelings | indent 4) . }}
+{{- end }}
+{{- if .Values.sparkOperator.serviceMonitor.relabelings }}
+    relabelings:
+{{ toYaml .Values.sparkOperator.serviceMonitor.relabelings | indent 4 }}
+{{- end }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "prometheus-operator.fullname" . }}-spark-application
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    app: {{ template "prometheus-operator.name" . }}-spark-application
+{{ include "prometheus-operator.labels" . | indent 4 }}
+spec:
+  jobLabel: {{ .Values.sparkOperator.jobLabel }}
+  selector:
+    matchLabels:
+      sparkAppMetrics: "true"
+  endpoints:
+  - port: metrics
+    {{- if .Values.sparkOperator.serviceMonitor.interval }}
+    interval: {{ .Values.sparkOperator.serviceMonitor.interval }}
+    {{- end }}
+    {{- if .Values.sparkOperator.serviceMonitor.scrapeTimeout }}
+    scrapeTimeout: {{ .Values.sparkOperator.serviceMonitor.scrapeTimeout }}
+    {{- end }}
+{{- if .Values.sparkOperator.serviceMonitor.metricRelabelings }}
+    metricRelabelings:
+{{ tpl (toYaml .Values.sparkOperator.serviceMonitor.metricRelabelings | indent 4) . }}
+{{- end }}
+{{- if .Values.sparkOperator.serviceMonitor.relabelings }}
+    relabelings:
+{{ toYaml .Values.sparkOperator.serviceMonitor.relabelings | indent 4 }}
+{{- end }}
+{{- end }}

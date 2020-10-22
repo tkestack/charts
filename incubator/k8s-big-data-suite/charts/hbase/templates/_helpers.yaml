@@ -1,0 +1,101 @@
+{{/* vim: set filetype=mustache: */}}
+{{/*
+Expand the name of the chart.
+*/}}
+
+{{/*
+Expand the name of the chart.
+*/}}
+{{- define "hbase.name" -}}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Create a default fully qualified app name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+*/}}
+{{- define "hbase.fullname" -}}
+{{- $name := default .Chart.Name .Values.nameOverride -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Create chart name and version as used by the chart label.
+*/}}
+{{- define "hbase.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "hbase.zookeeper.fullname" -}}
+{{- $fullname := .Release.Name -}}
+{{- if contains "zookeeper" $fullname -}}
+{{- printf "%s" $fullname -}}
+{{- else -}}
+{{- printf "%s-zookeeper" $fullname | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Create the domain name part of services.
+The HDFS config file should specify FQDN of services. Otherwise, Kerberos
+login may fail.
+*/}}
+{{- define "hbase.svc.domain" -}}
+{{- printf "%s.svc.cluster.local" .Release.Namespace -}}
+{{- end -}}
+
+{{/*
+Create the zookeeper quorum server list.  The below uses two loops to make
+sure the last item does not have comma. It uses index 0 for the last item
+since that is the only special index that helm template gives us.
+*/}}
+{{- define "hbase.zookeeper.quorum" -}}
+{{- if .Values.global.zookeeperQuorumOverride -}}
+{{- .Values.global.zookeeperQuorumOverride -}}
+{{- else -}}
+{{- $service := include "hbase.zookeeper.fullname" . -}}
+{{- $domain := include "hbase.svc.domain" . -}}
+{{- $replicas := .Values.global.zookeeperQuorumSize | int -}}
+{{- range $i, $e := until $replicas -}}
+  {{- if ne $i 0 -}}
+    {{- printf "%s-%d.%s-headless.%s:2181," $service $i $service $domain -}}
+  {{- end -}}
+{{- end -}}
+{{- range $i, $e := until $replicas -}}
+  {{- if eq $i 0 -}}
+    {{- printf "%s-%d.%s-headless.%s:2181" $service $i $service $domain -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "hbase.hadoop.name" -}}
+{{- $name := default "hadoop" .Values.hadoopName -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "hbase.hadoop.config.name" -}}
+{{- if .Values.hadoopConfName -}}
+{{- printf "%s" .Values.hadoopConfName -}}
+{{- else -}}
+{{- $name := default "hadoop" .Values.hadoopName -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "hbase.rootdir" -}}
+{{- if .Values.hbaseRootDir -}}
+{{- printf "%s" .Values.hbaseRootDir -}}
+{{- else -}}
+{{- $hadoopName := include "hbase.hadoop.name" . -}}
+{{- printf "hdfs://%s-hdfs-nn/hbase" $hadoopName -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "hbase.hadoop-config.fullname" -}}
+{{- if .Values.hadoopConfigOverride -}}
+{{- .Values.hadoopConfigOverride -}}
+{{- else -}}
+{{- printf "%s-hadoop" .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}

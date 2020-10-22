@@ -1,0 +1,88 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: {{ template "hbase.fullname" . }}-master
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/hbase-configmap.yaml") . | sha256sum }}
+  labels:
+    app: {{ template "hbase.name" . }}
+    chart: {{ include "hbase.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    component: hbase-master
+spec:
+  serviceName: {{ template "hbase.fullname" . }}-master
+  replicas: {{ .Values.master.replicas }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "hbase.name" . }}
+        release: {{ .Release.Name }}
+        component: hbase-master
+    spec:
+      {{- if .Values.master.affinity }}
+      affinity:
+{{ toYaml .Values.master.affinity | indent 8 }}
+      {{- else }}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "component"
+                    operator: In
+                    values:
+                      - hbase-master
+                  - key: "app"
+                    operator: In
+                    values:
+                      - {{ template "hbase.name" . }}
+              topologyKey: "kubernetes.io/hostname"
+      {{- end }}
+      terminationGracePeriodSeconds: 30
+      containers:
+      - name: hbase-master
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        env:
+          - name: HADOOP_CUSTOM_CONF_DIR
+            value: /etc/hadoop-custom-conf
+          - name: HADOOP_CONF_DIR
+            value: /etc/hadoop-custom-conf
+        command:
+        - "/bin/bash"
+        - "/etc/hbase-custom-conf/bootstrap.sh"
+        resources:
+{{ toYaml .Values.master.resources | indent 10 }}
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 16010
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 16010
+          initialDelaySeconds: 20
+          timeoutSeconds: 5
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - "/bin/bash"
+              - "/etc/hbase-custom-conf/stop.sh"
+        volumeMounts:
+        - name: hbase-config
+          mountPath: /etc/hbase-custom-conf
+        - name: hadoop-config
+          mountPath: /etc/hadoop-custom-conf
+      volumes:
+      - name: hbase-config
+        configMap:
+          name: {{ include "hbase.fullname" . }}
+      - name: hadoop-config
+        configMap:
+          name: {{ include "hbase.hadoop-config.fullname" . }}
+      nodeSelector:
+{{ toYaml .Values.master.nodeSelector | indent 8 }}

@@ -1,0 +1,41 @@
+{{- if .Values.thirftserver.enabled }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ template "thirftserver.fullname" . }}
+  labels:
+    app: spark-thirftserver
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ template "thirftserver.fullname" . }}
+  labels:
+    app: spark-thirftserver
+rules:
+  - apiGroups:
+      - '*'
+    resources:
+      - '*'
+    verbs:
+      - '*'
+  - nonResourceURLs:
+      - '*'
+    verbs:
+      - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "thirftserver.fullname" . }}
+  labels:
+    app: spark-thirftserver
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "thirftserver.fullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "thirftserver.fullname" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}

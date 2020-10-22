@@ -1,0 +1,340 @@
+# A headless service to create DNS records.
+{{- if .Values.nginx.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "nginx.name" . }}
+  labels:
+    app: {{ include "name" . }}
+    release: {{ .Release.Name }}
+spec:
+  ports:
+    {{- if .Values.hadoop.enabled }}
+    - name: hdfs
+      port: 80
+    {{- end }}
+    {{- if .Values.hive.enabled }}
+    - name: hive
+      port: 81
+    {{- end }}
+    {{- if .Values.hbase.enabled }}
+    - name: hbase
+      port: 82
+    {{- end }}
+    {{- if .Values.kudu.enabled }}
+    - name: kudu
+      port: 83
+    {{- end }}
+    {{- if .Values.impala.enabled }}
+    - name: catalogd
+      port: 84
+    - name: coord
+      port: 85
+    - name: statestored
+      port: 86
+    {{- end }}
+    {{- if .Values.superset.enabled }}
+    - name: superset
+      port: 87
+    {{- end }}
+
+  selector:
+    app: {{ include "name" . }}
+    release: {{ .Release.Name }}
+  type: ClusterIP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "nginx.name" . }}
+  labels:
+    app: {{ include "name" . }}
+    release: {{ .Release.Name }}
+data:
+  default.conf: |
+    {{- if .Values.hadoop.enabled }}
+    server {
+        listen       80;
+        server_name  localhost;
+
+        location /hdfs/nn0/ {
+            rewrite ^/hdfs/nn0/(.*) /$1 break;
+            proxy_set_header  Accept-Encoding '';
+            sub_filter_types text/html text/css text/xml text/javascript text/xml application/x-javascript;
+            sub_filter 'href="/' 'href="/hdfs/nn0/';
+            sub_filter 'src="/' 'src="/hdfs/nn0/';
+            sub_filter '/jmx' '/hdfs/nn0/jmx';
+            sub_filter '/conf' '/hdfs/nn0/conf';
+            sub_filter '/startupProgress' '/hdfs/nn0/startupProgress';
+            sub_filter '/webhdfs' '/hdfs/nn0/webhdfs';
+            sub_filter '/logs' '/hdfs/nn0/logs';
+            sub_filter '/favicon.ico' '/hdfs/nn0/favicon.ico';
+            sub_filter_once off;
+            proxy_pass http://{{ template "hadoop-namenode-svc-0" . }}:50070;
+        }
+
+        location /hdfs/nn1/ {
+            rewrite ^/hdfs/nn1/(.*) /$1 break;
+            proxy_set_header  Accept-Encoding '';
+            sub_filter_types text/html text/css text/xml text/javascript text/xml application/x-javascript;
+            sub_filter 'href="/' 'href="/hdfs/nn1/';
+            sub_filter 'src="/' 'src="/hdfs/nn1/';
+            sub_filter '/jmx' '/hdfs/nn1/jmx';
+            sub_filter '/conf' '/hdfs/nn1/conf';
+            sub_filter '/startupProgress' '/hdfs/nn1/startupProgress';
+            sub_filter '/webhdfs' '/hdfs/nn1/webhdfs';
+            sub_filter '/logs' '/hdfs/nn1/logs';
+            sub_filter '/favicon.ico' '/hdfs/nn1/favicon.ico';
+            sub_filter_once off;
+            proxy_pass http://{{ template "hadoop-namenode-svc-1" . }}:50070;
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+    {{- end }}
+    {{- if .Values.hive.enabled }}
+    server {
+        listen       81;
+        server_name  localhost;
+
+        location / {
+            rewrite ^/hive/(.*) /$1 break;
+            sub_filter_types text/html text/css text/xml;
+            sub_filter 'href="/' 'href="/hive/';
+            sub_filter 'src="/' 'src="/hive/';
+            sub_filter_once off;
+            proxy_pass http://{{ template "service.hive.name" . }}:10002;
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+    {{- end }}
+    {{- if .Values.hbase.enabled }}
+    server {
+        listen       82;
+        server_name  localhost;
+
+        location / {
+            rewrite ^/hbase/(.*) /$1 break;
+            sub_filter_types text/html text/css text/xml;
+            sub_filter 'href="/' 'href="/hbase/';
+            sub_filter 'src="/' 'src="/hbase/';
+            sub_filter '/master-status' '/hbase/master-status';
+            sub_filter_once off;
+            proxy_pass http://{{ template "service.hbase.name" . }}:16010;
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+    {{- end }}
+    {{- if .Values.kudu.enabled }}
+    server {
+        listen       83;
+        server_name  localhost;
+
+        location / {
+            proxy_set_header  Accept-Encoding '';
+            rewrite ^/kudu/(.*) /$1 break;
+            sub_filter_types text/html text/css text/xml text/javascript text/xml application/x-javascript;
+            sub_filter 'href="/' 'href="/kudu/';
+            sub_filter 'href=\'/' 'href=\'/kudu/';
+            sub_filter 'src="/' 'src="/kudu/';
+            sub_filter 'src=\'/' 'src=\'/kudu/';
+            sub_filter_once off;
+            proxy_pass http://{{ template "service.kudu.name" . }}:8051;
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+    {{- end }}
+    {{- if .Values.impala.enabled }}
+    server {
+        listen       84;
+        server_name  localhost;
+
+        location / {
+            proxy_set_header  Accept-Encoding '';
+            rewrite ^/catalogd/(.*) /$1 break;
+            sub_filter_types text/html text/css text/xml text/javascript text/xml application/x-javascript;
+            sub_filter 'href="/' 'href="/catalogd/';
+            sub_filter 'href=\'/' 'href=\'/catalogd/';
+            sub_filter 'src="/' 'src="/catalogd/';
+            sub_filter 'src=\'/' 'src=\'/catalogd/';
+            sub_filter_once off;
+            proxy_pass http://{{ template "service.catalogd.name" . }}:25020;
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+
+    server {
+        listen       85;
+        server_name  localhost;
+
+        location / {
+            proxy_set_header  Accept-Encoding '';
+            rewrite ^/impalad/(.*) /$1 break;
+            sub_filter_types text/html text/css text/xml text/javascript text/xml application/x-javascript;
+            sub_filter 'href="/' 'href="/impalad/';
+            sub_filter 'href=\'/' 'href=\'/impalad/';
+            sub_filter 'src="/' 'src="/impalad/';
+            sub_filter 'src=\'/' 'src=\'/impalad/';
+            sub_filter_once off;
+            proxy_pass http://{{ template "service.coord.name" . }}:25000;
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+
+    server {
+        listen       86;
+        server_name  localhost;
+
+        location / {
+            proxy_set_header  Accept-Encoding '';
+            rewrite ^/statestored/(.*) /$1 break;
+            sub_filter_types text/html text/css text/xml text/javascript text/xml application/x-javascript;
+            sub_filter 'href="/' 'href="/statestored/';
+            sub_filter 'href=\'/' 'href=\'/statestored/';
+            sub_filter 'src="/' 'src="/statestored/';
+            sub_filter 'src=\'/' 'src=\'/statestored/';
+            sub_filter_once off;
+            proxy_pass http://{{ template "service.statestored.name" . }}:25010;
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+    {{- end }}
+    {{- if .Values.superset.enabled }}
+    server {
+        listen       87;
+        server_name  localhost;
+
+        location / {
+            rewrite ^/(.*) http://superset.$http_host/ permanent;
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+    {{- end }}
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "nginx.name" . }}
+  labels:
+    app: {{ include "name" . }}
+    release: {{ .Release.Name }}
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ include "name" . }}
+        release: {{ .Release.Name }}
+      {{- if .Values.nginx.podAnnotations }}
+      annotations:
+{{ toYaml .Values.nginx.podAnnotations | indent 8 }}
+      {{- end }}
+    spec:
+      {{- if .Values.nginx.affinity }}
+      affinity:
+{{ toYaml .Values.nginx.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.nginx.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nginx.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.nginx.tolerations }}
+      tolerations:
+{{ toYaml .Values.nginx.tolerations | indent 8 }}
+      {{- end }}
+      containers:
+        # TODO: Support hadoop version as option.
+        - name: hdfs-nginx
+          image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
+          resources:
+{{ toYaml .Values.nginx.resources | indent 12 }}
+          ports:
+            - containerPort: 80
+              name: hdfs
+            - containerPort: 81
+              name: hive
+            - containerPort: 82
+              name: hbase
+            - containerPort: 83
+              name: kudu
+            - containerPort: 84
+              name: catalogd
+            - containerPort: 85
+              name: coord
+            - containerPort: 86
+              name: statestored
+            - containerPort: 87
+              name: superset
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+              readOnly: true
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: {{ template "nginx.name" . }}
+{{- end }}

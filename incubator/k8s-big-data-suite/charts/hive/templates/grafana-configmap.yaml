@@ -1,0 +1,16 @@
+{{- if  .Values.global.grafana.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "hive.fullname" . }}-dashboards
+  labels:
+    {{- if .Values.global.grafana.dashboardsLabel }}
+    {{ .Values.global.grafana.dashboardsLabel }}: "1"
+    {{- end }}
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+data:
+  hive.json: |-
+{{ .Files.Get "dashboards/hive.json" | indent 4 }}
+{{- end -}}

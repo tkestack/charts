@@ -1,0 +1,30 @@
+{{- if and .Values.ssdStorageClassEnabled }}
+# SSD云硬盘, 按量计费
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: kdl-ssd
+  selfLink: /apis/storage.k8s.io/v1/storageclasses/ssd
+parameters:
+  paymode: POSTPAID    # 按量计费
+  type: CLOUD_SSD
+provisioner: cloud.tencent.com/qcloud-cbs
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+{{- end }}
+
+---
+
+{{- if and .Values.cloudPremiumStorageClassEnabled }}
+# 高性能云硬盘, 按量计费
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: kdl-cloud-premium
+parameters:
+  paymode: POSTPAID
+  type: CLOUD_PREMIUM
+provisioner: cloud.tencent.com/qcloud-cbs
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+{{- end }}

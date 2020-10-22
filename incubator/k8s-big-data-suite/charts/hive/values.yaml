@@ -1,0 +1,71 @@
+# Default values for hive.
+# This is a YAML-formatted file.
+# Declare name/value pairs to be passed into your templates.
+# name: value
+imagePullSecrets: ""
+images:
+  init: "busybox"
+
+# Select antiAffinity as either hard or soft, default is soft
+antiAffinity: "soft"
+
+imageName: "ccr.ccs.tencentyun.com/k8s-big-data/hive"
+imageTag: "v2.3.6"
+
+warehouseDir: ""
+
+userName: "hive"
+password: "hive"
+# use custom jdbcUrl
+# jdbcUrl:
+
+global:
+  enableMerge: false
+  zookeeperQuorumSize: 3
+  grafana:
+    enabled: true
+    dashboardsLabel: grafana_dashboard
+  metrics:
+    enabled: true
+    image: sscaling/jmx-prometheus-exporter
+    imageTag: 0.3.0
+    pullPolicy: IfNotPresent
+    port: 8008
+    lowercaseOutputName: false
+    startDelaySeconds: 30
+    resources: {}
+    env: {}
+    serviceMonitor:
+      enabled: true
+
+metastore:
+  name: hive-metastore
+  replicas: 2
+  enableHealthCheck: false
+  component: "hive-metastore"
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+  hadoopHeapSize: "1024"
+  containerPort: 9083
+  servicePort: 9083
+  serviceType: ClusterIP
+  nodePort: 31183
+  nodeSelector: {}
+
+server:
+  name: hive-server
+  replicas: 1
+  hadoopHeapSize: "1024"
+  component: "hive-server"
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+  thrift:
+    nodePort: 31110
+  web:
+    nodePort: 31111
+  serviceType: ClusterIP
+  nodeSelector: {}

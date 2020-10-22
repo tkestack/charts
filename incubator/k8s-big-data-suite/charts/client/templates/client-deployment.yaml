@@ -1,0 +1,155 @@
+{{- if .Values.ssh.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "ssh.fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.client.component }}"
+spec:
+  ports:
+    - port: {{ .Values.ssh.servicePort }}
+      targetPort: {{ .Values.ssh.containerPort }}
+      {{ if (eq "NodePort" .Values.ssh.serviceType) }}
+      nodePort:  {{ .Values.ssh.nodePort }}
+      {{ end }}
+  selector:
+    component: "{{ .Release.Name }}-{{ .Values.client.component }}"
+  type: {{ .Values.ssh.serviceType }}
+---
+{{- end }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "client.fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.client.component }}"
+spec:
+  ports:
+  - name: client
+    port: 7077
+    protocol: TCP
+  clusterIP: None
+  selector:
+    component: "{{ .Release.Name }}-{{ .Values.client.component }}"
+---
+{{- if .Values.volume.enabled }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "client.fullname" . }}
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name | quote }}
+    component: client-data
+spec:
+  accessModes:
+  - {{ .Values.volume.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.volume.size | quote }}
+{{- if .Values.volume.storageClass }}
+{{- if (eq "-" .Values.volume.storageClass) }}
+  storageClassName: ""
+{{- else }}
+  storageClassName: "{{ .Values.volume.storageClass }}"
+{{- end }}
+{{- end }}
+---
+{{- end }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "client.fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.client.component }}"
+spec:
+  replicas: {{ default 1 .Values.client.replicas }}
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      component: "{{ .Release.Name }}-{{ .Values.client.component }}"
+  template:
+    metadata:
+      labels:
+        heritage: {{ .Release.Service | quote }}
+        release: {{ .Release.Name | quote }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        component: "{{ .Release.Name }}-{{ .Values.client.component }}"
+    spec:
+      imagePullSecrets:
+        - name: "{{ .Values.imagePullSecrets }}"
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: {{ template "client.fullname" . }}
+          image: "{{ .Values.client.imageName }}:{{ .Values.client.imageTag }}"
+          args: ["bash /etc/script/startup.sh"]
+          resources:
+{{ toYaml .Values.client.resources | indent 12 }}
+          volumeMounts:
+            - name: hadoop-config
+              mountPath: /etc/hadoop-custom-conf
+            - name: hive-config
+              mountPath: /etc/hive-custom-conf
+            - name: python-script
+              mountPath: /etc/script
+            - name: data
+              mountPath: /data
+          env:
+          - name: HADOOP_HOME
+            value: {{ default "/opt/hadoop" .Values.hadoopHome | quote }}
+          - name: HIVE_CONF_DIR
+            value: {{ default "/opt/hive/conf" .Values.hiveConfDir | quote }}
+          - name: HADOOP_HEAPSIZE
+            value: {{ default "1024" .Values.hadoopHeapSize | quote }}
+          - name: SSH_PASSWORD
+            value: "{{ .Values.ssh.password }}"
+          - name: HADOOP_CUSTOM_CONF_DIR
+            value: /etc/hadoop-custom-conf
+          - name: HIVE_CUSTOM_CONF_DIR
+            value: /etc/hive-custom-conf
+          livenessProbe:
+            exec:
+              command:
+              - sh
+              - -c
+              - |
+                #!/usr/bin/env bash -e
+                START_TIME=$(ps -eo etimes | head -2 | tail -1)
+                MAX_TIME=86400
+                if [ ${START_TIME} -gt ${MAX_TIME} ]
+                then
+                    echo "come to max live time"
+                    exit 1
+                else
+                    echo "current start time: $START_TIME"
+                fi
+                exit 0
+      volumes:
+      - name: hadoop-config
+        configMap:
+          name: {{ include "client.hadoop.config.name" . }}
+      - name: hive-config
+        configMap:
+          name: {{ include "client.hive.config.name" . }}
+      - name: python-script
+        configMap:
+          name: {{ include "client.fullname" . }}
+      - name: data
+      {{- if .Values.volume.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ include "client.fullname" . }}
+      {{- else }}
+        emptyDir: {}
+      {{- end }}
+      nodeSelector:
+{{ toYaml .Values.client.nodeSelector | indent 8 }}

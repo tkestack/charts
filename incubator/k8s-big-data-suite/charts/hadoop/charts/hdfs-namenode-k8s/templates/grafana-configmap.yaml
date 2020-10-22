@@ -1,0 +1,16 @@
+{{- if  .Values.global.grafana.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "hdfs-k8s.namenode.fullname" . }}-dashboards
+  labels:
+    {{- if .Values.global.grafana.dashboardsLabel }}
+    {{ .Values.global.grafana.dashboardsLabel }}: "1"
+    {{- end }}
+    app: {{ template "hdfs-k8s.namenode.name" . }}
+    chart: {{ template "hdfs-k8s.subchart" . }}
+    release: {{ .Release.Name }}
+data:
+  namenode.json: |-
+{{ .Files.Get "dashboards/namenode.json" | indent 4 }}
+{{- end -}}

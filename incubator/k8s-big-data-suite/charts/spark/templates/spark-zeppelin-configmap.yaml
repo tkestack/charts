@@ -1,0 +1,56 @@
+{{- if .Values.zeppelin.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "zeppelin-fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.zeppelin.component }}"
+data:
+  zeppelin-env.sh: |
+    #!/bin/bash
+
+    # set spark home dir
+    export SPARK_HOME=/opt/spark
+
+    # set hadoop conf dir
+    export HADOOP_CONF_DIR=/etc/hadoop/
+
+    # set options to pass spark-submit command
+    export SPARK_SUBMIT_OPTIONS={{ include "spark.zeppelin.spark.submit.options" . | quote }}
+
+    # extra classpath. e.g. set classpath for hive-site.xml
+    export ZEPPELIN_INTP_CLASSPATH_OVERRIDES=/etc/hive/
+
+  shiro.ini: |
+{{- range $key, $value := index .Values "shiro.ini" }}
+    {{- range $elem, $elemVal := $value }}
+    [{{ $elem }}]
+    {{- range $v1, $v2 := $elemVal }}
+    {{- range $v3, $v4 := $v2 }}
+    {{ $v3 }} = {{ $v4 }}
+    {{- end }}
+    {{- end }}
+    {{- end }}
+{{- end }}
+
+  log4j.properties: |
+{{- range $key, $value := index .Values "log4j.properties" }}
+    {{ $key }} {{ $value }}
+{{- end }}
+
+  zeppelin-site.xml: |-
+{{ .Files.Get "files/zeppelin-site.xml" | indent 4 }}
+
+  interpreter-list: |-
+{{ .Files.Get "files/interpreter-list" | indent 4 }}
+
+  configuration.xsl: |-
+{{ .Files.Get "files/configuration.xsl" | indent 4 }}
+
+  log4j_yarn_cluster.properties: |-
+{{ .Files.Get "files/log4j_yarn_cluster.properties" | indent 4 }}
+
+{{- end }}

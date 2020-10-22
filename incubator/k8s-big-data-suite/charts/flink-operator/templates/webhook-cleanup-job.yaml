@@ -1,0 +1,32 @@
+{{- if .Values.rbac.create }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: flink-operator-webhook-cleanup
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-delete-policy": hook-succeeded
+  labels:
+    app: flink-operator
+    control-plane: controller-manager
+spec:
+  template:
+    spec:
+      serviceAccountName: default
+      restartPolicy: OnFailure
+      imagePullSecrets:
+        - name: "{{ .Values.imagePullSecrets }}"
+      containers:
+      - name: clean-secret
+        image: {{ .Values.deployerWebhookCertImage }}
+        imagePullPolicy: Always
+        command:
+        - "/bin/sh"
+        - "-c"
+        - "curl -ik \
+          -X DELETE \
+          -H \"Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)\" \
+          -H \"Accept: application/json\" \
+          -H \"Content-Type: application/json\" \
+          https://kubernetes.default.svc/api/v1/namespaces/{{ .Release.Namespace }}/secrets/webhook-server-cert"
+{{ end }}

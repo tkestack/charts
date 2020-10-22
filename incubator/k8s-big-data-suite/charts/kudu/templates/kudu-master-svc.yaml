@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.master.name }}"
+  labels:
+    app: "{{ .Values.master.label }}"
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Values.Component }}"
+spec:
+  clusterIP: None
+  ports:
+    - name: ui
+      port: {{ .Values.master.ports.ui }}
+    - name: rpc-port
+      port: {{ index .Values.master.ports "rpc-port" }}
+  selector:
+    app: "{{ .Values.master.label }}"
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Values.Component }}"

@@ -1,0 +1,141 @@
+{{- if .Values.ingressEnabled }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ include "ingress.name" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "name" . }}
+    helm.sh/chart: {{ include "fullname" . }}
+  annotations:
+    {{- if eq .Values.ingressType "NGINX" }}
+    kubernetes.io/ingress.class: nginx
+    {{- else if eq .Values.ingressType "QCLOUD"}}
+    kubernetes.io/ingress.class: qcloud
+    {{- end }}
+    ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      rewrite ^/grafana/(.*) /$1 break;
+      rewrite ^/kibana/(.*) /$1 break;
+      rewrite ^/spark/(.*) /$1 break;
+      rewrite ^/hive/(.*) /$1 break;
+      rewrite ^/hbase/(.*) /$1 break;
+      rewrite ^/kudu/(.*) /$1 break;
+spec:
+  rules:
+    - host: {{ .Values.domain }}
+      http:
+        paths:
+          {{- if .Values.airflow.enabled }}
+          - backend:
+              serviceName: {{ template "service.grafana.name" . }}
+              servicePort: 80
+            path: /grafana/
+          {{- end }}
+          {{- if and .Values.spark.enabled .Values.spark.history.enabled }}
+          - backend:
+              serviceName: {{ template "service.history.name" . }}
+              servicePort: 18080
+            path: /spark/
+          - backend:
+              serviceName: {{ template "service.airflow.name" . }}
+              servicePort: 8080
+            path: /airflow/
+          {{- end }}
+          {{- if .Values.kibana.enabled }}
+          - backend:
+              serviceName: {{ template "service.kibana.name" . }}
+              servicePort: 5601
+            path: /kibana/
+          {{- end }}
+          {{- if .Values.grafana.enabled }}
+          - backend:
+              serviceName: {{ template "service.grafana.name" . }}
+              servicePort: 80
+            path: /grafana/
+          {{- end }}
+          {{- if and .Values.spark.enabled .Values.spark.zeppelin.enabled }}
+          - backend:
+              serviceName: {{ template "service.zeppelin.name" . }}
+              servicePort: 8080
+            path: /zeppelin/
+          {{- end }}
+          {{- if .Values.hadoop.enabled }}
+          - backend:
+              serviceName: {{ template "nginx.name" . }}
+              servicePort: 80
+            path: /hdfs/
+          {{- end }}
+          {{- if .Values.hive.enabled }}
+          - backend:
+              serviceName: {{ template "nginx.name" . }}
+              servicePort: 81
+            path: /hive/
+          {{- end }}
+          {{- if .Values.hbase.enabled }}
+          - backend:
+              serviceName: {{ template "nginx.name" . }}
+              servicePort: 82
+            path: /hbase/
+          {{- end }}
+          {{- if .Values.kudu.enabled }}
+          - backend:
+              serviceName: {{ template "nginx.name" . }}
+              servicePort: 83
+            path: /kudu/
+          {{- end }}
+          {{- if .Values.impala.enabled }}
+          - backend:
+              serviceName: {{ template "nginx.name" . }}
+              servicePort: 84
+            path: /catalogd/
+          - backend:
+              serviceName: {{ template "nginx.name" . }}
+              servicePort: 85
+            path: /impalad/
+          - backend:
+              serviceName: {{ template "nginx.name" . }}
+              servicePort: 86
+            path: /statestored/
+          {{- end -}}
+          {{- if index .Values "prometheus-operator" "enabled" }}
+          - backend:
+              serviceName: {{ template "service.alertmanager.name" . }}
+              servicePort: 9093
+            path: /alertmanager/
+          - backend:
+              serviceName: {{ template "service.prometheus.name" . }}
+              servicePort: 9090
+            path: /prometheus/
+          {{- end }}
+          {{- if .Values.superset.enabled }}
+          - backend:
+              serviceName: {{ template "nginx.name" . }}
+              servicePort: 87
+            path: /superset/
+          {{- end }}
+{{- if .Values.superset.enabled }}
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ include "ingress.name" . }}-superset
+  labels:
+    app.kubernetes.io/name: {{ include "name" . }}
+    helm.sh/chart: {{ include "fullname" . }}
+  annotations:
+    {{- if eq .Values.ingressType "NGINX" }}
+    kubernetes.io/ingress.class: nginx
+    {{- else if eq .Values.ingressType "QCLOUD"}}
+    kubernetes.io/ingress.class: qcloud
+    {{- end }}
+spec:
+  rules:
+    - host: superset.{{ .Values.domain }}
+      http:
+        paths:
+          - backend:
+              serviceName: {{ template "service.superset.name" . }}
+              servicePort: 8088
+            path: /
+{{- end }}
+{{- end }}

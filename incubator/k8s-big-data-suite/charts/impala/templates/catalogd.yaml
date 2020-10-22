@@ -1,0 +1,117 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: '{{ template "catalogd.fullname" . }}'
+spec:
+  ports:
+    - name: "inner"
+      port: 26000
+      targetPort: 26000
+      protocol: TCP
+    - name: "im-ss"
+      port: 24000
+      targetPort: 24000
+    - name: "heart"
+      port: 22000
+      targetPort: 22000
+      protocol: TCP
+    - name: "heart-update"
+      port: 23020
+      targetPort: 23020
+      protocol: TCP
+    - name: "web"
+      port: 25020
+      targetPort: 25020
+      protocol: TCP
+  selector:
+    component: "{{ .Release.Name }}-impala-catalogd"
+---
+  {{ if .Values.catalogd.enableNodePort }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: '{{ template "catalogd.fullname" . }}-node-port'
+  labels:
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-impala-catalogd"
+spec:
+  ports:
+    - name: "web"
+      port: 25020
+      targetPort: 25020
+      protocol: TCP
+      nodePort:  {{ .Values.catalogd.nodePort.web }}
+  selector:
+    component: "{{ .Release.Name }}-impala-catalogd"
+  type: NodePort
+---
+{{ end }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "catalogd.fullname" . }}
+  labels:
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-impala-catalogd"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: "{{ .Release.Name }}-impala-catalogd"
+    spec:
+      hostname: {{ template "catalogd.fullname" . }}
+      imagePullSecrets:
+        - name: "{{ .Values.imagePullSecrets }}"
+      terminationGracePeriodSeconds: 30
+      containers:
+      - name: catalogd
+        image: "{{ .Values.imageName }}:{{ .Values.imageTag }}"
+        command: [
+          "/opt/impala/bin/daemon_entrypoint.sh", "/opt/impala/bin/catalogd",
+              "-log_dir={{ .Values.logDir }}",
+              "-abort_on_config_error=false",
+              '-state_store_host={{ template "statestored.fullname" . }}',
+              "-hms_event_polling_interval_s=3",
+              "-invalidate_tables_on_memory_pressure=true"
+        ]
+        ports:
+          - name: "web"
+            containerPort: 25020
+          - name: "inner"
+            containerPort: 26000
+          - name: "im-ss"
+            containerPort: 24000
+          - name: "heart"
+            containerPort: 22000
+          - name: "heart-update"
+            containerPort: 23020
+        resources:
+{{ toYaml .Values.catalogd.resources | indent 10 }}
+        volumeMounts:
+          - name: hadoop-config
+            mountPath: /opt/impala/conf/core-site.xml
+            subPath: core-site.xml
+          - name: hadoop-config
+            mountPath: /opt/impala/conf/hdfs-site.xml
+            subPath: hdfs-site.xml
+          - name: hive-config
+            mountPath: /opt/impala/conf/hive-site.xml
+            subPath: hive-site.xml
+        livenessProbe:
+          tcpSocket:
+            port: 25020
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          failureThreshold: 3
+      volumes:
+      - name: hadoop-config
+        configMap:
+          name: {{ include "hadoop.conf.name" . }}
+      - name: hive-config
+        configMap:
+          name: {{ include "hive.conf.name" . }}
+      nodeSelector:
+{{ toYaml .Values.catalogd.nodeSelector | indent 8 }}

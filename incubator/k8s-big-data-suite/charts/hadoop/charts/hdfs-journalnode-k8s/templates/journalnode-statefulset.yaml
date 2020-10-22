@@ -1,0 +1,233 @@
+# A headless service to create DNS records.
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "hdfs-k8s.journalnode.fullname" . }}
+  labels:
+    app: {{ template "hdfs-k8s.journalnode.name" . }}
+    chart: {{ template "hdfs-k8s.subchart" . }}
+    release: {{ .Release.Name }}
+  annotations:
+    # TODO: Deprecated. Replace tolerate-unready-endpoints with
+    # v1.Service.PublishNotReadyAddresses.
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  ports:
+  - port: 8485
+    name: jn
+  - port: 8480
+    name: http
+  {{- if .Values.global.metrics.enabled }}
+  - port: {{ .Values.metrics.port }}
+    name: metrics
+  {{- end }}
+  clusterIP: None
+  selector:
+    app: {{ template "hdfs-k8s.journalnode.name" . }}
+    release: {{ .Release.Name }}
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ template "hdfs-k8s.journalnode.fullname" . }}
+  labels:
+    app: {{ template "hdfs-k8s.journalnode.name" . }}
+    chart: {{ template "hdfs-k8s.subchart" . }}
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "hdfs-k8s.journalnode.name" . }}
+      release: {{ .Release.Name }}
+  minAvailable: {{ div .Values.global.journalnodeQuorumSize 2 | add1 }}
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: {{ template "hdfs-k8s.journalnode.fullname" . }}
+  labels:
+    app: {{ template "hdfs-k8s.journalnode.name" . }}
+    chart: {{ template "hdfs-k8s.subchart" . }}
+    release: {{ .Release.Name }}
+spec:
+  serviceName: {{ template "hdfs-k8s.journalnode.fullname" . }}
+  replicas: {{ .Values.global.journalnodeQuorumSize }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "hdfs-k8s.journalnode.name" . }}
+        release: {{ .Release.Name }}
+      {{- if .Values.podAnnotations }}
+      annotations:
+{{ toYaml .Values.podAnnotations | indent 8 }}
+      {{- end }}
+    spec:
+      {{- if .Values.affinity }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8 }}
+      {{- else if .Values.global.defaultAffinityEnabled }}
+      terminationGracePeriodSeconds: 30
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - {{ template "hdfs-k8s.journalnode.name" . }}
+                  - key: "release"
+                    operator: In
+                    values:
+                      - {{ .Release.Name }}
+              topologyKey: "kubernetes.io/hostname"
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+      {{- end }}
+      containers:
+      {{- if .Values.global.metrics.enabled }}
+        - name: jmx-exporter
+          image: "{{ .Values.global.metrics.image }}:{{ .Values.global.metrics.imageTag }}"
+          imagePullPolicy: {{ .Values.global.metrics.pullPolicy }}
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.metrics.port }}
+          livenessProbe:
+{{ toYaml .Values.global.metrics.livenessProbe | indent 12 }}
+          readinessProbe:
+{{ toYaml .Values.global.metrics.readinessProbe | indent 12 }}
+          env:
+            - name: SERVICE_PORT
+              value: {{ .Values.metrics.port | quote }}
+          {{- with .Values.metrics.env }}
+            {{- range $key, $value := . }}
+            - name: {{ $key | upper | replace "." "_" }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- end }}
+          resources:
+  {{ toYaml .Values.metrics.resources | indent 10 }}
+          volumeMounts:
+            - name: jmx-config
+              mountPath: /opt/jmx_exporter/config.yml
+              subPath: hdfs-jn-config.yml
+        {{- end }}
+        - name: hdfs-journalnode
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          env:
+            - name: HADOOP_CUSTOM_CONF_DIR
+              value: /etc/hadoop-custom-conf
+            - name: HADOOP_HEAPSIZE
+              value: {{ default "1024" .Values.hadoopHeapSize | quote }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          command: ["/entrypoint.sh"]
+          args: ["/opt/hadoop-2.9.0/bin/hdfs", "--config", "/etc/hadoop", "journalnode"]
+          ports:
+          - containerPort: 8485
+            name: jn
+          - containerPort: 8480
+            name: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+          volumeMounts:
+            # Mount a subpath of the volume so that the journal subdir would be
+            # a brand new empty dir. This way, we won't get affected by
+            # existing files in the volume top dir.
+            - name: editdir
+              mountPath: /hadoop/dfs/journal
+              subPath: journal
+            - name: editdir
+              mountPath: /hadoop/dfs/name
+              subPath: name
+            - name: hdfs-config
+              mountPath: /etc/hadoop-custom-conf
+              readOnly: true
+           {{- if .Values.global.kerberosEnabled }}
+            - name: kerberos-config
+              mountPath: /etc/krb5.conf
+              subPath: {{ .Values.global.kerberosConfigFileName }}
+              readOnly: true
+            - name: kerberos-keytab-copy
+              mountPath: /etc/security/
+              readOnly: true
+            {{- end }}
+     {{- if .Values.global.kerberosEnabled }}
+      initContainers:
+        - name: copy-kerberos-keytab
+          image: "{{ .Values.global.init.image.repository }}:{{ .Values.global.init.image.tag }}"
+          command: ['sh', '-c']
+          args:
+            - cp /kerberos-keytabs/${MY_KERBEROS_NAME}*.keytab /kerberos-keytab-copy/hdfs.keytab
+          env:
+            - name: MY_KERBEROS_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          volumeMounts:
+            - name: kerberos-keytabs
+              mountPath: /kerberos-keytabs
+            - name: kerberos-keytab-copy
+              mountPath: /kerberos-keytab-copy
+      {{- end }}
+      restartPolicy: Always
+      volumes:
+        - name: hdfs-config
+          configMap:
+            name: {{ template "hdfs-k8s.config.fullname" . }}
+        {{- if .Values.global.metrics.enabled }}
+        - name: jmx-config
+          configMap:
+            name: {{ template "hdfs-k8s.fullname" . }}-jmx-configmap
+        {{- end }}
+        {{- if .Values.global.kerberosEnabled }}
+        - name: kerberos-config
+          configMap:
+            name: {{ template "krb5-configmap" . }}
+        - name: kerberos-keytabs
+          secret:
+            secretName: {{ template "krb5-keytabs-secret" . }}
+        - name: kerberos-keytab-copy
+          emptyDir: {}
+        {{- end }}
+      {{- if .Values.global.podSecurityContext.enabled }}
+      securityContext:
+        runAsUser: {{ .Values.global.podSecurityContext.runAsUser }}
+        fsGroup: {{ .Values.global.podSecurityContext.fsGroup }}
+      {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: editdir
+      spec:
+        accessModes:
+          - {{ .Values.persistence.accessMode | quote }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size | quote }}
+      {{- if .Values.persistence.storageClass }}
+        {{- if (eq "-" .Values.persistence.storageClass) }}
+        storageClassName: ""
+        {{- else }}
+        storageClassName: "{{ .Values.persistence.storageClass }}"
+        {{- end }}
+      {{- end }}
+      {{- if .Values.persistence.selector }}
+        selector:
+{{ toYaml .Values.persistence.selector | indent 10 }}
+      {{- end }}

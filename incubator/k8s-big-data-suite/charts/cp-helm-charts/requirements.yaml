@@ -1,0 +1,13 @@
+dependencies:
+- name: cp-kafka
+  version: 0.1.0
+  repository: file://./charts/cp-kafka
+  condition: cp-kafka.enabled
+- name: cp-schema-registry
+  version: 0.1.0
+  repository: file://./charts/cp-schema-registry
+  condition: cp-schema-registry.enabled
+- name: cp-kafka-connect
+  version: 0.1.0
+  repository: file://./charts/cp-kafka-connect
+  condition: cp-kafka-connect.enabled

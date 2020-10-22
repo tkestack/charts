@@ -1,0 +1,122 @@
+operatorImageName: ccr.ccs.tencentyun.com/k8s-big-data/operator
+operatorVersion: v1beta2-1.1.1-2.4.5
+imagePullPolicy: IfNotPresent
+imagePullSecrets: []
+
+rbac:
+  create: true
+
+serviceAccounts:
+  spark:
+    create: true
+    name:
+  sparkoperator:
+    create: true
+    name:
+
+sparkJobNamespace: ""
+installCrds: true
+controllerThreads: 10
+resyncInterval: 30
+ingressUrlFormat: ""
+logLevel: 2
+
+securityContext: {}
+
+enableWebhook: false
+webhookPort: 8080
+## The webhook will only operate on namespaces with this label, specified in the form key1=value1,key2=value2
+## empty string will operate on all namespaces
+webhookNamespaceSelector: ""
+
+enableMetrics: true
+metricsPort: 10254
+metricsEndpoint: "/metrics"
+metricsPrefix: ""
+metricsLabels:
+  - app_name
+  - app_namespace
+
+## Node labels for pod assignment
+## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+##
+nodeSelector: {}
+
+## Tolerations for the sparkoperator deployment
+##
+## Example:
+##   - key: "toleration=key"
+##     operator: "Equal"
+##     value: "value"
+##     effect: "NoSchedule"
+##
+## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+##
+tolerations: []
+
+podAnnotations: {}
+
+## Resources for the sparkoperator deployment
+## Ref: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+##
+resources: {}
+
+## Whether to enable batch scheduler for pod scheduling,
+## if enabled, end user can specify batch scheduler name in spark application.
+enableBatchScheduler: false
+
+## Whether to enable the ResourceQuota enforcement for SparkApplication resources.
+## Requires the webhook to be enabled by setting enableWebhook to true.
+## Ref: https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/docs/user-guide.md#enabling-resource-quota-enforcement.
+enableResourceQuotaEnforcement: false
+
+## Whether to enable leader election when the operator Deployment has more than one replica.
+## Only applicable when `replicas` is set to a value greater than 1.
+## Ref: https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/docs/user-guide.md#enabling-leader-election-for-high-availability.
+leaderElection:
+  enable: false
+  lockName: "spark-operator-lock"
+  ## Optionally store the lock in another namespace. Defaults to operator's namespace
+  # lockNamespace: ""
+replicas: 1
+
+
+serviceMonitor:
+  enabled: true
+
+  ## Use the value configured in prometheus-node-exporter.podLabels
+  ##
+  jobLabel: spark-operator
+
+  ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+  ##
+  interval: ""
+
+  ## How long until a scrape request times out. If not set, the Prometheus default scape timeout is used.
+  ##
+  scrapeTimeout: ""
+
+  ## 	metric relabel configs to apply to samples before ingestion.
+  ##
+  metricRelabelings: []
+  # - sourceLabels: [__name__]
+  #   separator: ;
+  #   regex: ^node_mountstats_nfs_(event|operations|transport)_.+
+  #   replacement: $1
+  #   action: drop
+
+  ## 	relabel configs to apply to samples before ingestion.
+  ##
+  relabelings: []
+  # - sourceLabels: [__meta_kubernetes_pod_node_name]
+  #   separator: ;
+  #   regex: ^(.*)$
+  #   target_label: nodename
+  #   replacement: $1
+  #   action: replace
+
+  # spark application pod label
+  matchLabels: {}
+
+  # spark application runnging namespaces
+  namespaceSelector: {}

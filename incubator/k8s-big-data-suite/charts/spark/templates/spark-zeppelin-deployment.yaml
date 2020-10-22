@@ -1,0 +1,137 @@
+{{- if .Values.zeppelin.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "zeppelin-fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.zeppelin.component }}"
+spec:
+  ports:
+    - name: http
+      port: {{ .Values.zeppelin.servicePort }}
+      targetPort: {{ .Values.zeppelin.containerPort }}
+      {{- if (eq "NodePort" .Values.zeppelin.serviceType) }}
+      nodePort:  {{ .Values.zeppelin.nodePort }}
+      {{- end }}
+  selector:
+    component: "{{ .Release.Name }}-{{ .Values.zeppelin.component }}"
+  type: {{ .Values.zeppelin.serviceType }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "zeppelin-master" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.zeppelin.component }}"
+spec:
+  ports:
+  - name: client
+    port: 7077
+    protocol: TCP
+  clusterIP: None
+  selector:
+    component: "{{ .Release.Name }}-{{ .Values.zeppelin.component }}"
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "zeppelin-fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.zeppelin.component }}"
+spec:
+  replicas: {{ default 1 .Values.zeppelin.replicas }}
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      component: "{{ .Release.Name }}-{{ .Values.zeppelin.component }}"
+  template:
+    metadata:
+      labels:
+        heritage: {{ .Release.Service | quote }}
+        release: {{ .Release.Name | quote }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        component: "{{ .Release.Name }}-{{ .Values.zeppelin.component }}"
+    spec:
+      imagePullSecrets:
+        - name: "{{ .Values.imagePullSecrets }}"
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: {{ template "zeppelin-fullname" . }}
+          image: "{{ .Values.zeppelin.imageName }}:{{ .Values.zeppelin.imageTag }}"
+          args: [ "/zeppelin/bin/zeppelin.sh"]
+          ports:
+            - containerPort: {{ .Values.zeppelin.containerPort }}
+              name: http
+          resources:
+{{ toYaml .Values.zeppelin.resources | indent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /zeppelin
+              port: 8080
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /zeppelin
+              port: 8080
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+          env:
+            - name: MASTER
+              value: "{{ .Values.sparkMaster }}"
+            - name: SPARK_EXPORT_ENV_SPARK_HISTORY_OPTS
+              value:  {{ include "spark.history.opts" . | quote }}
+            - name: ZEPPELIN_JMX_ENABLE
+              value:  "{{ .Values.zeppelin.jmx.enabled }}"
+            - name: ZEPPELIN_JMX_PORT
+              value:  "{{ .Values.zeppelin.jmx.port }}"
+            - name: ZEPPELIN_MEM
+              value: "{{ .Values.zeppelin.zeppelinMem }}"
+            - name: ZEPPELIN_CONF_DIR
+              value: /data/conf
+            - name: ZEPPELIN_NOTEBOOK_DIR
+              value: /data/notebook
+            - name: HADOOP_CUSTOM_CONF_DIR
+              value: /etc/hadoop-custom-conf
+            - name: ZEPPELIN_CUSTOM_CONF_DIR
+              value: /etc/zeppelin-custom-conf
+
+          volumeMounts:
+            - name: zeppelin-config
+              mountPath: /etc/zeppelin-custom-conf
+            - name: hadoop-config
+              mountPath: /etc/hadoop-custom-conf
+            - name: hive-config
+              mountPath: /etc/hive/
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: zeppelin-config
+          configMap:
+            name: {{ include "zeppelin-fullname" . }}
+        - name: hadoop-config
+          configMap:
+            name: {{ include "spark.hadoop.config.name" . }}
+        - name: hive-config
+          configMap:
+            name: {{ include "spark.hive.config.name" . }}
+        - name: data
+        {{- if .Values.zeppelin.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ template "zeppelin-fullname" . }}-data
+        {{- else }}
+          emptyDir: {}
+        {{- end }}
+      nodeSelector:
+{{ toYaml .Values.zeppelin.nodeSelector | indent 8 }}
+{{- end }}

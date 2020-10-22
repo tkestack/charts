@@ -1,0 +1,129 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "server.fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.server.component }}"
+spec:
+  replicas: {{ default 1 .Values.server.replicas }}
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      component: "{{ .Release.Name }}-{{ .Values.server.component }}"
+  template:
+    metadata:
+      labels:
+        heritage: {{ .Release.Service | quote }}
+        release: {{ .Release.Name | quote }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        component: "{{ .Release.Name }}-{{ .Values.server.component }}"
+    spec:
+      imagePullSecrets:
+        - name: "{{ .Values.imagePullSecrets }}"
+      terminationGracePeriodSeconds: 30
+      containers:
+      {{- if .Values.global.metrics.enabled }}
+      - name: jmx-exporter
+        image: "{{ .Values.global.metrics.image }}:{{ .Values.global.metrics.imageTag }}"
+        imagePullPolicy: {{ .Values.global.metrics.pullPolicy }}
+        ports:
+          - name: metrics
+            containerPort: {{ .Values.global.metrics.port }}
+        livenessProbe:
+          failureThreshold: 8
+          httpGet:
+            path: /metrics
+            port: metrics
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          successThreshold: 1
+          timeoutSeconds: 60
+
+        readinessProbe:
+          failureThreshold: 8
+          httpGet:
+            path: /metrics
+            port: metrics
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          successThreshold: 1
+          timeoutSeconds: 60
+        env:
+          - name: SERVICE_PORT
+            value: {{ .Values.global.metrics.port | quote }}
+        {{- with .Values.global.metrics.env }}
+          {{- range $key, $value := . }}
+          - name: {{ $key | upper | replace "." "_" }}
+            value: {{ $value | quote }}
+          {{- end }}
+        {{- end }}
+        resources:
+{{ toYaml .Values.global.metrics.resources | indent 10 }}
+        volumeMounts:
+          - name: jmx-config
+            mountPath: /opt/jmx_exporter/config.yml
+            subPath: hive-server-config.yml
+      {{- end }}
+      - name: server
+        image: "{{ .Values.imageName }}:{{ .Values.imageTag }}"
+        args: ["/usr/local/bin/startup.sh"]
+        ports:
+          - name: thrift
+            containerPort: 10000
+          - name: web
+            containerPort: 10002
+        livenessProbe:
+          failureThreshold: 8
+          httpGet:
+            path: /
+            port: web
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          successThreshold: 1
+          timeoutSeconds: 60
+
+        readinessProbe:
+          failureThreshold: 8
+          httpGet:
+            path: /
+            port: web
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          successThreshold: 1
+          timeoutSeconds: 60
+        resources:
+{{ toYaml .Values.server.resources | indent 10 }}
+        volumeMounts:
+          - name: hadoop-config
+            mountPath: /etc/hadoop-custom-conf
+          - name: hive-config
+            mountPath: /etc/hive-custom-conf
+        env:
+        - name: HADOOP_HOME
+          value: {{ default "/opt/hadoop" .Values.hadoopHome | quote }}
+        - name: HIVE_CONF_DIR
+          value: {{ default "/etc/hive" .Values.hiveConfDir | quote }}
+        - name: HADOOP_HEAPSIZE
+          value: {{ default "1024" .Values.server.hadoopHeapSize | quote }}
+        - name: HADOOP_CUSTOM_CONF_DIR
+          value: /etc/hadoop-custom-conf
+        - name: HIVE_CUSTOM_CONF_DIR
+          value: /etc/hive-custom-conf
+      volumes:
+      - name: hadoop-config
+        configMap:
+          name: {{ include "hadoop.conf.name" . }}
+      - name: hive-config
+        configMap:
+          name: {{ include "hive.fullname" . }}
+      {{- if .Values.global.metrics.enabled }}
+      - name: jmx-config
+        configMap:
+          name: {{ template "hive.fullname" . }}-jmx-configmap
+      {{- end }}
+      nodeSelector:
+{{ toYaml .Values.server.nodeSelector | indent 8 }}

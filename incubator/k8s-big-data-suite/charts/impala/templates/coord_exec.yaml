@@ -1,0 +1,152 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: '{{ template "coord-exec.fullname" . }}'
+spec:
+  clusterIP: None
+  ports:
+    - name: "beeswax"
+      port: 21000
+      targetPort: 21000
+      protocol: TCP
+    - name: "jdbc"
+      port: 21050
+      targetPort: 21050
+      protocol: TCP
+    - name: "hs2"
+      port: 28000
+      targetPort: 28000
+      protocol: TCP
+    - name: "heartbeat"
+      port: 22000
+      targetPort: 22000
+      protocol: TCP
+    - name: "heart-update"
+      port: 23000
+      targetPort: 23000
+      protocol: TCP
+    - name: "web"
+      port: 25000
+      targetPort: 25000
+      protocol: TCP
+  selector:
+    component: "{{ .Release.Name }}-impala-coord-exec"
+---
+{{ if .Values.coordExec.enableNodePort }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: '{{ template "coord-exec.fullname" . }}-node-port'
+  labels:
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  ports:
+    - name: "beeswax"
+      port: 21000
+      targetPort: 21000
+      nodePort: {{ .Values.coordExec.nodePort.beeswax }}
+    - name: "web"
+      port: 25000
+      targetPort: 25000
+      nodePort: {{ .Values.coordExec.nodePort.web }}
+    - name: "jdbc"
+      port: 21050
+      targetPort: 21050
+      nodePort: {{ .Values.coordExec.nodePort.jdbc }}
+  selector:
+    component: "{{ .Release.Name }}-impala-coord-exec"
+  type: NodePort
+---
+{{ end }}
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: {{ template "coord-exec.fullname" . }}
+  labels:
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  serviceName: {{ template "coord-exec.fullname" . }}
+  replicas: {{ .Values.coordExec.replicas }}
+  template:
+    metadata:
+      labels:
+        component: "{{ .Release.Name }}-impala-coord-exec"
+    spec:
+      imagePullSecrets:
+        - name: "{{ .Values.imagePullSecrets }}"
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: coord-exec
+        image: "{{ .Values.imageName }}:{{ .Values.imageTag }}"
+        command: ["/bin/bash", "-c", '/opt/impala/bin/daemon_entrypoint.sh /opt/impala/bin/impalad -hostname $POD_NAME.{{ template "coord-exec.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local -log_dir={{ .Values.logDir }} -abort_on_config_error=false -catalog_service_host={{ template "catalogd.fullname" . }} -state_store_host={{ template "statestored.fullname" . }} -mem_limit_includes_jvm=true -kudu_master_hosts={{ template "kudu.kudu_masters" . }}']
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+        ports:
+          - name: "beeswax"
+            containerPort: 21000
+          - name: "jdbc"
+            containerPort: 21050
+          - name: "hs2"
+            containerPort: 28000
+          - name: "web"
+            containerPort: 25000
+          - name: "heartbeat"
+            containerPort: 22000
+          - name: "heart"
+            containerPort: 22000
+        resources:
+{{ toYaml .Values.coordExec.resources | indent 10 }}
+        volumeMounts:
+          - name: hadoop-config
+            mountPath: /opt/impala/conf/core-site.xml
+            subPath: core-site.xml
+          - name: hadoop-config
+            mountPath: /opt/impala/conf/hdfs-site.xml
+            subPath: hdfs-site.xml
+          - name: hive-config
+            mountPath: /opt/impala/conf/hive-site.xml
+            subPath: hive-site.xml
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - |
+              #!/usr/bin/env bash -e
+              timeout 5 bash -c "cat < /dev/null > /dev/tcp/127.0.0.1/25000"
+              OK=$?
+              if [ ${OK} != 0 ]
+              then
+                exit 1
+              fi
+              START_TIME=$(ps -eo etimes | head -2 | tail -1)
+              MAX_TIME=86400
+              if [ ${START_TIME} -gt ${MAX_TIME} ]
+              then
+                  echo "come to max live time"
+                  exit 1
+              else
+                  echo "current start time: $START_TIME"
+              fi
+              exit 0
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          failureThreshold: 3
+        securityContext:
+          runAsUser: 0
+          capabilities:
+            add: ["NET_ADMIN", "SYS_TIME"]
+      volumes:
+      - name: hadoop-config
+        configMap:
+          name: {{ include "hadoop.conf.name" . }}
+      - name: hive-config
+        configMap:
+          name: {{ include "hive.conf.name" . }}
+      nodeSelector:
+{{ toYaml .Values.coordExec.nodeSelector | indent 8 }}

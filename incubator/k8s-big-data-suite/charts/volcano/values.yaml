@@ -1,0 +1,10 @@
+basic:
+  image_tag_version: "latest"
+  controller_image_name: "volcanosh/vc-controller-manager"
+  scheduler_image_name: "volcanosh/vc-scheduler"
+  admission_image_name: "volcanosh/vc-webhook-manager"
+  admission_secret_name: "volcano-admission-secret"
+  scheduler_config_file: "config/volcano-scheduler.conf"
+  busybox_image: "busybox"
+  image_pull_secret: ""
+  admission_port: 8443
