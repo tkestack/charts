@@ -35,7 +35,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | `distributed-jmeter.server.replicaCount`  | The number of jmeter nodes you want to create | `3`                                                     |
 | `grafana.enabled`                         | Install grafana for jmeter or not             | `true`                                                  |
 | `influxdb.enabled`                        | Install influx db for jmeter or not           | `true`                                                  |
-| `influxdb.persistence.enabled`            | Install influx db for jmeter or not           | `true`                                                  |
+| `influxdb.persistence.enabled`            | Creat pvc or not                              | `true`                                                  |
 | `influxdb.persistence.size`               | Size of influx db, must in [10, 32000]        | `20Gi`                                                  |
 
 
