@@ -20,3 +20,6 @@ maintainers:
     email: kangtian@tencent.com
   - name: toringzhang
     email: toringzhang@tencent.com
+
+icon: https://github.com/tkestack/charts/raw/main/icons/k8s-big-data-suite.jpg
+home: https://github.com/tkestack/charts
