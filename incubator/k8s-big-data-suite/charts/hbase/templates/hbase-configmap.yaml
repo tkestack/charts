@@ -1,0 +1,112 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "hbase.fullname" . }}
+  labels:
+    app: {{ template "hbase.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  hbase-site.xml: |
+    <configuration>
+      <property>
+        <name>hbase.master</name>
+        <value>{{ template "hbase.fullname" . }}-master:16010</value>
+      </property>
+      <property>
+        <name>zookeeper.znode.parent</name>
+        <value>/hbase</value>
+      </property>
+      <property>
+        <name>hbase.rootdir</name>
+        <value>{{ template "hbase.rootdir" . }}</value>
+      </property>
+      <property>
+        <name>hbase.cluster.distributed</name>
+        <value>true</value>
+      </property>
+      <property>
+        <name>hbase.zookeeper.quorum</name>
+        <value>{{ template "hbase.zookeeper.quorum" . }}</value>
+      </property>
+    </configuration>
+
+  bootstrap.sh: |
+    #!/bin/bash
+
+    cat /etc/hosts > /etc/hosts.bak
+    cat /etc/hosts | grep -v hbase-rs > /etc/hosts1
+    cat /etc/hosts1 > /etc/hosts
+    IP="$(cat /etc/hosts.bak  | grep hbase-rs  | cut -d$'\t' -f 1)"
+    hostname $IP
+    echo "${IP} ${IP}" >> /etc/hosts
+
+    : ${HADOOP_PREFIX:=/opt/hadoop}
+    : ${HADOOP_CONF_DIR:=/etc/hadoop}
+
+    . $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+
+    # Directory to find config artifacts
+    CONFIG_DIR="/etc/hbase-custom-conf"
+
+    # Copy config files from volume mount
+
+    for f in hbase-site.xml; do
+      if [[ -e ${CONFIG_DIR}/$f ]]; then
+        cp ${CONFIG_DIR}/$f /opt/hbase/conf/$f
+      else
+        echo "ERROR: Could not find $f in $CONFIG_DIR"
+        exit 1
+      fi
+    done
+
+    for f in core-site.xml hdfs-site.xml; do
+      if [[ -e ${HADOOP_CONF_DIR}/$f ]]; then
+        cp ${HADOOP_CONF_DIR}/$f /opt/hbase/conf/$f
+      else
+        echo "ERROR: Could not find $f in $HADOOP_CONF_DIR"
+        exit 1
+      fi
+    done
+
+    # installing libraries if any - (resource urls added comma separated to the ACP system variable)
+    cd $HADOOP_PREFIX/share/hadoop/common ; for cp in ${ACP//,/ }; do  echo == $cp; curl -LO $cp ; done; cd -
+
+    if [[ "${HOSTNAME}" =~ "hbase-master-0" ]]; then
+      /opt/hbase/bin/hbase-daemon.sh --config /opt/hbase/conf start master
+    fi
+
+    if [[ "${HOSTNAME}" =~ "hbase-master-1" ]]; then
+      /opt/hbase/bin/hbase-daemon.sh --config /opt/hbase/conf start master --backup
+    fi
+
+    if [[ "${HOSTNAME}" =~ "hbase-rs" ]]; then
+      sleep 30s
+      /opt/hbase/bin/hbase-daemon.sh --config /opt/hbase/conf start regionserver
+    fi
+
+    tail -f /opt/hbase/logs/*
+
+  stop.sh: |
+    #!/bin/bash
+
+    : ${HADOOP_PREFIX:=/opt/hadoop}
+    : ${HADOOP_CONF_DIR:=/etc/hadoop}
+
+    . $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+
+    # Directory to find config artifacts
+    CONFIG_DIR="/etc/hbase-custom-conf"
+
+    if [[ "${HOSTNAME}" =~ "hbase-master-0" ]]; then
+      /opt/hbase/bin/hbase-daemon.sh --config /opt/hbase/conf stop master
+    fi
+
+    if [[ "${HOSTNAME}" =~ "hbase-master-1" ]]; then
+      /opt/hbase/bin/hbase-daemon.sh --config /opt/hbase/conf stop master --backup
+    fi
+
+    if [[ "${HOSTNAME}" =~ "hbase-rs" ]]; then
+      /opt/hbase/bin/hbase-daemon.sh --config /opt/hbase/conf stop regionserver
+    fi

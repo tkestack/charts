@@ -1,0 +1,79 @@
+{{- if and .Values.global.metrics.enabled .Values.global.metrics.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "server.fullname" . }}
+  {{- if .Values.global.metrics.serviceMonitor.namespace }}
+  namespace: {{ .Values.global.metrics.serviceMonitor.namespace }}
+  {{- end }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.server.component }}"
+spec:
+  endpoints:
+  - port: metrics
+    {{- if .Values.global.metrics.serviceMonitor.interval }}
+    interval: {{ .Values.global.metrics.serviceMonitor.interval }}
+    {{- end }}
+    {{- if .Values.global.metrics.serviceMonitor.scrapeTimeout }}
+    scrapeTimeout: {{ .Values.global.metrics.serviceMonitor.scrapeTimeout }}
+    {{- end }}
+{{- if .Values.global.metrics.serviceMonitor.metricRelabelings }}
+    metricRelabelings:
+{{ tpl (toYaml .Values.global.metrics.serviceMonitor.metricRelabelings | indent 4) . }}
+{{- end }}
+{{- if .Values.global.metrics.serviceMonitor.relabelings }}
+    relabelings:
+{{ toYaml .Values.global.metrics.serviceMonitor.relabelings | indent 4 }}
+{{- end }}
+  selector:
+    matchLabels:
+      heritage: {{ .Release.Service | quote }}
+      chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+      component: "{{ .Release.Name }}-{{ .Values.server.component }}"
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "metastore.fullname" . }}
+  {{- if .Values.global.metrics.serviceMonitor.namespace }}
+  namespace: {{ .Values.global.metrics.serviceMonitor.namespace }}
+  {{- end }}
+  labels:
+    app:  {{ include "hive.name" . }}
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.metastore.component }}"
+spec:
+  endpoints:
+  - port: metrics
+    {{- if .Values.global.metrics.serviceMonitor.interval }}
+    interval: {{ .Values.global.metrics.serviceMonitor.interval }}
+    {{- end }}
+    {{- if .Values.global.metrics.serviceMonitor.scrapeTimeout }}
+    scrapeTimeout: {{ .Values.global.metrics.serviceMonitor.scrapeTimeout }}
+    {{- end }}
+{{- if .Values.global.metrics.serviceMonitor.metricRelabelings }}
+    metricRelabelings:
+{{ tpl (toYaml .Values.global.metrics.serviceMonitor.metricRelabelings | indent 4) . }}
+{{- end }}
+{{- if .Values.global.metrics.serviceMonitor.relabelings }}
+    relabelings:
+{{ toYaml .Values.global.metrics.serviceMonitor.relabelings | indent 4 }}
+{{- end }}
+  selector:
+    matchLabels:
+      app:  {{ include "hive.name" . }}
+      heritage: {{ .Release.Service | quote }}
+      chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+      component: "{{ .Release.Name }}-{{ .Values.metastore.component }}"
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+{{- end }}

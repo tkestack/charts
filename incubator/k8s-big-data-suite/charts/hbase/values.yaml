@@ -1,0 +1,27 @@
+# The base hadoop image to use for all components.
+# See this repo for image build details: https://github.com/Comcast/kube-yarn/tree/master/image
+
+image:
+  repository: ccr.ccs.tencentyun.com/k8s-big-data/hbase
+  tag: v2002121415
+  pullPolicy: IfNotPresent
+
+global:
+  # zookeeperQuorumOverride: zk-0.zk-svc.default.svc.cluster.local:2181,zk-1.zk-svc.default.svc.cluster.local:2181,zk-2.zk-svc.default.svc.cluster.local:2181
+  zookeeperQuorumSize: 3
+
+master:
+  replicas: 2
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+  nodeSelector: {}
+
+region:
+  replicas: 3
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+  nodeSelector: {}

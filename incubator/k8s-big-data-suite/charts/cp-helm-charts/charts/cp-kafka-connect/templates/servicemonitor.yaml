@@ -1,0 +1,59 @@
+{{- if and .Values.prometheus.jmx.enabled .Values.prometheus.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "cp-kafka-connect.fullname" . }}
+  {{- if .Values.prometheus.serviceMonitor.namespace }}
+  namespace: {{ .Values.prometheus.serviceMonitor.namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "cp-kafka-connect.name" . }}
+    chart: {{ template "cp-kafka-connect.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  endpoints:
+  - port: jmx
+    {{- if .Values.prometheus.serviceMonitor.interval }}
+    interval: {{ .Values.prometheus.serviceMonitor.interval }}
+    {{- end }}
+    {{- if .Values.prometheus.serviceMonitor.scrapeTimeout }}
+    scrapeTimeout: {{ .Values.prometheus.serviceMonitor.scrapeTimeout }}
+    {{- end }}
+{{- if .Values.prometheus.serviceMonitor.metricRelabelings }}
+    metricRelabelings:
+{{ tpl (toYaml .Values.prometheus.serviceMonitor.metricRelabelings | indent 4) . }}
+{{- end }}
+{{- if .Values.prometheus.serviceMonitor.relabelings }}
+    relabelings:
+{{ toYaml .Values.prometheus.serviceMonitor.relabelings | indent 4 }}
+{{- end }}
+  - port: prometheus-jmx
+    {{- if .Values.prometheus.serviceMonitor.interval }}
+    interval: {{ .Values.prometheus.serviceMonitor.interval }}
+    {{- end }}
+    {{- if .Values.prometheus.serviceMonitor.scrapeTimeout }}
+    scrapeTimeout: {{ .Values.prometheus.serviceMonitor.scrapeTimeout }}
+    {{- end }}
+{{- if .Values.prometheus.serviceMonitor.metricRelabelings }}
+    metricRelabelings:
+{{ tpl (toYaml .Values.prometheus.serviceMonitor.metricRelabelings | indent 4) . }}
+{{- end }}
+{{- if .Values.prometheus.serviceMonitor.relabelings }}
+    relabelings:
+{{ toYaml .Values.prometheus.serviceMonitor.relabelings | indent 4 }}
+{{- end }}
+  {{- if .Values.prometheus.serviceMonitor.namespaceSelector }}
+  namespaceSelector:
+{{ toYaml .Values.prometheus.serviceMonitor.namespaceSelector | indent 4 -}}
+  {{ else }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ template "cp-kafka-connect.name" . }}
+      chart: {{ template "cp-kafka-connect.chart" . }}
+      release: {{ .Release.Name }}
+{{- end }}

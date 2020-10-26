@@ -1,0 +1,107 @@
+{{- if .Values.thirftserver.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "thirftserver.fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.thirftserver.component }}"
+spec:
+  ports:
+    - port: 10000
+      targetPort: 10000
+      {{ if (eq "NodePort" .Values.thirftserver.serviceType) }}
+      nodePort:  {{ .Values.thirftserver.nodePort }}
+      {{ end }}
+  selector:
+    component: "{{ .Release.Name }}-{{ .Values.thirftserver.component }}"
+  type: {{ .Values.thirftserver.serviceType }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "thirftserver.master" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.thirftserver.component }}"
+spec:
+  ports:
+  - name: client
+    port: 7077
+    protocol: TCP
+  clusterIP: None
+  selector:
+    component: "{{ .Release.Name }}-{{ .Values.thirftserver.component }}"
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "thirftserver.fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.thirftserver.component }}"
+spec:
+  replicas: {{ default 1 .Values.thirftserver.replicas }}
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      component: "{{ .Release.Name }}-{{ .Values.thirftserver.component }}"
+  template:
+    metadata:
+      labels:
+        heritage: {{ .Release.Service | quote }}
+        release: {{ .Release.Name | quote }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        component: "{{ .Release.Name }}-{{ .Values.thirftserver.component }}"
+    spec:
+      serviceAccountName: {{ template "thirftserver.fullname" . }}
+      imagePullSecrets:
+        - name: "{{ .Values.imagePullSecrets }}"
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: {{ template "thirftserver.fullname" . }}
+          image: "{{ .Values.imageName }}:{{ .Values.imageTag }}"
+          args:
+            - "/opt/start-thrift-server.sh"
+            - "--conf spark.kubernetes.namespace={{ .Release.Namespace }}"
+            - "{{ include "spark.thirftserver.start.options" . }}"
+          resources:
+{{ toYaml .Values.thirftserver.resources | indent 12 }}
+          livenessProbe:
+            tcpSocket:
+              port: 10000
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+          volumeMounts:
+          {{ if .Values.hadoopConf.enabled }}
+            - name: hadoop-config
+              mountPath: /etc/hadoop-custom-conf
+          {{ end }}
+            - name: spark-config
+              mountPath: /etc/spark-custom-conf
+          env:
+          - name: MASTER
+            value: {{ .Values.sparkMaster }}
+          - name: HADOOP_CUSTOM_CONF_DIR
+            value: /etc/hadoop-custom-conf
+          - name: SPARK_CUSTOM_CONF_DIR
+            value: /etc/spark-custom-conf
+      volumes:
+      {{ if .Values.hadoopConf.enabled }}
+      - name: hadoop-config
+        configMap:
+          name: {{ include "spark.hadoop.config.name" . }}
+      {{ end }}
+      - name: spark-config
+        configMap:
+          name: {{ include "spark.fullname" . }}
+      nodeSelector:
+{{ toYaml .Values.thirftserver.nodeSelector | indent 8 }}
+{{- end }}

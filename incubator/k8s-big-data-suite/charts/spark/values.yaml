@@ -1,0 +1,166 @@
+# Default values for spark.
+# This is a YAML-formatted file.
+# Declare name/value pairs to be passed into your templates.
+# name: value
+
+imageName: "ccr.ccs.tencentyun.com/k8s-big-data/spark-master"
+imageTag: "v2.4.4-thrift"
+imagePullSecrets: ""
+
+# your k8s cluster api url
+sparkMaster: ""
+
+hadoopConf:
+  enabled: true
+  # custom define hadoop config name
+  # name: hadoop
+
+global:
+  zookeeperQuorumSize: 3
+  hiveMetastoreSize: 2
+
+history:
+  enabled: true
+  name: spark-history
+  replicas: 1
+  component: "spark-history"
+  servicePort: 18080
+  containerPort: 18080
+  nodePort: 31100
+  service:
+    annotations: {}
+  daemonMemory: 1g
+  serviceType: ClusterIP
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+  nodeSelector: {}
+
+thirftserver:
+  enabled: true
+  name: spark-thirftserver
+  component: "thirftserver"
+  master: spark-thirftserver-master
+  nodePort: 31119
+  serviceType: ClusterIP
+  executorInstances: 1
+  executorCores: 1
+  executorMemory: 1G
+  extraConf: ""
+  executorImage: "ccr.ccs.tencentyun.com/k8s-big-data/spark:v2.4.5-v1"
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+  nodeSelector: {}
+  startOptions:
+    spark.driver.port: 7077
+    spark.driver.cores: 1
+    spark.executor.instances: 1
+    spark.executor.cores: 1
+    spark.executor.memory: 1G
+    spark.eventLog.enabled: true
+    spark.kubernetes.authenticate.serviceAccountName: spark
+    spark.kubernetes.container.image: ccr.ccs.tencentyun.com/k8s-big-data/spark:v2.4.4
+
+zeppelin:
+  enabled: true
+  name: zeppelin-controller
+  master: zeppelin-master
+  imageName: "ccr.ccs.tencentyun.com/k8s-big-data/zeppelin"
+  imageTag: "v1912032141"
+  replicas: 1
+  component: "zeppelin"
+  servicePort: 8080
+  containerPort: 8080
+  nodePort: 31188
+  serviceType: ClusterIP
+  zeppelinMem: "-Xmx4096m -XX:MaxPermSize=2048m"
+  sparkSubmitOptions:
+    spark.kubernetes.driver.pod.name: $HOSTNAME
+    spark.driver.port: 7077
+    spark.driver.cores: 2
+    spark.executor.instances: 2
+    spark.executor.cores: 2
+    spark.executor.memory: 1G
+    spark.eventLog.enabled: true
+    spark.kubernetes.authenticate.serviceAccountName: spark
+    spark.kubernetes.container.image: ccr.ccs.tencentyun.com/k8s-big-data/spark:v2.4.4
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+
+  jmx:
+    enabled: "false"
+    port: 9996
+
+  nodeSelector: {}
+
+  persistence:
+    enabled: true
+    storageClass: ""
+    size: 10Gi
+    accessMode: ReadWriteOnce
+
+shiro.ini:
+  - users:
+    - admin: admin, admin
+  - main:
+    - sessionManager: org.apache.shiro.web.session.mgt.DefaultWebSessionManager
+    - cookie: org.apache.shiro.web.servlet.SimpleCookie
+    - cookie.name: JSESSIONID
+    - cookie.httpOnly: true
+    - sessionManager.sessionIdCookie: $cookie
+    - securityManager.sessionManager: $sessionManager
+    - securityManager.sessionManager.globalSessionTimeout: "86400000"
+    - shiro.loginUrl: /api/login
+  - roles:
+    - role1: "*"
+    - role2: "*"
+    - role3: "*"
+    - admin: "*"
+  - urls:
+    - /api/version: anon
+    - /api/interpreter/setting/restart/**: authc
+    - /api/interpreter/**: authc, roles[admin]
+    - /api/configurations/**: authc, roles[admin]
+    - /api/credential/**: authc, roles[admin]
+    - /**: authc
+
+log4j.properties:
+  log4j.rootCategory: INFO, console
+  log4j.appender.console: org.apache.log4j.ConsoleAppender
+  log4j.appender.console.target: System.err
+  log4j.appender.console.layout: org.apache.log4j.PatternLayout
+  log4j.appender.console.layout.ConversionPattern: "%d{yy/MM/dd HH:mm:ss} %p %c{1}: %m%n"
+
+  log4j.logger.org.apache.spark.repl.Main: WARN
+  log4j.logger.org.apache.commons.io.FileUtils: WARN
+  log4j.logger.org.apache.spark.scheduler.TaskSetManager: WARN
+  log4j.logger.org.apache.spark.scheduler.local.LocalActor: WARN
+  log4j.logger.org.apache.spark.storage.BlockManagerMasterActor: WARN
+  log4j.logger.org.apache.spark.HeartbeatReceiver: WARN
+
+  log4j.logger.org.spark_project.jetty: WARN
+  log4j.logger.org.spark_project.jetty.util.component.AbstractLifeCycle: ERROR
+  log4j.logger.org.apache.spark.repl.SparkIMain$exprTyper: INFO
+  log4j.logger.org.apache.spark.repl.SparkILoop$SparkILoopInterpreter: INFO
+  log4j.logger.org.apache.parquet: ERROR
+  log4j.logger.parquet: ERROR
+
+  log4j.logger.org.apache.hadoop.hive: WARN
+  log4j.logger.org.apache.hadoop.hive.metastore.RetryingHMSHandler: FATAL
+  log4j.logger.org.apache.hadoop.hive.ql.exec.FunctionRegistry: ERROR
+
+spark-defaults.conf:
+  spark.app.id: KubernetesSpark
+  spark.history.fs.cleaner.enabled: true
+  spark.ui.showConsoleProgress: true
+  spark.eventLog.compress: false
+  spark.eventLog.enabled: true
+  spark.ui.proxyBase: /spark/
+  spark.ui.reverseProxy: true
+  spark.ui.reverseProxyUrl: http://<domain>/spark/

@@ -1,0 +1,27 @@
+{{- if .Values.grafana.datasources.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "loki.fullname" . }}-grafana-datasource
+  namespace: {{ .Release.Namespace }}
+{{- if .Values.grafana.datasources.annotations }}
+  annotations:
+{{ toYaml .Values.grafana.datasources.annotations | indent 4 }}
+{{- end }}
+  labels:
+    {{ .Values.grafana.datasources.label }}: "1"
+    app: {{ template "loki.name" . }}
+data:
+  datasource.yaml: |-
+    apiVersion: 1
+    datasources:
+    - name: Loki
+      type: loki
+      url: http://{{ template "loki.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:3100
+      access: proxy
+      jsonData:
+        maxLines: 1000
+{{- if .Values.grafana.additionalDataSources }}
+{{ tpl (toYaml .Values.grafana.additionalDataSources | indent 4) . }}
+{{- end }}
+{{- end }}

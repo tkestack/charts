@@ -1,0 +1,139 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: {{ template "metastore.fullname" . }}
+  labels:
+    app:  {{ include "hive.name" . }}
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.metastore.component }}"
+spec:
+  serviceName: {{ template "metastore.fullname" . }}-headless
+  replicas: {{ default 1 .Values.metastore.replicas }}
+  selector:
+    matchLabels:
+      app:  {{ include "hive.name" . }}
+      release: {{ .Release.Name | quote }}
+      component: "{{ .Release.Name }}-{{ .Values.metastore.component }}"
+  template:
+    metadata:
+      labels:
+        app:  {{ include "hive.name" . }}
+        heritage: {{ .Release.Service | quote }}
+        release: {{ .Release.Name | quote }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        component: "{{ .Release.Name }}-{{ .Values.metastore.component }}"
+    spec:
+      affinity:
+        podAntiAffinity:
+        {{- if eq .Values.antiAffinity "hard" }}
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - topologyKey: "kubernetes.io/hostname"
+            labelSelector:
+              matchLabels:
+                app:  {{ include "hive.name" . }}
+                release: {{ .Release.Name | quote }}
+                component: "{{ .Release.Name }}-{{ .Values.metastore.component }}"
+        {{- else if eq .Values.antiAffinity "soft" }}
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchExpressions:
+                    - key: "app"
+                      operator: In
+                      values:
+                        - {{ include "hive.name" . }}
+                    - key: "release"
+                      operator: In
+                      values:
+                        - {{ .Release.Name | quote }}
+                    - key: "component"
+                      operator: In
+                      values:
+                       - "{{ .Release.Name }}-{{ .Values.metastore.component }}"
+        {{- end }}
+      terminationGracePeriodSeconds: 30
+      imagePullSecrets:
+        - name: "{{ .Values.imagePullSecrets }}"
+#      initContainers:
+#      - name: init-hdfs
+#        image: {{ .Values.images.init }}
+#        command: ['sh', '-c', 'until nslookup {{ .Release.Name }}-hadoop-hdfs-nn; do echo "waiting for {{ .Release.Name }}-hadoop-hdfs-nn"; sleep 2; done;']
+
+      containers:
+      {{- if .Values.global.metrics.enabled }}
+      - name: jmx-exporter
+        image: "{{ .Values.global.metrics.image }}:{{ .Values.global.metrics.imageTag }}"
+        imagePullPolicy: {{ .Values.global.metrics.pullPolicy }}
+        ports:
+          - name: metrics
+            containerPort: {{ .Values.global.metrics.port }}
+        env:
+          - name: SERVICE_PORT
+            value: {{ .Values.global.metrics.port | quote }}
+        {{- with .Values.global.metrics.env }}
+          {{- range $key, $value := . }}
+          - name: {{ $key | upper | replace "." "_" }}
+            value: {{ $value | quote }}
+          {{- end }}
+        {{- end }}
+        resources:
+{{ toYaml .Values.global.metrics.resources | indent 10 }}
+        volumeMounts:
+          - name: jmx-config
+            mountPath: /opt/jmx_exporter/config.yml
+            subPath: hive-metastore-config.yml
+      {{- end }}
+      - name: metastore
+        image: "{{ .Values.imageName }}:{{ .Values.imageTag }}"
+        args: ["/opt/hive/bin/hive", "--service", "metastore"]
+        ports:
+          - name: metastore
+            containerPort: {{ .Values.metastore.containerPort }}
+            protocol: TCP
+        {{- if .Values.metastore.enableHealthCheck }}
+        livenessProbe:
+          exec:
+            command:
+              - bash
+              - -c
+              - "/usr/local/bin/check-health.sh 9083 10800"    # TODO: 6 小时重启一次
+          initialDelaySeconds: 120
+          periodSeconds: 30
+        {{- end }}
+        resources:
+{{ toYaml .Values.metastore.resources | indent 10 }}
+        volumeMounts:
+          - name: hadoop-config
+            mountPath: /etc/hadoop-custom-conf
+          - name: hive-config
+            mountPath: /etc/hive-custom-conf
+
+        env:
+        - name: HADOOP_HOME
+          value: {{ default "/opt/hadoop" .Values.hadoopHome | quote }}
+        - name: HIVE_CONF_DIR
+          value: {{ default "/etc/hive" .Values.hiveConfDir | quote }}
+        - name: HADOOP_HEAPSIZE
+          value: {{ default "1024" .Values.metastore.hadoopHeapSize | quote }}
+        - name: HADOOP_CUSTOM_CONF_DIR
+          value: /etc/hadoop-custom-conf
+        - name: HIVE_CUSTOM_CONF_DIR
+          value: /etc/hive-custom-conf
+      volumes:
+      - name: hadoop-config
+        configMap:
+          name: {{ include "hadoop.conf.name" . }}
+      - name: hive-config
+        configMap:
+          name: {{ include "hive.fullname" . }}
+      {{- if .Values.global.metrics.enabled }}
+      - name: jmx-config
+        configMap:
+          name: {{ template "hive.fullname" . }}-jmx-configmap
+      {{- end }}
+      nodeSelector:
+{{ toYaml .Values.metastore.nodeSelector | indent 8 }}

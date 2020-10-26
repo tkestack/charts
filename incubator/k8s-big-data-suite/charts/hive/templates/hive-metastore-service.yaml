@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "metastore.fullname" . }}
+  labels:
+    app:  {{ include "hive.name" . }}
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.metastore.component }}"
+spec:
+  ports:
+    - name: metastore
+      port: {{ .Values.metastore.servicePort }}
+      targetPort: metastore
+      {{ if (eq "NodePort" .Values.metastore.serviceType) }}
+      nodePort:  {{ .Values.metastore.nodePort }}
+      {{- end }}
+      protocol: TCP
+    {{- if .Values.global.metrics.enabled }}
+    - port: {{ .Values.global.metrics.port }}
+      name: metrics
+    {{- end }}
+  selector:
+    component: "{{ .Release.Name }}-{{ .Values.metastore.component }}"
+  type: {{ .Values.metastore.serviceType }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "metastore.fullname" . }}-headless
+  labels:
+    app:  {{ include "hive.name" . }}
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.metastore.component }}"
+spec:
+  clusterIP: None
+  ports:
+    - name: metastore
+      port: {{ .Values.metastore.servicePort }}
+      targetPort: metastore
+      protocol: TCP
+  selector:
+    component: "{{ .Release.Name }}-{{ .Values.metastore.component }}"

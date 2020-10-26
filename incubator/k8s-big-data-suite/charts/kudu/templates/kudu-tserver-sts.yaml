@@ -1,0 +1,152 @@
+{{- $head := . -}}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: "{{ .Values.tserver.label }}"
+  labels:
+    app: "{{ .Values.tserver.label }}"
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Values.Component }}"
+spec:
+  serviceName: "{{ .Values.tserver.name }}"
+  podManagementPolicy: {{ .Values.PodManagementPolicy }}
+  replicas: {{ .Values.tserver.replicas }}
+
+  updateStrategy:
+    type: {{ .Values.updateStrategy }}
+  {{ if not .Values.tserver.storage.enableHostPath }}
+  volumeClaimTemplates:
+    {{- range $i := until (int (.Values.tserver.storage.count )) }}
+    - metadata:
+        name: kudu-tserver-datadir{{ $i }}
+        labels:
+          app: "{{ $head.Values.tserver.label }}"
+          heritage: {{ $head.Release.Service | quote }}
+          release: {{ $head.Release.Name | quote }}
+          chart: "{{ $head.Chart.Name }}-{{ $head.Chart.Version }}"
+          component: "{{ $head.Values.Component }}"
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        {{- if $head.Values.tserver.storage.storageClass }}
+        storageClassName: {{ $head.Values.tserver.storage.storageClass }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ $head.Values.tserver.storage.size }}
+    {{- end }}
+  {{- end }}
+
+  selector:
+    matchLabels:
+      app: "{{ .Values.tserver.label }}"
+      heritage: {{ .Release.Service | quote }}
+      release: {{ .Release.Name | quote }}
+      chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+      component: "{{ .Values.Component }}"
+  template:
+    metadata:
+      {{ if .Values.networkAnnotation }}
+      annotations:
+{{ toYaml .Values.networkAnnotation | indent 8}}
+      {{ end }}
+      labels:
+        app: "{{ .Values.tserver.label }}"
+        heritage: {{ .Release.Service | quote }}
+        release: {{ .Release.Name | quote }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        component: "{{ .Values.Component }}"
+    spec:
+      {{- if .Values.image.pullSecretName }}
+      imagePullSecrets:
+      - name: {{ .Values.image.pullSecretName }}
+      {{ end }}
+      {{- if .Values.tserver.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.tserver.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.tserver.securityContext.enabled }}
+      securityContext:
+        runAsUser: {{ .Values.tserver.securityContext.runAsUser }}
+      {{- end }}
+      containers:
+      - name: "{{ .Values.tserver.label }}"
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: KUDU_MASTERS
+          value: "{{ include "kudu.gen_kudu_masters" . | trim }}"
+        - name: DATA_DIR
+          value: '{{ template "kudu.tserver_data_dir" . }}'
+        - name: EXTRA_ARGS
+          value: "--rpc_max_message_size=104857600 --memory_limit_hard_bytes={{ .Values.tserver.memoryHardLimit }}"
+
+        resources:
+{{ toYaml .Values.tserver.resource | indent 10 }}
+        args:
+          - "tserver"
+        ports:
+          - name: ui
+            containerPort: {{ .Values.tserver.ports.ui }}
+          - name: rpc-port
+            containerPort: {{ index .Values.tserver.ports "rpc-port" }}
+        volumeMounts:
+          {{- range $index, $path := .Values.tserver.storage.hostPaths }}
+          - name: kudu-tserver-datadir{{ $index }}
+            mountPath: /var/lib/kudu/disk{{ $index }}
+          {{- end }}
+        livenessProbe:
+          exec:
+            command:
+              - bash
+              - -c
+              - "/check-health.sh"
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          failureThreshold: 3
+      volumes:
+        {{ if .Values.tserver.storage.enableHostPath }}
+        {{- range $index, $path := .Values.tserver.storage.hostPaths }}
+        - name: kudu-tserver-datadir{{ $index }}
+          hostPath:
+            path: {{ $path }}
+        {{- end }}
+        {{- end }}
+      affinity:
+        podAntiAffinity:
+          {{ if .Values.tserver.storage.enableHostPath }}
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - "{{ .Values.tserver.label }}"
+            topologyKey: kubernetes.io/hostname
+          {{ else }}
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - "{{ .Values.tserver.label }}"
+                topologyKey: kubernetes.io/hostname
+        {{ end }}

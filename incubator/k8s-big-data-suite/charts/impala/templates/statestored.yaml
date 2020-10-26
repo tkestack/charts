@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: '{{ template "statestored.fullname" . }}'
+spec:
+  ports:
+    - name: "inner"
+      port: 24000
+      targetPort: 24000
+      protocol: TCP
+    - name: "web"
+      port: 25010
+      targetPort: 25010
+      protocol: TCP
+  selector:
+    component: "{{ .Release.Name }}-impala-statestored"
+---
+{{ if .Values.statestored.enableNodePort }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: '{{ template "statestored.fullname" . }}-node-port'
+  labels:
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-impala-statestored"
+spec:
+  ports:
+    - name: "web"
+      port: 25010
+      targetPort: 25010
+      protocol: TCP
+      nodePort:  {{ .Values.statestored.nodePort.web }}
+  selector:
+    component: "{{ .Release.Name }}-impala-statestored"
+  type: NodePort
+---
+{{ end }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "statestored.fullname" . }}
+  labels:
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: "{{ .Release.Name }}-impala-statestored"
+    spec:
+      imagePullSecrets:
+        - name: "{{ .Values.imagePullSecrets }}"
+      terminationGracePeriodSeconds: 30
+      containers:
+      - name: statestored
+        image: "{{ .Values.imageName }}:{{ .Values.imageTag }}"
+        command: [
+          "/opt/impala/bin/daemon_entrypoint.sh", "/opt/impala/bin/statestored",
+              "-log_dir={{ .Values.logDir }}",
+              "-catalog_service_host=catalogd"
+        ]
+        ports:
+          - name: "web"
+            containerPort: 25010
+          - name: "inner"
+            containerPort: 24000
+        resources:
+{{ toYaml .Values.statestored.resources | indent 10 }}
+        volumeMounts:
+          - name: hadoop-config
+            mountPath: /opt/impala/conf/core-site.xml
+            subPath: core-site.xml
+          - name: hadoop-config
+            mountPath: /opt/impala/conf/hdfs-site.xml
+            subPath: hdfs-site.xml
+          - name: hive-config
+            mountPath: /opt/impala/conf/hive-site.xml
+            subPath: hive-site.xml
+        livenessProbe:
+          tcpSocket:
+            port: 25010
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          failureThreshold: 3
+      volumes:
+      - name: hadoop-config
+        configMap:
+          name: {{ include "hadoop.conf.name" . }}
+      - name: hive-config
+        configMap:
+          name: {{ include "hive.conf.name" . }}
+      nodeSelector:
+{{ toYaml .Values.statestored.nodeSelector | indent 8 }}

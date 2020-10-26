@@ -1,0 +1,19 @@
+{{- if and .Values.zeppelin.enabled .Values.zeppelin.persistence.enabled}}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ template "zeppelin-fullname" . }}-data
+spec:
+  accessModes:
+    - {{ .Values.zeppelin.persistence.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.zeppelin.persistence.size | quote }}
+{{- if .Values.zeppelin.persistence.storageClass }}
+{{- if (eq "-" .Values.zeppelin.persistence.storageClass) }}
+  storageClassName: ""
+{{- else }}
+  storageClassName: "{{ .Values.zeppelin.persistence.storageClass }}"
+{{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,97 @@
+{{- if and .Values.global.metrics.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "hive.fullname" . }}-jmx-configmap
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.server.component }}"
+data:
+  hive-server-config.yml: |-
+    hostPort: localhost:8009
+    lowercaseOutputName: {{ .Values.global.metrics.lowercaseOutputName }}
+    rules:
+      - pattern: "metrics<name=hs2_(\\w+)><>(\\w+)"
+        name: "HIVE_HiveServer2_hs2_$1_$2"
+      - pattern: "metrics<name=memory\\.(.*)><>Value"
+        name: "HIVE_HiveServer2_Memory_$1"
+      - pattern: "metrics<name=threads\\.(.*)><>Value"
+        name: "HIVE_HiveServer2_Threads_$1"
+      - pattern: "metrics<name=(.*)><>(\\w+)"
+        name: "HIVE_HiveServer2_$1_$2"
+      - pattern: "java.lang<type=OperatingSystem><>(\\w+)"
+        name: "HIVE_HiveServer2_OS_$1"
+      - pattern: "java.lang<type=GarbageCollector, name=(.*)><>(\\w+)"
+        name: "HIVE_HiveServer2_GC_$2"
+        labels:
+          name: $1
+      - pattern: "java.lang<type=GarbageCollector, name=(.*)><LastGcInfo>(\\w+)"
+        name: "HIVE_HiveServer2_GC_LastGcInfo_$2"
+        labels:
+          name: $1
+      - pattern: "java.lang<type=GarbageCollector, name=(.*), key=(.*)><LastGcInfo, memoryUsageAfterGc>(\\w+)"
+        name: "HIVE_HiveServer2_GC_LastGcInfo_memoryUsageAfterGc_$3"
+        labels:
+          name: $1
+          key: $2
+      - pattern: "java.lang<type=Threading><>(\\w+)"
+        name: "HIVE_HiveServer2_Threading_$1"
+      - pattern: "java.lang<type=(\\w+)><>(\\w+)"
+        name: "HIVE_HiveServer2_$1_$2"
+      - pattern: "java.lang<type=(\\w+), name=(.*)><>(\\w+)"
+        name: "HIVE_HiveServer2_$1_$3"
+        labels:
+          name: $2
+    ssl: false
+    startDelaySeconds: {{ .Values.global.metrics.startDelaySeconds }}
+  hive-metastore-config.yml: |-
+    hostPort: localhost:8009
+    lowercaseOutputName: {{ .Values.global.metrics.lowercaseOutputName }}
+    rules:
+      - pattern: "metrics<name=active_calls_api_(.*)><>Count"
+        name: "HIVE_HiveMetaStore_active_calls_api"
+        type: GAUGE
+        labels:
+          name: $1
+      - pattern: "metrics<name=api_(.*)><>(\\w+)"
+        name: "HIVE_HiveMetaStore_calls_api"
+        type: GAUGE
+        labels:
+          name: $1
+          type: $2
+      - pattern: "metrics<name=memory\\.(.*)><>Value"
+        name: "HIVE_HiveMetaStore_Memory_$1"
+      - pattern: "metrics<name=threads\\.(.*)><>Value"
+        name: "HIVE_HiveMetaStore_Threads_$1"
+      - pattern: "metrics<name=(.*)><>(\\w+)"
+        name: "HIVE_HiveMetaStore_$1_$2"
+      - pattern: "com.jolbox.bonecp<type=(\\w+)><>(\\w+)"
+        name: "HIVE_HiveMetaStore_$1_$2"
+      - pattern: "java.lang<type=OperatingSystem><>(\\w+)"
+        name: "HIVE_HiveMetaStore_OS_$1"
+      - pattern: "java.lang<type=GarbageCollector, name=(.*)><>(\\w+)"
+        name: "HIVE_HiveMetaStore_GC_$2"
+        labels:
+          name: $1
+      - pattern: "java.lang<type=GarbageCollector, name=(.*)><LastGcInfo>(\\w+)"
+        name: "HIVE_HiveMetaStore_GC_LastGcInfo_$2"
+        labels:
+          name: $1
+      - pattern: "java.lang<type=GarbageCollector, name=(.*), key=(.*)><LastGcInfo, memoryUsageAfterGc>(\\w+)"
+        name: "HIVE_HiveMetaStore_GC_LastGcInfo_memoryUsageAfterGc_$3"
+        labels:
+          name: $1
+          key: $2
+      - pattern: "java.lang<type=Threading><>(\\w+)"
+        name: "HIVE_HiveMetaStore_Threading_$1"
+      - pattern: "java.lang<type=(\\w+)><>(\\w+)"
+        name: "HIVE_HiveMetaStore_$1_$2"
+      - pattern: "java.lang<type=(\\w+), name=(.*)><>(\\w+)"
+        name: "HIVE_HiveMetaStore_$1_$3"
+        labels:
+          name: $2
+    ssl: false
+    startDelaySeconds: {{ .Values.global.metrics.startDelaySeconds }}
+{{- end }}

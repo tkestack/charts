@@ -1,0 +1,108 @@
+{{- if .Values.history.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "history.fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.history.component }}"
+  {{- if .Values.history.service.annotations }}
+  annotations:
+  {{ toYaml .Values.history.service.annotations | indent 4 }}
+  {{- end }}
+spec:
+  ports:
+    - port: {{ .Values.history.servicePort }}
+      targetPort: {{ .Values.history.containerPort }}
+      {{ if (eq "NodePort" .Values.history.serviceType) }}
+      nodePort:  {{ .Values.history.nodePort }}
+      {{ end }}
+  selector:
+    component: "{{ .Release.Name }}-{{ .Values.history.component }}"
+  type: {{ .Values.history.serviceType }}
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "history.fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.history.component }}"
+spec:
+  replicas: {{ default 1 .Values.history.replicas }}
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      component: "{{ .Release.Name }}-{{ .Values.history.component }}"
+  template:
+    metadata:
+      labels:
+        heritage: {{ .Release.Service | quote }}
+        release: {{ .Release.Name | quote }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        component: "{{ .Release.Name }}-{{ .Values.history.component }}"
+    spec:
+      imagePullSecrets:
+        - name: "{{ .Values.imagePullSecrets }}"
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: {{ template "history.fullname" . }}
+          image: "{{ .Values.imageName }}:{{ .Values.imageTag }}"
+          args: ["/opt/start-history.sh"]
+          ports:
+            - containerPort: {{ .Values.history.containerPort }}
+          resources:
+{{ toYaml .Values.history.resources | indent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 18080
+              {{ if .Values.history.httpHeaders }}
+              httpHeaders:
+{{ toYaml .Values.history.httpHeaders | indent 16 }}
+              {{ end }}
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 18080
+              {{ if .Values.history.httpHeaders }}
+              httpHeaders:
+{{ toYaml .Values.history.httpHeaders | indent 16 }}
+              {{ end }}
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+          volumeMounts:
+          {{ if .Values.hadoopConf.enabled }}
+            - name: hadoop-config
+              mountPath: /etc/hadoop-custom-conf
+          {{ end }}
+            - name: spark-config
+              mountPath: /etc/spark-custom-conf
+          env:
+          - name: SPARK_DAEMON_MEMORY
+            value: {{ default "1g" .Values.history.daemonMemory | quote }}
+          - name: SPARK_EXPORT_ENV_SPARK_HISTORY_OPTS
+            value:  {{ include "spark.history.opts" . | quote }}
+          - name: HADOOP_CUSTOM_CONF_DIR
+            value: /etc/hadoop-custom-conf
+          - name: SPARK_CUSTOM_CONF_DIR
+            value: /etc/spark-custom-conf
+      volumes:
+      {{ if .Values.hadoopConf.enabled }}
+      - name: hadoop-config
+        configMap:
+          name: {{ include "spark.hadoop.config.name" . }}
+      {{ end }}
+      - name: spark-config
+        configMap:
+          name: {{ include "spark.fullname" . }}
+      nodeSelector:
+{{ toYaml .Values.history.nodeSelector | indent 8 }}
+{{- end }}

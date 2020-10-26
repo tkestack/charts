@@ -1,0 +1,2 @@
+# Impala Helm Chart
+

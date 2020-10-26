@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.tserver.name }}"
+  labels:
+    app: "{{ .Values.tserver.label }}"
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Values.Component }}"
+spec:
+  clusterIP: None
+  ports:
+    - name: ui
+      port: {{ .Values.tserver.ports.ui }}
+    - name: rpc-port
+      port: {{ index .Values.tserver.ports "rpc-port" }}
+  selector:
+    app: "{{ .Values.tserver.label }}"
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Values.Component }}"

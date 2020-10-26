@@ -1,0 +1,9 @@
+{{- if and (.Values.sparkoperator.sparkJobNamespace) (ne .Values.sparkoperator.sparkJobNamespace "") }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.sparkoperator.sparkJobNamespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "name" . }}
+    helm.sh/chart: {{ include "fullname" . }}
+{{- end }}

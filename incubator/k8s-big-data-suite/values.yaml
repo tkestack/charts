@@ -1,0 +1,820 @@
+# K8s Data Lake, 云原生大数据套件
+#
+# 部署须知:
+# 1. 默认 values.yaml 适配腾讯云, 适配其他环境建议新增 values-xxx.yaml 进行 patch
+# 2. 很多组件使用 PVC, PVC 配额需要根据业务需要进行调整
+# 3. 所有 Service 默认的 type 为 ClusterIP 以保证安全性, 需要 Service 设置为 NodePort 可以每个服务单独开启 (做好安全组限制)
+# 4. HDFS DataNode 使用宿主机磁盘, 需要指定至少三台主机打 Label: storage=true, HDFS DataNode 便会在这些宿主机上启动
+#    示例: kubectl label node xxx xxx xxx storage=true
+# 5. 自带 Prometheus/Grafana, 各个组件的监控已经在 Grafana 中预配置好了
+# 6. 一些组件需要反复重启数次(如 HDFS/HBase/Impala ...), 正常现象, 通常部署完成所需时间约为 10 分钟.
+
+# 拉取镜像 secret, 此配置为腾讯云默认值
+imagePullSecrets: &imagePullSecrets  "qcloudregistrykey"
+# 默认 StorageClass, 此配置为腾讯云默认值
+defaultStorageClass: &defaultStorageClass "cbs"
+
+# (腾讯云专属) 是否创建 ssd storage class
+ssdStorageClassEnabled: false
+# (腾讯云专属) 是否创建 高性能云盘 storage class
+cloudPremiumStorageClassEnabled: false
+
+# 是否开启 Ingress
+ingressEnabled: true
+
+# Ingress 类型, 目前支持 QCLOUD|NGINX
+# QCLOUD 为腾讯云LB, NGINX 为 nginx-ingress (需要 nginx-ingress.enabled 设置为 true, 默认为 true)
+ingressType: "NGINX"
+
+# Ingress 域名
+domain: &domain "xxx.com"
+
+airflow:
+  enabled: true
+  web:
+    baseUrl: "http://localhost:8080/airflow"
+    affinity:
+      podAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - airflow
+              - key: component
+                operator: In
+                values:
+                - scheduler
+          topologyKey: "kubernetes.io/hostname"
+  logs:
+    persistence:
+      enabled: true
+      storageClass: *defaultStorageClass
+      size: 10Gi
+  ingress:
+    web:
+      path: "/airflow"
+
+client:
+  # 运维工具容器, 这里面有 hadoop,hive,spark-shell 等命令行
+  enabled: true
+  client:
+    imageName: "ccr.ccs.tencentyun.com/k8s-big-data/client"
+    imageTag: "v2006241010"
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+  ssh:
+    password: "kdlssh"    # Change me
+    nodePort: 31122
+  sparkHistoryOpts: ""
+  imagePullSecrets: *imagePullSecrets
+
+spark:
+  enabled: true
+  name: "spark"
+  sparkMaster: "k8s://https://kubernetes.default.svc:443"
+  imagePullSecrets: *imagePullSecrets
+  imageName: "ccr.ccs.tencentyun.com/k8s-big-data/spark-master"
+  imageTag: "v2004011800"
+  zeppelin:
+    enabled: true
+    imageName: "ccr.ccs.tencentyun.com/k8s-big-data/zeppelin"
+    imageTag: "v2004021514"
+    imagePullSecrets: *imagePullSecrets
+    persistence:
+      enabled: true
+      storageClass: *defaultStorageClass
+      size: 10Gi
+      accessMode: ReadWriteOnce
+    sparkSubmitOptions:
+      spark.kubernetes.container.image: ccr.ccs.tencentyun.com/k8s-big-data/spark:v2.4.5-v1
+  history:
+    enabled: true
+  thirftserver:
+    enabled: true
+    executorImage: "ccr.ccs.tencentyun.com/k8s-big-data/spark:v2.4.5-v1"
+    startOptions:
+      spark.kubernetes.container.image: ccr.ccs.tencentyun.com/k8s-big-data/spark:v2.4.5-v1
+
+zookeeper:
+  # 文档: https://github.com/helm/charts/tree/master/incubator/zookeeper
+  enabled: true
+  image:
+    repository: ccr.ccs.tencentyun.com/k8s-big-data/k8szk
+    tag: v3
+    imagePullSecrets: *imagePullSecrets
+  # The JVM heap size to allocate to Zookeeper
+  env:
+    ZK_HEAP_SIZE: 1G
+    ZK_PURGE_INTERVAL: 1
+  # The number of zookeeper server to have in the quorum.
+  replicaCount: 3
+  persistence:
+    storageClass: *defaultStorageClass
+    size: 10Gi
+  service:
+    type: ClusterIP  # Exposes zookeeper on a cluster-internal IP.
+    ports:
+      client:
+        port: 2181  # Service port number for client port.
+        targetPort: client  # Service target port for client port.
+        protocol: TCP  # Service port protocol for client port.
+  exporters:
+    jmx:
+      enabled: true
+      image:
+        repository: ccr.ccs.tencentyun.com/k8s-big-data/jmx-prometheus-exporter
+        tag: 0.12.0-openjdk
+    zookeeper:
+      enabled: true
+      image:
+        repository: ccr.ccs.tencentyun.com/k8s-big-data/zookeeper-exporter
+        tag: v1.1.2
+  prometheus:
+    serviceMonitor:
+      enabled: true
+    grafana:
+      enabled: true
+  securityContext:
+    fsGroup: 0
+    runAsUser: 0
+
+hive:
+  # 此为 K8sBigData 自行维护版本
+  enabled: true
+  global:
+    metrics:
+      enabled: true
+      image: ccr.ccs.tencentyun.com/k8s-big-data/jmx-prometheus-exporter
+      imageTag: 0.12.0-openjdk
+  userName: "postgres"
+  password: "postgres"
+  imagePullSecrets: *imagePullSecrets
+  imageName: "ccr.ccs.tencentyun.com/k8s-big-data/hive"
+  imageTag: "v2.3.2-v1"
+  metastore:
+    serviceType: ClusterIP
+  server:
+    serviceType: ClusterIP
+
+impala:
+  # impala 没有开源版本 helm, 此为 K8sBigData 自行维护版本
+  enabled: true
+  imagePullSecrets: *imagePullSecrets
+  imageName: "ccr.ccs.tencentyun.com/k8s-big-data/impala"
+  imageTag: "3.3-201912292037"
+  kudu:
+    enabled: true
+    # 直接声明 kudu masters (kudu 为外部创建)
+    kuduMasters: ""
+    # 当 kuduMasters 未声明时, 根据 masterReplicas 自动生成
+    masterReplicas: 3
+  catalogd:
+    enableNodePort: false
+  statestored:
+    enableNodePort: false
+  coordExec:
+    replicas: 3
+    enableNodePort: false
+
+kudu:
+  # 文档: 根据 https://github.com/apache/kudu/tree/master/kubernetes/helm/kudu 重写
+  # 主要为了提升可读性
+  enabled: true
+  image:
+    repository: "ccr.ccs.tencentyun.com/k8s-big-data/kudu"
+    tag: 1.11-v14
+    pullSecretName: *imagePullSecrets
+  tserver:
+    replicas: 3
+    # NOTICE: memoryHardLimit 是非常重要的参数, 默认值对生产环境偏小, 参考文档: https://kudu.apache.org/docs/scaling_guide.html#_verifying_if_a_memory_limit_is_sufficient
+    memoryHardLimit: "1610612736" # 1.5GB
+    resource:
+      requests:
+        cpu: 100m
+        memory: 1Gi
+      limits:
+        cpu: 4
+        memory: 8Gi
+    securityContext:
+      enabled: true
+      runAsUser: 0
+    storage:
+      storageClass: *defaultStorageClass
+      count: 1
+      size: 100Gi
+      # 是否使用宿主机磁盘
+      enableHostPath: false
+      # 注意这里路径需要配合宿主机设置
+      hostPaths:
+        - /ssd/kudu_tserver
+  master:
+    storage:
+      count: 1
+      storageClass: *defaultStorageClass
+      enableLocalPv: false
+
+postgresql:
+  # 文档: https://github.com/mapreducelab/bigdata-helm-charts/tree/develop/postgresql
+  enabled: true
+  postgresUser: postgres
+  postgresPassword: postgres
+  metrics:
+    enabled: false
+    image: ccr.ccs.tencentyun.com/k8s-big-data/postgres_exporter
+    imageTag: v0.1.1
+  imagePullSecrets: *imagePullSecrets
+  image: "ccr.ccs.tencentyun.com/k8s-big-data/postgresql"
+  imageTag: "v9.5.3"
+  script:
+    enabled: true
+    customScript: |
+      #!/bin/bash
+      echo "create database superset"
+      psql -c 'CREATE DATABASE superset'
+      psql -c 'CREATE DATABASE airflow'
+
+
+postgresql-ha:
+  # 文档: https://hub.helm.sh/charts/bitnami/postgresql-ha
+  # 经过可用性优化
+  enabled: true
+  imagePullSecrets: *imagePullSecrets
+  postgresqlImage:
+    registry: ccr.ccs.tencentyun.com
+    repository: k8s-big-data/postgresql-repmgr
+    tag: 11.8.0-debian-10-r43-v8
+  pgpoolImage:
+    registry: ccr.ccs.tencentyun.com
+    repository: k8s-big-data/pgpool
+    tag: 4.1.2-debian-10-r37
+  metricsImage:
+    registry: ccr.ccs.tencentyun.com
+    repository: k8s-big-data/postgres-exporter
+    tag: 0.8.0-debian-10-r151
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+  persistence:
+    enabled: true
+    storageClass: *defaultStorageClass
+    size: 50Gi
+  postgresql:
+    username: postgresql
+    password: postgresql
+    database: postgresql
+    repmgrUsername: repmgrpostgresql
+    repmgrPassword: repmgrpostgresql
+    repmgrDatabase: repmgrpostgresql
+  volumePermissions:
+    enabled: true
+    securityContext:
+      runAsUser: 0
+  pgpool:
+    adminUsername: postgresql
+    adminPassword: postgresql
+    initdbScripts:
+      my_init_script.sh: |
+        #!/bin/bash
+        ( timeout 300 bash -c 'until printf "" 2>>/dev/null >>/dev/tcp/$0/$1; do sleep 1; done' 127.0.0.1 5432 &&
+          sleep 20s &&
+          echo "creating database"  &&
+          export PGPASSWORD=postgresql  &&
+          export PGUSER=postgresql  &&
+          export PGHOST=127.0.0.1  &&
+          psql -c "select 'hello, postgressql'" ) &
+
+hbase:
+  # 文档: https://github.com/warp-poke/hbase-helm
+  # 经过剪裁, 只留了 HBase 部分
+  enabled: true
+  master:
+    replicas: 2
+  region:
+    replicas: 3
+
+elasticsearch:
+  # 文档: https://github.com/elastic/helm-charts/tree/master/elasticsearch
+  enabled: true
+  image: "ccr.ccs.tencentyun.com/k8s-big-data/elasticsearch"
+  imageTag: "6.4.0"
+  imagePullSecrets: *imagePullSecrets
+  replicas: 2
+  extraEnvs:
+  # 针对大流量写入的优化: https://cloud.tencent.com/developer/article/1156231
+  # https://www.datadoghq.com/blog/elasticsearch-performance-scaling-problems/
+  volumeClaimTemplate:
+    storageClassName: *defaultStorageClass
+  hostVolume:
+    # 使用 host path, 注意需要事先格式化和挂载数据盘
+    enabled: true
+    paths:
+      - /data1/es/
+      - /data2/es/
+      - /data3/es/
+
+kibana:
+  # 文档: https://github.com/elastic/helm-charts/tree/master/kibana
+  enabled: true
+  image: "ccr.ccs.tencentyun.com/k8s-big-data/kibana"
+  imageTag: "6.4.0"
+  imagePullSecrets: *imagePullSecrets
+  elasticsearchURL: "http://elasticsearch-master-headless:9200"
+  extraEnvs:
+    - name: SERVER_BASEPATH
+      value: /kibana
+
+prometheus-operator:
+  # 文档: https://github.com/prometheus-operator/prometheus-operator
+  enabled: true
+  grafana:
+    enabled: true
+    # Deploy default dashboards.
+    defaultDashboardsEnabled: true
+  alertmanager:
+    alertmanagerSpec:
+      routePrefix: /alertmanager/
+      storage:
+        volumeClaimTemplate:
+          spec:
+            storageClassName: *defaultStorageClass
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 50Gi
+      image:
+        repository: ccr.ccs.tencentyun.com/k8s-big-data/alertmanager
+        tag: v0.19.0
+  prometheusOperator:
+    image:
+      repository: ccr.ccs.tencentyun.com/k8s-big-data/prometheus-operator
+      tag: v0.32.0
+    prometheusConfigReloaderImage:
+      repository: ccr.ccs.tencentyun.com/k8s-big-data/prometheus-config-reloader
+      tag: v0.32.0
+    configmapReloadImage:
+      repository: ccr.ccs.tencentyun.com/k8s-big-data/configmap-reload
+      tag: v0.0.1
+    # 如果手动create之后就设置为false
+    createCustomResource: true
+    tlsProxy:
+      enabled: true
+      image:
+        repository: ccr.ccs.tencentyun.com/k8s-big-data/ghostunnel
+        tag: v1.4.1
+    admissionWebhooks:
+      enabled: true
+      patch:
+        image:
+          repository: ccr.ccs.tencentyun.com/k8s-big-data/kube-webhook-certgen
+          tag: v1.0.0
+  prometheus:
+    prometheusSpec:
+      # bug, 按理说只用设置routePrefix就可以了
+      routePrefix: /prometheus/
+      externalUrl: http://localhost:9090/prometheus
+      image:
+        repository: ccr.ccs.tencentyun.com/k8s-big-data/prometheus
+        tag: v2.18.2
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            storageClassName: *defaultStorageClass
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 50Gi
+
+  nodeExporter:
+    serviceMonitor:
+      relabelings:
+        - sourceLabels: [__meta_kubernetes_pod_node_name]
+          targetLabel: node
+
+prometheus-node-exporter:
+  # 文档: https://github.com/prometheus/node_exporter/
+  enabled: true
+  image:
+    repository: ccr.ccs.tencentyun.com/k8s-big-data/node-exporter
+    tag: v0.18.1
+  podLabels:
+    # Add the 'node-exporter' label to be used by serviceMonitor to match standard common usage in rules and grafana dashboards
+    jobLabel: node-exporter
+  extraArgs:
+    - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+)($|/)
+    - --collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$
+  resources:
+    limits:
+      memory: 1024Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+kube-state-metrics:
+  # 文档: https://github.com/kubernetes/kube-state-metrics/
+  enabled: true
+  image:
+    repository: ccr.ccs.tencentyun.com/k8s-big-data/kube-state-metrics
+    tag: v1.8.0
+  rbac:
+    create: true
+  podSecurityPolicy:
+    enabled: true
+
+grafana:
+  # 文档: https://github.com/helm/charts/tree/master/stable/grafana
+  enabled: true
+  image:
+    repository: ccr.ccs.tencentyun.com/k8s-big-data/grafana
+    # 如果使用tps版本grafana，则tag为6.4.2-tps2
+    tag: 6.4.2
+  grafana.ini:
+    server:
+      domain: *domain
+      root_url: "%(protocol)s://%(domain)s/grafana/"
+  persistence:
+    enabled: true
+    storageClassName: *defaultStorageClass
+
+  ## Deploy default dashboards.
+  ##
+  defaultDashboardsEnabled: true
+  adminPassword: prom-operator
+  ingress:
+    enabled: true
+  sidecar:
+    image: ccr.ccs.tencentyun.com/k8s-big-data/k8s-sidecar:0.1.20
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+    resources:
+      limits:
+        memory: 1024Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+    datasources:
+      enabled: true
+      defaultDatasourceEnabled: true
+      ## Create datasource for each Pod of Prometheus StatefulSet;
+      ## this uses headless service `prometheus-operated` which is
+      ## created by Prometheus Operator
+      ## ref: https://git.io/fjaBS
+      createPrometheusReplicasDatasources: false
+      label: grafana_datasource
+
+  extraConfigmapMounts: []
+  # - name: certs-configmap
+  #   mountPath: /etc/grafana/ssl/
+  #   configMap: certs-configmap
+  #   readOnly: true
+
+  ## Configure additional grafana datasources
+  ## ref: http://docs.grafana.org/administration/provisioning/#datasources
+  additionalDataSources: []
+  # - name: prometheus-sample
+  #   access: proxy
+  #   basicAuth: true
+  #   basicAuthPassword: pass
+  #   basicAuthUser: daco
+  #   editable: false
+  #   jsonData:
+  #       tlsSkipVerify: true
+  #   orgId: 1
+  #   type: prometheus
+  #   url: https://prometheus.svc:9090
+  #   version: 1
+
+  # If true, create a serviceMonitor for grafana
+  serviceMonitor:
+    # Scrape interval. If not set, the Prometheus default scrape interval is used.
+    interval: ""
+    selfMonitor: true
+    # metric relabel configs to apply to samples before ingestion.
+    metricRelabelings: []
+    # - action: keep
+    #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
+    #   sourceLabels: [__name__]
+    # 	relabel configs to apply to samples before ingestion.
+    relabelings: []
+    # - sourceLabels: [__meta_kubernetes_pod_node_name]
+    #   separator: ;
+    #   regex: ^(.*)$
+    #   target_label: nodename
+    #   replacement: $1
+    #   action: replace
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  service:
+    type: ClusterIP
+
+sparkoperator:
+  # 文档: https://github.com/GoogleCloudPlatform/spark-on-k8s-operator
+  enabled: true
+  operatorImageName: ccr.ccs.tencentyun.com/k8s-big-data/spark-operator
+  operatorVersion: v1beta2-1.1.1-2.4.5
+  sparkJobNamespace: ""
+  replicas: 2
+  applicationCleanUpEnabled: true
+  enableWebhook: true
+  webhookPort: 443
+  enableResourceQuotaEnforcement: true
+  enableBatchScheduler: true
+  leaderElection:
+    enable: true
+  serviceAccounts:
+    spark:
+      create: true
+      name: spark
+    sparkoperator:
+      create: true
+      name: sparkoperator
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+
+hadoop:
+  # 原始Helm(做了一些可用性优化): https://github.com/apache-spark-on-k8s/kubernetes-HDFS
+  enabled: true
+  global:
+    # enable root as proxy user
+    enableProxyUserRoot: false
+    # refer: https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-hdfs/ArchivalStorage.html
+    # 普通盘 [DISK]
+    # 注意:
+    #      1. HDFS DataNode 使用宿主机磁盘作为存储, 请为 DataNode 分配合适的目录
+    #      2. 当 HDFS 重新部署时(NameNode PVC被删除), 请清空 DataNode 目录, 让数据被擦除 (不然 DataNode 不能正常启动)
+    # 腾讯云最佳实践:
+    #    选择1(省钱的方案): 使用腾讯云D2/D3大数据机型(有超大本地盘, 需要手动格式化/挂载), 每块盘分别挂载 /data1, /data2, /data3 ...
+    #    选择2(省事的方案): 容器服务添加Node时, 直接添加数据盘并设置挂载目录, 每块盘分别挂载 /data1, /data2, /data3 ...
+    #
+    #    dataNodeHostPath: ["/data1/hdfs", "/data2/hdfs", "/data3/hdfs"]
+    #    建议多挂几块盘提升IO吞吐
+    dataNodeHostPath:
+      - /data/hdfs # 注意, 这里根据实际挂盘情况情况做修改
+    # 高性能盘 [SSD]
+    #dataNodeHostPathSsd:
+    #  - /mnt/vdh
+    metrics:
+      enabled: true
+      image: ccr.ccs.tencentyun.com/k8s-big-data/jmx-prometheus-exporter
+      imageTag: 0.12.0-openjdk
+  hdfs-namenode-k8s:
+    persistence:
+      size: 100Gi
+    nodeSelector: {}
+    hadoopHeapSize: "1024"
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+    service:
+      enableNodePort: false
+  hdfs-journalnode-k8s:
+    persistence:
+      size: 50Gi
+    nodeSelector:
+      storage: "true"
+    hadoopHeapSize: "1024"
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+  hdfs-datanode-k8s:
+    nodeSelector:
+      storage: "true"
+    hadoopHeapSize: "1024"
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+
+custom-config:
+  # 如果不部署 HDFS, 而使用外部 HDFS, 可以用这个配置
+  enabled: true
+
+volcano:
+  # 文档: https://github.com/volcano-sh/volcano/tree/master/installer/helm/chart/volcano
+  enabled: true
+  basic:
+    image_tag_version: "v0.4.0"
+    busybox_image: "ccr.ccs.tencentyun.com/k8s-big-data/busybox:1.31.1"
+    controller_image_name: "ccr.ccs.tencentyun.com/k8s-big-data/vc-controller-manager"
+    scheduler_image_name: "ccr.ccs.tencentyun.com/k8s-big-data/vc-scheduler"
+    admission_image_name: "ccr.ccs.tencentyun.com/k8s-big-data/vc-webhook-manager"
+
+flink-operator:
+  # 文档: https://github.com/GoogleCloudPlatform/flink-on-k8s-operator/blob/master/docs/user_guide.md
+  enabled: true
+  imagePullSecrets: *imagePullSecrets
+  flinkOperatorNamespace: "default"
+  operatorImage:
+    name: ccr.ccs.tencentyun.com/k8s-big-data/flink-operator:v2
+  deployerWebhookCertImage: ccr.ccs.tencentyun.com/k8s-big-data/deployer:webhook-cert
+  kubeRbacProxyImage: ccr.ccs.tencentyun.com/k8s-big-data/kube-rbac-proxy:v0.4.0
+
+cp-helm-charts:
+  # 文档: https://github.com/confluentinc/cp-helm-charts
+  # 开启 kafka 必须将 zookeeper 也开启
+  enabled: true
+  cp-kafka:
+    brokers: 3
+    image: ccr.ccs.tencentyun.com/k8s-big-data/cp-kafka
+    imageTag: 5.2.2
+    heapOptions: "-Xms256M -Xmx512M"
+    imagePullSecrets:
+    - name: *imagePullSecrets
+    nodeport:
+      enabled: true
+      firstListenerPort: 31130
+    persistence:
+      size: 50Gi
+      storageClass: *defaultStorageClass
+    prometheus:
+      jmx:
+        enabled: true
+        image: ccr.ccs.tencentyun.com/k8s-big-data/kafka-prometheus-jmx-exporter
+        imageTag: 6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143
+      cge:
+        image: ccr.ccs.tencentyun.com/k8s-big-data/prometheus-kafka-consumer-group-exporter
+        imageTag: v1.2
+        enabled: true
+      serviceMonitor:
+        enabled: true
+    configurationOverrides:
+      num.partitions: 3
+      default.replication.factor: 3
+      auto.create.topics.enable: "true"
+      log.cleanup.policy: "delete"
+      offsets.retention.minutes: "120"
+      log.retention.hours: "2"
+  cp-kafka-connect:
+    image: ccr.ccs.tencentyun.com/k8s-big-data/confluent-connect
+    imageTag: v31
+    heapOptions: "-Xms256M -Xmx512M"
+    replicaCount: 1
+    hadoopUserName: root
+    prometheus:
+      jmx:
+        enabled: true
+        image: ccr.ccs.tencentyun.com/k8s-big-data/kafka-prometheus-jmx-exporter
+        imageTag: 6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143
+      serviceMonitor:
+        enabled: true
+    customEnv:
+      TPS_SYS_ID: "NOT_SET"
+      TPS_TOKEN: "NOT_SET"
+      KAFKA_CONNECT_LABEL: "first"
+  cp-schema-registry:
+    image: ccr.ccs.tencentyun.com/k8s-big-data/cp-schema-registry
+    imageTag: 5.2.2
+    nodeport:
+      enabled: true
+      port: 31135
+    heapOptions: "-Xms512M -Xmx512M"
+    prometheus:
+      jmx:
+        enabled: true
+        image: ccr.ccs.tencentyun.com/k8s-big-data/kafka-prometheus-jmx-exporter
+        imageTag: 6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143
+      serviceMonitor:
+        enabled: true
+  grafana:
+    enabled: true
+
+nginx-ingress:
+  # 文档: https://github.com/kubernetes/ingress-nginx/tree/master/charts/ingress-nginx
+  enabled: true
+  metrics:
+    enabled: true
+  controller:
+    image:
+      repository: ccr.ccs.tencentyun.com/k8s-big-data/nginx-ingress-controller
+      tag: "0.29.0"
+    patch:
+      image:
+        repository: ccr.ccs.tencentyun.com/k8s-big-data/kube-webhook-certgen
+        tag: v1.0.0
+  defaultBackend:
+    image:
+      repository: ccr.ccs.tencentyun.com/k8s-big-data/defaultbackend-amd64
+      tag: "1.5"
+
+nginx:
+  # nginx 反向代理
+  enabled: true
+  image:
+    repository: ccr.ccs.tencentyun.com/k8s-big-data/nginx
+    tag: 1.17.8
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  resources: {}
+
+mist:
+  # 文档: https://github.com/Hydrospheredata/mist
+  # 此为 Spark serverless proxy 工具
+  # 此 Helm 为自行维护版本
+  enabled: true
+  imagePullSecrets: *imagePullSecrets
+  image:
+    repository: ccr.ccs.tencentyun.com/k8s-big-data/mist
+    tag: v3
+  service:
+    type: ClusterIP
+  persistence:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    mountPath: /opt/mist/data
+    storageClass: *defaultStorageClass
+
+superset:
+  # 文档: https://github.com/apache/incubator-superset/tree/master/helm/superset
+  enabled: true
+  imagePullSecrets: *imagePullSecrets
+  image:
+    repository: ccr.ccs.tencentyun.com/k8s-big-data/superset
+    tag: v6-only-impala
+  supersetNode:
+    ## change me
+    connections:
+      db_host: '{{ template "service.postgresql.name" . }}'
+      db_port: "5432"
+      db_user: postgres
+      db_pass: postgres
+      db_name: superset
+    initContainers:
+      - name: wait-for-postgres
+        image: ccr.ccs.tencentyun.com/k8s-big-data/busybox:1.31.1
+        imagePullPolicy: IfNotPresent
+        envFrom:
+          - secretRef:
+              name: '{{ tpl .Values.envFromSecret . }}'
+        command: [ "/bin/sh", "-c", "until nc -zv $DB_HOST $DB_PORT -w1; do echo 'waiting for db'; sleep 1; done" ]
+  init:
+    initContainers:
+      - name: wait-for-postgres
+        image: ccr.ccs.tencentyun.com/k8s-big-data/busybox:1.31.1
+        imagePullPolicy: IfNotPresent
+        envFrom:
+          - secretRef:
+              name: '{{ tpl .Values.envFromSecret . }}'
+        command: [ "/bin/sh", "-c", "until nc -zv $DB_HOST $DB_PORT -w1; do echo 'waiting for db'; sleep 1; done" ]
+  nodeSelector: {}
+
+loki:
+  enabled: true
+  image:
+    repository: ccr.ccs.tencentyun.com/k8s-big-data/loki
+    tag: 1.6.0
+  persistence:
+    size: 100Gi
+    storageClassName: *defaultStorageClass
+  config:
+    schema_config:
+      configs:
+      - from: 2018-04-15
+        store: boltdb
+        object_store: filesystem
+        schema: v9
+        index:
+          prefix: index_
+          period: 24h
+    table_manager:
+      retention_deletes_enabled: true
+      retention_period: 24h
+
+promtail:
+  enabled: true
+  image:
+    repository: ccr.ccs.tencentyun.com/k8s-big-data/promtail
+    tag: 1.6.0
+  volumes:
+  - name: docker
+    hostPath:
+      path: /var/lib/docker/containers
+  - name: pods
+    hostPath:
+      path: /var/log/pods
+  - name: docker2
+    hostPath:
+      path: /data/docker/containers
+
+  volumeMounts:
+  - name: docker
+    mountPath: /var/lib/docker/containers
+    readOnly: true
+  - name: pods
+    mountPath: /var/log/pods
+    readOnly: true
+  - name: docker2
+    mountPath: /data/docker/containers
+    readOnly: true

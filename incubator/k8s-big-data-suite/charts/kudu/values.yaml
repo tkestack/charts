@@ -1,0 +1,92 @@
+
+Component: "kududb"
+
+hiveMetastoreUris: ""
+
+image:
+  repository: "apache/kudu"
+  tag: latest
+  pullPolicy: IfNotPresent
+  pullSecretName: ""
+
+PodManagementPolicy: Parallel
+updateStrategy: RollingUpdate
+isMultiAz: false
+domainName: "cluster.local"
+
+tserver:
+  name: "kudu-tservers"
+  label: "kudu-tserver"
+  replicas: 3
+  memoryHardLimit: "1610612736" # 1.5GB
+  nodeAffinity: {}
+  ports:
+    ui: "8050"
+    rpc-port: "7050"
+  nodeSelector: {}
+  resource: {}
+  securityContext:
+    enabled: true
+    runAsUser: 0
+  storage:
+    count: 2
+    size: 200Gi
+    enableHostPath: true
+    nodeAffinity: {}
+    hostPaths:
+      - /ssd1/kudu_data
+      - /ssd2/kudu_data
+
+master:
+  name: "kudu-masters"
+  label: "kudu-master"
+  replicas: 3
+  ports:
+    ui: "8051"
+    rpc-port: "7051"
+    metrics: "8080"
+  nodeSelector: {}
+  resource: {}
+  securityContext:
+    enabled: true
+    runAsUser: 0
+  storage:
+    count: 1
+    size: 50Gi
+    storageClass: local-storage
+
+    enableLocalPv: false
+    nodeAffinity: {}
+    hostPaths:
+      - /ssd1/kudu_master
+
+master-ui:
+  name: "kudu-master-ui"
+  type: ClusterIP
+  app: "kudu-master"
+  annotations: {}
+  ports:
+    ui:
+      port: "8051"
+      nodePort: 31184
+    rpc-port:
+      port: "7051"
+      nodePort: 31185
+    metrics:
+      port: "8080"
+      nodePort: 31186
+
+NetworkPolicy:
+  Enabled: false
+
+metrics:
+  enabled: true
+  image: ccr.ccs.tencentyun.com/k8s-big-data/kudu_exporter
+  imageTag: v6
+  prefix: kudu
+  resources: {}
+  port: 8080
+  interval: 60
+  serviceMonitor:
+    enabled: true
+  dashboardsLabel: grafana_dashboard
