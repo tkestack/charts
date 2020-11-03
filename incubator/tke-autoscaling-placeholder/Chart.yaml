@@ -1,0 +1,16 @@
+apiVersion: v2
+name: tke-autoscaling-placeholder
+version: 1.0.0
+description: Autoscaling placeholder for TKE.
+type: application
+keywords:
+- tke
+- autoscaling
+- placeholder
+home: https://github.com/tkestack/charts
+appVersion: 1.0.0
+maintainers:
+- name: roc
+  email: rockerchen@gmail.com
+  url: https://imroc.io
+icon: https://github.com/tkestack/charts/raw/main/icons/tke-autoscaling-placeholder.png
