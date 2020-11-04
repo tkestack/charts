@@ -1,0 +1,19 @@
+replicaCount: 10
+priorityClassName: low-priority
+image: "ccr.ccs.tencentyun.com/library/pause:latest"
+
+nameOverride: ""
+fullnameOverride: ""
+
+resources:
+  requests:
+    cpu: 300m
+    memory: 600Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+lowPriorityClass:
+  create: true
+  name: low-priority
