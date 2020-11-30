@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    control-plane: hpc-controller-manager
+  name: cronhpa-controller-manager-metrics-service
+  {{ if .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+  {{ else }}
+  namespace: {{ .Release.Namespace }}
+  {{ end }}
+spec:
+  ports:
+  - name: https
+    port: 8443
+    targetPort: 8080
+  selector:
+    control-plane: hpc-controller-manager
