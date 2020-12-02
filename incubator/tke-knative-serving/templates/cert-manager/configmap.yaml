@@ -1,0 +1,15 @@
+{{- if .Values.certmanager.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-certmanager
+  namespace: knative-serving
+  labels:
+    serving.knative.dev/release: "{{ .Chart.AppVersion }}"
+    networking.knative.dev/certificate-provider: {{ .Values.certmanager.provider }}
+data:
+  issuerRef: |
+    kind: {{ .Values.certmanager.typeissuer }}
+    name: {{ .Values.certmanager.clusterissuer }}
+---
+{{- end }}

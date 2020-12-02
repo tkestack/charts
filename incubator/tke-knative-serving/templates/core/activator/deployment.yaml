@@ -1,0 +1,114 @@
+---
+# Copyright 2018 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "knative-serving.core.activator.name" . }}
+  namespace: knative-serving
+  labels:
+    serving.knative.dev/release: "{{ .Chart.AppVersion }}"
+{{- include "knative-serving.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: activator
+      role: activator
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+      labels:
+        app: activator
+        role: activator
+        serving.knative.dev/release: "{{ .Chart.AppVersion }}"
+    spec:
+{{- if .Values.core.activator.priorityClassName }}
+      priorityClassName: "{{ .Values.core.activator.priorityClassName }}"
+{{- end }}
+      serviceAccountName: controller
+      containers:
+      - name: activator
+        # This is the Go import path for the binary that is containerized
+        # and substituted here.
+        image: "{{ .Values.core.activator.image }}"
+        # The numbers are based on performance test results from
+        # https://github.com/knative/serving/issues/1625#issuecomment-511930023
+        resources:
+{{ toYaml .Values.core.activator.resources | indent 10 }}
+        env:
+        - # Run Activator with GC collection when newly generated memory is 500%.
+          name: GOGC
+          value: "500"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - # TODO(https://github.com/knative/pkg/pull/953): Remove stackdriver specific config
+          name: METRICS_DOMAIN
+          value: knative.dev/internal/serving
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsUser: 0
+        ports:
+        - name: metrics
+          containerPort: 9090
+        - name: profiling
+          containerPort: 8008
+        - name: http1
+          containerPort: 8012
+        - name: h2c
+          containerPort: 8013
+        readinessProbe: &probe
+          httpGet:
+            port: 8012
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: "activator"
+          failureThreshold: 12
+        livenessProbe: *probe
+      # The activator (often) sits on the dataplane, and may proxy long (e.g.
+      # streaming, websockets) requests.  We give a long grace period for the
+      # activator to "lame duck" and drain outstanding requests before we
+      # forcibly terminate the pod (and outstanding connections).  This value
+      # should be at least as large as the upper bound on the Revision's
+      # timeoutSeconds property to avoid servicing events disrupting
+      # connections.
+      terminationGracePeriodSeconds: 300
+    {{- if .Values.core.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.core.nodeSelector | indent 8 }}
+    {{- end }}
+    {{- if .Values.core.tolerations }}
+      tolerations:
+{{ toYaml .Values.core.tolerations | indent 8 }}
+    {{- end }}
+    {{- if .Values.core.affinity }}
+      affinity:
+{{ toYaml .Values.core.affinity | indent 8 }}
+    {{- end }}
+---

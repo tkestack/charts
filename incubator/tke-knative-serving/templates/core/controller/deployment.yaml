@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "knative-serving.core.controller.name" . }}
+  namespace: knative-serving
+  labels:
+    serving.knative.dev/release: "{{ .Chart.AppVersion }}"
+    {{- include "knative-serving.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: controller
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        app: controller
+        serving.knative.dev/release: "{{ .Chart.AppVersion }}"
+    spec:
+{{- if .Values.core.controller.priorityClassName }}
+      priorityClassName: "{{ .Values.core.controller.priorityClassName }}"
+{{- end }}
+      serviceAccountName: controller
+      containers:
+      - name: controller
+        # This is the Go import path for the binary that is containerized
+        # and substituted here.
+        image: "{{ .Values.core.controller.image }}"
+        resources:
+{{ toYaml .Values.core.controller.resources | indent 10 }}
+        env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - # TODO(https://github.com/knative/pkg/pull/953): Remove stackdriver specific config
+          name: METRICS_DOMAIN
+          value: knative.dev/internal/serving
+        securityContext:
+          allowPrivilegeEscalation: false
+        ports:
+        - name: metrics
+          containerPort: 9090
+        - name: profiling
+          containerPort: 8008
+    {{- if .Values.core.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.core.nodeSelector | indent 8 }}
+    {{- end }}
+    {{- if .Values.core.tolerations }}
+      tolerations:
+{{ toYaml .Values.core.tolerations | indent 8 }}
+    {{- end }}
+    {{- if .Values.core.affinity }}
+      affinity:
+{{ toYaml .Values.core.affinity | indent 8 }}
+    {{- end }}

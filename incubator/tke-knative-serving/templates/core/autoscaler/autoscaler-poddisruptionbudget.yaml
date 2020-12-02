@@ -1,0 +1,14 @@
+{{- if .Values.core.autoscaler.podDisruptionBudget.enabled }}
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    serving.knative.dev/release: "{{ .Chart.AppVersion }}"
+{{- include "knative-serving.labels" . | nindent 4 }}
+  name: {{ template "knative-serving.core.autoscaler.name" . }}
+spec:
+  selector:
+    matchLabels:
+      app: autoscaler
+  minAvailable: {{ .Values.core.autoscaler.podDisruptionBudget.minAvailable }}
+{{- end }}
