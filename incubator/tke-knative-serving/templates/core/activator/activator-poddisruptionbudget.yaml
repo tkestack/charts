@@ -1,0 +1,14 @@
+{{- if .Values.core.activator.podDisruptionBudget.enabled }}
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    serving.knative.dev/release: "{{ .Chart.AppVersion }}"
+{{- include "knative-serving.labels" . | nindent 4 }}
+  name: {{ template "knative-serving.core.activator.name" . }}
+spec:
+  selector:
+    matchLabels:
+      app: activator
+  minAvailable: {{ .Values.core.activator.podDisruptionBudget.minAvailable }}
+{{- end }}

@@ -1,0 +1,21 @@
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ template "knative-serving.core.activator.name" . }}
+  namespace: knative-serving
+  labels:
+    serving.knative.dev/release: "{{ .Chart.AppVersion }}"
+{{- include "knative-serving.labels" . | nindent 4 }}
+spec:
+  minReplicas: {{ .Values.core.activator.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.core.activator.autoscaling.maxReplicas }}
+  scaleTargetRef:
+    apiVersion: {{ template "deployment.apiVersion" . }}
+    kind: Deployment
+    name: {{ template "knative-serving.core.activator.name" . }}
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      # Percentage of the requested CPU
+      targetAverageUtilization: {{ .Values.core.activator.autoscaling.targetCPUUtilizationPercentage }}
