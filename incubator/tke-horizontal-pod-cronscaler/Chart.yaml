@@ -1,6 +1,6 @@
 apiVersion: v2
 name: tke-horizontal-pod-cronscaler
-description: a time-based autoscaling controller for TKE
+description: A time-based autoscaling controller for TKE
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -27,8 +27,11 @@ keywords:
 - tke
 - autoscaling
 - hpc
+
 home: https://github.com/tkestack/charts
+
 maintainers:
 - name: zhiguo.lee
   email: zhiguo.lee@foxmail.com
+
 icon: https://raw.githubusercontent.com/tkestack/charts/main/icons/k8s.png
