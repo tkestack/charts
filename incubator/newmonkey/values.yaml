@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: ccr.ccs.tencentyun.com/newmonkey/newmonkey_pub
   tag: tke_v2011301935
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 imagePullSecrets: []
 nameOverride: ""
