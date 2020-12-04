@@ -29,24 +29,35 @@ NewMonkey基于`Java`和`Golang`开发，架构包括客户端、web后台、算
 APK下载地址 ： [NewMonkey2.10](https://monkeyapk-1253358381.cos.ap-guangzhou.myqcloud.com/NewMonkey_2.10.1.apk)
 
 ### 后台搭建
-和普通的 Helm 包使用方法无异，所有的配置项集中于 `values.yaml`
-搭建完后台后，可到web界面(地址为服务器ip:30080)查看使用文档
+
+#### 环境准备
+
+1. 一个[tke集群](https://cloud.tencent.com/document/product/457/11741)，k8s版本1.10以上
+2. 一个 [postgres数据库](https://cloud.tencent.com/product/postgres)， 版本9.5.4
+3. [对象存储桶](https://cloud.tencent.com/product/cos), 一个或两个
+
+#### 搭建流程
+
+通过腾讯云控制台-容器服务-应用，新建应用，在应用市场中选择newmonkey-web应用，
+配置和普通的 Helm 包使用方法无异，所有的配置项集中于 `values.yaml`
+搭建完后台后，可到web界面(地址为服务器公网ip:30080)查看使用文档
 下面是 `values.yaml` 字段:
 
 
 | 参数                       | 描述                       |
 | ------------------------- | ------------------------- |
-| `allowedIp`               | 限定请求的host ip地址，用','分隔（可填写服务器的IP地址） |
-| `databaseName`            | 数据库名称， 需要使用[postgresql数据库](https://cloud.tencent.com/product/postgres)|
-| `databaseHost`            | 数据库地址 |
-| `databaseUser`            | 数据库用户名 |
-| `databasePassword`        | 数据库密码    |
-| `databasePort`            | 数据库端口    |
-| `bugPucket`               | 腾讯云[对象存储桶](https://cloud.tencent.com/product/cos)名称，用于存放发现的crash zip包|
-| `apkPucket`               | 腾讯云对象存储桶名称，用于存放apk        |
-| `secretId`                | 访问存储桶所需要的secretId， 可在[对象存储-密钥管理](https://console.cloud.tencent.com/cos5/key)中查看 |
-| `secretKey`               | 访问存储桶所需要的secretKey， 可在[对象存储-密钥管理](https://console.cloud.tencent.com/cos5/key)中查看 |
-| `tapdKey`                 | tapd api账号，发现的Crash会提单至tapd，可在[tapd官网](https://www.tapd.cn/help/view#1120003271001002318)了解  |
+| `allowedIp`               | 必填，限定请求的host ip地址，用','分隔（可填写服务器的IP地址） |
+| `databaseName`            | 必填，数据库名称， 需要使用[postgresql数据库](https://cloud.tencent.com/product/postgres)|
+| `databaseHost`            | 必填，数据库地址 |
+| `databaseUser`            | 必填，数据库用户名 |
+| `databasePassword`        | 必填，数据库密码    |
+| `databasePort`            | 必填，数据库端口    |
+| `bugPucket`               | 必填，腾讯云[对象存储桶](https://cloud.tencent.com/product/cos)名称，用于存放发现的crash zip包|
+| `apkPucket`               | 必填，腾讯云对象存储桶名称，用于存放上传的apk |
+| `bucketRegion`            | 必填，存储桶所属地域 |
+| `secretId`                | 必填，访问存储桶所需要的secretId， 可在[对象存储-密钥管理](https://console.cloud.tencent.com/cos5/key)中查看 |
+| `secretKey`               | 必填，访问存储桶所需要的secretKey， 可在[对象存储-密钥管理](https://console.cloud.tencent.com/cos5/key)中查看 |
+| `tapdKey`                 | tapd api账号，发现的Crash会提单至tapd，可在[tapd官网](https://www.tapd.cn/help/view#1120003271001002318)了解，不填将无法自动提单  |
 | `tapdSecret`              | tapd api secret|
 | `sdkVersion`              | sdk版本，stable或latest, 默认latest。 latest支持安卓10，stable不支持|
 
