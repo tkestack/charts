@@ -77,17 +77,31 @@ tolerations: []
 
 affinity: {}
 
+# 访问存储桶所需要的secretId
 secretId:
+# 访问存储桶所需要的secretKey
 secretKey:
-allowedIp: 
-databaseName: 
-databaseHost: 
-databaseUser: 
-databasePassword: 
-databasePort: 
-bugBucket: 
-apkBucket: 
-bucketRegion: 
+# 限定请求的host ip地址
+allowedIp:
+# 数据库名称
+databaseName:
+# 数据库地址
+databaseHost:
+# 数据库用户名
+databaseUser:
+# 数据库密码
+databasePassword:
+# 数据库端口
+databasePort:
+# bug存储桶名称
+bugBucket:
+# apk存储桶名称
+apkBucket:
+# 存储桶所属地域
+bucketRegion:
+# tapd api账号key
 tapdKey:
+# tapd api账号secret
 tapdSecret:
+# sdk版本， latest or stable ,默认latest
 sdkVersion:
