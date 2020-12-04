@@ -24,8 +24,13 @@ NewMonkey基于`Java`和`Golang`开发，架构包括客户端、web后台、算
 线程安全问题导致应用程序crash率高，但是其问题发现定位难、复现难，NewMonkey采用hook技术从根本上发现并解决，让偶现问题无所遁形。
 
 ## 使用
+
+### 客户端
+APK下载地址 ： [NewMonkey2.10](https://monkeyapk-1253358381.cos.ap-guangzhou.myqcloud.com/NewMonkey_2.10.1.apk)
+
+### 后台搭建
 和普通的 Helm 包使用方法无异，所有的配置项集中于 `values.yaml`
-搭建完后台后，可到web界面(服务器ip:30080)查看使用文档
+搭建完后台后，可到web界面(地址为服务器ip:30080)查看使用文档
 下面是 `values.yaml` 字段:
 
 
