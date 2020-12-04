@@ -49,3 +49,6 @@ APK下载地址 ： [NewMonkey2.10](https://monkeyapk-1253358381.cos.ap-guangzho
 | `tapdKey`                 | tapd api账号，发现的Crash会提单至tapd，可在[tapd官网](https://www.tapd.cn/help/view#1120003271001002318)了解  |
 | `tapdSecret`              | tapd api secret|
 | `sdkVersion`              | sdk版本，stable或latest, 默认latest。 latest支持安卓10，stable不支持|
+
+## 其他
+如有其他问题，欢迎[反馈](https://support.qq.com/products/297005?)
