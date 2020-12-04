@@ -1,6 +1,6 @@
 apiVersion: v2
-name: monkey-web
-description: NewMonkey web
+name: newmonkey-web
+description: NewMonkey web service
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -22,6 +22,13 @@ version: 1.0.0
 # follow Semantic Versioning. They should reflect the version the application is using.
 appVersion: 1.0.0
 
+keywords:
+  - automated-test
+  - android
+
+maintainers:
+  - name: weitonhuang
+    email: weitonhuang@tencent.com
 
 icon: https://github.com/tkestack/charts/raw/main/icons/monkey.png
 home: https://github.com/tkestack/charts
