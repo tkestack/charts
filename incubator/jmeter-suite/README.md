@@ -3,7 +3,8 @@
 
 * This scheme provides the visualization interface of Grafana and the capacity of Influx storage
 
-
+## 中文说明
+https://cloud.tencent.com/developer/article/1757898
 
 ## Installing the Chart
 
@@ -33,6 +34,8 @@ The command removes all the Kubernetes components associated with the chart and 
 |-------------------------------------------|-----------------------------------------------|---------------------------------------------------------|
 | `distributed-jmeter.enabled`              | Install distributed-jmeter or not             | `true`                                                  |
 | `distributed-jmeter.server.replicaCount`  | The number of jmeter nodes you want to create | `3`                                                     |
+| `distributed-jmeter.server.heap_size`     | Heap size of master node                      | `2g`                                                     |
+| `distributed-jmeter.master.heap_size`     | Heap size of server node                      | `2g`                                                     |
 | `grafana.enabled`                         | Install grafana for jmeter or not             | `true`                                                  |
 | `influxdb.enabled`                        | Install influx db for jmeter or not           | `true`                                                  |
 | `influxdb.persistence.enabled`            | Creat pvc or not                              | `true`                                                  |

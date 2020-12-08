@@ -396,6 +396,8 @@ dashboards:
   default:
     jmeter-dashboard:
       file: dashboards/jmeter-dashboard_rev2.json
+    jmeter-trend-dashboard:
+      file: dashboards/jmeter-trend-dashboard.json
   # default:
   #   some-dashboard:
   #     json: |
