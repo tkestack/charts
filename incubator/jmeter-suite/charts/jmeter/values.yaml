@@ -5,10 +5,12 @@
 master:
   ## The number of pods in the master deployment
   replicaCount: 1
+  heap_size: 2g
 
 server:
   ## The number of pods in the server deployment
   replicaCount: 3
+  heap_size: 2g
 
 image:
   ## Specify an imagePullPolicy
@@ -17,12 +19,12 @@ image:
 
   ## The repository and image
   ## ref: https://hub.docker.com/r/pedrocesarti/jmeter-docker/
-#  repository: "pedrocesarti/jmeter-docker"
+  #  repository: "pedrocesarti/jmeter-docker"
   repository: "ccr.ccs.tencentyun.com/jmeter-test/jmeter-helm-docker"
 
   ## The tag for the image
   ## ref: https://hub.docker.com/r/pedrocesarti/jmeter-docker/tags/
-#  tag: "5.3"
+  #  tag: "5.3"
   tag: "v1"
 
 

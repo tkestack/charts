@@ -6,8 +6,14 @@ distributed-jmeter:
   enabled: true
   server:
     replicaCount: 3
+    heap_size: 2g
+  master:
+    heap_size: 2g
 
 grafana:
+  enabled: true
+
+influxdb:
   enabled: true
   persistence:
     enabled: true
@@ -20,7 +26,3 @@ grafana:
     ##
     # storageClass: "-"
     size: 20Gi
-
-influxdb:
-  enabled: true
-
