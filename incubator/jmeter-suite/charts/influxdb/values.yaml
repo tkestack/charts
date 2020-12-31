@@ -180,9 +180,11 @@ tolerations: []
 ## The InfluxDB image uses several environment variables to automatically
 ## configure certain parts of the server.
 ## Ref: https://hub.docker.com/_/influxdb/
-env: {}
+env:
   # - name: INFLUXDB_DB
   #   value: "demo"
+  - name: INFLUXDB_DATA_MAX_VALUES_PER_TAG
+    value: "0"
 
 ## InfluxDB configuration
 ## ref: https://docs.influxdata.com/influxdb/v1.7/administration/config
