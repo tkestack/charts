@@ -1,0 +1,23 @@
+# Default values for tke-spot-agent.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image:
+  repository: ccr.ccs.tencentyun.com/tke-market/tke-spot-agent
+  tag: v1.0
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart version.
+  
+env:
+  # DISABLE_ONLY controls whether to drain the pod or not when spot instances will be retrieved.
+  # If true, will disable the node only, will not drain the pod.
+  DISABLE_ONLY: "false"
+  # By Default, the Kubernetes `drain` will not delete the pod with empty local dir, so DELETE_EMPTY_LOCAL_DIR=true
+  # will force to delete the pod with empty local dir.
+  DELETE_EMPTY_LOCAL_DIR: "true"
+  # When TAINT is ture, it will only taint the node(tke.cloud.tencent.com/tke-spot-agent) and make 
+  # the node as unschedulable, but will not drain the pod.
+  TAINT: "false"
+
+
+
