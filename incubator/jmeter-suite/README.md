@@ -34,10 +34,13 @@ The command removes all the Kubernetes components associated with the chart and 
 |-------------------------------------------|-----------------------------------------------|---------------------------------------------------------|
 | `distributed-jmeter.enabled`              | Install distributed-jmeter or not             | `true`                                                  |
 | `distributed-jmeter.server.replicaCount`  | The number of jmeter nodes you want to create | `3`                                                     |
-| `distributed-jmeter.server.heap_size`     | Heap size of master node                      | `2g`                                                     |
-| `distributed-jmeter.master.heap_size`     | Heap size of server node                      | `2g`                                                     |
+| `distributed-jmeter.server.heap_size`     | Heap size of master node                      | `2g`                                                    |
+| `distributed-jmeter.master.heap_size`     | Heap size of server node                      | `2g`                                                    |
 | `grafana.enabled`                         | Install grafana for jmeter or not             | `true`                                                  |
-| `influxdb.enabled`                        | Install influx db for jmeter or not           | `true`                                                  |
+| `grafana.adminUser`                       | Admin name(Invalid if anonymous is true)      | `admin`                                                 |
+| `grafana.adminPassword`                   | Admin password(Invalid if anonymous is true)  | ``                                                      |
+| `grafana.env.GF_AUTH_ANONYMOUS_ENABLED`   | Access it anonymously or not                  | `true`                                                  |
+| `influxdb.enabled`                        | Install influx db for Jmeter or not           | `true`                                                  |
 | `influxdb.persistence.enabled`            | Creat pvc or not                              | `true`                                                  |
 | `influxdb.persistence.size`               | Size of influx db, must in [10, 32000]        | `20Gi`                                                  |
 
@@ -77,7 +80,7 @@ In order to write JMeter data to influx DB, you should create a new backend list
 | Parameter                    | Value                                                               | Description                                             |
 |------------------------------|---------------------------------------------------------------------|---------------------------------------------------------|
 | `influxdbMetricsSender`      | `org.apache.jmeter.visualizers.backend.influxdb.HttpMetricsSender`  | Influx component for JMeter                             |
-| `influxdbUrl`                | `http://jmeter-influxdb:8086/write?db=jmeter`                       | Influx DB host                                          |
+| `influxdbUrl`                | `http://jmeter-influxdb.default:8086/write?db=jmeter`               | Influx DB host, "default" is namespace                  |
 | `measurement`                | `jmeter`                                                            | Measurement name                                        |
 | `percentiles`                | `90;95;99`                                                          | Time consumption statistics                             |
 
@@ -93,7 +96,7 @@ JMeter backend listener:
               </elementProp>
               <elementProp name="influxdbUrl" elementType="Argument">
                 <stringProp name="Argument.name">influxdbUrl</stringProp>
-                <stringProp name="Argument.value">http://jmeter-influxdb:8086/write?db=jmeter</stringProp>
+                <stringProp name="Argument.value">http://jmeter-influxdb.default:8086/write?db=jmeter</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
               <elementProp name="application" elementType="Argument">

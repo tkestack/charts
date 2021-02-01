@@ -12,6 +12,10 @@ distributed-jmeter:
 
 grafana:
   enabled: true
+  adminUser: admin
+  # adminPassword: strongpassword
+  env:
+    GF_AUTH_ANONYMOUS_ENABLED: "true"
 
 influxdb:
   enabled: true
