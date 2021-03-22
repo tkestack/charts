@@ -6,4 +6,4 @@ version: "0.2.1"
 keywords:
   - flink
 icon: https://github.com/tkestack/charts/raw/main/icons/flink-on-tke.png
-home: http://git.code.oa.com/k8s/bigdata-sig/flink-on-k8s-operator.git
+home: https://github.com/tkestack/charts
