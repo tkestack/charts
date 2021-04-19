@@ -46,7 +46,7 @@ eksAdmission:
   replicaCount: 1
   autoScaleEKS: "\"true\""
   image:
-    ref: ccr.ccs.tencentyun.com/tkeimages/eks-admission-controller:v0.1.0.test.6
+    ref: ccr.ccs.tencentyun.com/tkeimages/eks-admission-controller:v0.1.0
     pullPolicy: IfNotPresent
   nodeSelector:
     kubernetes.io/os: linux
@@ -56,5 +56,5 @@ eksAdmission:
       cpu: 500m
       memory: 500M
     requests:
-      cpu: 20m
-      memory: 50M
+      cpu: 300m
+      memory: 300M
