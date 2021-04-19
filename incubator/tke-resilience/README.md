@@ -137,7 +137,7 @@ spec:
         imagePullPolicy: IfNotPresent
         command: ['sh', '-c', 'echo Container 1 is Running ; sleep 3600']
 ```
-1. 检查副本状态, 满足预期
+2. 检查副本状态, 满足预期
 
 ```
 root@VM-0-34-ubuntu:~/yamls# kubectl get po -o wide
