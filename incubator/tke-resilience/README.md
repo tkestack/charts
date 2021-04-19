@@ -103,7 +103,7 @@ helm delete tke-resilience -n kube-system
  - 本地资源不足，但replicas小于N时，workload也可以扩容到腾讯云EKS
 
 3. 优先缩容腾讯云EKS上的实例，此特性只在tke发行版k8s有效，社区版k8s会随机缩容workload
-4. 当使用社区版k8s时候，需要在wokload中指定 `schedulerName: tke-scheduler`
+4. 当使用社区版k8s时候，需要在wokload中指定调度器为 `schedulerName: tke-scheduler`, 而tke发行版k8s则不需要指定调度器
 
 ## 测试用例
 
