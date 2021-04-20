@@ -15,7 +15,7 @@
 
 # TKE Resilience Chart
  
-部署在IDC/私有云中的Kubernetes集群资源是有限的，随着用户workload数量和规模的不断增大，计算，网络，存储等资源最终会被消耗殆尽，而TKE Resilience Chart利用Tencent公有云EKS技术，基于自定义的调度策略，将用户集群中的workload弹性上云，从而将用户集群资源容量扩展到无限，并带来以下好处：
+部署在IDC/私有云中的Kubernetes集群资源是有限的，随着用户workload数量和规模的不断增大，计算，网络，存储等资源最终会被消耗殆尽。TKE Resilience Chart利用腾讯公有云EKS服务，基于自定义的调度策略，通过添加虚拟节点的方式，将用户集群中的workload弹性上云，从而将用户集群的资源容量扩展到无限，并带来以下好处：
 
 1. 用户IDC/私有云的硬件和维护成本保持不变
 2. 实现了用户IDC/私有云和公有云级别的workload高可用
@@ -23,22 +23,23 @@
 
 ## TKE Resilience Chart 组件定义
 
-TKE Resilience Chart主要是由虚拟节点管理器，调度器，污点控制器3部分组成，如下表格：
+TKE Resilience Chart主要是由虚拟节点管理器，调度器，容忍控制器3部分组成，如下表格：
+
 | 简称                 | 组件名称       | 描述                                                                 |
 | -------------------- | -------------- | -------------------------------------------------------------------- |
 | eklet                | 虚拟节点管理器 | 负责podsandbox生命周期的管理，并对外提供原生kubelet与节点相关的接口  |
 | tke-scheduler        | 调度器         | 负责根据调度策略将workload弹性上云, 仅会安装在非tke发行版的k8s集群上 |
 | admission-controller | 容忍控制器     | 负将处于 `pending` 状态的pod添加容忍，使其可以调度到虚拟节点上       |
 
-## 安装 TKE Resilience Chart  
+## 安装 TKE Resilience Chart
 
 这里以 Chart 版本`v0.0.1`为例，通过helm chart安装
 
 ```bash
- helm install tke-resilience  --namespace kube-system ./tke-resilience --debug
+helm install tke-resilience --namespace kube-system ./tke-resilience --debug
 ```
 
-## 卸载 TKE Resilience Chart  
+## 卸载 TKE Resilience Chart
 
 ```bash
 helm delete tke-resilience -n kube-system 
@@ -56,13 +57,13 @@ helm delete tke-resilience -n kube-system
 | `cloud.regionShort`               | 腾讯云Region短名                                 | `cq`                              |
 | `cloud.regionLong`                | 腾讯云Region长名                                 | `ap-chongqing`                    |
 | `cloud.apiDomain`                 | 腾讯云API域名                                    | `tencentcloudapi.com`             |
-| `cloud.subnets.id[0...N]`         | 腾讯云VPC内子网ID,可以指定多个subnetID           | `subnet-xxx`                      |
+| `cloud.subnets.id[0...N]`         | 腾讯云VPC内子网ID,一个子网ID对应一个虚拟节点     | `subnet-xxx`                      |
 | `eklet.waitSandboxRunningTimeout` | eklet等待Pod运行的超时时间                       | `24h`                             |
-| `eklet.podUsedApiserver`          | eklet连接用户集群的API server地址，需VPC内网可达 | `https://127.0.0.1:6443`          |
+| `eklet.podUsedApiserver`          | eklet连接用户集群的API server地址，需VPC内网可达 | `https://172.1.2.3:6443`          |
 | `eklet.replicaCount`              | eklet副本数量                                    | `1`                               |
-| `eklet.image.ref`                 | eklet运行时镜像                                  | `eklet-amd64:v2.5.0-rc7`          |
+| `eklet.image.ref`                 | eklet运行时镜像                                  | `eklet-amd64:v2.4.3`          |
 | `eklet.image.pullPolicy`          | eklet镜像拉取策略                                | `IfNotPresent`                    |
-| `eklet.service.type`              | eklet service类型,                               | `NodePort`                        |
+| `eklet.service.type`              | eklet service类型                                | `NodePort`                        |
 | `eklet.nodeSelector`              | eklet节点选择器                                  | `os=linux and arch=amd64`         |
 | `eklet.resources.limits`          | eklet资源上限配额                                | `cpu: "1", memory: 1Gi`           |
 | `eklet.resources.requests`        | eklet资源请求配额                                | `cpu: "200m", memory: 200Mi`      |
@@ -80,10 +81,9 @@ helm delete tke-resilience -n kube-system
 
 ## 主要特性
 
-1. Worklaod resilience特性控制开关分为全局开关和局部开关`AUTO_SCALE_EKS=true|false`, 用来控制本地的workload在`pending`的情况下是否弹性调度到腾讯云EKS
-- 全局开关：`kubectl get cm -n kube-system eks-config` 中 `AUTO_SCALE_EKS`
-- 局部开关：`spec.template.metadata.annotations['AUTO_SCALE_EKS']`
-
+1. Worklaod resilience特性控制开关`AUTO_SCALE_EKS=true|false`分为全局开关和局部开关, 用来控制workload在`pending`的情况下是否弹性调度到腾讯云EKS，如下表格：
+ - 全局开关：`kubectl get cm -n kube-system eks-config` 中 `AUTO_SCALE_EKS`
+ - 局部开关：`spec.template.metadata.annotations['AUTO_SCALE_EKS']`,见[测试用例](#测试用例)
 
 | 全局开关               | 局部开关               | 行为       |
 | ---------------------- | ---------------------- | ---------- |
@@ -97,13 +97,23 @@ helm delete tke-resilience -n kube-system
 | `未定义`               | `未定义`               | `调度成功` |
 | `未定义`               | `AUTO_SCALE_EKS=true`  | `调度成功` |
 
-2. 设定本地保留副本数量 `LOCAL_REPLICAS: N`
-
- - 当replicas大于N时，workload扩容到腾讯云EKS
- - 本地资源不足，但replicas小于N时，workload也可以扩容到腾讯云EKS
-
-3. 优先缩容腾讯云EKS上的实例，此特性只在tke发行版k8s有效，社区版k8s会随机缩容workload
-4. 当使用社区版k8s时候，需要在wokload中指定调度器为 `schedulerName: tke-scheduler`, 而tke发行版k8s则不需要指定调度器
+2. 当使用社区版K8S的时候，需要在workload中指定调度器为 `tke-scheduler`, 而TKE发行版K8S则不需要指定调度器,见[测试用例](#测试用例)
+3. Workload设定本地集群保留副本数量 `LOCAL_REPLICAS: N`, 见[测试用例](#测试用例)
+4. Workload`扩容`
+ - 当本地集群资源不足，并满足全局和局部开关中`调度成功`的行为设定，`pending`的workload将扩容到腾讯云EKS
+ - 当实际创建workload副本数量达到N后，并满足全局和局部开关中`调度成功`的行为设定, `pending`的workload将扩容到腾讯云EKS
+5. Workload`缩容`
+ - TKE发行版K8S会优先缩容腾讯云EKS上的实例
+ - 社区版K8S会随机缩容workload
+6. 调度规则的限制条件
+ - 无法调度DaemonSet Pod到虚拟节点,此特性只在TKE发行版K8S有效，社区版K8S DaemonSet Pod会调度到虚拟节点，但会显示`DaemonsetForbidden`
+ - 无法调度kube-system, tke-eni-ip-webhook 命名空间下的Pod到虚拟节点
+ - 无法调度securityContext.sysctls["net.ipv4.ip_local_port_range"]的值包含61000 - 65534的端口
+ - 无法调度pod.Annotations[tke.cloud.tencent.com/vpc-ip-claim-delete-policy]的Pod
+ - 无法调度container(initContainer).ports[].containerPort(hostPort)包含61000 - 65534 的端口
+ - 无法调度container(initContainer)中探针指定61000 - 65534的端口
+ - 无法调度除了nfs，Cephfs，hostPath，qcloudcbs以外的PV
+ - 无法调度启用固定IP特性的pod到虚拟节点
 
 ## 测试用例
 
@@ -132,6 +142,8 @@ spec:
       labels:
         app: busybox
     spec:
+      #社区版K8S集群需要指定调度器
+      #schedulerName: tke-scheduler
       containers:
       - name: busybox
         image: busybox

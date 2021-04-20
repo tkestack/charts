@@ -50,6 +50,8 @@ spec:
             - --pod-used-apiserver={{ .Values.eklet.podUsedApiserver }}
             - --secret-id={{ .Values.cloud.secretID }}
             - --secret-key={{ .Values.cloud.secretKey }}
+            - --eklet-service-name=eks-eklet
+            - --eklet-service-namespace={{ .Release.Namespace }}
           image: {{ .Values.eklet.image.ref }}
           imagePullPolicy: {{ .Values.eklet.image.pullPolicy }}
           livenessProbe:

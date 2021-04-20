@@ -12,10 +12,10 @@ cloud:
 
 eklet:
   waitSandboxRunningTimeout: 24h
-  podUsedApiserver: https://127.0.0.1:6443
+  podUsedApiserver: https://172.1.2.3:6443
   replicaCount: 1
   image:
-    ref: ccr.ccs.tencentyun.com/tkeimages/eklet-amd64:v2.5.0-rc7
+    ref: ccr.ccs.tencentyun.com/tkeimages/eklet-amd64:v2.4.3
     pullPolicy: IfNotPresent
   service:
     type: NodePort
