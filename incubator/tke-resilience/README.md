@@ -9,6 +9,7 @@
   - [卸载 TKE Resilience Chart](#卸载-tke-resilience-chart)
   - [配置及默认值](#配置及默认值)
   - [主要特性](#主要特性)
+  - [地域与可用区](#地域与可用区)
   - [测试用例](#测试用例)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -57,11 +58,11 @@ helm delete tke-resilience -n kube-system
 | `cloud.regionShort`               | 腾讯云Region短名                                 | `cq`                              |
 | `cloud.regionLong`                | 腾讯云Region长名                                 | `ap-chongqing`                    |
 | `cloud.apiDomain`                 | 腾讯云API域名                                    | `tencentcloudapi.com`             |
-| `cloud.subnets.id[0...N]`         | 腾讯云VPC内子网ID,一个子网ID对应一个虚拟节点     | `subnet-xxx`                      |
+| `cloud.subnets[0...N].id/zone`    | 腾讯云VPC子网ID/可用区英文名称，对应一个虚拟节点 | []                                |
 | `eklet.waitSandboxRunningTimeout` | eklet等待Pod运行的超时时间                       | `24h`                             |
 | `eklet.podUsedApiserver`          | eklet连接用户集群的API server地址，需VPC内网可达 | `https://172.1.2.3:6443`          |
 | `eklet.replicaCount`              | eklet副本数量                                    | `1`                               |
-| `eklet.image.ref`                 | eklet运行时镜像                                  | `eklet-amd64:v2.4.3`          |
+| `eklet.image.ref`                 | eklet运行时镜像                                  | `eklet-amd64:v2.4.3`              |
 | `eklet.image.pullPolicy`          | eklet镜像拉取策略                                | `IfNotPresent`                    |
 | `eklet.service.type`              | eklet service类型                                | `NodePort`                        |
 | `eklet.nodeSelector`              | eklet节点选择器                                  | `os=linux and arch=amd64`         |
@@ -114,6 +115,14 @@ helm delete tke-resilience -n kube-system
  - 无法调度container(initContainer)中探针指定61000 - 65534的端口
  - 无法调度除了nfs，Cephfs，hostPath，qcloudcbs以外的PV
  - 无法调度启用固定IP特性的pod到虚拟节点
+
+## 地域与可用区
+
+关于地域和可用区配置可参考：
+
+```
+https://cloud.tencent.com/document/product/215/20057
+```
 
 ## 测试用例
 

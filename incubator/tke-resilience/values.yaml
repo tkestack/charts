@@ -8,7 +8,10 @@ cloud:
   regionLong: ap-chongqing
   apiDomain: tencentcloudapi.com
   subnets:
-    - id: "subnet-bu17jw8a"
+    - id: "subnet-xx"
+      zone: "ap-chongqing-1"
+    - id: "subnet-yy"
+      zone: "ap-chongqing-1"
 
 eklet:
   waitSandboxRunningTimeout: 24h
