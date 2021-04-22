@@ -1,4 +1,4 @@
-apiVersion: v3
+apiVersion: v2
 name: jmeter-suite
 description: A Helm chart for jmeter suit.
 
@@ -34,13 +34,13 @@ maintainers:
 dependencies:
   - name: distributed-jmeter
     condition: distributed-jmeter.enabled
-    repository: file://../charts/jmeter
+    repository: file://dep_charts/jmeter
   - name: grafana
     condition: grafana.enabled
-    repository: file://../charts/grafana
+    repository: file://dep_charts/grafana
   - name: influxdb
     condition: influxdb.enabled
-    repository: file://../charts/influxdb
+    repository: file://dep_charts/influxdb
 
 icon: https://github.com/tkestack/charts/raw/main/icons/jmeter-suite.png
 home: https://github.com/tkestack/charts

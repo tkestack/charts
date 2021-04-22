@@ -283,6 +283,10 @@ metadata:
     release: {{ .Release.Name }}
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "name" . }}
+      release: {{ .Release.Name }}
   template:
     metadata:
       labels:
