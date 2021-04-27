@@ -82,7 +82,7 @@ helm delete tke-resilience -n kube-system
 
 ## 主要特性
 
-1. Worklaod resilience特性控制开关`AUTO_SCALE_EKS=true|false`分为全局开关和局部开关, 用来控制workload在`pending`的情况下是否弹性调度到腾讯云EKS，如下表格：
+1. Workload resilience特性控制开关`AUTO_SCALE_EKS=true|false`分为全局开关和局部开关, 用来控制workload在`pending`的情况下是否弹性调度到腾讯云EKS，如下表格：
  - 全局开关：`kubectl get cm -n kube-system eks-config` 中 `AUTO_SCALE_EKS`
  - 局部开关：`spec.template.metadata.annotations['AUTO_SCALE_EKS']`,见[测试用例](#测试用例)
 
