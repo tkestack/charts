@@ -34,13 +34,13 @@ maintainers:
 dependencies:
   - name: distributed-jmeter
     condition: distributed-jmeter.enabled
-    repository: file://dep_charts/jmeter
+    repository: file://charts/jmeter
   - name: grafana
     condition: grafana.enabled
-    repository: file://dep_charts/grafana
+    repository: file://charts/grafana
   - name: influxdb
     condition: influxdb.enabled
-    repository: file://dep_charts/influxdb
+    repository: file://charts/influxdb
 
 icon: https://github.com/tkestack/charts/raw/main/icons/jmeter-suite.png
 home: https://github.com/tkestack/charts
