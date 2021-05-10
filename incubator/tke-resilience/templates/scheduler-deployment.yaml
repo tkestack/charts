@@ -27,6 +27,7 @@ spec:
           - --scheduler-name=tke-scheduler
           - --leader-elect-resource-name=tke-scheduler
           - --leader-elect-resource-namespace={{ .Release.Namespace }}
+          - --eks-config-namespace={{ .Release.Namespace }}
           - --port=0
           image: {{ .Values.scheduler.image.ref }}
           imagePullPolicy: {{ .Values.scheduler.image.pullPolicy }}
