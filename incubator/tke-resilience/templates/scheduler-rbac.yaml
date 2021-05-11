@@ -8,6 +8,32 @@ metadata:
 {{ include "scheduler.labels" . | indent 4 }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: scheduler-{{ .Release.Name }}
+  labels:
+{{ include "scheduler.labels" . | indent 4 }}
+rules:
+  - apiGroups: [ "" ]
+    resources: [ "configmaps" ]
+    verbs: [ "get","list","watch" ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: scheduler-{{ .Release.Name }}
+  labels:
+{{ include "scheduler.labels" . | indent 4 }}
+subjects:
+- kind: ServiceAccount
+  name: scheduler-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: scheduler-{{ .Release.Name }}
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: scheduler-kube-{{ .Release.Name }}
