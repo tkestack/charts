@@ -152,7 +152,7 @@ spec:
         app: busybox
     spec:
       #社区版K8S集群需要指定调度器
-      #schedulerName: tke-scheduler
+      schedulerName: tke-scheduler
       containers:
       - name: busybox
         image: busybox
