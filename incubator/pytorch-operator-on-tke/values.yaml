@@ -1,0 +1,55 @@
+# Default values for pytorch-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ccr.ccs.tencentyun.com/kubeflow-oteam/pytorch-operator
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+namespace: 
+  create: true
+  name: "pytorch-operator"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "pytorch-opertor"
+
+commandVerboseLevel: 1
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  name: "monitoring-port"
+  port: 8443
+  targetPort: 8443
+  type: ClusterIP
+
+prometheus:
+  path: /metric
+  scrape: true
+  port: 8443
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
