@@ -5,17 +5,21 @@
 distributed-jmeter:
   enabled: true
   server:
-    replicaCount: 3
-    heap_size: 2g
+    replicaCount: 10
+    heap_size: 5g
   master:
-    heap_size: 2g
+    heap_size: 5g
+  image:
+    pullPolicy: Always
+    repository: ccr.ccs.tencentyun.com/jmeter-test/jmeter-helm-docker
+    tag: v1.4
 
 grafana:
   enabled: true
   adminUser: admin
-  # adminPassword: strongpassword
+  adminPassword: admin
   env:
-    GF_AUTH_ANONYMOUS_ENABLED: "true"
+    GF_AUTH_ANONYMOUS_ENABLED: "False"
 
 influxdb:
   enabled: true
@@ -29,4 +33,4 @@ influxdb:
     ##   GKE, AWS & OpenStack)
     ##
     # storageClass: "-"
-    size: 20Gi
+    size: 40Gi
