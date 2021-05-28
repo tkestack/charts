@@ -31,7 +31,9 @@
 
 Horovod 官方提供的 `horovod/horovod:0.20.0-tf2.3.0-torch1.6.0-mxnet1.5.0-py3.7-cpu` 镜像中已经包含了该训练代码。
 
-镜像仓库 `ccr.ccs.tencentyun.com/ti_containers/ti-tensorflow` 中内置了经过腾讯优图实验室提供优化后的 ti-horovod，标签（tag）包括：
+镜像仓库 `ccr.ccs.tencentyun.com/ti_containers/ti-tensorflow` 中内置了由腾讯优图实验室和机智团队合作开发的Ti-horovod，针对腾讯云网络环境特点进行了定制优化。
+
+**标签（tag）**
 
 * `1.15.2-gpu-cu100-py3`
 * `2.0.0-gpu-cu100-py3`
