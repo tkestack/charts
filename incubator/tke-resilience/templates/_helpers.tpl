@@ -52,7 +52,7 @@ node.kubernetes.io/instance-type: eklet
 {{- end -}}
 
 {{- define "isTKEkubeVendor" -}}
-  {{- if contains "tke" .Capabilities.KubeVersion.GitVersion -}}
+  {{- if or (contains "tke" .Capabilities.KubeVersion.GitVersion) (contains "tce" .Capabilities.KubeVersion.GitVersion) }}
     {{- printf "true" -}}
   {{- else -}}
     {{- printf "false" -}}
