@@ -116,9 +116,12 @@ helm delete tke-resilience -n kube-system
  - 无法调度除了nfs，Cephfs，hostPath，qcloudcbs以外的PV
  - 无法调度启用固定IP特性的pod到虚拟节点
 7. 虚拟节点支持自定义默认DNS配置：用户可以在虚拟节点上新增 `eks.tke.cloud.tencent.com/resolv-conf`的annotation后，生成的cxm子机里的/etc/resolv.conf就会被更新成用户定义的内容。注意会覆盖原来虚拟节点的dns配置,最终会以用户的配置为准。
- - eks.tke.cloud.tencent.com/resolv-conf: |  
-   - nameserver 4.4.4.4
-   - nameserver 8.8.8.8
+```
+eks.tke.cloud.tencent.com/resolv-conf: |  
+   nameserver 4.4.4.4
+   nameserver 8.8.8.8
+```
+ 
 
 ## 地域与可用区
 
