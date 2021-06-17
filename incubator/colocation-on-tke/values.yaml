@@ -24,3 +24,7 @@ prometheus:
 
 grafana:
   enabled: true
+
+
+icon: https://github.com/tkestack/charts/raw/main/icons/colocation-on-tke.png
+home: https://github.com/tkestack/charts
