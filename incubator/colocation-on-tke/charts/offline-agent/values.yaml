@@ -1,0 +1,22 @@
+# Default values for offline-agent.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# name for offline agent
+OfflineAgentName: "offline-agent"
+
+# image for offline agent daemonset
+image:
+  repository: "ccr.ccs.tencentyun.com/tkeimages/offline-scheduling-agent"
+  pullPolicy: Always
+  tag: "v1.0-2-gae6c50925d"
+
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""

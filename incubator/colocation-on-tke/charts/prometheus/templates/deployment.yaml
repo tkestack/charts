@@ -1,0 +1,53 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    app: {{ .Values.PrometheusName }}
+  name: {{ .Values.PrometheusName }}
+  namespace:  {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: {{ .Values.PrometheusName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.PrometheusName }}
+    spec:
+      serviceAccountName: {{ .Values.PrometheusName }}
+      securityContext:
+        runAsUser: 65534
+        fsGroup: 65534
+      containers:
+        - name: {{ .Values.PrometheusName }}
+          image:   {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          volumeMounts:
+            - mountPath: /etc/prometheus/prometheus.yml
+              name: prometheus-conf-volume
+              subPath: prometheus.yml
+            - mountPath: /etc/prometheus/rules
+              name: prometheus-rules-volume
+          ports:
+            - containerPort: 9090
+              protocol: TCP
+      volumes:
+        - name: prometheus-conf-volume
+          configMap:
+            name: {{ .Values.PrometheusName }}-config
+        - name: prometheus-rules-volume
+          configMap:
+            name: {{ .Values.PrometheusName }}-rules
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

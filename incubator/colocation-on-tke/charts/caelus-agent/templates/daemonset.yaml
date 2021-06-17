@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ .Values.CaelusAgentName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.CaelusAgentName }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.CaelusAgentName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.CaelusAgentName }}
+    spec:
+      hostNetwork: true
+      hostPID: true
+      tolerations:
+        - effect: NoSchedule
+          operator: Exists
+      serviceAccountName: {{ .Values.CaelusAgentName }}
+      containers:
+        - name: {{ .Values.CaelusAgentName }}
+          image:  {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/caelus"]
+          args:
+            - --v=5
+            - --logtostderr
+            - --config=/etc/caelus/caelus.json
+            - --hostname-override=$(MY_NODE_NAME)
+            - --insecure-bind-address=$(MY_NODE_NAME)
+            - --docker=unix:///rootfs/var/run/docker.sock
+          ports:
+            - containerPort: 10030
+              hostPort: 10030
+          env:
+            - name: MY_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: {{ .Values.CaelusAgentConfigmapName }}
+              mountPath: /etc/caelus
+            # cadvisor volumes
+            - name: rootfs
+              mountPath: /rootfs
+              readOnly: true
+            - name: var-run-caelus
+              mountPath: /var/run/caelus
+            - name: sys
+              mountPath: /sys
+              readOnly: true
+            - name: disk
+              mountPath: /dev/disk
+              readOnly: true
+            - name: etc
+              mountPath: /etc
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: {{ .Values.CaelusAgentConfigmapName }}
+          name: {{ .Values.CaelusAgentConfigmapName }}
+        # cadvisor volumes
+        - name: rootfs
+          hostPath:
+            path: /
+        - name: var-run-caelus
+          hostPath:
+            path: /var/run/caelus
+            type: DirectoryOrCreate
+        - name: sys
+          hostPath:
+            path: /sys
+        - name: etc
+          hostPath:
+            path: /etc
+        - name: disk
+          hostPath:
+            path: /dev/disk
