@@ -1,0 +1,15 @@
+apiVersion: v2
+name: elastic-jupyter-operator
+description: A Helm chart for elastic Jupyter notebooks
+version: 0.1.1
+appVersion: "elastic-jupyter-operator-0.1.1"
+keywords:
+ - kubeflow
+ - training
+icon: https://github.com/tkestack/charts/raw/main/icons/elastic-jupyter-operator-on-tke.png
+home: https://github.com/tkestack/charts
+maintainers:
+- name: lucaswzhang
+  email: lucaswzhang@tencent.com
+- name: cegao
+  email: cegao@tencent.com
