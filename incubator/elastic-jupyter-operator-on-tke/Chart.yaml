@@ -6,7 +6,7 @@ appVersion: "elastic-jupyter-operator-0.1.1"
 keywords:
  - kubeflow
  - training
-icon: https://github.com/tkestack/charts/raw/main/icons/elastic-jupyter-operator-on-tke.png
+icon: https://github.com/tkestack/charts/raw/main/icons/elastic-jupyter-operator-on-tke.svg
 home: https://github.com/tkestack/charts
 maintainers:
 - name: lucaswzhang
