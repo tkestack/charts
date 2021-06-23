@@ -62,4 +62,4 @@ AlluxioRuntime: 来源于 Alluixo 社区，是支撑 Dataset 数据管理和缓�
 | `runtime.alluxio.fuse.image.tag`   | Alluxio 缓存引擎 Fuse 组件镜像的版本 | `"release-2.5.0-2-SNAPSHOT-a05eadcff1"` |
 
 ## 最佳实践
-- Alluxio 最佳实践见[社区文档](https://github.com/fluid-cloudnative/fluid/tree/master/docs/zh/samples)
+- Alluxio [使用文档](https://github.com/fluid-cloudnative/fluid/blob/master/docs/zh/TOC.md)
