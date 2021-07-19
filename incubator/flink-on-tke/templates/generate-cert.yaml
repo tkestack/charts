@@ -32,10 +32,14 @@ data:
     DNS.2 = ${service}.${namespace}
     DNS.3 = ${service}.${namespace}.svc
     EOF
+
+    mkdir -p /root/.rnd
+    openssl rand -writerand /root/.rnd
+
     openssl req -nodes -new -x509 -keyout ca.key -out ca.crt -subj "/CN=Admission Controller Webhook CA"
-    openssl genrsa -out ${tmpdir}/server-key.pem 2048
-    openssl req -new -key ${tmpdir}/server-key.pem -subj "/CN=${service}.${namespace}.svc" -config ${tmpdir}/csr.conf \
-        | openssl x509 -days 3650 -req -CA ca.crt -CAkey ca.key -CAcreateserial -out ${tmpdir}/server-cert.pem
+    openssl req -newkey rsa:2048 -nodes -keyout  ${tmpdir}/server-key.pem -subj "/C=CN/ST=GD/L=SZ/O=Acme, Inc./CN=*${service}.${namespace}.svc" -out ${tmpdir}/server.csr
+    openssl x509 -req -extfile <(printf "subjectAltName=DNS:${service},DNS:${service}.${namespace},DNS:${service}.${namespace}.svc") -days 365 -in ${tmpdir}/server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out ${tmpdir}/server-cert.pem
+
     serverCert="$(openssl base64 -A -in ${tmpdir}/server-cert.pem)"
     if [[ -z ${serverCert} ]]; then
         echo "ERROR: The signed certificate did not appear." >&2
