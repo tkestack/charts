@@ -2,7 +2,7 @@ apiVersion: v2
 name: pytorch-operator
 description: A Helm chart for PyTorch Operator on Kubernetes
 version: 0.7.0
-appVersion: "tf-operator-0.7.0"
+appVersion: "pytorch-operator-0.7.0"
 keywords:
  - kubeflow
  - training
