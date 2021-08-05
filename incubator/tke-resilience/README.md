@@ -5,6 +5,7 @@
 
 - [TKE Resilience Chart](#tke-resilience-chart)
   - [TKE Resilience Chart 组件定义](#tke-resilience-chart-组件定义)
+  - [先决条件](#先决条件)
   - [安装 TKE Resilience Chart](#安装-tke-resilience-chart)
   - [卸载 TKE Resilience Chart](#卸载-tke-resilience-chart)
   - [配置及默认值](#配置及默认值)
@@ -31,6 +32,31 @@ TKE Resilience Chart主要是由虚拟节点管理器，调度器，容忍控制
 | eklet                | 虚拟节点管理器 | 负责podsandbox生命周期的管理，并对外提供原生kubelet与节点相关的接口  |
 | tke-scheduler        | 调度器         | 负责根据调度策略将workload弹性上云, 仅会安装在非tke发行版的k8s集群上 |
 | admission-controller | 容忍控制器     | 负将处于 `pending` 状态的pod添加容忍，使其可以调度到虚拟节点上       |
+
+## 先决条件
+1. 创建腾讯云 access secret id以及key，并且具备vpc产品的权限,具体接口列表如下
+```
+  {
+  "version": "2.0",
+  "statement": [
+      {
+          "effect": "allow",
+          "resource": [
+              "*"
+          ],
+          "action": [
+              "vpc:DescribeSubnet"
+          ]
+      }
+  ]
+ }
+```
+2. 获取帐号信息appID，ownerUIN
+3. 获取VPC信息 region，vpcID
+4. 专线与腾讯云VPC内网链通
+5. 用户集群API Server通过service将访问地址暴露出集群外，访问地址必须云VPC可达
+6. 用户自有IDC需要部署EKS的集群可以访问公网，需要通过公网调用云API
+7. 用户集群Pod IP必须与云VPC路由可达（使用Calico之类的基于BGP路由而不是SDN封装的CNI插件）
 
 ## 安装 TKE Resilience Chart
 
