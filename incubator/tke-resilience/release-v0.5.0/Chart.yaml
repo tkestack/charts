@@ -5,8 +5,8 @@ keywords:
   - high availability
   - resilience
   - elastic
-version: 1.0.0
-appVersion: "0.17.0"
+version: 0.5.0
+appVersion: "0.15.0"
 maintainers:
   - name: vvictorhu
     email: vvictorhu@tencent.com
@@ -14,4 +14,3 @@ home: https://github.com/tkestack/charts
 icon: https://raw.githubusercontent.com/tkestack/charts/main/icons/tke-resilience.png
 sources:
   - https://github.com/tkestack/charts/incubator/tke-resilience
-

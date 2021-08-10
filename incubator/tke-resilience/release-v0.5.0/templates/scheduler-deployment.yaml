@@ -25,23 +25,12 @@ spec:
           - --leader-elect=true
           - --bind-address=0.0.0.0
           - --scheduler-name=tke-scheduler
-          - --leader-elect-resource-name=tke-scheduler
-          - --leader-elect-resource-namespace={{ .Release.Namespace }}
-          - --eks-config-namespace={{ .Release.Namespace }}
+          - --lock-object-name=tke-scheduler
           - --port=0
           image: {{ .Values.scheduler.image.ref }}
           imagePullPolicy: {{ .Values.scheduler.image.pullPolicy }}
           livenessProbe:
             failureThreshold: 8
-            httpGet:
-              path: /healthz
-              port: 10259
-              scheme: HTTPS
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 15
-          startupProbe:
-            failureThreshold: 24
             httpGet:
               path: /healthz
               port: 10259
