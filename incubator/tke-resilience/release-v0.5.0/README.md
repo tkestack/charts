@@ -34,6 +34,7 @@ TKE Resilience Chart主要是由虚拟节点管理器，调度器，容忍控制
 | admission-controller | 容忍控制器     | 负将处于 `pending` 状态的pod添加容忍，使其可以调度到虚拟节点上       |
 
 ## 先决条件
+0. Kubernates `1.20` TKE发行版或者社区版集群Ready
 1. 创建腾讯云 access secret id以及key，并且具备vpc产品的权限,具体接口列表如下
 ```
   {
