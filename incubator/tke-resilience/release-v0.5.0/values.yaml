@@ -15,10 +15,10 @@ cloud:
 
 eklet:
   waitSandboxRunningTimeout: 24h
-  podUsedApiserver: https://172.1.2.3:6443
+  podUsedApiserver: https://10.0.191.92:6443
   replicaCount: 1
   image:
-    ref: ccr.ccs.tencentyun.com/tkeimages/eklet-amd64:v2.4.6
+    ref: ccr.ccs.tencentyun.com/tkeimages/eklet-amd64:v2.5.18
     pullPolicy: IfNotPresent
   service:
     type: NodePort
@@ -36,7 +36,7 @@ eklet:
 scheduler:
   replicaCount: 1
   image:
-    ref: ccr.ccs.tencentyun.com/tkeimages/kube-scheduler:v1.20.4-tke.1
+    ref: ccr.ccs.tencentyun.com/tkeimages/hyperkube:v1.14.3-tke.22.eks.1 
     pullPolicy: IfNotPresent
   nodeSelector:
     kubernetes.io/os: linux
@@ -49,7 +49,7 @@ eksAdmission:
   replicaCount: 1
   autoScaleEKS: "\"true\""
   image:
-    ref: ccr.ccs.tencentyun.com/tkeimages/eks-admission-controller:v0.1.0
+    ref: ccr.ccs.tencentyun.com/tkeimages/eks-admission-controller:v0.1.7
     pullPolicy: IfNotPresent
   nodeSelector:
     kubernetes.io/os: linux

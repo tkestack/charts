@@ -34,7 +34,7 @@ TKE Resilience Chart主要是由虚拟节点管理器，调度器，容忍控制
 | admission-controller | 容忍控制器     | 负将处于 `pending` 状态的pod添加容忍，使其可以调度到虚拟节点上       |
 
 ## 先决条件
-0. Kubernates `1.20` TKE发行版或者社区版集群Ready
+0. Kubernates `1.15` TKE发行版或者社区版集群Ready
 1. 创建腾讯云 access secret id以及key，并且具备vpc产品的权限,具体接口列表如下
 ```
   {
@@ -61,7 +61,7 @@ TKE Resilience Chart主要是由虚拟节点管理器，调度器，容忍控制
 
 ## 安装 TKE Resilience Chart
 
-这里以 Chart 版本`v0.0.1`为例，通过helm chart安装
+这里以 Chart 版本`v0.0.1`为例，通过helm chart安装 (只支持创建在`kube-system`)
 
 ```bash
 helm install tke-resilience --namespace kube-system ./tke-resilience --debug
