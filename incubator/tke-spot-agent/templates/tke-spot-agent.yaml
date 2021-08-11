@@ -1,0 +1,122 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tke-spot-agent
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/name: tke-spot-agent
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tke-spot-agent
+rules:
+- apiGroups:
+    - ""
+  resources:
+    - nodes
+  verbs:
+    - get
+    - list
+    - patch
+    - update
+- apiGroups:
+    - ""
+  resources:
+    - pods
+  verbs:
+    - list
+- apiGroups:
+    - ""
+  resources:
+    - pods/eviction
+  verbs:
+    - create
+- apiGroups:
+    - extensions
+  resources:
+    - daemonsets
+  verbs:
+    - get
+- apiGroups:
+    - apps
+  resources:
+    - daemonsets
+  verbs:
+    - get
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tke-spot-agent
+subjects:
+- kind: ServiceAccount
+  name: tke-spot-agent
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: tke-spot-agent
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: tke-spot-agent
+  namespace: kube-system
+  labels:
+    k8s-app: tke-spot-agent
+spec:
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 5
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: tke-spot-agent
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: tke-spot-agent
+    spec:
+      volumes:
+        - name: "uptime"
+          hostPath:
+            path: "/proc/uptime"
+      serviceAccountName: tke-spot-agent
+      hostNetwork: true 
+      dnsPolicy: "ClusterFirstWithHostNet"
+      containers:
+        - name: tke-spot-agent
+          image: {{ .Values.image.repository }}:{{.Values.image.tag}}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: "uptime"
+              mountPath: "/proc/uptime"
+              readOnly: true
+          env:
+          - name: SPOT_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: DISABLE_ONLY
+            value: "{{ .Values.env.DISABLE_ONLY }}"
+          - name: TAINT
+            value: "{{ .Values.env.TAINT }}"
+          - name: DEBUG_MODE
+            value: "false"
+          - name: DELETE_EMPTY_LOCAL_DIR
+            value: "{{ .Values.env.DELETE_EMPTY_LOCAL_DIR }}"
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 8Mi

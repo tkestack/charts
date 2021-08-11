@@ -1,0 +1,19 @@
+{{- if .Values.certmanager.enabled }}
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  # These are the permissions needed by the `cert-manager` `Certificate` implementation.
+  name: knative-serving-certmanager
+  labels:
+    serving.knative.dev/release: "{{ .Chart.AppVersion }}"
+    serving.knative.dev/controller: "true"
+    networking.knative.dev/certificate-provider: {{ .Values.certmanager.provider }}
+rules:
+- apiGroups: ["cert-manager.io"]
+  resources: ["certificates", "clusterissuers"]
+  verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+- apiGroups: ["acme.cert-manager.io"]
+  resources: ["challenges"]
+  verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+---
+{{- end }}

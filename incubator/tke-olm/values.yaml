@@ -1,0 +1,56 @@
+rbacGroup: rbac.authorization.k8s.io
+olm_namespace: operator-lifecycle-manager
+operator_namespace: operators
+minKubeVersion: 1.11.0
+olmVersion: 0.17.0
+debug: false
+olm:
+  replicaCount: 1
+  image:
+    ref: ccr.ccs.tencentyun.com/tkeimages/olm:0.17.0
+    pullPolicy: IfNotPresent
+  service:
+    internalPort: 8080
+  nodeSelector:
+    kubernetes.io/os: linux
+  resources:
+    requests:
+     cpu: 10m
+     memory: 160Mi
+
+catalog:
+  replicaCount: 1
+  commandArgs: -configmapServerImage=ccr.ccs.tencentyun.com/tkeimages/configmap-operator-registry:0.17.0
+  image:
+    ref: ccr.ccs.tencentyun.com/tkeimages/olm:0.17.0
+    pullPolicy: IfNotPresent
+  service:
+    internalPort: 8080
+  nodeSelector:
+    kubernetes.io/os: linux
+  resources:
+    requests:
+     cpu: 10m
+     memory: 80Mi
+
+package:
+  replicaCount: 1
+  image:
+    ref: ccr.ccs.tencentyun.com/tkeimages/olm:0.17.0
+    pullPolicy: IfNotPresent
+  service:
+    internalPort: 5443
+  nodeSelector:
+    kubernetes.io/os: linux
+  resources:
+    requests:
+     cpu: 10m
+     memory: 50Mi
+
+hook:
+  serviceAccount:
+    create: true
+    name:
+  image:
+    ref: ccr.ccs.tencentyun.com/tkeimages/kubectl:0.17.0
+    pullPolicy: IfNotPresent

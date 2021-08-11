@@ -1,0 +1,52 @@
+{{- $head := . -}}
+---
+{{- if .Values.master.storage.enableLocalPv }}
+{{- range $index := until (int (.Values.master.replicas)) }}
+{{- range $i, $path := $head.Values.master.storage.hostPaths }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: "datadir{{ $i }}-{{ $index }}"
+  labels:
+    local-pv-name: "datadir{{ $i }}-{{ $index }}"
+    app: "{{ $head.Values.master.label }}"
+    heritage: {{ $head.Release.Service | quote }}
+    release: {{ $head.Release.Name | quote }}
+    chart: "{{ $head.Chart.Name }}-{{ $head.Chart.Version }}"
+    component: "{{ $head.Values.Component }}"
+spec:
+  storageClassName: kudu-local-storage
+  persistentVolumeReclaimPolicy: Delete
+  capacity:
+    storage: {{ $head.Values.master.storage.size }}
+  accessModes:
+  - ReadWriteOnce
+  local:
+    path: {{ $path }}
+  nodeAffinity:
+{{ toYaml $head.Values.master.nodeAffinity | indent 4 }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "datadir{{ $i }}-kudu-master-{{ $index }}"
+  labels:
+    app: "{{ $head.Values.master.label }}"
+    heritage: {{ $head.Release.Service | quote }}
+    release: {{ $head.Release.Name | quote }}
+    chart: "{{ $head.Chart.Name }}-{{ $head.Chart.Version }}"
+    component: "{{ $head.Values.Component }}"
+spec:
+  storageClassName: kudu-local-storage
+  resources:
+    requests:
+      storage: {{ $head.Values.master.storage.size }}
+  accessModes:
+  - ReadWriteOnce
+  selector:
+    matchLabels:
+      local-pv-name: "datadir{{ $i }}-{{ $index }}"
+---
+{{- end }}
+{{- end }}
+{{- end }}

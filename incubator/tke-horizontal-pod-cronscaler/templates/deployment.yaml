@@ -1,0 +1,54 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    control-plane: hpc-controller-manager
+  name: tke-hpc-controller
+  {{- if .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+  {{- else }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+spec:
+  {{- if .Values.controller.replicas }}      
+  replicas: {{ .Values.controller.replicas }}
+  {{- else }}
+  replicas: 2
+  {{- end }}
+  selector:
+    matchLabels:
+      control-plane: hpc-controller-manager
+  template:
+    metadata:
+      labels:
+        control-plane: hpc-controller-manager
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: control-plane
+                operator: In
+                values:
+                - hpc-controller-manager
+            topologyKey: kubernetes.io/hostname
+      serviceAccount: hpc-manager
+      containers:
+      - args:
+        - --enable-leader-election
+        command:
+        - /manager
+        image: {{ .Values.controller.image }} 
+        name: manager
+        imagePullPolicy: "{{ .Values.imagePullPolicy }}"
+        resources:
+        {{- toYaml .Values.resources | nindent 10 }}
+        volumeMounts:
+          - name: hpc-time
+            mountPath: /etc/localtime
+      volumes:
+      - name: hpc-time
+        hostPath:
+          path: /etc/localtime 

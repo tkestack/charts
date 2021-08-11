@@ -1,0 +1,751 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.2.1">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="QAPM测试脚本 V0.9" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+      <ResultCollector guiclass="StatGraphVisualizer" testclass="ResultCollector" testname="Aggregate Graph" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="察看结果树" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="false">
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+          <collectionProp name="Arguments.arguments"/>
+        </elementProp>
+        <stringProp name="HTTPSampler.domain">tmf.com</stringProp>
+        <stringProp name="HTTPSampler.port">30026</stringProp>
+        <stringProp name="HTTPSampler.protocol"></stringProp>
+        <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+        <stringProp name="HTTPSampler.path"></stringProp>
+        <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+        <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+        <stringProp name="HTTPSampler.response_timeout"></stringProp>
+      </ConfigTestElement>
+      <hashTree/>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="线程组" enabled="false">
+        <stringProp name="ThreadGroup.on_sample_error">startnextloop</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="循环控制器" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <intProp name="LoopController.loops">-1</intProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="固定定时器" enabled="true">
+          <stringProp name="ConstantTimer.delay">1000</stringProp>
+        </ConstantTimer>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="jserror个例" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+	   &quot;p_id&quot;:&quot;17517&quot;,&#xd;
+        &quot;exception&quot;:{&#xd;
+                &quot;values&quot;:[&#xd;
+                        {&#xd;
+                                &quot;type&quot;:&quot;URIError&quot;,&#xd;
+                                &quot;value&quot;:&quot;URI malformed&quot;,&#xd;
+                                &quot;stacktrace&quot;:{&#xd;
+                                        &quot;frames&quot;:[&#xd;
+                                                {&#xd;
+                                                        &quot;colno&quot;:9,&#xd;
+                                                        &quot;filename&quot;:&quot;file:///android_asset/monitor.html&quot;,&#xd;
+                                                        &quot;function&quot;:&quot;HTMLButtonElement.document.querySelector.addEventListener&quot;,&#xd;
+                                                        &quot;in_app&quot;:true,&#xd;
+                                                        &quot;lineno&quot;:42&#xd;
+                                                },&#xd;
+                                                {&#xd;
+                                                        &quot;colno&quot;:null,&#xd;
+                                                        &quot;filename&quot;:&quot;native&quot;,&#xd;
+                                                        &quot;function&quot;:&quot;decodeURIComponent&quot;,&#xd;
+                                                        &quot;in_app&quot;:true,&#xd;
+                                                        &quot;lineno&quot;:null&#xd;
+                                                }&#xd;
+                                        ]&#xd;
+                                },&#xd;
+                                &quot;mechanism&quot;:{&#xd;
+                                        &quot;data&quot;:{&#xd;
+                                                &quot;mode&quot;:&quot;stack&quot;,&#xd;
+                                                &quot;message&quot;:&quot;URI malformed&quot;,&#xd;
+                                                &quot;name&quot;:&quot;URIError&quot;&#xd;
+                                        },&#xd;
+                                        &quot;handled&quot;:false,&#xd;
+                                        &quot;type&quot;:&quot;onerror&quot;&#xd;
+                                }&#xd;
+                        }&#xd;
+                ]&#xd;
+        },&#xd;
+        &quot;event_id&quot;:&quot;5300ab73c4bc4f52b00da6ff7451d36d&quot;,&#xd;
+        &quot;url&quot;:&quot;file:///android_asset/monitor.html&quot;,&#xd;
+        &quot;headers&quot;:&quot;User-Agent: Mozilla/5.0 (Linux; Android 6.0.1; vivo X9L Build/MMB29M; wv) AppleWebKit/537.36 (KHTML,like Gecko) Version/4.0 Chrome/51.0.2704.81 Mobile Safari/537.36&quot;,&#xd;
+        &quot;bread_crumb_id&quot;:&quot;30d804c1-6160-4a81-9c4b-b5ca9e800e1d&quot;,&#xd;
+        &quot;level&quot;:&quot;error&quot;,&#xd;
+        &quot;browser&quot;:&quot;chrome 51.0.2704.81&quot;,&#xd;
+        &quot;uin&quot;:&quot;11223344&quot;,&#xd;
+        &quot;arch&quot;:&quot;web&quot;,&#xd;
+        &quot;version&quot;:&quot;1.0.0&quot;,&#xd;
+        &quot;device&quot;:&quot;web&quot;,&#xd;
+        &quot;app_key&quot;:&quot;6f5692ca-11178&quot;,&#xd;
+        &quot;plugin&quot;:143,&#xd;
+        &quot;api_ver&quot;:&quot;1&quot;,&#xd;
+        &quot;plugin_ver&quot;:&quot;1&quot;,&#xd;
+        &quot;client_identify&quot;:&quot;1&quot;,&#xd;
+        &quot;os&quot;:&quot;1.0.0&quot;,&#xd;
+        &quot;deviceid&quot;:&quot;03035119022815300300429461345540&quot;,&#xd;
+        &quot;manu&quot;:&quot;web&quot;,&#xd;
+        &quot;rdmuuid&quot;:&quot;e6ae1282-ceb8-4237-89bd-2d23d00a8e33&quot;,&#xd;
+        &quot;sdk_ver&quot;:&quot;1.0.0&quot;,&#xd;
+        &quot;apn_type&quot;:0&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">tmf.com</stringProp>
+          <stringProp name="HTTPSampler.port">30080</stringProp>
+          <stringProp name="HTTPSampler.protocol">http</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/entrance/17517/uploadJson/</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="固定定时器" enabled="true">
+          <stringProp name="ConstantTimer.delay">1000</stringProp>
+        </ConstantTimer>
+        <hashTree/>
+        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="固定定时器" enabled="true">
+          <stringProp name="ConstantTimer.delay">1000</stringProp>
+        </ConstantTimer>
+        <hashTree/>
+        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="固定定时器" enabled="true">
+          <stringProp name="ConstantTimer.delay">1000</stringProp>
+        </ConstantTimer>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="启动个例" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+	&quot;p_id&quot;: 17517,&#xd;
+    &quot;stage&quot;: &quot;COLD_LAUNCH&quot;,&#xd;
+    &quot;event_time&quot;: 1574851547692,&#xd;
+    &quot;cost_time&quot;: 3256,&#xd;
+    &quot;stack&quot;: &quot;com.bankcomm.main.fragment.TestFragment.Kz(SourceFile:1)&quot;,&#xd;
+    &quot;plugin&quot;: 102,&#xd;
+    &quot;extra_data&quot;: &quot;{\&quot;manu_tags\&quot;:[{\&quot;event_time\&quot;:1.574851547692E9,\&quot;tag_id\&quot;:1574851547692,\&quot;during_time\&quot;:0,\&quot;type\&quot;:0,\&quot;stage\&quot;:\&quot;QAPM_APPLAUNCH\&quot;,\&quot;sub_stage\&quot;:\&quot;COLD_LAUNCH\&quot;,\&quot;extra_info\&quot;:\&quot;\&quot;,\&quot;process_name\&quot;:\&quot;\&quot;,\&quot;is_slow\&quot;:0},{\&quot;event_time\&quot;:1.574851550948E9,\&quot;tag_id\&quot;:1574851547692,\&quot;during_time\&quot;:3256,\&quot;type\&quot;:1,\&quot;stage\&quot;:\&quot;QAPM_APPLAUNCH\&quot;,\&quot;sub_stage\&quot;:\&quot;COLD_LAUNCH\&quot;,\&quot;extra_info\&quot;:\&quot;\&quot;,\&quot;process_name\&quot;:\&quot;\&quot;,\&quot;is_slow\&quot;:0},{\&quot;event_time\&quot;:1.574851547692E9,\&quot;tag_id\&quot;:1574851547692,\&quot;during_time\&quot;:0,\&quot;type\&quot;:0,\&quot;stage\&quot;:\&quot;QAPM_APPLAUNCH\&quot;,\&quot;sub_stage\&quot;:\&quot;LAUNCH_APPLICATION_INIT\&quot;,\&quot;extra_info\&quot;:\&quot;\&quot;,\&quot;process_name\&quot;:\&quot;\&quot;,\&quot;is_slow\&quot;:0},{\&quot;event_time\&quot;:1.57485154811E9,\&quot;tag_id\&quot;:1574851547692,\&quot;during_time\&quot;:418,\&quot;type\&quot;:1,\&quot;stage\&quot;:\&quot;QAPM_APPLAUNCH\&quot;,\&quot;sub_stage\&quot;:\&quot;LAUNCH_APPLICATION_INIT\&quot;,\&quot;extra_info\&quot;:\&quot;\&quot;,\&quot;process_name\&quot;:\&quot;\&quot;,\&quot;is_slow\&quot;:0},{\&quot;event_time\&quot;:1.57485154811E9,\&quot;tag_id\&quot;:1574851547692,\&quot;during_time\&quot;:0,\&quot;type\&quot;:0,\&quot;stage\&quot;:\&quot;QAPM_APPLAUNCH\&quot;,\&quot;sub_stage\&quot;:\&quot;LAUNCH_MAIN_ACTIVITY_INIT\&quot;,\&quot;extra_info\&quot;:\&quot;\&quot;,\&quot;process_name\&quot;:\&quot;\&quot;,\&quot;is_slow\&quot;:0},{\&quot;event_time\&quot;:1.574851548173E9,\&quot;tag_id\&quot;:1574851547692,\&quot;during_time\&quot;:63,\&quot;type\&quot;:1,\&quot;stage\&quot;:\&quot;QAPM_APPLAUNCH\&quot;,\&quot;sub_stage\&quot;:\&quot;LAUNCH_MAIN_ACTIVITY_INIT\&quot;,\&quot;extra_info\&quot;:\&quot;\&quot;,\&quot;process_name\&quot;:\&quot;\&quot;,\&quot;is_slow\&quot;:0},{\&quot;event_time\&quot;:1.574851548173E9,\&quot;tag_id\&quot;:1574851547692,\&quot;during_time\&quot;:0,\&quot;type\&quot;:0,\&quot;stage\&quot;:\&quot;QAPM_APPLAUNCH\&quot;,\&quot;sub_stage\&quot;:\&quot;LAUNCH_ACTIVITY_LOAD\&quot;,\&quot;extra_info\&quot;:\&quot;\&quot;,\&quot;process_name\&quot;:\&quot;\&quot;,\&quot;is_slow\&quot;:0},{\&quot;event_time\&quot;:1.574851550948E9,\&quot;tag_id\&quot;:1574851547692,\&quot;during_time\&quot;:2775,\&quot;type\&quot;:1,\&quot;stage\&quot;:\&quot;QAPM_APPLAUNCH\&quot;,\&quot;sub_stage\&quot;:\&quot;LAUNCH_ACTIVITY_LOAD\&quot;,\&quot;extra_info\&quot;:\&quot;\&quot;,\&quot;process_name\&quot;:\&quot;\&quot;,\&quot;is_slow\&quot;:0}]}&quot;,&#xd;
+    &quot;api_ver&quot;: &quot;1&quot;,&#xd;
+    &quot;app_key&quot;: &quot;33e15431&quot;,&#xd;
+    &quot;device&quot;: &quot;MI+5X&quot;,&#xd;
+    &quot;deviceid&quot;: &quot;a78b86ca770eccdad6637db5ed54d7d7&quot;,&#xd;
+    &quot;manu&quot;: &quot;Xiaomi&quot;,&#xd;
+    &quot;os&quot;: &quot;7.1.2&quot;,&#xd;
+    &quot;plugin_ver&quot;: &quot;1&quot;,&#xd;
+    &quot;sdk_ver&quot;: &quot;1.0&quot;,&#xd;
+    &quot;uin&quot;: &quot;11223344&quot;,&#xd;
+    &quot;rdmuuid&quot;: &quot;e6ae1282-ceb8-4237-89bd-2d23d00a8e13&quot;,&#xd;
+    &quot;version&quot;: &quot;4.0.1&quot;,&#xd;
+    &quot;client_identify&quot;: &quot;21b55e23309e496743a59ec035b3b94b&quot;&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">tmf.com</stringProp>
+          <stringProp name="HTTPSampler.port">30080</stringProp>
+          <stringProp name="HTTPSampler.protocol">http</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/entrance/17517/uploadJson/?p_id=17517&amp;plugin=107</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="内存个例" enabled="true">
+          <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
+            <collectionProp name="HTTPFileArgs.files">
+              <elementProp name="/home/vergil/Downloads/qq-files/356580285/file_recv/d0b2fd7f-fda0-4842-87f9-1a9e000da47e.zip" elementType="HTTPFileArg">
+                <stringProp name="File.path">/home/vergil/Downloads/qq-files/356580285/file_recv/d0b2fd7f-fda0-4842-87f9-1a9e000da47e.zip</stringProp>
+                <stringProp name="File.paramname">file</stringProp>
+                <stringProp name="File.mimetype">application/x-zip-compressed</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="uin" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">entrance_test_case</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">uin</stringProp>
+              </elementProp>
+              <elementProp name="api_ver" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">1</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">api_ver</stringProp>
+              </elementProp>
+              <elementProp name="plugin" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">107</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">plugin</stringProp>
+              </elementProp>
+              <elementProp name="version" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">1.0.1</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">version</stringProp>
+              </elementProp>
+              <elementProp name="p_id" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">17517</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">p_id</stringProp>
+              </elementProp>
+              <elementProp name="client_identify" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">7918C1CA-688B-42F9-A8F3-0697872EBC2</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">client_identify</stringProp>
+              </elementProp>
+              <elementProp name="os" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">9</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">os</stringProp>
+              </elementProp>
+              <elementProp name="deviceid" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">D618B06E-8A91-4E27-9581-1CF86895B818</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">deviceid</stringProp>
+              </elementProp>
+              <elementProp name="arch" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">arm64</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">arch</stringProp>
+              </elementProp>
+              <elementProp name="plugin_ver" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">1</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">plugin_ver</stringProp>
+              </elementProp>
+              <elementProp name="device" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">P10</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">device</stringProp>
+              </elementProp>
+              <elementProp name="rdmuuid" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">90a3a6bf-7a05-3513-87bf-c35ccb6cdfdf</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">rdmuuid</stringProp>
+              </elementProp>
+              <elementProp name="sdk_ver" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">1.0.0</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">sdk_ver</stringProp>
+              </elementProp>
+              <elementProp name="stage" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">aio</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">stage</stringProp>
+              </elementProp>
+              <elementProp name="cost_time" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">50</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">cost_time</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">tmf.com</stringProp>
+          <stringProp name="HTTPSampler.port">30080</stringProp>
+          <stringProp name="HTTPSampler.protocol">http</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/entrance/17517/uploadFile/?p_id=17517&amp;plugin=107</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">true</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="固定定时器" enabled="true">
+          <stringProp name="ConstantTimer.delay">1000</stringProp>
+        </ConstantTimer>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="sigkill" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+    &quot;p_id&quot;: 13581,&#xd;
+    &quot;api_ver&quot;: 1,&#xd;
+    &quot;client_identify&quot;: &quot;CC179F5D-C4B7-4372-8FAF-8A395AAB0CE2&quot;,&#xd;
+    &quot;plugin&quot;: 35,&#xd;
+    &quot;plugin_ver&quot;: 1,&#xd;
+    &quot;user_classification&quot;: &quot;1&quot;,&#xd;
+    &quot;device_classification&quot;: &quot;2&quot;,&#xd;
+    &quot;version&quot;: &quot;8.2.6.630&quot;,&#xd;
+    &quot;uin&quot;: &quot;test&quot;,&#xd;
+    &quot;rdmuuid&quot;: &quot;9537c113-3bf4-434e-be19-cb86e94cfbe1&quot;,&#xd;
+    &quot;arch&quot;: &quot;arm64&quot;,&#xd;
+    &quot;device&quot;: &quot;iPhone9,2&quot;,&#xd;
+    &quot;deviceid&quot;: &quot;DED833CD-F546-41D3-921B-ED76C401995C&quot;,&#xd;
+    &quot;os&quot;: &quot;Version 13.1.2 (Build 17A860)&quot;,&#xd;
+    &quot;parts&quot;: [&#xd;
+        {&#xd;
+            &quot;category&quot;: &quot;sigkill&quot;,&#xd;
+            &quot;s&quot;: 1514193087.123,&#xd;
+            &quot;e&quot;: 1514202027.147,&#xd;
+            &quot;enable_oom&quot;: false,&#xd;
+            &quot;crash_stage&quot;: &quot;QQMemoryMonitorViewController&quot;,&#xd;
+            &quot;crash_type&quot;: 3,&#xd;
+            &quot;mem_warning_cnt&quot;: 2,&#xd;
+            &quot;mem_used&quot;: &quot;24900&quot;,&#xd;
+            &quot;stack_oom&quot;: {&#xd;
+                &quot;time_slices&quot;: [&#xd;
+                    {&#xd;
+                        &quot;threads&quot;: [&#xd;
+                            {&#xd;
+                                &quot;frame&quot;: {&#xd;
+                                    &quot;calls&quot;: [&#xd;
+                                        &quot;1 APMDemo 0x1029e0000 0x1029e8130&quot;,&#xd;
+                                        &quot;2 APMDemo 0x1029e0000 0x1029e8130&quot;,&#xd;
+                                        &quot;3 VideoToolbox 0x1c9fbe000 0x1ca0207f0&quot;,&#xd;
+                                        &quot;4 libdispatch.dylib 0x1c5eaf000 0x1c5f0f6c8&quot;,&#xd;
+                                        &quot;5 libdispatch.dylib 0x1c5eaf000 0x1c5f10484&quot;,&#xd;
+                                        &quot;6 libdispatch.dylib 0x1c5eaf000 0x1c5eeb0f0&quot;,&#xd;
+                                        &quot;7 libdispatch.dylib 0x1c5eaf000 0x1c5eebaf4&quot;,&#xd;
+                                        &quot;8 libdispatch.dylib 0x1c5eaf000 0x1c5ef3f14&quot;,&#xd;
+                                        &quot;9 APMDemo 0x1029e0000 0x1029e97ec&quot;&#xd;
+                                    ]&#xd;
+                                },&#xd;
+                                &quot;malloc_count&quot;: 66,&#xd;
+                                &quot;malloc_size&quot;: 100375160,&#xd;
+                                &quot;stack_type&quot;: &quot;vm&quot;&#xd;
+                            }&#xd;
+                        ]&#xd;
+                    }&#xd;
+                ]&#xd;
+            }&#xd;
+        }&#xd;
+    ]&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">tmf.com</stringProp>
+          <stringProp name="HTTPSampler.port">30080</stringProp>
+          <stringProp name="HTTPSampler.protocol">http</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/entrance/13581/uploadJson/?p_id=13581&amp;plugin=107</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Baidu" enabled="false">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <intProp name="LoopController.loops">-1</intProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">10</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">60</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <boolProp name="ThreadGroup.delayedStart">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="百度" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">www.baidu.com</stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <PreciseThroughputTimer guiclass="TestBeanGUI" testclass="PreciseThroughputTimer" testname="准确的吞吐量定时器" enabled="false">
+            <doubleProp>
+              <name>allowedThroughputSurplus</name>
+              <value>1.0</value>
+              <savedValue>0.0</savedValue>
+            </doubleProp>
+            <intProp name="batchSize">1</intProp>
+            <intProp name="batchThreadDelay">0</intProp>
+            <longProp name="duration">3600</longProp>
+            <intProp name="exactLimit">10000</intProp>
+            <longProp name="randomSeed">0</longProp>
+            <doubleProp>
+              <name>throughput</name>
+              <value>100.0</value>
+              <savedValue>0.0</savedValue>
+            </doubleProp>
+            <intProp name="throughputPeriod">3600</intProp>
+          </PreciseThroughputTimer>
+          <hashTree/>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="统一随机定时器" enabled="false">
+            <stringProp name="ConstantTimer.delay">0</stringProp>
+            <stringProp name="RandomTimer.range">100.0</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          <ConstantThroughputTimer guiclass="TestBeanGUI" testclass="ConstantThroughputTimer" testname="常数吞吐量定时器" enabled="true">
+            <intProp name="calcMode">0</intProp>
+            <doubleProp>
+              <name>throughput</name>
+              <value>0.0</value>
+              <savedValue>0.0</savedValue>
+            </doubleProp>
+          </ConstantThroughputTimer>
+          <hashTree/>
+        </hashTree>
+        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="true">
+          <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="influxdbMetricsSender" elementType="Argument">
+                <stringProp name="Argument.name">influxdbMetricsSender</stringProp>
+                <stringProp name="Argument.value">org.apache.jmeter.visualizers.backend.influxdb.HttpMetricsSender</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="influxdbUrl" elementType="Argument">
+                <stringProp name="Argument.name">influxdbUrl</stringProp>
+                <stringProp name="Argument.value">http://jmeter-influxdb:8086/write?db=jmeter</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="application" elementType="Argument">
+                <stringProp name="Argument.name">application</stringProp>
+                <stringProp name="Argument.value">百度</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="measurement" elementType="Argument">
+                <stringProp name="Argument.name">measurement</stringProp>
+                <stringProp name="Argument.value">jmeter</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="summaryOnly" elementType="Argument">
+                <stringProp name="Argument.name">summaryOnly</stringProp>
+                <stringProp name="Argument.value">false</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="samplersRegex" elementType="Argument">
+                <stringProp name="Argument.name">samplersRegex</stringProp>
+                <stringProp name="Argument.value">.*</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="percentiles" elementType="Argument">
+                <stringProp name="Argument.name">percentiles</stringProp>
+                <stringProp name="Argument.value">90;95;99</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="testTitle" elementType="Argument">
+                <stringProp name="Argument.name">testTitle</stringProp>
+                <stringProp name="Argument.value">百度首页1</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="eventTags" elementType="Argument">
+                <stringProp name="Argument.name">eventTags</stringProp>
+                <stringProp name="Argument.value"></stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="classname">org.apache.jmeter.visualizers.backend.influxdb.InfluxdbBackendListenerClient</stringProp>
+        </BackendListener>
+        <hashTree/>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Baidu" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">startnextloop</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">3000</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">10</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <boolProp name="ThreadGroup.delayedStart">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="百度" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">www.baidu.com</stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="false">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <PreciseThroughputTimer guiclass="TestBeanGUI" testclass="PreciseThroughputTimer" testname="准确的吞吐量定时器" enabled="false">
+            <doubleProp>
+              <name>allowedThroughputSurplus</name>
+              <value>1.0</value>
+              <savedValue>0.0</savedValue>
+            </doubleProp>
+            <intProp name="batchSize">1</intProp>
+            <intProp name="batchThreadDelay">0</intProp>
+            <longProp name="duration">3600</longProp>
+            <intProp name="exactLimit">10000</intProp>
+            <longProp name="randomSeed">0</longProp>
+            <doubleProp>
+              <name>throughput</name>
+              <value>100.0</value>
+              <savedValue>0.0</savedValue>
+            </doubleProp>
+            <intProp name="throughputPeriod">3600</intProp>
+          </PreciseThroughputTimer>
+          <hashTree/>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="统一随机定时器" enabled="false">
+            <stringProp name="ConstantTimer.delay">0</stringProp>
+            <stringProp name="RandomTimer.range">100.0</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          <ConstantThroughputTimer guiclass="TestBeanGUI" testclass="ConstantThroughputTimer" testname="常数吞吐量定时器" enabled="false">
+            <intProp name="calcMode">0</intProp>
+            <doubleProp>
+              <name>throughput</name>
+              <value>10.0</value>
+              <savedValue>0.0</savedValue>
+            </doubleProp>
+          </ConstantThroughputTimer>
+          <hashTree/>
+          <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="固定定时器" enabled="true">
+            <stringProp name="ConstantTimer.delay">11</stringProp>
+          </ConstantTimer>
+          <hashTree/>
+        </hashTree>
+        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="true">
+          <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="influxdbMetricsSender" elementType="Argument">
+                <stringProp name="Argument.name">influxdbMetricsSender</stringProp>
+                <stringProp name="Argument.value">org.apache.jmeter.visualizers.backend.influxdb.HttpMetricsSender</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="influxdbUrl" elementType="Argument">
+                <stringProp name="Argument.name">influxdbUrl</stringProp>
+                <stringProp name="Argument.value">http://jmeter-influxdb:8086/write?db=jmeter</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="application" elementType="Argument">
+                <stringProp name="Argument.name">application</stringProp>
+                <stringProp name="Argument.value">百度</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="measurement" elementType="Argument">
+                <stringProp name="Argument.name">measurement</stringProp>
+                <stringProp name="Argument.value">jmeter</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="summaryOnly" elementType="Argument">
+                <stringProp name="Argument.name">summaryOnly</stringProp>
+                <stringProp name="Argument.value">false</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="samplersRegex" elementType="Argument">
+                <stringProp name="Argument.name">samplersRegex</stringProp>
+                <stringProp name="Argument.value">.*</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="percentiles" elementType="Argument">
+                <stringProp name="Argument.name">percentiles</stringProp>
+                <stringProp name="Argument.value">90;95;99</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="testTitle" elementType="Argument">
+                <stringProp name="Argument.name">testTitle</stringProp>
+                <stringProp name="Argument.value">百度首页2</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="eventTags" elementType="Argument">
+                <stringProp name="Argument.name">eventTags</stringProp>
+                <stringProp name="Argument.value"></stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="classname">org.apache.jmeter.visualizers.backend.influxdb.InfluxdbBackendListenerClient</stringProp>
+        </BackendListener>
+        <hashTree/>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

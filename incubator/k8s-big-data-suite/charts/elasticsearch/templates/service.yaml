@@ -1,0 +1,64 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ template "uname" . }}
+spec:
+  type: ClusterIP
+  selector:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    app: "{{ template "uname" . }}"
+  ports:
+  {{- if eq .Values.service.type "ClusterIP" }}
+  - name: http
+    protocol: TCP
+    port: {{ .Values.httpPort }}
+  {{- end }}
+  - name: transport
+    protocol: TCP
+    port: {{ .Values.transportPort }}
+---
+{{- if eq .Values.service.type "NodePort" }}
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ template "uname" . }}-node-port
+spec:
+  type: NodePort
+  selector:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    app: "{{ template "uname" . }}"
+  ports:
+  - name: http
+    protocol: TCP
+    port: {{ .Values.httpPort }}
+    nodePort: {{ .Values.service.nodePort }}
+---
+{{- end }}
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ template "uname" . }}-headless
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    app: "{{ template "uname" . }}"
+  annotations:
+    # Create endpoints also if the related pod isn't ready
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  clusterIP: None # This is needed for statefulset hostnames like elasticsearch-0 to resolve
+  # Create endpoints also if the related pod isn't ready
+  publishNotReadyAddresses: true
+  selector:
+    app: "{{ template "uname" . }}"
+  ports:
+  - name: http
+    port: {{ .Values.httpPort }}
+  - name: transport
+    port: {{ .Values.transportPort }}

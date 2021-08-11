@@ -1,0 +1,53 @@
+# Default values for client.
+# This is a YAML-formatted file.
+# Declare name/value pairs to be passed into your templates.
+# name: value
+imagePullSecrets: ""
+hadoopHeapSize: 1024
+hadoopConf:
+  enabled: true
+
+global:
+  zookeeperQuorumSize: 3
+  hiveMetastoreSize: 2
+
+ssh:
+  enabled: true
+  name: client-ssh
+  password: ""
+  servicePort: 22
+  containerPort: 22
+  nodePort: 31122
+  serviceType: ClusterIP
+
+client:
+  name: client
+  component: "client"
+  replicas: 1
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+  imageName: "ccr.ccs.tencentyun.com/k8s-big-data/client"
+  imageTag: "v2006241010"
+  nodeSelector: {}
+
+volume:
+  enabled: true
+  accessMode: ReadWriteOnce
+  size: 10Gi
+  storageClass: ""
+
+spark-defaults.conf:
+  spark.app.id: KubernetesSpark
+  spark.history.fs.cleaner.enabled: true
+  spark.ui.showConsoleProgress: true
+  spark.eventLog.compress: false
+  spark.eventLog.enabled: true
+  spark.ui.proxyBase: /spark/
+  spark.ui.reverseProxy: true
+  spark.ui.reverseProxyUrl: http://<domain>/spark/
+
+script:
+  k8sClientPath: file/k8s_client.py
+  resetConnectPath: file/reset-connect.sh

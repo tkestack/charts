@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tke-autoscaling-placeholder
+  labels:
+    {{- include "tke-autoscaling-placeholder.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "tke-autoscaling-placeholder.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "tke-autoscaling-placeholder.selectorLabels" . | nindent 8 }}
+    spec:
+      priorityClassName: {{ .Values.lowPriorityClass.name }}
+      restartPolicy: Always
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: placeholder
+        image: "{{ .Values.image }}"
+        imagePullPolicy: "{{ .Values.imagePullPolicy }}"
+        resources:
+        {{- toYaml .Values.resources | nindent 10 }}

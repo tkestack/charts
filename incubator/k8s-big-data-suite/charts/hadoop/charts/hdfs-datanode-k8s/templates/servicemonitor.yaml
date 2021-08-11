@@ -1,0 +1,34 @@
+{{- if and .Values.global.metrics.enabled .Values.global.metrics.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "hdfs-k8s.datanode.fullname" . }}
+  labels:
+    app: {{ template "hdfs-k8s.datanode.name" . }}
+    chart: {{ template "hdfs-k8s.subchart" . }}
+    release: {{ .Release.Name }}
+spec:
+  endpoints:
+  - port: metrics
+    {{- if .Values.global.metrics.serviceMonitor.interval }}
+    interval: {{ .Values.global.metrics.serviceMonitor.interval }}
+    {{- end }}
+    {{- if .Values.global.metrics.serviceMonitor.scrapeTimeout }}
+    scrapeTimeout: {{ .Values.global.metrics.serviceMonitor.scrapeTimeout }}
+    {{- end }}
+{{- if .Values.global.metrics.serviceMonitor.metricRelabelings }}
+    metricRelabelings:
+{{ tpl (toYaml .Values.global.metrics.serviceMonitor.metricRelabelings | indent 4) . }}
+{{- end }}
+{{- if .Values.global.metrics.serviceMonitor.relabelings }}
+    relabelings:
+{{ toYaml .Values.global.metrics.serviceMonitor.relabelings | indent 4 }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ template "hdfs-k8s.datanode.name" . }}
+      release: {{ .Release.Name }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+{{- end }}

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.PrometheusName }}-rules
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.PrometheusName }}
+data:
+  cpu-usage.rule: |
+    groups:
+      - name: NodeCPUUsage
+        rules:
+          - alert: NodeCPUUsage
+            expr: (100 - (avg by (instance) (irate(node_cpu{name="node-exporter",mode="idle"}[5m])) * 100)) > 75
+            for: 2m
+            labels:
+              severity: "page"
+            annotations:
+              summary: "\{\{$labels.instance\}\}: High CPU usage detected"
+              description: "\{\{$labels.instance\}\}: CPU usage is above 75% (current value is: \{\{ $value \}\})"

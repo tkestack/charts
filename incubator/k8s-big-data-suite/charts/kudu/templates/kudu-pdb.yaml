@@ -1,0 +1,11 @@
+{{- if .Values.isMultiAz }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Values.tserver.label }}-pdb
+spec:
+  maxUnavailable: {{ include "kudu.max_failovers" . }}
+  selector:
+    matchLabels:
+      app: {{ .Values.tserver.label }}
+{{- end }}

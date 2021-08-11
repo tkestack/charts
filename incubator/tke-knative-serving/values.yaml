@@ -1,0 +1,81 @@
+certmanager:
+  clusterissuer: ""
+  enabled: false
+  httpProtocol: Enabled
+  provider: cert-manager
+  typeissuer: ClusterIssuer
+  webhookimage: ccr.ccs.tencentyun.com/cloudrun-net-certmanager/webhook-29139c5ce1fe7007906a2b725aaa018b:v0.16.tke.1
+  controllerimage: ccr.ccs.tencentyun.com/cloudrun-net-certmanager/controller-b5455ad1ba7b683d126966c08026cd15:v0.16.tke.1
+
+core:
+  activator:
+    autoscaling:
+      maxReplicas: 20
+      minReplicas: 1
+      targetCPUUtilizationPercentage: 100
+    name: activator
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 1
+    priorityClassName: ""
+    resources: {}
+    image: ccr.ccs.tencentyun.com/cloudrun/activator-ecd51ca5034883acbe737fde417a3d86:v0.16.tke.1
+  affinity: {}
+  autoscaler:
+    name: autoscaler
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 1
+    priorityClassName: ""
+    replicaCount: 1
+    resources: {}
+    image: ccr.ccs.tencentyun.com/cloudrun/autoscaler-12c0fa24db31956a7cfa673210e4fa13:v0.16.tke.1
+  controller:
+    name: controller
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 1
+    priorityClassName: ""
+    resources: {}
+    image: ccr.ccs.tencentyun.com/cloudrun/controller-f6fdb41c6acbc726e29a3104ff2ef720:v0.16.tke.1
+  domain: xip.io
+  lifecycle: {}
+  nodeSelector: {}
+  podAnnotations: {}
+  podLabels: {}
+  tolerations: []
+  webhook:
+    name: webhook
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 1
+    priorityClassName: ""
+    resources: {}
+    image: ccr.ccs.tencentyun.com/cloudrun/webhook-261c6506fca17bc41be50b3461f98f1c:v0.16.tke.1
+  queueimage: ccr.ccs.tencentyun.com/cloudrun/queue-39be6f1d08a095bd076a71d288d295b6:v0.16.tke.1
+  
+istio:
+  webhookimage: ccr.ccs.tencentyun.com/cloudrun-net-istio/webhook-10f01925599200cc26bc8dd53cba7a95:v0.16.tke.1
+#   controllerimage: ccr.ccs.tencentyun.com/cloudrun-net-istio/controller-7b82f356e674cfa4acc296344eb87e89:v0.16.tke.1
+  controllerimage: ccr.ccs.tencentyun.com/cloudrun-net-istio/controller:v0.16.tke.1
+  affinity: {}
+  externalIngressgateway: istio-ingressgateway
+  lifecycle: {}
+  localIngressgateway: cluster-local-gateway
+  namespace: istio-system
+  networking:
+    name: networking
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 1
+    resources: {}
+  nodeSelector: {}
+  podAnnotations: {}
+  podLabels: {}
+  tolerations: []
+  webhook:
+    name: webhook
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 1
+    resources: {}

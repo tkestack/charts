@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "client.fullname" . }}
+  labels:
+    app: {{ include "client.fullname" . }}
+    chart:  "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name }}
+data:
+  k8s_client.py: |-
+{{ .Files.Get .Values.script.k8sClientPath | indent 4 }}
+  reset-connect.sh: |-
+{{ .Files.Get .Values.script.resetConnectPath | indent 4 }}
+  hdfs-fsck.sh: |-
+{{ .Files.Get "file/hdfs-fsck.sh" | indent 4 }}
+  spark-defaults.conf: |
+{{ include "client.spark.defaults.config" . | indent 4 }}
+
+  startup.sh: |
+    #!/bin/bash
+    cp /etc/script/spark-defaults.conf /opt/spark/conf/spark-defaults.conf
+    ssh_path=/data/.ssh/authorized_keys
+    if [ ! -f $ssh_path ]; then
+      mkdir -p /data/.ssh/
+      touch $ssh_path
+    fi
+    bash /opt/start-ssh.sh
+    tail -f /dev/null

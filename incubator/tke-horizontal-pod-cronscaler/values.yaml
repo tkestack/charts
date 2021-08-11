@@ -1,0 +1,15 @@
+namespace: "kube-system"
+
+controller:
+  image: "ccr.ccs.tencentyun.com/tkeimages/tke-hpc-controller:v1.0.0"
+  replicas: 2
+
+imagePullPolicy: "IfNotPresent"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 20Mi
+  limits:
+    cpu: 100m
+    memory: 100Mi

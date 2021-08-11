@@ -1,0 +1,94 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.customHadoopConfigName }}
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name }}
+data:
+  core-site.xml: |
+    <?xml version="1.0"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+    <configuration>
+      <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://kdl-hadoop-hdfs-nn</value>
+      </property>
+      <property>
+        <name>ha.zookeeper.quorum</name>
+        <value>kdl-zookeeper-1.kdl-zookeeper-headless.default.svc.cluster.local:2181,kdl-zookeeper-2.kdl-zookeeper-headless.default.svc.cluster.local:2181,kdl-zookeeper-0.kdl-zookeeper-headless.default.svc.cluster.local:2181</value>
+      </property>
+    </configuration>
+
+  hive-site.xml: |
+    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+    <configuration>
+      <property>
+         <name>hive.metastore.warehouse.dir</name>
+         <value>hdfs://{{ .Release.Name }}-hadoop-hdfs-nn/user/hive/warehouse/</value>
+      </property>
+    </configuration>
+
+  hdfs-site.xml: |
+    <?xml version="1.0"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+    <configuration>
+      <property>
+        <name>dfs.nameservices</name>
+        <value>kdl-hadoop-hdfs-nn</value>
+      </property>
+      <property>
+        <name>dfs.ha.namenodes.kdl-hadoop-hdfs-nn</name>
+        <value>nn0,nn1</value>
+      </property>
+      <property>
+        <name>dfs.namenode.rpc-address.kdl-hadoop-hdfs-nn.nn0</name>
+        <value>kdl-hadoop-hdfs-nn-0.kdl-hadoop-hdfs-nn.default.svc.cluster.local:8020</value>
+      </property>
+      <property>
+        <name>dfs.namenode.rpc-address.kdl-hadoop-hdfs-nn.nn1</name>
+        <value>kdl-hadoop-hdfs-nn-1.kdl-hadoop-hdfs-nn.default.svc.cluster.local:8020</value>
+      </property>
+      <property>
+        <name>dfs.namenode.http-address.kdl-hadoop-hdfs-nn.nn0</name>
+        <value>kdl-hadoop-hdfs-nn-0.kdl-hadoop-hdfs-nn.default.svc.cluster.local:50070</value>
+      </property>
+      <property>
+        <name>dfs.namenode.http-address.kdl-hadoop-hdfs-nn.nn1</name>
+        <value>kdl-hadoop-hdfs-nn-1.kdl-hadoop-hdfs-nn.default.svc.cluster.local:50070</value>
+      </property>
+      <property>
+        <name>dfs.namenode.shared.edits.dir</name>
+        <value>qjournal://kdl-hadoop-hdfs-jn-1.kdl-hadoop-hdfs-jn.default.svc.cluster.local:8485;kdl-hadoop-hdfs-jn-2.kdl-hadoop-hdfs-jn.default.svc.cluster.local:8485;kdl-hadoop-hdfs-jn-0.kdl-hadoop-hdfs-jn.default.svc.cluster.local:8485/kdl-hadoop-hdfs-nn</value>
+      </property>
+      <property>
+        <name>dfs.ha.automatic-failover.enabled</name>
+        <value>true</value>
+      </property>
+      <property>
+        <name>dfs.ha.fencing.methods</name>
+        <value>shell(/bin/true)</value>
+      </property>
+      <property>
+        <name>dfs.journalnode.edits.dir</name>
+        <value>/hadoop/dfs/journal</value>
+      </property>
+      <property>
+        <name>dfs.client.failover.proxy.provider.kdl-hadoop-hdfs-nn</name>
+        <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+      </property>
+      <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>file:///hadoop/dfs/name</value>
+      </property>
+      <property>
+        <name>dfs.namenode.datanode.registration.ip-hostname-check</name>
+        <value>false</value>
+      </property>
+      <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>/hadoop/dfs/data/0</value>
+      </property>
+    </configuration>

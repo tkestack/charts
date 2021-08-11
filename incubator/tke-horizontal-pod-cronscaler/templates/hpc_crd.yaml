@@ -1,0 +1,169 @@
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.5
+  creationTimestamp: null
+  name: horizontalpodcronscalers.autoscaling.cloud.tencent.com
+spec:
+  group: autoscaling.cloud.tencent.com
+  names:
+    kind: HorizontalPodCronscaler
+    listKind: HorizontalPodCronscalerList
+    plural: horizontalpodcronscalers
+    shortNames:
+    - hpc
+    - hpcs
+    singular: horizontalpodcronscaler
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      description: HorizontalPodCronscaler is the Schema for the horizontalpodcronscalers
+        API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: HorizontalPodCronscalerSpec defines the desired state of HorizontalPodCronscaler
+          properties:
+            crons:
+              description: Crons stores the cron jobs setted by user
+              items:
+                description: CronJob is
+                properties:
+                  excludeDates:
+                    items:
+                      type: string
+                    type: array
+                  maxSize:
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  minSize:
+                    format: int32
+                    minimum: 1
+                    type: integer
+                  name:
+                    description: the cron Job Name
+                    minLength: 1
+                    type: string
+                  runOnce:
+                    description: job will only run once if enabled.
+                    type: boolean
+                  schedule:
+                    description: The schedule in Cron format, see https://en.wikipedia.org/wiki/Cron.
+                    minLength: 1
+                    type: string
+                  targetSize:
+                    description: TargetSize is used when target resource is deployment
+                      or statefulset
+                    format: int32
+                    type: integer
+                required:
+                - name
+                - schedule
+                type: object
+              minItems: 1
+              type: array
+            scaleTarget:
+              description: scaleTargetRef points to the target resource to scale
+              properties:
+                apiVersion:
+                  type: string
+                kind:
+                  type: string
+                name:
+                  type: string
+                namespace:
+                  type: string
+              required:
+              - apiVersion
+              - kind
+              - name
+              - namespace
+              type: object
+          required:
+          - crons
+          - scaleTarget
+          type: object
+        status:
+          description: HorizontalPodCronscalerStatus defines the observed state of
+            HorizontalPodCronscaler
+          properties:
+            jobStatus:
+              items:
+                description: JobStatus is ...
+                properties:
+                  excludeDates:
+                    items:
+                      type: string
+                    type: array
+                  id:
+                    type: integer
+                  lastScheduleTime:
+                    description: Information when was the last time the job was successfully
+                      scheduled.
+                    format: date-time
+                    type: string
+                  maxSize:
+                    description: setted  when target is HPA
+                    format: int32
+                    type: integer
+                  message:
+                    description: message about last job's result
+                    type: string
+                  minSize:
+                    format: int32
+                    type: integer
+                  name:
+                    description: Type of job condition, Complete or Failed.
+                    type: string
+                  runOnce:
+                    type: boolean
+                  schedule:
+                    description: The schedule in Cron format, see https://en.wikipedia.org/wiki/Cron.
+                    minLength: 1
+                    type: string
+                  state:
+                    description: JobState is ...
+                    type: string
+                  targetSize:
+                    format: int32
+                    type: integer
+                required:
+                - id
+                - name
+                - runOnce
+                - schedule
+                - state
+                type: object
+              type: array
+          required:
+          - jobStatus
+          type: object
+      type: object
+  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

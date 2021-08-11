@@ -1,0 +1,24 @@
+---
+
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: config.webhook.net-certmanager.networking.internal.knative.dev
+  labels:
+    serving.knative.dev/release: "{{ .Chart.AppVersion }}"
+webhooks:
+- admissionReviewVersions:
+  - v1beta1
+  clientConfig:
+    service:
+      name: net-certmanager-webhook
+      namespace: knative-serving
+  failurePolicy: Fail
+  sideEffects: None
+  name: config.webhook.net-certmanager.networking.internal.knative.dev
+  namespaceSelector:
+    matchExpressions:
+    - key: serving.knative.dev/release
+      operator: Exists
+
+---

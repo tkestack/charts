@@ -1,0 +1,55 @@
+{{- if .Values.certmanager.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: networking-certmanager
+  namespace: knative-serving
+  labels:
+    serving.knative.dev/release: "{{ .Chart.AppVersion }}"
+    networking.knative.dev/certificate-provider: {{ .Values.certmanager.provider }}
+spec:
+  selector:
+    matchLabels:
+      app: networking-certmanager
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        app: networking-certmanager
+        serving.knative.dev/release: "{{ .Chart.AppVersion }}"
+    spec:
+      serviceAccountName: controller
+      containers:
+      - name: networking-certmanager
+        # This is the Go import path for the binary that is containerized
+        # and substituted here.
+        image: "{{ .Values.certmanager.controllerimage }}"
+        resources:
+          requests:
+            cpu: 30m
+            memory: 40Mi
+          limits:
+            cpu: 300m
+            memory: 400Mi
+        env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - # TODO(https://github.com/knative/pkg/pull/953): Remove stackdriver specific config
+          name: METRICS_DOMAIN
+          value: knative.dev/serving
+        securityContext:
+          allowPrivilegeEscalation: false
+        ports:
+        - name: metrics
+          containerPort: 9090
+        - name: profiling
+          containerPort: 8008
+---
+{{- end }}

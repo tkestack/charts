@@ -1,0 +1,57 @@
+{{- if and .Values.metrics.enabled .Values.metrics.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Values.master.label }}-svm
+  labels:
+    app: {{ .Values.master.label }}
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Values.Component }}"
+spec:
+  endpoints:
+  - port: metrics
+    {{- if .Values.metrics.serviceMonitor.interval }}
+    interval: {{ .Values.metrics.serviceMonitor.interval }}
+    {{- end }}
+    {{- if .Values.metrics.serviceMonitor.scrapeTimeout }}
+    scrapeTimeout: {{ .Values.metrics.serviceMonitor.scrapeTimeout }}
+    {{- end }}
+{{- if .Values.metrics.serviceMonitor.metricRelabelings }}
+    metricRelabelings:
+{{ tpl (toYaml .Values.metrics.serviceMonitor.metricRelabelings | indent 4) . }}
+{{- end }}
+{{- if .Values.metrics.serviceMonitor.relabelings }}
+    relabelings:
+{{ toYaml .Values.metrics.serviceMonitor.relabelings | indent 4 }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.master.label }}
+      heritage: {{ .Release.Service | quote }}
+      release: {{ .Release.Name | quote }}
+      chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+      component: "{{ .Values.Component }}"
+  namespaceSelector:
+    matchNames:
+      - "{{ .Release.Namespace }}"
+{{- end }}
+{{- if .Values.metrics.enabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.master.label }}-dashboards
+  labels:
+    {{- if .Values.metrics.dashboardsLabel }}
+    {{ .Values.metrics.dashboardsLabel }}: "1"
+    {{- end }}
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Values.Component }}"
+data:
+  kudu.json: |-
+{{ .Files.Get "dashboards/kudu.json" | indent 4 }}
+{{- end }}

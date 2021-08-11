@@ -1,0 +1,161 @@
+{{- $head := . -}}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: "{{ .Values.master.label }}"
+  labels:
+    app: "{{ .Values.master.label }}"
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Values.Component }}"
+spec:
+  serviceName: "{{ .Values.master.name }}"
+  podManagementPolicy: {{ .Values.PodManagementPolicy }}
+  replicas: {{ .Values.master.replicas }}
+
+  volumeClaimTemplates:
+    {{- range $i := until (int (.Values.master.storage.count )) }}
+    - metadata:
+        name: datadir{{ $i }}
+        labels:
+          app: "{{ $head.Values.master.label }}"
+          heritage: {{ $head.Release.Service | quote }}
+          release: {{ $head.Release.Name | quote }}
+          chart: "{{ $head.Chart.Name }}-{{ $head.Chart.Version }}"
+          component: "{{ $head.Values.Component }}"
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        {{- if $head.Values.master.storage.storageClass }}
+        storageClassName: {{ $head.Values.master.storage.storageClass }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ $head.Values.master.storage.size }}
+    {{- end }}
+
+  updateStrategy:
+    type: {{ .Values.updateStrategy }}
+
+  selector:
+    matchLabels:
+      app: "{{ .Values.master.label }}"
+      heritage: {{ .Release.Service | quote }}
+      release: {{ .Release.Name | quote }}
+      chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+      component: "{{ .Values.Component }}"
+  template:
+    metadata:
+      {{ if .Values.networkAnnotation }}
+      annotations:
+{{ toYaml .Values.networkAnnotation | indent 8}}
+      {{ end }}
+      labels:
+        app: "{{ .Values.master.label }}"
+        heritage: {{ .Release.Service | quote }}
+        release: {{ .Release.Name | quote }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        component: "{{ .Values.Component }}"
+    spec:
+      {{- if .Values.image.pullSecretName }}
+      imagePullSecrets:
+      - name: {{ .Values.image.pullSecretName }}
+      {{ end }}
+      {{- if .Values.master.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.master.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.master.securityContext.enabled }}
+      securityContext:
+        runAsUser: {{ .Values.master.securityContext.runAsUser }}
+      {{- end }}
+      containers:
+      {{- if .Values.metrics.enabled }}
+      - name: kudu-exporter
+        image: "{{ .Values.metrics.image }}:{{ .Values.metrics.imageTag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args:
+         - -http_endpoint=http://127.0.0.1:8051/metrics
+         - -prefix={{ .Values.metrics.prefix }}
+         - -port={{ .Values.metrics.port }}
+         - -interval={{ .Values.metrics.interval }}
+        resources:
+{{ toYaml .Values.metrics.resources | indent 10 }}
+      {{- end }}
+      - name: "{{ .Values.master.label }}"
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: KUDU_MASTERS
+          value: "{{ include "kudu.gen_kudu_masters" . | trim }}"
+        - name: DATA_DIR
+          value: '{{ template "kudu.master_data_dir" . }}'
+        - name: EXTRA_MASTER_ARGS
+          value: '--hive_metastore_uris={{ include "kudu.hive_metastore_uris" . }} --hive_metastore_sasl_enabled=false'
+        - name: EXTRA_ARGS
+          value: "--rpc_max_message_size=104857600 --memory_limit_hard_bytes={{ .Values.tserver.memoryHardLimit }}"
+
+        resources:
+{{ toYaml .Values.master.resource | indent 10 }}
+        args:
+          - "master"
+        ports:
+          - name: ui
+            containerPort: {{ .Values.master.ports.ui }}
+          - name: rpc-port
+            containerPort: {{ index .Values.master.ports "rpc-port" }}
+         {{- if .Values.metrics.enabled }}
+          - name: metrics
+            containerPort: {{ .Values.master.ports.metrics }}
+         {{- end }}
+        volumeMounts:
+          {{- range $i := until (int (.Values.master.storage.count )) }}
+          - name: datadir{{ $i }}
+            mountPath: /var/lib/kudu/disk{{ $i }}
+          {{- end }}
+        livenessProbe:
+          exec:
+            command:
+              - bash
+              - -c
+              - "/check-health.sh"
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          failureThreshold: 3
+      affinity:
+        podAntiAffinity:
+          {{ if .Values.master.storage.enableLocalPv }}
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - "{{ .Values.master.label }}"
+            topologyKey: kubernetes.io/hostname
+          {{ else }}
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - "{{ .Values.master.label }}"
+                topologyKey: kubernetes.io/hostname
+        {{ end }}

@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Values.OfflineAgentName }}
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods/status
+      - pods
+    verbs:
+      - get
+      - list
+      - watch

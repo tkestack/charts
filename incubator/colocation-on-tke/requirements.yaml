@@ -1,0 +1,22 @@
+dependencies:
+  - name: offline-agent
+    condition: colocation.offline-agent.enabled,offline-agent.enabled
+    repository: file://./charts/offline-agent
+  - name: caelus-agent
+    condition: colocation.caelus-agent.enabled,caelus-agent.enabled
+    repository: file://./charts/caelus-agent
+  - name: tke-scheduler
+    condition: colocation.tke-scheduler.enabled,tke-scheduler.enabled
+    repository: file://./charts/tke-scheduler
+  - name: tke-controller
+    condition: colocation.tke-controller.enabled,tke-controller.enabled
+    repository: file://./charts/tke-controller
+  - name: tke-coordinator
+    condition: colocation.tke-coordinator.enabled,tke-coordinator.enabled
+    repository: file://./charts/tke-coordinator
+  - name: prometheus
+    condition: colocation.prometheus.enabled,prometheus.enabled
+    repository: file://./charts/prometheus
+  - name: grafana
+    condition: colocation.grafana.enabled,grafana.enabled
+    repository: file://./charts/grafana

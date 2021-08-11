@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ index .Values "master-ui" "name" }}"
+  namespace: "{{ .Release.Namespace }}"
+  annotations:
+{{ toYaml (index .Values "master-ui" "annotations") | indent 4 }}
+  labels:
+    app: "{{ index .Values "master-ui" "app" }}"
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Values.Component }}"
+spec:
+  ports:
+    - name: ui
+      port: {{ index .Values "master-ui" "ports" "ui" "port" }}
+      {{ if eq "NodePort" (index .Values "master-ui" "type" ) }}
+      nodePort: {{ index .Values "master-ui" "ports" "ui" "nodePort" }}
+      {{ end }}
+    - name: rpc-port
+      port: {{ index .Values "master-ui" "ports" "rpc-port" "port" }}
+      {{ if eq "NodePort" (index .Values "master-ui" "type") }}
+      nodePort: {{ index .Values "master-ui" "ports" "rpc-port" "nodePort" }}
+      {{ end }}
+    {{- if .Values.metrics.enabled }}
+    - name: metrics
+      port: {{ index .Values "master-ui" "ports" "metrics" "port" }}
+      {{ if eq "NodePort" (index .Values "master-ui" "type") }}
+      nodePort: {{ index .Values "master-ui" "ports" "metrics" "nodePort" }}
+      {{ end }}
+    {{- end }}
+  selector:
+    app: "{{ index .Values "master-ui" "app" }}"
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Values.Component }}"
+  type: {{ index .Values "master-ui" "type" }}

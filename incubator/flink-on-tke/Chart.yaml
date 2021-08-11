@@ -1,0 +1,9 @@
+apiVersion: v1
+name: flink-operator
+appVersion: "1.0"
+description: A Helm chart for flink on Kubernetes operator
+version: "0.2.1"
+keywords:
+  - flink
+icon: https://github.com/tkestack/charts/raw/main/icons/flink-on-tke.png
+home: https://github.com/tkestack/charts

@@ -1,0 +1,11 @@
+apiVersion: v1
+name: sparkoperator
+description: A Helm chart for Spark on Kubernetes operator
+version: 0.7.0
+appVersion: v1beta2-1.1.1-2.4.5
+keywords:
+  - spark
+home: https://git.code.oa.com/k8s-incubator/spark-on-k8s-operator
+maintainers:
+  - name: timxbxu
+    email: timxbxu@tencent.com

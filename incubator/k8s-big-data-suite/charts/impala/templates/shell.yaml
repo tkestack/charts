@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "shell.fullname" . }}
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: "{{ .Release.Name }}-impala-shell"
+    spec:
+      containers:
+      - name: shell
+        image: "{{ .Values.shell.imageName }}:{{ .Values.shell.imageTag }}"
+        command: ["/usr/bin/tail", "-f", "/dev/null"]

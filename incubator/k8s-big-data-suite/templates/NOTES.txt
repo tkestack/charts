@@ -1,0 +1,22 @@
+感谢选择 K8sBigData.
+
+下面为部署清单:
+
+Hadoop
+===============
+Enabled: {{ .Values.hadoop.enabled }}
+HDFS NameNode: http://{IP:PORT}/hdfs/nn0/dfshealth.html#tab-overview
+
+Hive
+===============
+Enabled: {{ .Values.hive.enabled }}
+Hive Admin: http://{IP:PORT}/hive/
+
+Kudu
+===============
+Enabled: {{ .Values.kudu.enabled }}
+Kudu Master: http://{IP:PORT}/kudu/
+
+Impala
+===============
+Enabled: {{ .Values.impala.enabled }}

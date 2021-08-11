@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "spark.fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+data:
+  log4j.properties: |
+{{- range $key, $value := index .Values "log4j.properties" }}
+    {{ $key }} {{ $value }}
+{{- end }}
+  spark-defaults.conf: |
+{{ include "spark.spark.defaults.config" . | indent 4 }}

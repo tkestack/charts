@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.olm_namespace }}
+  labels:
+    tke.cloud.tencent.com/source: marketplace
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.operator_namespace }}
+  labels:
+    tke.cloud.tencent.com/source: marketplace

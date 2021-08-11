@@ -1,0 +1,279 @@
+# A headless service to create DNS records.
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "hdfs-k8s.datanode.fullname" . }}
+  labels:
+    app: {{ template "hdfs-k8s.datanode.name" . }}
+    chart: {{ template "hdfs-k8s.subchart" . }}
+    release: {{ .Release.Name }}
+spec:
+  ports:
+  - port: 50010
+    name: dn
+  - port: 50075
+    name: http
+ {{- if .Values.global.metrics.enabled }}
+  - port: {{ .Values.metrics.port }}
+    name: metrics
+  {{- end }}
+  clusterIP: None
+  selector:
+    app: {{ template "hdfs-k8s.datanode.name" . }}
+    release: {{ .Release.Name }}
+---
+# Provides datanode helper scripts.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "hdfs-k8s.datanode.fullname" . }}-scripts
+  labels:
+    app: {{ template "hdfs-k8s.datanode.name" . }}
+    chart: {{ template "hdfs-k8s.subchart" . }}
+    release: {{ .Release.Name }}
+data:
+  check-status.sh: |
+    #!/usr/bin/env bash
+    # Exit on error. Append "|| true" if you expect an error.
+    set -o errexit
+    # Exit on error inside any functions or subshells.
+    set -o errtrace
+    # Do not allow use of undefined vars. Use ${VAR:-} to use an undefined VAR
+    set -o nounset
+    # Catch an error in command pipes. e.g. mysqldump fails (but gzip succeeds)
+    # in `mysqldump |gzip`
+    set -o pipefail
+    # Turn on traces, useful while debugging.
+    set -o xtrace
+
+    # Check if datanode registered with the namenode and got non-null cluster ID.
+    _PORTS="50075 1006"
+    _URL_PATH="jmx?qry=Hadoop:service=DataNode,name=DataNodeInfo"
+    _CLUSTER_ID=""
+    for _PORT in $_PORTS; do
+      _CLUSTER_ID+=$(curl -s http://localhost:${_PORT}/$_URL_PATH |  \
+          grep ClusterId) || true
+    done
+    echo $_CLUSTER_ID | grep -q -v null
+---
+# Deleting a daemonset may need some trick. See
+# https://github.com/kubernetes/kubernetes/issues/33245#issuecomment-261250489
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: {{ template "hdfs-k8s.datanode.fullname" . }}
+  labels:
+    app: {{ template "hdfs-k8s.datanode.name" . }}
+    chart: {{ template "hdfs-k8s.subchart" . }}
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "hdfs-k8s.datanode.name" . }}
+      chart: {{ template "hdfs-k8s.subchart" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "hdfs-k8s.datanode.name" . }}
+        release: {{ .Release.Name }}
+      {{- if .Values.podAnnotations }}
+      annotations:
+{{ toYaml .Values.podAnnotations | indent 8 }}
+      {{- end }}
+    spec:
+      {{- if .Values.affinity }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8 }}
+      {{- else if .Values.global.defaultAffinityEnabled }}
+      terminationGracePeriodSeconds: 120
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: {{ template "hdfs-k8s.datanode.fullname" . }}-exclude
+                  operator: DoesNotExist
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+      {{- end }}
+      hostNetwork: true
+      hostPID: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        {{- if .Values.global.metrics.enabled }}
+        - name: jmx-exporter
+          image: "{{ .Values.global.metrics.image }}:{{ .Values.global.metrics.imageTag }}"
+          imagePullPolicy: {{ .Values.global.metrics.pullPolicy }}
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.metrics.port }}
+          livenessProbe:
+{{ toYaml .Values.global.metrics.livenessProbe | indent 12 }}
+          readinessProbe:
+{{ toYaml .Values.global.metrics.readinessProbe | indent 12 }}
+          env:
+            - name: SERVICE_PORT
+              value: {{ .Values.metrics.port | quote }}
+          {{- with .Values.metrics.env }}
+            {{- range $key, $value := . }}
+            - name: {{ $key | upper | replace "." "_" }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- end }}
+          resources:
+  {{ toYaml .Values.metrics.resources | indent 10 }}
+          volumeMounts:
+            - name: jmx-config
+              mountPath: /opt/jmx_exporter/config.yml
+              subPath: hdfs-dd-config.yml
+        {{- end }}
+        - name: hdfs-datanode
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          args: ["/run_datanode.sh"]
+          ports:
+          - containerPort: 50010
+            name: dn
+          - containerPort: 50075
+            name: http
+          env:
+            - name: HADOOP_CUSTOM_CONF_DIR
+              value: /etc/hadoop-custom-conf
+            - name: MULTIHOMED_NETWORK
+              value: "0"
+            - name: HADOOP_HEAPSIZE
+              value: {{ default "1024" .Values.hadoopHeapSize | quote }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+            {{- if and .Values.global.kerberosEnabled .Values.global.jsvcEnabled }}
+            - name: HADOOP_SECURE_DN_USER
+              value: root
+            - name: JSVC_OUTFILE
+              value: /dev/stdout
+            - name: JSVC_ERRFILE
+              value: /dev/stderr
+            - name: JSVC_HOME
+              value: /jsvc-home
+            {{- end }}
+          livenessProbe:
+            exec:
+              command:
+                - /dn-scripts/check-status.sh
+            initialDelaySeconds: 120
+            periodSeconds: 60
+          readinessProbe:
+            exec:
+              command:
+                - /dn-scripts/check-status.sh
+            initialDelaySeconds: 120
+            periodSeconds: 60
+          securityContext:
+            privileged: true
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - "/bin/sh"
+                  - "-c"
+                  - "/opt/hadoop-2.9.0/bin/hdfs dfsadmin -shutdownDatanode 127.0.0.1:50020; sleep 60"
+          volumeMounts:
+            - name: dn-scripts
+              mountPath: /dn-scripts
+              readOnly: true
+            - name: hdfs-config
+              mountPath: /etc/hadoop-custom-conf
+              readOnly: true
+            {{- range $index, $path := .Values.global.dataNodeHostPath }}
+            - name: hdfs-disk-{{ $index }}
+              mountPath: /hadoop/dfs/disk/{{ $index }}
+            {{- end }}
+            {{- range $index, $path := .Values.global.dataNodeHostPathSsd }}
+            - name: hdfs-ssd-{{ $index }}
+              mountPath: /hadoop/dfs/ssd/{{ $index }}
+            {{- end }}
+            {{- if .Values.global.kerberosEnabled }}
+            - name: kerberos-config
+              mountPath: /etc/krb5.conf
+              subPath: {{ .Values.global.kerberosConfigFileName }}
+              readOnly: true
+            - name: kerberos-keytab-copy
+              mountPath: /etc/security/
+              readOnly: true
+            {{- if .Values.global.jsvcEnabled }}
+            - name: jsvc-home
+              mountPath: /jsvc-home
+            {{- end }}
+            {{- end }}
+      {{- if .Values.global.kerberosEnabled }}
+      initContainers:
+        - name: copy-kerberos-keytab
+          image: busybox:1.27.1
+          command: ['sh', '-c']
+          args:
+            - cp /kerberos-keytabs/$MY_NODE_NAME.keytab /kerberos-keytab-copy/hdfs.keytab
+          env:
+            - name: MY_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          volumeMounts:
+            - name: kerberos-keytabs
+              mountPath: /kerberos-keytabs
+            - name: kerberos-keytab-copy
+              mountPath: /kerberos-keytab-copy
+        {{- if .Values.global.jsvcEnabled }}
+        - name: copy-jsvc
+          # Pull by digest because the image doesn't have tags to pin.
+          image: mschlimb/jsvc@sha256:bf20eb9a319e9a2f87473d8da7418d21503a97528b932800b6b8417cd31e30ef
+          command: ['sh', '-c']
+          args:
+            - cp /usr/bin/jsvc /jsvc-home/jsvc
+          volumeMounts:
+            - name: jsvc-home
+              mountPath: /jsvc-home
+        {{- end }}
+      {{- end }}
+      restartPolicy: Always
+      volumes:
+        - name: dn-scripts
+          configMap:
+            name: {{ template "hdfs-k8s.datanode.fullname" . }}-scripts
+            defaultMode: 0744
+        {{- range $index, $path := .Values.global.dataNodeHostPath }}
+        - name: hdfs-disk-{{ $index }}
+          hostPath:
+            path: {{ $path }}
+        {{- end }}
+        {{- range $index, $path := .Values.global.dataNodeHostPathSsd }}
+        - name: hdfs-ssd-{{ $index }}
+          hostPath:
+            path: {{ $path }}
+        {{- end }}
+        - name: hdfs-config
+          configMap:
+            name: {{ template "hdfs-k8s.config.fullname" . }}
+        {{- if .Values.global.metrics.enabled }}
+        - name: jmx-config
+          configMap:
+            name: {{ template "hdfs-k8s.fullname" . }}-jmx-configmap
+        {{- end }}
+        {{- if .Values.global.kerberosEnabled }}
+        - name: kerberos-config
+          configMap:
+            name: {{ template "krb5-configmap" . }}
+        - name: kerberos-keytabs
+          secret:
+            secretName: {{ template "krb5-keytabs-secret" . }}
+        - name: kerberos-keytab-copy
+          emptyDir: {}
+        {{- if .Values.global.jsvcEnabled }}
+        - name: jsvc-home
+          emptyDir: {}
+        {{- end }}
+        {{- end }}

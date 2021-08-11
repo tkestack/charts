@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eks-admission-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "eks-admission.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.eksAdmission.replicaCount }}
+  selector:
+    matchLabels:
+{{ include "eks-admission.labels" . | indent 6 }}
+  strategy:
+    rollingUpdate:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+{{ include "eks-admission.labels" . | indent 8 }}
+    spec:
+      serviceAccountName: eks-admission-{{ .Release.Name }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: eks-admission-controller
+          args:
+            - --max-concurrent-reconciles=5
+            - --healthz-port=10253
+            - --v=4
+            - --election-id=hybrid-eks-admission-controller-group-leader
+            - --election-namespace={{ .Release.Namespace }}
+            - --eks-config-namespace={{ .Release.Namespace }}
+          image: {{ .Values.eksAdmission.image.ref }}
+          imagePullPolicy: {{ .Values.eksAdmission.image.pullPolicy }}
+          ports:
+            - containerPort: 10253
+              name: healthz
+              protocol: TCP
+          {{- if .Values.eksAdmission.resources }}
+          resources:
+{{ toYaml .Values.eksAdmission.resources | indent 12 }}
+          {{- end }}
+    {{- if .Values.eksAdmission.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.eksAdmission.nodeSelector | indent 8 }}
+    {{- end }}

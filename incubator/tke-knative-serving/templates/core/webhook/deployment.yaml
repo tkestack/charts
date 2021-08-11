@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "knative-serving.core.webhook.name" . }}
+  namespace: knative-serving
+  labels:
+    serving.knative.dev/release: "{{ .Chart.AppVersion }}"
+spec:
+  selector:
+    matchLabels:
+      app: webhook
+      role: webhook
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+      labels:
+        app: webhook
+        role: webhook
+        serving.knative.dev/release: "{{ .Chart.AppVersion }}"
+    spec:
+{{- if .Values.core.webhook.priorityClassName }}
+      priorityClassName: "{{ .Values.core.webhook.priorityClassName }}"
+{{- end }}
+      serviceAccountName: controller
+      containers:
+      - name: webhook
+        # This is the Go import path for the binary that is containerized
+        # and substituted here.
+        image: "{{ .Values.core.webhook.image }}"
+        resources:
+{{ toYaml .Values.core.webhook.resources | indent 10 }}
+        env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - name: WEBHOOK_PORT
+          value: "8443"
+        - # TODO(https://github.com/knative/pkg/pull/953): Remove stackdriver specific config
+          name: METRICS_DOMAIN
+          value: knative.dev/serving
+        securityContext:
+          allowPrivilegeEscalation: false
+        ports:
+        - name: metrics
+          containerPort: 9090
+        - name: profiling
+          containerPort: 8008
+        - name: https-webhook
+          containerPort: 8443
+        readinessProbe: &probe
+          periodSeconds: 1
+          httpGet:
+            scheme: HTTPS
+            port: 8443
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: "webhook"
+        livenessProbe: *probe
+    {{- if .Values.core.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.core.nodeSelector | indent 8 }}
+    {{- end }}
+    {{- if .Values.core.tolerations }}
+      tolerations:
+{{ toYaml .Values.core.tolerations | indent 8 }}
+    {{- end }}
+    {{- if .Values.core.affinity }}
+      affinity:
+{{ toYaml .Values.core.affinity | indent 8 }}
+    {{- end }}

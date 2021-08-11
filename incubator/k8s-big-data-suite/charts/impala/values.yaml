@@ -1,0 +1,53 @@
+imageName: "ccr.ccs.tencentyun.com/k8s-big-data/impala"
+imageTag: "3.3-201912292037"
+
+# 日志路径, 和 Docker file 绑定的, 改不了
+logDir: /opt/impala/logs
+
+imagePullSecrets: ""
+hadoopConfName:
+
+
+catalogd:
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+  enableNodePort: false
+  nodePort:
+    web: 31160
+  nodeSelector: {}
+
+statestored:
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+  enableNodePort: false
+  nodePort:
+    web: 31161
+  nodeSelector: {}
+
+coordExec:
+  replicas: 1
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "100m"
+  enableNodePort: false
+  nodePort:
+    web: 31162
+    jdbc: 31163
+    beeswax: 31164
+  nodeSelector: {}
+
+shell:
+  imageName: "ccr.ccs.tencentyun.com/k8s-big-data/impala-shell"
+  imageTag: "3.3"
+
+kudu:
+  enabled: true
+  # 直接声明 kudu masters (kudu 为外部创建)
+  kuduMasters: ""
+  # 当 kuduMasters 未声明时, 根据 masterReplicas 自动生成
+  masterReplicas: 3
