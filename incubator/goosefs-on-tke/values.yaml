@@ -1,0 +1,51 @@
+# Default values for fluid.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+workdir: /tmp
+
+dataset:
+  controller:
+    image:
+      repository: fluidcloudnative/dataset-controller
+      tag: v0.6.0-48de610
+
+csi:
+  registrar:
+    image: 
+      repository: registry.aliyuncs.com/acs/csi-node-driver-registrar
+      tag: v1.2.0
+  plugins:
+    image: 
+      repository: fluidcloudnative/fluid-csi
+      tag: v0.6.0-48de610
+  kubelet:
+    rootDir: /var/lib/kubelet
+
+runtime:
+  mountRoot: /runtime-mnt
+  goosefs:
+    runtimeWorkers: 3
+    portRange: 26000-32000
+    enabled: true 
+    init:
+      image: 
+        repository: fluidcloudnative/init-users
+        tag: v0.6.0-48de610
+    controller:
+      image: 
+        repository: fluidcloudnative/goosefsruntime-controller
+        tag: v0.6.0-48de610
+    runtime:
+      image: 
+        repository: ccr.ccs.tencentyun.com/goosefs/goosefs
+        tag: v1.0.1
+    fuse:
+      image: 
+        repository: ccr.ccs.tencentyun.com/goosefs/goosefs-fuse
+        tag: v1.0.1
+
+webhook:
+  enabled: true
+  image: fluidcloudnative/fluid-webhook:v0.6.0-48de610
+
