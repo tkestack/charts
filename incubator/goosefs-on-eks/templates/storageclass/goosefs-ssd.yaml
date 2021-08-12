@@ -1,0 +1,15 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: goosefs-ssd
+provisioner: cloud.tencent.com/qcloud-cbs
+volumeBindingMode: WaitForFirstConsumer
+parameters:
+  type: CLOUD_SSD
+  # 支持 CLOUD_BASIC,CLOUD_PREMIUM,CLOUD_SSD  如果不识别则当做 CLOUD_BASIC
+  # renewflag: NOTIFY_AND_AUTO_RENEW
+  # renewflag为云硬盘的续费模式，NOTIFY_AND_AUTO_RENEW模式支持通知过期且按月自动续费，NOTIFY_AND_MANUAL_RENEW模式支持通知过期但不支持自动续费，DISABLE_NOTIFY_AND_MANUAL_RENEW模式支持不通知过期也不自动续费。不指定该字段则默认为NOTIFY_AND_MANUAL_RENEW模式。
+  # paymode: PREPAID
+  # paymode为云盘的计费模式，PREPAID模式（包年包月：仅支持Retain保留的回收策略），默认是 POSTPAID（按量计费：支持 Retain 保留和 Delete 删除策略，Retain 仅在高于1.8的集群版本生效）
+  # aspid:asp-123
+  # 支持指定快照策略，创建云盘后自动绑定此快照策略,绑定失败不影响创建
