@@ -1,5 +1,5 @@
 apiVersion: v2
-name: goosefs 
+name: goosefs-on-tke 
 description: A Helm chart to deploy fluid for goosefs in Kubernetes
 
 # A chart can be either an 'application' or a 'library' chart.
@@ -23,9 +23,9 @@ home: https://github.com/fluid-cloudnative/fluid
 icon: https://github.com/tkestack/charts/raw/main/icons/goosefs-on-tke-and-eks.jpg
 keywords:
   - category:data
-  - goosefs
+  - goosefs-on-tke
   - namespace:fluid-system
-  - releaseName:goosefs
+  - releaseName:goosefs-on-tke
 maintainers:
   - name: chrisydxie
     email: chrisydxie@tencent.com

@@ -46,6 +46,5 @@ GooseFSRuntime: 来源于腾讯云 COS 团队GooseFS，是基于 Java 实现的�
 
 
 ## 最佳实践
-- GooseFS on TKE [使用文档](https://cloud.tencent.com/document/product/436/59358)
 - GooseFS on EKS [使用文档](https://cloud.tencent.com/document/product/436/60091)
 
