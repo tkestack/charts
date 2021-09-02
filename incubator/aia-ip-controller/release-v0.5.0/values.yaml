@@ -1,0 +1,32 @@
+config:
+  region: # 使用地域
+    shortName: hk
+    longName: ap-hongkong
+  credential: # 具备访问aia API的访问凭据
+    clusterID: "" # tke集群id
+    appID: ""
+    secretID: ""
+    secretKey: ""
+  aia:
+    tags: # 需要额外设置的aia资源标签
+      k1: v1
+      k2: v2
+    bandwidth: 100 # 设置购买的aia ip带宽，单位Mbps
+    autoRelease: true # 是否自动释放aia ip
+  node: # 只有打了如下label的节点才会触发aia ip controller处理绑定anycast ip
+    labels:
+      tke.cloud.tencent.com/need-aia-ip: 'true'
+
+controller:
+  replicaCount: 2
+  image:
+    ref: hkccr.ccs.tencentyun.com/ploto/aia-ip-controller:v0.5.0
+    pullPolicy: Always
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 50Mi
+  
