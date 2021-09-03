@@ -19,7 +19,6 @@
 | `config.credential.secretKey`      | 腾讯云API密钥SecretKey                           | ""                                |
 | `config.aia.tags`                  | 创建腾讯云aia资源时额外配置的label                  | `k1: v1, ke: v2`                  |
 | `config.aia.bandwidth`             | 创建腾讯云aia资源时设置的带宽（Mbps）                | `100`                          |
-| `config.aia.autoRelease`           | 是否需要自动释放aia资源             		  | `true`                          |
 | `config.node.labels`               | 需要绑定aia ip节点识别label             		 | `tke.cloud.tencent.com/need-aia-ip: 'true'`|
 | `controller.replicaCount`          | controller副本数量                               | `2`                               |
 | `controller.image.ref`             | controller运行时镜像                              | `hkccr.ccs.tencentyun.com/ploto/aia-ip-controller:v0.5.0`|
@@ -47,7 +46,6 @@ config:
 #       k1: v1
 #       k2: v2
 #     bandwidth: 100 # 设置购买的aia ip带宽，单位Mbps
-#     autoRelease: true # 是否自动释放aia ip
 #   node: # 只有打了如下label的节点才会触发aia ip controller处理绑定anycast ip
 #     labels:
 #       tke.cloud.tencent.com/need-aia-ip: 'true'
