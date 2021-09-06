@@ -1,0 +1,13 @@
+apiVersion: v2
+name: aia-ip-controller
+description: Tencent Anycast IP Controller
+keywords:
+  - anycast
+  - IP
+version: 0.5.0
+appVersion: "1.16.0"
+maintainers:
+  - name: leoryu
+    email: leonarliu@tencent.com
+home: https://github.com/tkestack/charts
+icon: https://raw.githubusercontent.com/tkestack/charts/main/icons/aia-ip-controller.png
