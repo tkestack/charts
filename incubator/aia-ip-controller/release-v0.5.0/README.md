@@ -67,6 +67,7 @@ config:
 这里以在`kube-system`命名空间以`aia-ip-controller`作为release name进行部署，用户也可根据自己需求更改为其他命名空间和名称：
 
 ```sh
+wget https://tke-release-1251707795.cos.ap-guangzhou.myqcloud.com/charts/aia-ip-controller-0.5.0.tgz
 helm install aia-ip-controller -n kube-system -f values.yaml aia-ip-controller-0.5.0.tgz
 ```
 
