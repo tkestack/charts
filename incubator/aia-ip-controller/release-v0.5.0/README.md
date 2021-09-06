@@ -1,59 +1,59 @@
 # AIA IP controller Chart
 
-提供为TKE集群添加节点时自动绑定[anycast ip](https://config.tencent.com/product/aia)资源的能力。
+Bind [anycast ip](https://config.tencent.com/product/aia) automatically when adding node in TKE cluster.
  
-## 使用前提
+## Limitations
 
-1. 账号已申请开通使用Anycast IP权限
-2. 需要绑定的节点，未绑定公网IP
+1. Your account has the permission to use Anycast IP.
+2. The node is not bound with public IP.
 
-## 配置及默认值
+## Parameters and Default Values
 
-| 参数                              | 描述                                             | 默认值                            |
+| Parameters                        | Description                                       | Default Values                            |
 | --------------------------------- | ------------------------------------------------ | --------------------------------- |
-| `config.region.shortName`          | 腾讯云Region短名                                 | `hk`                              |
-| `config.region.longName`           | 腾讯云Region长名                                 | `ap-hongkong`                    |
-| `config.credential.clusterID`      | 腾讯云TKE集群ID                                  | ""                                |
-| `config.credential.appID`          | 腾讯云用户appID                                  | ""                                |
-| `config.credential.secretID`       | 腾讯云API密钥SecretId                            | ""                                |
-| `config.credential.secretKey`      | 腾讯云API密钥SecretKey                           | ""                                |
-| `config.aia.tags`                  | 创建腾讯云aia资源时额外配置的label                  | `k1: v1, ke: v2`                  |
-| `config.aia.bandwidth`             | 创建腾讯云aia资源时设置的带宽（Mbps）                | `100`                          |
-| `config.node.labels`               | 需要绑定aia ip节点识别label             		 | `tke.cloud.tencent.com/need-aia-ip: 'true'`|
-| `controller.replicaCount`          | controller副本数量                               | `2`                               |
-| `controller.image.ref`             | controller运行时镜像                              | ""					|
-| `controller.image.pullPolicy`      | controller镜像拉取策略                             | `Always`                    |
-| `controller.resources.limits`      | controller资源上限配额                         	  | `cpu: "1", memory: 1Gi`        |
-| `controller.resources.requests`    | controller资源请求配额                         	  | `cpu: "100m", memory: 50Mi`      |
+| `config.region.shortName`          | Tencent cloud region short name                 | `hk`                              |
+| `config.region.longName`           | Tencent cloud region long name                  | `ap-hongkong`                    |
+| `config.credential.clusterID`      | Tencent cloud TKE cluster ID                    | ""                                |
+| `config.credential.appID`          | Tencent cloud user app ID                      | ""                                |
+| `config.credential.secretID`       | Tencent cloud API secret ID                    | ""                                |
+| `config.credential.secretKey`      | Tencent cloud API secret key                   | ""                                |
+| `config.aia.tags`                  | Extension label of aia                        | `k1: v1, ke: v2`                  |
+| `config.aia.bandwidth`             | Bandwidth(Mbps) of aia                        | `100`                          |
+| `config.node.labels`               | Label of node which needs to be bound aia     | `tke.cloud.tencent.com/need-aia-ip: 'true'`|
+| `controller.replicaCount`          | Controller replica count                       | `2`                               |
+| `controller.image.ref`             | Controller image                              | ""					|
+| `controller.image.pullPolicy`      | Controller image pull policy                    | `Always`                    |
+| `controller.resources.limits`      | Controller resources limits                         	  | `cpu: "1", memory: 1Gi`        |
+| `controller.resources.requests`    | Controller resources requests 			| `cpu: "100m", memory: 50Mi`      |
 
-## 安装及验证
+## Installation and Verification
 
-准备好values.yaml，重点关注region和credential内容：
+Prepare values.yaml，set region and credential content：
 
 ```yaml
 # valuse.yaml
 config:
-  region: # 使用地域
+  region:
     shortName: hk
     longName: ap-hongkong
-  credential: # 具备访问aia API的访问凭据
-    clusterID: {your_cluster_ID} # tke集群id
+  credential: # credential which has permission to access aia API
+    clusterID: {your_cluster_ID} # tke cluster id
     appID: {your_app_ID}
     secretID: {your_secret_ID}
     secretKey: {your_secret_key}
 #   aia:
-#     tags: # 需要额外设置的aia资源标签
+#     tags: # Extension label of aia
 #       k1: v1
 #       k2: v2
-#     bandwidth: 100 # 设置购买的aia ip带宽，单位Mbps
-#   node: # 只有打了如下label的节点才会触发aia ip controller处理绑定anycast ip
-#     labels:
+#     bandwidth: 100 # Bandwidth(Mbps) of aia
+#   node:
+#     labels: # the node with these labels will be bound aia ip
 #       tke.cloud.tencent.com/need-aia-ip: 'true'
 
 # controller:
 #   replicaCount: 2
 #   image:
-#     ref: "" # 若在中国大陆地区使用请填写ccr.ccs.tencentyun.com/tkeimages/aia-ip-controller:v0.5.0，其他地区不用填写
+#     ref: "" # if your region is China mainland, set the value whith ccr.ccs.tencentyun.com/tkeimages/aia-ip-controller:v0.5.0, otherwise no need to modify it.
 #     pullPolicy: Always
 #   resources:
 #     limits:
@@ -64,18 +64,18 @@ config:
 #       memory: 50Mi
 ```
 
-这里以在`kube-system`命名空间以`aia-ip-controller`作为release name进行部署，用户也可根据自己需求更改为其他命名空间和名称：
+Here we will deploy the controller in `kube-system` namespace, and the helm release name is `aia-ip-controller`, you can alose use other namespace and name：
 
 ```sh
 wget https://tke-release-1251707795.cos.ap-guangzhou.myqcloud.com/charts/aia-ip-controller-0.5.0.tgz
 helm install aia-ip-controller -n kube-system -f values.yaml aia-ip-controller-0.5.0.tgz
 ```
 
-在观察到`aia-ip-controller` prod正常运行后在集群中添加节点时（注意不要绑定公网IP）添加label `tke.cloud.tencent.com/need-aia-ip: true`将自动创建`aia`资源绑定到改节点。
+After `aia-ip-controller` status is running, add node, do not bind public ip for this node, with label `tke.cloud.tencent.com/need-aia-ip: true`, this node will be bound with `aia` automatically。
 
-## 卸载
+## uninstall
 
-这里以在`kube-system`命名空间以`aia-ip-controller`作为release name为例：
+Here we will uninstall `aia-ip-controller` from `kube-system` namespace：
 
 ```sh
 helm uninstall -n kube-system aia-ip-controller

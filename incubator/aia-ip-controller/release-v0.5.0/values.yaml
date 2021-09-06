@@ -1,25 +1,25 @@
 config:
-  region: # 使用地域
+  region:
     shortName: hk
     longName: ap-hongkong
-  credential: # 具备访问aia API的访问凭据
-    clusterID: "" # tke集群id
+  credential: # credential which has permission to access aia API
+    clusterID: "" # tke cluster id
     appID: ""
     secretID: ""
     secretKey: ""
   aia:
-    tags: # 需要额外设置的aia资源标签
+    tags: # Extension label of aia
       k1: v1
       k2: v2
-    bandwidth: 100 # 设置购买的aia ip带宽，单位Mbps
-  node: # 只有打了如下label的节点才会触发aia ip controller处理绑定anycast ip
-    labels:
+    bandwidth: 100 # Bandwidth(Mbps) of aia
+  node:
+    labels: # the node with these labels will be bound aia ip
       tke.cloud.tencent.com/need-aia-ip: 'true'
 
 controller:
   replicaCount: 2
   image:
-    ref: "" # 若在中国大陆地区使用请填写ccr.ccs.tencentyun.com/tkeimages/aia-ip-controller:v0.5.0，其他地区不用填写
+    ref: "" # if your region is China mainland, set the value whith ccr.ccs.tencentyun.com/tkeimages/aia-ip-controller:v0.5.0, otherwise no need to modify it.
     pullPolicy: Always
   resources:
     limits:
