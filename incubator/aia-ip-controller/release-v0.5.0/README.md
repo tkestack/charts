@@ -23,7 +23,7 @@ Bind [anycast ip](https://config.tencent.com/product/aia) automatically when add
 | `controller.replicaCount`          | Controller replica count                       | `2`                               |
 | `controller.image.ref`             | Controller image                              | ""					|
 | `controller.image.pullPolicy`      | Controller image pull policy                    | `Always`                    |
-| `controller.resources.limits`      | Controller resources limits                         	  | `cpu: "1", memory: 1Gi`        |
+| `controller.resources.limits`      | Controller resources limits                      | `cpu: "1", memory: 1Gi`        |
 | `controller.resources.requests`    | Controller resources requests 			| `cpu: "100m", memory: 50Mi`      |
 
 ## Installation and Verification
@@ -64,7 +64,7 @@ config:
 #       memory: 50Mi
 ```
 
-Here we will deploy the controller in `kube-system` namespace, and the helm release name is `aia-ip-controller`, you can alose use other namespace and name：
+Here we will deploy the controller in `kube-system` namespace, and the helm release name is `aia-ip-controller`, you can also use other namespace and name：
 
 ```sh
 wget https://tke-release-1251707795.cos.ap-guangzhou.myqcloud.com/charts/aia-ip-controller-0.5.0.tgz
@@ -73,7 +73,7 @@ helm install aia-ip-controller -n kube-system -f values.yaml aia-ip-controller-0
 
 After `aia-ip-controller` status is running, add node, do not bind public ip for this node, with label `tke.cloud.tencent.com/need-aia-ip: true`, this node will be bound with `aia` automatically。
 
-## uninstall
+## Uninstall
 
 Here we will uninstall `aia-ip-controller` from `kube-system` namespace：
 
