@@ -21,7 +21,7 @@
 | `config.aia.bandwidth`             | 创建腾讯云aia资源时设置的带宽（Mbps）                | `100`                          |
 | `config.node.labels`               | 需要绑定aia ip节点识别label             		 | `tke.cloud.tencent.com/need-aia-ip: 'true'`|
 | `controller.replicaCount`          | controller副本数量                               | `2`                               |
-| `controller.image.ref`             | controller运行时镜像                              | `hkccr.ccs.tencentyun.com/ploto/aia-ip-controller:v0.5.0`|
+| `controller.image.ref`             | controller运行时镜像                              | ""					|
 | `controller.image.pullPolicy`      | controller镜像拉取策略                             | `Always`                    |
 | `controller.resources.limits`      | controller资源上限配额                         	  | `cpu: "1", memory: 1Gi`        |
 | `controller.resources.requests`    | controller资源请求配额                         	  | `cpu: "100m", memory: 50Mi`      |
@@ -53,7 +53,7 @@ config:
 # controller:
 #   replicaCount: 2
 #   image:
-#     ref: hkccr.ccs.tencentyun.com/ploto/aia-ip-controller:v0.5.0
+#     ref: "" # 若在中国大陆地区使用请填写ccr.ccs.tencentyun.com/tkeimages/aia-ip-controller:v0.5.0，其他地区不用填写
 #     pullPolicy: Always
 #   resources:
 #     limits:

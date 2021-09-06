@@ -38,7 +38,11 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.podIP
+          {{- if eq .Values.controller.image.ref "" }}
+          image: {{ .Values.config.region.shortName }}ccr.ccs.tencentyun.com/tkeimages/aia-ip-controller:v0.5.0
+          {{- else }}
           image: {{ .Values.controller.image.ref }}
+          {{- end}}
           imagePullPolicy: {{ .Values.controller.image.pullPolicy }}
           name: {{ .Release.Name }}
           {{- if .Values.controller.resources }}
