@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+data:
+  values.yaml: |
+    controller:
+      resourceLockName: {{ .Release.Name }} # 资源锁名称
+{{ toYaml .Values.config| indent 4 }}
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}

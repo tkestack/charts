@@ -1,0 +1,32 @@
+credential: # credential which has permission to access aia API
+  clusterID: "" # tke cluster id
+  appID: ""
+  secretID: ""
+  secretKey: ""
+
+config:
+  region:
+    shortName: hk
+    longName: ap-hongkong
+  aia:
+    tags: # Extension label of aia
+      k1: v1
+      k2: v2
+    bandwidth: 100 # Bandwidth(Mbps) of aia
+  node:
+    labels: # the node with these labels will be bound aia ip
+      tke.cloud.tencent.com/need-aia-ip: 'true'
+
+controller:
+  replicaCount: 2
+  image:
+    ref: "" # if your region is China mainland, set the value whith ccr.ccs.tencentyun.com/tkeimages/aia-ip-controller:v0.7.0, otherwise no need to modify it.
+    pullPolicy: Always
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 50Mi
+  
