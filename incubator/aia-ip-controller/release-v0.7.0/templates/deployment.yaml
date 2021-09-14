@@ -59,7 +59,7 @@ spec:
                   name: {{ .Release.Name }}-credential
                   key: secretKey
           {{- if eq .Values.controller.image.ref "" }}
-          image: {{ .Values.config.region.shortName }}ccr.ccs.tencentyun.com/tkeimages/aia-ip-controller:v0.7.0
+          image: {{ .Values.config.region.shortName }}ccr.ccs.tencentyun.com/tke-market/aia-ip-controller:v0.7.0
           {{- else }}
           image: {{ .Values.controller.image.ref }}
           {{- end}}

@@ -1,7 +1,7 @@
 namespace: "kube-system"
 
 controller:
-  image: "ccr.ccs.tencentyun.com/tkeimages/tke-hpc-controller:v1.0.0"
+  image: "ccr.ccs.tencentyun.com/tke-market/tke-hpc-controller:v1.0.0"
   replicas: 2
 
 imagePullPolicy: "IfNotPresent"

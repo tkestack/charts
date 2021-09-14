@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: ccr.ccs.tencentyun.com/ccs-dev/grafana
+  repository: ccr.ccs.tencentyun.com/tke-market/grafana
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "7.1.3"

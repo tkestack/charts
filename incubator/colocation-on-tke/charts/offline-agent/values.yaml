@@ -7,7 +7,7 @@ OfflineAgentName: "offline-agent"
 
 # image for offline agent daemonset
 image:
-  repository: "ccr.ccs.tencentyun.com/tkeimages/offline-scheduling-agent"
+  repository: "ccr.ccs.tencentyun.com/tke-market/offline-scheduling-agent"
   pullPolicy: Always
   tag: "v1.0-2-gae6c50925d"
 

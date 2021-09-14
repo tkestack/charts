@@ -13,7 +13,7 @@ rbac:
 
 # The defination of the operator image
 operatorImage:
-  name: ccr.ccs.tencentyun.com/cloudnative-bigdata/flink-operator:v0.2.0
+  name: ccr.ccs.tencentyun.com/tke-market/flink-operator:v0.2.0
   pullPolicy: IfNotPresent
 
 serviceAccount:

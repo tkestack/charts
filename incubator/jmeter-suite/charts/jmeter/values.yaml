@@ -20,7 +20,7 @@ image:
   ## The repository and image
   ## ref: https://hub.docker.com/r/pedrocesarti/jmeter-docker/
   #  repository: "pedrocesarti/jmeter-docker"
-  repository: "ccr.ccs.tencentyun.com/jmeter-test/jmeter-helm-docker"
+  repository: "ccr.ccs.tencentyun.com/tke-market/jmeter-helm-docker"
 
   ## The tag for the image
   ## ref: https://hub.docker.com/r/pedrocesarti/jmeter-docker/tags/

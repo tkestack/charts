@@ -6,17 +6,17 @@ workdir: /tmp
 dataset:
   controller:
     image: 
-      repository: ccr.ccs.tencentyun.com/fluid/dataset-controller
+      repository: ccr.ccs.tencentyun.com/tke-market/dataset-controller
       tag: v0.6.0-0bfc552 
 
 csi:
   registrar:
     image:
-      repository: ccr.ccs.tencentyun.com/fluid/csi-node-driver-registrar
+      repository: ccr.ccs.tencentyun.com/tke-market/csi-node-driver-registrar
       tag: v1.2.0
   plugins:
     image:
-      repository: ccr.ccs.tencentyun.com/fluid/fluid-csi
+      repository: ccr.ccs.tencentyun.com/tke-market/fluid-csi
       tag: v0.6.0-def5316 
   kubelet:
     rootDir: /var/lib/kubelet
@@ -27,18 +27,18 @@ runtime:
     enabled: true 
     init:
       image: 
-        repository: ccr.ccs.tencentyun.com/fluid/init-users
+        repository: ccr.ccs.tencentyun.com/tke-market/init-users
         tag: v0.6.0-0cd802e 
     controller:
       image:
-        repository: ccr.ccs.tencentyun.com/tkeimages/goosefsruntime-controller
+        repository: ccr.ccs.tencentyun.com/tke-market/goosefsruntime-controller
         tag: v0.1.3
     runtime:
       image:
-        repository: ccr.ccs.tencentyun.com/fluid/goosefs
+        repository: ccr.ccs.tencentyun.com/tke-market/goosefs
         tag: v1.1.10
     fuse:
       image: 
-        repository: ccr.ccs.tencentyun.com/fluid/goosefs-fuse
+        repository: ccr.ccs.tencentyun.com/tke-market/goosefs-fuse
         tag: v1.1.10 
   

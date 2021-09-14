@@ -28,7 +28,7 @@ client:
     requests:
       memory: "256Mi"
       cpu: "100m"
-  imageName: "ccr.ccs.tencentyun.com/k8s-big-data/client"
+  imageName: "ccr.ccs.tencentyun.com/tke-market/client"
   imageTag: "v2006241010"
   nodeSelector: {}
 

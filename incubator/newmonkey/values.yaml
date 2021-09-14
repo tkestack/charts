@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: ccr.ccs.tencentyun.com/newmonkey/newmonkey_pub
+  repository: ccr.ccs.tencentyun.com/tke-market/newmonkey_pub
   tag: tke_v2011301935
   pullPolicy: Always
 
