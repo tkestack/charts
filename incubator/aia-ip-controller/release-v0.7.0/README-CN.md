@@ -17,7 +17,7 @@
 | `credential.secretKey`             | 腾讯云API密钥SecretKey                           | ""                                |
 | `config.region.shortName`          | 腾讯云Region短名                                 | `hk`                              |
 | `config.region.longName`           | 腾讯云Region长名                                 | `ap-hongkong`                    |
-| `config.aia.tags`                  | 创建腾讯云aia资源时额外配置的label                  | `k1: v1, ke: v2`                  |
+| `config.aia.tags`                  | 创建腾讯云aia资源时额外配置的label                  | ""			                  |
 | `config.aia.bandwidth`             | 创建腾讯云aia资源时设置的带宽（Mbps）                | `100`                          |
 | `config.node.labels`               | 需要绑定aia ip节点识别label             		 | `tke.cloud.tencent.com/need-aia-ip: 'true'`|
 | `controller.replicaCount`          | controller副本数量                               | `2`                               |
@@ -42,27 +42,6 @@ config:
   region: # 使用地域
     shortName: hk
     longName: ap-hongkong
-#   aia:
-#     tags: # 需要额外设置的aia资源标签
-#       k1: v1
-#       k2: v2
-#     bandwidth: 100 # 设置购买的aia ip带宽，单位Mbps
-#   node: # 只有打了如下label的节点才会触发aia ip controller处理绑定anycast ip
-#     labels:
-#       tke.cloud.tencent.com/need-aia-ip: 'true'
-
-# controller:
-#   replicaCount: 2
-#   image:
-#     ref: "" # 若在中国大陆地区使用请填写ccr.ccs.tencentyun.com/tkeimages/aia-ip-controller:v0.7.0，其他地区不用填写
-#     pullPolicy: Always
-#   resources:
-#     limits:
-#       cpu: 1
-#       memory: 1Gi
-#     requests:
-#       cpu: 100m
-#       memory: 50Mi
 ```
 
 这里以在`kube-system`命名空间以`aia-ip-controller`作为release name进行部署，用户也可根据自己需求更改为其他命名空间和名称：
@@ -73,6 +52,43 @@ helm install aia-ip-controller -n kube-system -f values.yaml aia-ip-controller-0
 ```
 
 在观察到`aia-ip-controller` pod正常运行后在集群中添加节点时（注意不要绑定公网IP）添加label `tke.cloud.tencent.com/need-aia-ip: true`将自动创建`aia`资源绑定到改节点。
+
+如果想设置更多的chart values，这里有一个例子：
+
+```yaml
+# valuse.yaml
+credential: # 具备访问aia API的访问凭据
+  clusterID: {your_cluster_ID} # tke集群id
+  appID: {your_app_ID}
+  secretID: {your_secret_ID}
+  secretKey: {your_secret_key}
+
+config:
+  region: # 使用地域
+    shortName: hk
+    longName: ap-hongkong
+  aia:
+    tags: # 需要额外设置的aia资源标签
+      k1: v1
+      k2: v2
+    bandwidth: 100 # 设置购买的aia ip带宽，单位Mbps
+  node: # 只有打了如下label的节点才会触发aia ip controller处理绑定anycast ip
+    labels:
+      tke.cloud.tencent.com/need-aia-ip: 'true'
+
+controller:
+  replicaCount: 2
+  image:
+    ref: "" # 若在中国大陆地区使用请填写ccr.ccs.tencentyun.com/tkeimages/aia-ip-controller:v0.7.0，其他地区不用填写
+    pullPolicy: Always
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 50Mi
+```
 
 ## 卸载
 

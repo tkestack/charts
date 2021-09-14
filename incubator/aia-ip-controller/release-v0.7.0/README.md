@@ -17,7 +17,7 @@ Bind [anycast ip](https://config.tencent.com/product/aia) automatically when add
 | `credential.secretKey`             | Tencent cloud API secret key                   | ""                                |
 | `config.region.shortName`          | Tencent cloud region short name                 | `hk`                              |
 | `config.region.longName`           | Tencent cloud region long name                  | `ap-hongkong`                    |
-| `config.aia.tags`                  | Extension label of aia                        | `k1: v1, ke: v2`                  |
+| `config.aia.tags`                  | Extension label of aia                        | ""		                  |
 | `config.aia.bandwidth`             | Bandwidth(Mbps) of aia                        | `100`                          |
 | `config.node.labels`               | Label of node which needs to be bound aia     | `tke.cloud.tencent.com/need-aia-ip: 'true'`|
 | `controller.replicaCount`          | Controller replica count                       | `2`                               |
@@ -42,27 +42,6 @@ config:
   region:
     shortName: hk
     longName: ap-hongkong
-#   aia:
-#     tags: # Extension label of aia
-#       k1: v1
-#       k2: v2
-#     bandwidth: 100 # Bandwidth(Mbps) of aia
-#   node:
-#     labels: # the node with these labels will be bound aia ip
-#       tke.cloud.tencent.com/need-aia-ip: 'true'
-
-# controller:
-#   replicaCount: 2
-#   image:
-#     ref: "" # if your region is China mainland, set the value whith ccr.ccs.tencentyun.com/tkeimages/aia-ip-controller:v0.7.0, otherwise no need to modify it.
-#     pullPolicy: Always
-#   resources:
-#     limits:
-#       cpu: 1
-#       memory: 1Gi
-#     requests:
-#       cpu: 100m
-#       memory: 50Mi
 ```
 
 Here we will deploy the controller in `kube-system` namespace, and the helm release name is `aia-ip-controller`, you can also use other namespace and name：
@@ -73,6 +52,43 @@ helm install aia-ip-controller -n kube-system -f values.yaml aia-ip-controller-0
 ```
 
 After `aia-ip-controller` status is running, add node, do not bind public ip for this node, with label `tke.cloud.tencent.com/need-aia-ip: true`, this node will be bound with `aia` automatically。
+
+If you want set more chart values, here is an example: 
+
+```yaml
+# valuse.yaml
+credential: # credential which has permission to access aia API
+  clusterID: {your_cluster_ID} # tke cluster id
+  appID: {your_app_ID}
+  secretID: {your_secret_ID}
+  secretKey: {your_secret_key}
+
+config:
+  region:
+    shortName: hk
+    longName: ap-hongkong
+  aia:
+    tags: # Extension label of aia
+      k1: v1
+      k2: v2
+    bandwidth: 100 # Bandwidth(Mbps) of aia
+  node:
+    labels: # the node with these labels will be bound aia ip
+      tke.cloud.tencent.com/need-aia-ip: 'true'
+
+controller:
+  replicaCount: 2
+  image:
+    ref: "" # if your region is China mainland, set the value whith ccr.ccs.tencentyun.com/tkeimages/aia-ip-controller:v0.7.0, otherwise no need to modify it.
+    pullPolicy: Always
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 50Mi
+```
 
 ## Uninstall
 
