@@ -9,9 +9,6 @@ config:
     shortName: hk
     longName: ap-hongkong
   aia:
-    tags: # Extension label of aia
-      k1: v1
-      k2: v2
     bandwidth: 100 # Bandwidth(Mbps) of aia
   node:
     labels: # the node with these labels will be bound aia ip
