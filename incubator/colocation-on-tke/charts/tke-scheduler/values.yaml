@@ -16,7 +16,7 @@ TkeCoordinatorName: "tke-coordinator"
 
 # image for tke scheduler deployment
 image:
-  repository: "ccr.ccs.tencentyun.com/tkeimages/tke-scheduler"
+  repository: "ccr.ccs.tencentyun.com/tke-market/tke-scheduler"
   pullPolicy: Always
   tag: "11480e3"
 

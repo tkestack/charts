@@ -11,7 +11,7 @@ distributed-jmeter:
     heap_size: 5g
   image:
     pullPolicy: Always
-    repository: ccr.ccs.tencentyun.com/jmeter-test/jmeter-helm-docker
+    repository: ccr.ccs.tencentyun.com/tke-market/jmeter-helm-docker
     tag: v1.4
 
 grafana:

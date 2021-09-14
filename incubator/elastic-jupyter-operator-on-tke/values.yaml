@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 image:
-  repository: ccr.ccs.tencentyun.com/kubeflow-oteam/elastic-jupyter-operator
+  repository: ccr.ccs.tencentyun.com/tke-market/elastic-jupyter-operator
   # Overrides the image tag whose default is the chart appVersion.
   tag: "v0.1.1"
 

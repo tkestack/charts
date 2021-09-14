@@ -14,7 +14,7 @@
 
 | 参数     | 描述     | 默认值     |
 | ------- | -------- | --------- |
-| `image.repository` | MPI-Operator 镜像所在仓库  | `ccr.ccs.tencentyun.com/kubeflow-oteam/mpi-operator` |
+| `image.repository` | MPI-Operator 镜像所在仓库  | `ccr.ccs.tencentyun.com/tke-market/mpi-operator` |
 | `image.tag`        | MPI-Operator 镜像的版本    | `"latest"` |
 | `namespace.create` | 是否为 MPI-Operator 创建独立的命名空间 | `true` |
 | `namespace.name`   | 部署 MPI-Operator 的命名空间 | `"mpi-operator"` |
@@ -31,7 +31,7 @@
 
 Horovod 官方提供的 `horovod/horovod:0.20.0-tf2.3.0-torch1.6.0-mxnet1.5.0-py3.7-cpu` 镜像中已经包含了该训练代码。
 
-镜像仓库 `ccr.ccs.tencentyun.com/ti_containers/ti-tensorflow` 中内置了由腾讯优图实验室和机智团队合作开发的Ti-horovod，针对腾讯云网络环境特点进行了定制优化。
+镜像仓库 `ccr.ccs.tencentyun.com/tke-market/ti-tensorflow` 中内置了由腾讯优图实验室和机智团队合作开发的Ti-horovod，针对腾讯云网络环境特点进行了定制优化。
 
 **标签（tag）**
 

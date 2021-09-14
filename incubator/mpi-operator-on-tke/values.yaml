@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: ccr.ccs.tencentyun.com/kubeflow-oteam/mpi-operator
+  repository: ccr.ccs.tencentyun.com/tke-market/mpi-operator
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
@@ -14,7 +14,7 @@ command: "/opt/mpi-operator.v1"
 
 args:
   optionKubectlDeliverImage: "--kubectl-delivery-image"
-  kubectlDeliverImage: "ccr.ccs.tencentyun.com/kubeflow-oteam/kubectl-delivery:latest"
+  kubectlDeliverImage: "ccr.ccs.tencentyun.com/tke-market/kubectl-delivery:latest"
 
 imagePullSecrets: []
 nameOverride: ""

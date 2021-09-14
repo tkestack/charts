@@ -38,11 +38,11 @@ runtime:
         tag: v0.6.0-48de610
     runtime:
       image: 
-        repository: ccr.ccs.tencentyun.com/goosefs/goosefs
+        repository: ccr.ccs.tencentyun.com/tke-market/goosefs
         tag: v1.0.1
     fuse:
       image: 
-        repository: ccr.ccs.tencentyun.com/goosefs/goosefs-fuse
+        repository: ccr.ccs.tencentyun.com/tke-market/goosefs-fuse
         tag: v1.0.1
 
 webhook:

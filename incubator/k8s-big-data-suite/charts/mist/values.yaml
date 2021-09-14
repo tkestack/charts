@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: ccr.ccs.tencentyun.com/k8s-big-data/mist
+  repository: ccr.ccs.tencentyun.com/tke-market/mist
   tag: v3
   pullPolicy: IfNotPresent
 

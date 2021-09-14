@@ -14,7 +14,7 @@
 
 | 参数     | 描述     | 默认值     |
 | ------- | -------- | --------- |
-| `image.repository` | PyTorch-Operator 镜像所在仓库  | `ccr.ccs.tencentyun.com/kubeflow-oteam/pytorch-operator` |
+| `image.repository` | PyTorch-Operator 镜像所在仓库  | `ccr.ccs.tencentyun.com/tke-market/pytorch-operator` |
 | `image.tag`        | PyTorch-Operator 镜像的版本    | `"latest"` |
 | `namespace.create` | 是否为 PyTorch-Operator 创建独立的命名空间 | `true` |
 | `namespace.name`   | 部署 PyTorch-Operator 的命名空间 | `"pytorch-operator"` |

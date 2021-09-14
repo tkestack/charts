@@ -41,7 +41,7 @@ kubernetes版本：1.12+
 | 参数                        | 描述                               | 默认值 |
 | --------------------------- | ---------------------------------- | --------------------------------------------- |
 | `replicas`                  | hpc controller 的副本数            | `2`                                           |
-| `image`                     | hpc controller 的镜像地址          | `ccr.ccs.tencentyun.com/tkeimages/tke-hpc-controller:v1.0.0` |
+| `image`                     | hpc controller 的镜像地址          | `ccr.ccs.tencentyun.com/tke-market/tke-hpc-controller:v1.0.0` |
 | `resources.requests.cpu`    | 单个 controller 运行最小 cpu 配额 | `100m`                                        |
 | `resources.requests.memory` | 单个 controller  运行最小内存配额  | `20Mi`                                        |
 | `resources.limits.cpu`      | 单个 controller 运行的CPU 使用上限 | `100m`                                        |

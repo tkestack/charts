@@ -11,7 +11,7 @@ TkeControllerName: "tke-controller"
 
 # image for tke controller deployment
 imagecontroller:
-  repository: "ccr.ccs.tencentyun.com/tkeimages/tke-controller"
+  repository: "ccr.ccs.tencentyun.com/tke-market/tke-controller"
   pullPolicy: Always
   tag: "11480e3"
 
