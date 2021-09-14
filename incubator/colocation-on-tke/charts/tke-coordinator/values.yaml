@@ -11,7 +11,7 @@ TkeCoordinatorName: "tke-coordinator"
 
 # image for tke coordinator deployment
 imagecoordinator:
-  repository: "ccr.ccs.tencentyun.com/tkeimages/coordinator"
+  repository: "ccr.ccs.tencentyun.com/tke-market/coordinator"
   pullPolicy: Always
   tag: "5629a19"
 

@@ -14,7 +14,7 @@
 
 | 参数     | 描述     | 默认值     |
 | ------- | -------- | --------- |
-| `image.repository` | TF-Operator 镜像所在仓库  | `ccr.ccs.tencentyun.com/kubeflow-oteam/tf-operator` |
+| `image.repository` | TF-Operator 镜像所在仓库  | `ccr.ccs.tencentyun.com/tke-market/tf-operator` |
 | `image.tag`        | TF-Operator 镜像的版本    | `"latest"` |
 | `namespace.create` | 是否为 TF-Operator 创建独立的命名空间 | `true` |
 | `namespace.name`   | 部署 TF-Operator 的命名空间 | `"tf-operator"` |

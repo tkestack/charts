@@ -16,7 +16,7 @@
 
 | 参数     | 描述     | 默认值     |
 | ------- | -------- | --------- |
-| `image.repository` | 镜像所在仓库  | `ccr.ccs.tencentyun.com/kubeflow-oteam/elastic-jupyter-operator` |
+| `image.repository` | 镜像所在仓库  | `ccr.ccs.tencentyun.com/tke-market/elastic-jupyter-operator` |
 | `image.tag`        | 镜像的版本    | `"v0.1.1"` |
 | `namespace.name`   | 命名空间 | `"enterprise-gateway"` |
 

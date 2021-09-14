@@ -7,7 +7,7 @@ debug: false
 olm:
   replicaCount: 1
   image:
-    ref: ccr.ccs.tencentyun.com/tkeimages/olm:0.17.0
+    ref: ccr.ccs.tencentyun.com/tke-market/olm:0.17.0
     pullPolicy: IfNotPresent
   service:
     internalPort: 8080
@@ -20,9 +20,9 @@ olm:
 
 catalog:
   replicaCount: 1
-  commandArgs: -configmapServerImage=ccr.ccs.tencentyun.com/tkeimages/configmap-operator-registry:0.17.0
+  commandArgs: -configmapServerImage=ccr.ccs.tencentyun.com/tke-market/configmap-operator-registry:0.17.0
   image:
-    ref: ccr.ccs.tencentyun.com/tkeimages/olm:0.17.0
+    ref: ccr.ccs.tencentyun.com/tke-market/olm:0.17.0
     pullPolicy: IfNotPresent
   service:
     internalPort: 8080
@@ -36,7 +36,7 @@ catalog:
 package:
   replicaCount: 1
   image:
-    ref: ccr.ccs.tencentyun.com/tkeimages/olm:0.17.0
+    ref: ccr.ccs.tencentyun.com/tke-market/olm:0.17.0
     pullPolicy: IfNotPresent
   service:
     internalPort: 5443
@@ -52,5 +52,5 @@ hook:
     create: true
     name:
   image:
-    ref: ccr.ccs.tencentyun.com/tkeimages/kubectl:0.17.0
+    ref: ccr.ccs.tencentyun.com/tke-market/kubectl:0.17.0
     pullPolicy: IfNotPresent

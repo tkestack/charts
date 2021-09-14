@@ -26,22 +26,22 @@ GooseFSRuntime: 来源于腾讯云 COS 团队GooseFS，是基于 Java 实现的�
 | 参数     | 描述     | 默认值     |
 | ------- | -------- | --------- |
 | `workdir` | 缓存引擎备份元数据地址 | `/tmp`
-| `dataset.controller.image.repository` | Dataset Controller 镜像所在仓库  | `ccr.ccs.tencentyun.com/fluid/dataset-controller` |
+| `dataset.controller.image.repository` | Dataset Controller 镜像所在仓库  | `ccr.ccs.tencentyun.com/tke-market/dataset-controller` |
 | `dataset.controller.image.tag`        | Dataset Controller 镜像的版本    | `"v0.6.0-0bfc552"` |
-| `csi.registrar.image.repository`   | CSI registrar 镜像所在仓库 | `"ccr.ccs.tencentyun.com/fluid/csi-node-driver-registrar"` |
+| `csi.registrar.image.repository`   | CSI registrar 镜像所在仓库 | `"ccr.ccs.tencentyun.com/tke-market/csi-node-driver-registrar"` |
 | `csi.registrar.image.tag`   | CSI registrar 镜像的版本 | `"v1.2.0"` |
-| `csi.plugins.image.repository`   | CSI plugins 镜像所在仓库 | `"ccr.ccs.tencentyun.com/fluid/fluid-csi"` |
+| `csi.plugins.image.repository`   | CSI plugins 镜像所在仓库 | `"ccr.ccs.tencentyun.com/tke-market/fluid-csi"` |
 | `csi.plugins.image.tag`   | CSI plugins 镜像的版本 | `"v0.6.0-def5316"` |
 | `csi.kubelet.rootDir`   | kubelet root 文件夹 | `"/var/lib/kubelet"` |
 | `runtime.mountRoot`   | 缓存引擎 fuse mount 点的 Root 地址 | `"/var/lib/kubelet"` |
 | `runtime.goosefs.enable`   | 开启 GooseFS 缓存引擎支持 | `"true"` |
-| `runtime.goosefs.init.image.repository`   | GooseFS 缓存引擎初始化镜像所在仓库 | `"ccr.ccs.tencentyun.com/fluid/init-users"` |
+| `runtime.goosefs.init.image.repository`   | GooseFS 缓存引擎初始化镜像所在仓库 | `"ccr.ccs.tencentyun.com/tke-market/init-users"` |
 | `runtime.goosefs.init.image.tag`   | GooseFS 缓存引擎初始化镜像的版本 | `"v0.6.0-0cd802e"` |
-| `runtime.goosefs.controller.image.repository`   | GooseFS 缓存引擎控制器镜像所在仓库 | `"ccr.ccs.tencentyun.com/fluid/goosefsruntime-controller"` |
+| `runtime.goosefs.controller.image.repository`   | GooseFS 缓存引擎控制器镜像所在仓库 | `"ccr.ccs.tencentyun.com/tke-market/goosefsruntime-controller"` |
 | `runtime.goosefs.controller.image.tag`   | GooseFS 缓存引擎控制器镜像的版本 | `"v0.6.0-bbf4ea0"` |
-| `runtime.goosefs.runtime.image.repository`   | GooseFS 缓存引擎镜像所在仓库 | `"ccr.ccs.tencentyun.com/fluid/goosefs"` |
+| `runtime.goosefs.runtime.image.repository`   | GooseFS 缓存引擎镜像所在仓库 | `"ccr.ccs.tencentyun.com/tke-market/goosefs"` |
 | `runtime.goosefs.runtime.image.tag`   | GooseFS 缓存引擎镜像的版本 | `"v1.1.10"` |
-| `runtime.goosefs.fuse.image.repository`   | GooseFS 缓存引擎 Fuse 组件镜像所在仓库 | `"ccr.ccs.tencentyun.com/fluid/goosefs-fuse"` |
+| `runtime.goosefs.fuse.image.repository`   | GooseFS 缓存引擎 Fuse 组件镜像所在仓库 | `"ccr.ccs.tencentyun.com/tke-market/goosefs-fuse"` |
 | `runtime.goosefs.fuse.image.tag`   | GooseFS 缓存引擎 Fuse 组件镜像的版本 | `"v1.1.10"` |
 
 

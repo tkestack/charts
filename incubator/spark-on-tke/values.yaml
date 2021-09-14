@@ -8,7 +8,7 @@ replicaCount: 1
 
 image:
   # -- Image repository
-  repository: ccr.ccs.tencentyun.com/cloudnative-bigdata/spark-operator
+  repository: ccr.ccs.tencentyun.com/tke-market/spark-operator
   # -- Image pull policy
   pullPolicy: IfNotPresent
   # -- Overrides the image tag whose default is the chart appVersion.

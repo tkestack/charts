@@ -145,7 +145,7 @@ spec:
             do
               bash $cert;
           done
-        image: ccr.ccs.tencentyun.com/kinderyj/flink-operator-deployer:webhook-cert
+        image: ccr.ccs.tencentyun.com/tke-market/flink-operator-deployer:webhook-cert
         imagePullPolicy: Always
         name: create-cert
         volumeMounts:

@@ -10,7 +10,7 @@ CaelusAgentConfigmapName: "caelus-json"
 
 # image for caelus agent daemonset
 image:
-  repository: "ccr.ccs.tencentyun.com/colocation/caelus"
+  repository: "ccr.ccs.tencentyun.com/tke-market/caelus"
   pullPolicy: Always
   tag: "mvp.v0.0.1.20.gb9fee6d"
 
