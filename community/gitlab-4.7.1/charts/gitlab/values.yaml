@@ -1,0 +1,40 @@
+# Default values for gitlab-chart.
+# This is a YAML-formatted file.
+
+global:
+  edition: ce
+  hosts:
+    domain: example.com
+    https: true
+  enterpriseImages:
+    # Default repositories used to pull Gitlab Enterprise Edition images.
+    # See the image.repository and workhorse.repository template helpers.
+    migrations:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-task-runner-ee
+    sidekiq:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ee
+    task-runner:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-task-runner-ee
+    webservice:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-webservice-ee
+    workhorse:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ee
+    geo-logcursor:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-geo-logcursor
+  communityImages:
+    # Default repositories used to pull Gitlab Community Edition images.
+    # See the image.repository and workhorse.repository template helpers.
+    migrations:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-task-runner-ce
+    sidekiq:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ce
+    task-runner:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-task-runner-ce
+    webservice:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-webservice-ce
+    workhorse:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ce
+
+gitlab-runner:
+  enabled: false
+

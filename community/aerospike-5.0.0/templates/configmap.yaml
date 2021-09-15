@@ -1,0 +1,50 @@
+# ------------------------------------------------------------------------------
+# Copyright 2012-2020 Aerospike, Inc.
+#
+# Portions may be licensed to Aerospike, Inc. under one or more contributor
+# license agreements.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+# ------------------------------------------------------------------------------
+
+# ConfigMap for supplying aerospike config template and other necessary scripts.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-conf
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "aerospike.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+data:
+  # Use dynamically supplied aerospike.template.conf over the existing one.
+  {{ if .Files.Get "files/aerospike.template.conf" }}
+  aerospike.template.conf: {{ tpl (.Files.Get "files/aerospike.template.conf") . | quote }}
+  {{ end }}
+  {{ if (.Values.confFilePath) }}
+  aerospike.template.conf: |-
+    {{ .Values.confFilePath | nindent 4 | trim }}
+  {{ end }}
+
+  # Add on-start.sh script to configmap if available
+  {{ if .Files.Get "files/on-start.sh" }}
+  on-start.sh: {{ tpl (.Files.Get "files/on-start.sh") . | quote }}
+  {{ end }}
+
+  # Add aerospike-prometheus-exporter config template to config if monitoring is enabled and if the file is available
+  {{- if or (eq .Values.enableAerospikeMonitoring true) (eq .Values.enableAerospikePrometheusExporter true) }}
+  {{ if .Files.Get "files/ape.toml.template" }}
+  ape.toml.template: {{ tpl (.Files.Get "files/ape.toml.template") . | quote }}
+  {{ end }}
+  {{- end }}
+---

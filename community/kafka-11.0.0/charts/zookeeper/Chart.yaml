@@ -1,0 +1,15 @@
+apiVersion: v1
+appVersion: 3.6.1
+description: A centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services for distributed applications.
+engine: gotpl
+home: https://zookeeper.apache.org/
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/f1526762-dfe3-4965-9046-209d95ce900f.png
+keywords:
+- zookeeper
+maintainers:
+- email: containers@bitnami.com
+  name: Bitnami
+name: zookeeper
+sources:
+- https://github.com/bitnami/bitnami-docker-zookeeper
+version: 5.14.5

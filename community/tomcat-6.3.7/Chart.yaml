@@ -1,0 +1,20 @@
+apiVersion: v1
+appVersion: 9.0.35
+description: Chart for Apache Tomcat
+engine: gotpl
+home: http://tomcat.apache.org
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/a3872bee-945f-4599-8468-acfabd75eec4.png
+keywords:
+- tomcat
+- java
+- http
+- web
+- application server
+- jsp
+maintainers:
+- email: containers@bitnami.com
+  name: Bitnami
+name: tomcat
+sources:
+- https://github.com/bitnami/bitnami-docker-tomcat
+version: 6.3.7
