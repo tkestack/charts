@@ -5,5 +5,5 @@ description: A Helm chart for flink on Kubernetes operator
 version: "0.2.1"
 keywords:
   - flink
-icon: https://github.com/tkestack/charts/raw/main/icons/flink-on-tke.png
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/7dc9880f-1208-465c-9e40-4f1ad6cad848.png
 home: https://github.com/tkestack/charts

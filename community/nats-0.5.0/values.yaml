@@ -1,0 +1,53 @@
+affinity: {}
+auth:
+  enabled: false
+bootconfig:
+  image: connecteverything/nats-boot-config:0.5.2
+  pullPolicy: IfNotPresent
+cluster:
+  enabled: false
+  replicas: 3
+exporter:
+  enabled: true
+  image: synadia/prometheus-nats-exporter:0.5.0
+  pullPolicy: IfNotPresent
+gateway:
+  enabled: false
+  name: default
+imagePullSecrets: []
+leafnodes:
+  enabled: false
+nameOverride: ""
+nats:
+  advertise: true
+  connectRetries: 30
+  externalAccess: false
+  image: nats:2.1.7-alpine3.11
+  limits:
+    lameDuckDuration: null
+    maxConnections: null
+    maxControlLine: null
+    maxPayload: null
+    maxPending: null
+    maxPings: null
+    maxSubscriptions: null
+    writeDeadline: null
+  logging:
+    connectErrorReports: null
+    debug: null
+    logtime: null
+    reconnectErrorReports: null
+    trace: null
+  pingInterval: null
+  pullPolicy: IfNotPresent
+  serviceAccount: nats-server
+natsbox:
+  enabled: true
+  image: synadia/nats-box:0.3.0
+  pullPolicy: IfNotPresent
+podAnnotations: {}
+reloader:
+  enabled: true
+  image: connecteverything/nats-server-config-reloader:0.6.0
+  pullPolicy: IfNotPresent
+securityContext: null

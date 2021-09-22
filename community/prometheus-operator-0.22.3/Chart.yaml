@@ -1,0 +1,20 @@
+apiVersion: v1
+appVersion: 0.40.0
+description: The Prometheus Operator for Kubernetes provides easy monitoring definitions
+  for Kubernetes services and deployment and management of Prometheus instances.
+engine: gotpl
+home: https://github.com/coreos/prometheus-operator/
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/5b43b518-90fd-4581-aeb2-90691a88d73d.png
+keywords:
+- prometheus
+- alertmanager
+- operator
+- monitoring
+maintainers:
+- email: containers@bitnami.com
+  name: Bitnami
+name: prometheus-operator
+sources:
+- https://github.com/bitnami/bitnami-docker-prometheus-operator
+- https://github.com/coreos/prometheus-operator/
+version: 0.22.3

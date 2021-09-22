@@ -1,0 +1,17 @@
+appVersion: 0.20.0
+description: An nginx Ingress controller that uses ConfigMap to store the nginx configuration.
+engine: gotpl
+home: https://github.com/kubernetes/ingress-nginx
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/61a46829-4e90-449b-9a0f-90b188e78028.png
+keywords:
+- ingress
+- nginx
+- gitlab
+maintainers:
+- email: support@gitlab.com
+  name: GitLab Inc.
+name: nginx-ingress
+sources:
+- https://github.com/kubernetes/ingress-nginx
+- https://gitlab.com/gitlab-org/charts/gitlab/charts/nginx
+version: 0.30.0-1

@@ -1,7 +1,7 @@
 apiVersion: v2
 appVersion: v0.16.0
 description: A knative serving Helm chart for Kubernetes
-icon: https://avatars2.githubusercontent.com/u/35583233?s=200&v=4
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/3e1a9f50-e982-4105-8b90-e6656f18d609.png
 name: tke-knative-serving
 type: application
 version: 3.10.4

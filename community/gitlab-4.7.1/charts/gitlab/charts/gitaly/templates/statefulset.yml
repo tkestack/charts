@@ -1,0 +1,259 @@
+{{- if .Values.global.gitaly.enabled -}}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "fullname" . }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "gitlab.immutableLabels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "name" . }}
+      release: {{ .Release.Name }}
+  serviceName: {{ template "gitlab.gitaly.serviceName" . }}
+  replicas: {{template "gitlab.gitaly.replicas" . }}
+  podManagementPolicy: Parallel
+  {{- if .Values.global.operator.enabled }}
+  updateStrategy:
+    rollingUpdate:
+      partition: {{template "gitlab.gitaly.replicas" . }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}
+        release: {{ .Release.Name }}
+        {{- include "gitlab.podLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yml") . | sha256sum }}
+      {{- range $key, $value := .Values.annotations }}
+        {{ $key }}: {{ $value | quote }}
+      {{- end }}
+    spec:
+      {{- if .Values.tolerations }}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
+      {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: "{{ .Values.priorityClassName }}"
+      {{- end }}
+      terminationGracePeriodSeconds: 30
+      initContainers:
+        {{- include "gitlab.extraInitContainers" . | nindent 8 }}
+        {{- include "gitlab.certificates.initContainer" . | nindent 8 }}
+        - name: configure
+          command: ['sh', '/config/configure']
+          image: {{ include "gitlab.busybox.image" (dict "local" .Values.init "global" $.Values.global.busybox) | quote }}
+          env:
+          {{- include "gitlab.extraEnv" . | nindent 10 }}
+          volumeMounts:
+          {{- include "gitlab.extraVolumeMounts" . | nindent 10 }}
+          - name: gitaly-config
+            mountPath: /config
+            readOnly: true
+          - name: init-gitaly-secrets
+            mountPath: /init-config
+            readOnly: true
+          - name: gitaly-secrets
+            mountPath: /init-secrets
+            readOnly: false
+          resources:
+            {{- toYaml .Values.init.resources | nindent 12 }}
+      {{- if .Values.securityContext }}
+      securityContext:
+        {{- if not (empty .Values.securityContext.runAsUser) }}
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        {{- end }}
+        {{- if not (empty .Values.securityContext.fsGroup) }}
+        fsGroup: {{ .Values.securityContext.fsGroup }}
+        {{- end }}
+      {{- end }}
+{{- include "pullsecrets" .Values.image | indent 6 }}
+      {{- if eq (default .Values.global.antiAffinity .Values.antiAffinity) "hard" }}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchLabels:
+                  app: {{ template "name" . }}
+                  release: {{ .Release.Name }}
+      {{- else if eq (default .Values.global.antiAffinity .Values.antiAffinity) "soft" }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app: {{ template "name" . }}
+                  release: {{ .Release.Name }}
+      {{- end }}
+      {{- if or .Values.serviceAccount.enabled .Values.global.serviceAccount.enabled }}
+      serviceAccountName: {{ include "gitlab.serviceAccount.name" . }}
+      {{- end }}
+      containers:
+        {{- include "gitlab.extraContainers" . | nindent 8 }}
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ coalesce .Values.image.tag (include "gitlab.parseAppVersion" (dict "appVersion" .Chart.AppVersion "prepend" "true")) }}"
+          {{ template "gitlab.imagePullPolicy" . }}
+          ports:
+            - containerPort: {{ coalesce .Values.service.internalPort .Values.global.gitaly.service.internalPort }}
+           {{- if .Values.metrics.enabled }}
+            - containerPort: {{ .Values.metrics.metricsPort }}
+           {{- end }}
+          env:
+            - name: CONFIG_TEMPLATE_DIRECTORY
+              value: '/etc/gitaly/templates'
+            - name: CONFIG_DIRECTORY
+              value: '/etc/gitaly'
+            - name: GITALY_CONFIG_FILE
+              value: '/etc/gitaly/config.toml'
+            - name: SSL_CERT_DIR
+              value: '/etc/ssl/certs'
+            {{- if .Values.metrics.enabled }}
+            - name: GITALY_PROMETHEUS_LISTEN_ADDR
+              value: ':{{ .Values.metrics.metricsPort }}'
+            {{- end }}
+            {{- include "gitlab.tracing.env" . | nindent 12 }}
+            {{- include "gitlab.extraEnv" . | nindent 12 }}
+          volumeMounts:
+            {{- include "gitlab.extraVolumeMounts" . | nindent 12 }}
+            {{- include "gitlab.certificates.volumeMount" . | nindent 12 }}
+            - name: gitaly-config
+              mountPath: '/etc/gitaly/templates'
+            - name: gitaly-secrets
+              mountPath: '/etc/gitlab-secrets'
+              readOnly: true
+            - name: repo-data
+              mountPath: '/home/git/repositories'
+              {{- if and .Values.persistence.enabled .Values.persistence.subPath }}
+              subPath: "{{ .Values.persistence.subPath }}"
+              {{- end }}
+            {{- with .Values.global.gitaly.hooks }}
+            {{- if .preReceive }}
+            - name: gitaly-hooks-pre-recieve
+              mountPath: "/home/git/custom_hooks/pre-receive.d"
+            {{- end }}
+            {{- if .postReceive }}
+            - name: gitaly-hooks-post-recieve
+              mountPath: "/home/git/custom_hooks/post-receive.d"
+            {{- end }}
+            {{- if .update }}
+            - name: gitaly-hooks-update
+              mountPath: "/home/git/custom_hooks/update.d"
+            {{- end }}
+            {{- end }}
+          livenessProbe:
+            exec:
+              command:
+              - /scripts/healthcheck
+            initialDelaySeconds: 30
+            timeoutSeconds: 3
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+              - /scripts/healthcheck
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+      {{- include "gitlab.extraVolumes" . | nindent 6 }}
+      - name: gitaly-config
+        configMap:
+          name: {{ template "fullname" . }}
+      {{- if not .Values.persistence.enabled }}
+      - name: repo-data
+        emptyDir: {}
+      {{- end }}
+      - name: gitaly-secrets
+        emptyDir:
+          medium: "Memory"
+      - name: init-gitaly-secrets
+        projected:
+          defaultMode: 0440
+          sources:
+          - secret:
+              name: {{ template "gitlab.gitaly.authToken.secret" . }}
+              items:
+                - key: {{ template "gitlab.gitaly.authToken.key" . }}
+                  path: "gitaly_token"
+          - secret:
+              name: {{ template "gitlab.gitlab-shell.authToken.secret" . }}
+              items:
+                - key: {{ template "gitlab.gitlab-shell.authToken.key" . }}
+                  path: ".gitlab_shell_secret"
+          {{- if .Values.global.gitaly.tls.enabled }}
+          - secret:
+              name: {{ template "gitlab.gitaly.tls.secret" . }}
+              items:
+                - key: "tls.crt"
+                  path: "gitaly.crt"
+                - key: "tls.key"
+                  path: "gitaly.key"
+          {{- end }}
+      {{- with .Values.global.gitaly.hooks }}
+      {{- if and .preReceive (has .preReceive .configmap) }}
+      - name: gitaly-hooks-preReceive
+        configMap:
+          name: {{ .preReceive.configmap }}
+          defaultMode: 0555
+      {{- end }}
+      {{- if and .postReceive (has .postReceive .configmap) }}
+      - name: gitaly-hooks-postReceive
+        configMap:
+          name: {{ .postReceive.configmap }}
+          defaultMode: 0555
+      {{- end }}
+      {{- if and .update (hasKey .update "configmap") }}
+      - name: gitaly-hooks-update
+        configMap:
+          name: {{ .update.configmap }}
+          defaultMode: 0555
+      {{- end }}
+      {{- end }}
+      {{- include "gitlab.certificates.volumes" . | nindent 6 }}
+    {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+    {{- end -}}
+  {{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: repo-data
+        labels:
+          app: {{ template "name" . }}
+          release: {{ .Release.Name }}
+        annotations:
+        {{- range $key, $value := .Values.persistence.annotations }}
+          {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      spec:
+        accessModes:
+          - {{ .Values.persistence.accessMode | quote }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size | quote }}
+      {{- if .Values.persistence.storageClass }}
+      {{- if (eq "-" .Values.persistence.storageClass) }}
+        storageClassName: ""
+      {{- else }}
+        storageClassName: "{{ .Values.persistence.storageClass }}"
+      {{- end -}}
+      {{- end }}
+        selector:
+      {{- if .Values.persistence.matchLabels }}
+          matchLabels:
+      {{- toYaml .Values.persistence.matchLabels | nindent 12 }}
+      {{- end -}}
+      {{- if .Values.persistence.matchExpressions }}
+          matchExpressions:
+      {{- toYaml .Values.persistence.matchExpressions | nindent 12 }}
+      {{- end -}}
+  {{- end }}
+{{- end }}

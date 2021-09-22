@@ -1,0 +1,24 @@
+annotations:
+  category: CMS
+apiVersion: v1
+appVersion: 9.0.5
+description: One of the most versatile open source content management systems.
+engine: gotpl
+home: https://github.com/bitnami/charts/tree/master/bitnami/drupal
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/fcc26d7a-bc21-4cfe-801b-b12f81d50d77.png
+keywords:
+- drupal
+- cms
+- blog
+- http
+- web
+- application
+- php
+maintainers:
+- email: containers@bitnami.com
+  name: Bitnami
+name: drupal
+sources:
+- https://github.com/bitnami/bitnami-docker-drupal
+- http://www.drupal.org/
+version: 8.1.4

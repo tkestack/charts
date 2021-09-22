@@ -1,0 +1,6 @@
+dependencies:
+- name: kube-state-metrics
+  repository: https://market-tke.tencentcloudcr.com/chartrepo/opensource-stable/
+  version: 2.7.2
+digest: sha256:33fb444e27ed92c1a7a7ddb97fb805c8051f1e2c6d29efa63993683db86daa20
+generated: "2020-04-23T16:39:45.962038609+08:00"
