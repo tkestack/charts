@@ -1,0 +1,15 @@
+apiVersion: v1
+appVersion: 7.4.0
+description: A Helm chart to collect Kubernetes logs with filebeat
+home: https://www.elastic.co/products/beats/filebeat
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/a813b59f-39c0-4452-b324-dde5992c649e.png
+kubeVersion: '>=1.10.0-0'
+maintainers:
+- email: pete.brown@powerhrg.com
+  name: rendhalver
+- email: shane.starcher@gmail.com
+  name: sstarcher
+name: filebeat
+sources:
+- https://www.elastic.co/guide/en/beats/filebeat/current/index.html
+version: 4.0.0

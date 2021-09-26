@@ -5,7 +5,7 @@ version: 1.0.5
 appVersion: spark-operator-1.0.5-3.0.0
 keywords:
   - spark
-icon: https://github.com/tkestack/charts/raw/main/icons/spark-on-tke.png
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/3471d79f-d65a-4aef-b8b8-728e51633f08.png
 home: https://github.com/tkestack/charts
 maintainers:
   - name: yujunwang

@@ -1,0 +1,26 @@
+{{- if .Values.global.kas.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fullname" . }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "gitlab.standardLabels" . | nindent 4 }}
+data:
+  # See https://gitlab.com/gitlab-org/cluster-integration/gitlab-agent/-/blob/master/pkg/kascfg/config_example.yaml
+  config.yaml: |
+{{- if .Values.customConfig }}
+    {{- .Values.customConfig | toYaml | nindent 4 }}
+{{- else }}
+    agent:
+      listen:
+        address: ":{{ .Values.service.internalPort }}"
+        websocket: true
+    gitlab:
+      address: "{{ template "gitlab.workhorse.url" . }}"
+      authentication_secret_file: "/etc/kas/.gitlab_kas_secret"
+    observability:
+      listen:
+        address: ":{{ .Values.metrics.port }}"
+{{- end }}
+{{- end }}

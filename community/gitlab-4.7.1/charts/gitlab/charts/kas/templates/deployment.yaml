@@ -1,0 +1,90 @@
+{{- if .Values.global.kas.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "gitlab.standardLabels" . | nindent 4 }}
+  annotations:
+    {{- include "gitlab.deploymentAnnotations" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}
+        release: {{ .Release.Name }}
+        {{- include "gitlab.podLabels" . | nindent 8 }}
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+        {{- if .Values.metrics.enabled }}
+        gitlab.com/prometheus_scrape: "true"
+        gitlab.com/prometheus_path: {{ .Values.metrics.path | quote }}
+        gitlab.com/prometheus_port: {{ .Values.metrics.port | quote }}
+        prometheus.io/scrape: "true"
+        prometheus.io/path: {{ .Values.metrics.path | quote }}
+        prometheus.io/port: {{ .Values.metrics.port | quote }}
+        {{- end }}
+      {{- range $key, $value := .Values.annotations }}
+        {{ $key }}: {{ $value | quote }}
+      {{- end }}
+    spec:
+      {{- if .Values.tolerations }}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.serviceAccount.enabled .Values.global.serviceAccount.enabled }}
+      serviceAccountName: {{ include "gitlab.serviceAccount.name" . }}
+      automountServiceAccountToken: false
+      {{- end }}
+      securityContext:
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        runAsGroup: {{ .Values.securityContext.runAsGroup }}
+        fsGroup: {{ .Values.securityContext.fsGroup }}
+      containers:
+        {{- include "gitlab.extraContainers" . | nindent 8 }}
+        - name: {{ template "name" . }}
+          image: "{{ .Values.image.repository }}:{{ coalesce .Values.image.tag (include "gitlab.parseAppVersion" (dict "appVersion" .Chart.AppVersion "prepend" "true")) }}"
+          {{ template "gitlab.imagePullPolicy" . }}
+          args:
+            - "--configuration-file=/etc/kas/config.yaml"
+          ports:
+            - containerPort: {{ .Values.service.internalPort }}
+              name: {{ template "name" . }}
+            - containerPort: {{ .Values.metrics.port }}
+              name: {{ template "name" . }}-metrics
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.service.internalPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.service.internalPort }}
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: init-etc-kas
+              mountPath: /etc/kas
+              readOnly: true
+            {{- include "gitlab.extraVolumeMounts" . | nindent 12 }}
+      volumes:
+      {{- include "gitlab.extraVolumes" . | nindent 6 }}
+      - name: init-etc-kas
+        projected:
+          defaultMode: 0440
+          sources:
+            - configMap:
+                name: {{ template "fullname" . }}
+            - secret:
+                name: {{ template "gitlab.kas.secret" . }}
+                items:
+                  - key: {{ template "gitlab.kas.key" . }}
+                    path: .gitlab_kas_secret
+{{- end }}
