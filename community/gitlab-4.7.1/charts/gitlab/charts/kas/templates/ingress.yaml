@@ -1,0 +1,37 @@
+{{- if .Values.global.kas.enabled -}}
+{{- if eq (include "gitlab.ingress.enabled" $) "true" -}}
+{{- $hostname := include "gitlab.kas.hostname" . -}}
+{{- $tlsSecret := include "kas.tlsSecret" . -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gitlab.standardLabels" . | nindent 4 }}
+  annotations:
+    kubernetes.io/ingress.class: "{{ template "gitlab.ingressclass" . }}"
+    kubernetes.io/ingress.provider: nginx
+    {{ include "gitlab.certmanager_annotations" . }}
+  {{- range $key, $value := merge .Values.ingress.annotations .Values.global.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+spec:
+  rules:
+    - host: {{ $hostname }}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: {{ .Release.Name }}-{{ template "name" . }}
+              servicePort: {{ .Values.service.externalPort }}
+  {{- if (and $tlsSecret (eq (include "gitlab.ingress.tls.enabled" $) "true" )) }}
+  tls:
+    - hosts:
+      - {{ $hostname }}
+      secretName: {{ $tlsSecret }}
+  {{- else }}
+  tls: []
+  {{- end }}
+{{- end -}}
+{{- end -}}

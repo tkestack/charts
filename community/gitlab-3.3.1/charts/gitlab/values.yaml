@@ -1,0 +1,40 @@
+# Default values for gitlab-chart.
+# This is a YAML-formatted file.
+
+global:
+  edition: ee
+  hosts:
+    domain: example.com
+    https: true
+  enterpriseImages:
+    # Default repositories used to pull Gitlab Enterprise Edition images.
+    # See the image.repository and workhorse.repository template helpers.
+    migrations:
+      repository: ccr.ccs.tencentyun.com/tke-market/gitlab-task-runner-ee
+    sidekiq:
+      repository: ccr.ccs.tencentyun.com/tke-market/gitlab-sidekiq-ee
+    task-runner:
+      repository: ccr.ccs.tencentyun.com/tke-market/gitlab-task-runner-ee
+    unicorn:
+      repository: ccr.ccs.tencentyun.com/tke-market/gitlab-webservice-ee
+      workhorse:
+        repository: ccr.ccs.tencentyun.com/tke-market/gitlab-workhorse-ee
+    geo-logcursor:
+      repository: ccr.ccs.tencentyun.com/tke-market/gitlab-geo-logcursor
+  communityImages:
+    # Default repositories used to pull Gitlab Community Edition images.
+    # See the image.repository and workhorse.repository template helpers.
+    migrations:
+      repository: ccr.ccs.tencentyun.com/tke-market/gitlab-task-runner-ce
+    sidekiq:
+      repository: ccr.ccs.tencentyun.com/tke-market/gitlab-sidekiq-ce
+    task-runner:
+      repository: ccr.ccs.tencentyun.com/tke-market/gitlab-task-runner-ce
+    unicorn:
+      repository: ccr.ccs.tencentyun.com/tke-market/gitlab-webservice-ce
+      workhorse:
+        repository: ccr.ccs.tencentyun.com/tke-market/gitlab-workhorse-ce
+
+gitlab-runner:
+  enabled: false
+

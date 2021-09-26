@@ -1,0 +1,16 @@
+appVersion: 0.0.1
+description: Chart with custom tempaltes used in Bitnami charts.
+engine: gotpl
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/b2936338-a7d5-48c0-8a24-21fd18bc04f8.png
+keywords:
+- helper
+- template
+- bitnami
+- broker
+- service
+- catalog
+maintainers:
+- email: containers@bitnami.com
+  name: Bitnami
+name: bitnami-common
+version: 0.0.5

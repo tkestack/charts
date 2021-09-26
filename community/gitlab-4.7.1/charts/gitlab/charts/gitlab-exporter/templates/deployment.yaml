@@ -1,0 +1,144 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "gitlab.standardLabels" . | nindent 4 }}
+  annotations:
+    {{- include "gitlab.deploymentAnnotations" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}
+        release: {{ .Release.Name }}
+        {{- include "gitlab.podLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+{{- if .Values.metrics.enabled }}
+        {{- toYaml .Values.metrics.annotations | nindent 8 }}
+{{- end }}
+    spec:
+      securityContext:
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        fsGroup: {{ .Values.securityContext.fsGroup }}
+      {{- if eq (default .Values.global.antiAffinity .antiAffinity) "hard" }}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchLabels:
+                  app: {{ template "name" . }}
+                  release: {{ .Release.Name }}
+      {{- else if eq (default .Values.global.antiAffinity .antiAffinity) "soft" }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app: {{ template "name" . }}
+                  release: {{ .Release.Name }}
+      {{- end }}
+      {{- if or .Values.serviceAccount.enabled .Values.global.serviceAccount.enabled }}
+      serviceAccountName: {{ include "gitlab.serviceAccount.name" . }}
+      {{- end }}
+      initContainers:
+        {{- include "gitlab.extraInitContainers" . | nindent 8 }}
+        {{- include "gitlab.certificates.initContainer" . | nindent 8 }}
+        - name: configure
+          command: ['sh', '/config/configure']
+          image: {{ include "gitlab.busybox.image" (dict "local" .Values.init "global" $.Values.global.busybox) | quote }}
+          env:
+          {{- include "gitlab.extraEnv" . | nindent 10 }}
+          volumeMounts:
+          {{- include "gitlab.extraVolumeMounts" . | nindent 10 }}
+          {{- include "gitlab.psql.ssl.volumeMount" . | nindent 10 }}
+          - name: gitlab-exporter-config
+            mountPath: /config
+            readOnly: true
+          - name: init-gitlab-exporter-secrets
+            mountPath: /init-config
+            readOnly: true
+          - name: gitlab-exporter-secrets
+            mountPath: /init-secrets
+            readOnly: false
+          resources:
+            {{- toYaml .Values.init.resources | nindent 12 }}
+      {{- include "pullsecrets" .Values.image | nindent 6 }}
+      containers:
+        {{- include "gitlab.extraContainers" . | nindent 8 }}
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ coalesce .Values.image.tag .Chart.AppVersion }}"
+          {{ template "gitlab.imagePullPolicy" . }}
+          env:
+            - name: CONFIG_TEMPLATE_DIRECTORY
+              value: '/var/opt/gitlab-exporter/templates'
+            - name: CONFIG_DIRECTORY
+              value: '/etc/gitlab-exporter'
+            {{- include "gitlab.extraEnv" . | nindent 12 }}
+          ports:
+          - containerPort: {{ .Values.service.internalPort }}
+            name: gitlab-exporter
+          volumeMounts:
+            - name: gitlab-exporter-config
+              mountPath: /var/opt/gitlab-exporter/templates/gitlab-exporter.yml.erb
+              subPath: gitlab-exporter.yml.erb
+            - name: gitlab-exporter-secrets
+              mountPath: '/etc/gitlab'
+              readOnly: true
+            {{- include "gitlab.extraVolumeMounts" . | nindent 12 }}
+            {{- include "gitlab.certificates.volumeMount" . | nindent 12 }}
+          livenessProbe:
+            exec:
+              command:
+                - pgrep
+                - -f
+                - gitlab-exporter
+          readinessProbe:
+            exec:
+              command:
+                - pgrep
+                - -f
+                - gitlab-exporter
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/bash", "-c", "pkill -f 'gitlab-exporter'"]
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+      {{- include "gitlab.extraVolumes" . | nindent 6 }}
+      {{- include "gitlab.psql.ssl.volume" . | nindent 6 }}
+      - name: gitlab-exporter-config
+        configMap:
+          name: {{ template "fullname" . }}
+      - name: init-gitlab-exporter-secrets
+        projected:
+          defaultMode: 0400
+          sources:
+          {{- include "gitlab.psql.secret" . | nindent 10 }}
+          {{- include "gitlab.redis.secret" . | nindent 10 }}
+      - name: gitlab-exporter-secrets
+        emptyDir:
+          medium: "Memory"
+      {{- include "gitlab.certificates.volumes" . | nindent 6 }}
+    {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+    {{- end }}
+    {{- if .Values.tolerations }}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
+    {{- end }}
+{{- end }}

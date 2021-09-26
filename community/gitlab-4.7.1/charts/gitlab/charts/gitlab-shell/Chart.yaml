@@ -1,0 +1,17 @@
+apiVersion: v1
+appVersion: 13.14.0
+description: sshd for Gitlab
+home: https://about.gitlab.com/
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/4c415edc-64eb-4faf-b132-83a288bce2f1.png
+keywords:
+- gitlab
+- sshd
+- ssh
+maintainers:
+- email: support@gitlab.com
+  name: GitLab Inc.
+name: gitlab-shell
+sources:
+- https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/gitlab/charts/gitlab-shell
+- https://gitlab.com/gitlab-org/build/CNG/tree/master/gitlab-shell
+version: 4.7.1

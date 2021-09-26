@@ -23,5 +23,5 @@ version: 0.1.0
 # It is recommended to use it with quotes.
 appVersion: "1.16.0"
 
-icon: https://github.com/tkestack/charts/raw/main/icons/colocation-on-tke.png
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/f0cb66de-55eb-4b1d-a965-a09b3964ea9e.png
 home: https://github.com/tkestack/charts

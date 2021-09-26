@@ -1,0 +1,31 @@
+annotations:
+  artifacthub.io/links: |
+    - name: Chart Source
+      url: https://github.com/jenkinsci/helm-charts/tree/main/charts/jenkins
+    - name: Jenkins
+      url: https://www.jenkins.io/
+apiVersion: v2
+appVersion: 2.263.1
+description: Jenkins - Build great things at any scale! The leading open source automation
+  server, Jenkins provides hundreds of plugins to support building, deploying and
+  automating any project.
+home: https://jenkins.io/
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/1b6d4b1b-6d47-48c2-a9c7-2935ff4e77af.png
+maintainers:
+- email: maor.friedman@redhat.com
+  name: maorfr
+- email: mail@torstenwalter.de
+  name: torstenwalter
+- email: garridomota@gmail.com
+  name: mogaal
+- email: wmcdona89@gmail.com
+  name: wmcdona89
+- email: timjacomb1@gmail.com
+  name: timja
+name: jenkins
+sources:
+- https://github.com/jenkinsci/jenkins
+- https://github.com/jenkinsci/docker-inbound-agent
+- https://github.com/maorfr/kube-tasks
+- https://github.com/jenkinsci/configuration-as-code-plugin
+version: 3.0.12
