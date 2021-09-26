@@ -19,7 +19,7 @@ version: 0.6.0
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
 appVersion: 0.6.0-48de610
-icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/7bfe0453-095e-481d-acf1-e7861bc2ba83.jpg
+icon: https://github.com/tkestack/charts/raw/main/icons/goosefs-on-tke-and-eks.jpg
 home: https://github.com/fluid-cloudnative/fluid
 keywords:
   - category:data

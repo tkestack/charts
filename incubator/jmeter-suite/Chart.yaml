@@ -42,5 +42,5 @@ dependencies:
     condition: influxdb.enabled
     repository: file://../charts/influxdb
 
-icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/d0955b92-9f66-4393-a974-5ec55dc4f69f.png
+icon: https://github.com/tkestack/charts/raw/main/icons/jmeter-suite.png
 home: https://github.com/tkestack/charts

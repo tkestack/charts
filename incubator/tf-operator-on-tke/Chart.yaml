@@ -6,7 +6,7 @@ appVersion: "tf-operator-0.5.3"
 keywords:
  - kubeflow
  - training
-icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/4c7d05af-9c8b-4bff-847d-3e2f8827fca1.png
+icon: https://github.com/tkestack/charts/raw/main/icons/tf-operator-on-tke.png
 home: https://github.com/tkestack/charts
 maintainers:
  - name: lucaswzhang

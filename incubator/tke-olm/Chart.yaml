@@ -9,7 +9,7 @@ sources:
   - https://github.com/tkestack/charts/incubator/tke-olm
 version: 0.17.0
 appVersion: "0.17.0"
-icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/9fa1f17c-f2da-44eb-863b-d91f854fbb56.svg
+icon: https://raw.githubusercontent.com/tkestack/charts/main/icons/logo-olm.svg
 keyWords:
   - operator
   - olm
