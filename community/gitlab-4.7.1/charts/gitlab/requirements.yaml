@@ -1,3 +1,0 @@
-dependencies:
-- name: praefect
-  condition: global.praefect.enabled

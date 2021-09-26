@@ -6,7 +6,7 @@ appVersion: "pytorch-operator-0.7.0"
 keywords:
  - kubeflow
  - training
-icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/9271fbaf-0ab5-4197-b621-58eb4139d378.png
+icon: https://github.com/tkestack/charts/raw/main/icons/pytorch-operator-on-tke.png
 home: https://github.com/tkestack/charts
 maintainers:
  - name: lucaswzhang

@@ -1,0 +1,16 @@
+{{- range .Values.cloud.subnets }}
+apiVersion: v1
+kind: Node
+metadata:
+  annotations:
+    eks.tke.cloud.tencent.com/subnet-id: {{ .id }}
+  labels:
+    eks.tke.cloud.tencent.com/zone-name: {{ .zone }}
+{{ include "node.labels" . | indent 4 }}
+  name: eklet-{{ .id }}
+spec:
+  taints:
+  - effect: NoSchedule
+    key: eks.tke.cloud.tencent.com/eklet
+---
+{{- end }}

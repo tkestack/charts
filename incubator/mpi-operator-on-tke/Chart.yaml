@@ -6,7 +6,7 @@ appVersion: "mpi-operator-0.2.3"
 keywords:
  - kubeflow
  - training
-icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/eec0b2b5-3036-4a89-8d16-8b9fdc29d22c.png
+icon: https://github.com/tkestack/charts/raw/main/icons/mpi-operator-on-tke.png
 home: https://github.com/tkestack/charts
 maintainers:
  - name: lucaswzhang

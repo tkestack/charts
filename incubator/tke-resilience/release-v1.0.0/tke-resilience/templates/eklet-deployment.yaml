@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eklet-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "eklet.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.eklet.replicaCount }}
+  selector:
+    matchLabels:
+{{ include "eklet.labels" . | indent 6 }}
+  template:
+    metadata:
+      labels:
+{{ include "eklet.labels" . | indent 8 }}
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node.kubernetes.io/instance-type
+                    operator: NotIn
+                    values:
+                      - eklet
+      serviceAccountName: eklet-{{ .Release.Name }}
+      containers:
+        - name: eklet
+          env:
+            - name: API_DOMAIN
+              value: {{ .Values.cloud.apiDomain }}
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+          args:
+            - /usr/local/bin/eklet
+            - --runtime-cxm
+            - --client-ca-file=/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            - --cluster-id={{ .Values.cloud.vpcID }}
+            - --app-id={{ .Values.cloud.appID }}
+            - --owner-uin={{ .Values.cloud.ownerUIN }}
+            - --region-short={{ .Values.cloud.regionShort }}
+            - --region-long={{ .Values.cloud.regionLong }}
+            - --vpc-id={{ .Values.cloud.vpcID }}
+            - --wait-sandbox-running-timeout={{ .Values.eklet.waitSandboxRunningTimeout }}
+            - --node-ip=$(POD_IP)
+            - --pod-used-apiserver={{ .Values.eklet.podUsedApiserver }}
+            - --secret-id={{ .Values.cloud.secretID }}
+            - --secret-key={{ .Values.cloud.secretKey }}
+            - --eklet-service-name=eks-eklet
+            - --eklet-service-namespace={{ .Release.Namespace }}
+          image: {{ .Values.eklet.image.ref }}
+          imagePullPolicy: {{ .Values.eklet.image.pullPolicy }}
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 10240
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 2
+          ports:
+            - containerPort: 10241
+              name: eklet-port
+              protocol: TCP
+            - containerPort: 10240
+              name: unsecure-port
+              protocol: TCP
+          {{- if .Values.eklet.resources }}
+          resources:
+{{ toYaml .Values.eklet.resources | indent 12 }}
+          {{- end}}
+    {{- if .Values.eklet.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.eklet.nodeSelector | indent 8 }}
+    {{- end }}

@@ -249,7 +249,7 @@ postgresql-ha:
     tag: 11.8.0-debian-10-r43-v8
   pgpoolImage:
     registry: ccr.ccs.tencentyun.com
-    repository: tke-market/pgpool
+    repository: tke-marekt/pgpool
     tag: 4.1.2-debian-10-r37
   metricsImage:
     registry: ccr.ccs.tencentyun.com

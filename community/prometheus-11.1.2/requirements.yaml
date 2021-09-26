@@ -1,7 +1,0 @@
-dependencies:
-
-  - name: kube-state-metrics
-    version: "2.7.*"
-    repository: https://market-tke.tencentcloudcr.com/chartrepo/opensource-stable/
-    condition: kubeStateMetrics.enabled
-
