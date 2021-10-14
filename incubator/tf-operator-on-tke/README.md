@@ -21,11 +21,11 @@
 
 ## 最佳实践
 
-`TF-Operator` 提供一个 PS/Worker 模式的分布式训练[案例](https://github.com/kubeflow/tf-operator/tree/master/examples/v1/dist-mnist)。
+`TF-Operator` 提供一个 PS/Worker 模式的分布式训练[案例](https://github.com/kubeflow/training-operator/tree/master/examples/tensorflow/dist-mnist)。
 
 ### 训练代码
 
-[`dist_mnist.py`](https://github.com/kubeflow/tf-operator/blob/master/examples/v1/dist-mnist/dist_mnist.py)
+[`dist_mnist.py`](https://raw.githubusercontent.com/kubeflow/training-operator/master/examples/tensorflow/dist-mnist/dist_mnist.py)
 
 ### 训练镜像
 
@@ -33,7 +33,7 @@
 
 ### 任务提交
 
-准备一个 TFJob 的 [yaml 文件](https://raw.githubusercontent.com/kubeflow/tf-operator/master/examples/v1/dist-mnist/tf_job_mnist.yaml)：定义 2 个 PS 和 4 个 Worker。请注意，用户需要用上传后的训练镜像地址替换 `<训练镜像>` 所在占位。
+准备一个 TFJob 的 [yaml 文件](https://raw.githubusercontent.com/kubeflow/training-operator/master/examples/tensorflow/dist-mnist/tf_job_mnist.yaml)：定义 2 个 PS 和 4 个 Worker。请注意，用户需要用上传后的训练镜像地址替换 `<训练镜像>` 所在占位。
 
 ```yaml
 apiVersion: "kubeflow.org/v1"
