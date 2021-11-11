@@ -19,7 +19,7 @@ Bind [anycast ip](https://config.tencent.com/product/aia) automatically when add
 | `config.region.longName`           | Tencent cloud region long name                  | `ap-hongkong`                    |
 | `config.aia.tags`                  | Extension label of aia                        | ""		                  |
 | `config.aia.bandwidth`             | Bandwidth(Mbps) of aia                        | `100`                          |
-| `config.aia.anycastZone`           | Zone of anycast resource                       | `ANYCAST_ZONE_OVERSEAS`                          |
+| `config.aia.anycastZone`           | Zone of anycast resource                       | `ANYCAST_ZONE_OVERSEAS` (`ANYCAST_ZONE_GLOBAL`: publish in global，need add white list to enable global accelerationaccelerate，`ANYCAST_ZONE_OVERSEAS`: publish in overseas)|
 | `config.node.labels`               | Label of node which needs to be bound aia     | `tke.cloud.tencent.com/need-aia-ip: 'true'`|
 | `controller.replicaCount`          | Controller replica count                       | `2`                               |
 | `controller.image.ref`             | Controller image                              | ""					|
@@ -59,10 +59,10 @@ If you want set more chart values, here is an example:
 ```yaml
 # valuse.yaml
 credential: # credential which has permission to access aia API
-  clusterID: {your_cluster_ID} # tke cluster id
-  appID: {your_app_ID}
-  secretID: {your_secret_ID}
-  secretKey: {your_secret_key}
+  clusterID: '{your_cluster_ID}' # tke cluster id
+  appID: '{your_app_ID}'
+  secretID: '{your_secret_ID}'
+  secretKey: '{your_secret_key}'
 
 config:
   region:
@@ -73,6 +73,7 @@ config:
       k1: v1
       k2: v2
     bandwidth: 100 # Bandwidth(Mbps) of aia
+    anycastZone: ANYCAST_ZONE_OVERSEAS # ANYCAST_ZONE_OVERSEAS or ANYCAST_ZONE_GLOBAL 
   node:
     labels: # the node with these labels will be bound aia ip
       tke.cloud.tencent.com/need-aia-ip: 'true'

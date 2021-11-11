@@ -19,7 +19,7 @@
 | `config.region.longName`           | 腾讯云Region长名                                 | `ap-hongkong`                    |
 | `config.aia.tags`                  | 创建腾讯云aia资源时额外配置的label                  | ""			                  |
 | `config.aia.bandwidth`             | 创建腾讯云aia资源时设置的带宽（Mbps）                | `100`                          |
-| `config.aia.anycastZone`           | anycast资源所在区域	                       | `ANYCAST_ZONE_OVERSEAS`                          |
+| `config.aia.anycastZone`           | anycast资源所在区域	                       | `ANYCAST_ZONE_OVERSEAS` (`ANYCAST_ZONE_GLOBAL`：全球发布域，需要额外开通Anycast全球加速白名单，`ANYCAST_ZONE_OVERSEAS`：境外发布域)|
 | `config.node.labels`               | 需要绑定aia ip节点识别label             		 | `tke.cloud.tencent.com/need-aia-ip: 'true'`|
 | `controller.replicaCount`          | controller副本数量                               | `2`                               |
 | `controller.image.ref`             | controller运行时镜像                              | ""					|
@@ -34,10 +34,10 @@
 ```yaml
 # valuse.yaml
 credential: # 具备访问aia API的访问凭据
-  clusterID: {your_cluster_ID} # tke集群id
-  appID: {your_app_ID}
-  secretID: {your_secret_ID}
-  secretKey: {your_secret_key}
+  clusterID: '{your_cluster_ID}' # tke集群id
+  appID: '{your_app_ID}'
+  secretID: '{your_secret_ID}'
+  secretKey: '{your_secret_key}'
 
 config:
   region: # 使用地域
@@ -59,10 +59,10 @@ helm install aia-ip-controller -n kube-system -f values.yaml aia-ip-controller-0
 ```yaml
 # valuse.yaml
 credential: # 具备访问aia API的访问凭据
-  clusterID: {your_cluster_ID} # tke集群id
-  appID: {your_app_ID}
-  secretID: {your_secret_ID}
-  secretKey: {your_secret_key}
+  clusterID: '{your_cluster_ID}' # tke集群id
+  appID: '{your_app_ID}'
+  secretID: '{your_secret_ID}'
+  secretKey: '{your_secret_key}'
 
 config:
   region: # 使用地域
@@ -73,6 +73,7 @@ config:
       k1: v1
       k2: v2
     bandwidth: 100 # 设置购买的aia ip带宽，单位Mbps
+    anycastZone: ANYCAST_ZONE_OVERSEAS # ANYCAST_ZONE_OVERSEAS or ANYCAST_ZONE_GLOBAL 
   node: # 只有打了如下label的节点才会触发aia ip controller处理绑定anycast ip
     labels:
       tke.cloud.tencent.com/need-aia-ip: 'true'
