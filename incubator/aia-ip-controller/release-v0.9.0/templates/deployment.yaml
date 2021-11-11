@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: {{ .Release.Name }}
+    qcloud-app: {{ .Release.Name }}
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  progressDeadlineSeconds: 600
+  replicas: {{ .Values.controller.replicaCount}}
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      k8s-app: {{ .Release.Name }}
+      qcloud-app: {{ .Release.Name }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        k8s-app: {{ .Release.Name }}
+        qcloud-app: {{ .Release.Name }}
+    spec:
+      hostNetwork: true
+      containers:
+        - command:
+            - /app/bin/aia-ip-controller
+            - --aia-conf-path=/app/conf/values.yaml
+            - -v=3
+          env:
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+            - name: AIA_CLUSTER_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-credential
+                  key: clusterID
+            - name: AIA_APP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-credential
+                  key: appID
+            - name: AIA_SECRET_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-credential
+                  key: secretID
+            - name: AIA_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-credential
+                  key: secretKey
+          {{- if eq .Values.controller.image.ref "" }}
+          image: {{ .Values.config.region.shortName }}ccr.ccs.tencentyun.com/tkeimages/aia-ip-controller:v0.9.0
+          {{- else }}
+          image: {{ .Values.controller.image.ref }}
+          {{- end}}
+          imagePullPolicy: {{ .Values.controller.image.pullPolicy }}
+          name: {{ .Release.Name }}
+          {{- if .Values.controller.resources }}
+          resources:
+{{ toYaml .Values.controller.resources | indent 12 }}
+          {{- end}}
+          securityContext:
+            privileged: false
+            procMount: Default
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - name: values-yaml
+              mountPath: /app/conf/
+      dnsPolicy: ClusterFirstWithHostNet
+      hostAliases:
+        - hostnames:
+            - cbs.api.qcloud.com
+            - cvm.api.qcloud.com
+            - lb.api.qcloud.com
+            - snapshot.api.qcloud.com
+            - monitor.api.qcloud.com
+            - scaling.api.qcloud.com
+            - ccs.api.qcloud.com
+            - tag.api.qcloud.com
+          ip: 169.254.0.28
+        - hostnames:
+            - vpc.tencentcloudapi.com
+            - cbs.tencentcloudapi.com
+            - cvm.tencentcloudapi.com
+            - tag.tencentcloudapi.com
+            - tke.internal.tencentcloudapi.com
+            - clb.internal.tencentcloudapi.com
+            - cvm.internal.tencentcloudapi.com
+            - tag.internal.tencentcloudapi.com
+          ip: 169.254.0.95
+      volumes:
+        - name: values-yaml
+          configMap:
+            name: {{ .Release.Name }}
+            items:
+              - key: values.yaml
+                path: values.yaml
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: {{ .Release.Name }}
+      serviceAccountName: {{ .Release.Name }}
+      terminationGracePeriodSeconds: 30
