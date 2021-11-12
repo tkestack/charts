@@ -16,9 +16,9 @@ config:
       tke.cloud.tencent.com/need-aia-ip: 'true'
 
 controller:
-  # maxConcurrentReconcile: 3
-  # kubeApiQps: 50
-  # kubeApiBurst: 100
+  maxConcurrentReconcile: 1
+  kubeApiQps: 20
+  kubeApiBurst: 30
   replicaCount: 2
   image:
     ref: "" # if your region is China mainland, set the value whith ccr.ccs.tencentyun.com/tkeimages/aia-ip-controller:v0.10.0, otherwise no need to modify it.

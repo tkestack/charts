@@ -22,9 +22,9 @@ Bind [anycast ip](https://config.tencent.com/product/aia) automatically when add
 | `config.aia.anycastZone`           | Zone of anycast resource                       | `ANYCAST_ZONE_OVERSEAS` (`ANYCAST_ZONE_GLOBAL`: publish in global，need add white list to enable global acceleration，`ANYCAST_ZONE_OVERSEAS`: publish in overseas)|
 | `config.node.labels`               | Label of node which needs to be bound aia     | `tke.cloud.tencent.com/need-aia-ip: 'true'`|
 | `controller.replicaCount`          | Controller replica count                       | `2`                               |
-| `controller.maxConcurrentReconcile` |the maximum number of concurrent Reconciles     | ``                               |
-| `controller.kubeApiQps`            |the maximum QPS                                | ``                               |
-| `controller.kubeApiBurst`          |maximum burst for throttle                               | ``                               |
+| `controller.maxConcurrentReconcile` |the maximum number of concurrent Reconciles     | `1`                               |
+| `controller.kubeApiQps`            |the maximum QPS                                | `20`                               |
+| `controller.kubeApiBurst`          |maximum burst for throttle                      | `30`                               |
 | `controller.image.ref`             | Controller image                              | ""					|
 | `controller.image.pullPolicy`      | Controller image pull policy                    | `Always`                    |
 | `controller.resources.limits`      | Controller resources limits                      | `cpu: "1", memory: 1Gi`        |
