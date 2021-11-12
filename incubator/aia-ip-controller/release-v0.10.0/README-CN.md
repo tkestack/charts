@@ -22,9 +22,9 @@
 | `config.aia.anycastZone`           | anycast资源所在区域	                       | `ANYCAST_ZONE_OVERSEAS` (`ANYCAST_ZONE_GLOBAL`：全球发布域，需要额外开通Anycast全球加速白名单，`ANYCAST_ZONE_OVERSEAS`：境外发布域)|
 | `config.node.labels`               | 需要绑定aia ip节点识别label             		 | `tke.cloud.tencent.com/need-aia-ip: 'true'`|
 | `controller.replicaCount`          | controller副本数量                               | `2`                               |
-| `controller.maxConcurrentReconcile` | 允许并行运行的Reconciles最大数                      | ``                               |
-| `controller.kubeApiQps`            | 最大QPS                              		 | ``                               |
-| `controller.kubeApiBurst`          | 节流限制最大值                             	 | ``                               |
+| `controller.maxConcurrentReconcile` | 允许并行运行的Reconciles最大数                      | `1`                               |
+| `controller.kubeApiQps`            | 最大QPS                              		 | `20`                               |
+| `controller.kubeApiBurst`          | 节流限制最大值                             	 | `30`                               |
 | `controller.image.ref`             | controller运行时镜像                              | ""					|
 | `controller.image.pullPolicy`      | controller镜像拉取策略                             | `Always`                    |
 | `controller.resources.limits`      | controller资源上限配额                         	  | `cpu: "1", memory: 1Gi`        |
