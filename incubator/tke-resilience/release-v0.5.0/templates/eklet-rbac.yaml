@@ -49,7 +49,9 @@ rules:
   - apiGroups: [ "" ]
     resources: [ "pods/eviction" ]
     verbs: [ "create" ]
-
+  - apiGroups: [ "cls.cloud.tencent.com" ]
+    resources: [ "logconfigs" ]
+    verbs:  [ "create", "get", "list", "patch", "update","watch" ]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
