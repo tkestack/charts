@@ -21,7 +21,6 @@ Nocalhost 的核心功能是：提供 Nocalhost IDE 插件（包括 VSCode 和 J
 | 参数                                  | 描述                 | 默认值         |
 | :------------------------------------ | -------------------- | :------------- |
 | `service.type`                        | 发布服务（服务类型)  | `LoadBalancer` |
-| `mariadb.auth.rootPassword`           | 数据库 root 用户密码 | `root`         |
 | `mariadb.primary.persistence.enabled` | 使用持久化存储       | `true`         |
 | `mariadb.primary.persistence.size`    | 持久化存储卷大小     | `10Gi`         |
 
