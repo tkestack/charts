@@ -28,8 +28,8 @@ keywords:
   - influxdb
 
 maintainers:
-  - name: duckzheng
-    email: duckzheng@tencent.com
+  - name: charrli
+    email: charrli@tencent.com
 
 dependencies:
   - name: distributed-jmeter
