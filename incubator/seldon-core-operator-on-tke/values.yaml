@@ -49,7 +49,7 @@ executor:
   metricsPortName: metrics
   image:
     pullPolicy: IfNotPresent
-    registry: ccr.ccs.tencent.yun
+    registry: ccr.ccs.tencentyun.com
     repository: tke-market/seldon-core-executor
     tag: 1.12.0
   resources:
@@ -72,7 +72,7 @@ executor:
 # ## Seldon Core Controller Manager Options
 image:
   pullPolicy: IfNotPresent
-  registry: ccr.ccs.tencent.yun
+  registry: ccr.ccs.tencentyun.com
   repository: tke-market/seldon-core-operator
   tag: 1.12.0
 manager:
@@ -96,7 +96,7 @@ singleNamespace: false
 storageInitializer:
   cpuLimit: "1"
   cpuRequest: 100m
-  image: ccr.ccs.tencent.yun/tke-market/rclone-storage-initializer:1.12.0
+  image: ccr.ccs.tencentyun.com/tke-market/rclone-storage-initializer:1.12.0
   memoryLimit: 1Gi
   memoryRequest: 100Mi
 usageMetrics:
@@ -118,44 +118,44 @@ predictor_servers:
     protocols:
       seldon:
         defaultImageVersion: "1.12.0"
-        image: ccr.ccs.tencent.yun/tke-market/mlflowserver
+        image: ccr.ccs.tencentyun.com/tke-market/mlflowserver
       kfserving:
         defaultImageVersion: "1.0.0.rc1-mlflow"
-        image: ccr.ccs.tencent.yun/tke-market/mlserver
+        image: ccr.ccs.tencentyun.com/tke-market/mlserver
   SKLEARN_SERVER:
     protocols:
       seldon:
         defaultImageVersion: "1.12.0"
-        image: ccr.ccs.tencent.yun/tke-market/sklearnserver
+        image: ccr.ccs.tencentyun.com/tke-market/sklearnserver
       kfserving:
         defaultImageVersion: "1.0.0.rc1-sklearn"
-        image: ccr.ccs.tencent.yun/tke-market/mlserver
+        image: ccr.ccs.tencentyun.com/tke-market/mlserver
   TENSORFLOW_SERVER:
     protocols:
       seldon:
         defaultImageVersion: "1.12.0"
-        image: ccr.ccs.tencent.yun/tke-market/tfserving-proxy
+        image: ccr.ccs.tencentyun.com/tke-market/tfserving-proxy
       tensorflow: 
         defaultImageVersion: 2.1.0
-        image:  ccr.ccs.tencent.yun/tke-market/serving
+        image:  ccr.ccs.tencentyun.com/tke-market/serving
   XGBOOST_SERVER:
     protocols:
       seldon:
         defaultImageVersion: "1.12.0"
-        image: ccr.ccs.tencent.yun/tke-market/xgboostserver
+        image: ccr.ccs.tencentyun.com/tke-market/xgboostserver
       kfserving:
         defaultImageVersion: "1.0.0.rc1-xgboost"
-        image: ccr.ccs.tencent.yun/tke-market/mlserver
+        image: ccr.ccs.tencentyun.com/tke-market/mlserver
   TRITON_SERVER:
     protocols:
       kfserving:
         defaultImageVersion: "21.08-py3"
-        image: ccr.ccs.tencent.yun/tke-market/tritonserver
+        image: ccr.ccs.tencentyun.com/seldonio/tritonserver
   TEMPO_SERVER:
     protocols:
       kfserving:
         defaultImageVersion: "1.0.0.rc1-slim"
-        image: ccr.ccs.tencent.yun/tke-market/mlserver
+        image: ccr.ccs.tencentyun.com/tke-market/mlserver
 
 # ## Other
 # You can choose the crds to not be installed if you already installed them
@@ -187,7 +187,7 @@ engine:
     port: 5001
   image:
     pullPolicy: IfNotPresent
-    registry: ccr.ccs.tencent.yun
+    registry: ccr.ccs.tencentyun.com
     repository: tke-market/seldon-engine
     tag: 1.12.0
   resources:
@@ -206,5 +206,5 @@ engine:
 
 # Explainer image
 explainer:
-  image: ccr.ccs.tencentyun.com/seldonio/alibiexplainer:1.12.0
-  image_v2: ccr.ccs.tencentyun.com/seldonio/mlserver:1.0.0.rc1-alibi-explain
+  image: ccr.ccs.tencentyun.com/tke-market/alibiexplainer:1.12.0
+  image_v2: ccr.ccs.tencentyun.com/tke-market/mlserver:1.0.0.rc1-alibi-explain
