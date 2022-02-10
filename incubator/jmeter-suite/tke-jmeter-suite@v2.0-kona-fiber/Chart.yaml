@@ -1,5 +1,5 @@
 apiVersion: v2
-name: jmeter-suite
+name: tke-jmeter-suite-fiber
 description: A Helm chart for jmeter suit.
 
 # A chart can be either an 'application' or a 'library' chart.
