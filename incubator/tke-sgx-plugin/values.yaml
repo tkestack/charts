@@ -1,0 +1,14 @@
+init:
+  image:
+    repository: ccr.ccs.tencentyun.com/tke-market/intel-sgx-initcontainer
+    tag: v0.0.1
+
+plugin:
+  image:
+    repository: ccr.ccs.tencentyun.com/tke-market/intel-sgx-plugin
+    tag: v0.0.1
+
+
+
+
+

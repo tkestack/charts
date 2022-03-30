@@ -1,0 +1,12 @@
+apiVersion: v1
+name: tke-sgx-plugin
+description: A Helm chart for SGX device plugin on Kubernetes operator
+version: 0.0.1
+appVersion: sgx-operator-0.0.1
+keywords:
+  - sgx
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/139450e0-2529-4cdc-8583-528b7e38ff2a.png
+home: https://github.com/tkestack/charts
+maintainers:
+  - name: lionelxchen
+    email: lionelxchen@tencent.com
