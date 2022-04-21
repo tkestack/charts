@@ -1,0 +1,37 @@
+# Default values for jmeter-helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+distributed-jmeter:
+  enabled: true
+  server:
+    replicaCount: 10
+    heap_size: 8g
+  master:
+    replicaCount: 0
+    heap_size: 5g
+  image:
+    pullPolicy: Always
+    repository: ccr.ccs.tencentyun.com/jmeter-test/jmeter-helm-docker
+    tag: v2.2-kona
+
+grafana:
+  enabled: true
+  adminUser: admin
+  adminPassword: admin
+  env:
+    GF_AUTH_ANONYMOUS_ENABLED: "False"
+
+influxdb:
+  enabled: true
+  persistence:
+    enabled: true
+    ## influxdb data Persistent Volume Storage Class
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, AWS & OpenStack)
+    ##
+    # storageClass: "-"
+    size: 40Gi
