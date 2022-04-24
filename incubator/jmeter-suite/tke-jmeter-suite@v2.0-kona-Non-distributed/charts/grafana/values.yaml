@@ -395,9 +395,9 @@ dashboardProviders:
 dashboards:
   default:
     jmeter-dashboard:
-      file: dashboards/jmeter-dashboard-non.json
+      file: dashboards/JMeter_Dashboard.json
     jmeter-trend-dashboard:
-      file: dashboards/jmeter-trend-dashboard.json
+      file: dashboards/Apache_JMeter_Dashboard.json
   # default:
   #   some-dashboard:
   #     json: |

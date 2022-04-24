@@ -21,7 +21,7 @@
   "gnetId": 4026,
   "graphTooltip": 0,
   "id": 1,
-  "iteration": 1650356115019,
+  "iteration": 1650790751029,
   "links": [],
   "panels": [
     {
@@ -523,7 +523,7 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:1086",
+          "$$hashKey": "object:112",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -532,7 +532,7 @@
           "show": true
         },
         {
-          "$$hashKey": "object:1087",
+          "$$hashKey": "object:113",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -674,6 +674,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:698",
           "decimals": 0,
           "format": "short",
           "label": null,
@@ -683,6 +684,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:699",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -705,7 +707,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$data_source",
-      "decimals": 1,
+      "decimals": 0,
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -726,11 +728,9 @@
       "legend": {
         "alignAsTable": true,
         "avg": false,
-        "current": true,
-        "hideZero": false,
-        "max": false,
+        "current": false,
+        "max": true,
         "min": false,
-        "rightSide": false,
         "show": true,
         "total": false,
         "values": true
@@ -768,7 +768,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT sum(\"maxAT\") FROM \"$measurement_name\" WHERE (\"transaction\" = 'internal' AND \"application\" =~ /^$application$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "query": "SELECT sum(\"minAT\") FROM \"$measurement_name\" WHERE (\"transaction\" = 'internal' AND \"application\" =~ /^$application$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -809,8 +809,8 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:277",
-          "decimals": 1,
+          "$$hashKey": "object:197",
+          "decimals": 0,
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -819,7 +819,7 @@
           "show": true
         },
         {
-          "$$hashKey": "object:278",
+          "$$hashKey": "object:198",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -903,7 +903,7 @@
           "measurement": "jmeter",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"pct95.0\") FROM \"$measurement_name\" WHERE (\"statut\" = 'ok' AND \"application\" =~ /^$application$/) AND $timeFilter GROUP BY \"transaction\", time($__interval) fill(null)",
+          "query": "SELECT mean(\"pct95.0\") FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/) AND $timeFilter GROUP BY \"transaction\", time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -934,31 +934,25 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:916",
           "colorMode": "ok",
           "fill": true,
           "line": true,
           "op": "lt",
-          "value": 500,
-          "yaxis": "left"
+          "value": 500
         },
         {
-          "$$hashKey": "object:917",
           "colorMode": "warning",
           "fill": false,
           "line": true,
           "op": "gt",
-          "value": 1500,
-          "yaxis": "left"
+          "value": 1500
         },
         {
-          "$$hashKey": "object:918",
           "colorMode": "critical",
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 5000,
-          "yaxis": "left"
+          "value": 5000
         }
       ],
       "timeFrom": null,
@@ -981,7 +975,7 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:890",
+          "$$hashKey": "object:521",
           "format": "ms",
           "label": null,
           "logBase": 1,
@@ -990,7 +984,7 @@
           "show": true
         },
         {
-          "$$hashKey": "object:891",
+          "$$hashKey": "object:522",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1690,6 +1684,7 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
+          "$$hashKey": "object:290",
           "alias": "Average",
           "yaxis": 1
         }
@@ -1772,7 +1767,7 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:804",
+          "$$hashKey": "object:297",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1781,7 +1776,7 @@
           "show": true
         },
         {
-          "$$hashKey": "object:805",
+          "$$hashKey": "object:298",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1907,7 +1902,7 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:575",
+          "$$hashKey": "object:609",
           "decimals": 0,
           "format": "short",
           "label": null,
@@ -1917,7 +1912,7 @@
           "show": true
         },
         {
-          "$$hashKey": "object:576",
+          "$$hashKey": "object:610",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1990,6 +1985,7 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
+          "$$hashKey": "object:427",
           "alias": "Average",
           "yaxis": 1
         }
@@ -2304,31 +2300,25 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:494",
           "colorMode": "ok",
           "fill": true,
           "line": true,
           "op": "lt",
-          "value": 500,
-          "yaxis": "left"
+          "value": 500
         },
         {
-          "$$hashKey": "object:495",
           "colorMode": "warning",
           "fill": false,
           "line": true,
           "op": "gt",
-          "value": 1500,
-          "yaxis": "left"
+          "value": 1500
         },
         {
-          "$$hashKey": "object:496",
           "colorMode": "critical",
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 5000,
-          "yaxis": "left"
+          "value": 5000
         }
       ],
       "timeFrom": null,
@@ -2351,7 +2341,7 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:468",
+          "$$hashKey": "object:434",
           "format": "ms",
           "label": null,
           "logBase": 1,
@@ -2360,7 +2350,7 @@
           "show": true
         },
         {
-          "$$hashKey": "object:469",
+          "$$hashKey": "object:435",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -2405,8 +2395,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "ngnix",
-          "value": "ngnix"
+          "text": "团队名称",
+          "value": "团队名称"
         },
         "datasource": "$data_source",
         "definition": "",
@@ -2431,8 +2421,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "ngnix",
-          "value": "ngnix"
+          "text": "接口名2",
+          "value": "接口名2"
         },
         "datasource": "$data_source",
         "definition": "",
@@ -2463,6 +2453,7 @@
         "name": "measurement_name",
         "options": [
           {
+            "selected": true,
             "text": "jmeter",
             "value": "jmeter"
           }
@@ -2481,6 +2472,7 @@
         "name": "send_interval",
         "options": [
           {
+            "selected": true,
             "text": "5",
             "value": "5"
           }
@@ -2492,8 +2484,8 @@
     ]
   },
   "time": {
-    "from": "2022-04-19T08:14:06.265Z",
-    "to": "2022-04-19T08:24:45.737Z"
+    "from": "2022-04-24T08:32:35.375Z",
+    "to": "2022-04-24T08:34:26.975Z"
   },
   "timepicker": {
     "refresh_intervals": [

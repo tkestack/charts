@@ -28,7 +28,7 @@ spec:
         - name: {{ .Chart.Name }}
           env:
             - name: HEAP
-              value: -Xms{{ .Values.server.heap_size }} -Xmx{{ .Values.server.heap_size }} -XX:MaxMetaspaceSize=256m
+              value: -Xms{{ .Values.server.heap_size }} -Xmx{{ .Values.server.heap_size }} -XX:MaxMetaspaceSize=512m
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args: ["server"]
