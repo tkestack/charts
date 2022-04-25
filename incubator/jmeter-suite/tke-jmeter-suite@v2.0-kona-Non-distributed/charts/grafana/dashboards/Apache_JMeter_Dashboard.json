@@ -19,15 +19,16 @@
   },
   "description": "Monitor your Apache JMeter load test in real time with InfluxDB and Grafana.\r\nGet overall summary, errors details and particular transaction response times.",
   "editable": true,
+  "fiscalYearStartMonth": 0,
   "gnetId": 5496,
   "graphTooltip": 0,
-  "id": 3,
-  "iteration": 1650790754954,
+  "id": 13,
+  "iteration": 1650889595006,
   "links": [],
+  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -36,34 +37,46 @@
       },
       "id": 33,
       "panels": [],
-      "repeat": null,
       "title": "Summary",
       "type": "row"
     },
     {
-      "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": true,
-      "colors": [
-        "#299c46",
-        "#e5ac0e",
-        "#d44a3a"
-      ],
-      "datasource": "$data_source",
-      "decimals": 0,
+      "datasource": {
+        "uid": "$data_source"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "0"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
         },
         "overrides": []
-      },
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
       },
       "gridPos": {
         "h": 7,
@@ -71,42 +84,25 @@
         "x": 0,
         "y": 1
       },
-      "height": "",
       "id": 26,
       "interval": "[[send_interval]]s",
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": " Requests",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "#e5ac0e",
-        "show": false
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "8.4.3",
       "targets": [
         {
           "dsType": "influxdb",
@@ -147,43 +143,46 @@
           "tags": []
         }
       ],
-      "thresholds": "",
       "title": "Total Requests",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "0",
-          "value": "null"
-        }
-      ],
-      "valueName": "total"
+      "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": true,
-      "colors": [
-        "#299c46",
-        "#e24d42",
-        "#d44a3a"
-      ],
-      "datasource": "$data_source",
-      "decimals": 0,
+      "datasource": {
+        "uid": "$data_source"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "0"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
         },
         "overrides": []
-      },
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
       },
       "gridPos": {
         "h": 7,
@@ -191,42 +190,25 @@
         "x": 4,
         "y": 1
       },
-      "height": "",
       "id": 28,
       "interval": "[[send_interval]]s",
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": " Failed",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "#bf1b00",
-        "show": false
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "8.4.3",
       "targets": [
         {
           "dsType": "influxdb",
@@ -267,43 +249,46 @@
           "tags": []
         }
       ],
-      "thresholds": "",
       "title": "Failed Requests",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "0",
-          "value": "null"
-        }
-      ],
-      "valueName": "total"
+      "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": true,
-      "colors": [
-        "#299c46",
-        "#e24d42",
-        "#d44a3a"
-      ],
-      "datasource": "$data_source",
-      "decimals": 0,
+      "datasource": {
+        "uid": "$data_source"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "0"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
         },
         "overrides": []
-      },
-      "format": "bytes",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
       },
       "gridPos": {
         "h": 7,
@@ -311,42 +296,25 @@
         "x": 8,
         "y": 1
       },
-      "height": "",
       "id": 38,
       "interval": "[[send_interval]]s",
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": " ",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "#bf1b00",
-        "show": false
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "8.4.3",
       "targets": [
         {
           "dsType": "influxdb",
@@ -387,43 +355,46 @@
           "tags": []
         }
       ],
-      "thresholds": "",
       "title": "Received Bytes",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "0",
-          "value": "null"
-        }
-      ],
-      "valueName": "total"
+      "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": true,
-      "colors": [
-        "#299c46",
-        "#e24d42",
-        "#d44a3a"
-      ],
-      "datasource": "$data_source",
-      "decimals": 0,
+      "datasource": {
+        "uid": "$data_source"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "0"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
         },
         "overrides": []
-      },
-      "format": "bytes",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
       },
       "gridPos": {
         "h": 7,
@@ -431,42 +402,25 @@
         "x": 12,
         "y": 1
       },
-      "height": "",
       "id": 37,
       "interval": "[[send_interval]]s",
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": " ",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "#bf1b00",
-        "show": false
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "8.4.3",
       "targets": [
         {
           "dsType": "influxdb",
@@ -507,43 +461,53 @@
           "tags": []
         }
       ],
-      "thresholds": "",
       "title": "Sent Bytes",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "0",
-          "value": "null"
-        }
-      ],
-      "valueName": "total"
+      "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": true,
-      "colors": [
-        "#299c46",
-        "#ef843c",
-        "#e24d42"
-      ],
-      "datasource": "$data_source",
-      "decimals": 2,
+      "datasource": {
+        "uid": "$data_source"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "color": "#ef843c",
+                  "text": "0"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              },
+              {
+                "color": "#ef843c",
+                "value": 0
+              },
+              {
+                "color": "#e24d42",
+                "value": 0.01
+              }
+            ]
+          },
+          "unit": "percentunit"
         },
         "overrides": []
-      },
-      "format": "percentunit",
-      "gauge": {
-        "maxValue": 1,
-        "minValue": 0,
-        "show": true,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
       },
       "gridPos": {
         "h": 7,
@@ -554,38 +518,20 @@
       "id": 29,
       "interval": "[[send_interval]]s",
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false
+      "options": {
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
       },
-      "tableColumn": "",
+      "pluginVersion": "8.4.3",
       "targets": [
         {
           "dsType": "influxdb",
@@ -626,18 +572,8 @@
           "tags": []
         }
       ],
-      "thresholds": "0,0.01",
       "title": "Error Rate %",
-      "type": "singlestat",
-      "valueFontSize": "50%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "0",
-          "value": "null"
-        }
-      ],
-      "valueName": "total"
+      "type": "gauge"
     },
     {
       "aliasColors": {
@@ -648,16 +584,13 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$data_source",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "$data_source"
+      },
       "decimals": 2,
       "editable": true,
       "error": false,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
       "fill": 7,
       "fillGradient": 0,
       "gridPos": {
@@ -677,8 +610,6 @@
         "min": true,
         "rightSide": false,
         "show": true,
-        "sort": null,
-        "sortDesc": null,
         "total": false,
         "values": true
       },
@@ -686,8 +617,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "8.4.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -698,6 +632,10 @@
       "targets": [
         {
           "alias": "Req / s",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "raZTjaY7z"
+          },
           "dsType": "influxdb",
           "groupBy": [
             {
@@ -744,9 +682,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Total Throughput",
       "tooltip": {
         "msResolution": false,
@@ -756,9 +692,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -766,25 +700,18 @@
         {
           "$$hashKey": "object:160",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:161",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": false
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -795,16 +722,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$data_source",
+      "datasource": {
+        "uid": "$data_source"
+      },
       "decimals": 0,
       "editable": true,
       "error": false,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
       "fill": 7,
       "fillGradient": 0,
       "gridPos": {
@@ -831,8 +754,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "8.4.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -895,9 +821,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Total Errors",
       "tooltip": {
         "msResolution": false,
@@ -907,9 +831,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -917,24 +839,17 @@
         {
           "decimals": 0,
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": false
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -945,14 +860,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$data_source",
-      "decimals": 0,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
+      "datasource": {
+        "uid": "$data_source"
       },
+      "decimals": 0,
       "fill": 7,
       "fillGradient": 0,
       "gridPos": {
@@ -978,8 +889,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "8.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1029,9 +943,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Active Threads",
       "tooltip": {
         "shared": true,
@@ -1040,9 +952,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -1051,25 +961,18 @@
           "$$hashKey": "object:245",
           "decimals": 0,
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:246",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -1079,16 +982,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$data_source",
+      "datasource": {
+        "uid": "$data_source"
+      },
       "decimals": 2,
       "editable": true,
       "error": false,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -1118,12 +1017,14 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "8.4.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
-      "repeat": null,
       "repeatDirection": "h",
       "seriesOverrides": [],
       "spaceLength": 10,
@@ -1196,9 +1097,7 @@
           "value": 5000
         }
       ],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Transactions Response Times (95th pct)",
       "tooltip": {
         "msResolution": false,
@@ -1208,33 +1107,24 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "ms",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": false
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -1244,16 +1134,13 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$data_source",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "$data_source"
+      },
       "decimals": 2,
       "editable": true,
       "error": false,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -1283,8 +1170,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "8.4.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -1295,6 +1185,10 @@
       "targets": [
         {
           "alias": "$tag_transaction",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "raZTjaY7z"
+          },
           "groupBy": [
             {
               "params": [
@@ -1311,7 +1205,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"sb\") FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/) AND $timeFilter GROUP BY \"transaction\", time($__interval) fill(null)",
+          "query": "SELECT mean(\"sb\") / $send_interval FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/) AND $timeFilter GROUP BY \"transaction\", time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -1333,6 +1227,10 @@
         },
         {
           "alias": "$tag_transaction",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "raZTjaY7z"
+          },
           "groupBy": [
             {
               "params": [
@@ -1349,7 +1247,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"rb\") FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/) AND $timeFilter GROUP BY \"transaction\", time($__interval) fill(null)",
+          "query": "SELECT mean(\"rb\") / $send_interval FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/) AND $timeFilter GROUP BY \"transaction\", time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -1372,30 +1270,34 @@
       ],
       "thresholds": [
         {
+          "$$hashKey": "object:694",
           "colorMode": "ok",
           "fill": true,
           "line": true,
           "op": "lt",
-          "value": 500
+          "value": 500,
+          "yaxis": "left"
         },
         {
+          "$$hashKey": "object:695",
           "colorMode": "warning",
           "fill": false,
           "line": true,
           "op": "gt",
-          "value": 1500
+          "value": 1500,
+          "yaxis": "left"
         },
         {
+          "$$hashKey": "object:696",
           "colorMode": "critical",
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 5000
+          "value": 5000,
+          "yaxis": "left"
         }
       ],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Network Traffic",
       "tooltip": {
         "msResolution": false,
@@ -1405,38 +1307,30 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
+          "$$hashKey": "object:668",
           "format": "bytes",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
+          "$$hashKey": "object:669",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": false
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
       "collapsed": true,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1447,7 +1341,9 @@
       "panels": [
         {
           "columns": [],
-          "datasource": "$data_source",
+          "datasource": {
+            "uid": "$data_source"
+          },
           "fontSize": "100%",
           "gridPos": {
             "h": 7,
@@ -1459,7 +1355,6 @@
           "id": 25,
           "interval": "[[send_interval]]s",
           "links": [],
-          "pageSize": null,
           "scroll": true,
           "showHeader": true,
           "sort": {
@@ -1477,7 +1372,6 @@
             {
               "alias": "",
               "align": "auto",
-              "colorMode": null,
               "colors": [
                 "rgba(245, 54, 54, 0.9)",
                 "rgba(237, 129, 40, 0.89)",
@@ -1544,7 +1438,9 @@
         },
         {
           "columns": [],
-          "datasource": "$data_source",
+          "datasource": {
+            "uid": "$data_source"
+          },
           "fontSize": "100%",
           "gridPos": {
             "h": 7,
@@ -1555,7 +1451,6 @@
           "id": 27,
           "interval": "[[send_interval]]s",
           "links": [],
-          "pageSize": null,
           "scroll": true,
           "showHeader": true,
           "sort": {
@@ -1573,7 +1468,6 @@
             {
               "alias": "",
               "align": "auto",
-              "colorMode": null,
               "colors": [
                 "rgba(245, 54, 54, 0.9)",
                 "rgba(237, 129, 40, 0.89)",
@@ -1643,13 +1537,11 @@
           "type": "table-old"
         }
       ],
-      "repeat": null,
       "title": "Errors",
       "type": "row"
     },
     {
       "collapsed": false,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1658,36 +1550,46 @@
       },
       "id": 35,
       "panels": [],
-      "repeat": null,
       "title": "Individual Transaction - $transaction",
       "type": "row"
     },
     {
-      "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": true,
-      "colors": [
-        "rgba(245, 54, 54, 0.9)",
-        "#e5ac0e",
-        "rgba(50, 172, 45, 0.97)"
-      ],
-      "datasource": "$data_source",
-      "decimals": 0,
-      "editable": true,
-      "error": false,
+      "datasource": {
+        "uid": "$data_source"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "0"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
         },
         "overrides": []
-      },
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
       },
       "gridPos": {
         "h": 7,
@@ -1698,38 +1600,22 @@
       "id": 9,
       "interval": "[[send_interval]]s",
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": " Requests",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "#e5ac0e",
-        "show": false
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "8.4.3",
       "targets": [
         {
           "dsType": "influxdb",
@@ -1783,45 +1669,46 @@
           ]
         }
       ],
-      "thresholds": "",
       "title": "Total Requests - $transaction",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "0",
-          "value": "null"
-        }
-      ],
-      "valueName": "total"
+      "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": true,
-      "colors": [
-        "rgba(245, 54, 54, 0.9)",
-        "#e24d42",
-        "rgba(50, 172, 45, 0.97)"
-      ],
-      "datasource": "$data_source",
-      "decimals": 0,
-      "editable": true,
-      "error": false,
+      "datasource": {
+        "uid": "$data_source"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "0"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
         },
         "overrides": []
-      },
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
       },
       "gridPos": {
         "h": 7,
@@ -1832,38 +1719,22 @@
       "id": 6,
       "interval": "[[send_interval]]s",
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": " Failed",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "#e24d42",
-        "show": false
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "8.4.3",
       "targets": [
         {
           "dsType": "influxdb",
@@ -1917,45 +1788,53 @@
           ]
         }
       ],
-      "thresholds": "",
       "title": "Failed Requests - $transaction",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "0",
-          "value": "null"
-        }
-      ],
-      "valueName": "total"
+      "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": true,
-      "colors": [
-        "rgba(50, 172, 45, 0.97)",
-        "#e5ac0e",
-        "#e24d42"
-      ],
-      "datasource": "$data_source",
-      "decimals": 2,
-      "editable": true,
-      "error": false,
+      "datasource": {
+        "uid": "$data_source"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "color": "#e5ac0e",
+                  "text": "0"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(50, 172, 45, 0.97)",
+                "value": null
+              },
+              {
+                "color": "#e5ac0e",
+                "value": 0
+              },
+              {
+                "color": "#e24d42",
+                "value": 0.01
+              }
+            ]
+          },
+          "unit": "percentunit"
         },
         "overrides": []
-      },
-      "format": "percentunit",
-      "gauge": {
-        "maxValue": 1,
-        "minValue": 0,
-        "show": true,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
       },
       "gridPos": {
         "h": 7,
@@ -1966,38 +1845,20 @@
       "id": 8,
       "interval": "[[send_interval]]s",
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(14, 237, 45)",
-        "show": false
+      "options": {
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
       },
-      "tableColumn": "",
+      "pluginVersion": "8.4.3",
       "targets": [
         {
           "dsType": "influxdb",
@@ -2051,18 +1912,8 @@
           ]
         }
       ],
-      "thresholds": "0,0.01",
       "title": "Error Rate % - $transaction",
-      "type": "singlestat",
-      "valueFontSize": "50%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "0",
-          "value": "null"
-        }
-      ],
-      "valueName": "total"
+      "type": "gauge"
     },
     {
       "aliasColors": {
@@ -2076,16 +1927,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$data_source",
+      "datasource": {
+        "uid": "$data_source"
+      },
       "decimals": 2,
       "editable": true,
       "error": false,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
       "fill": 7,
       "fillGradient": 0,
       "gridPos": {
@@ -2113,8 +1960,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "8.4.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -2183,9 +2033,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Throughput - $transaction",
       "tooltip": {
         "msResolution": false,
@@ -2195,9 +2043,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -2205,25 +2051,18 @@
         {
           "$$hashKey": "object:353",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:354",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": false
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -2234,14 +2073,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$data_source",
-      "decimals": 0,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
+      "datasource": {
+        "uid": "$data_source"
       },
+      "decimals": 0,
       "fill": 7,
       "fillGradient": 0,
       "gridPos": {
@@ -2268,8 +2103,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "8.4.3",
       "pointradius": 1,
       "points": true,
       "renderer": "flot",
@@ -2319,9 +2157,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Errors",
       "tooltip": {
         "shared": true,
@@ -2332,7 +2168,6 @@
       "xaxis": {
         "buckets": 1,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -2340,24 +2175,17 @@
         {
           "decimals": 0,
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -2373,16 +2201,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$data_source",
+      "datasource": {
+        "uid": "$data_source"
+      },
       "decimals": 2,
       "editable": true,
       "error": false,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -2412,8 +2236,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "8.4.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -2754,9 +2581,7 @@
           "value": 5000
         }
       ],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Response Times - $transaction",
       "tooltip": {
         "msResolution": false,
@@ -2766,38 +2591,29 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "ms",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": false
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     }
   ],
   "refresh": false,
-  "schemaVersion": 26,
+  "schemaVersion": 35,
   "style": "dark",
   "tags": [
     "load_test"
@@ -2807,8 +2623,8 @@
       {
         "current": {
           "selected": false,
-          "text": "influxdb",
-          "value": "influxdb"
+          "text": "InfluxDB",
+          "value": "InfluxDB"
         },
         "hide": 0,
         "includeAll": false,
@@ -2823,13 +2639,14 @@
         "type": "datasource"
       },
       {
-        "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "团队名称",
           "value": "团队名称"
         },
-        "datasource": "$data_source",
+        "datasource": {
+          "uid": "$data_source"
+        },
         "definition": "",
         "hide": 0,
         "includeAll": false,
@@ -2842,20 +2659,18 @@
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
-        "tagValuesQuery": null,
-        "tags": [],
-        "tagsQuery": null,
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
-          "selected": true,
-          "text": "接口名1",
-          "value": "接口名1"
+          "selected": false,
+          "text": "百度",
+          "value": "百度"
         },
-        "datasource": "$data_source",
+        "datasource": {
+          "uid": "$data_source"
+        },
         "definition": "",
         "hide": 0,
         "includeAll": false,
@@ -2868,46 +2683,21 @@
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
-        "tagValuesQuery": null,
-        "tags": [],
-        "tagsQuery": null,
         "type": "query",
         "useTags": false
       },
       {
-        "current": {
-          "text": "jmeter",
-          "value": "jmeter"
-        },
         "hide": 2,
         "label": "Measurement name",
         "name": "measurement_name",
-        "options": [
-          {
-            "selected": true,
-            "text": "jmeter",
-            "value": "jmeter"
-          }
-        ],
         "query": "jmeter",
         "skipUrlSync": false,
         "type": "constant"
       },
       {
-        "current": {
-          "text": "5",
-          "value": "5"
-        },
         "hide": 2,
         "label": "Backend send interval in second",
         "name": "send_interval",
-        "options": [
-          {
-            "selected": true,
-            "text": "5",
-            "value": "5"
-          }
-        ],
         "query": "5",
         "skipUrlSync": false,
         "type": "constant"
@@ -2915,8 +2705,8 @@
     ]
   },
   "time": {
-    "from": "2022-04-24T08:32:49.920Z",
-    "to": "2022-04-24T08:34:24.672Z"
+    "from": "2022-04-24T07:54:45.820Z",
+    "to": "2022-04-24T07:59:55.303Z"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -2944,7 +2734,8 @@
     ]
   },
   "timezone": "browser",
-  "title": "Apache JMeter Dashboard using Core InfluxdbBackendListenerClient",
+  "title": "Apache JMeter Dashboard",
   "uid": "TbYg1ow7k",
-  "version": 1
+  "version": 1,
+  "weekStart": ""
 }
