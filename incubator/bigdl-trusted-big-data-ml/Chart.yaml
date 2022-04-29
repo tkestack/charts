@@ -3,4 +3,10 @@ name: bigdl-trusted-big-data-ml
 description: A Helm chart for submitting BigDL PPML trusted-big-data-ml Spark jobs to Kubernetes
 type: application
 version: 0.1.0
+icon: https://github.com/tkestack/charts/raw/main/icons/bigdl_logo.jpg
 appVersion: 2.1.0-SNAPSHOT
+keywords:
+ - bigdl
+maintainers:
+ - name: glorysdj
+   email: dongjie.shi@intel.com
