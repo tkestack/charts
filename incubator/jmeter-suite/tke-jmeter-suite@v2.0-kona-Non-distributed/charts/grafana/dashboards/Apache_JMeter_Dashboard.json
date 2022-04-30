@@ -5,7 +5,7 @@
         "$$hashKey": "object:4298",
         "builtIn": 1,
         "datasource": "$data_source",
-        "enable": true,
+        "enable": false,
         "hide": false,
         "iconColor": "rgba(0, 211, 255, 1)",
         "limit": 100,
@@ -21,8 +21,8 @@
   "editable": true,
   "gnetId": 5496,
   "graphTooltip": 0,
-  "id": 5,
-  "iteration": 1650960362703,
+  "id": 3,
+  "iteration": 1651352605112,
   "links": [],
   "panels": [
     {
@@ -2813,7 +2813,7 @@
       }
     }
   ],
-  "refresh": false,
+  "refresh": "5s",
   "schemaVersion": 26,
   "style": "dark",
   "tags": [
@@ -2868,10 +2868,9 @@
       {
         "allValue": null,
         "current": {
-          "isNone": true,
           "selected": false,
-          "text": "None",
-          "value": ""
+          "text": "百度",
+          "value": "百度"
         },
         "datasource": "$data_source",
         "definition": "",
@@ -2931,8 +2930,8 @@
     ]
   },
   "time": {
-    "from": "2022-04-26T07:59:50.346Z",
-    "to": "2022-04-26T08:02:06.118Z"
+    "from": "now-5m",
+    "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [
