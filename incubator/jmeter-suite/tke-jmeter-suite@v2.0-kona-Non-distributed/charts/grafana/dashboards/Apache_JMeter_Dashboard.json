@@ -5,7 +5,7 @@
         "$$hashKey": "object:4298",
         "builtIn": 1,
         "datasource": "$data_source",
-        "enable": false,
+        "enable": true,
         "hide": false,
         "iconColor": "rgba(0, 211, 255, 1)",
         "limit": 100,
@@ -22,7 +22,7 @@
   "gnetId": 5496,
   "graphTooltip": 0,
   "id": 3,
-  "iteration": 1651352605112,
+  "iteration": 1651389097735,
   "links": [],
   "panels": [
     {
@@ -486,7 +486,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT max(\"sb\") FROM \"$measurement_name\" WHERE (\"transaction\" = 'all' AND \"application\" =~ /^$application$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "query": "SELECT sum(\"sb\") FROM \"$measurement_name\" WHERE (\"transaction\" = 'all' AND \"application\" =~ /^$application$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -1319,7 +1319,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"sb\") / $send_interval FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/) AND $timeFilter GROUP BY \"transaction\", time($__interval) fill(null)",
+          "query": "SELECT sum(\"sb\") / $send_interval FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/) AND $timeFilter GROUP BY \"transaction\", time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -1357,7 +1357,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"rb\") / $send_interval FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/) AND $timeFilter GROUP BY \"transaction\", time($__interval) fill(null)",
+          "query": "SELECT sum(\"rb\") / $send_interval FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/) AND $timeFilter GROUP BY \"transaction\", time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -2842,7 +2842,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "百度",
           "value": "百度"
         },
@@ -2901,6 +2901,7 @@
         "name": "measurement_name",
         "options": [
           {
+            "selected": true,
             "text": "jmeter",
             "value": "jmeter"
           }
@@ -2919,6 +2920,7 @@
         "name": "send_interval",
         "options": [
           {
+            "selected": true,
             "text": "5",
             "value": "5"
           }
