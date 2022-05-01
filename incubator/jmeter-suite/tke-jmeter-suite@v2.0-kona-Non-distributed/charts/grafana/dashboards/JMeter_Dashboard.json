@@ -4,7 +4,7 @@
       {
         "builtIn": 1,
         "datasource": "$data_source",
-        "enable": false,
+        "enable": true,
         "hide": false,
         "iconColor": "rgba(0, 211, 255, 1)",
         "limit": 100,
@@ -20,8 +20,8 @@
   "editable": true,
   "gnetId": 4026,
   "graphTooltip": 0,
-  "id": 1,
-  "iteration": 1650790751029,
+  "id": 5,
+  "iteration": 1651389374933,
   "links": [],
   "panels": [
     {
@@ -2365,7 +2365,7 @@
       }
     }
   ],
-  "refresh": false,
+  "refresh": "5s",
   "schemaVersion": 26,
   "style": "dark",
   "tags": [
@@ -2394,9 +2394,9 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
-          "text": "团队名称",
-          "value": "团队名称"
+          "selected": true,
+          "text": "百度",
+          "value": "百度"
         },
         "datasource": "$data_source",
         "definition": "",
@@ -2421,8 +2421,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "接口名2",
-          "value": "接口名2"
+          "text": "百度",
+          "value": "百度"
         },
         "datasource": "$data_source",
         "definition": "",
@@ -2484,8 +2484,8 @@
     ]
   },
   "time": {
-    "from": "2022-04-24T08:32:35.375Z",
-    "to": "2022-04-24T08:34:26.975Z"
+    "from": "now-5m",
+    "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -2513,7 +2513,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "JMeter Dashboard",
-  "uid": "apxmvRFGz",
+  "title": "JMeter Dashboard11",
+  "uid": "apxmvRFGz1",
   "version": 1
 }
