@@ -1,5 +1,5 @@
 apiVersion: v2
-name: tke-jmeter-suite-kona
+name: tke-jmeter-suite-kona-Non-distributed
 description: A Helm chart for jmeter suit.
 
 # A chart can be either an 'application' or a 'library' chart.
