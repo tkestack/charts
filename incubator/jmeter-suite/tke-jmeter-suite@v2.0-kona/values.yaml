@@ -12,7 +12,7 @@ distributed-jmeter:
   image:
     pullPolicy: Always
     repository: ccr.ccs.tencentyun.com/jmeter-test/jmeter-helm-docker
-    tag: v2.0-kona
+    tag: v2.2-kona
 
 grafana:
   enabled: true

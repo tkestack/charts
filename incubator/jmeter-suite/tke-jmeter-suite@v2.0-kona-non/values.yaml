@@ -6,13 +6,14 @@ distributed-jmeter:
   enabled: true
   server:
     replicaCount: 10
-    heap_size: 5g
+    heap_size: 8g
   master:
+    replicaCount: 0
     heap_size: 5g
   image:
     pullPolicy: Always
     repository: ccr.ccs.tencentyun.com/jmeter-test/jmeter-helm-docker
-    tag: v2.0-kona-fiber
+    tag: v2.2-kona
 
 grafana:
   enabled: true

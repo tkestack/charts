@@ -1,5 +1,5 @@
 apiVersion: v2
-name: tke-jmeter-suite-fiber
+name: tke-jmeter-suite-non
 description: A Helm chart for jmeter suit.
 
 # A chart can be either an 'application' or a 'library' chart.
@@ -15,7 +15,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 1.0.1
+version: 2.0-kona
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
@@ -42,5 +42,5 @@ dependencies:
     condition: influxdb.enabled
     repository: file://../charts/influxdb
 
-icon: https://github.com/tkestack/charts/raw/main/icons/jmeter-suite.png
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/d0955b92-9f66-4393-a974-5ec55dc4f69f.png
 home: https://github.com/tkestack/charts
