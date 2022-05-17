@@ -1,5 +1,5 @@
 apiVersion: v2
-name: intel-bigdl-trusted-big-data-ml
+name: bigdl-trusted-big-data-ml
 description: BigDL Privacy Preserving Machine Learning (PPML) for end-to-end Big Data AI pipeline based on Intel SGX
 type: application
 version: 0.1.0

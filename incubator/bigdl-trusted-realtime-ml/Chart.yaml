@@ -1,5 +1,5 @@
 apiVersion: v2
-name: intel-bigdl-trusted-realtime-ml
+name: bigdl-trusted-realtime-ml
 description: BigDL Privacy Preserving Machine Learning (PPML) for end-to-end BigDL cluster serving with Flink based on Intel SGX
 type: application
 version: 0.1.0
