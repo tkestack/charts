@@ -1,0 +1,11 @@
+apiVersion: v2
+name: bigdl-trusted-fl
+description: BigDL Privacy Preserving Machine Learning (PPML) for FL based on Intel SGX
+type: application
+version: 0.1.0
+appVersion: 2.1.0-SNAPSHOT
+keywords:
+ - bigdl
+maintainers:
+ - name: Gong Qiyuan
+   email: qiyuan.gong@intel.com
