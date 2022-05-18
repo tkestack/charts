@@ -20,8 +20,8 @@
   "editable": true,
   "gnetId": 4026,
   "graphTooltip": 0,
-  "id": 8,
-  "iteration": 1651654984789,
+  "id": 1,
+  "iteration": 1652869063391,
   "links": [],
   "panels": [
     {
@@ -903,7 +903,7 @@
           "measurement": "jmeter",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"pct95.0\") FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/) AND $timeFilter GROUP BY \"transaction\", time($send_interval_s) fill(null)",
+          "query": "SELECT mean(\"pct95.0\") FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/) AND $timeFilter AND \"statut\" = 'all' GROUP BY \"transaction\", time($send_interval_s) fill(null)",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -2394,7 +2394,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "百度",
           "value": "百度"
         },
@@ -2535,5 +2535,5 @@
   "timezone": "browser",
   "title": "JMeter Dashboard",
   "uid": "apxmvRFGz1",
-  "version": 2
+  "version": 1
 }
