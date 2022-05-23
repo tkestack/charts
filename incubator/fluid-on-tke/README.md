@@ -32,34 +32,38 @@ AlluxioRuntime: 来源于 Alluixo 社区，是支撑 Dataset 数据管理和缓�
 | 参数     | 描述     | 默认值     |
 | ------- | -------- | --------- |
 | `workdir` | 缓存引擎备份元数据地址 | `/tmp`
-| `dataset.controller.image.repository` | Dataset Controller 镜像所在仓库  | `ccr.ccs.tencentyun.com/fluid/dataset-controller` |
-| `dataset.controller.image.tag`        | Dataset Controller 镜像的版本    | `"v0.6.0-0bfc552"` |
-| `csi.registrar.image.repository`   | CSI registrar 镜像所在仓库 | `"ccr.ccs.tencentyun.com/fluid/csi-node-driver-registrar"` |
+| `dataset.controller.image.repository` | Dataset Controller 镜像所在仓库  | `ccr.ccs.tencentyun.com/tke-market/dataset-controller` |
+| `dataset.controller.image.tag`        | Dataset Controller 镜像的版本    | `"v0.7.0-3d66068"` |
+| `csi.registrar.image.repository`   | CSI registrar 镜像所在仓库 | `"ccr.ccs.tencentyun.com/tke-market/csi-node-driver-registrar"` |
 | `csi.registrar.image.tag`   | CSI registrar 镜像的版本 | `"v1.2.0"` |
-| `csi.plugins.image.repository`   | CSI plugins 镜像所在仓库 | `"ccr.ccs.tencentyun.com/fluid/fluid-csi"` |
-| `csi.plugins.image.tag`   | CSI plugins 镜像的版本 | `"v0.6.0-def5316"` |
+| `csi.plugins.image.repository`   | CSI plugins 镜像所在仓库 | `"ccr.ccs.tencentyun.com/tke-market/fluid-csi"` |
+| `csi.plugins.image.tag`   | CSI plugins 镜像的版本 | `"v0.7.0-3d66068"` |
 | `csi.kubelet.rootDir`   | kubelet root 文件夹 | `"/var/lib/kubelet"` |
 | `runtime.mountRoot`   | 缓存引擎 fuse mount 点的 Root 地址 | `"/var/lib/kubelet"` |
 | `runtime.goosefs.enable`   | 开启 GooseFS 缓存引擎支持 | `"true"` |
-| `runtime.goosefs.init.image.repository`   | GooseFS 缓存引擎初始化镜像所在仓库 | `"ccr.ccs.tencentyun.com/fluid/init-users"` |
-| `runtime.goosefs.init.image.tag`   | GooseFS 缓存引擎初始化镜像的版本 | `"v0.6.0-0cd802e"` |
-| `runtime.goosefs.controller.image.repository`   | GooseFS 缓存引擎控制器镜像所在仓库 | `"ccr.ccs.tencentyun.com/fluid/goosefsruntime-controller"` |
-| `runtime.goosefs.controller.image.tag`   | GooseFS 缓存引擎控制器镜像的版本 | `"v0.6.0-bbf4ea0"` |
-| `runtime.goosefs.runtime.image.repository`   | GooseFS 缓存引擎镜像所在仓库 | `"ccr.ccs.tencentyun.com/fluid/goosefs"` |
-| `runtime.goosefs.runtime.image.tag`   | GooseFS 缓存引擎镜像的版本 | `"v1.1.10"` |
-| `runtime.goosefs.fuse.image.repository`   | GooseFS 缓存引擎 Fuse 组件镜像所在仓库 | `"ccr.ccs.tencentyun.com/fluid/goosefs-fuse"` |
-| `runtime.goosefs.fuse.image.tag`   | GooseFS 缓存引擎 Fuse 组件镜像的版本 | `"v1.1.10"` |
+| `runtime.goosefs.init.image.repository`   | GooseFS 缓存引擎初始化镜像所在仓库 | `"ccr.ccs.tencentyun.com/tke-market/init-users"` |
+| `runtime.goosefs.init.image.tag`   | GooseFS 缓存引擎初始化镜像的版本 | `"v0.7.0-3d66068"` |
+| `runtime.goosefs.controller.image.repository`   | GooseFS 缓存引擎控制器镜像所在仓库 | `"ccr.ccs.tencentyun.com/tke-market/goosefsruntime-controller"` |
+| `runtime.goosefs.controller.image.tag`   | GooseFS 缓存引擎控制器镜像的版本 | `"v0.7.0-a0973270"` |
+| `runtime.goosefs.runtime.image.repository`   | GooseFS 缓存引擎镜像所在仓库 | `"ccr.ccs.tencentyun.com/tke-market/goosefs"` |
+| `runtime.goosefs.runtime.image.tag`   | GooseFS 缓存引擎镜像的版本 | `"v1.3.0_autopilot"` |
+| `runtime.goosefs.fuse.image.repository`   | GooseFS 缓存引擎 Fuse 组件镜像所在仓库 | `"ccr.ccs.tencentyun.com/tke-market/goosefs-fuse"` |
+| `runtime.goosefs.fuse.image.tag`   | GooseFS 缓存引擎 Fuse 组件镜像的版本 | `"v1.3.0_autopilot"` |
+| `runtime.goosefs.portRange`   | GooseFS 缓存引擎组件端口占用分配段 | `"26000-32000"` |
 | `runtime.alluxio.runtimeWorkers`   | Alluxio 缓存引擎控制器最大并发 worker 数量 | `"3"` |
 | `runtime.alluxio.portRange`   | Alluxio 缓存引擎组件端口占用分配段 | `"20000-26000"` |
 | `runtime.alluxio.enable`   | 开启 Alluxio 缓存引擎支持 | `"true"` |
-| `runtime.alluxio.init.image.repository`   | Alluxio 缓存引擎初始化镜像所在仓库 | `"ccr.ccs.tencentyun.com/fluid/init-users"` |
-| `runtime.alluxio.init.image.tag`   | Alluxio 缓存引擎初始化镜像的版本 | `"v0.6.0-def5316"` |
-| `runtime.alluxio.controller.image.repository`   | Alluxio 缓存引擎控制器镜像所在仓库 | `"ccr.ccs.tencentyun.com/fluid/alluxioruntime-controller"` |
-| `runtime.alluxio.controller.image.tag`   | Alluxio 缓存引擎控制器镜像的版本 | `"v0.6.0-0cd802e"` |
-| `runtime.alluxio.runtime.image.repository`   | Alluxio 缓存引擎镜像所在仓库 | `"ccr.ccs.tencentyun.com/alluxio/alluxio"` |
-| `runtime.alluxio.runtime.image.tag`   | Alluxio 缓存引擎镜像的版本 | `"release-2.5.0-2-SNAPSHOT-a05eadcff1"` |
-| `runtime.alluxio.fuse.image.repository`   | Alluxio 缓存引擎 Fuse 组件镜像所在仓库 | `"ccr.ccs.tencentyun.com/alluxio/alluxio-fuse"` |
-| `runtime.alluxio.fuse.image.tag`   | Alluxio 缓存引擎 Fuse 组件镜像的版本 | `"release-2.5.0-2-SNAPSHOT-a05eadcff1"` |
+| `runtime.alluxio.init.image.repository`   | Alluxio 缓存引擎初始化镜像所在仓库 | `"ccr.ccs.tencentyun.com/tke-market/init-users"` |
+| `runtime.alluxio.init.image.tag`   | Alluxio 缓存引擎初始化镜像的版本 | `"v0.7.0-3d66068"` |
+| `runtime.alluxio.controller.image.repository`   | Alluxio 缓存引擎控制器镜像所在仓库 | `"ccr.ccs.tencentyun.com/tke-market/alluxioruntime-controller"` |
+| `runtime.alluxio.controller.image.tag`   | Alluxio 缓存引擎控制器镜像的版本 | `"v0.7.0-3d66068"` |
+| `runtime.alluxio.runtime.image.repository`   | Alluxio 缓存引擎镜像所在仓库 | `"ccr.ccs.tencentyun.com/tke-market/alluxio"` |
+| `runtime.alluxio.runtime.image.tag`   | Alluxio 缓存引擎镜像的版本 | `"release-2.7.2-SNAPSHOT-3714f2b"` |
+| `runtime.alluxio.fuse.image.repository`   | Alluxio 缓存引擎 Fuse 组件镜像所在仓库 | `"ccr.ccs.tencentyun.com/tke-market/alluxio-fuse"` |
+| `runtime.alluxio.fuse.image.tag`   | Alluxio 缓存引擎 Fuse 组件镜像的版本 | `"release-2.7.2-SNAPSHOT-3714f2b"` |
+| `webhook.enabled`   | 是否使用 webhook | `"True"` |
+| `webhook.image`   | webhook 镜像信息 | `"ccr.ccs.tencentyun.com/tke-market/fluid-webhook:v0.7.0-3d66068"` |
+| `webhook.replicas`   | webhook 副本数 | `"1"` |
 
 ## 最佳实践
 - Goosefs [使用文档](https://cloud.tencent.com/document/product/436/57225)
