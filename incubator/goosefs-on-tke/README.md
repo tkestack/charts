@@ -22,6 +22,7 @@ GooseFSRuntime: 来源于腾讯云 COS 团队GooseFS，是基于 Java 实现的�
 ## 部署
 *当前版本的 GooseFS 依赖 Kubernetes 集群（version >= 1.14）, 并且支持 CSI 功能。*
 在 Helm 部署过程中，所有配置项都集中于 `values.yaml`，相关自定义的字段展示如下：
+
 | 参数     | 描述     | 默认值     |
 | ------- | -------- | --------- |
 | `workdir` | 缓存引擎备份元数据地址 | `/tmp`
