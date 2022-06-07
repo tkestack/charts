@@ -20,8 +20,8 @@
   "editable": true,
   "gnetId": 4026,
   "graphTooltip": 0,
-  "id": 1,
-  "iteration": 1652869063391,
+  "id": 6,
+  "iteration": 1654574497661,
   "links": [],
   "panels": [
     {
@@ -523,7 +523,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:112",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -532,7 +531,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:113",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -674,7 +672,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:698",
           "decimals": 0,
           "format": "short",
           "label": null,
@@ -684,7 +681,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:699",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -809,7 +805,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:197",
           "decimals": 0,
           "format": "short",
           "label": null,
@@ -819,7 +814,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:198",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -903,7 +897,7 @@
           "measurement": "jmeter",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"pct95.0\") FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/) AND $timeFilter AND \"statut\" = 'all' GROUP BY \"transaction\", time($send_interval_s) fill(null)",
+          "query": "SELECT mean(\"pct95.0\") FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/) AND $timeFilter AND \"statut\" = 'all' GROUP BY \"transaction\", time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -975,7 +969,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:521",
           "format": "ms",
           "label": null,
           "logBase": 1,
@@ -984,7 +977,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:522",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1684,7 +1676,6 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "$$hashKey": "object:290",
           "alias": "Average",
           "yaxis": 1
         }
@@ -1767,7 +1758,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:297",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1776,7 +1766,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:298",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1902,7 +1891,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:609",
           "decimals": 0,
           "format": "short",
           "label": null,
@@ -1912,7 +1900,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:610",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1985,7 +1972,6 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "$$hashKey": "object:427",
           "alias": "Average",
           "yaxis": 1
         }
@@ -2014,7 +2000,7 @@
           "measurement": "jmeter",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT last(\"avg\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($send_interval_s)",
+          "query": "SELECT last(\"avg\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($__interval)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -2067,7 +2053,7 @@
           "measurement": "jmeter",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT last(\"pct50.0\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($send_interval_s)",
+          "query": "SELECT last(\"pct50.0\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($__interval)",
           "rawQuery": true,
           "refId": "F",
           "resultFormat": "time_series",
@@ -2119,7 +2105,7 @@
           "measurement": "jmeter",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT last(\"pct90.0\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($send_interval_s) fill(null)",
+          "query": "SELECT last(\"pct90.0\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -2172,7 +2158,7 @@
           "measurement": "jmeter",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT last(\"pct95.0\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($send_interval_s) fill(null)",
+          "query": "SELECT last(\"pct95.0\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "C",
           "resultFormat": "time_series",
@@ -2219,7 +2205,7 @@
           "measurement": "jmeter",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT last(\"pct99.0\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($send_interval_s) fill(null)",
+          "query": "SELECT last(\"pct99.0\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "D",
           "resultFormat": "time_series",
@@ -2265,7 +2251,7 @@
           "measurement": "jmeter",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT last(\"max\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($send_interval_s) fill(null)",
+          "query": "SELECT last(\"max\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "E",
           "resultFormat": "time_series",
@@ -2341,7 +2327,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:434",
           "format": "ms",
           "label": null,
           "logBase": 1,
@@ -2350,7 +2335,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:435",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -2534,6 +2518,6 @@
   },
   "timezone": "browser",
   "title": "JMeter Dashboard",
-  "uid": "apxmvRFGz1",
+  "uid": "apxmvRFGz",
   "version": 1
 }
