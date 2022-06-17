@@ -20,8 +20,8 @@
   "editable": true,
   "gnetId": 5496,
   "graphTooltip": 0,
-  "id": 5,
-  "iteration": 1654572096535,
+  "id": 3,
+  "iteration": 1655436104289,
   "links": [],
   "panels": [
     {
@@ -36,7 +36,7 @@
       "id": 33,
       "panels": [],
       "repeat": null,
-      "title": "Summary",
+      "title": "所有线程组的压测数据汇总",
       "type": "row"
     },
     {
@@ -147,7 +147,7 @@
         }
       ],
       "thresholds": "",
-      "title": "Total Requests",
+      "title": "总请求数",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -267,7 +267,7 @@
         }
       ],
       "thresholds": "",
-      "title": "Failed Requests",
+      "title": "总失败请求数",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -387,7 +387,7 @@
         }
       ],
       "thresholds": "",
-      "title": "Received Bytes",
+      "title": "总接收流量",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -507,7 +507,7 @@
         }
       ],
       "thresholds": "",
-      "title": "Sent Bytes",
+      "title": "总发送流量",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -626,7 +626,7 @@
         }
       ],
       "thresholds": "0,0.01",
-      "title": "Error Rate %",
+      "title": "失败请求占总请求比例 %",
       "type": "singlestat",
       "valueFontSize": "50%",
       "valueMaps": [
@@ -746,7 +746,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Total Throughput",
+      "title": "所有请求吞吐量",
       "tooltip": {
         "msResolution": false,
         "shared": true,
@@ -895,7 +895,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Total Errors",
+      "title": "错误请求吞吐量",
       "tooltip": {
         "msResolution": false,
         "shared": true,
@@ -1029,7 +1029,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Active Threads",
+      "title": "活动线程数",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1197,7 +1197,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Transactions Response Times (95th pct)",
+      "title": "所有请求95分位响应耗时",
       "tooltip": {
         "msResolution": false,
         "shared": true,
@@ -1399,7 +1399,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Network Traffic",
+      "title": "总流量",
       "tooltip": {
         "msResolution": false,
         "shared": true,
@@ -1449,7 +1449,7 @@
       "id": 34,
       "panels": [],
       "repeat": null,
-      "title": "Errors",
+      "title": "所有线程组的压测错误信息汇总",
       "type": "row"
     },
     {
@@ -1551,7 +1551,7 @@
           ]
         }
       ],
-      "title": "Errors per Transaction",
+      "title": "所有线程组的错误请求数",
       "transform": "table",
       "type": "table-old"
     },
@@ -1657,7 +1657,7 @@
           ]
         }
       ],
-      "title": "Error Info",
+      "title": "所有线程组的错误请求信息",
       "transform": "table",
       "type": "table-old"
     },
@@ -1673,7 +1673,7 @@
       "id": 35,
       "panels": [],
       "repeat": null,
-      "title": "Individual Transaction - $transaction",
+      "title": "单个请求 - $transaction",
       "type": "row"
     },
     {
@@ -1798,7 +1798,7 @@
         }
       ],
       "thresholds": "",
-      "title": "Total Requests - $transaction",
+      "title": "总请求数 - $transaction",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -1932,7 +1932,7 @@
         }
       ],
       "thresholds": "",
-      "title": "Failed Requests - $transaction",
+      "title": "总失败请求数 - $transaction",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -2066,7 +2066,7 @@
         }
       ],
       "thresholds": "0,0.01",
-      "title": "Error Rate % - $transaction",
+      "title": "失败请求占总请求比例 % - $transaction",
       "type": "singlestat",
       "valueFontSize": "50%",
       "valueMaps": [
@@ -2199,7 +2199,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Throughput - $transaction",
+      "title": "成功请求的吞吐量 - $transaction",
       "tooltip": {
         "msResolution": false,
         "shared": true,
@@ -2333,7 +2333,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Errors",
+      "title": "失败请求的吞吐量 - $transaction",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -2768,7 +2768,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Response Times - $transaction",
+      "title": "成功请求的各分位响应耗时 - $transaction",
       "tooltip": {
         "msResolution": false,
         "shared": true,
