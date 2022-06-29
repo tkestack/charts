@@ -28,8 +28,8 @@ keywords:
   - influxdb
 
 maintainers:
-  - name: charrli
-    email: charrli@tencent.com
+  - name: silvertan
+    email: silvertan@tencent.com
 
 dependencies:
   - name: distributed-jmeter
