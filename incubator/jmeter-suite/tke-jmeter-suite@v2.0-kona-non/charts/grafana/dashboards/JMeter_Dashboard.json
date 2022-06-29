@@ -20,8 +20,8 @@
   "editable": true,
   "gnetId": 4026,
   "graphTooltip": 0,
-  "id": 8,
-  "iteration": 1651654984789,
+  "id": 4,
+  "iteration": 1655438899028,
   "links": [],
   "panels": [
     {
@@ -36,7 +36,7 @@
       "id": 33,
       "panels": [],
       "repeat": null,
-      "title": "Summary",
+      "title": "所有线程组的压测数据汇总",
       "type": "row"
     },
     {
@@ -147,7 +147,7 @@
         }
       ],
       "thresholds": "",
-      "title": "Total Requests",
+      "title": "总请求数",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -267,7 +267,7 @@
         }
       ],
       "thresholds": "",
-      "title": "Failed Requests",
+      "title": "总失败请求数",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -386,7 +386,7 @@
         }
       ],
       "thresholds": "0,0.01",
-      "title": "Error Rate %",
+      "title": "失败请求占总请求比例 %",
       "type": "singlestat",
       "valueFontSize": "50%",
       "valueMaps": [
@@ -506,7 +506,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Total Throughput",
+      "title": "所有请求吞吐量",
       "tooltip": {
         "msResolution": false,
         "shared": true,
@@ -523,7 +523,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:112",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -532,7 +531,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:113",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -657,7 +655,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Total Errors",
+      "title": "错误请求吞吐量",
       "tooltip": {
         "msResolution": false,
         "shared": true,
@@ -674,7 +672,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:698",
           "decimals": 0,
           "format": "short",
           "label": null,
@@ -684,7 +681,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:699",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -793,7 +789,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Active Threads",
+      "title": "活动线程数",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -809,7 +805,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:197",
           "decimals": 0,
           "format": "short",
           "label": null,
@@ -819,7 +814,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:198",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -903,7 +897,7 @@
           "measurement": "jmeter",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"pct95.0\") FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/) AND $timeFilter GROUP BY \"transaction\", time($send_interval_s) fill(null)",
+          "query": "SELECT mean(\"pct95.0\") FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/) AND $timeFilter AND \"statut\" = 'all' GROUP BY \"transaction\", time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -958,7 +952,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Transactions Response Times (95th pct)",
+      "title": "所有请求95分位响应耗时",
       "tooltip": {
         "msResolution": false,
         "shared": true,
@@ -975,7 +969,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:521",
           "format": "ms",
           "label": null,
           "logBase": 1,
@@ -984,7 +977,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:522",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -999,7 +991,7 @@
       }
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
@@ -1008,208 +1000,219 @@
         "y": 22
       },
       "id": 34,
-      "panels": [
+      "panels": [],
+      "repeat": null,
+      "title": "所有线程组的压测错误信息汇总",
+      "type": "row"
+    },
+    {
+      "columns": [],
+      "datasource": "$data_source",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 23
+      },
+      "height": "",
+      "id": 25,
+      "interval": "[[send_interval]]s",
+      "links": [],
+      "pageSize": null,
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 2,
+        "desc": true
+      },
+      "styles": [
         {
-          "columns": [],
-          "datasource": "$data_source",
-          "fontSize": "100%",
-          "gridPos": {
-            "h": 7,
-            "w": 8,
-            "x": 0,
-            "y": 23
-          },
-          "height": "",
-          "id": 25,
-          "interval": "[[send_interval]]s",
-          "links": [],
-          "pageSize": null,
-          "scroll": true,
-          "showHeader": true,
-          "sort": {
-            "col": 2,
-            "desc": true
-          },
-          "styles": [
-            {
-              "alias": "Time",
-              "align": "auto",
-              "dateFormat": "YYYY-MM-DD HH:mm:ss",
-              "pattern": "Time",
-              "type": "hidden"
-            },
-            {
-              "alias": "",
-              "align": "auto",
-              "colorMode": null,
-              "colors": [
-                "rgba(245, 54, 54, 0.9)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(50, 172, 45, 0.97)"
-              ],
-              "decimals": 0,
-              "pattern": "/.*/",
-              "thresholds": [],
-              "type": "number",
-              "unit": "short"
-            }
-          ],
-          "targets": [
-            {
-              "alias": "$tag_transaction",
-              "dsType": "influxdb",
-              "groupBy": [
-                {
-                  "params": [
-                    "transaction"
-                  ],
-                  "type": "tag"
-                }
-              ],
-              "measurement": "jmeter",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT sum(\"count\") FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/ AND \"statut\" = 'ko') AND $timeFilter GROUP BY \"transaction\"",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "table",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "count"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "sum"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "application",
-                  "operator": "=~",
-                  "value": "/^$application$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "statut",
-                  "operator": "=",
-                  "value": "ko"
-                }
-              ]
-            }
-          ],
-          "title": "Errors per Transaction",
-          "transform": "table",
-          "type": "table-old"
+          "alias": "Time",
+          "align": "auto",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "hidden"
         },
         {
-          "columns": [],
-          "datasource": "$data_source",
-          "fontSize": "100%",
-          "gridPos": {
-            "h": 7,
-            "w": 16,
-            "x": 8,
-            "y": 23
-          },
-          "id": 27,
-          "interval": "[[send_interval]]s",
-          "links": [],
-          "pageSize": null,
-          "scroll": true,
-          "showHeader": true,
-          "sort": {
-            "col": 0,
-            "desc": true
-          },
-          "styles": [
-            {
-              "alias": "Time",
-              "align": "auto",
-              "dateFormat": "YYYY-MM-DD HH:mm:ss",
-              "pattern": "Time",
-              "type": "hidden"
-            },
-            {
-              "alias": "",
-              "align": "auto",
-              "colorMode": null,
-              "colors": [
-                "rgba(245, 54, 54, 0.9)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(50, 172, 45, 0.97)"
-              ],
-              "decimals": 0,
-              "pattern": "/.*/",
-              "thresholds": [],
-              "type": "number",
-              "unit": "short"
-            }
+          "alias": "",
+          "align": "auto",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
           ],
-          "targets": [
-            {
-              "alias": "$tag_responseCode",
-              "dsType": "influxdb",
-              "groupBy": [
-                {
-                  "params": [
-                    "responseCode"
-                  ],
-                  "type": "tag"
-                }
-              ],
-              "measurement": "jmeter",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT sum(\"count\") FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/ AND \"responseCode\" !~ /^$/) AND $timeFilter GROUP BY \"responseCode\",\"responseMessage\"",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "table",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "count"
-                    ],
-                    "type": "field"
-                  }
-                ],
-                [
-                  {
-                    "params": [
-                      "responseMessage"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "application",
-                  "operator": "=~",
-                  "value": "/^$application$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "responseCode",
-                  "operator": "!~",
-                  "value": "/^$/"
-                }
-              ]
-            }
-          ],
-          "title": "Error Info",
-          "transform": "table",
-          "type": "table-old"
+          "decimals": 0,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "number",
+          "unit": "short"
         }
       ],
-      "repeat": null,
-      "title": "Errors",
-      "type": "row"
+      "targets": [
+        {
+          "alias": "$tag_transaction",
+          "dsType": "influxdb",
+          "groupBy": [
+            {
+              "params": [
+                "transaction"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "jmeter",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT sum(\"count\") FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/ AND \"statut\" = 'ko') AND $timeFilter GROUP BY \"transaction\"",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "table",
+          "select": [
+            [
+              {
+                "params": [
+                  "count"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "application",
+              "operator": "=~",
+              "value": "/^$application$/"
+            },
+            {
+              "condition": "AND",
+              "key": "statut",
+              "operator": "=",
+              "value": "ko"
+            }
+          ]
+        }
+      ],
+      "title": "所有线程组的错误请求数",
+      "transform": "table",
+      "type": "table-old"
+    },
+    {
+      "columns": [],
+      "datasource": "$data_source",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 7,
+        "w": 16,
+        "x": 8,
+        "y": 23
+      },
+      "id": 27,
+      "interval": "[[send_interval]]s",
+      "links": [],
+      "pageSize": null,
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "Time",
+          "align": "auto",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "hidden"
+        },
+        {
+          "alias": "",
+          "align": "auto",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 0,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "number",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "alias": "$tag_responseCode",
+          "dsType": "influxdb",
+          "groupBy": [
+            {
+              "params": [
+                "responseCode"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "jmeter",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT sum(\"count\") FROM \"$measurement_name\" WHERE (\"application\" =~ /^$application$/ AND \"responseCode\" !~ /^$/) AND $timeFilter GROUP BY \"responseCode\",\"responseMessage\"",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "table",
+          "select": [
+            [
+              {
+                "params": [
+                  "count"
+                ],
+                "type": "field"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "responseMessage"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "application",
+              "operator": "=~",
+              "value": "/^$application$/"
+            },
+            {
+              "condition": "AND",
+              "key": "responseCode",
+              "operator": "!~",
+              "value": "/^$/"
+            }
+          ]
+        }
+      ],
+      "title": "所有线程组的错误请求信息",
+      "transform": "table",
+      "type": "table-old"
     },
     {
       "collapsed": false,
@@ -1218,12 +1221,12 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 30
       },
       "id": 35,
       "panels": [],
       "repeat": null,
-      "title": "Individual Transaction - $transaction",
+      "title": "单个请求 - $transaction",
       "type": "row"
     },
     {
@@ -1257,7 +1260,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 24
+        "y": 31
       },
       "id": 9,
       "interval": "[[send_interval]]s",
@@ -1348,7 +1351,7 @@
         }
       ],
       "thresholds": "",
-      "title": "Total Requests - $transaction",
+      "title": "总请求数 - $transaction",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -1391,7 +1394,7 @@
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 24
+        "y": 31
       },
       "id": 6,
       "interval": "[[send_interval]]s",
@@ -1482,7 +1485,7 @@
         }
       ],
       "thresholds": "",
-      "title": "Failed Requests - $transaction",
+      "title": "总失败请求数 - $transaction",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -1525,7 +1528,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 24
+        "y": 31
       },
       "id": 8,
       "interval": "[[send_interval]]s",
@@ -1616,7 +1619,7 @@
         }
       ],
       "thresholds": "0,0.01",
-      "title": "Error Rate % - $transaction",
+      "title": "失败请求占总请求比例 % - $transaction",
       "type": "singlestat",
       "valueFontSize": "50%",
       "valueMaps": [
@@ -1656,7 +1659,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 31
+        "y": 38
       },
       "height": "",
       "hiddenSeries": false,
@@ -1684,7 +1687,6 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "$$hashKey": "object:290",
           "alias": "Average",
           "yaxis": 1
         }
@@ -1750,7 +1752,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Throughput - $transaction",
+      "title": "成功请求的吞吐量 - $transaction",
       "tooltip": {
         "msResolution": false,
         "shared": true,
@@ -1767,7 +1769,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:297",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1776,7 +1777,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:298",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1812,7 +1812,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 31
+        "y": 38
       },
       "hiddenSeries": false,
       "id": 32,
@@ -1886,7 +1886,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Errors",
+      "title": "失败请求的吞吐量 - $transaction",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1902,7 +1902,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:609",
           "decimals": 0,
           "format": "short",
           "label": null,
@@ -1912,7 +1911,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:610",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1955,7 +1953,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 45
       },
       "height": "",
       "hiddenSeries": false,
@@ -1985,7 +1983,6 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "$$hashKey": "object:427",
           "alias": "Average",
           "yaxis": 1
         }
@@ -2014,7 +2011,7 @@
           "measurement": "jmeter",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT last(\"avg\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($send_interval_s)",
+          "query": "SELECT last(\"avg\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($__interval)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -2067,7 +2064,7 @@
           "measurement": "jmeter",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT last(\"pct50.0\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($send_interval_s)",
+          "query": "SELECT last(\"pct50.0\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($__interval)",
           "rawQuery": true,
           "refId": "F",
           "resultFormat": "time_series",
@@ -2119,7 +2116,7 @@
           "measurement": "jmeter",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT last(\"pct90.0\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($send_interval_s) fill(null)",
+          "query": "SELECT last(\"pct90.0\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -2172,7 +2169,7 @@
           "measurement": "jmeter",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT last(\"pct95.0\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($send_interval_s) fill(null)",
+          "query": "SELECT last(\"pct95.0\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "C",
           "resultFormat": "time_series",
@@ -2219,7 +2216,7 @@
           "measurement": "jmeter",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT last(\"pct99.0\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($send_interval_s) fill(null)",
+          "query": "SELECT last(\"pct99.0\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "D",
           "resultFormat": "time_series",
@@ -2265,7 +2262,7 @@
           "measurement": "jmeter",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT last(\"max\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($send_interval_s) fill(null)",
+          "query": "SELECT last(\"max\") FROM \"$measurement_name\" WHERE (\"transaction\" =~ /^$transaction$/ AND \"statut\" = 'ok') AND $timeFilter GROUP BY time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "E",
           "resultFormat": "time_series",
@@ -2324,7 +2321,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Response Times - $transaction",
+      "title": "成功请求的各分位响应耗时 - $transaction",
       "tooltip": {
         "msResolution": false,
         "shared": true,
@@ -2341,7 +2338,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:434",
           "format": "ms",
           "label": null,
           "logBase": 1,
@@ -2350,7 +2346,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:435",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -2394,7 +2389,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "百度",
           "value": "百度"
         },
@@ -2534,6 +2529,6 @@
   },
   "timezone": "browser",
   "title": "JMeter Dashboard",
-  "uid": "apxmvRFGz1",
-  "version": 2
+  "uid": "apxmvRFGz",
+  "version": 1
 }

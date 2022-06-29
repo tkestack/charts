@@ -35,3 +35,11 @@ spec:
           ports:
             - containerPort: 50000
             - containerPort: 1099
+          volumeMounts:
+          - name: jmeter
+            mountPath: /root
+      volumes:
+        - name: jmeter
+          hostPath:
+            path: /jmeter
+            type: DirectoryOrCreate
