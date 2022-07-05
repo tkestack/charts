@@ -178,8 +178,6 @@ secure_password=`openssl rsautl -inkey /ppml/trusted-big-data-ml/work/password/k
         --master $RUNTIME_SPARK_MASTER \
         --deploy-mode cluster \
         --name spark-pi-sgx \
-        --conf spark.driver.host=$SPARK_LOCAL_IP \
-        --conf spark.driver.port=54321 \
         --conf spark.driver.memory=$RUNTIME_DRIVER_MEMORY \
         --conf spark.driver.cores=$RUNTIME_DRIVER_CORES \
         --conf spark.executor.cores=$RUNTIME_EXECUTOR_CORES \
