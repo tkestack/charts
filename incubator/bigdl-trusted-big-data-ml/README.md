@@ -90,7 +90,7 @@ sudo kubectl get pod | grep -o "spark-pi-sgx.*-driver" | xargs sudo kubectl dele
 [keysNpassword]: https://github.com/intel-analytics/BigDL/tree/main/ppml/trusted-big-data-ml/python/docker-graphene#2-prepare-data-key-and-password
 [helmsite]: https://helm.sh/
 
-## Spark-Pi Example Based On SGX
+## Spark-Pi Example Based On SGX On Local Mode
 The following simply shows how to start a Spark-Pi example based on SGX on local mode, In order to better start your work, please refer to [Trusted Big Data ML with Python](https://github.com/intel-analytics/BigDL/tree/branch-2.0/ppml/trusted-big-data-ml/python/docker-graphene) for a more comprehensive guidance.
 
 ### Spark-Pi example
