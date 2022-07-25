@@ -4,7 +4,7 @@ description: Nocalhost is Cloud Native Dev Environment.
 type: application
 version: 0.6.11
 appVersion: "v0.6.11"
-kubeVersion: '>= 1.16.0-0'
+kubeVersion: '>= 1.16.0-0 <= 1.22.5-x'
 sources:
   - https://github.com/nocalhost/nocalhost
 keywords:
@@ -15,7 +15,7 @@ keywords:
 - telepresence
 - skaffold
 home: https://nocalhost.dev
-icon: https://github.com/tkestack/charts/raw/main/icons/nocalhost.png
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/f360ed08-f769-413a-9ead-ecb1bdb5dd19.png
 annotations:
   category: App Definition and Development
 dependencies:

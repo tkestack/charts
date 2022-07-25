@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name:  {{ .Values.TkeCoordinatorName }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - protocol: TCP
+      port: 12345
+      targetPort: 12345
+  selector:
+    service: {{ .Values.TkeCoordinatorName }}
+  type: ClusterIP
+status:
+  loadBalancer: {}

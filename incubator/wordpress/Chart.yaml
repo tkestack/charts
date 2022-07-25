@@ -1,0 +1,20 @@
+apiVersion: v1
+appVersion: 5.3.2
+deprecated: true
+description: Web publishing platform for building blogs and websites.
+engine: gotpl
+home: http://www.wordpress.com/
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/a0f49129-b7c9-44f4-88e6-28c1356dd56b.png
+keywords:
+- wordpress
+- cms
+- blog
+- http
+- web
+- application
+- php
+kubeVersion: '>=1.12.0-0 <=1.22.5-x'
+name: wordpress
+sources:
+- https://github.com/bitnami/bitnami-docker-wordpress
+version: 9.0.3

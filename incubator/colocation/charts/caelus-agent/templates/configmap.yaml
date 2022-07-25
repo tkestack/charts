@@ -1,0 +1,240 @@
+apiVersion: v1
+data:
+  alarm.json: |
+    {
+      "address": "http://wx.alarm.gaiastack.oa.com/itilalarmcgi/sendmsg",
+      "sender": "tkestack",
+      "receivers": [
+        "xxx"
+      ]
+    }
+  caelus.json: |
+    {
+      "k8s_config": {
+        "kubelet_root_dir": "/var/lib/kubelet"
+      },
+      "check_point": {
+        "check_point_dir": "/var/run/caelus",
+        "node_resource_key": "node_resource"
+      },
+      "task_type": {
+        "online_type": "k8s",
+        "offline_type": "k8s"
+      },
+      "node_resource": {
+        "disable": false,
+        "disable_kill_if_normal": false,
+        "update_interval": "10s",
+        "yarn_config": {
+          "capacity_inc_interval": "1m",
+          "nm_server": "",
+          "shim_server": "",
+          "nm_reserve": {
+            "cpu_milli": 1000,
+            "mem_mb": 1024
+          },
+          "resource_roundoff": {
+            "cpu_milli": 1000,
+            "mem_mb": 512
+          },
+          "resource_range": {
+            "cpu_milli": {
+              "min": 1000,
+              "max": 2000,
+              "ratio": 0.1
+            },
+            "mem_mb": {
+              "min": 512,
+              "max": 1024,
+              "ratio": 0.1
+            }
+          },
+          "schedule_server_port": "10010",
+          "port_auto_detect": true,
+          "properties": {},
+          "disks": {
+            "ratio_to_core": 50,
+            "multi_disk_disable": false,
+            "disk_min_capacity_gb": 500,
+            "space_check_enabled": true,
+            "space_check_period": "10m",
+            "space_check_reserved_gb": 50,
+            "space_clean_disable": false,
+            "space_clean_just_data": false,
+            "offline_exited_clean_delay": "25m"
+          }
+        }
+      },
+      "predicts": [{
+        "disable": false,
+        "predict_type": "local",
+        "predict_server_addr": "10.215.255.248:8012",
+        "pod_min_cpu_millicores": 10,
+        "pod_min_memory_mb": 10,
+        "safety_margin_fraction": 0.08,
+        "cpu_percentile": 0.8,
+        "memory_peaks_percentile": 0.9,
+        "cpu_histogram_decay_half_life": "5m",
+        "reserve_resource": {
+          "cpu_milli": 1000,
+          "mem_mb": 5120,
+          "cpu_percent": "20%",
+          "mem_percent": "20%"
+        }
+      }],
+      "metrics": {
+        "metrics_ttl": "10m",
+        "node": {
+          "collect_interval": "5s"
+        },
+        "container": {
+          "resources": [
+            "cpu",
+            "memory"
+          ],
+          "cgroups": [
+            "/kubepods"
+          ],
+          "max_housekeeping_interval": "15s"
+        },
+        "perf": {
+          "disable": true,
+          "collect_interval": "1m",
+          "collect_duration": "10s",
+          "ignored_cgroups": ["/kubepods/besteffort", "/kubepods/offline"]
+        },
+        "rdt": {
+          "disable": true,
+          "rdt_command": "",
+          "collect_interval": "1m",
+          "collect_duration": "2s",
+          "execute_interval": "2s"
+        }
+      },
+      "resource_isolate": {
+        "disable": false,
+        "disable_diskio": true,
+        "disable_net": true,
+        "DisableNet": true,
+        "update_period": "1m",
+        "cpu_config": {
+          "auto_detect": false,
+          "manage_policy": "quota",
+          "cpuset_config": {
+            "enable_online_isolate": false,
+            "reserved_cpus": ""
+          },
+          "cpu_quota_config": {
+            "offline_share": 102
+          }
+        },
+        "iface": "",
+        "eni_iface": "",
+        "disk_names": []
+      },
+      "monitor": {
+        "disable": false,
+        "check_interval": "10s",
+        "remove_interval": "30s",
+        "recover_interval": "60s",
+        "only_unschedule": false,
+        "resources": {
+          "cpu": {
+            "remove_interval": "30s",
+            "recover_interval": "60s",
+            "only_unschedule": false,
+            "expression": "auto",
+            "warning_count": 2,
+            "step": 1000
+          },
+          "cpuLoad": {
+            "remove_interval": "30s",
+            "recover_interval": "60s",
+            "only_unschedule": false,
+            "expression": "CpuLoadIn1Minute > 75",
+            "warning_count": 1,
+            "step": 1000
+          },
+          "memory": {
+            "remove_interval": "30s",
+            "recover_interval": "60s",
+            "only_unschedule": false,
+            "expression": "auto",
+            "warning_count": 1,
+            "step": 536870912
+          },
+          "network": {
+            "ifaces": [],
+            "expression": "$iface_NetSentkbps > 0.5 * 1000 * $iface_SpeedMbps",
+            "warning_count": 2,
+            "step": 0
+          },
+          "diskio": {
+            "disk_names": [],
+            "util_max": 10,
+            "expression": "$dev_DiskReadKiBps > 100*1024 || $dev_DiskWriteKiBps > 50*1024 || $dev_DiskReadIOps > 5000 || $dev_DiskWriteIOps > 1000 || $dev_Util > 0.4",
+            "warning_count": 2,
+            "step": 0.2
+          },
+          "process": {
+            "expression": "NrUninterruptible > 10",
+            "warning_count": 1,
+            "step": 0
+          }
+        }
+      },
+      "alarm": {
+        "enable": false,
+        "message_batch": 1,
+        "message_delay": "1m",
+        "channel_name": "local",
+        "alarm_channel": {
+          "local": {
+            "executor": "/caelus_monitor"
+          },
+          "remote": {
+            "weChatAddress": "",
+            "weWorkWebhook": "http://in.qyapi.weixin.qq.com/cgi-bin/webhook/send?key=74089093-1f3d-4fd8-9588-07caa660083d"
+          }
+        }
+      },
+      "slo": {
+        "disable": false,
+        "onlyCollectMetrics": false,
+        "metricsServerAddr": "http://127.0.0.1:9102"
+      },
+      "online": {
+        "enable": false,
+        "jobs": {
+          "osd": {
+             "jobCommand": "ceph-osd -f --cluster ceph --id [0-9] --setuser ceph",
+             "metricsCommand": "/root/test.sh"
+          }
+        },
+        "pids_check_interval": "0s",
+        "cgroup_check_interval": "1m",
+        "batch_num": 50,
+        "resource": {
+          "cpu_share": 1024000,
+          "oom_score": 999
+        }
+      },
+      "disk_quota": {
+        "enabled": false,
+        "check_period": "3m",
+        "container_runtime": "docker",
+        "volume_sizes": {
+          "rootFs": {
+            "quota": 20480000000,
+            "inodes": 10000000
+          },
+          "emptyDir": {},
+          "hostPath": {}
+        }
+      }
+    }
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: {{ .Values.CaelusAgentConfigmapName }}
+  namespace: {{ .Release.Namespace }}
