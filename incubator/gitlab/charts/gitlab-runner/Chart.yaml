@@ -1,0 +1,15 @@
+apiVersion: v1
+appVersion: 14.10.0
+description: GitLab Runner
+icon: https://jihulab.com/gitlab-cn/charts/gitlab/raw/main-jh/icons/helm-chart-icon.svg
+keywords:
+- git
+- ci
+- deploy
+maintainers:
+- email: support@gitlab.cn
+  name: JiHu(GitLab)
+name: gitlab-runner
+sources:
+- https://docs.gitlab.cn/runner/
+version: 0.40.0

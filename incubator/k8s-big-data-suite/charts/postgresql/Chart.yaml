@@ -1,6 +1,5 @@
 appVersion: 9.6.9
-description: Object-relational database management system (ORDBMS) with an emphasis
-  on extensibility and on standards-compliance.
+description: Object-relational database management system (ORDBMS) with an emphasis on extensibility and on standards-compliance.
 engine: gotpl
 home: https://www.postgresql.org/
 icon: https://www.postgresql.org/media/img/about/press/elephant.png

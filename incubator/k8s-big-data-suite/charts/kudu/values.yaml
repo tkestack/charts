@@ -81,7 +81,7 @@ NetworkPolicy:
 
 metrics:
   enabled: true
-  image: ccr.ccs.tencentyun.com/k8s-big-data/kudu_exporter
+  image: ccr.ccs.tencentyun.com/tke-market/kudu_exporter
   imageTag: v6
   prefix: kudu
   resources: {}

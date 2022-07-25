@@ -6,18 +6,22 @@ replicaCount: 1
 
 api:
   image:
-    repository: nocalhost-docker.pkg.coding.net/nocalhost/public/nocalhost-api
+    repository: ccr.ccs.tencentyun.com/tke-market/nocalhost-api
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "v0.6.11"
 
 web:
   image:
-    repository: nocalhost-docker.pkg.coding.net/nocalhost/public/nocalhost-web
+    repository: ccr.ccs.tencentyun.com/tke-market/nocalhost-web
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "v0.6.11"
 
+
+tests:
+  repository: ccr.ccs.tencentyun.com/tke-market/busybox
+  tag: stable-glibc
 imagePullSecrets: []
 
 podSecurityContext: {}
@@ -60,8 +64,9 @@ mariadb:
   fullnameOverride: nocalhost-mariadb
   commonAnnotations: {"helm.sh/hook":"pre-install","helm.sh/hook-weight":"1"}
   image:
-    registry: nocalhost-docker.pkg.coding.net/nocalhost/public
-    repository: mariadb
+    registry: ccr.ccs.tencentyun.com
+    repository: tke-market/mariadb
+    tag: 10.5.8-debian-10-r0
   auth:
     rootPassword: root
     database: nocalhost

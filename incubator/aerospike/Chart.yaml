@@ -1,0 +1,15 @@
+apiVersion: v1
+appVersion: 5.0.0.4
+description: A Helm chart for Aerospike Server Community Edition on Kubernetes
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/0f3b936a-06e0-4e4e-b723-ead8984846ce.png
+maintainers:
+- email: kesan@aerospike.com
+  name: spkesan
+name: aerospike
+sources:
+- https://github.com/aerospike/aerospike-server.docker
+- https://github.com/aerospike/aerospike-kubernetes
+- https://github.com/aerospike/aerospike-kubernetes-init
+- https://github.com/aerospike/aerospike-prometheus-exporter
+version: 5.0.0
+kubeVersion: <= 1.22.5-x

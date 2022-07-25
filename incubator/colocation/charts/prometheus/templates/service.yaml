@@ -1,0 +1,21 @@
+kind: Service
+apiVersion: v1
+metadata:
+  annotations:
+    prometheus.io/scrape: 'true'
+  labels:
+    app: {{ .Values.PrometheusName }}
+  name: {{ .Values.PrometheusName }}-service
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: http
+      protocol: TCP
+      port: {{ .Values.service.port }}
+      targetPort: 9090
+      {{- if (and (eq .Values.service.type "NodePort") (not (empty .Values.service.nodePort))) }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
+  selector:
+    app: {{ .Values.PrometheusName }}

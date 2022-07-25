@@ -1,0 +1,17 @@
+apiVersion: v2
+appVersion: v0.7.0-a0973270
+description: A Helm chart to deploy fluid in Kubernetes
+home: https://github.com/fluid-cloudnative/fluid
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/5cd88288-e9c8-4aa7-9f42-5db67514b40f.jpg
+keywords:
+- category:data
+- fluid
+- namespace:fluid-system
+- releaseName:fluid
+maintainers:
+- email: chrisydxie@tencent.com
+  name: chrisydxie
+name: fluid
+type: application
+version: 0.7.0
+kubeVersion: <= 1.22.5-x

@@ -1,0 +1,31 @@
+apiVersion: v2
+appVersion: 1.16.0
+dependencies:
+- condition: colocation.offline-agent.enabled,offline-agent.enabled
+  name: offline-agent
+  repository: file://./charts/offline-agent
+- condition: colocation.caelus-agent.enabled,caelus-agent.enabled
+  name: caelus-agent
+  repository: file://./charts/caelus-agent
+- condition: colocation.tke-scheduler.enabled,tke-scheduler.enabled
+  name: tke-scheduler
+  repository: file://./charts/tke-scheduler
+- condition: colocation.tke-controller.enabled,tke-controller.enabled
+  name: tke-controller
+  repository: file://./charts/tke-controller
+- condition: colocation.tke-coordinator.enabled,tke-coordinator.enabled
+  name: tke-coordinator
+  repository: file://./charts/tke-coordinator
+- condition: colocation.prometheus.enabled,prometheus.enabled
+  name: prometheus
+  repository: file://./charts/prometheus
+- condition: colocation.grafana.enabled,grafana.enabled
+  name: grafana
+  repository: file://./charts/grafana
+description: A Helm chart for Kubernetes
+home: https://github.com/tkestack/charts
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/f0cb66de-55eb-4b1d-a965-a09b3964ea9e.png
+name: colocation
+type: application
+version: 0.1.0
+kubeVersion: < 1.22.0-x

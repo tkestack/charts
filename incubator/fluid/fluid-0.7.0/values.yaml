@@ -1,0 +1,75 @@
+# Default values for fluid.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+workdir: /tmp
+
+dataset:
+  controller:
+    image: 
+      repository: ccr.ccs.tencentyun.com/tke-market/dataset-controller
+      tag: v0.7.0-3d66068
+
+csi:
+  featureGates: "FuseRecovery=true"
+  config:
+    hostNetwork: false
+  registrar:
+    image:
+      repository: ccr.ccs.tencentyun.com/tke-market/csi-node-driver-registrar
+      tag: v1.2.0
+  plugins:
+    image:
+      repository: ccr.ccs.tencentyun.com/tke-market/fluid-csi
+      tag: v0.7.0-3d66068
+  kubelet:
+    rootDir: /var/lib/kubelet
+
+runtime:
+  criticalFusePod: true
+  syncRetryDuration: 15s
+  mountRoot: /runtime-mnt
+  goosefs:
+    runtimeWorkers: 3
+    portRange: 26000-32000
+    enabled: true 
+    init:
+      image: 
+        repository: ccr.ccs.tencentyun.com/tke-market/init-users
+        tag: v0.7.0-3d66068
+    controller:
+      image:
+        repository: ccr.ccs.tencentyun.com/tke-market/goosefsruntime-controller
+        tag: v0.7.0-a0973270
+    runtime:
+      image:
+        repository: ccr.ccs.tencentyun.com/tke-market/goosefs
+        tag: v1.3.0_autopilot
+    fuse:
+      image: 
+        repository: ccr.ccs.tencentyun.com/tke-market/goosefs-fuse
+        tag: v1.3.0_autopilot
+  alluxio:
+    runtimeWorkers: 3
+    portRange: 20000-26000
+    enabled: true 
+    init:
+      image:  
+        repository: ccr.ccs.tencentyun.com/tke-market/init-users
+        tag: v0.7.0-3d66068
+    controller:
+      image:
+        repository: ccr.ccs.tencentyun.com/tke-market/alluxioruntime-controller
+        tag: v0.7.0-3d66068
+    runtime:
+      image:
+        repository: ccr.ccs.tencentyun.com/alluxio/alluxio
+        tag: release-2.7.2-SNAPSHOT-3714f2b
+    fuse:
+      image:
+        repository: ccr.ccs.tencentyun.com/alluxio/alluxio-fuse
+        tag: release-2.7.2-SNAPSHOT-3714f2b
+
+webhook:
+  enabled: true
+  image: ccr.ccs.tencentyun.com/tke-market/fluid-webhook:v0.7.0-3d66068
+  replicas: 1

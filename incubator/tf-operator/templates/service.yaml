@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "tf-operator.fullname" . }}
+  namespace: {{ include "tf-operator.namespaceName" . }}
+  labels:
+    {{- include "tf-operator.labels" . | nindent 4 }}
+  annotations:
+    {{- include "tf-operator.serviceAnnotations" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+      name: {{ .Values.service.name }}
+  selector:
+    {{- include "tf-operator.selectorLabels" . | nindent 4 }}

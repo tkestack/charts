@@ -1,0 +1,14 @@
+apiVersion: v2
+appVersion: pytorch-operator-0.7.0
+description: A Helm chart for PyTorch Operator on Kubernetes
+home: https://github.com/tkestack/charts
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/9271fbaf-0ab5-4197-b621-58eb4139d378.png
+keywords:
+- kubeflow
+- training
+maintainers:
+- email: lucaswzhang@tencent.com
+  name: lucaswzhang
+name: pytorch-operator
+version: 0.7.0
+kubeVersion: < 1.22.0-x

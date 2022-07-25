@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  labels:
+    kubernetes.io/bootstrapping: rbac-defaults
+  name: {{ .Values.CaelusAgentName }}
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/eviction
+      - nodes
+      - nodes/status
+    verbs: ["create", "list", "watch", "get", "update", "delete", "patch"]

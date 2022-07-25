@@ -124,7 +124,7 @@ prometheus:
     resources: {}
   cge:
     enabled: true
-    image: ccr.ccs.tencentyun.com/k8s-big-data/prometheus-kafka-consumer-group-exporter
+    image: ccr.ccs.tencentyun.com/tke-market/prometheus-kafka-consumer-group-exporter
     imageTag: v1.2
     port: 9208
     resources: {}
