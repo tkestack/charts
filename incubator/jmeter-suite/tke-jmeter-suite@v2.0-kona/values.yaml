@@ -11,7 +11,7 @@ distributed-jmeter:
     heap_size: 5g
   image:
     pullPolicy: Always
-    repository: ccr.ccs.tencentyun.com/jmeter-test/jmeter-helm-docker
+    repository: ccr.ccs.tencentyun.com/tke-market/jmeter-helm-docker
     tag: v2.2-kona
 
 grafana:
@@ -20,6 +20,11 @@ grafana:
   adminPassword: admin
   env:
     GF_AUTH_ANONYMOUS_ENABLED: "False"
+  image:
+    repository: ccr.ccs.tencentyun.com/tke-market/grafana
+    tag: 7.5.5
+    sha: ""
+    pullPolicy: IfNotPresent
 
 influxdb:
   enabled: true
@@ -34,3 +39,7 @@ influxdb:
     ##
     # storageClass: "-"
     size: 40Gi
+  image:
+    repository: ccr.ccs.tencentyun.com/tke-market/influxdb
+    tag: 1.7.9-alpine
+    pullPolicy: IfNotPresent

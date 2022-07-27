@@ -1,8 +1,8 @@
 ## influxdb image version
 ## ref: https://hub.docker.com/r/library/influxdb/tags/
 image:
-  repository: "influxdb"
-  tag: "1.7.9-alpine"
+  repository: ccr.ccs.tencentyun.com/tke-market/influxdb
+  tag: 1.8.0-debian-10-r48
   pullPolicy: IfNotPresent
   ## If specified, use these secrets to access the images
   # pullSecrets:

@@ -1,6 +1,7 @@
 apiVersion: v2
 name: tke-jmeter-suite-non
 description: A Helm chart for jmeter suit.
+kubeVersion: <= 1.22.5-tke.21
 
 # A chart can be either an 'application' or a 'library' chart.
 #
