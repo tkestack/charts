@@ -80,3 +80,40 @@ The same goes for the master deployment's ports 6379, 10020, and 10023. Remember
 [keysNpassword]: https://github.com/intel-analytics/BigDL/tree/main/ppml/trusted-realtime-ml/scala/docker-graphene#prepare-the-keys
 [helmsite]: https://helm.sh/
 [devicePluginK8sQuickStart]: https://bigdl.readthedocs.io/en/latest/doc/PPML/QuickStart/deploy_intel_sgx_device_plugin_for_kubernetes.html
+
+
+## Start BigDL cluster-serving On Local Mode
+Please refer to [BigDL cluster-serving](https://github.com/intel-analytics/BigDL/tree/branch-2.0/ppml/trusted-realtime-ml/scala/docker-graphene#run-the-ppml-as-docker-containers) for more detail.
+
+### The steps of start cluster-serving
+step.1 Get BigDL2.0 project.  
+```bash
+git clone https://github.com/intel-analytics/BigDL.git
+```
+
+step.2 Start Local cluster-serving container.  
+First, configure `ENCLAVE_KEY`,`KEYS_PATH` and `SECURE_PASSWORD_PATH` in `start-local-cluster-serving.sh` file, please refer to [prepare-the-key](https://github.com/intel-analytics/BigDL/tree/0a8b3c6543f710804f969ca65915b2752d04ab23/ppml/trusted-big-data-ml/python/docker-graphene#prepare-the-key).
+
+```bash
+cd BigDL/ppml/trusted-realtime-ml/scala/docker-graphene/
+./start-local-cluster-serving.sh
+```
+
+step.3, Check cluster-serving status.  
+Wait a few minutes, execute the following command, you will see the status of cluster-serving successfully started.
+```bash
+sudo docker exec -it trusted-cluster-serving-local bash /ppml/trusted-realtime-ml/check-status.sh
+```
+
+The result is as follows:  
+> Detecting redis status...  
+> Redis initialization successful.  
+> Detecting Flink job manager status...  
+> Flink job manager initialization successful.  
+> Detecting Flink task manager status...  
+> Flink task manager initialization successful.  
+> Detecting http frontend status. This may take a while.  
+> Http frontend initialization successful.  
+> Detecting cluster-serving-job status...  
+> cluster-serving-job initialization successful.  
+
