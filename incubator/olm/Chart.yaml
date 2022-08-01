@@ -1,0 +1,15 @@
+apiVersion: v1
+appVersion: 0.17.0
+description: A Helm chart for Operator Lifycycle Manager
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/9fa1f17c-f2da-44eb-863b-d91f854fbb56.svg
+keywords:
+- operator
+- olm
+maintainers:
+- email: danielxxli@tencent.com
+  name: Xin Li
+name: olm
+sources:
+- https://github.com/tkestack/charts/incubator/tke-olm
+version: 0.17.0
+kubeVersion: <= 1.22.5-x

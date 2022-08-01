@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elastic-jupyter-operator
+  namespace: {{ include "elastic-jupyter-operator.namespaceName" . }}
+  labels:
+    control-plane: elastic-jupyter-operator
+    helm.sh/chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+spec:
+  selector:
+    matchLabels:
+      control-plane: elastic-jupyter-operator
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        control-plane: elastic-jupyter-operator
+    spec:
+      containers:
+      - command:
+        - /elastic-jupyter-operator
+        args:
+        - --enable-leader-election
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        name: elastic-jupyter-operator
+        resources:
+          limits:
+            cpu: 100m
+            memory: 30Mi
+          requests:
+            cpu: 100m
+            memory: 20Mi
+      terminationGracePeriodSeconds: 10

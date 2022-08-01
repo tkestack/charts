@@ -1,0 +1,18 @@
+apiVersion: v1
+appVersion: 1.10.1
+description: General-purpose web UI for Kubernetes clusters
+home: https://github.com/kubernetes/dashboard
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/b2082fc7-4422-4a59-b3e6-a8c1899f414c.png
+keywords:
+- kubernetes
+- dashboard
+maintainers:
+- email: Kevin.Fox@pnnl.gov
+  name: kfox1111
+- email: cdesaintmartin@wiremind.fr
+  name: desaintmartin
+name: kubernetes-dashboard
+sources:
+- https://github.com/kubernetes/dashboard
+version: 1.10.1
+kubeVersion: <= 1.22.5-x

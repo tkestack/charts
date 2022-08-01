@@ -9,7 +9,7 @@ metadata:
 spec:
   containers:
     - name: wget
-      image: busybox
+      image: {{ .Values.tests.repository }}:{{ .Values.tests.tag }}
       command: ['wget']
       args: ['{{ include "nocalhost-api.fullname" . }}:{{ .Values.service.port }}']
   restartPolicy: Never

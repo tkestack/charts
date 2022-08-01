@@ -1,0 +1,21 @@
+annotations:
+  category: Infrastructure
+apiVersion: v1
+appVersion: 10.22.0
+description: Event-driven I/O server-side JavaScript environment based on V8
+engine: gotpl
+home: http://nodejs.org/
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/25511d73-25cc-47b8-9afa-9eef93f9104f.png
+keywords:
+- node
+- javascript
+- nodejs
+- git
+maintainers:
+- email: containers@bitnami.com
+  name: Bitnami
+name: node
+sources:
+- https://github.com/bitnami/bitnami-docker-node
+version: 13.0.0
+kubeVersion: <= 1.22.5-x

@@ -1,4 +1,4 @@
-operatorImageName: ccr.ccs.tencentyun.com/k8s-big-data/operator
+operatorImageName: ccr.ccs.tencentyun.com/tke-market/operator
 operatorVersion: v1beta2-1.1.1-2.4.5
 imagePullPolicy: IfNotPresent
 imagePullSecrets: []

@@ -60,7 +60,7 @@ client:
   # 运维工具容器, 这里面有 hadoop,hive,spark-shell 等命令行
   enabled: true
   client:
-    imageName: "ccr.ccs.tencentyun.com/k8s-big-data/client"
+    imageName: "ccr.ccs.tencentyun.com/tke-market/client"
     imageTag: "v2006241010"
     resources:
       requests:
@@ -77,11 +77,11 @@ spark:
   name: "spark"
   sparkMaster: "k8s://https://kubernetes.default.svc:443"
   imagePullSecrets: *imagePullSecrets
-  imageName: "ccr.ccs.tencentyun.com/k8s-big-data/spark-master"
+  imageName: "ccr.ccs.tencentyun.com/tke-market/spark-master"
   imageTag: "v2004011800"
   zeppelin:
     enabled: true
-    imageName: "ccr.ccs.tencentyun.com/k8s-big-data/zeppelin"
+    imageName: "ccr.ccs.tencentyun.com/tke-market/zeppelin"
     imageTag: "v2004021514"
     imagePullSecrets: *imagePullSecrets
     persistence:
@@ -90,20 +90,20 @@ spark:
       size: 10Gi
       accessMode: ReadWriteOnce
     sparkSubmitOptions:
-      spark.kubernetes.container.image: ccr.ccs.tencentyun.com/k8s-big-data/spark:v2.4.5-v1
+      spark.kubernetes.container.image: ccr.ccs.tencentyun.com/tke-market/spark:v2.4.5-v1
   history:
     enabled: true
   thirftserver:
     enabled: true
-    executorImage: "ccr.ccs.tencentyun.com/k8s-big-data/spark:v2.4.5-v1"
+    executorImage: "ccr.ccs.tencentyun.com/tke-market/spark:v2.4.5-v1"
     startOptions:
-      spark.kubernetes.container.image: ccr.ccs.tencentyun.com/k8s-big-data/spark:v2.4.5-v1
+      spark.kubernetes.container.image: ccr.ccs.tencentyun.com/tke-market/spark:v2.4.5-v1
 
 zookeeper:
   # 文档: https://github.com/helm/charts/tree/master/incubator/zookeeper
   enabled: true
   image:
-    repository: ccr.ccs.tencentyun.com/k8s-big-data/k8szk
+    repository: ccr.ccs.tencentyun.com/tke-market/k8szk
     tag: v3
     imagePullSecrets: *imagePullSecrets
   # The JVM heap size to allocate to Zookeeper
@@ -126,12 +126,12 @@ zookeeper:
     jmx:
       enabled: true
       image:
-        repository: ccr.ccs.tencentyun.com/k8s-big-data/jmx-prometheus-exporter
+        repository: ccr.ccs.tencentyun.com/tke-market/jmx-prometheus-exporter
         tag: 0.12.0-openjdk
     zookeeper:
       enabled: true
       image:
-        repository: ccr.ccs.tencentyun.com/k8s-big-data/zookeeper-exporter
+        repository: ccr.ccs.tencentyun.com/tke-market/zookeeper-exporter
         tag: v1.1.2
   prometheus:
     serviceMonitor:
@@ -148,12 +148,12 @@ hive:
   global:
     metrics:
       enabled: true
-      image: ccr.ccs.tencentyun.com/k8s-big-data/jmx-prometheus-exporter
+      image: ccr.ccs.tencentyun.com/tke-market/jmx-prometheus-exporter
       imageTag: 0.12.0-openjdk
   userName: "postgres"
   password: "postgres"
   imagePullSecrets: *imagePullSecrets
-  imageName: "ccr.ccs.tencentyun.com/k8s-big-data/hive"
+  imageName: "ccr.ccs.tencentyun.com/tke-market/hive"
   imageTag: "v2.3.2-v1"
   metastore:
     serviceType: ClusterIP
@@ -164,7 +164,7 @@ impala:
   # impala 没有开源版本 helm, 此为 K8sBigData 自行维护版本
   enabled: true
   imagePullSecrets: *imagePullSecrets
-  imageName: "ccr.ccs.tencentyun.com/k8s-big-data/impala"
+  imageName: "ccr.ccs.tencentyun.com/tke-market/impala"
   imageTag: "3.3-201912292037"
   kudu:
     enabled: true
@@ -185,7 +185,7 @@ kudu:
   # 主要为了提升可读性
   enabled: true
   image:
-    repository: "ccr.ccs.tencentyun.com/k8s-big-data/kudu"
+    repository: "ccr.ccs.tencentyun.com/tke-market/kudu"
     tag: 1.11-v14
     pullSecretName: *imagePullSecrets
   tserver:
@@ -224,10 +224,10 @@ postgresql:
   postgresPassword: postgres
   metrics:
     enabled: false
-    image: ccr.ccs.tencentyun.com/k8s-big-data/postgres_exporter
+    image: ccr.ccs.tencentyun.com/tke-market/postgres_exporter
     imageTag: v0.1.1
   imagePullSecrets: *imagePullSecrets
-  image: "ccr.ccs.tencentyun.com/k8s-big-data/postgresql"
+  image: "ccr.ccs.tencentyun.com/tke-market/postgresql"
   imageTag: "v9.5.3"
   script:
     enabled: true
@@ -245,15 +245,15 @@ postgresql-ha:
   imagePullSecrets: *imagePullSecrets
   postgresqlImage:
     registry: ccr.ccs.tencentyun.com
-    repository: k8s-big-data/postgresql-repmgr
+    repository: tke-market/postgresql-repmgr
     tag: 11.8.0-debian-10-r43-v8
   pgpoolImage:
     registry: ccr.ccs.tencentyun.com
-    repository: k8s-big-data/pgpool
+    repository: tke-market/pgpool
     tag: 4.1.2-debian-10-r37
   metricsImage:
     registry: ccr.ccs.tencentyun.com
-    repository: k8s-big-data/postgres-exporter
+    repository: tke-market/postgres-exporter
     tag: 0.8.0-debian-10-r151
   metrics:
     enabled: true
@@ -300,7 +300,7 @@ hbase:
 elasticsearch:
   # 文档: https://github.com/elastic/helm-charts/tree/master/elasticsearch
   enabled: true
-  image: "ccr.ccs.tencentyun.com/k8s-big-data/elasticsearch"
+  image: "ccr.ccs.tencentyun.com/tke-market/elasticsearch"
   imageTag: "6.4.0"
   imagePullSecrets: *imagePullSecrets
   replicas: 2
@@ -320,7 +320,7 @@ elasticsearch:
 kibana:
   # 文档: https://github.com/elastic/helm-charts/tree/master/kibana
   enabled: true
-  image: "ccr.ccs.tencentyun.com/k8s-big-data/kibana"
+  image: "ccr.ccs.tencentyun.com/tke-market/kibana"
   imageTag: "6.4.0"
   imagePullSecrets: *imagePullSecrets
   elasticsearchURL: "http://elasticsearch-master-headless:9200"
@@ -347,30 +347,30 @@ prometheus-operator:
               requests:
                 storage: 50Gi
       image:
-        repository: ccr.ccs.tencentyun.com/k8s-big-data/alertmanager
+        repository: ccr.ccs.tencentyun.com/tke-market/alertmanager
         tag: v0.19.0
   prometheusOperator:
     image:
-      repository: ccr.ccs.tencentyun.com/k8s-big-data/prometheus-operator
+      repository: ccr.ccs.tencentyun.com/tke-market/prometheus-operator
       tag: v0.32.0
     prometheusConfigReloaderImage:
-      repository: ccr.ccs.tencentyun.com/k8s-big-data/prometheus-config-reloader
+      repository: ccr.ccs.tencentyun.com/tke-market/prometheus-config-reloader
       tag: v0.32.0
     configmapReloadImage:
-      repository: ccr.ccs.tencentyun.com/k8s-big-data/configmap-reload
+      repository: ccr.ccs.tencentyun.com/tke-market/configmap-reload
       tag: v0.0.1
     # 如果手动create之后就设置为false
     createCustomResource: true
     tlsProxy:
       enabled: true
       image:
-        repository: ccr.ccs.tencentyun.com/k8s-big-data/ghostunnel
+        repository: ccr.ccs.tencentyun.com/tke-market/ghostunnel
         tag: v1.4.1
     admissionWebhooks:
       enabled: true
       patch:
         image:
-          repository: ccr.ccs.tencentyun.com/k8s-big-data/kube-webhook-certgen
+          repository: ccr.ccs.tencentyun.com/tke-market/kube-webhook-certgen
           tag: v1.0.0
   prometheus:
     prometheusSpec:
@@ -378,7 +378,7 @@ prometheus-operator:
       routePrefix: /prometheus/
       externalUrl: http://localhost:9090/prometheus
       image:
-        repository: ccr.ccs.tencentyun.com/k8s-big-data/prometheus
+        repository: ccr.ccs.tencentyun.com/tke-market/prometheus
         tag: v2.18.2
       storageSpec:
         volumeClaimTemplate:
@@ -399,7 +399,7 @@ prometheus-node-exporter:
   # 文档: https://github.com/prometheus/node_exporter/
   enabled: true
   image:
-    repository: ccr.ccs.tencentyun.com/k8s-big-data/node-exporter
+    repository: ccr.ccs.tencentyun.com/tke-market/node-exporter
     tag: v0.18.1
   podLabels:
     # Add the 'node-exporter' label to be used by serviceMonitor to match standard common usage in rules and grafana dashboards
@@ -418,7 +418,7 @@ kube-state-metrics:
   # 文档: https://github.com/kubernetes/kube-state-metrics/
   enabled: true
   image:
-    repository: ccr.ccs.tencentyun.com/k8s-big-data/kube-state-metrics
+    repository: ccr.ccs.tencentyun.com/tke-market/kube-state-metrics
     tag: v1.8.0
   rbac:
     create: true
@@ -429,7 +429,7 @@ grafana:
   # 文档: https://github.com/helm/charts/tree/master/stable/grafana
   enabled: true
   image:
-    repository: ccr.ccs.tencentyun.com/k8s-big-data/grafana
+    repository: ccr.ccs.tencentyun.com/tke-market/grafana
     # 如果使用tps版本grafana，则tag为6.4.2-tps2
     tag: 6.4.2
   grafana.ini:
@@ -447,7 +447,7 @@ grafana:
   ingress:
     enabled: true
   sidecar:
-    image: ccr.ccs.tencentyun.com/k8s-big-data/k8s-sidecar:0.1.20
+    image: ccr.ccs.tencentyun.com/tke-market/k8s-sidecar:0.1.20
     dashboards:
       enabled: true
       label: grafana_dashboard
@@ -517,7 +517,7 @@ grafana:
 sparkoperator:
   # 文档: https://github.com/GoogleCloudPlatform/spark-on-k8s-operator
   enabled: true
-  operatorImageName: ccr.ccs.tencentyun.com/k8s-big-data/spark-operator
+  operatorImageName: ccr.ccs.tencentyun.com/tke-market/spark-operator
   operatorVersion: v1beta2-1.1.1-2.4.5
   sparkJobNamespace: ""
   replicas: 2
@@ -564,7 +564,7 @@ hadoop:
     #  - /mnt/vdh
     metrics:
       enabled: true
-      image: ccr.ccs.tencentyun.com/k8s-big-data/jmx-prometheus-exporter
+      image: ccr.ccs.tencentyun.com/tke-market/jmx-prometheus-exporter
       imageTag: 0.12.0-openjdk
   hdfs-namenode-k8s:
     persistence:
@@ -605,10 +605,10 @@ volcano:
   enabled: true
   basic:
     image_tag_version: "v0.4.0"
-    busybox_image: "ccr.ccs.tencentyun.com/k8s-big-data/busybox:1.31.1"
-    controller_image_name: "ccr.ccs.tencentyun.com/k8s-big-data/vc-controller-manager"
-    scheduler_image_name: "ccr.ccs.tencentyun.com/k8s-big-data/vc-scheduler"
-    admission_image_name: "ccr.ccs.tencentyun.com/k8s-big-data/vc-webhook-manager"
+    busybox_image: "ccr.ccs.tencentyun.com/tke-market/busybox:1.31.1"
+    controller_image_name: "ccr.ccs.tencentyun.com/tke-market/vc-controller-manager"
+    scheduler_image_name: "ccr.ccs.tencentyun.com/tke-market/vc-scheduler"
+    admission_image_name: "ccr.ccs.tencentyun.com/tke-market/vc-webhook-manager"
 
 flink-operator:
   # 文档: https://github.com/GoogleCloudPlatform/flink-on-k8s-operator/blob/master/docs/user_guide.md
@@ -616,9 +616,9 @@ flink-operator:
   imagePullSecrets: *imagePullSecrets
   flinkOperatorNamespace: "default"
   operatorImage:
-    name: ccr.ccs.tencentyun.com/k8s-big-data/flink-operator:v2
-  deployerWebhookCertImage: ccr.ccs.tencentyun.com/k8s-big-data/deployer:webhook-cert
-  kubeRbacProxyImage: ccr.ccs.tencentyun.com/k8s-big-data/kube-rbac-proxy:v0.4.0
+    name: ccr.ccs.tencentyun.com/tke-market/flink-operator:v2
+  deployerWebhookCertImage: ccr.ccs.tencentyun.com/tke-market/deployer:webhook-cert
+  kubeRbacProxyImage: ccr.ccs.tencentyun.com/tke-market/kube-rbac-proxy:v0.4.0
 
 cp-helm-charts:
   # 文档: https://github.com/confluentinc/cp-helm-charts
@@ -626,7 +626,7 @@ cp-helm-charts:
   enabled: true
   cp-kafka:
     brokers: 3
-    image: ccr.ccs.tencentyun.com/k8s-big-data/cp-kafka
+    image: ccr.ccs.tencentyun.com/tke-market/cp-kafka
     imageTag: 5.2.2
     heapOptions: "-Xms256M -Xmx512M"
     imagePullSecrets:
@@ -640,10 +640,10 @@ cp-helm-charts:
     prometheus:
       jmx:
         enabled: true
-        image: ccr.ccs.tencentyun.com/k8s-big-data/kafka-prometheus-jmx-exporter
+        image: ccr.ccs.tencentyun.com/tke-market/kafka-prometheus-jmx-exporter
         imageTag: 6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143
       cge:
-        image: ccr.ccs.tencentyun.com/k8s-big-data/prometheus-kafka-consumer-group-exporter
+        image: ccr.ccs.tencentyun.com/tke-market/prometheus-kafka-consumer-group-exporter
         imageTag: v1.2
         enabled: true
       serviceMonitor:
@@ -656,7 +656,7 @@ cp-helm-charts:
       offsets.retention.minutes: "120"
       log.retention.hours: "2"
   cp-kafka-connect:
-    image: ccr.ccs.tencentyun.com/k8s-big-data/confluent-connect
+    image: ccr.ccs.tencentyun.com/tke-market/confluent-connect
     imageTag: v31
     heapOptions: "-Xms256M -Xmx512M"
     replicaCount: 1
@@ -664,7 +664,7 @@ cp-helm-charts:
     prometheus:
       jmx:
         enabled: true
-        image: ccr.ccs.tencentyun.com/k8s-big-data/kafka-prometheus-jmx-exporter
+        image: ccr.ccs.tencentyun.com/tke-market/kafka-prometheus-jmx-exporter
         imageTag: 6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143
       serviceMonitor:
         enabled: true
@@ -673,7 +673,7 @@ cp-helm-charts:
       TPS_TOKEN: "NOT_SET"
       KAFKA_CONNECT_LABEL: "first"
   cp-schema-registry:
-    image: ccr.ccs.tencentyun.com/k8s-big-data/cp-schema-registry
+    image: ccr.ccs.tencentyun.com/tke-market/cp-schema-registry
     imageTag: 5.2.2
     nodeport:
       enabled: true
@@ -682,7 +682,7 @@ cp-helm-charts:
     prometheus:
       jmx:
         enabled: true
-        image: ccr.ccs.tencentyun.com/k8s-big-data/kafka-prometheus-jmx-exporter
+        image: ccr.ccs.tencentyun.com/tke-market/kafka-prometheus-jmx-exporter
         imageTag: 6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143
       serviceMonitor:
         enabled: true
@@ -696,22 +696,22 @@ nginx-ingress:
     enabled: true
   controller:
     image:
-      repository: ccr.ccs.tencentyun.com/k8s-big-data/nginx-ingress-controller
+      repository: ccr.ccs.tencentyun.com/tke-market/nginx-ingress-controller
       tag: "0.29.0"
     patch:
       image:
-        repository: ccr.ccs.tencentyun.com/k8s-big-data/kube-webhook-certgen
+        repository: ccr.ccs.tencentyun.com/tke-market/kube-webhook-certgen
         tag: v1.0.0
   defaultBackend:
     image:
-      repository: ccr.ccs.tencentyun.com/k8s-big-data/defaultbackend-amd64
+      repository: ccr.ccs.tencentyun.com/tke-market/defaultbackend-amd64
       tag: "1.5"
 
 nginx:
   # nginx 反向代理
   enabled: true
   image:
-    repository: ccr.ccs.tencentyun.com/k8s-big-data/nginx
+    repository: ccr.ccs.tencentyun.com/tke-market/nginx
     tag: 1.17.8
   nodeSelector: {}
   tolerations: []
@@ -725,7 +725,7 @@ mist:
   enabled: true
   imagePullSecrets: *imagePullSecrets
   image:
-    repository: ccr.ccs.tencentyun.com/k8s-big-data/mist
+    repository: ccr.ccs.tencentyun.com/tke-market/mist
     tag: v3
   service:
     type: ClusterIP
@@ -741,7 +741,7 @@ superset:
   enabled: true
   imagePullSecrets: *imagePullSecrets
   image:
-    repository: ccr.ccs.tencentyun.com/k8s-big-data/superset
+    repository: ccr.ccs.tencentyun.com/tke-market/superset
     tag: v6-only-impala
   supersetNode:
     ## change me
@@ -753,7 +753,7 @@ superset:
       db_name: superset
     initContainers:
       - name: wait-for-postgres
-        image: ccr.ccs.tencentyun.com/k8s-big-data/busybox:1.31.1
+        image: ccr.ccs.tencentyun.com/tke-market/busybox:1.31.1
         imagePullPolicy: IfNotPresent
         envFrom:
           - secretRef:
@@ -762,7 +762,7 @@ superset:
   init:
     initContainers:
       - name: wait-for-postgres
-        image: ccr.ccs.tencentyun.com/k8s-big-data/busybox:1.31.1
+        image: ccr.ccs.tencentyun.com/tke-market/busybox:1.31.1
         imagePullPolicy: IfNotPresent
         envFrom:
           - secretRef:
@@ -773,7 +773,7 @@ superset:
 loki:
   enabled: true
   image:
-    repository: ccr.ccs.tencentyun.com/k8s-big-data/loki
+    repository: ccr.ccs.tencentyun.com/tke-market/loki
     tag: 1.6.0
   persistence:
     size: 100Gi
@@ -795,7 +795,7 @@ loki:
 promtail:
   enabled: true
   image:
-    repository: ccr.ccs.tencentyun.com/k8s-big-data/promtail
+    repository: ccr.ccs.tencentyun.com/tke-market/promtail
     tag: 1.6.0
   volumes:
   - name: docker

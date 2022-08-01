@@ -1,0 +1,14 @@
+apiVersion: v2
+appVersion: tf-operator-0.5.3
+description: A Helm chart for TF Operator on Kubernetes
+home: https://github.com/tkestack/charts
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/4c7d05af-9c8b-4bff-847d-3e2f8827fca1.png
+keywords:
+- kubeflow
+- training
+maintainers:
+- email: lucaswzhang@tencent.com
+  name: lucaswzhang
+name: tf-operator
+version: 0.5.3
+kubeVersion: < 1.22.0-x

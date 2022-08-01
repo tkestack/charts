@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  creationTimestamp: null
+  generation: 1
+  labels:
+    app: {{ .Values.OfflineAgentName }}
+  name: {{ .Values.OfflineAgentName }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.OfflineAgentName }}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: {{ .Values.OfflineAgentName }}
+    spec:
+      containers:
+        - args:
+            - --v=2
+            - --offline-annotation=tke.cloud.tencent.com/offline-pod
+            - --offline-utilization=all:100
+            - --host-cpucg-path=/host-cpucg
+            - --ex-offline-path=/offline
+          command:
+            - /offline-scheduling-agent
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: {{ .Values.OfflineAgentName }}
+          resources:
+            limits:
+              cpu: 100m
+              memory: 100Mi
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /host-cpucg
+              name: host-cpucg
+      dnsPolicy: ClusterFirst
+      hostPID: true
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: {{ .Values.OfflineAgentName }}
+      serviceAccountName: {{ .Values.OfflineAgentName }}
+      terminationGracePeriodSeconds: 30
+      tolerations:
+        - effect: NoSchedule
+          operator: Exists
+      volumes:
+        - hostPath:
+            path: /sys/fs/cgroup/cpu
+            type: ""
+          name: host-cpucg
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate

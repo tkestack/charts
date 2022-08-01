@@ -17,7 +17,7 @@
 | 参数                        | 描述                                                       | 默认值                                        |
 |-----------------------------|------------------------------------------------------------|-----------------------------------------------|
 | `replicaCount`              | placeholder 的副本数                                       | `10`                                          |
-| `image`                     | placeholder 的镜像地址                                     | `ccr.ccs.tencentyun.com/library/pause:latest` |
+| `image`                     | placeholder 的镜像地址                                     | `ccr.ccs.tencentyun.com/tke-market/pause:latest` |
 | `resources.requests.cpu`    | 单个 placeholder 副本占位的 cpu 资源大小                   | `300m`                                        |
 | `resources.requests.memory` | 单个 placeholder 副本占位的内存大小                        | `600Mi`                                       |
 | `lowPriorityClass.create`   | 是否创建低优先级的 PriorityClass (用于被 placeholder 引用) | `true`                                        |

@@ -1,0 +1,19 @@
+apiVersion: v1
+appVersion: 2.35.0
+description: Prometheus is a monitoring system and time series database.
+home: https://prometheus.io/
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/94cd67e2-f5a2-4186-acc1-a587f192928a.png
+maintainers:
+- email: gianrubio@gmail.com
+  name: gianrubio
+- email: zanhsieh@gmail.com
+  name: zanhsieh
+name: prometheus
+sources:
+- https://github.com/prometheus/alertmanager
+- https://github.com/prometheus/prometheus
+- https://github.com/prometheus/pushgateway
+- https://github.com/prometheus/node_exporter
+- https://github.com/kubernetes/kube-state-metrics
+version: 11.1.2
+kubeVersion: < 1.22.0-x

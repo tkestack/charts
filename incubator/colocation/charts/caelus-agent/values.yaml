@@ -1,0 +1,24 @@
+# Default values for caelus-agent.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# name for caelus agent
+CaelusAgentName: "caelus-agent"
+
+# name for caelus agent configmap
+CaelusAgentConfigmapName: "caelus-json"
+
+# image for caelus agent daemonset
+image:
+  repository: "ccr.ccs.tencentyun.com/tke-market/caelus"
+  pullPolicy: Always
+  tag: "mvp.v0.0.1.20.gb9fee6d"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""

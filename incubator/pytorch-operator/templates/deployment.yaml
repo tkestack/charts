@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "pytorch-operator.fullname" . }}
+  namespace: {{ include "pytorch-operator.namespaceName" . }}
+  labels:
+    {{- include "pytorch-operator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "pytorch-operator.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "pytorch-operator.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "pytorch-operator.serviceAccountName" . }}
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command:
+        - /pytorch-operator.v1
+        - --alsologtostderr
+        - -v={{ .Values.commandVerboseLevel }}
+        - --monitoring-port={{ .Values.prometheus.port }}
+        env:
+        - name: MY_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        

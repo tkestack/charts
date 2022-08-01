@@ -1,6 +1,6 @@
 replicaCount: 10
 priorityClassName: low-priority
-image: "ccr.ccs.tencentyun.com/library/pause:latest"
+image: "ccr.ccs.tencentyun.com/tke-market/pause:latest"
 
 nameOverride: ""
 fullnameOverride: ""

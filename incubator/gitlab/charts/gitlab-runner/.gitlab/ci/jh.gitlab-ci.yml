@@ -1,0 +1,40 @@
+.if_jh_release_tag: &if_jh_release_tag
+  if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+-jh+(-rc[0-9]+)?/ && $CI_PROJECT_URL == "https://jihulab.com/gitlab-cn/charts/gitlab-runner"'
+
+wait-for-images:
+  stage: release
+  image: docker:dind
+  services:
+    - docker:dind
+  script:
+    - |
+      # Get docker image from Chart.appVersion
+      export IMAGE_TAG=`cat Chart.yaml | grep appVersion | awk -F" " '{print $2}'`
+      if [ $IMAGE_TAG != "bleeding" ]; then
+        export IMAGE_TAG=v$IMAGE_TAG
+      fi
+      docker pull "gitlab/gitlab-runner:alpine-$IMAGE_TAG"
+      echo "$TCR_REGISTRY_PASSWORD" | docker login "$TCR_REGISTRY" --username "$TCR_REGISTRY_USER" --password-stdin
+      docker tag "gitlab/gitlab-runner:alpine-$IMAGE_TAG" "$TCR_REGISTRY/jihulab/gitlab-runner:alpine-$IMAGE_TAG"
+      docker push "$TCR_REGISTRY/jihulab/gitlab-runner:alpine-$IMAGE_TAG"
+
+  rules:
+  - <<: *if_jh_release_tag
+
+release-jh-stable:
+  stage: release
+  inherit:
+    variables: false
+  variables:
+    CHART_NAME: $CI_PROJECT_NAME
+    RELEASE_REF: $CI_COMMIT_REF_NAME
+    UNSTABLE: 'false'
+  trigger:
+    project: gitlab-cn/charts/charts.jihulab.cn
+    branch: main
+    strategy: depend
+  rules:
+  - <<: *if_jh_release_tag
+    when: manual
+  needs:
+    - wait-for-images

@@ -9,7 +9,7 @@ images:
 # Select antiAffinity as either hard or soft, default is soft
 antiAffinity: "soft"
 
-imageName: "ccr.ccs.tencentyun.com/k8s-big-data/hive"
+imageName: "ccr.ccs.tencentyun.com/tke-market/hive"
 imageTag: "v2.3.6"
 
 warehouseDir: ""

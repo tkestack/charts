@@ -1,0 +1,17 @@
+apiVersion: v2
+appVersion: 2.1.7
+description: A Helm chart for the NATS.io High Speed Cloud Native Distributed Communications Technology.
+home: http://github.com/nats-io/k8s
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/349c0a98-62e1-4a81-aa8a-a7f2fa5e9c66.png
+keywords:
+- nats
+- messaging
+- cncf
+maintainers:
+- email: wally@nats.io
+  name: Waldemar Quevedo
+- email: colin@nats.io
+  name: Colin Sullivan
+name: nats
+version: 0.5.0
+kubeVersion: <= 1.22.5-x
