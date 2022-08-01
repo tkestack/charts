@@ -1,0 +1,31 @@
+# Default values for gitlab-chart.
+# This is a YAML-formatted file.
+
+global:
+  hosts:
+    domain: example.com
+    https: true
+  jhImages:
+    # Default repositories used to pull Gitlab Enterprise Edition images.
+    # See the image.repository and workhorse.repository template helpers.
+    migrations:
+      repository: ccr.ccs.tencentyun.com/tke-market/gitlab-toolbox-jh
+    sidekiq:
+      repository: ccr.ccs.tencentyun.com/tke-market/gitlab-sidekiq-jh
+    toolbox:
+      repository: ccr.ccs.tencentyun.com/tke-market/gitlab-toolbox-jh
+    webservice:
+      repository: ccr.ccs.tencentyun.com/tke-market/gitlab-webservice-jh
+    workhorse:
+      repository: ccr.ccs.tencentyun.com/tke-market/gitlab-workhorse-jh
+    geo-logcursor:
+      repository: ccr.ccs.tencentyun.com/tke-market/gitlab-geo-logcursor
+  # This exists to support template handling
+  psql:
+    knownDecompositions:
+      - main
+      - ci
+
+gitlab-runner:
+  enabled: false
+

@@ -1,0 +1,47 @@
+# Default values for colocation.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+offline-agent:
+  enabled: false
+  image:
+    repository: "ccr.ccs.tencentyun.com/tke-market/offline-scheduling-agent"
+    tag: "v1.0-2-gae6c50925d"
+
+caelus-agent:
+  nabled: true
+  image:
+    repository: "ccr.ccs.tencentyun.com/tke-market/caelus"
+    tag: "mvp.v0.0.1.20.gb9fee6d"
+
+tke-scheduler:
+  enabled: true
+  image:
+    repository: "ccr.ccs.tencentyun.com/tke-market/tke-scheduler"
+    tag: "11480e3"
+
+tke-controller:
+  enabled: true
+  image: 
+    repository: "ccr.ccs.tencentyun.com/tke-market/tke-controller"
+    tag: "11480e3"
+
+tke-coordinator:
+  enabled: true
+  image:
+    repository: "ccr.ccs.tencentyun.com/tke-market/coordinator"
+    tag: "5629a19"
+
+prometheus:
+  enabled: true
+  image:
+    repository: ccr.ccs.tencentyun.com/tke-market/prometheus
+    tag: "v2.22.1"
+
+grafana:
+  enabled: true
+  image:
+    repository: "ccr.ccs.tencentyun.com/tke-market/grafana"
+    tag: "7.1.3"

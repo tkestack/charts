@@ -17,7 +17,7 @@ hdfs-config-k8s:
 ## ------------------------------------------------------------------------------
 hdfs-journalnode-k8s:
   image:
-    repository: ccr.ccs.tencentyun.com/k8s-big-data/hadoop
+    repository: ccr.ccs.tencentyun.com/tke-market/hadoop
     tag: v2.9.0-all
   persistence:
     ## Persistent Volume Storage Class
@@ -55,7 +55,7 @@ hdfs-namenode-k8s:
   ## Name of the namenode start script in the config map.
   namenodeStartScript: format-and-run.sh
   image:
-    repository: ccr.ccs.tencentyun.com/k8s-big-data/hadoop
+    repository: ccr.ccs.tencentyun.com/tke-market/hadoop
     tag: v2.9.0-all
   ## A namenode start script that can have user specified content.
   ## Can be used to conduct ad-hoc operation as specified by a user.
@@ -129,7 +129,7 @@ hdfs-simple-namenode-k8s:
 ## ------------------------------------------------------------------------------
 hdfs-datanode-k8s:
   image:
-    repository: ccr.ccs.tencentyun.com/k8s-big-data/hadoop
+    repository: ccr.ccs.tencentyun.com/tke-market/hadoop
     tag: v2.9.0-all
   ## Node labels and tolerations for pod assignment
   nodeSelector: {}

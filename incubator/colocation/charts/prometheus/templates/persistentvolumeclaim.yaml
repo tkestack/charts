@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    pv.kubernetes.io/bind-completed: "yes"
+    pv.kubernetes.io/bound-by-controller: "yes"
+  finalizers:
+    - kubernetes.io/pvc-protection
+  name: {{ .Values.PrometheusName }}-data-pvc
+  namespace:   {{ .Release.Namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: cbs
+  volumeMode: Filesystem
+  volumeName: {{ .Values.PrometheusName }}-data

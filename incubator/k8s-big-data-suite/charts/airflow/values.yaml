@@ -5,7 +5,7 @@ airflow:
   ## configs for the docker image of the web/scheduler/worker
   ##
   image:
-    repository: ccr.ccs.tencentyun.com/k8s-big-data/airflow
+    repository: ccr.ccs.tencentyun.com/tke-market/airflow
     tag: 1.10.12-python3.6
     ## values: Always or IfNotPresent
     pullPolicy: IfNotPresent
@@ -82,7 +82,7 @@ airflow:
   config:
     AIRFLOW__CORE__LOAD_EXAMPLES: "True"
     AIRFLOW__KUBERNETES__DAGS_IN_IMAGE: "True"
-    # AIRFLOW__KUBERNETES__WORKER_CONTAINER_REPOSITORY: "ccr.ccs.tencentyun.com/k8s-big-data/airflow"
+    # AIRFLOW__KUBERNETES__WORKER_CONTAINER_REPOSITORY: "ccr.ccs.tencentyun.com/tke-market/airflow"
     # AIRFLOW__KUBERNETES__WORKER_CONTAINER_TAG: "1.10.12-python3.6"
     # AIRFLOW__KUBERNETES__WORKER_CONTAINER_IMAGE_PULL_POLICY: "IfNotPresent"
     # AIRFLOW__KUBERNETES__WORKER_PODS_CREATION_BATCH_SIZE: "10"
@@ -334,7 +334,7 @@ scheduler:
   ##
   extraInitContainers:
     - name: volume-mount-hack
-      image: ccr.ccs.tencentyun.com/k8s-big-data/busybox:1.31.1
+      image: ccr.ccs.tencentyun.com/tke-market/busybox:1.31.1
       command: ["sh", "-c", "chown -R 50000:50000 /opt/airflow/logs"]
       volumeMounts:
         - mountPath: /opt/airflow/logs
@@ -981,7 +981,7 @@ dags:
 
       ## the docker image for the git-sync container
       image:
-        repository: ccr.ccs.tencentyun.com/k8s-big-data/git
+        repository: ccr.ccs.tencentyun.com/tke-market/git
         tag: v2.26.2
         ## values: Always or IfNotPresent
         pullPolicy: Always
@@ -1018,7 +1018,7 @@ dags:
 
     ## the docker image for the git-clone container
     image:
-      repository: ccr.ccs.tencentyun.com/k8s-big-data/git
+      repository: ccr.ccs.tencentyun.com/tke-market/git
       tag: v2.26.2
       ## values: Always or IfNotPresent
       pullPolicy: Always

@@ -1,0 +1,14 @@
+apiVersion: v2
+appVersion: mpi-operator-0.2.3
+description: A Helm chart for MPI Operator on Kubernetes
+home: https://github.com/tkestack/charts
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/eec0b2b5-3036-4a89-8d16-8b9fdc29d22c.png
+keywords:
+- kubeflow
+- training
+maintainers:
+- email: lucaswzhang@tencent.com
+  name: lucaswzhang
+name: mpi-operator
+version: 0.2.3
+kubeVersion: < 1.22.0-x

@@ -10,3 +10,4 @@ home: https://github.com/tkestack/charts
 maintainers:
   - name: lionelxchen
     email: lionelxchen@tencent.com
+kubeVersion: <= 1.22.5-x

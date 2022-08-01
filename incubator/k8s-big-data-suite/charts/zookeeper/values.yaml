@@ -21,7 +21,7 @@ updateStrategy:
 ## - https://github.com/kubernetes/contrib/tree/master/statefulsets/zookeeper
 ## - https://github.com/kubernetes/contrib/blob/master/statefulsets/zookeeper/Makefile#L1
 image:
-  repository: ccr.ccs.tencentyun.com/k8s-big-data/k8szk  # Container image repository for zookeeper container.
+  repository: ccr.ccs.tencentyun.com/tke-market/k8szk  # Container image repository for zookeeper container.
   tag: v3  # Container image tag for zookeeper container.
   imagePullSecrets: "qcloudregistrykey"
   pullPolicy: IfNotPresent  # Image pull criteria for zookeeper container.

@@ -1,0 +1,109 @@
+loki:
+  image:
+    repository: ccr.ccs.tencentyun.com/tke-market/loki
+    tag: 1.5.0
+  enabled: true
+
+promtail:
+  image:
+    repository: ccr.ccs.tencentyun.com/tke-market/promtail
+    tag: 1.6.0
+  enabled: true
+
+fluent-bit:
+  image:
+    repository: ccr.ccs.tencentyun.com/tke-market/fluent-bit-plugin-loki
+    tag: 1.5.0-amd64
+  enabled: false
+
+grafana:
+  image:
+    repository: ccr.ccs.tencentyun.com/tke-market/grafana
+    tag: 7.7.5
+  testFramework:
+     image: ccr.ccs.tencentyun.com/tke-market/bats
+     tag: "v1.4.1"
+  enabled: false
+  sidecar:
+    datasources:
+      enabled: true
+
+prometheus:
+  server:
+    image:
+      repository: ccr.ccs.tencentyun.com/tke-market/prometheus
+      tag: v2.35.0
+  pushgateway:
+    image:
+      repository: ccr.ccs.tencentyun.com/tke-market/pushgateway
+      tag: v1.4.2
+  nodeExporter:
+    image:
+      repository: ccr.ccs.tencentyun.com/tke-market/node-exporter
+      tag: v1.3.1
+  kubeStateMetrics:
+    image:
+      repository: ccr.ccs.tencentyun.com/tke-market/kube-state-metrics
+      tag: v1.9.7-shard
+  configmapReload:
+    image:
+      repository: ccr.ccs.tencentyun.com/tke-market/configmap-reload
+      tag: v0.5.0
+  alertmanager:
+    image:
+      repository: ccr.ccs.tencentyun.com/tke-market/alertmanager
+      tag: v0.23.0
+  enabled: false
+
+filebeat:
+  image: "ccr.ccs.tencentyun.com/tke-market/filebeat"
+  imageTag: "7.10.1"
+  enabled: false
+  filebeatConfig:
+    filebeat.yml: |
+      # logging.level: debug
+      filebeat.inputs:
+      - type: container
+        paths:
+          - /var/log/containers/*.log
+        processors:
+        - add_kubernetes_metadata:
+            host: ${NODE_NAME}
+            matchers:
+            - logs_path:
+                logs_path: "/var/log/containers/"
+      output.logstash:
+        hosts: ["logstash-loki:5044"]
+
+logstash:
+  enabled: false
+  image:
+    repository: ccr.ccs.tencentyun.com/tke-market/logstash-output-loki
+    tag: 1.0.1
+  filters:
+    main: |-
+      filter {
+        if [kubernetes] {
+          mutate {
+            add_field => {
+              "container_name" => "%{[kubernetes][container][name]}"
+              "namespace" => "%{[kubernetes][namespace]}"
+              "pod" => "%{[kubernetes][pod][name]}"
+            }
+            replace => { "host" => "%{[kubernetes][node][name]}"}
+          }
+        }
+        mutate {
+          remove_field => ["tags"]
+        }
+      }
+  outputs:
+    main: |-
+      output {
+        loki {
+          url => "http://loki:3100/loki/api/v1/push"
+          #username => "test"
+          #password => "test"
+        }
+        # stdout { codec => rubydebug }
+      }

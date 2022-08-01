@@ -1,0 +1,6 @@
+dependencies:
+- name: mariadb
+  repository: https://market-tke.tencentcloudcr.com/chartrepo/opensource-stable
+  version: 7.3.21
+digest: sha256:a643eaed3908c0ff42f1b8b6b5b8d268b619fd302a00f21c9b6907a24e388578
+generated: "2020-04-23T16:37:27.191237327+08:00"

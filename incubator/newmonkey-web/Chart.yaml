@@ -1,0 +1,15 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: NewMonkey web service
+home: https://github.com/tkestack/charts
+icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/4626b041-5d6c-47ea-afab-94aa4f1ad77c.png
+keywords:
+- automated-test
+- android
+maintainers:
+- email: weitonhuang@tencent.com
+  name: weitonhuang
+name: newmonkey-web
+type: application
+version: 1.0.0
+kubeVersion: <= 1.22.5-x

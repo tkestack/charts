@@ -1,4 +1,4 @@
-imageName: "ccr.ccs.tencentyun.com/k8s-big-data/impala"
+imageName: "ccr.ccs.tencentyun.com/tke-market/impala"
 imageTag: "3.3-201912292037"
 
 # 日志路径, 和 Docker file 绑定的, 改不了
@@ -42,7 +42,7 @@ coordExec:
   nodeSelector: {}
 
 shell:
-  imageName: "ccr.ccs.tencentyun.com/k8s-big-data/impala-shell"
+  imageName: "ccr.ccs.tencentyun.com/tke-market/impala-shell"
   imageTag: "3.3"
 
 kudu:
