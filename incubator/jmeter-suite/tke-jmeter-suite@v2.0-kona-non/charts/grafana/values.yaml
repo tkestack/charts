@@ -49,8 +49,8 @@ livenessProbe:
 # schedulerName: "default-scheduler"
 
 image:
-  repository: grafana/grafana
-  tag: 7.1.5
+  repository: ccr.ccs.tencentyun.com/tke-market/grafana
+  tag: 7.5.5
   sha: ""
   pullPolicy: IfNotPresent
 

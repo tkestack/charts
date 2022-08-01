@@ -1,6 +1,7 @@
 apiVersion: v2
 name: tke-jmeter-suite-non
 description: A Helm chart for jmeter suit.
+kubeVersion: <= 1.22.5-tke.21
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -28,8 +29,8 @@ keywords:
   - influxdb
 
 maintainers:
-  - name: charrli
-    email: charrli@tencent.com
+  - name: silvertan
+    email: silvertan@tencent.com
 
 dependencies:
   - name: distributed-jmeter
