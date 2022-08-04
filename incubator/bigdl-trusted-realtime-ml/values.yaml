@@ -2,4 +2,4 @@
 
 enclaveKeysPath: path_to_enclave-key.pem
 startAllButFlinkPath: path_to_start-all-but-flink.sh
-image: your_ppml_image
+image: ccr.ccs.tencentyun.com/tke-market/bigdl-ppml-trusted-realtime-ml-scala-graphene:2.1.0-SNAPSHOT
