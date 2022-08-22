@@ -24,7 +24,7 @@ rules:
     verbs: [ "create", "get","list","patch", "update", "watch" ]
   - apiGroups: [ "" ]
     resources: [ "pods" ]
-    verbs: [ "delete", "update", "patch" ]
+    verbs: [ "delete", "update", "patch", "get", "list", "watch" ]
   - apiGroups: [ "" ]
     resources: [ "events", "endpoints", "configmaps", "serviceaccounts/token" ]
     verbs: [ "create", "get","list","patch", "update", "watch" ]
@@ -49,6 +49,7 @@ rules:
   - apiGroups: [ "cls.cloud.tencent.com" ]
     resources: [ "logconfigs" ]
     verbs:  [ "create", "get", "list", "patch", "update","watch" ]
+    
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
