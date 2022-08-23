@@ -63,7 +63,7 @@ rules:
     resources: [ "configmaps", "nodes", "replicationcontrollers", "services", "persistentvolumeclaims", "persistentvolumes" ]
     verbs: [ "get", "list", "watch" ]
   - apiGroups: [ "" ]
-    resources: [ "pods", "bindings", "pods/binding", "pods/status" ]
+    resources: [ "pods", "bindings", "pods/binding", "pods/status", "configmaps" ]
     verbs: [ "get", "list", "watch", "delete", "create", "update", "patch" ]
   - apiGroups: [ "" ]
     resources: [ "events", "services/proxy" ]
