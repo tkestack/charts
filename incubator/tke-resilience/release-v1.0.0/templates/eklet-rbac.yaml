@@ -26,7 +26,7 @@ rules:
     resources: [ "pods" ]
     verbs: [ "delete", "update", "patch", "get", "list", "watch" ]
   - apiGroups: [ "" ]
-    resources: [ "events", "endpoints", "configmaps", "serviceaccounts/token" ]
+    resources: [ "events", "endpoints", "configmaps", "serviceaccounts/token", "persistentvolumeclaims", "persistentvolumes" ]
     verbs: [ "create", "get","list","patch", "update", "watch" ]
   - apiGroups: [ "batch" ]
     resources: [ "jobs" ]
