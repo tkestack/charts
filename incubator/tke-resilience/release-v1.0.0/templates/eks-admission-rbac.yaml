@@ -53,7 +53,7 @@ rules:
     resources: [ "subjectaccessreviews" ]
     verbs: [ "create" ]
   - apiGroups: [ "storage.k8s.io" ]
-    resources: [ "csinodes" ]
+    resources: [ "csinodes", "storageclasses" ]
     verbs: [ "get", "list", "watch" ]
 
 ---
