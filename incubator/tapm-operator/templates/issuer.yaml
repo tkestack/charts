@@ -1,0 +1,7 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: tapm-operator-selfsigned-issuer
+  namespace: tapm-operator-system
+spec:
+  selfSigned: {}
