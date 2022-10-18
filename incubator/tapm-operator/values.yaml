@@ -16,6 +16,6 @@ resources:
     memory: 128Mi
 
 env:
-  CLUSTER_ID: "cls-41fadqre"
-  TKE_REGION: "ap-guangzhou"
-  APM_TOKEN: "WWWZGruhHLUBTtiiggLF"
+  CLUSTER_ID: ""
+  TKE_REGION: ""
+  APM_TOKEN: ""
