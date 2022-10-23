@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tapm-operator-serving-cert
+  namespace: tapm-operator-system
+spec:
+  dnsNames:
+  - tapm-operator-webhook-service.tapm-operator-system.svc
+  - tapm-operator-webhook-service.tapm-operator-system.svc.cluster.local
+  issuerRef:
+    kind: Issuer
+    name: tapm-operator-selfsigned-issuer
+  secretName: tapm-operator-controller-manager-cert

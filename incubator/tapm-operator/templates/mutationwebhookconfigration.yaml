@@ -1,0 +1,70 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: tapm-operator-system/tapm-operator-serving-cert
+  name: tapm-operator-mutating-webhook-configuration
+webhooks:
+- admissionReviewVersions:
+  - v1beta1
+  clientConfig:
+    service:
+      name: tapm-operator-webhook-service
+      namespace: tapm-operator-system
+      path: /mutate-v1-pod
+  failurePolicy: Fail
+  name: mpod.kb.io
+  namespaceSelector:
+    matchLabels:
+      swck-injection: enabled
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - pods
+  sideEffects: None
+- admissionReviewVersions:
+  - v1beta1
+  clientConfig:
+    service:
+      name: tapm-operator-webhook-service
+      namespace: tapm-operator-system
+      path: /mutate-operator-skywalking-apache-org-v1alpha1-javaagent
+  failurePolicy: Fail
+  name: mjavaagent.kb.io
+  rules:
+  - apiGroups:
+    - operator.skywalking.apache.org
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - javaagents
+  sideEffects: None
+- admissionReviewVersions:
+  - v1beta1
+  clientConfig:
+    service:
+      name: tapm-operator-webhook-service
+      namespace: tapm-operator-system
+      path: /mutate-operator-skywalking-apache-org-v1alpha1-swagent
+  failurePolicy: Fail
+  name: mswagent.kb.io
+  rules:
+  - apiGroups:
+    - operator.skywalking.apache.org
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - swagents
+  sideEffects: None

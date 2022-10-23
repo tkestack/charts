@@ -1,0 +1,10 @@
+apiVersion: v2
+name: tapm-operator
+description: A Helm chart for tencent apm operator on tke
+home: https://github.com/tkestack/charts
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/a8d1c192-64f9-45d4-9581-27b46575bce0.webp
+maintainers:
+- email: yorkwang@tencent.com
+  name: yorkwang
+version: 0.1.0
+kubeVersion: <= 1.22.5-x
