@@ -1,10 +1,11 @@
 apiVersion: v2
 name: tapm-operator
-description: A Helm chart for tencent apm operator on tke
+appVersion: 0.1.0
+description: A Helm chart for tencent apm operator on tke, to support quick deployment of components, automatically add specific labels to pods in the cluster, and enable probe injection capabilities.
 home: https://github.com/tkestack/charts
 icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/a8d1c192-64f9-45d4-9581-27b46575bce0.webp
 maintainers:
 - email: yorkwang@tencent.com
   name: yorkwang
-version: 0.1.0
+version: 0.2.0
 kubeVersion: <= 1.22.5-x
