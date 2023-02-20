@@ -7,6 +7,30 @@ image:
   pullPolicy: IfNotPresent
   tag: latest
 
+proxy:
+  image:
+    repository: ccr.ccs.tencentyun.com/tke-market/tapm-kube-rbac-proxy
+    pullPolicy: IfNotPresent
+    tag: v0.8.0
+
+cainjector:
+  image:
+    repository: ccr.ccs.tencentyun.com/tke-market/tapm-cert-manager-cainjector
+    pullPolicy: IfNotPresent
+    tag: v1.3.1
+
+controller:
+  image:
+    repository: ccr.ccs.tencentyun.com/tke-market/tapm-cert-manager-controller
+    pullPolicy: IfNotPresent
+    tag: v1.3.1
+
+webhook:
+  image:
+    repository: ccr.ccs.tencentyun.com/tke-market/tapm-cert-manager-webhook
+    pullPolicy: IfNotPresent
+    tag: v1.3.1
+
 resources:
   limits:
     cpu: 500m
