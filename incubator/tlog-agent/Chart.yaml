@@ -1,0 +1,12 @@
+apiVersion: v2
+name: tlog-agent
+description: A Helm chart for Tencent Cloud monitoring team to support quick deployment of components on Kubernetes
+  clusters and collect logs of specified paths in pods.
+home: https://github.com/tkestack/charts
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/6bb9b37c-9b91-4de2-886f-e6b5796ab317.png
+maintainers:
+  - email: haleyao@tencent.com
+    name: haleyao
+version: 0.1.0
+appVersion: "1.16.0"
+kubeVersion: <= 1.22.5-x

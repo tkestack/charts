@@ -1,0 +1,59 @@
+# Default values for tlog-agent.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+namespace: kube-system
+clusterID: ""
+region: ""
+
+name: tlog-agent
+
+env:
+  - name: TLOG_LOGSTASH_PATH
+    value: 11.151.199.17:12001
+  - name: TLOG_TARGET
+    value: ip://30.172.105.162:7000
+
+image: ccr.ccs.tencentyun.com/tke-market/tlog-agent:v0.1.0
+
+resources:
+  limits:
+    cpu: "0.1"
+    memory: 100Mi
+  requests:
+    cpu: "0.01"
+    memory: 30Mi
+
+volumeMounts:
+  - mountPath: /var/lib/docker
+    name: var-lib-docker
+  - mountPath: /var/log/tlog-agent-output
+    name: output-log-root
+volumes:
+  - hostPath:
+      path: /var/lib/docker
+      type: ""
+    name: var-lib-docker
+  - hostPath:
+      path: /var/log/tlog-agent-output
+      type: ""
+    name: output-log-root
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: tlog-agent
