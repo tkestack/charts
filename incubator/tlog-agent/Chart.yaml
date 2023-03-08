@@ -8,5 +8,5 @@ maintainers:
   - email: haleyao@tencent.com
     name: haleyao
 version: 0.1.0
-appVersion: "1.16.0"
+appVersion: 0.1.0
 kubeVersion: <= 1.22.5-x

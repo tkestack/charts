@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: {{ include "tlog-agent.fullname" . }}
@@ -10,7 +10,7 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ .Values.name }} 
+        app: {{ .Values.name }}
     spec:
       containers:
         - env:
