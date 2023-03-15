@@ -2,9 +2,9 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-namespace: kube-system
 clusterID: ""
 region: ""
+namespace: kube-system
 
 name: tlog-agent
 
@@ -14,30 +14,24 @@ env:
   - name: TLOG_TARGET
     value: ip://30.172.106.201:7000
 
-image: ccr.ccs.tencentyun.com/tke-market/tlog-agent:v0.1.0
+image: ccr.ccs.tencentyun.com/tke-market/tlog-agent:v0.2.0
 
 resources:
   limits:
-    cpu: "0.1"
+    cpu: "0.5"
     memory: 100Mi
   requests:
-    cpu: "0.01"
-    memory: 30Mi
+    cpu: "0.1"
+    memory: 50Mi
 
 volumeMounts:
   - mountPath: /var/lib/docker
     name: var-lib-docker
-  - mountPath: /var/log/tlog-agent-output
-    name: output-log-root
 volumes:
   - hostPath:
       path: /var/lib/docker
       type: ""
     name: var-lib-docker
-  - hostPath:
-      path: /var/log/tlog-agent-output
-      type: ""
-    name: output-log-root
 
 nameOverride: ""
 fullnameOverride: ""

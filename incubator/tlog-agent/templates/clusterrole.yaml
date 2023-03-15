@@ -3,26 +3,27 @@ kind: ClusterRole
 metadata:
   name: {{ include "tlog-agent.fullname" . }}
 rules:
-  - apiGroups:
-      - ""
-    resources:
-      - namespaces
-      - nodes
-      - pods
-      - daemonsets
-      - deployments
-      - statefulsets
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - apps
-    resources:
-      - daemonsets
-      - deployments
-      - statefulsets
-    verbs:
-      - update
-      - get
-      - list
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  - nodes
+  - pods
+  - daemonsets
+  - deployments
+  - statefulsets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - daemonsets
+  - deployments
+  - statefulsets
+  verbs:
+  - update
+  - get
+  - list
+

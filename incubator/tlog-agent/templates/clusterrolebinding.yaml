@@ -7,6 +7,6 @@ roleRef:
   kind: ClusterRole
   name: {{ include "tlog-agent.fullname" . }}
 subjects:
-  - kind: ServiceAccount
-    name: {{ .Values.serviceAccount.name }}
-    namespace: {{ .Values.namespace }}
+- kind: ServiceAccount
+  name: {{ .Values.serviceAccount.name }}
+  namespace: {{ .Values.namespace }}
