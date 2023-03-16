@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "tlog-agent.fullname" . }}
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.name }}
+    spec:
+      containers:
+        - env:
+            - name: TLOG_NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: TLOG_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: TLOG_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: TLOG_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: TLOG_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: TLOG_REGION
+              value: {{ .Values.region }}
+            - name: TLOG_CLUSTER_ID
+              value: {{ .Values.clusterID }}
+            - name: TLOG_NAME
+              value: {{ .Values.name }}
+            {{- toYaml .Values.env | nindent 12 }}
+          image: {{ .Values.image }}
+          imagePullPolicy: Always
+          command:
+            - ./tlog_agent
+          args:
+            - -c
+            - ./conf/tlog-filebeat.yml
+          name: {{ .Values.name }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            {{- toYaml .Values.volumeMounts | nindent 12 }}
+      dnsPolicy: ClusterFirst
+      hostNetwork: true
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      tolerations:
+        - operator: Exists
+      volumes:
+        {{- toYaml .Values.volumes | nindent 8 }}
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 100%
+    type: RollingUpdate
