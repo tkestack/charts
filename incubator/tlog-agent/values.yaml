@@ -14,7 +14,7 @@ env:
   - name: TLOG_TARGET
     value: ip://30.172.106.201:7000
 
-image: ccr.ccs.tencentyun.com/tke-market/tlog-agent:v0.2.0
+image: ccr.ccs.tencentyun.com/cloudmonitor/tlog-agent:v0.4.0
 
 resources:
   limits:
@@ -27,12 +27,17 @@ resources:
 volumeMounts:
   - mountPath: /var/lib/docker
     name: var-lib-docker
+  - mountPath: /etc/docker
+    name: etc-docker
 volumes:
   - hostPath:
       path: /var/lib/docker
       type: ""
     name: var-lib-docker
-
+  - hostPath:
+      path: /etc/docker
+      type: ""
+    name: etc-docker
 nameOverride: ""
 fullnameOverride: ""
 
