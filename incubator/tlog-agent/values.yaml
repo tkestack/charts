@@ -14,7 +14,7 @@ env:
   - name: TLOG_TARGET
     value: ip://30.172.106.201:7000
 
-image: ccr.ccs.tencentyun.com/cloudmonitor/tlog-agent:v0.4.0
+image: ccr.ccs.tencentyun.com/tke-market/tlog-agent:v0.4.0
 
 resources:
   limits:
