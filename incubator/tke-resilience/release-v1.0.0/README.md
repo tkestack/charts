@@ -110,20 +110,21 @@ helm delete tke-resilience -n kube-system
 ## 主要特性
 
 1. Workload resilience特性控制开关`AUTO_SCALE_EKS=true|false`分为全局开关和局部开关, 用来控制workload在`pending`的情况下是否弹性调度到腾讯云EKS，如下表格：
- - 全局开关：`kubectl get cm -n kube-system eks-config` 中 `AUTO_SCALE_EKS`
- - 局部开关：`spec.template.metadata.annotations['AUTO_SCALE_EKS']`,见[测试用例](#测试用例)
 
-| 全局开关               | 局部开关               | 行为       |
-| ---------------------- | ---------------------- | ---------- |
-| `AUTO_SCALE_EKS=true`  | `AUTO_SCALE_EKS=false` | `调度成功` |
-| `AUTO_SCALE_EKS=true`  | `未定义`               | `调度成功` |
-| `AUTO_SCALE_EKS=true`  | `AUTO_SCALE_EKS=true`  | `调度成功` |
-| `AUTO_SCALE_EKS=false` | `AUTO_SCALE_EKS=false` | `调度失败` |
-| `AUTO_SCALE_EKS=false` | `未定义`               | `调度失败` |
-| `AUTO_SCALE_EKS=false` | `AUTO_SCALE_EKS=true`  | `调度成功` |
-| `未定义`               | `AUTO_SCALE_EKS=false` | `调度成功` |
-| `未定义`               | `未定义`               | `调度成功` |
-| `未定义`               | `AUTO_SCALE_EKS=true`  | `调度成功` |
+- 全局开关：`kubectl get cm -n kube-system eks-config` 中 `AUTO_SCALE_EKS`
+- 局部开关：`spec.template.metadata.annotations['AUTO_SCALE_EKS']`,见[测试用例](#测试用例)
+
+| 全局开关               | 局部开关               | 自动调度到eks       | LOCAL_REPLICAS 值是否生效 
+| ---------------------- | ---------------------- | ---------- |-------------|
+| `AUTO_SCALE_EKS=true`  | `AUTO_SCALE_EKS=false` | `调度失败` | `失效`        |
+| `AUTO_SCALE_EKS=true`  | `未定义`               | `调度成功` | `局部值优先于全局值` |
+| `AUTO_SCALE_EKS=true`  | `AUTO_SCALE_EKS=true`  | `调度成功` | `局部值优先于全局值` |
+| `AUTO_SCALE_EKS=false` | `AUTO_SCALE_EKS=false` | `调度失败` | `失效`        |
+| `AUTO_SCALE_EKS=false` | `未定义`               | `调度失败` | `失效`        |
+| `AUTO_SCALE_EKS=false` | `AUTO_SCALE_EKS=true`  | `调度成功` | `局部值优先于全局值` |
+| `未定义`               | `AUTO_SCALE_EKS=false` | `调度失败` | `失效`        |
+| `未定义`               | `未定义`               | `调度成功` | `失效`        |
+| `未定义`               | `AUTO_SCALE_EKS=true`  | `调度成功` | `局部值优先于全局值` |
 
 2. 当使用社区版K8S的时候，需要在workload中指定调度器为 `tke-scheduler`, 而TKE发行版K8S则不需要指定调度器,见[测试用例](#测试用例)
 3. Workload设定本地集群保留副本数量 `LOCAL_REPLICAS: N`, 见[测试用例](#测试用例)
@@ -134,14 +135,15 @@ helm delete tke-resilience -n kube-system
  - TKE发行版K8S会优先缩容腾讯云EKS上的实例
  - 社区版K8S会随机缩容workload
 6. 调度规则的限制条件
- - 无法调度DaemonSet Pod到虚拟节点,此特性只在TKE发行版K8S有效，社区版K8S DaemonSet Pod会调度到虚拟节点，但会显示`DaemonsetForbidden`
- - 无法调度kube-system, tke-eni-ip-webhook 命名空间下的Pod到虚拟节点
- - 无法调度securityContext.sysctls["net.ipv4.ip_local_port_range"]的值包含61000 - 65534的端口
- - 无法调度pod.Annotations[tke.cloud.tencent.com/vpc-ip-claim-delete-policy]的Pod
- - 无法调度container(initContainer).ports[].containerPort(hostPort)包含61000 - 65534 的端口
- - 无法调度container(initContainer)中探针指定61000 - 65534的端口
- - 无法调度除了nfs，Cephfs，hostPath，qcloudcbs以外的PV
- - 无法调度启用固定IP特性的pod到虚拟节点
+- 无法调度DaemonSet Pod到虚拟节点,此特性只在TKE发行版K8S有效，社区版K8S DaemonSet Pod会调度到虚拟节点，但会显示`DaemonsetForbidden`
+- 无法调度 tke-eni-ip-webhook 命名空间下的Pod到虚拟节点
+- 对 Volume 的限制
+  - 仅支持 EmptyDir / PVC / Secret / NFS / ConfigMap / Downward API / HostPath / GitRepo / ISCSI / DownwardAPI / Projected / CSI / Ephemeral / PVC 类型的 Volume，其他的不支持 
+  - 针对 PVC 类型对应的 Volume
+    - 仅支持 NFS / CephFS / HostPath / 静态 cbs 类型的 PV，其他的不支持
+    - 仅支持用户自定义 /cloud.tencent.com/qcloud-cbs / com.tencent.cloud.csi.cbs /  com.tencent.cloud.csi.cfs 类型的 Storageclass，其他的不支持
+- 默认无法调度启用固定 IP 特性的pod到虚拟节点，可通过启动参数打开
+- 对gpu的限制： 必须在annotation中指定 gpu-type字段，否则不支持
 7. 虚拟节点支持自定义默认DNS配置：用户可以在虚拟节点上新增 `eks.tke.cloud.tencent.com/resolv-conf`的annotation后，生成的cxm子机里的/etc/resolv.conf就会被更新成用户定义的内容。注意会覆盖原来虚拟节点的dns配置,最终会以用户的配置为准。
 ```
 eks.tke.cloud.tencent.com/resolv-conf: |  
