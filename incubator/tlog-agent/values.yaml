@@ -12,9 +12,9 @@ env:
   - name: TLOG_LOGSTASH_PATH
     value: 169.254.0.213:12001
   - name: TLOG_TARGET
-    value: ip://30.172.106.201:7000
+    value: ip://169.254.0.177:7000
 
-image: ccr.ccs.tencentyun.com/tke-market/tlog-agent:v0.4.0
+image: ccr.ccs.tencentyun.com/tke-market/tlog-agent:v0.5.0
 
 resources:
   limits:
