@@ -39,7 +39,7 @@ spec:
             - /usr/local/bin/eklet
             - --runtime-cxm
             - --client-ca-file=/run/secrets/kubernetes.io/serviceaccount/ca.crt
-            - --cluster-id={{ .Values.cloud.vpcID }}
+            - --cluster-id={{ .Values.cloud.uniqueID }}
             - --app-id={{ .Values.cloud.appID }}
             - --owner-uin={{ .Values.cloud.ownerUIN }}
             - --region-short={{ .Values.cloud.regionShort }}

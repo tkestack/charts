@@ -1,4 +1,5 @@
 cloud:
+  uniqueID: ""
   appID: ""
   ownerUIN: ""
   secretID: ""
