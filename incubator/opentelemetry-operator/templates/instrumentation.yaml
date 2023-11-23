@@ -5,18 +5,30 @@ metadata:
   namespace: opentelemetry-operator-system
 spec:
   exporter:
-    endpoint: http://demo-collector:4317 # Opentelemetry collector address
+    endpoint: {{if eq .Values.env.TKE_REGION "ap-guangzhou"}} "pl.ap-guangzhou.apm.tencentcs.com"
+        {{else if eq .Values.env.TKE_REGION "ap-shanghai"}} "pl.ap-shanghai.apm.tencentcs.com"
+        {{else if eq .Values.env.TKE_REGION "ap-beijing"}} "pl.ap-beijing.apm.tencentcs.com"
+        {{else if eq .Values.env.TKE_REGION "ap-chengdu"}} "pl.ap-chengdu.apm.tencentcs.com"
+        {{else if eq .Values.env.TKE_REGION "ap-chongqing"}} "pl.ap-chongqing.apm.tencentcs.com"
+        {{else if eq .Values.env.TKE_REGION "ap-hongkong"}} "pl.ap-hongkong.apm.tencentcs.com"
+        {{else if eq .Values.env.TKE_REGION "ap-shenzhen-fsi"}} "pl.ap-shenzhen-fsi.apm.tencentcs.com"
+        {{else if eq .Values.env.TKE_REGION "ap-shanghai-fsi"}} "pl.ap-shanghai-fsi.apm.tencentcs.com"
+        {{else if eq .Values.env.TKE_REGION "ap-singapore"}} "pl.ap-singapore.apm.tencentcs.com"
+        {{else if eq .Values.env.TKE_REGION "ap-mumbai"}} "pl.ap-mumbai.apm.tencentcs.com"
+        {{else if eq .Values.env.TKE_REGION "ap-seoul"}} "pl.ap-seoul.apm.tencentcs.com"
+        {{else if eq .Values.env.TKE_REGION "ap-bangkok"}} "pl.ap-bangkok.apm.tencentcs.com"
+        {{else}}"pl.ap-guangzhou.apm.tencentcs.com"
+        {{end}}
   propagators:
     - tracecontext
     - baggage
     - b3
       #sampler:
-      #type: parentbased_traceidratio
+    #type: parentbased_traceidratio
     #argument: "0.25"
   resource:
     resourceAttributes:
-      token: ATrzbDXHHIHmqhDUdyJV
-      testKey: testValue
+      token: {{.Values.env.APM_TOKEN}}
   java:
     image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:latest
   nodejs:
