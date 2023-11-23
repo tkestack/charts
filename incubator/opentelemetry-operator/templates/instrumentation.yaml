@@ -1,0 +1,25 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: default-instrumentation
+  namespace: opentelemetry-operator-system
+spec:
+  exporter:
+    endpoint: http://demo-collector:4317 # Opentelemetry collector address
+  propagators:
+    - tracecontext
+    - baggage
+    - b3
+      #sampler:
+      #type: parentbased_traceidratio
+    #argument: "0.25"
+  resource:
+    resourceAttributes:
+      token: ATrzbDXHHIHmqhDUdyJV
+      testKey: testValue
+  java:
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:latest
+  nodejs:
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:latest
+  python:
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:latest
