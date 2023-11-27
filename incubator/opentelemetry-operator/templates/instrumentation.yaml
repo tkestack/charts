@@ -27,4 +27,4 @@ spec:
     resourceAttributes:
       token: {{.Values.env.APM_TOKEN}}
   java:
-    image: ccr.ccs.tencentyun.com/tapm/opentelemetry-agent-8.5.0:20231116-1846_master_2355186a
+    image: ccr.ccs.tencentyun.com/tapm/opentelemetry-java-agent:1.16-2023111618
