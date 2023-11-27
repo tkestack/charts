@@ -1,6 +1,6 @@
 ## 简介
 
-opentelemetry-operator是由腾讯云监控团队基于开源opentelemetry-operator二次开发，用以支持在 Kubernetes 集群上快捷部署组件，为集群中的pod自动添加特定的标签，开启探针注入能力。
+opentelemetry-operator是由腾讯云监控团队基于开源opentelemetry-operator，对TKE的容器环境进行单独适配，用以支持在 Kubernetes 集群上快捷部署组件，为集群中的pod自动添加特定的标签，开启探针注入能力。
 
 在部署完成之后，用户可以在腾讯云控制台应用性能监控页面查看监控采集数据。
 

@@ -28,10 +28,10 @@ pdb:
 ##
 manager:
   image:
-    repository: ccr.ccs.tencentyun.com/tapm/opentelemetry-operator
+    repository: ccr.ccs.tencentyun.com/tke-market/opentelemetry-operator
     tag: 20231122-2052_apm_version_0.85.0_96ab6e30
   collectorImage:
-    repository: otel/opentelemetry-collector-contrib
+    repository: ccr.ccs.tencentyun.com/tke-market/opentelemetry-collector-contrib
     tag: 0.85.0
   targetAllocatorImage:
     repository: ""
@@ -153,7 +153,7 @@ manager:
 kubeRBACProxy:
   enabled: true
   image:
-    repository: ccr.ccs.tencentyun.com/tapm/kube-rbac-proxy
+    repository: ccr.ccs.tencentyun.com/tke-market/kube-rbac-proxy
     tag: v0.14.2
   ports:
     proxyPort: 8443
