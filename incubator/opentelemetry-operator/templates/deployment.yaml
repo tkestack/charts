@@ -78,6 +78,12 @@ spec:
             - name: {{ $name }}
               value: {{ $value | quote -}}
             {{- end }}
+            - name: CLUSTER_ID
+              value: {{ .Values.env.CLUSTER_ID | quote }}
+            - name: TKE_REGION
+              value: {{ .Values.env.TKE_REGION | quote }}
+            - name: APM_TOKEN
+              value: {{ .Values.env.APM_TOKEN | quote }}
           {{- end }}
           image: "{{ .Values.manager.image.repository }}:{{ .Values.manager.image.tag }}"
           name: manager
