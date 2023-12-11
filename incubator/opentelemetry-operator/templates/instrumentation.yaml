@@ -30,3 +30,9 @@ spec:
     image: ccr.ccs.tencentyun.com/tapm/opentelemetry-java-agent:1.16-2023111618
   nodejs:
     image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-nodejs:0.44.0
+  python:
+    image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-python:0.41b0
+  dotnet:
+    image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-dotnet:1.2.0
+  go:
+    image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-go:v0.8.0-alpha
