@@ -8,15 +8,11 @@ spec:
     endpoint: {{if eq .Values.env.TKE_REGION "ap-guangzhou"}} "http://pl.ap-guangzhou.apm.tencentcs.com:4317"
         {{else if eq .Values.env.TKE_REGION "ap-shanghai"}} "http://pl.ap-shanghai.apm.tencentcs.com:4317"
         {{else if eq .Values.env.TKE_REGION "ap-beijing"}} "http://pl.ap-beijing.apm.tencentcs.com:4317"
-        {{else if eq .Values.env.TKE_REGION "ap-chengdu"}} "http://pl.ap-chengdu.apm.tencentcs.com:4317"
-        {{else if eq .Values.env.TKE_REGION "ap-chongqing"}} "http://pl.ap-chongqing.apm.tencentcs.com:4317"
         {{else if eq .Values.env.TKE_REGION "ap-hongkong"}} "http://pl.ap-hongkong.apm.tencentcs.com:4317"
-        {{else if eq .Values.env.TKE_REGION "ap-shenzhen-fsi"}} "http://pl.ap-shenzhen-fsi.apm.tencentcs.com:4317"
         {{else if eq .Values.env.TKE_REGION "ap-shanghai-fsi"}} "http://pl.ap-shanghai-fsi.apm.tencentcs.com:4317"
+        {{else if eq .Values.env.TKE_REGION "ap-beijing-fsi"}} "http://pl.ap-beijing-fsi.apm.tencentcs.com:4317"
         {{else if eq .Values.env.TKE_REGION "ap-singapore"}} "http://pl.ap-singapore.apm.tencentcs.com:4317"
-        {{else if eq .Values.env.TKE_REGION "ap-mumbai"}} "http://pl.ap-mumbai.apm.tencentcs.com:4317"
-        {{else if eq .Values.env.TKE_REGION "ap-seoul"}} "http://pl.ap-seoul.apm.tencentcs.com:4317"
-        {{else if eq .Values.env.TKE_REGION "ap-bangkok"}} "http://pl.ap-bangkok.apm.tencentcs.com:4317"
+        {{else if eq .Values.env.TKE_REGION "na-siliconvalley"}} "http://pl.na-siliconvalley.apm.tencentcs.com:4317"
         {{else}}"http://pl.ap-guangzhou.apm.tencentcs.com:4317"
         {{end}}
   propagators:
