@@ -79,3 +79,19 @@ Create an ordered name of the MutatingWebhookConfiguration
 {{- define "opentelemetry-operator.MutatingWebhookName" -}}
 {{- printf "%s-%s" (.Values.admissionWebhooks.namePrefix | toString) (include "opentelemetry-operator.fullname" .) | trimPrefix "-" }}
 {{- end }}
+
+{{/*
+根据地域确定上报地址
+*/}}
+{{- define "opentelemetry-operator.endpoint" -}}
+{{if eq .Values.env.TKE_REGION "ap-guangzhou"}}http://pl.ap-guangzhou.apm.tencentcs.com{{
+else if eq .Values.env.TKE_REGION "ap-shanghai"}}http://pl.ap-shanghai.apm.tencentcs.com{{
+else if eq .Values.env.TKE_REGION "ap-beijing"}}http://pl.ap-beijing.apm.tencentcs.com{{
+else if eq .Values.env.TKE_REGION "ap-hongkong"}}http://pl.ap-hongkong.apm.tencentcs.com{{
+else if eq .Values.env.TKE_REGION "ap-shanghai-fsi"}}http://pl.ap-shanghai-fsi.apm.tencentcs.com{{
+else if eq .Values.env.TKE_REGION "ap-beijing-fsi"}} http://pl.ap-beijing-fsi.apm.tencentcs.com{{
+else if eq .Values.env.TKE_REGION "ap-singapore"}}http://pl.ap-singapore.apm.tencentcs.com{{
+else if eq .Values.env.TKE_REGION "na-siliconvalley"}}http://pl.na-siliconvalley.apm.tencentcs.com{{
+else}}http://pl.ap-guangzhou.apm.tencentcs.com{{end}}{{end}}
+
+

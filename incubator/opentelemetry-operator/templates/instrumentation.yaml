@@ -5,16 +5,7 @@ metadata:
   namespace: opentelemetry-operator-system
 spec:
   exporter:
-    endpoint: {{if eq .Values.env.TKE_REGION "ap-guangzhou"}} "http://pl.ap-guangzhou.apm.tencentcs.com:4317"
-        {{else if eq .Values.env.TKE_REGION "ap-shanghai"}} "http://pl.ap-shanghai.apm.tencentcs.com:4317"
-        {{else if eq .Values.env.TKE_REGION "ap-beijing"}} "http://pl.ap-beijing.apm.tencentcs.com:4317"
-        {{else if eq .Values.env.TKE_REGION "ap-hongkong"}} "http://pl.ap-hongkong.apm.tencentcs.com:4317"
-        {{else if eq .Values.env.TKE_REGION "ap-shanghai-fsi"}} "http://pl.ap-shanghai-fsi.apm.tencentcs.com:4317"
-        {{else if eq .Values.env.TKE_REGION "ap-beijing-fsi"}} "http://pl.ap-beijing-fsi.apm.tencentcs.com:4317"
-        {{else if eq .Values.env.TKE_REGION "ap-singapore"}} "http://pl.ap-singapore.apm.tencentcs.com:4317"
-        {{else if eq .Values.env.TKE_REGION "na-siliconvalley"}} "http://pl.na-siliconvalley.apm.tencentcs.com:4317"
-        {{else}}"http://pl.ap-guangzhou.apm.tencentcs.com:4317"
-        {{end}}
+    endpoint: {{printf "%s:4317" (include "opentelemetry-operator.endpoint" . ) | quote | trim}}
   propagators:
     - tracecontext
     - baggage
@@ -28,7 +19,13 @@ spec:
     image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-nodejs:0.44.0
   python:
     image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-python:0.41b0
+    env:
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: {{printf "%s:55681" (include "opentelemetry-operator.endpoint" . ) | quote | trim}}
   dotnet:
     image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-dotnet:1.2.0
+    env:
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: {{printf "%s:55681" (include "opentelemetry-operator.endpoint" . ) | quote | trim}}
   go:
     image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-go:v0.8.0-alpha
