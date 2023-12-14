@@ -29,7 +29,7 @@ pdb:
 manager:
   image:
     repository: ccr.ccs.tencentyun.com/tke-market/opentelemetry-operator
-    tag: 20231122-2052_apm_version_0.85.0_96ab6e30
+    tag: 20231214-1618_apm_version_0.85.0_f0a282c1
   collectorImage:
     repository: ccr.ccs.tencentyun.com/tke-market/opentelemetry-collector-contrib
     tag: 0.85.0
