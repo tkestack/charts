@@ -1,0 +1,31 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: default-instrumentation
+  namespace: opentelemetry-operator-system
+spec:
+  exporter:
+    endpoint: {{printf "%s:4317" (include "opentelemetry-operator.endpoint" . ) | quote | trim}}
+  propagators:
+    - tracecontext
+    - baggage
+    - b3
+  resource:
+    resourceAttributes:
+      token: {{.Values.env.APM_TOKEN}}
+  java:
+    image: ccr.ccs.tencentyun.com/tapm/opentelemetry-java-agent:1.16-2023111618
+  nodejs:
+    image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-nodejs:0.44.0
+  python:
+    image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-python:0.41b0
+    env:
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: {{printf "%s:55681" (include "opentelemetry-operator.endpoint" . ) | quote | trim}}
+  dotnet:
+    image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-dotnet:1.2.0
+    env:
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: {{printf "%s:55681" (include "opentelemetry-operator.endpoint" . ) | quote | trim}}
+  go:
+    image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-go:v0.8.0-alpha
