@@ -4,7 +4,7 @@ opentelemetry-operator是由腾讯云监控团队基于开源opentelemetry-opera
 
 在部署完成之后，用户可以在腾讯云控制台应用性能监控页面查看监控采集数据。
 
-*当前版本的 tapm-operator 依赖 Kubernetes v1.19 to v1.28
+*当前版本的 opentelemetry-operator 依赖 Kubernetes v1.19 to v1.28
 
 ## 部署
 
