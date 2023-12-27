@@ -14,7 +14,7 @@ spec:
     resourceAttributes:
       token: {{.Values.env.APM_TOKEN}}
   java:
-    image: ccr.ccs.tencentyun.com/tapm/opentelemetry-java-agent:1.16-2023111618
+    image: ccr.ccs.tencentyun.com/tapm/opentelemetry-java-agent:20231218
   nodejs:
     image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-nodejs:0.44.0
   python:
