@@ -39,6 +39,10 @@ spec:
             - /usr/local/bin/eklet
             - --runtime-cxm
             - --client-ca-file=/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            - --cluster-type=tke
+            - --leader-elect-lease-duration=10s
+            - --leader-elect-renew-deadline=7s
+            - --leader-elect-retry-period=2s
             - --cluster-id={{ .Values.cloud.uniqueID | default .Values.cloud.vpcID }}
             - --app-id={{ .Values.cloud.appID }}
             - --owner-uin={{ .Values.cloud.ownerUIN }}
