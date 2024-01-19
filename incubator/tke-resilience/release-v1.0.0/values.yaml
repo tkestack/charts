@@ -19,7 +19,7 @@ eklet:
   podUsedApiserver: https://172.1.2.3:6443
   replicaCount: 1
   image:
-    ref: ccr.ccs.tencentyun.com/tkeimages/eklet-amd64:v2.11.17
+    ref: ccr.ccs.tencentyun.com/tkeimages/eklet-amd64:v2.12.41
     pullPolicy: IfNotPresent
   service:
     type: NodePort
