@@ -2,8 +2,10 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  {{- if .Values.admissionWebhooks.certManager.certificateAnnotations }}
   annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+  {{- if .Values.admissionWebhooks.certManager.certificateAnnotations }}
   {{- toYaml .Values.admissionWebhooks.certManager.certificateAnnotations | nindent 4 }}
   {{- end }}
   labels:
@@ -31,8 +33,10 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  {{- if .Values.admissionWebhooks.certManager.issuerAnnotations }}
   annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+  {{- if .Values.admissionWebhooks.certManager.issuerAnnotations }}
   {{- toYaml .Values.admissionWebhooks.certManager.issuerAnnotations | nindent 4 }}
   {{- end }}
   labels:
