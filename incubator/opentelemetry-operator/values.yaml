@@ -58,7 +58,7 @@ manager:
   # Prefix a gate with '-' to disable support.
   # Prefixing a gate with '+' or no prefix will enable support.
   # A full list of valud identifiers can be found here: https://github.com/open-telemetry/opentelemetry-operator/blob/main/pkg/featuregate/featuregate.go
-  featureGates: ""
+  featureGates: "operator.autoinstrumentation.go"
   ports:
     metricsPort: 8080
     webhookPort: 9443
