@@ -5,7 +5,7 @@ metadata:
   namespace: opentelemetry-operator-system
 spec:
   exporter:
-    endpoint: {{printf "%s:4317" (include "opentelemetry-operator.endpoint" . ) | quote | trim}}
+    endpoint: {{printf "%s:4317" (include "opentelemetry-operator.host" . ) | quote | trim}}
   propagators:
     - tracecontext
     - baggage
@@ -14,18 +14,18 @@ spec:
     resourceAttributes:
       token: {{.Values.env.APM_TOKEN}}
   java:
-    image: ccr.ccs.tencentyun.com/tapm/opentelemetry-java-agent:20231218
+    image:
   nodejs:
-    image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-nodejs:0.44.0
+    image:
   python:
-    image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-python:0.41b0
+    image:
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: {{printf "%s:55681" (include "opentelemetry-operator.endpoint" . ) | quote | trim}}
+        value: {{printf "%s:55681" (include "opentelemetry-operator.host" . ) | quote | trim}}
   dotnet:
-    image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-dotnet:1.2.0
+    image:
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: {{printf "%s:55681" (include "opentelemetry-operator.endpoint" . ) | quote | trim}}
+        value: {{printf "%s:55681" (include "opentelemetry-operator.host" . ) | quote | trim}}
   go:
     image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-go:v0.8.0-alpha
