@@ -78,12 +78,32 @@ spec:
             - name: {{ $name }}
               value: {{ $value | quote -}}
             {{- end }}
-            - name: CLUSTER_ID
-              value: {{ .Values.env.CLUSTER_ID | quote }}
+            - name: TKE_CLUSTER_ID
+              value: {{ .Values.env.TKE_CLUSTER_ID | quote }}
             - name: TKE_REGION
               value: {{ .Values.env.TKE_REGION | quote }}
             - name: APM_TOKEN
               value: {{ .Values.env.APM_TOKEN | quote }}
+            - name: ENDPOINT
+              value: {{ .Values.env.ENDPOINT | quote }}
+            - name: JAVA_INSTR_VERSION
+              value: {{ .Values.env.JAVA_INSTR_VERSION | quote }}
+            - name: PYTHON_INSTR_VERSION
+              value: {{ .Values.env.PYTHON_INSTR_VERSION | quote }}
+            - name: DOTNET_INSTR_VERSION
+              value: {{ .Values.env.DOTNET_INSTR_VERSION | quote }}
+            - name: NODEJS_INSTR_VERSION
+              value: {{ .Values.env.NODEJS_INSTR_VERSION | quote }}
+            - name: INTL_SITE
+              value: {{ .Values.env.INTL_SITE | quote }}
+            - name: CONFIG_JAVA
+              value: {{ .Values.config.java | quote }}
+            - name: CONFIG_PYTHON
+              value: {{ .Values.config.python | quote }}
+            - name: CONFIG_DOTNET
+              value: {{ .Values.config.dotnet | quote }}
+            - name: CONFIG_NODEJS
+              value: {{ .Values.config.nodejs | quote }}
           {{- end }}
           image: "{{ .Values.manager.image.repository }}:{{ .Values.manager.image.tag }}"
           name: manager
