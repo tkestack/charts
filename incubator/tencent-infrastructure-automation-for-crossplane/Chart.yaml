@@ -1,0 +1,17 @@
+apiVersion: v1
+appVersion: 1.0.0
+description: Tencent Infrastructure Automation for Crossplane is a Tencent Cloud product developed based on the popular multi-cloud management open-source tool, Crossplane. 
+  It aims to provide users with the ability to automate deployment, implementation, and management of cloud resources.
+home: https://marketplace.upbound.io/providers/crossplane-contrib/provider-tencentcloud
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/e73076df-c87a-4112-b1cd-2c95099984d0.png
+keywords:
+- cloud
+- infrastructure
+- services
+- application
+- kubernetes
+maintainers:
+- email: hellertang@tencent.com
+  name: hellertang
+name: crossplane
+version: 1.0.0
