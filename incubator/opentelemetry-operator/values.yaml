@@ -205,7 +205,7 @@ admissionWebhooks:
   ## TLS Certificate Option 1: Use certManager to generate self-signed certificate.
   ## certManager must be enabled. If enabled, always takes precendence over options 2 and 3.
   certManager:
-    enabled: true
+    enabled: false
     ## Provide the issuer kind and name to do the cert auth job.
     ## By default, OpenTelemetry Operator will use self-signer issuer.
     issuerRef: {}
