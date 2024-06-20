@@ -182,7 +182,7 @@ kubeRBACProxy:
 admissionWebhooks:
   create: true
   failurePolicy: Fail
-  secretName: ""
+  secretName: "tencent-opentelemetry-operator-webhook-service-cert"
 
   ## Defines the sidecar injection logic in Pods.
   ## - Ignore, the injection is fail-open. The pod will be created, but the sidecar won't be injected.
