@@ -104,6 +104,10 @@ spec:
               value: {{ .Values.config.dotnet | quote }}
             - name: CONFIG_NODEJS
               value: {{ .Values.config.nodejs | quote }}
+            - name: OPERATOR_VERSION
+              value: {{ .Values.manager.image.tag | quote }}
+            - name: HELM_CHART_VERSION
+              value: {{ .Chart.Version | quote }}
           {{- end }}
           image: "{{ .Values.manager.image.repository }}:{{ .Values.manager.image.tag }}"
           name: manager
