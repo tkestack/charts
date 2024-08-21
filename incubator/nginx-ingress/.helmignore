@@ -19,3 +19,5 @@
 .project
 .idea/
 *.tmproj
+.vscode/
+__snapshot__
