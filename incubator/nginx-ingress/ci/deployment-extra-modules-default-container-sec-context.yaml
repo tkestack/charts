@@ -5,6 +5,8 @@ controller:
     digest: null
   service:
     type: ClusterIP
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
   extraModules:
     - name: opentelemetry
       image:

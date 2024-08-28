@@ -9,7 +9,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
     {{- end }}
   name: {{ include "ingress-nginx.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "ingress-nginx.namespace" . }}
 rules:
   - apiGroups:
       - ""
@@ -44,12 +44,15 @@ rules:
       - get
       - list
       - watch
+  # Omit Ingress status permissions if `--update-status` is disabled.
+  {{- if ne (index .Values.controller.extraArgs "update-status") "false" }}
   - apiGroups:
       - networking.k8s.io
     resources:
       - ingresses/status
     verbs:
       - update
+  {{- end }}
   - apiGroups:
       - networking.k8s.io
     resources:
@@ -58,32 +61,12 @@ rules:
       - get
       - list
       - watch
-  # TODO(Jintao Zhang)
-  # Once we release a new version of the controller,
-  # we will be able to remove the configmap related permissions
-  # We have used the Lease API for selection
-  # ref: https://github.com/kubernetes/ingress-nginx/pull/8921
-  - apiGroups:
-      - ""
-    resources:
-      - configmaps
-    resourceNames:
-      - {{ .Values.controller.electionID }}
-    verbs:
-      - get
-      - update
-  - apiGroups:
-      - ""
-    resources:
-      - configmaps
-    verbs:
-      - create
   - apiGroups:
       - coordination.k8s.io
     resources:
       - leases
     resourceNames:
-      - {{ .Values.controller.electionID }}
+      - {{ include "ingress-nginx.controller.electionID" . }}
     verbs:
       - get
       - update
@@ -100,6 +83,14 @@ rules:
     verbs:
       - create
       - patch
+  - apiGroups:
+      - discovery.k8s.io
+    resources:
+      - endpointslices
+    verbs:
+      - list
+      - watch
+      - get
 {{- if .Values.podSecurityPolicy.enabled }}
   - apiGroups:      [{{ template "podSecurityPolicy.apiGroup" . }}]
     resources:      ['podsecuritypolicies']

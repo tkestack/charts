@@ -11,3 +11,5 @@ controller:
         registry: registry.k8s.io
         image: busybox
         tag: latest
+      containerSecurityContext:
+        allowPrivilegeEscalation: false
