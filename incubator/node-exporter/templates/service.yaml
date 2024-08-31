@@ -1,0 +1,25 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ include "node-exporter.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "node-exporter.labels" . | nindent 4 }}
+  annotations:
+    {{- if .Values.prometheusScrape }}
+    prometheus.io/scrape: '{{ .Values.prometheusScrape }}'
+    {{- end }}
+    {{- if .Values.service.port }}
+    prometheus.io/port: '{{ .Values.service.port }}'
+    {{- end }}
+    {{- if .Values.service.annotations }}
+    {{- toYaml .Values.service.annotations | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    {{- include "node-exporter.selectorLabels" . | nindent 4 }}
+  ports:
+  - name: tcp
+    protocol: TCP
+    port:  {{ .Values.service.port }}
+    targetPort: {{ .Values.service.port }}
