@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "node-exporter.fullname" . }}
+  namespace: {{ include "node-exporter.namespace" . }}
+  labels:
+    {{- include "node-exporter.labels" . | nindent 4 }}
+  {{- with .Values.daemonsetAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "node-exporter.selectorLabels" . | nindent 6 }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  {{- with .Values.updateStrategy }}
+  updateStrategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "node-exporter.labels" . | nindent 8 }}
+    spec:
+      {{- with .Values.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ . }}
+      {{- end }}
+      hostNetwork: {{ .Values.hostNetwork }}
+      hostPID: {{ .Values.hostPID }}
+      hostIPC: {{ .Values.hostIPC }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.dnsConfig }}
+      dnsConfig:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - args:
+        - --path.sysfs=/host/sys
+        - --path.procfs=/host/proc
+        {{- if .Values.hostRootFsMount.enabled }}
+        - --path.rootfs=/host/root
+        {{- end }}
+        - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/pods/.+)($|/)
+        - --collector.netclass.ignored-devices=^(veth.*)$
+        {{- with .Values.extraArgs }}
+        {{- toYaml . | nindent 12 }}
+        {{- end }}
+        {{- with .Values.containerSecurityContext }}
+        securityContext:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+        name: {{ include "node-exporter.fullname" . }}
+        image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        {{- with .Values.containerSecurityContext }}
+        securityContext:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+        ports:
+          - containerPort: {{ .Values.service.port }}
+            protocol: TCP
+            name: {{ .Values.service.portName }}
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+        volumeMounts:
+        - name: proc
+          mountPath: /host/proc
+          {{- with .Values.hostProcFsMount.mountPropagation }}
+          mountPropagation: {{ . }}
+          {{- end }}
+          readOnly:  true
+        - name: sys
+          mountPath: /host/sys
+          {{- with .Values.hostSysFsMount.mountPropagation }}
+          mountPropagation: {{ . }}
+          {{- end }}
+          readOnly: true
+        {{- if .Values.hostRootFsMount.enabled }}
+        - name: root
+          mountPath: /host/root
+          {{- with .Values.hostRootFsMount.mountPropagation }}
+          mountPropagation: {{ . }}
+          {{- end }}
+          readOnly: true
+        {{- end }}
+      volumes:
+      - name: proc
+        hostPath:
+          path: /proc
+      - hostPath:
+          path: /sys
+        name: sys
+      {{- if .Values.hostRootFsMount.enabled }}
+      - hostPath:
+          path: /
+        name: root
+      {{- end }}

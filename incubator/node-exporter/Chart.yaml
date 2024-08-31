@@ -1,0 +1,17 @@
+apiVersion: v2
+name: node-exporter
+description: A Helm chart for prometheus node-exporter
+keywords:
+  - node-exporter
+  - prometheus
+  - exporter
+  - monitor
+type: application
+version: 1.8.0
+appVersion: "1.16.0"
+sources:
+  - https://github.com/prometheus/node_exporter/
+maintainers:
+  - email: willyi@tencent.com
+    name: willyi
+kubeVerion: '>=1.12.0-0'
