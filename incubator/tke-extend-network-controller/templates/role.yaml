@@ -1,0 +1,186 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    {{- include "tke-extend-network-controller.labels" . | nindent 4 }}
+  name: {{ include "tke-extend-network-controller.fullname" . }}-leader-election-role
+  namespace: {{ .Release.Namespace | quote }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "tke-extend-network-controller.fullname" . }}-metrics-auth-role
+  labels:
+    {{- include "tke-extend-network-controller.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - authentication.k8s.io
+  resources:
+  - tokenreviews
+  verbs:
+  - create
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "tke-extend-network-controller.fullname" . }}-metrics-reader
+rules:
+- nonResourceURLs:
+  - /metrics
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "tke-extend-network-controller.fullname" . }}-role
+  labels:
+    {{- include "tke-extend-network-controller.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/status
+  verbs:
+  - get
+- apiGroups:
+  - networking.cloud.tencent.com
+  resources:
+  - dedicatedclblisteners
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - networking.cloud.tencent.com
+  resources:
+  - dedicatedclblisteners/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - networking.cloud.tencent.com
+  resources:
+  - dedicatedclblisteners/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - networking.cloud.tencent.com
+  resources:
+  - dedicatedclbservices
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - networking.cloud.tencent.com
+  resources:
+  - dedicatedclbservices/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - networking.cloud.tencent.com
+  resources:
+  - dedicatedclbservices/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - networking.cloud.tencent.com
+  resources:
+  - dedicatednatgwservices
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - networking.cloud.tencent.com
+  resources:
+  - dedicatednatgwservices/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - networking.cloud.tencent.com
+  resources:
+  - dedicatednatgwservices/status
+  verbs:
+  - get
+  - patch
+  - update
+

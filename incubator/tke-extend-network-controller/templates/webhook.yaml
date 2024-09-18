@@ -1,0 +1,62 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "tke-extend-network-controller.fullname" . }}-serving-cert
+  labels:
+    app.kubernetes.io/component: webhook
+    {{- include "tke-extend-network-controller.labels" . | nindent 4 }}
+  name: {{ include "tke-extend-network-controller.fullname" . }}-mutating-webhook-configuration
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: {{ include "tke-extend-network-controller.fullname" . }}-webhook-service
+      namespace: {{ .Release.Namespace | quote }}
+      path: /mutate-networking-cloud-tencent-com-v1alpha1-dedicatedclblistener
+  failurePolicy: Fail
+  name: mdedicatedclblistener.kb.io
+  rules:
+  - apiGroups:
+    - networking.cloud.tencent.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - dedicatedclblisteners
+  sideEffects: None
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "tke-extend-network-controller.fullname" . }}-serving-cert
+  labels:
+    app.kubernetes.io/component: webhook
+    {{- include "tke-extend-network-controller.labels" . | nindent 4 }}
+  name: {{ include "tke-extend-network-controller.fullname" . }}-validating-webhook-configuration
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: {{ include "tke-extend-network-controller.fullname" . }}-webhook-service
+      namespace: {{ .Release.Namespace | quote }}
+      path: /validate-networking-cloud-tencent-com-v1alpha1-dedicatedclblistener
+  failurePolicy: Fail
+  name: vdedicatedclblistener.kb.io
+  rules:
+  - apiGroups:
+    - networking.cloud.tencent.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - dedicatedclblisteners
+  sideEffects: None
+
