@@ -1,0 +1,152 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "tke-extend-network-controller.fullname" . }}-serving-cert
+  name: dedicatedclbservices.networking.cloud.tencent.com
+spec:
+  group: networking.cloud.tencent.com
+  names:
+    kind: DedicatedCLBService
+    listKind: DedicatedCLBServiceList
+    plural: dedicatedclbservices
+    singular: dedicatedclbservice
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: DedicatedCLBService is the Schema for the dedicatedclbservices
+          API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: DedicatedCLBServiceSpec defines the desired state of DedicatedCLBService
+            properties:
+              existedLbIds:
+                description: 复用的已有的 CLB ID，可动态追加。
+                items:
+                  type: string
+                type: array
+              lbAutoCreate:
+                description: 启用自动创建 CLB 的功能。
+                properties:
+                  enable:
+                    description: 是否启用自动创建 CLB 的功能，如果启用，当 CLB 不足时，会自动创建新的 CLB。
+                    type: boolean
+                  extensiveParameters:
+                    description: 创建 CLB 时的参数，JSON 格式，详细参数请参考 CreateLoadBalancer 接口：https://cloud.tencent.com/document/api/214/30692
+                    type: string
+                type: object
+              lbRegion:
+                description: CLB 所在地域，不填则使用 TKE 集群所在的地域。
+                type: string
+              listenerExtensiveParameters:
+                description: 创建监听器的参数，JSON 格式，详细参数请参考 CreateListener 接口：https://cloud.tencent.com/document/api/214/30693
+                type: string
+              maxPod:
+                description: 限制单个 CLB 的 Pod/监听器 的最大数量。
+                format: int64
+                type: integer
+              maxPort:
+                default: 50000
+                description: CLB 端口范围的最大端口号。
+                format: int64
+                type: integer
+              minPort:
+                default: 500
+                description: CLB 端口范围的最小端口号。
+                format: int64
+                type: integer
+              ports:
+                description: Pod 监听的端口。
+                items:
+                  properties:
+                    addressPodAnnotation:
+                      description: Pod 外部地址的注解，如果设置，Pod 被映射的外部 CLB 地址将会被自动写到 Pod 的该注解中，Pod
+                        内部可通过 Downward API 感知到自身的外部地址。
+                      type: string
+                    protocol:
+                      description: 端口协议，支持 TCP、UDP。
+                      type: string
+                    targetPort:
+                      description: 目标端口。
+                      format: int64
+                      type: integer
+                  required:
+                  - protocol
+                  - targetPort
+                  type: object
+                type: array
+              selector:
+                additionalProperties:
+                  type: string
+                description: Pod 的标签选择器，被选中的 Pod 会被绑定到 CLB 监听器下。
+                type: object
+              vpcId:
+                description: CLB 所在 VPC ID，不填则使用 TKE 集群所在的 VPC 的 ID。
+                type: string
+            required:
+            - ports
+            - selector
+            type: object
+          status:
+            description: DedicatedCLBServiceStatus defines the observed state of DedicatedCLBService
+            properties:
+              allocatableLb:
+                description: 可分配端口的 CLB 列表
+                items:
+                  properties:
+                    autoCreate:
+                      description: 是否是自动创建的 CLB。如果是，删除 DedicatedCLBService 时，CLB 也会被清理。
+                      type: boolean
+                    currentPort:
+                      description: CLB 当前已被分配的端口。
+                      format: int64
+                      type: integer
+                    lbId:
+                      description: CLB 实例的 ID。
+                      type: string
+                  required:
+                  - autoCreate
+                  - lbId
+                  type: object
+                type: array
+              allocatedLb:
+                description: 已分配完端口的 CLB 列表
+                items:
+                  properties:
+                    autoCreate:
+                      description: 是否是自动创建的 CLB。如果是，删除 DedicatedCLBService 时，CLB 也会被清理。
+                      type: boolean
+                    lbId:
+                      description: CLB 实例的 ID。
+                      type: string
+                  required:
+                  - autoCreate
+                  - lbId
+                  type: object
+                type: array
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+

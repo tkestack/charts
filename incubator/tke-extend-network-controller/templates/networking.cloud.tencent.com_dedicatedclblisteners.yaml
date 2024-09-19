@@ -1,0 +1,146 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "tke-extend-network-controller.fullname" . }}-serving-cert
+  name: dedicatedclblisteners.networking.cloud.tencent.com
+spec:
+  conversion:
+    strategy: Webhook
+    webhook:
+      clientConfig:
+        service:
+          name: {{ include "tke-extend-network-controller.fullname" . }}-webhook-service
+          namespace: {{ .Release.Namespace | quote }}
+          path: /convert
+      conversionReviewVersions:
+      - v1
+  group: networking.cloud.tencent.com
+  names:
+    kind: DedicatedCLBListener
+    listKind: DedicatedCLBListenerList
+    plural: dedicatedclblisteners
+    singular: dedicatedclblistener
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - description: CLB ID
+      jsonPath: .spec.lbId
+      name: LbId
+      type: string
+    - description: Port of CLB Listener
+      jsonPath: .spec.lbPort
+      name: LbPort
+      type: integer
+    - description: Pod name of target pod
+      jsonPath: .spec.targetPod.podName
+      name: Pod
+      type: string
+    - description: State of the dedicated clb listener
+      jsonPath: .status.state
+      name: State
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: DedicatedCLBListener is the Schema for the dedicatedclblisteners
+          API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: DedicatedCLBListenerSpec defines the desired state of DedicatedCLBListener
+            properties:
+              extensiveParameters:
+                description: 创建监听器的参数，JSON 格式，详细参数请参考 CreateListener 接口：https://cloud.tencent.com/document/api/214/30693
+                type: string
+              lbId:
+                description: CLB 实例的 ID。
+                type: string
+                x-kubernetes-validations:
+                - message: Value is immutable
+                  rule: self == oldSelf
+              lbPort:
+                description: CLB 监听器的端口号。
+                format: int64
+                type: integer
+                x-kubernetes-validations:
+                - message: Value is immutable
+                  rule: self == oldSelf
+              lbRegion:
+                description: CLB 所在地域，不填则使用 TKE 集群所在的地域。
+                type: string
+                x-kubernetes-validations:
+                - message: Value is immutable
+                  rule: self == oldSelf
+              protocol:
+                description: CLB 监听器的协议。
+                enum:
+                - TCP
+                - UDP
+                type: string
+                x-kubernetes-validations:
+                - message: Value is immutable
+                  rule: self == oldSelf
+              targetPod:
+                description: CLB 监听器绑定的目标 Pod。
+                properties:
+                  podName:
+                    description: Pod 的名称。
+                    type: string
+                  targetPort:
+                    description: Pod 监听的端口。
+                    format: int64
+                    type: integer
+                required:
+                - podName
+                - targetPort
+                type: object
+            required:
+            - lbId
+            - lbPort
+            - protocol
+            type: object
+          status:
+            description: DedicatedCLBListenerStatus defines the observed state of
+              DedicatedCLBListener
+            properties:
+              address:
+                description: CLB 监听器的外部地址。
+                type: string
+              listenerId:
+                description: CLB 监听器的 ID。
+                type: string
+              message:
+                description: 记录 CLB 监听器的失败信息。
+                type: string
+              state:
+                description: CLB 监听器的状态。
+                enum:
+                - Bound
+                - Available
+                - Pending
+                - Failed
+                - Deleting
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

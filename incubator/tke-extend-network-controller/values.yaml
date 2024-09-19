@@ -1,0 +1,73 @@
+# Default values for tke-extend-network-controller.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- Replica count of the controller pod
+replicaCount: 1
+
+# -- Region of the current TKE Cluster, optional.
+region: ""
+# -- VPC ID of the current TKE Cluster.
+vpcID: ""
+# -- Secret ID of the Tencent Cloud Account.
+secretID: ""
+# -- Secret Key of the Tencent Cloud Account.
+secretKey: ""
+# -- Cluster ID of the current TKE Cluster.
+clusterID: ""
+# -- Worker count of the controller
+workerCount: 3
+
+# -- Logging otpions of the controller
+log:
+  # -- Log level of the controller, be one of 'debug', 'info', 'error', or any integer value > 0 which corresponds to custom debug levels of increasing verbosity
+  level: "info"
+  # -- Log format of the controller, be one of 'json' or 'console'
+  encoder: "json"
+
+# -- Image of the controller
+image:
+  # -- Image repository of the controller
+  repository: ccr.ccs.tencentyun.com/tke-market/tke-extend-network-controller
+  # -- ImagePullPolicy of the controller
+  pullPolicy: IfNotPresent
+  # -- Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+# -- ImagePullSecrets of the controller
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+resources:
+  {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: 8081
+  initialDelaySeconds: 15
+  periodSeconds: 20
+
+readinessProbe:
+  httpGet:
+    path: /readyz
+    port: 8081
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
