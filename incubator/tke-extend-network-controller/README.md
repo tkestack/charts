@@ -68,6 +68,8 @@ secretKey: "" # 腾讯云子账号的 SecretKey
 
 ## 使用 CLB 为 Pod 分配公网地址映射
 
+**前提条件**：要使用该功能，需要保证将 Pod 调度到原生节点或超级节点上，如果 Pod 在普通节点（CVM），将不会自动为该 Pod 分配 CLB 公网地址映射。
+
 下面介绍如何为 Pod 分配独立的 CLB 公网地址映射。
 
 ### 创建 DedicatedCLBService
