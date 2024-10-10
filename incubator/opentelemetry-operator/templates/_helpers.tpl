@@ -86,3 +86,55 @@ Create an ordered name of the MutatingWebhookConfiguration
 {{- $ss := $endpoint | split ":" -}}
 {{- printf "%s:%s" (index $ss "_0") (index $ss "_1") -}}
 {{end}}
+
+
+{{- define "regionRepositoryMap" -}}
+{{- $region := . -}}
+{{- $map := dict
+  "ap-guangzhou" "ccr.ccs.tencentyun.com"
+  "ap-shanghai-fsi" "shjrccr.ccs.tencentyun.com"
+  "ap-beijing-fsi" "bjjrccr.ccs.tencentyun.com"
+  "ap-hongkong" "hkccr.ccs.tencentyun.com"
+  "ap-singapore" "sgccr.ccs.tencentyun.com"
+  "na-siliconvalley" "uswccr.ccs.tencentyun.com"
+  "eu-frankfurt" "deccr.ccs.tencentyun.com"
+  "na-ashburn" "useccr.ccs.tencentyun.com"
+  "sa-saopaulo" "saoccr.ccs.tencentyun.com"
+  "ap-bangkok" "thccr.ccs.tencentyun.com"
+  "ap-jakarta" "jktccr.ccs.tencentyun.com"
+  "na-toronto" "caccr.ccs.tencentyun.com"
+  "ap-seoul" "krccr.ccs.tencentyun.com"
+  "ap-tokyo" "jpccr.ccs.tencentyun.com"
+  "ap-mumbai" "inccr.ccs.tencentyun.com"
+  "ap-shenzhen-fsi" "szjrccr.ccs.tencentyun.com"
+  "ap-taipei" "tpeccr.ccs.tencentyun.com" -}}
+{{- $result := index $map $region | default "ccr.ccs.tencentyun.com" -}}
+{{- $result -}}
+{{- end -}}
+
+
+{{/*
+Modify image repository by region.
+*/}}
+{{- define "opentelemetry-operator.managerImageRepository" -}}
+{{- $parts := regexSplit "/" .Values.manager.image.repository -1 -}}
+{{- printf "%s/%s" (include "regionRepositoryMap" .Values.env.TKE_REGION) (join "/" (slice $parts 1 (len $parts))) -}}
+{{- end -}}
+
+
+{{/*
+Modify collector image repository by region.
+*/}}
+{{- define "opentelemetry-operator.managerCollectorImageRepository" -}}
+{{- $parts := regexSplit "/" .Values.manager.collectorImage.repository -1 -}}
+{{- printf "%s/%s" (include "regionRepositoryMap" .Values.env.TKE_REGION) (join "/" (slice $parts 1 (len $parts))) -}}
+{{- end -}}
+
+
+{{/*
+Modify kubeRBACProxy image repository by region.
+*/}}
+{{- define "opentelemetry-operator.proxyImageRepository" -}}
+{{- $parts := regexSplit "/" .Values.kubeRBACProxy.image.repository -1 -}}
+{{- printf "%s/%s" (include "regionRepositoryMap" .Values.env.TKE_REGION) (join "/" (slice $parts 1 (len $parts))) -}}
+{{- end -}}
