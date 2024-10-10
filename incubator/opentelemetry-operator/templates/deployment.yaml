@@ -43,8 +43,8 @@ spec:
             {{- if or .Values.admissionWebhooks.create .Values.admissionWebhooks.secretName }}
             - --webhook-port={{ .Values.manager.ports.webhookPort }}
             {{- end }}
-            {{- if and .Values.manager.collectorImage.repository .Values.manager.collectorImage.tag }}
-            - --collector-image={{ .Values.manager.collectorImage.repository }}:{{ .Values.manager.collectorImage.tag }}
+            {{- if and (include "opentelemetry-operator.managerCollectorImageRepository" .) .Values.manager.collectorImage.tag }}
+            - --collector-image={{ include "opentelemetry-operator.managerCollectorImageRepository" . }}:{{ .Values.manager.collectorImage.tag }}
             {{- end }}
             {{- if and .Values.manager.targetAllocatorImage.repository .Values.manager.targetAllocatorImage.tag }}
             - --target-allocator-image={{ .Values.manager.targetAllocatorImage.repository }}:{{ .Values.manager.targetAllocatorImage.tag }}
@@ -108,8 +108,10 @@ spec:
               value: {{ .Values.manager.image.tag | quote }}
             - name: HELM_CHART_VERSION
               value: {{ .Chart.Version | quote }}
+            - name: IMAGE_REPOSITORY
+              value: {{ include "regionRepositoryMap" .Values.env.TKE_REGION | default (include "regionRepositoryMap" "ap-guangzhou") | quote }}
           {{- end }}
-          image: "{{ .Values.manager.image.repository }}:{{ .Values.manager.image.tag }}"
+          image: "{{ include "opentelemetry-operator.managerImageRepository" . }}:{{ .Values.manager.image.tag }}"
           name: manager
           ports:
             - containerPort: {{ .Values.manager.ports.metricsPort }}
@@ -151,7 +153,7 @@ spec:
             {{-  if .Values.kubeRBACProxy.extraArgs  }}
             {{- .Values.kubeRBACProxy.extraArgs | toYaml | nindent 12 }}
             {{-  end  }}
-          image: "{{ .Values.kubeRBACProxy.image.repository }}:{{ .Values.kubeRBACProxy.image.tag }}"
+          image: "{{ include "opentelemetry-operator.proxyImageRepository" . }}:{{ .Values.kubeRBACProxy.image.tag }}"
           name: kube-rbac-proxy
           ports:
             - containerPort: {{ .Values.kubeRBACProxy.ports.proxyPort }}
