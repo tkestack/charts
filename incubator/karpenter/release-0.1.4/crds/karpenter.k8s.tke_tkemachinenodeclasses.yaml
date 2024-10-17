@@ -1,0 +1,407 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.15.0
+  name: tkemachinenodeclasses.karpenter.k8s.tke
+spec:
+  group: karpenter.k8s.tke
+  names:
+    categories:
+    - karpenter
+    kind: TKEMachineNodeClass
+    listKind: TKEMachineNodeClassList
+    plural: tkemachinenodeclasses
+    shortNames:
+    - tmnc
+    - tmncs
+    singular: tkemachinenodeclass
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.conditions[?(@.type=="Ready")].status
+      name: Ready
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1beta1
+    schema:
+      openAPIV3Schema:
+        description: TKEMachineNodeClass is the Schema for the TKEMachineNodeClass
+          API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: TKEMachineNodeClassSpec is the top level specification for
+              TKEMachineNodeClasses.
+            properties:
+              dataDisks:
+                description: DataDisks defines the data disks of the instance.
+                items:
+                  properties:
+                    fileSystem:
+                      description: |-
+                        FileSystem specify the filesystem used by this disk.
+                        Supported filesystem: {ext3, ext4, xfs}.
+                        If not specified, default etx4 will be used.
+                      enum:
+                      - ext3
+                      - ext4
+                      - xfs
+                      type: string
+                    mountTarget:
+                      description: MountTarget is the path that disk wil mount during
+                        intalization.
+                      type: string
+                    size:
+                      description: |-
+                        Size of disk in GB.
+                        Supported size: 20-32000, step size is 10.
+                      format: int32
+                      maximum: 32000
+                      minimum: 20
+                      type: integer
+                      x-kubernetes-validations:
+                      - message: step size should be 10
+                        rule: self%10 == 0
+                    type:
+                      description: 'Type of disk, supported type: {CloudPremium, CloudSSD}.'
+                      enum:
+                      - CloudPremium
+                      - CloudSSD
+                      type: string
+                  type: object
+                type: array
+              internetAccessible:
+                description: InternetAccessible is the network configuration used
+                  to create network interface for the node.
+                properties:
+                  bandwidthPackageID:
+                    description: |-
+                      Bandwidth package ID.
+                      The ID should be already created in tencentcloud
+                      (https://console.cloud.tencent.com/vpc/package)
+                    pattern: bwp-[0-9a-z]+
+                    type: string
+                  chargeType:
+                    description: |-
+                      ChargeType specify the network connection billing plan.
+                      If not specified, default TrafficPostpaidByHour will be used.
+                      Supported type: {TrafficPostpaidByHour, BandwidthPackage, BandwidthPostpaidByHour}.
+                    enum:
+                    - TrafficPostpaidByHour
+                    - BandwidthPackage
+                    - BandwidthPostpaidByHour
+                    type: string
+                  maxBandwidthOut:
+                    description: |-
+                      The maximum outbound bandwidth of the public network, in Mbps.
+                      Valid Range: Minimum value of 1. Maximum value of 100.
+                      If not specified, default 1 Mbps will be used.
+                    format: int32
+                    maximum: 100
+                    minimum: 1
+                    type: integer
+                type: object
+                x-kubernetes-validations:
+                - message: bandwidthPackageID should be specified when chargeType
+                    is BandwidthPostpaidByHour
+                  rule: 'has(self.chargeType) && self.chargeType == ''BandwidthPackage''
+                    ? has(self.bandwidthPackageID) : true'
+              lifecycleScript:
+                description: LifecycleScript allow users to operations on the node
+                  before/after the node initialization.
+                properties:
+                  postInitScript:
+                    description: PostInitScript will be executed after node initialization.
+                    type: string
+                  preInitScript:
+                    description: PreInitScript will be executed before node initialization..
+                    type: string
+                type: object
+              securityGroupSelectorTerms:
+                description: SecurityGroupSelectorTerms is a list of or security group
+                  selector terms. The terms are ORed.
+                items:
+                  description: |-
+                    SecurityGroupSelectorTerm defines selection logic for a security group used by Karpenter to launch nodes.
+                    If multiple fields are used for selection, the requirements are ANDed.
+                  properties:
+                    id:
+                      description: ID is the security group id
+                      pattern: sg-[0-9a-z]+
+                      type: string
+                    tags:
+                      additionalProperties:
+                        type: string
+                      description: |-
+                        Tags is a map of key/value tags used to select security group
+                        Specifying '*' for a value selects all values for a given tag key.
+                        The tags should be already created in tencentcloud
+                        (https://console.cloud.tencent.com/tag)
+                      maxProperties: 20
+                      type: object
+                      x-kubernetes-validations:
+                      - message: empty tag keys or values aren't supported
+                        rule: self.all(k, k != '' && self[k] != '')
+                  type: object
+                maxItems: 5
+                type: array
+                x-kubernetes-validations:
+                - message: securityGroupSelectorTerms cannot be empty
+                  rule: self.size() != 0
+                - message: expected at least one, got none, ['tags', 'id']
+                  rule: self.all(x, has(x.tags) || has(x.id))
+                - message: '''id'' is mutually exclusive, cannot be set with a combination
+                    of other fields in securityGroupSelectorTerms'
+                  rule: '!self.all(x, has(x.id) && has(x.tags))'
+              sshKeySelectorTerms:
+                description: SSHKeySelectorTerms is a list of or SSH key selector
+                  terms. The terms are ORed.
+                items:
+                  description: |-
+                    SSHKeysSelectorTerm defines selection logic for a security group used by Karpenter to launch nodes.
+                    If multiple fields are used for selection, the requirements are ANDed.
+                  properties:
+                    id:
+                      description: ID is the SSH key id
+                      pattern: skey-[0-9a-z]+
+                      type: string
+                    tags:
+                      additionalProperties:
+                        type: string
+                      description: |-
+                        Tags is a map of key/value tags used to select sshkey
+                        Specifying '*' for a value selects all values for a given tag key.
+                        The tags must be already created in tencentcloud
+                        (https://console.cloud.tencent.com/tag)
+                      maxProperties: 20
+                      type: object
+                      x-kubernetes-validations:
+                      - message: empty tag keys or values aren't supported
+                        rule: self.all(k, k != '' && self[k] != '')
+                  type: object
+                maxItems: 30
+                type: array
+                x-kubernetes-validations:
+                - message: sshKeySelectorTerms cannot be empty
+                  rule: self.size() != 0
+                - message: expected at least one, got none, ['tags', 'id']
+                  rule: self.all(x, has(x.tags) || has(x.id))
+                - message: '''id'' is mutually exclusive, cannot be set with a combination
+                    of other fields in sshKeySelectorTerms'
+                  rule: '!self.all(x, has(x.id) && has(x.tags))'
+              subnetSelectorTerms:
+                description: SubnetSelectorTerms is a list of or subnet selector terms.
+                  The terms are ORed.
+                items:
+                  description: |-
+                    SubnetSelectorTerm defines selection logic for a subnet used by Karpenter to launch nodes.
+                    If multiple fields are used for selection, the requirements are ANDed.
+                  properties:
+                    id:
+                      description: ID is the subnet id
+                      pattern: subnet-[0-9a-z]+
+                      type: string
+                    tags:
+                      additionalProperties:
+                        type: string
+                      description: |-
+                        Tags is a map of key/value tags used to select subnets
+                        Specifying '*' for a value selects all values for a given tag key.
+                        The tags must be already created in tencentcloud
+                        (https://console.cloud.tencent.com/tag)
+                      maxProperties: 20
+                      type: object
+                      x-kubernetes-validations:
+                      - message: empty tag keys or values aren't supported
+                        rule: self.all(k, k != '' && self[k] != '')
+                  type: object
+                maxItems: 30
+                type: array
+                x-kubernetes-validations:
+                - message: subnetSelectorTerms cannot be empty
+                  rule: self.size() != 0
+                - message: expected at least one, got none, ['tags', 'id']
+                  rule: self.all(x, has(x.tags) || has(x.id))
+                - message: '''id'' is mutually exclusive, cannot be set with a combination
+                    of other fields in subnetSelectorTerms'
+                  rule: '!self.all(x, has(x.id) && has(x.tags))'
+              systemDisk:
+                description: |-
+                  SystemDisk defines the system disk of the instance.
+                  if not specified, a default system disk (CloudPremium, 50GB) will be used.
+                properties:
+                  size:
+                    description: |-
+                      Size of disk in GB.
+                      Supported size: 20-2048, step size is 1.
+                    format: int32
+                    maximum: 2048
+                    minimum: 20
+                    type: integer
+                  type:
+                    description: 'Type of disk, supported type: {CloudPremium, CloudSSD}.'
+                    enum:
+                    - CloudPremium
+                    - CloudSSD
+                    type: string
+                type: object
+              tags:
+                additionalProperties:
+                  type: string
+                description: |-
+                  Tags to be applied on tke machine resources like instances.
+                  The tags must be already created in tencentcloud
+                  (https://console.cloud.tencent.com/tag)
+                type: object
+                x-kubernetes-validations:
+                - message: empty tag keys aren't supported
+                  rule: self.all(k, k != '')
+            required:
+            - securityGroupSelectorTerms
+            - sshKeySelectorTerms
+            - subnetSelectorTerms
+            type: object
+          status:
+            description: TKEMachineNodeClassStatus contains the resolved state of
+              the TKEMachineNodeClass
+            properties:
+              conditions:
+                description: Conditions contains signals for health and readiness
+                items:
+                  description: Condition aliases the upstream type and adds additional
+                    helper methods
+                  properties:
+                    lastTransitionTime:
+                      description: |-
+                        lastTransitionTime is the last time the condition transitioned from one status to another.
+                        This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: |-
+                        message is a human readable message indicating details about the transition.
+                        This may be an empty string.
+                      maxLength: 32768
+                      type: string
+                    observedGeneration:
+                      description: |-
+                        observedGeneration represents the .metadata.generation that the condition was set based upon.
+                        For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+                        with respect to the current state of the instance.
+                      format: int64
+                      minimum: 0
+                      type: integer
+                    reason:
+                      description: |-
+                        reason contains a programmatic identifier indicating the reason for the condition's last transition.
+                        Producers of specific condition types may define expected values and meanings for this field,
+                        and whether the values are considered a guaranteed API.
+                        The value should be a CamelCase string.
+                        This field may not be empty.
+                      maxLength: 1024
+                      minLength: 1
+                      pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                      type: string
+                    status:
+                      description: status of the condition, one of True, False, Unknown.
+                      enum:
+                      - "True"
+                      - "False"
+                      - Unknown
+                      type: string
+                    type:
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+                      maxLength: 316
+                      pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              securityGroups:
+                description: |-
+                  SecurityGroups contains the current Security Groups values that are available to the
+                  cluster under the SecurityGroups selectors.
+                items:
+                  description: SecurityGroup contains resolved SecurityGroup selector
+                    values utilized for node launch
+                  properties:
+                    id:
+                      description: ID of the security group
+                      type: string
+                  required:
+                  - id
+                  type: object
+                type: array
+              sshKeys:
+                description: |-
+                  SSHKeys contains the current SSH Key values that are available to the
+                  cluster under the SSH Keys selectors.
+                items:
+                  description: SSHKey contains resolved SSHKey selector values utilized
+                    for node launch
+                  properties:
+                    id:
+                      description: ID of the ssh key paire
+                      type: string
+                  required:
+                  - id
+                  type: object
+                type: array
+              subnets:
+                description: |-
+                  Subnets contains the current Subnet values that are available to the
+                  cluster under the subnet selectors.
+                items:
+                  description: Subnet contains resolved Subnet selector values utilized
+                    for node launch
+                  properties:
+                    id:
+                      description: ID of the subnet
+                      type: string
+                    zone:
+                      description: The associated availability zone
+                      type: string
+                    zoneID:
+                      description: The associated availability zone ID
+                      type: string
+                  required:
+                  - id
+                  - zone
+                  type: object
+                type: array
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
