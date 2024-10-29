@@ -2,7 +2,7 @@ apiVersion: v2
 appVersion: v1.1.2
 description: The Helm chart for Envoy Gateway
 home: https://gateway.envoyproxy.io/
-icon: https://raw.githubusercontent.com/envoyproxy/gateway/main/site/assets/icons/logo.svg
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/92b3d22e-12b4-48c3-a852-daf66b91ea45.png
 keywords:
 - gateway-api
 - envoyproxy
