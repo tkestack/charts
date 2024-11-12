@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tke-event-collector
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: tke-event-collector
+spec:
+  minReadySeconds: 10
+  replicas: {{ .Values.global.replicas }}
+  selector:
+    matchLabels:
+      app: tke-event-collector
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: tke-event-collector
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+               - key: node.kubernetes.io/instance-type
+                 operator: In
+                 values:
+                 - eklet
+      serviceAccountName: tke-event-collector
+      containers:
+        - command:
+            - kube-event-collector
+            - --topic-id={{ .Values.global.topicId }}
+            - --cls-host={{ .Values.global.clsHost }}
+            - --cluster-id={{ .Values.global.clusterId }}
+            {{- if .Values.global.requestRegion }}
+            - --request-region={{ .Values.global.requestRegion }}
+            {{- end }}
+            - --cred-source=anony
+            - --v={{ .Values.global.logLevel }}
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+          image: "{{.Values.global.registry}}/{{.Values.global.repository}}:{{.Values.global.imageTag}}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          name: tke-event-collector
+          resources:
+            limits:
+              cpu: 1
+              memory: 1024M
+            requests:
+              cpu: 200m
+              memory: 256M
+      {{- if .Values.global.hostAliases }}
+      hostAliases: {{- include "common.tplvalues.render" (dict "value" .Values.global.hostAliases "context" $) | nindent 8 }}
+      {{- end }}
+      dnsPolicy: "None"
+      dnsConfig:
+        nameservers:
+          - 183.60.83.19
+          - 183.60.82.98
