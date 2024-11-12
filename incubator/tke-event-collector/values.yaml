@@ -1,0 +1,18 @@
+# Default values for tke-event-collector.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+
+global:
+  replicas: 1
+  topicId: "5450c7b5-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  clsHost: "ap-beijing.cls.tencentyun.com"
+  requestRegion: "ap-beijing"
+  clusterId: "xxxx"
+  logLevel: 5
+  registry: ccr.ccs.tencentyun.com
+  repository: tkeimages/kube-event-collector
+  imageTag: v0.0.6
+  imagePullPolicy: IfNotPresent
+  annotations: {}
+  hostAliases: {}
