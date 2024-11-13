@@ -70,7 +70,7 @@ The name of the Envoy Gateway image.
 {{- else if .Values.global.images.envoyGateway.image }}
 {{- .Values.global.images.envoyGateway.image }}
 {{- else }}
-docker.io/envoyproxy/gateway:{{ .Chart.Version }}
+ccr.ccs.tencentyun.com/tke-market/envoygateway:{{ .Chart.Version }}
 {{- end }}
 {{- end }}
 
@@ -107,6 +107,8 @@ provider:
       container:
         {{- if .Values.global.images.ratelimit.image }}
         image: {{ .Values.global.images.ratelimit.image }}
+        {{- else }}
+        image: "ccr.ccs.tencentyun.com/tke-market/envoy-ratelimit:master"
         {{- end }}
       {{- with .Values.global.images.ratelimit.pullSecrets }}
       pod:
