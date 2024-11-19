@@ -35,6 +35,10 @@ spec:
                  values:
                  - eklet
       serviceAccountName: tke-event-collector
+      tolerations:
+      - effect: NoSchedule
+        key: eks.tke.cloud.tencent.com/eklet
+        operator: Exists
       containers:
         - command:
             - kube-event-collector
