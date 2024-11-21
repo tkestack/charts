@@ -6,7 +6,7 @@ annotations:
     fingerprint: 1020CF3C033D4F35BAE1C19E1226061C665DF13E
     url: https://cert-manager.io/public-keys/cert-manager-keyring-2021-09-20-1020CF3C033D4F35BAE1C19E1226061C665DF13E.gpg
 apiVersion: v2
-appVersion: v1.16.1
+appVersion: v1.16.2
 description: A Helm chart for cert-manager
 home: https://cert-manager.io
 icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/44fcdbc2-7461-4025-99c7-54608dfe700d.png
@@ -23,4 +23,4 @@ maintainers:
 name: cert-manager
 sources:
 - https://github.com/cert-manager/cert-manager
-version: v1.16.1
+version: v1.16.2
