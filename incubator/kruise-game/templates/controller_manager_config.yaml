@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kruise-game-manager-config
+  namespace: {{ .Values.installation.namespace }}
+data:
+  config.toml: |
+    [kubernetes]
+    enable = true
+    [kubernetes.hostPort]
+    max_port = 9000
+    min_port = 8000
+
+    [alibabacloud]
+    enable = true
+    [alibabacloud.slb]
+    max_port = 700
+    min_port = 500
+    [alibabacloud.nlb]
+    max_port = 1500
+    min_port = 1000
+
+    [volcengine]
+    enable = true
+    [volcengine.clb]
+    max_port = 700
+    min_port = 500
+    
+    [aws]
+    enable = false
+    [aws.nlb]
+    max_port = 30050
+    min_port = 30001
+  controller_manager_config.yaml: |
+    apiVersion: controller-runtime.sigs.k8s.io/v1alpha1
+    kind: ControllerManagerConfig
+    health:
+      healthProbeBindAddress: :8081
+    metrics:
+      bindAddress: 127.0.0.1:8080
+    webhook:
+      port: 9443
+    leaderElection:
+      leaderElect: true
+      resourceName: c637bb1e.my.domain
+# leaderElectionReleaseOnCancel defines if the leader should step down volume
+# when the Manager ends. This requires the binary to immediately end when the
+# Manager is stopped, otherwise, this setting is unsafe. Setting this significantly
+# speeds up voluntary leader transitions as the new leader don't have to wait
+# LeaseDuration time first.
+# In the default scaffold provided, the program ends immediately after
+# the manager stops, so would be fine to enable this option. However,
+# if you are doing or is intended to do any operation such as perform cleanups
+# after the manager stops then its usage might be unsafe.
+# leaderElectionReleaseOnCancel: true
+
+

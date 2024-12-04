@@ -1,0 +1,17 @@
+{{- if .Values.prometheus.enabled }}
+# Prometheus Monitor Service (Metrics)
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    control-plane: {{ .Values.kruiseGame.fullname }}
+  name: kruise-game-controller-manager-metrics-monitor
+  namespace: {{ .Values.installation.namespace }}
+spec:
+  endpoints:
+    - path: /metrics
+      port: https
+  selector:
+    matchLabels:
+      control-plane: {{ .Values.kruiseGame.fullname }}
+{{- end }}

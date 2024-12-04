@@ -1,0 +1,119 @@
+{{- if .Values.installation.createNamespace }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    control-plane: {{ .Values.kruiseGame.fullname }}
+  name: {{ .Values.installation.namespace }}
+  {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kruise-game-controller-manager-metrics-service
+  namespace: {{ .Values.installation.namespace }}
+  labels:
+    control-plane: {{ .Values.kruiseGame.fullname }}
+spec:
+  ports:
+    - name: https
+      port: {{ .Values.service.port }}
+      protocol: TCP
+      targetPort: https
+  selector:
+    control-plane: {{ .Values.kruiseGame.fullname }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.kruiseGame.fullname }}
+  namespace: {{ .Values.installation.namespace }}
+  labels:
+    control-plane: {{ .Values.kruiseGame.fullname }}
+spec:
+  selector:
+    matchLabels:
+      control-plane: {{ .Values.kruiseGame.fullname }}
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: manager
+      labels:
+        control-plane: {{ .Values.kruiseGame.fullname }}
+    spec:
+      #      securityContext:
+      #        runAsNonRoot: true
+      # TODO(user): For common cases that do not require escalating privileges
+      # it is recommended to ensure that all your Pods/Containers are restrictive.
+      # More info: https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+      # Please uncomment the following code if your project does NOT have to work on old Kubernetes
+      # versions < 1.19 or on vendors versions which do NOT support this field by default (i.e. Openshift < 4.11 ).
+      # seccompProfile:
+      #   type: RuntimeDefault
+      containers:
+        - command:
+            - /manager
+          args:
+            - --leader-elect=false
+            - --provider-config=/etc/kruise-game/config.toml
+            - --api-server-qps={{ .Values.kruiseGame.apiServerQps }}
+            - --api-server-qps-burst={{ .Values.kruiseGame.apiServerQpsBurst }}
+            - --scale-server-bind-address=:{{ .Values.scale.service.targetPort }}
+            {{- if .Values.prometheus.enabled }}
+            - --metrics-bind-address=:{{ .Values.prometheus.monitorService.port }}
+            {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: manager
+          env:
+          - name: "NETWORK_TOTAL_WAIT_TIME"
+            value: {{ .Values.network.totalWaitTime | quote }}
+          - name: "NETWORK_PROBE_INTERVAL_TIME"
+            value: {{ .Values.network.probeIntervalTime | quote }}
+          ports:
+            - name: https
+              containerPort: {{ .Values.prometheus.monitorService.port }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - "ALL"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.kruiseGame.healthBindPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: {{ .Values.kruiseGame.healthBindPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          # TODO(user): Configure the resources accordingly based on the project requirements.
+          # More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /etc/kruise-game
+              name: provider-config
+      topologySpreadConstraints:
+      - labelSelector:
+          matchLabels:
+            control-plane: {{ .Values.kruiseGame.fullname }}
+        matchLabelKeys:
+        - pod-template-hash
+        maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable:  ScheduleAnyway
+      serviceAccountName: {{ .Values.kruiseGame.fullname }}
+      terminationGracePeriodSeconds: 10
+      volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+              - key: config.toml
+                path: config.toml
+            name: kruise-game-manager-config
+          name: provider-config
