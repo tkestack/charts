@@ -31,7 +31,7 @@ manager:
 
   replicas: 2
   image:
-    repository: openkruise/kruise-manager
+    repository: ccr.ccs.tencentyun.com/tke-market/kruise-manager
     tag: v1.7.2
   webhook:
     port: 9876
