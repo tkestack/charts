@@ -1,0 +1,115 @@
+# Default values for kruise.
+
+crds:
+  managed: true
+
+# values for kruise installation
+installation:
+  namespace: kruise-system
+  createNamespace: true
+  roleListGroups:
+    - '*'
+
+featureGates: "ImagePullJobGate=true"
+
+externalCerts:
+  # annotations to patch for webhook configuration and crd
+  # e.g. cert-manager.io/inject-ca-from: kruise-system/kruise-webhook
+  annotations: {}
+
+# KUBE_CACHE_MUTATION_DETECTOR
+enableKubeCacheMutationDetector: false
+
+# imagePullSecrets to pull kruise images
+imagePullSecrets: []
+
+manager:
+  # settings for log print
+  log:
+    # log level for kruise-manager
+    level: "4"
+
+  replicas: 2
+  image:
+    repository: openkruise/kruise-manager
+    tag: v1.7.2
+  webhook:
+    port: 9876
+  metrics:
+    port: 8080
+  healthProbe:
+    port: 8000
+  pprofAddr: "localhost:8090"
+
+  resyncPeriod: "0"
+
+  loggingFormat: ""
+
+  # resources of kruise-manager container
+  resources:
+    limits:
+      cpu: 200m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+  hostNetwork: false
+
+  nodeAffinity: {}
+  nodeSelector: {}
+  tolerations: []
+
+webhookConfiguration:
+  timeoutSeconds: 30
+
+daemon:
+  log:
+    # log level for kruise-daemon
+    level: "4"
+
+  port: 10221
+  enablePprof: true
+  pprofAddr: "localhost:10222"
+
+  socketLocation: "/var/run"
+  socketFile: ""
+
+  nodeSelector: {}
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: type
+            operator: NotIn
+            values:
+            - virtual-kubelet
+  resources:
+    limits:
+      cpu: 50m
+      memory: 128Mi
+    requests:
+      cpu: "0"
+      memory: "0"
+
+  # Extra environment variables that will be pass onto pods.
+  # For example, when the daemon is used behind a http proxy, you can set the proxy environment variables here.
+  # This will be appended to the current 'env:' key. You can use any of the kubernetes env
+  # syntax here.
+  extraEnvs: []
+  # - name: HTTP_PROXY
+  #   value: http://my-proxy:8080/
+  # - name: HTTPS_PROXY
+  #   value: http://my-proxy:8080/
+  # - name: NO_PROXY
+  #   value: localhost,0.0.0.0,127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,.svc,.cluster.local
+
+  credentialProvider:
+    enable: false
+    configmap: credential-provider-config
+    hostPath: credential-provider-plugin
+    awsCredentialsDir: ""
+
+serviceAccount:
+  annotations: {}

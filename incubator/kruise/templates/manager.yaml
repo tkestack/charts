@@ -1,0 +1,294 @@
+{{- if .Values.installation.createNamespace }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    control-plane: openkruise
+  name: {{ .Values.installation.namespace }}
+{{- end }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kruise-daemon-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kruise-webhook-service
+  namespace: {{ .Values.installation.namespace }}
+spec:
+{{ ( include "webhookServiceSpec" . ) | indent 2 }}
+{{- if and (not (contains "EnableExternalCerts=true" .Values.featureGates)) (not (contains "AllAlpha=true" .Values.featureGates)) }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kruise-webhook-certs
+  namespace: {{ .Values.installation.namespace }}
+{{ ( include "webhookSecretData" . ) }}
+{{- end }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    control-plane: controller-manager
+  name: kruise-controller-manager
+  namespace: {{ .Values.installation.namespace }}
+spec:
+  replicas: {{ .Values.manager.replicas }}
+  selector:
+    matchLabels:
+      control-plane: controller-manager
+  minReadySeconds: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 100%
+  template:
+    metadata:
+      labels:
+        control-plane: controller-manager
+    spec:
+{{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+{{- toYaml . | nindent 8 }}
+{{- end }}
+      containers:
+        - args:
+            - --enable-leader-election
+            - --metrics-addr=:{{ .Values.manager.metrics.port }}
+            - --health-probe-addr=:{{ .Values.manager.healthProbe.port }}
+            - --logtostderr=true
+            - --leader-election-namespace={{ .Values.installation.namespace }}
+            - --v={{ .Values.manager.log.level }}
+            - --feature-gates={{ .Values.featureGates }}
+            - --sync-period={{ .Values.manager.resyncPeriod }}
+            {{- if .Values.manager.loggingFormat }}
+            - --logging-format={{ .Values.manager.loggingFormat }}
+            {{- end }}
+          command:
+            - /manager
+          image: {{ .Values.manager.image.repository }}:{{ .Values.manager.image.tag }}
+          imagePullPolicy: Always
+          securityContext:
+            capabilities:
+              drop:
+                - all
+              add: [ 'NET_BIND_SERVICE' ]
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 65534
+          name: manager
+          env:
+{{- if .Values.enableKubeCacheMutationDetector }}
+            - name: KUBE_CACHE_MUTATION_DETECTOR
+              value: "true"
+{{- end }}
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: WEBHOOK_PORT
+              value: "{{ .Values.manager.webhook.port }}"
+          ports:
+            - containerPort: {{ .Values.manager.webhook.port }}
+              name: webhook-server
+              protocol: TCP
+            - containerPort: {{ .Values.manager.metrics.port }}
+              name: metrics
+              protocol: TCP
+            - containerPort: {{ .Values.manager.healthProbe.port }}
+              name: health
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: readyz
+              port: {{ .Values.manager.healthProbe.port }}
+          resources:
+            {{- toYaml .Values.manager.resources | nindent 12 }}
+      hostNetwork: {{ .Values.manager.hostNetwork }}
+      terminationGracePeriodSeconds: 10
+      serviceAccountName: kruise-manager
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: control-plane
+                  operator: In
+                  values:
+                  - controller-manager
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+{{- with .Values.manager.nodeAffinity }}
+        nodeAffinity:
+{{ toYaml . | indent 10 }}
+{{- end }}
+
+{{- if .Values.manager.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.manager.nodeSelector | indent 8 }}
+{{- end }}
+
+{{- if .Values.manager.tolerations }}
+      tolerations:
+{{ toYaml .Values.manager.tolerations | indent 8 }}
+{{- end }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kruise-manager
+{{- if .Values.serviceAccount.annotations }}
+  annotations:
+{{ toYaml .Values.serviceAccount.annotations | indent 4 }}
+{{- end }}
+  namespace: {{ .Values.installation.namespace }}
+{{ ( include "serviceAccountManager" . ) }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kruise-daemon
+{{- if .Values.serviceAccount.annotations }}
+  annotations:
+{{ toYaml .Values.serviceAccount.annotations | indent 4 }}
+{{- end }}
+  namespace: {{ .Values.installation.namespace }}
+{{ ( include "serviceAccountDaemon" . ) }}
+---
+{{ if contains "KruiseDaemon=false" .Values.featureGates }}{{ else }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kruise-daemon
+  namespace: {{ .Values.installation.namespace }}
+  labels:
+    control-plane: daemon
+spec:
+  selector:
+    matchLabels:
+      control-plane: daemon
+  minReadySeconds: 3
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 10%
+  template:
+    metadata:
+      labels:
+        control-plane: daemon
+    spec:
+{{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+{{- toYaml . | nindent 8 }}
+{{- end }}
+{{- if .Values.daemon.affinity }}
+      affinity:
+{{ toYaml .Values.daemon.affinity | indent 8 }}
+{{- end }}
+{{- if .Values.daemon.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.daemon.nodeSelector | indent 8 }}
+{{- end }}
+      containers:
+      - command:
+        - /kruise-daemon
+        args:
+        - --logtostderr=true
+        - --v=4
+        - --addr=:{{ .Values.daemon.port }}
+        - --feature-gates={{ .Values.featureGates }}
+        - --socket-file={{ .Values.daemon.socketFile }}
+{{- if not .Values.daemon.enablePprof }}
+        - --enable-pprof=false
+{{- else }}
+        - --enable-pprof=true
+        - --pprof-addr={{ .Values.daemon.pprofAddr }}
+{{- end }}
+{{- if .Values.daemon.credentialProvider.enable }}
+        - --plugin-config-file=/credential-provider-config/CredentialProviderPlugin.yaml
+        - --plugin-bin-dir=/credential-provider-plugin
+{{- end }}
+        image: {{ .Values.manager.image.repository }}:{{ .Values.manager.image.tag }}
+        imagePullPolicy: Always
+        securityContext:
+          capabilities:
+            drop:
+              - all
+            add: [ 'NET_BIND_SERVICE' ]
+          allowPrivilegeEscalation: false
+        name: daemon
+        env:
+{{- if .Values.enableKubeCacheMutationDetector }}
+        - name: KUBE_CACHE_MUTATION_DETECTOR
+          value: "true"
+{{- end }}
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        {{- if .Values.daemon.extraEnvs }}
+        {{- toYaml .Values.daemon.extraEnvs | nindent 8 }}
+        {{- end }}
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: {{ .Values.daemon.port }}
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          {{- toYaml .Values.daemon.resources | nindent 12 }}
+        volumeMounts:
+        - mountPath: /hostvarrun
+          name: runtime-socket
+          readOnly: true
+{{- if .Values.daemon.credentialProvider.enable }}
+        - name: credential-provider-plugin-config
+          mountPath: /credential-provider-config
+          readOnly: true
+        - name: credential-provider-plugin
+          mountPath: /credential-provider-plugin
+          readOnly: true
+        {{- if ne .Values.daemon.credentialProvider.awsCredentialsDir "" }}
+        - name: aws-credentials-dir
+          mountPath: /root/.aws
+          readOnly: true
+        {{- end }}
+{{- end }}
+      tolerations:
+      - operator: Exists
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      terminationGracePeriodSeconds: 10
+      serviceAccountName: kruise-daemon
+      volumes:
+      - hostPath:
+          path: {{ .Values.daemon.socketLocation }}
+          type: ""
+        name: runtime-socket
+{{- if .Values.daemon.credentialProvider.enable }}
+      - name: credential-provider-plugin-config
+        configMap:
+          name: {{ .Values.daemon.credentialProvider.configmap }}
+      - hostPath:
+          path: {{ .Values.daemon.credentialProvider.hostPath }}
+          type: ""
+        name: credential-provider-plugin
+      {{- if ne .Values.daemon.credentialProvider.awsCredentialsDir "" }}
+      - hostPath:
+          path: {{ .Values.daemon.credentialProvider.awsCredentialsDir }}
+          type: ""
+        name: aws-credentials-dir
+      {{- end }}
+{{- end }}
+{{- end }}
