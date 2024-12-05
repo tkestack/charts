@@ -3,7 +3,7 @@ name: kruise-game
 description: Helm chart for kruise-game components
 version: 0.9.1
 appVersion: 0.9.1
-kubeVersion: ">= 1.16.0-0"
+kubeVersion: ">= 1.25.0-0"
 icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/85d71722-01ce-4630-b83e-782b18a79172.png
 maintainers:
   - name: rockerchen
