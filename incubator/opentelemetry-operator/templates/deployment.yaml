@@ -78,6 +78,10 @@ spec:
             - name: {{ $name }}
               value: {{ $value | quote -}}
             {{- end }}
+            {{- if (eq .Values.env.FROM_INTERNET "true") }}
+            - name: API_ENDPOINT
+              value: "apm.tencentcloudapi.com"
+            {{- end }}
             - name: TKE_CLUSTER_ID
               value: {{ .Values.env.TKE_CLUSTER_ID | quote }}
             - name: TKE_REGION

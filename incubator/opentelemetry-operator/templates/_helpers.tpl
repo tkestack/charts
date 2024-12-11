@@ -107,6 +107,12 @@ Create an ordered name of the MutatingWebhookConfiguration
   "ap-tokyo" "jpccr.ccs.tencentyun.com"
   "ap-mumbai" "inccr.ccs.tencentyun.com"
   "ap-shenzhen-fsi" "szjrccr.ccs.tencentyun.com"
+  "ap-guangzhou-wxzf" "gzwxzfccr.ccs.tencentyun.com"
+  "ap-shenzhen-jxcft" "szjxcftccr.ccs.tencentyun.com"
+  "ap-shanghai-hq-cft" "shhqcftccr.ccs.tencentyun.com"
+  "ap-shanghai-hq-uat-cft" "shhqcftfzhjccr.ccs.tencentyun.com"
+  "ap-shanghai-wxzf" "shwxzfccr.ccs.tencentyun.com"
+  "ap-shanghai-adc" "shadcccr.ccs.tencentyun.com"
   "ap-taipei" "tpeccr.ccs.tencentyun.com" -}}
 {{- $result := index $map $region | default "ccr.ccs.tencentyun.com" -}}
 {{- $result -}}
