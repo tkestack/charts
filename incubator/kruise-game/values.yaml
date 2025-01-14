@@ -20,7 +20,7 @@ replicaCount: 1
 
 image:
   repository: ccr.ccs.tencentyun.com/tke-market/kruise-game-manager
-  tag: v0.9.1
+  tag: v0.10.0
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
 
