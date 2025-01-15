@@ -1,4 +1,4 @@
-# Kruise Game v0.9.1
+# Kruise Game v0.10.0
 
 ## Configuration
 
@@ -16,7 +16,7 @@ The following table lists the configurable parameters of the kruise-game chart a
 | `kruiseGame.apiServerQpsBurst`   | Maximum burst for throttle of kruise-game-controller-manager                | `10`                             |
 | `replicaCount`                   | Replicas of kruise-game deployment                                          | `1`                              |
 | `image.repository`               | Repository for kruise-game image                                            | `ccr.ccs.tencentyun.com/tke-market/kruise-game-manager` |
-| `image.tag`                      | Tag for kruise-game image                                                   | `v0.9.1`                         |
+| `image.tag`                      | Tag for kruise-game image                                                   | `v0.10.0`                        |
 | `image.pullPolicy`               | ImagePullPolicy for kruise-game container                                   | `Always`                         |
 | `serviceAccount.annotations`     | The annotations for serviceAccount of kruise-game                           | ` `                              |
 | `service.port`                   | Port of kruise-game service                                                 | `8443`                           |

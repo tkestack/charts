@@ -263,24 +263,6 @@ rules:
       - update
       - watch
   - apiGroups:
-      - networking.cloud.tencent.com
-    resources:
-      - dedicatedclblisteners
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - networking.cloud.tencent.com
-    resources:
-      - dedicatedclblisteners/status
-    verbs:
-      - get
-  - apiGroups:
       - game.kruise.io
     resources:
       - gameservers
@@ -332,6 +314,24 @@ rules:
       - get
       - patch
       - update
+  - apiGroups:
+      - networking.cloud.tencent.com
+    resources:
+      - dedicatedclblisteners
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - networking.cloud.tencent.com
+    resources:
+      - dedicatedclblisteners/status
+    verbs:
+      - get
   - apiGroups:
       - networking.k8s.io
     resources:

@@ -98,15 +98,6 @@ spec:
           volumeMounts:
             - mountPath: /etc/kruise-game
               name: provider-config
-      topologySpreadConstraints:
-      - labelSelector:
-          matchLabels:
-            control-plane: {{ .Values.kruiseGame.fullname }}
-        matchLabelKeys:
-        - pod-template-hash
-        maxSkew: 1
-        topologyKey: topology.kubernetes.io/zone
-        whenUnsatisfiable:  ScheduleAnyway
       serviceAccountName: {{ .Values.kruiseGame.fullname }}
       terminationGracePeriodSeconds: 10
       volumes:
