@@ -1,0 +1,19 @@
+apiVersion: v2
+name: lws
+description: A general-purpose AI/ML inference workload that supports the distributed execution of large language models (LLM).
+
+type: application
+
+# This is the chart version. 
+version: 0.1.0
+
+home: https://github.com/kubernetes-sigs/lws
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/d470d11c-94a7-4ff6-9a36-6816f40548f5.png
+
+kubeVersion: '>=1.27.0-0'
+
+maintainers:
+- name: halewang@tencent.com
+
+# This is the version number of the application being deployed. 
+appVersion: "v0.5.0"
