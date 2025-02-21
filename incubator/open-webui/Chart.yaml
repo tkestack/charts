@@ -1,0 +1,47 @@
+apiVersion: v2
+name: open-webui
+version: 5.17.0
+appVersion: 0.5.15
+home: https://www.openwebui.com/
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/66e9d54f-4d32-4db7-abcc-acbb5b622089.png
+maintainers:
+  - name: rockerchen
+    email: rockerchen@tencent.com
+description: 'Open WebUI: A User-Friendly Web Interface for Chat Interactions 👋'
+keywords:
+  - llm
+  - chat
+  - web-ui
+  - open-webui
+sources:
+  - https://github.com/open-webui/helm-charts
+  - https://github.com/open-webui/open-webui/pkgs/container/open-webui
+  - https://github.com/otwld/ollama-helm/
+  - https://hub.docker.com/r/ollama/ollama
+  - https://charts.bitnami.com/bitnami
+annotations:
+  licenses: MIT
+dependencies:
+  - name: ollama
+    repository: https://otwld.github.io/ollama-helm/
+    version: '>=0.24.0'
+    import-values:
+      - child: service
+        parent: ollama.service
+    condition: ollama.enabled
+  - name: pipelines
+    repository: https://helm.openwebui.com
+    version: '>=0.0.1'
+    import-values:
+      - child: service
+        parent: pipelines.service
+    condition: pipelines.enabled
+  - name: tika
+    repository: https://apache.jfrog.io/artifactory/tika
+    version: '>=2.9.0'
+    condition: tika.enabled
+  - name: redis
+    repository: https://charts.bitnami.com/bitnami
+    version: '>=20.6.2'
+    alias: redis-cluster
+    condition: redis-cluster.enabled

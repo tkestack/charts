@@ -1,0 +1,28 @@
+apiVersion: v2
+appVersion: 2.9.0.0
+description: The official Helm chart to deploy Apache Tika on Kubernetes
+home: https://tika.apache.org
+icon: https://tika.apache.org/tika.png
+keywords:
+- apache
+- tika
+- apache-tika
+- tika-helm
+maintainers:
+- email: lewismc@apache.org
+  name: lewismc
+  url: https://github.com/lewismc
+- name: stijnbrouwers
+  url: https://github.com/stijnbrouwers
+- name: philipsoutham
+  url: https://github.com/philipsoutham
+- name: frascu
+  url: https://github.com/frascu
+- name: euven
+  url: https://github.com/euven
+name: tika
+sources:
+- https://github.com/apache/tika
+- https://github.com/apache/tika-helm
+type: application
+version: 2.9.0

@@ -1,0 +1,23 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ template "tika-helm.fullname" . }}
+  labels:
+    {{- include "tika-helm.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "tika-helm.selectorLabels" . | nindent 6 }}
+  egress:
+    - {}
+  ingress:
+    - ports:
+      - port: {{ .Values.service.port }}
+      {{- if not .Values.networkPolicy.allowExternal }}
+      from:
+        - podSelector:
+          matchLabels:
+            {{ template "tika-helm.fullname" . }}-client: "true"
+      {{- end }}
+{{- end }}
