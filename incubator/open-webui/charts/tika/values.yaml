@@ -1,0 +1,67 @@
+affinity: {}
+autoscaling:
+  apiVersion: autoscaling/v2beta1
+  enabled: false
+  maxReplicas: 100
+  minReplicas: 1
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+config:
+  base_url: http://localhost/
+fullnameOverride: ""
+image:
+  pullPolicy: IfNotPresent
+  repository: ccr.ccs.tencentyun.com/tke-market/apache-tika
+  tag: 2.9.0.0
+imagePullSecrets: []
+ingress:
+  annotations: {}
+  enabled: false
+  hosts:
+  - host: chart-example.local
+    paths: []
+  tls: []
+livenessProbe:
+  failureThreshold: 20
+  initialDelaySeconds: 15
+  periodSeconds: 5
+  scheme: HTTP
+  timeoutSeconds: 30
+nameOverride: ""
+networkPolicy:
+  allowExternal: false
+  enabled: false
+nodeSelector: {}
+podAnnotations: {}
+podSecurityContext: {}
+readinessProbe:
+  failureThreshold: 20
+  initialDelaySeconds: 15
+  periodSeconds: 5
+  scheme: HTTP
+  timeoutSeconds: 30
+replicaCount: 1
+resources:
+  limits:
+    cpu: "2"
+    memory: 2000Mi
+  requests:
+    cpu: "1"
+    memory: 1500Mi
+securityContext:
+  allowPrivilegeEscalation: true
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsGroup: 35002
+  runAsNonRoot: true
+  runAsUser: 35002
+service:
+  port: 9998
+  type: ClusterIP
+serviceAccount:
+  annotations: {}
+  create: true
+  name: ""
+tolerations: []

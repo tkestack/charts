@@ -1,0 +1,117 @@
+nameOverride: ""
+namespaceOverride: ""
+
+# -- Value of cluster domain
+clusterDomain: cluster.local
+
+annotations: {}
+podAnnotations: {}
+podLabels: {}
+replicaCount: 1
+image:
+  repository: ccr.ccs.tencentyun.com/tke-market/open-webui-pipelines
+  tag: main
+  pullPolicy: Always
+
+# -- Configure imagePullSecrets to use private registry
+# ref: <https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry>
+imagePullSecrets: []
+# imagePullSecrets:
+# - name: myRegistryKeySecretName
+
+resources: {}
+ingress:
+  enabled: true
+  class: ""
+  # -- Use appropriate annotations for your Ingress controller, e.g., for NGINX:
+  # nginx.ingress.kubernetes.io/rewrite-target: /
+  annotations: {}
+  host: ""
+  tls: false
+  existingSecret: ""
+persistence:
+  enabled: true
+  size: 10Gi
+  existingClaim: ""
+  # -- If using multiple replicas, you must update accessModes to ReadWriteMany
+  accessModes:
+    - ReadWriteOnce
+  storageClass: ""
+  selector: {}
+  annotations: {}
+
+serviceAccount:
+  enable: true
+  automountServiceAccountToken: false
+
+# -- Node labels for pod assignment.
+nodeSelector: {}
+
+# -- Tolerations for pod assignment
+tolerations: []
+
+# -- Affinity for pod assignment
+affinity: {}
+
+service:
+  type: ClusterIP
+  annotations: {}
+  port: 9099
+  containerPort: 9099
+  nodePort: ""
+  labels: {}
+  loadBalancerClass: ""
+
+# -- Additional environments variables on the output Deployment definition. These are used to pull initial Pipeline files, and help configure Pipelines with required values (e.g. Langfuse API keys)
+extraEnvVars:
+  # -- Example pipeline to pull and load on deployment startup, see current pipelines here: https://github.com/open-webui/pipelines/blob/main/examples
+  - name: PIPELINES_URLS
+    value: "https://github.com/open-webui/pipelines/blob/main/examples/filters/detoxify_filter_pipeline.py"
+  # - name: PIPELINES_API_KEY
+  #   valueFrom:
+  #     secretKeyRef: 
+  #       name: pipelines-keys
+  #       key: pipelines-api-key
+  # -- Langfuse example, including values used in Langfuse filter to connect
+  # - name: PIPELINES_URLS
+  #   value: "https://github.com/open-webui/pipelines/blob/main/examples/filters/langfuse_filter_pipeline.py"  
+  # - name: LANGFUSE_PUBLIC_KEY
+  #   valueFrom:
+  #     secretKeyRef: 
+  #       name: langfuse-keys
+  #       key: public-key
+  # - name: LANGFUSE_SECRET_KEY
+  #   valueFrom:
+  #     secretKeyRef: 
+  #       name: langfuse-keys
+  #       key: secret-key
+  # - name: LANGFUSE_HOST
+  #   value: https://us.cloud.langfuse.com
+
+# -- Configure container volume mounts
+# ref: <https://kubernetes.io/docs/tasks/configure-pod-container/configure-volume-storage/>
+volumeMounts: []
+  # - name: ""
+  #   mountPath: ""
+
+# -- Configure pod volumes
+# ref: <https://kubernetes.io/docs/tasks/configure-pod-container/configure-volume-storage/>
+volumes: []
+# - name: ""
+#   configMap:
+#     name: ""
+# - name: ""
+#   secret:
+#     name: ""
+# - name: ""
+#   emptyDir: {}
+
+# -- Extra resources to deploy with Open WebUI Pipelines
+extraResources:
+  []
+  # - apiVersion: v1
+  #   kind: ConfigMap
+  #   metadata:
+  #     name: example-configmap
+  #   data:
+  #     example-key: example-value

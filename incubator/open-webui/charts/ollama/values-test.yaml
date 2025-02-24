@@ -1,0 +1,14 @@
+ollama:
+
+  models:
+
+    pull:
+      - moondream
+    create:
+      - name: test
+        configMapRef: test-model-configmap
+        configMapKeyRef: test-model-configmap-key
+      - name: test2
+        template: |
+          FROM llama3.2
+          PARAMETER num_ctx 32768
