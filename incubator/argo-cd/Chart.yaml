@@ -1,17 +1,31 @@
-apiVersion: v1
-appVersion: 1.6.1
-description: A Helm chart for ArgoCD, a declarative, GitOps continuous delivery tool for Kubernetes.
+annotations:
+  artifacthub.io/changes: |
+    - kind: added
+      description: Added a comment how to pass values into argocd-cm ConfigMap
+  artifacthub.io/signKey: |
+    fingerprint: 2B8F22F57260EFA67BE1C5824B11F800CD9D2252
+    url: https://argoproj.github.io/argo-helm/pgp_keys.asc
+apiVersion: v2
+appVersion: v2.14.2
+dependencies:
+- condition: redis-ha.enabled
+  name: redis-ha
+  repository: https://dandydeveloper.github.io/charts/
+  version: 4.29.4
+description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool
+  for Kubernetes.
 home: https://github.com/argoproj/argo-helm
-icon: https://imgcache.qq.com/qcloud/tcloud_dtc/static/Industry_tke/3745a01d-b2ee-4af1-9f10-9b5f0d699350.png
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/3745a01d-b2ee-4af1-9f10-9b5f0d699350.png
 keywords:
 - argoproj
 - argocd
 - gitops
+kubeVersion: '>=1.25.0-0'
 maintainers:
-- name: alexec
-- name: alexmt
-- name: jessesuen
-- name: seanson
+- name: rockerchen
+  email: rockerchen@tencent.com
 name: argo-cd
-version: 2.5.3
-kubeVersion: < 1.22.0-x
+sources:
+- https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd
+- https://github.com/argoproj/argo-cd
+version: 7.8.5
