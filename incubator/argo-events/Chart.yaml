@@ -9,13 +9,13 @@ apiVersion: v2
 appVersion: v1.9.5
 description: A Helm chart for Argo Events, the event-driven workflow automation framework
 home: https://github.com/argoproj/argo-helm
-icon: https://avatars.githubusercontent.com/u/30269780?s=200&v=4
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/3745a01d-b2ee-4af1-9f10-9b5f0d699350.png
 keywords:
 - argoproj
 - argo-events
 maintainers:
-- name: argoproj
-  url: https://argoproj.github.io/
+- name: rockerchen
+  email: rockerchen@tencent.com
 name: argo-events
 sources:
 - https://github.com/argoproj/argo-events
