@@ -1,0 +1,71 @@
+# Default values for rollout.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# values for rollout installation
+installation:
+  namespace: kruise-rollout
+  createNamespace: true
+
+rollout:
+  fullname: kruise-rollout-controller-manager
+  healthBindPort: "8081"
+  metricsBindAddr: "127.0.0.1:8080"
+  webhook:
+    port: 9876
+    # ObjectSelector for workloads in MutatingWebhookConfiguration, which
+    # allow Rollout operator focuses on the workloads that users really care.
+    objectSelector:
+    #  - key: <your-focused-workload-label-key>
+    #    operator: In # Exists DoesNotExist NotIn
+    #    values:
+    #      - <your-focused-workload-label-values>
+
+
+  log:
+    level: 4
+  featureGates: AdvancedDeployment=true
+
+replicaCount: 2
+
+image:
+  repository: ccr.ccs.tencentyun.com/tke-market/kruise-rollout
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: v0.6.0
+imagePullSecrets:
+  # - name: for-your-secret-name
+serviceAccount:
+  # Annotations to add to the service account
+  annotations: {}
+
+service:
+  port: 443
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+tolerations:
+# Toleration represents the toleration object that can be attached to a pod.
+# The pod this Toleration is attached to tolerates any taint that matches
+# the triple <key,value,effect> using the matching operator <operator>.
+# you could find more info at https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+# - effect: NoSchedule
+#   key: test
+#   operator: Equal
+#   value: hello
