@@ -1,0 +1,499 @@
+# -- Install and upgrade CRDs
+installCRDs: true
+# -- Keep CRD's on helm uninstall
+keepCRDs: true
+
+# -- `false` runs controller in namespaced mode (does not require cluster RBAC)
+clusterInstall: true
+
+# -- flag to enable creation of cluster aggregate roles (requires cluster RBAC)
+createClusterAggregateRoles: true
+
+# -- String to partially override "argo-rollouts.fullname" template
+nameOverride:
+
+# -- String to fully override "argo-rollouts.fullname" template
+fullnameOverride:
+
+## Override APIVersions
+## If you want to template helm charts but cannot access k8s API server
+## you can set api versions here
+apiVersionOverrides:
+  # -- String to override apiVersion of ingresses rendered by this helm chart
+  ingress: "" # networking.k8s.io/v1beta1
+
+# -- Override the Kubernetes version, which is used to evaluate certain manifests
+kubeVersionOverride: ""
+
+# -- Additional manifests to deploy within the chart. A list of objects.
+## Can be used to add secrets for Analysis with 3rd-party monitoring solutions.
+extraObjects: []
+  # - apiVersion: v1
+  #   kind: Secret
+  #   metadata:
+  #     name: datadog
+  #   type: Opaque
+  #   data:
+  #     address: https://api.datadoghq.com
+  #     api-key: <datadog-api-key>
+  #     app-key: <datadog-app-key>
+
+global:
+  # -- Annotations for all deployed Deployments
+  deploymentAnnotations: {}
+  # -- Labels for all deployed Deployments
+  deploymentLabels: {}
+  # -- Number of old deployment ReplicaSets to retain. The rest will be garbage collected.
+  revisionHistoryLimit: 10
+
+controller:
+  # -- Value of label `app.kubernetes.io/component`
+  component: rollouts-controller
+  # -- Annotations to be added to the controller deployment
+  deploymentAnnotations: {}
+  # -- Labels to be added to the controller deployment
+  deploymentLabels: {}
+  # -- Annotations to be added to application controller pods
+  podAnnotations: {}
+  # -- Labels to be added to the application controller pods
+  podLabels: {}
+  # -- [Node selector]
+  nodeSelector: {}
+  # -- [Tolerations] for use with node taints
+  tolerations: []
+  # -- Assign custom [affinity] rules to the deployment
+  affinity: {}
+  logging:
+    # -- Set the logging level (one of: `debug`, `info`, `warn`, `error`)
+    level: info
+    # -- Set the klog logging level
+    kloglevel: "0"
+    # -- Set the logging format (one of: `text`, `json`)
+    format: "text"
+
+  # -- Assign custom [TopologySpreadConstraints] rules to the controller
+  ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  ## If labelSelector is left out, it will default to the labelSelector configuration of the deployment
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: DoNotSchedule
+
+  # -- terminationGracePeriodSeconds for container lifecycle hook
+  terminationGracePeriodSeconds: 30
+  # -- Specify lifecycle hooks for the  controller
+  lifecycle: {}
+  # -- [priorityClassName] for the controller
+  priorityClassName: ""
+  # -- The number of controller pods to run
+  replicas: 2
+  image:
+    # -- Registry to use
+    registry: ccr.ccs.tencentyun.com
+    # -- Repository to use
+    repository: tke-market/argo-rollouts
+    # -- Overrides the image tag (default is the chart appVersion)
+    tag: ""
+    # -- Image pull policy
+    pullPolicy: IfNotPresent
+
+  # -- Additional command line arguments to pass to rollouts-controller.  A list of flags.
+  extraArgs: []
+
+  # -- Additional environment variables for rollouts-controller. A list of name/value maps.
+  extraEnv: []
+    # - name: AWS_REGION
+    #   value: us-east-1
+
+  # -- Literal yaml for extra containers to be added to controller deployment.
+  ## Additional containers to add to the rollouts controller deployment
+  ## This will be rendered as the literal yaml
+  extraContainers: []
+
+  # -- Init containers to add to the rollouts controller pod
+  ## This will be rendered as the literal yaml
+  initContainers: []
+  #  - name: download-tools
+  #    image: alpine:3.8
+  #    command: [sh, -c]
+  #    args:
+  #      -  ls
+
+  # -- Resource limits and requests for the controller pods.
+  resources: {}
+  #  limits:
+  #    cpu: 100m
+  #    memory: 128Mi
+  #    ephemeral-storage: 1Gi
+  #  requests:
+  #    cpu: 50m
+  #    memory: 64Mi
+
+  # -- flag to enable creation of cluster controller role (requires cluster RBAC)
+  createClusterRole: true
+
+  # Controller container ports
+  containerPorts:
+    # -- Metrics container port
+    metrics: 8090
+    # -- Healthz container port
+    healthz: 8080
+
+  metrics:
+    # -- Deploy metrics service
+    enabled: false
+    service:
+      # -- Metrics service port name
+      portName: metrics
+      # -- Metrics service port
+      port: 8090
+      # -- Service annotations
+      annotations: {}
+    serviceMonitor:
+      # -- Enable a prometheus ServiceMonitor
+      enabled: false
+      # -- Namespace to be used for the ServiceMonitor
+      namespace: ""
+      # -- Labels to be added to the ServiceMonitor
+      additionalLabels: {}
+      # -- Annotations to be added to the ServiceMonitor
+      additionalAnnotations: {}
+      # -- RelabelConfigs to apply to samples before scraping
+      relabelings: []
+      # -- MetricRelabelConfigs to apply to samples before ingestion
+      metricRelabelings: []
+
+  # -- Configure liveness [probe] for the controller
+  # @default -- See [values.yaml]
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: healthz
+    initialDelaySeconds: 30
+    periodSeconds: 20
+    failureThreshold: 3
+    successThreshold: 1
+    timeoutSeconds: 10
+
+  # -- Configure readiness [probe] for the controller
+  # @default -- See [values.yaml]
+  readinessProbe:
+    httpGet:
+      path: /metrics
+      port: metrics
+    initialDelaySeconds: 15
+    periodSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+    timeoutSeconds: 4
+
+  ## Configure Pod Disruption Budget for the controller
+  pdb:
+    # -- Labels to be added to controller [Pod Disruption Budget]
+    labels: {}
+    # -- Annotations to be added to controller [Pod Disruption Budget]
+    annotations: {}
+    # -- Deploy a [Pod Disruption Budget] for the controller
+    enabled: false
+    # -- Minimum number / percentage of pods that should remain scheduled
+    minAvailable: # 1
+    # -- Maximum number / percentage of pods that may be made unavailable
+    maxUnavailable: # 0
+
+  # -- Additional volumes to add to the controller pod
+  volumes: []
+    # - configMap:
+    #     name: my-certs-cm
+    #   name: my-certs
+
+  # -- Additional volumeMounts to add to the controller container
+  volumeMounts: []
+    # - mountPath: /etc/ssl/certs
+    #   name: my-certs
+
+  # -- Configures 3rd party metric providers for controller
+  ## Ref: https://argo-rollouts.readthedocs.io/en/stable/analysis/plugins/
+  metricProviderPlugins: []
+    # - name: "argoproj-labs/sample-prometheus" # name of the plugin, it must match the name required by the plugin so that it can find its configuration
+    #   location: "file://./my-custom-plugin" # supports http(s):// urls and file://
+
+  # -- Configures 3rd party traffic router plugins for controller
+  ## Ref: https://argo-rollouts.readthedocs.io/en/stable/features/traffic-management/plugins/
+  trafficRouterPlugins: []
+    # - name: "argoproj-labs/sample-nginx" # name of the plugin, it must match the name required by the plugin so it can find it's configuration
+    #   location: "file://./my-custom-plugin" # supports http(s):// urls and file://
+
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# -- Annotations to be added to all CRDs
+crdAnnotations: {}
+
+# -- Annotations for the all deployed pods
+podAnnotations: {}
+
+# -- Security Context to set on pod level
+podSecurityContext:
+  runAsNonRoot: true
+
+# -- Security Context to set on container level
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  seccompProfile:
+    type: RuntimeDefault
+
+# -- Annotations to be added to the Rollout service
+serviceAnnotations: {}
+
+# -- Labels to be added to the Rollout pods
+podLabels: {}
+
+# -- Secrets with credentials to pull images from a private registry. Registry secret names as an array.
+imagePullSecrets: []
+# - name: argo-pull-secret
+
+providerRBAC:
+  # -- Toggles addition of provider-specific RBAC rules to the controller Role and ClusterRole
+  enabled: true
+  # providerRBAC.enabled must be true in order to toggle the individual providers
+  providers:
+    # -- Adds RBAC rules for the Istio provider
+    istio: true
+    # -- Adds RBAC rules for the SMI provider
+    smi: true
+    # -- Adds RBAC rules for the Ambassador provider
+    ambassador: true
+    # -- Adds RBAC rules for the AWS Load Balancer Controller provider
+    awsLoadBalancerController: true
+    # -- Adds RBAC rules for the AWS App Mesh provider
+    awsAppMesh: true
+    # -- Adds RBAC rules for the Traefik provider
+    traefik: true
+    # -- Adds RBAC rules for the Apisix provider
+    apisix: true
+    # -- Adds RBAC rules for the Contour provider, see `https://github.com/argoproj-labs/rollouts-plugin-trafficrouter-contour/blob/main/README.md`
+    contour: true
+    # -- Adds RBAC rules for the Gloo Platform provider, see `https://github.com/argoproj-labs/rollouts-plugin-trafficrouter-glooplatform/blob/main/README.md`
+    glooPlatform: true
+    # -- Adds RBAC rules for the Gateway API provider
+    gatewayAPI: true
+  # -- Additional RBAC rules for others providers
+  additionalRules: []
+
+dashboard:
+  # -- Deploy dashboard server
+  enabled: false
+  # -- Set cluster role to readonly
+  readonly: false
+  # -- Value of label `app.kubernetes.io/component`
+  component: rollouts-dashboard
+  # -- Annotations to be added to the dashboard deployment
+  deploymentAnnotations: {}
+  # -- Labels to be added to the dashboard deployment
+  deploymentLabels: {}
+  # -- Annotations to be added to application dashboard pods
+  podAnnotations: {}
+  # -- Labels to be added to the application dashboard pods
+  podLabels: {}
+  # -- [Node selector]
+  nodeSelector: {}
+  # -- [Tolerations] for use with node taints
+  tolerations: []
+  # -- Assign custom [affinity] rules to the deployment
+  affinity: {}
+  logging:
+    # -- Set the logging level (one of: `debug`, `info`, `warn`, `error`)
+    level: info
+    # -- Set the klog logging level
+    kloglevel: "0"
+
+  # -- Assign custom [TopologySpreadConstraints] rules to the dashboard server
+  ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  ## If labelSelector is left out, it will default to the labelSelector configuration of the deployment
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: DoNotSchedule
+
+  # -- [priorityClassName] for the dashboard server
+  priorityClassName: ""
+
+  # -- flag to enable creation of dashbord cluster role (requires cluster RBAC)
+  createClusterRole: true
+
+  # -- The number of dashboard pods to run
+  replicas: 1
+  image:
+    # -- Registry to use
+    registry: ccr.ccs.tencentyun.com
+    # --  Repository to use
+    repository: tke-market/kubectl-argo-rollouts
+    # -- Overrides the image tag (default is the chart appVersion)
+    tag: ""
+    # -- Image pull policy
+    pullPolicy: IfNotPresent
+  # -- Additional command line arguments to pass to rollouts-dashboard. A list of flags.
+  extraArgs: []
+  # -- Additional environment variables for rollouts-dashboard. A list of name/value maps.
+  extraEnv: []
+    # - name: FOO
+    #   value: bar
+  # -- Resource limits and requests for the dashboard pods.
+  resources: {}
+  # -- Security Context to set on pod level
+  podSecurityContext:
+    runAsNonRoot: true
+  # -- Security Context to set on container level
+  containerSecurityContext: {}
+  service:
+    # -- Sets the type of the Service
+    type: ClusterIP
+    # -- The class of the load balancer implementation
+    loadBalancerClass: ""
+    # -- LoadBalancer will get created with the IP specified in this field
+    loadBalancerIP: ""
+    # -- Source IP ranges to allow access to service from
+    loadBalancerSourceRanges: []
+    # -- Dashboard service external IPs
+    externalIPs: []
+    # -- Service annotations
+    annotations: {}
+    # -- Service labels
+    labels: {}
+    # -- Service port name
+    portName: dashboard
+    # -- Service port
+    port: 3100
+    # -- Service target port
+    targetPort: 3100
+    # -- (int) Service nodePort
+    nodePort:
+  serviceAccount:
+    # -- Specifies whether a dashboard service account should be created
+    create: true
+    # -- Annotations to add to the dashboard service account
+    annotations: {}
+    # -- The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+  ## Configure Pod Disruption Budget for the dashboard
+  pdb:
+    # -- Labels to be added to dashboard [Pod Disruption Budget]
+    labels: {}
+    # -- Annotations to be added to dashboard [Pod Disruption Budget]
+    annotations: {}
+    # -- Deploy a [Pod Disruption Budget] for the dashboard
+    enabled: false
+    # -- Minimum number / percentage of pods that should remain scheduled
+    minAvailable: # 1
+    # -- Maximum number / percentage of pods that may be made unavailable
+    maxUnavailable: # 0
+
+  ## Ingress configuration.
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+  ##
+  ingress:
+    # -- Enable dashboard ingress support
+    enabled: false
+    # -- Dashboard ingress annotations
+    annotations: {}
+    # -- Dashboard ingress labels
+    labels: {}
+    # -- Dashboard ingress class name
+    ingressClassName: ""
+
+    # -- Dashboard ingress hosts
+    ## Argo Rollouts Dashboard Ingress.
+    ## Hostnames must be provided if Ingress is enabled.
+    ## Secrets must be manually created in the namespace
+    hosts: []
+      # - argorollouts.example.com
+
+    # -- Dashboard ingress paths
+    paths:
+      - /
+    # -- Dashboard ingress path type
+    pathType: Prefix
+    # -- Dashboard ingress extra paths
+    extraPaths: []
+      # - path: /*
+      #   backend:
+      #     serviceName: ssl-redirect
+      #     servicePort: use-annotation
+      ## for Kubernetes >=1.19 (when "networking.k8s.io/v1" is used)
+      # - path: /*
+      #   pathType: Prefix
+      #   backend:
+      #     service
+      #       name: ssl-redirect
+      #       port:
+      #         name: use-annotation
+
+    # -- Dashboard ingress tls
+    tls: []
+      # - secretName: argorollouts-example-tls
+      #   hosts:
+      #     - argorollouts.example.com
+
+  # -- Additional volumes to add to the dashboard pod
+  volumes: []
+
+  # -- Additional volumeMounts to add to the dashboard container
+  volumeMounts: []
+
+notifications:
+  configmap:
+    # -- Whether to create notifications configmap
+    create: true
+
+  secret:
+    # -- Whether to create notifications secret.
+    ## If you want to manually create secret, do not forget to add proper label to it: "app.kubernetes.io/component: {{ .Values.controller.component }}".
+    create: false
+    # -- Generic key:value pairs to be inserted into the notifications secret
+    items: {}
+      # slack-token:
+    # -- Annotations to be added to the notifications secret
+    annotations: {}
+
+  # -- Configures notification services
+  notifiers: {}
+    # service.slack: |
+    #   token: $slack-token
+
+  # -- Notification templates
+  templates: {}
+    # template.my-purple-template: |
+    #   message: |
+    #     Rollout {{.rollout.metadata.name}} has purple image
+    #   slack:
+    #       attachments: |
+    #           [{
+    #             "title": "{{ .rollout.metadata.name}}",
+    #             "color": "#800080"
+    #           }]
+
+  # -- The trigger defines the condition when the notification should be sent
+  triggers: {}
+    # trigger.on-purple: |
+    #   - send: [my-purple-template]
+    #     when: rollout.spec.template.spec.containers[0].image == 'argoproj/rollouts-demo:purple'
+
+  # -- The subscriptions define the subscriptions to the triggers in a general way for all rollouts
+  subscriptions: []
+    # - recipients:
+    #   - slack:<channel>
+    #   triggers:
+    #   - on-rollout-completed
+    #   - on-rollout-aborted
