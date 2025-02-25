@@ -1,0 +1,16 @@
+{{- if .Values.serviceAccount.create }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ template "flagger.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+  {{- if .Values.serviceAccount.annotations }}
+  annotations:
+{{ toYaml .Values.serviceAccount.annotations | indent 4 }}
+  {{- end }}
+  labels:
+    helm.sh/chart: {{ template "flagger.chart" . }}
+    app.kubernetes.io/name: {{ template "flagger.name" . }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

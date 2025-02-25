@@ -1,0 +1,27 @@
+apiVersion: v1
+appVersion: 1.40.0
+description: Flagger is a progressive delivery operator for Kubernetes
+home: https://flagger.app
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/2180ef6e-99a7-4884-9357-ff8e31daf496.png
+keywords:
+- flagger
+- istio
+- appmesh
+- linkerd
+- kuma
+- osm
+- smi
+- gloo
+- contour
+- nginx
+- traefik
+- gitops
+- canary
+kubeVersion: '>=1.19.0-0'
+maintainers:
+- name: rockerchen
+  email: rockerchen@tencent.com
+name: flagger
+sources:
+- https://github.com/fluxcd/flagger
+version: 1.40.0
