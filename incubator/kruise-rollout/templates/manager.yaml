@@ -1,0 +1,111 @@
+{{- if .Values.installation.createNamespace }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    control-plane: {{ .Values.rollout.fullname }}
+  name: {{ .Values.installation.namespace }}
+{{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kruise-rollout-webhook-service
+  namespace: {{ .Values.installation.namespace }}
+spec:
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.rollout.webhook.port }}
+  selector:
+    control-plane: {{ .Values.rollout.fullname }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.rollout.fullname }}
+  namespace: {{ .Values.installation.namespace }}
+  labels:
+    control-plane: {{ .Values.rollout.fullname }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      control-plane: {{ .Values.rollout.fullname }}
+  minReadySeconds: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 100%
+  template:
+    metadata:
+      labels:
+        control-plane: {{ .Values.rollout.fullname }}
+    spec:
+{{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+{{- toYaml . | nindent 8 }}
+{{- end }}
+      serviceAccountName: {{ .Values.rollout.fullname }}
+      containers:
+        - name: {{ .Chart.Name }}
+          args:
+            - --leader-elect
+            - --health-probe-bind-address=:{{ .Values.rollout.healthBindPort }}
+            - --metrics-bind-address={{ .Values.rollout.metricsBindAddr }}
+            - --v={{ .Values.rollout.log.level }}
+            {{- if .Values.rollout.featureGates }}
+            - --feature-gates={{ .Values.rollout.featureGates }}
+            {{- end }}
+          command:
+            - /manager
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          ports:
+            - containerPort: {{ .Values.rollout.webhook.port }}
+              name: webhook-server
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.rollout.healthBindPort }}
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: {{ .Values.rollout.healthBindPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: control-plane
+                      operator: In
+                      values:
+                        - {{ .Values.rollout.fullname }}
+                topologyKey: kubernetes.io/hostname
+              weight: 100
+      topologySpreadConstraints:
+      - labelSelector:
+          matchLabels:
+            control-plane: {{ .Values.rollout.fullname }}
+        matchLabelKeys:
+        - pod-template-hash
+        maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable:  ScheduleAnyway
+      {{- with .Values.tolerations }}
+      tolerations:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
