@@ -160,8 +160,8 @@ Fields to note:
 | controller.extraContainers | list | `[]` | Extra containers to be added to the controller deployment |
 | controller.extraEnv | list | `[]` | Extra environment variables to provide to the controller container |
 | controller.extraInitContainers | list | `[]` | Enables init containers to be added to the controller deployment |
-| controller.image.registry | string | `"quay.io"` | Registry to use for the controller |
-| controller.image.repository | string | `"argoproj/workflow-controller"` | Registry to use for the controller |
+| controller.image.registry | string | `"ccr.ccs.tencentyun.com"` | Registry to use for the controller |
+| controller.image.repository | string | `"tke-market/argo-workflow-controller"` | Registry to use for the controller |
 | controller.image.tag | string | `""` | Image tag for the workflow controller. Defaults to `.Values.images.tag`. |
 | controller.initialDelay | string | `nil` | Resolves ongoing, uncommon AWS EKS bug: https://github.com/argoproj/argo-workflows/pull/4224 |
 | controller.instanceID.enabled | bool | `false` | Configures the controller to filter workflow submissions to only those which have a matching instanceID attribute. |
@@ -262,8 +262,8 @@ Fields to note:
 | executor.args | list | `[]` | Passes arguments to the executor processes |
 | executor.env | list | `[]` | Adds environment variables for the executor. |
 | executor.image.pullPolicy | string | `""` | Image PullPolicy to use for the Workflow Executors. Defaults to `.Values.images.pullPolicy`. |
-| executor.image.registry | string | `"quay.io"` | Registry to use for the Workflow Executors |
-| executor.image.repository | string | `"argoproj/argoexec"` | Repository to use for the Workflow Executors |
+| executor.image.registry | string | `"ccr.ccs.tencentyun.com"` | Registry to use for the Workflow Executors |
+| executor.image.repository | string | `"tke-market/argoexec"` | Repository to use for the Workflow Executors |
 | executor.image.tag | string | `""` | Image tag for the workflow executor. Defaults to `.Values.images.tag`. |
 | executor.resources | object | `{}` | Resource limits and requests for the Workflow Executors |
 | executor.securityContext | object | `{}` | sets security context for the executor container |
@@ -297,8 +297,8 @@ Fields to note:
 | server.extraEnv | list | `[]` | Extra environment variables to provide to the argo-server container |
 | server.extraInitContainers | list | `[]` | Enables init containers to be added to the server deployment |
 | server.hostAliases | list | `[]` | Mapping between IP and hostnames that will be injected as entries in the pod's hosts files |
-| server.image.registry | string | `"quay.io"` | Registry to use for the server |
-| server.image.repository | string | `"argoproj/argocli"` | Repository to use for the server |
+| server.image.registry | string | `"ccr.ccs.tencentyun.com"` | Registry to use for the server |
+| server.image.repository | string | `"tke-market/argocli"` | Repository to use for the server |
 | server.image.tag | string | `""` | Image tag for the Argo Workflows server. Defaults to `.Values.images.tag`. |
 | server.ingress.annotations | object | `{}` | Additional ingress annotations |
 | server.ingress.enabled | bool | `false` | Enable an ingress resource |
@@ -390,14 +390,14 @@ Fields to note:
 
    ```yaml
    image:
-     registry: quay.io
-     repository: argoproj/argocli
+     registry: ccr.ccs.tencentyun.com
+     repository: tke-market/argocli
      tag: v3.0.1
    ```
 
    this also makes it easier for automatic update tooling (eg. renovate bot) to detect and update images.
 
-1. switched to quay.io as the default registry for all images
+1. switched to ccr.ccs.tencentyun.com as the default registry for all images
 1. removed any included usage of Minio
 1. aligned the configuration of serviceAccounts with the argo-cd chart, ie: what used to be `server.createServiceAccount` is now `server.serviceAccount.create`
 1. moved the field previously known as `telemetryServicePort` inside the `telemetryConfig` as `telemetryConfig.servicePort` - same for `metricsConfig`
