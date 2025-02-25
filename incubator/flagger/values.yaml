@@ -4,7 +4,7 @@
 # annotations: {}
 
 image:
-  repository: ghcr.io/fluxcd/flagger
+  repository: ccr.ccs.tencentyun.com/tke-market/flagger
   tag: 1.40.0
   pullPolicy: IfNotPresent
   pullSecret:
@@ -170,7 +170,7 @@ affinity:
 prometheus:
   # to be used with ingress controllers
   install: false
-  image: docker.io/prom/prometheus:v2.41.0
+  image: ccr.ccs.tencentyun.com/tke-market/prometheus:v2.41.0
   pullSecret:
   retention: 2h
   # when enabled, it will add a security context for the prometheus pod

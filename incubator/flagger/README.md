@@ -132,7 +132,7 @@ The following tables lists the configurable parameters of the Flagger chart and 
 
 | Parameter                            | Description                                                                                                                                        | Default                               |
 |--------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------|
-| `image.repository`                   | Image repository                                                                                                                                   | `ghcr.io/fluxcd/flagger`              |
+| `image.repository`                   | Image repository                                                                                                                                   | `ccr.ccs.tencentyun.com/tke-market/flagger`              |
 | `image.tag`                          | Image tag                                                                                                                                          | `<VERSION>`                           |
 | `image.pullPolicy`                   | Image pull policy                                                                                                                                  | `IfNotPresent`                        |
 | `logLevel`                           | Log level                                                                                                                                          | `info`                                |
