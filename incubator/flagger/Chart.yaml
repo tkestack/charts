@@ -1,0 +1,28 @@
+apiVersion: v1
+appVersion: 1.40.0
+description: Flagger is a progressive delivery operator for Kubernetes
+home: https://flagger.app
+icon: https://raw.githubusercontent.com/fluxcd/flagger/main/docs/logo/flagger-icon.png
+keywords:
+- flagger
+- istio
+- appmesh
+- linkerd
+- kuma
+- osm
+- smi
+- gloo
+- contour
+- nginx
+- traefik
+- gitops
+- canary
+kubeVersion: '>=1.19.0-0'
+maintainers:
+- email: stefanprodan@users.noreply.github.com
+  name: stefanprodan
+  url: https://github.com/stefanprodan
+name: flagger
+sources:
+- https://github.com/fluxcd/flagger
+version: 1.40.0

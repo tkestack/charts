@@ -1,0 +1,205 @@
+# Default values for flagger.
+
+## Deployment annotations
+# annotations: {}
+
+image:
+  repository: ghcr.io/fluxcd/flagger
+  tag: 1.40.0
+  pullPolicy: IfNotPresent
+  pullSecret:
+
+# accepted values are debug, info, warning, error (defaults to info)
+logLevel: info
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8080"
+  appmesh.k8s.aws/sidecarInjectorWebhook: disabled
+  linkerd.io/inject: enabled
+
+# priority class name for pod priority configuration
+podPriorityClassName: ""
+
+metricsServer: "http://prometheus:9090"
+
+# creates serviceMonitor for monitoring Flagger metrics
+serviceMonitor:
+  enabled: false
+  honorLabels: false
+  # Set the namespace the ServiceMonitor should be deployed
+  # namespace: monitoring
+  # Set labels for the ServiceMonitor, use this to define your scrape label for Prometheus Operator
+  # labels:
+
+# accepted values are kubernetes, istio, linkerd, appmesh, contour, nginx, gloo, skipper, traefik, apisix, osm
+meshProvider: ""
+
+# single namespace restriction
+namespace: ""
+
+# list of pod labels that Flagger uses to create pod selectors
+# defaults to: app,name,app.kubernetes.io/name
+selectorLabels: ""
+
+# when enabled, flagger will track changes in Secrets and ConfigMaps referenced in the target deployment (enabled by default)
+configTracking:
+  enabled: true
+
+# annotations prefix for NGINX ingresses
+ingressAnnotationsPrefix: ""
+
+# ingress class used for annotating HTTPProxy objects
+ingressClass: ""
+
+# when enabled, it will add a security context for the flagger pod. You may
+# need to disable this if you are running flagger on OpenShift
+securityContext:
+  enabled: true
+  context:
+    readOnlyRootFilesystem: true
+    runAsUser: 10001
+
+# when specified, flagger will publish events to the provided webhook
+eventWebhook: ""
+
+# when specified, flagger will add the cluster name to alerts
+clusterName: ""
+
+slack:
+  user: flagger
+  channel:
+  # incoming webhook https://api.slack.com/incoming-webhooks
+  url:
+  proxy:
+
+msteams:
+  # MS Teams incoming webhook URL
+  url:
+
+podMonitor:
+  enabled: false
+  namespace:
+  interval: 15s
+  additionalLabels: {}
+  honorLabels: false
+
+#env:
+#- name: SLACK_URL
+#  valueFrom:
+#    secretKeyRef:
+#      name: slack
+#      key: url
+#- name: SLACK_PROXY_URL
+#  valueFrom:
+#    secretKeyRef:
+#      name: slack
+#      key: proxy-url
+#- name: MSTEAMS_URL
+#  valueFrom:
+#    secretKeyRef:
+#      name: msteams
+#      key: url
+#- name: MSTEAMS_PROXY_URL
+#  valueFrom:
+#    secretKeyRef:
+#      name: msteams
+#      key: proxy-url
+#- name: EVENT_WEBHOOK_URL
+#  valueFrom:
+#    secretKeyRef:
+#      name: eventwebhook
+#      key: url
+env: []
+
+leaderElection:
+  enabled: false
+  replicaCount: 1
+
+serviceAccount:
+  # serviceAccount.create: Whether to create a service account or not
+  create: true
+  # serviceAccount.name: The name of the service account to create or use
+  name: ""
+  # serviceAccount.annotations: Annotations for service account
+  annotations: {}
+
+rbac:
+  # rbac.create: `true` if rbac resources should be created
+  create: true
+  # rbac.pspEnabled: `true` if PodSecurityPolicy resources should be created
+  pspEnabled: false
+
+crd:
+  # crd.create: `true` if custom resource definitions should be created
+  create: false
+
+linkerdAuthPolicy:
+  # linkerdAuthPolicy.create: Whether to create an AuthorizationPolicy in
+  # linkerd viz' namespace to allow flagger to reach viz' prometheus service
+  create: false
+  # linkerdAuthPolicy.namespace: linkerd-viz' namespace
+  namespace: linkerd-viz
+
+nameOverride: ""
+fullnameOverride: ""
+
+resources:
+  limits:
+    memory: "512Mi"
+    cpu: "1000m"
+  requests:
+    memory: "32Mi"
+    cpu: "10m"
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: '{{ template "flagger.name" . }}'
+              app.kubernetes.io/instance: '{{ .Release.Name }}'
+          topologyKey: kubernetes.io/hostname
+
+prometheus:
+  # to be used with ingress controllers
+  install: false
+  image: docker.io/prom/prometheus:v2.41.0
+  pullSecret:
+  retention: 2h
+  # when enabled, it will add a security context for the prometheus pod
+  securityContext:
+    enabled: false
+    context:
+      readOnlyRootFilesystem: true
+      runAsUser: 10001
+
+kubeconfigQPS: ""
+kubeconfigBurst: ""
+
+#  Multi-cluster service mesh (shared control plane single-network)
+controlplane:
+  kubeconfig:
+    # controlplane.kubeconfig.secretName: The name of the secret containing the mesh control plane kubeconfig
+    secretName: ""
+    # controlplane.kubeconfig.key: The name of secret data key that contains the mesh control plane kubeconfig
+    key: "kubeconfig"
+
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+
+podLabels: {}
+
+noCrossNamespaceRefs: false
+
+#Placeholder to supply additional volumes to the flagger pod
+additionalVolumes: {}
+  # - name: tmpfs
+  #   emptyDir: {}

@@ -1,0 +1,184 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "flagger.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    helm.sh/chart: {{ template "flagger.chart" . }}
+    app.kubernetes.io/name: {{ template "flagger.name" . }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+  {{- with .Values.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.leaderElection.replicaCount }}
+  {{- if eq .Values.leaderElection.enabled false }}
+  strategy:
+    type: Recreate
+  {{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ template "flagger.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ template "flagger.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/version: {{ .Chart.AppVersion }}
+      {{- if .Values.podLabels }}
+      {{- range $key, $value := .Values.podLabels }}
+        {{ $key }}: {{ $value | quote }}
+      {{- end }}
+      {{- end }}
+      annotations:
+        {{- if .Values.podAnnotations }}
+{{ toYaml .Values.podAnnotations | indent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ template "flagger.serviceAccountName" . }}
+      {{- if .Values.affinity }}
+      affinity:
+        {{- tpl (toYaml .Values.affinity) . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.image.pullSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecret }}
+      {{- end }}
+      {{- if .Values.controlplane.kubeconfig.secretName }}
+      volumes:
+        - name: kubeconfig
+          secret:
+            secretName: "{{ .Values.controlplane.kubeconfig.secretName }}"
+      {{- end }}
+        {{- if .Values.additionalVolumes }}
+          {{- toYaml .Values.additionalVolumes | nindent 8 -}}
+        {{- end }}
+      {{- if .Values.podPriorityClassName }}
+      priorityClassName: {{ .Values.podPriorityClassName }}
+      {{- end }}                  
+      containers:
+        - name: flagger
+          {{- if .Values.securityContext.enabled }}
+          securityContext:
+{{ toYaml .Values.securityContext.context | indent 12 }}
+          {{- end }}
+          {{- if .Values.controlplane.kubeconfig.secretName }}
+          volumeMounts:
+            - name: kubeconfig
+              mountPath: "/tmp/controlplane"
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+          - name: http
+            containerPort: 8080
+          command:
+          - ./flagger
+          - -log-level={{ .Values.logLevel }}
+          {{- if .Values.meshProvider }}
+          - -mesh-provider={{ .Values.meshProvider }}
+          {{- end }}
+          {{- if .Values.prometheus.install }}
+          - -metrics-server=http://{{ template "flagger.fullname" . }}-prometheus:9090
+          {{- else }}
+          - -metrics-server={{ .Values.metricsServer }}
+          {{- end }}
+          {{- if .Values.selectorLabels }}
+          - -selector-labels={{ .Values.selectorLabels }}
+          {{- end }}
+          {{- if .Values.configTracking }}
+          - -enable-config-tracking={{ .Values.configTracking.enabled }}
+          {{- end }}
+          {{- if .Values.namespace }}
+          - -namespace={{ .Values.namespace }}
+          {{- end }}
+          {{- if .Values.slack.url }}
+          - -slack-url={{ .Values.slack.url }}
+          {{- end }}
+          {{- if .Values.slack.proxyUrl }}
+          - -slack-proxy-url={{ .Values.slack.proxyUrl }}
+          {{- end }}
+          {{- if .Values.slack.user }}
+          - -slack-user={{ .Values.slack.user }}
+          {{- end }}
+          {{- if .Values.slack.channel }}
+          - -slack-channel={{ .Values.slack.channel }}
+          {{- end }}
+          {{- if .Values.msteams.url }}
+          - -msteams-url={{ .Values.msteams.url }}
+          {{- end }}
+          {{- if .Values.msteams.proxyUrl }}
+          - -msteams-proxy-url={{ .Values.msteams.proxyUrl }}
+          {{- end }}
+          {{- if .Values.leaderElection.enabled }}
+          - -enable-leader-election=true
+          - -leader-election-namespace={{ .Release.Namespace }}
+          {{- end }}
+          {{- if .Values.ingressAnnotationsPrefix }}
+          - -ingress-annotations-prefix={{ .Values.ingressAnnotationsPrefix }}
+          {{- end }}
+          {{- if .Values.includeLabelPrefix }}
+          - -include-label-prefix={{ .Values.includeLabelPrefix }}
+          {{- end }}
+          {{- if .Values.ingressClass }}
+          - -ingress-class={{ .Values.ingressClass }}
+          {{- end }}
+          {{- if .Values.eventWebhook }}
+          - -event-webhook={{ .Values.eventWebhook }}
+          {{- end }}
+          {{- if .Values.kubeconfigQPS }}
+          - -kubeconfig-qps={{ .Values.kubeconfigQPS }}
+          {{- end }}
+          {{- if .Values.kubeconfigBurst }}
+          - -kubeconfig-burst={{ .Values.kubeconfigBurst }}
+          {{- end }}
+          {{- if .Values.controlplane.kubeconfig.secretName }}
+          - -kubeconfig-service-mesh=/tmp/controlplane/{{ .Values.controlplane.kubeconfig.key }}
+          {{- end }}
+          {{- if .Values.threadiness }}
+          - -threadiness={{ .Values.threadiness }}
+          {{- end }}
+          {{- if .Values.clusterName }}
+          - -cluster-name={{ .Values.clusterName }}
+          {{- end }}
+          {{- if .Values.noCrossNamespaceRefs }}
+          - -no-cross-namespace-refs={{ .Values.noCrossNamespaceRefs }}
+          {{- end }}
+          livenessProbe:
+            exec:
+              command:
+              - wget
+              - --quiet
+              - --tries=1
+              - --timeout=4
+              - --spider
+              - http://localhost:8080/healthz
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+              - wget
+              - --quiet
+              - --tries=1
+              - --timeout=4
+              - --spider
+              - http://localhost:8080/healthz
+            timeoutSeconds: 5
+          {{- if .Values.env }}
+          env:
+{{ toYaml .Values.env | indent 12 }}
+          {{- end }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
