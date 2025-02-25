@@ -1,0 +1,20 @@
+annotations:
+  artifacthub.io/changes: |
+    - kind: added
+      description: Support livenessProbe to server
+  artifacthub.io/signKey: |
+    fingerprint: 2B8F22F57260EFA67BE1C5824B11F800CD9D2252
+    url: https://argoproj.github.io/argo-helm/pgp_keys.asc
+apiVersion: v2
+appVersion: v3.6.4
+description: A Helm chart for Argo Workflows
+home: https://github.com/argoproj/argo-helm
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/3745a01d-b2ee-4af1-9f10-9b5f0d699350.png
+maintainers:
+- name: rockerchen
+  email: rockerchen@tencent.com
+name: argo-workflows
+sources:
+- https://github.com/argoproj/argo-workflows
+type: application
+version: 0.45.8
