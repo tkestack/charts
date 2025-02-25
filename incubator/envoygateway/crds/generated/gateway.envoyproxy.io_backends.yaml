@@ -80,7 +80,7 @@ spec:
                             endpoint.
                           maxLength: 253
                           minLength: 1
-                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9]))*$
+                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
                           type: string
                         port:
                           description: Port defines the port of the backend endpoint.
@@ -132,7 +132,7 @@ spec:
                     rule: ((has(self.fqdn) && !(has(self.ip) || has(self.unix))) ||
                       (has(self.ip) && !(has(self.fqdn) || has(self.unix))) || (has(self.unix)
                       && !(has(self.ip) || has(self.fqdn))))
-                maxItems: 4
+                maxItems: 64
                 minItems: 1
                 type: array
                 x-kubernetes-validations:
