@@ -120,7 +120,7 @@ Kubernetes: `>=1.22.0-0`
 | hub.tracing.additionalTraceHeaders.traceContext.traceParent | string | `""` | Name of the header that will contain the traceparent copy. |
 | hub.tracing.additionalTraceHeaders.traceContext.traceState | string | `""` | Name of the header that will contain the tracestate copy. |
 | image.pullPolicy | string | `"IfNotPresent"` | Traefik image pull policy |
-| image.registry | string | `"docker.io"` | Traefik image host registry |
+| image.registry | string | `"ccr.ccs.tencentyun.com"` | Traefik image host registry |
 | image.repository | string | `"traefik"` | Traefik image repository |
 | image.tag | string | `nil` | defaults to appVersion |
 | ingressClass | object | `{"enabled":true,"isDefaultClass":true,"name":""}` | Create a default IngressClass for Traefik |

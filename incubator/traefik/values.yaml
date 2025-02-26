@@ -4,9 +4,9 @@
 
 image:  # @schema additionalProperties: false
   # -- Traefik image host registry
-  registry: docker.io
+  registry: ccr.ccs.tencentyun.com
   # -- Traefik image repository
-  repository: traefik
+  repository: tke-market/traefik
   # -- defaults to appVersion
   tag:  # @schema type:[string, null]
   # -- Traefik image pull policy

@@ -830,9 +830,9 @@ index 2232d9e..1b9d0fd 100644
 -image:
 +image:  # @schema additionalProperties: false
    # -- Traefik image host registry
-   registry: docker.io
+   registry: ccr.ccs.tencentyun.com
    # -- Traefik image repository
-   repository: traefik
+   repository: tke-market/traefik
    # -- defaults to appVersion
 -  tag:
 +  tag:  # @schema type:[string, null]
@@ -1931,7 +1931,7 @@ index e440dcf..c8bfd5b 100644
 +++ b/traefik/values.yaml
 @@ -8,7 +8,7 @@ image:
    # -- Traefik image repository
-   repository: traefik
+   repository: tke-market/traefik
    # -- defaults to appVersion
 -  tag: ""
 +  tag:
@@ -2203,7 +2203,7 @@ index 2fd9282..c558c78 100644
 +
  image:
    # -- Traefik image host registry
-   registry: docker.io
+   registry: ccr.ccs.tencentyun.com
 @@ -12,9 +15,6 @@ image:
  # -- Add additional label to all resources
  commonLabels: {}
@@ -4351,9 +4351,9 @@ index 71273cc..345bbd8 100644
  # Default values for Traefik
  image:
 +  # -- Traefik image host registry
-   registry: docker.io
+   registry: ccr.ccs.tencentyun.com
 +  # -- Traefik image repository
-   repository: traefik
+   repository: tke-market/traefik
 -  # defaults to appVersion
 +  # -- defaults to appVersion
    tag: ""
@@ -5245,8 +5245,8 @@ index cadc7a6..4762b77 100644
 @@ -1,5 +1,6 @@
  # Default values for Traefik
  image:
-+  registry: docker.io
-   repository: traefik
++  registry: ccr.ccs.tencentyun.com
+   repository: tke-market/traefik
    # defaults to appVersion
    tag: ""
 @@ -66,10 +67,14 @@ deployment:
@@ -5362,7 +5362,7 @@ index 42a27f9..780b04b 100644
  # Default values for Traefik
  image:
 -  name: traefik
-+  repository: traefik
++  repository: tke-market/traefik
    # defaults to appVersion
    tag: ""
    pullPolicy: IfNotPresent
