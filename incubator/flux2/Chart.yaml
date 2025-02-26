@@ -1,0 +1,16 @@
+annotations:
+  artifacthub.io/changes: |
+    - "fix(charts/flux2,crds): crds.annotations got respected now"
+apiVersion: v2
+appVersion: 2.4.0
+description: A Helm chart for flux2
+name: flux2
+sources:
+- https://github.com/fluxcd-community/helm-charts
+type: application
+version: 2.14.1
+kubeVersion: '>= 1.29.0-0'
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/83a933b2-2f0e-47aa-af58-dc667546db39.svg
+maintainers:
+- name: rockerchen
+  email: rockerchen@tencent.com
