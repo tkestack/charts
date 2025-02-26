@@ -22,7 +22,7 @@ multitenancy:
 clusterDomain: cluster.local
 
 cli:
-  image: ghcr.io/fluxcd/flux-cli
+  image: ccr.ccs.tencentyun.com/tke-market/flux-cli
   tag: v2.4.0
   nodeSelector: {}
   affinity: {}
@@ -35,7 +35,7 @@ cli:
 
 helmController:
   create: true
-  image: ghcr.io/fluxcd/helm-controller
+  image: ccr.ccs.tencentyun.com/tke-market/flux-helm-controller
   tag: v1.1.0
   resources:
     limits: {}
@@ -83,7 +83,7 @@ helmController:
 
 imageAutomationController:
   create: true
-  image: ghcr.io/fluxcd/image-automation-controller
+  image: ccr.ccs.tencentyun.com/tke-market/flux-image-automation-controller
   tag: v0.39.0
   resources:
     limits: {}
@@ -111,7 +111,7 @@ imageAutomationController:
 
 imageReflectionController:
   create: true
-  image: ghcr.io/fluxcd/image-reflector-controller
+  image: ccr.ccs.tencentyun.com/tke-market/flux-image-reflector-controller
   tag: v0.33.0
   resources:
     limits: {}
@@ -139,7 +139,7 @@ imageReflectionController:
 
 kustomizeController:
   create: true
-  image: ghcr.io/fluxcd/kustomize-controller
+  image: ccr.ccs.tencentyun.com/tke-market/flux-kustomize-controller
   tag: v1.4.0
   resources:
     limits: {}
@@ -187,7 +187,7 @@ kustomizeController:
 
 notificationController:
   create: true
-  image: ghcr.io/fluxcd/notification-controller
+  image: ccr.ccs.tencentyun.com/tke-market/flux-notification-controller
   tag: v1.4.0
   resources:
     limits: {}
@@ -240,7 +240,7 @@ notificationController:
 
 sourceController:
   create: true
-  image: ghcr.io/fluxcd/source-controller
+  image: ccr.ccs.tencentyun.com/tke-market/flux-source-controller
   tag: v1.4.1
   resources:
     limits: {}

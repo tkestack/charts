@@ -16,7 +16,7 @@ This helm chart is maintained and released by the fluxcd-community on a best eff
 |-----|------|---------|-------------|
 | cli.affinity | object | `{}` |  |
 | cli.annotations | object | `{}` |  |
-| cli.image | string | `"ghcr.io/fluxcd/flux-cli"` |  |
+| cli.image | string | `"ccr.ccs.tencentyun.com/tke-market/flux-cli"` |  |
 | cli.nodeSelector | object | `{}` |  |
 | cli.serviceAccount.automount | bool | `true` |  |
 | cli.tag | string | `"v2.4.0"` |  |
@@ -30,7 +30,7 @@ This helm chart is maintained and released by the fluxcd-community on a best eff
 | helmController.container.additionalArgs | list | `[]` |  |
 | helmController.create | bool | `true` |  |
 | helmController.extraEnv | list | `[]` |  |
-| helmController.image | string | `"ghcr.io/fluxcd/helm-controller"` |  |
+| helmController.image | string | `"ccr.ccs.tencentyun.com/tke-market/flux-helm-controller"` |  |
 | helmController.imagePullPolicy | string | `""` |  |
 | helmController.labels | object | `{}` |  |
 | helmController.nodeSelector | object | `{}` |  |
@@ -49,7 +49,7 @@ This helm chart is maintained and released by the fluxcd-community on a best eff
 | imageAutomationController.container.additionalArgs | list | `[]` |  |
 | imageAutomationController.create | bool | `true` |  |
 | imageAutomationController.extraEnv | list | `[]` |  |
-| imageAutomationController.image | string | `"ghcr.io/fluxcd/image-automation-controller"` |  |
+| imageAutomationController.image | string | `"ccr.ccs.tencentyun.com/tke-market/flux-image-automation-controller"` |  |
 | imageAutomationController.imagePullPolicy | string | `""` |  |
 | imageAutomationController.labels | object | `{}` |  |
 | imageAutomationController.nodeSelector | object | `{}` |  |
@@ -69,7 +69,7 @@ This helm chart is maintained and released by the fluxcd-community on a best eff
 | imageReflectionController.container.additionalArgs | list | `[]` |  |
 | imageReflectionController.create | bool | `true` |  |
 | imageReflectionController.extraEnv | list | `[]` |  |
-| imageReflectionController.image | string | `"ghcr.io/fluxcd/image-reflector-controller"` |  |
+| imageReflectionController.image | string | `"ccr.ccs.tencentyun.com/tke-market/flux-image-reflector-controller"` |  |
 | imageReflectionController.imagePullPolicy | string | `""` |  |
 | imageReflectionController.labels | object | `{}` |  |
 | imageReflectionController.nodeSelector | object | `{}` |  |
@@ -91,7 +91,7 @@ This helm chart is maintained and released by the fluxcd-community on a best eff
 | kustomizeController.envFrom | object | `{"map":{"name":""},"secret":{"name":""}}` | Defines envFrom using a configmap and/or secret. |
 | kustomizeController.extraEnv | list | `[]` |  |
 | kustomizeController.extraSecretMounts | list | `[]` | Defines additional mounts with secrets. Secrets must be manually created in the namespace or with kustomizeController.secret |
-| kustomizeController.image | string | `"ghcr.io/fluxcd/kustomize-controller"` |  |
+| kustomizeController.image | string | `"ccr.ccs.tencentyun.com/tke-market/flux-kustomize-controller"` |  |
 | kustomizeController.imagePullPolicy | string | `""` |  |
 | kustomizeController.labels | object | `{}` |  |
 | kustomizeController.nodeSelector | object | `{}` |  |
@@ -117,7 +117,7 @@ This helm chart is maintained and released by the fluxcd-community on a best eff
 | notificationController.container.additionalArgs | list | `[]` |  |
 | notificationController.create | bool | `true` |  |
 | notificationController.extraEnv | list | `[]` |  |
-| notificationController.image | string | `"ghcr.io/fluxcd/notification-controller"` |  |
+| notificationController.image | string | `"ccr.ccs.tencentyun.com/tke-market/flux-notification-controller"` |  |
 | notificationController.imagePullPolicy | string | `""` |  |
 | notificationController.labels | object | `{}` |  |
 | notificationController.nodeSelector | object | `{}` |  |
@@ -157,7 +157,7 @@ This helm chart is maintained and released by the fluxcd-community on a best eff
 | sourceController.container.additionalArgs | list | `[]` |  |
 | sourceController.create | bool | `true` |  |
 | sourceController.extraEnv | list | `[]` |  |
-| sourceController.image | string | `"ghcr.io/fluxcd/source-controller"` |  |
+| sourceController.image | string | `"ccr.ccs.tencentyun.com/tke-market/flux-source-controller"` |  |
 | sourceController.imagePullPolicy | string | `""` |  |
 | sourceController.labels | object | `{}` |  |
 | sourceController.nodeSelector | object | `{}` |  |
