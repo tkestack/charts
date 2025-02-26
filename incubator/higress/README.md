@@ -44,7 +44,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | controller.autoscaling.minReplicas | int | `1` |  |
 | controller.autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
 | controller.env | object | `{}` |  |
-| controller.hub | string | `"higress-registry.cn-hangzhou.cr.aliyuncs.com/higress"` |  |
+| controller.hub | string | `"ccr.ccs.tencentyun.com/tke-market"` |  |
 | controller.image | string | `"higress"` |  |
 | controller.imagePullSecrets | list | `[]` |  |
 | controller.labels | object | `{}` |  |
@@ -94,7 +94,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | gateway.hostNetwork | bool | `false` |  |
 | gateway.httpPort | int | `80` |  |
 | gateway.httpsPort | int | `443` |  |
-| gateway.hub | string | `"higress-registry.cn-hangzhou.cr.aliyuncs.com/higress"` |  |
+| gateway.hub | string | `"ccr.ccs.tencentyun.com/tke-market"` |  |
 | gateway.image | string | `"gateway"` |  |
 | gateway.kind | string | `"Deployment"` | Use a `DaemonSet` or `Deployment` |
 | gateway.labels | object | `{}` | Labels to apply to all resources |
@@ -169,7 +169,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | global.enableStatus | bool | `true` | If true, Higress Controller will update the status field of Ingress resources. When migrating from Nginx Ingress, in order to avoid status field of Ingress objects being overwritten, this parameter needs to be set to false, so Higress won't write the entry IP to the status field of the corresponding Ingress object. |
 | global.externalIstiod | bool | `false` | Configure a remote cluster data plane controlled by an external istiod. When set to true, istiod is not deployed locally and only a subset of the other discovery charts are enabled. |
 | global.hostRDSMergeSubset | bool | `false` |  |
-| global.hub | string | `"higress-registry.cn-hangzhou.cr.aliyuncs.com/higress"` | Default hub for Istio images. Releases are published to docker hub under 'istio' project. Dev builds from prow are on gcr.io |
+| global.hub | string | `"ccr.ccs.tencentyun.com/tke-market"` | Default hub for Istio images. Releases are published to docker hub under 'istio' project. Dev builds from prow are on gcr.io |
 | global.imagePullPolicy | string | `""` | Specify image pull policy if default behavior isn't desired. Default behavior: latest images will be Always else IfNotPresent. |
 | global.imagePullSecrets | list | `[]` | ImagePullSecrets for all ServiceAccount, list of secrets in the same namespace to use for pulling any images in pods that reference this ServiceAccount. For components that don't use ServiceAccounts (i.e. grafana, servicegraph, tracing) ImagePullSecrets will be added to the corresponding Deployment(StatefulSet) objects. Must be set for any cluster configured with private docker registry. |
 | global.ingressClass | string | `"higress"` | IngressClass filters which ingress resources the higress controller watches. The default ingress class is higress. There are some special cases for special ingress class. 1. When the ingress class is set as nginx, the higress controller will watch ingress resources with the nginx ingress class or without any ingress class. 2. When the ingress class is set empty, the higress controller will watch all ingress resources in the k8s cluster. |
@@ -187,7 +187,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | global.multiCluster.clusterName | string | `""` | Should be set to the name of the cluster this installation will run in. This is required for sidecar injection to properly label proxies |
 | global.multiCluster.enabled | bool | `true` | Set to true to connect two kubernetes clusters via their respective ingressgateway services when pods in each cluster cannot directly talk to one another. All clusters should be using Istio mTLS and must have a shared root CA for this model to work. |
 | global.network | string | `""` | Network defines the network this cluster belong to. This name corresponds to the networks in the map of mesh networks. |
-| global.o11y | object | `{"enabled":false,"promtail":{"image":{"repository":"higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/promtail","tag":"2.9.4"},"port":3101,"resources":{"limits":{"cpu":"500m","memory":"2Gi"}},"securityContext":{}}}` | Observability (o11y) configurations |
+| global.o11y | object | `{"enabled":false,"promtail":{"image":{"repository":"ccr.ccs.tencentyun.com/tke-market/higress-promtail","tag":"2.9.4"},"port":3101,"resources":{"limits":{"cpu":"500m","memory":"2Gi"}},"securityContext":{}}}` | Observability (o11y) configurations |
 | global.omitSidecarInjectorConfigMap | bool | `false` |  |
 | global.onDemandRDS | bool | `false` |  |
 | global.oneNamespace | bool | `false` | Whether to restrict the applications namespace the controller manages; If not set, controller watches all namespaces |
@@ -237,7 +237,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | global.useMCP | bool | `false` | Use the Mesh Control Protocol (MCP) for configuring Istiod. Requires an MCP source. |
 | global.watchNamespace | string | `""` | If not empty, Higress Controller will only watch resources in the specified namespace. When isolating different business systems using K8s namespace, if each namespace requires a standalone gateway instance, this parameter can be used to confine the Ingress watching of Higress within the given namespace. |
 | global.xdsMaxRecvMsgSize | string | `"104857600"` |  |
-| hub | string | `"higress-registry.cn-hangzhou.cr.aliyuncs.com/higress"` |  |
+| hub | string | `"ccr.ccs.tencentyun.com/tke-market"` |  |
 | meshConfig | object | `{"enablePrometheusMerge":true,"rootNamespace":null,"trustDomain":"cluster.local"}` | meshConfig defines runtime configuration of components, including Istiod and istio-agent behavior See https://istio.io/docs/reference/config/istio.mesh.v1alpha1/ for all available options |
 | meshConfig.rootNamespace | string | `nil` | The namespace to treat as the administrative root namespace for Istio configuration. When processing a leaf namespace Istio will search for declarations in that namespace first and if none are found it will search in the root namespace. Any matching declaration found in the root namespace is processed as if it were declared in the leaf namespace. |
 | meshConfig.trustDomain | string | `"cluster.local"` | The trust domain corresponds to the trust root of a system Refer to https://github.com/spiffe/spiffe/blob/master/standards/SPIFFE-ID.md#21-trust-domain |
@@ -254,7 +254,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | pilot.env.PILOT_ENABLE_METADATA_EXCHANGE | string | `"false"` |  |
 | pilot.env.PILOT_SCOPE_GATEWAY_TO_NAMESPACE | string | `"false"` |  |
 | pilot.env.VALIDATION_ENABLED | string | `"false"` |  |
-| pilot.hub | string | `"higress-registry.cn-hangzhou.cr.aliyuncs.com/higress"` |  |
+| pilot.hub | string | `"ccr.ccs.tencentyun.com/tke-market"` |  |
 | pilot.image | string | `"pilot"` | Can be a full hub/image:tag |
 | pilot.jwksResolverExtraRootCA | string | `""` | You can use jwksResolverExtraRootCA to provide a root certificate in PEM format. This will then be trusted by pilot when resolving JWKS URIs. |
 | pilot.keepaliveMaxServerConnectionAge | string | `"30m"` | The following is used to limit how long a sidecar can be connected to a pilot. It balances out load across pilot instances at the cost of increasing system churn. |

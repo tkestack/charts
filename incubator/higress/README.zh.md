@@ -44,7 +44,7 @@ helm delete higress -n higress-system
 | controller.autoscaling.minReplicas | 整数 | `1` |  |
 | controller.autoscaling.targetCPUUtilizationPercentage | 整数 | `80` |  |
 | controller.env | 对象 | `{}` |  |
-| controller.hub | 字符串 | `"higress-registry.cn-hangzhou.cr.aliyuncs.com/higress"` |  |
+| controller.hub | 字符串 | `"ccr.ccs.tencentyun.com/tke-market"` |  |
 | controller.image | 字符串 | `"higress"` |  |
 | controller.imagePullSecrets | 列表 | `[]` |  |
 | controller.labels | 对象 | `{}` |  |
@@ -94,7 +94,7 @@ helm delete higress -n higress-system
 | gateway.hostNetwork | 布尔值 | `false` |  |
 | gateway.httpPort | 整数 | `80` |  |
 | gateway.httpsPort | 整数 | `443` |  |
-| gateway.hub | 字符串 | `"higress-registry.cn-hangzhou.cr.aliyuncs.com/higress"` |  |
+| gateway.hub | 字符串 | `"ccr.ccs.tencentyun.com/tke-market"` |  |
 | gateway.image | 字符串 | `"gateway"` |  |
 | gateway.kind | 字符串 | `"Deployment"` | 使用 `DaemonSet` 或 `Deployment` |
 | gateway.labels | 对象 | `{}` | 应用到所有资源的标签 |
@@ -169,7 +169,7 @@ helm delete higress -n higress-system
 | global.enableStatus | 布尔值 | `true` | 如果为 true，Higress Controller 将更新 Ingress 资源的状态字段。从 Nginx Ingress 迁移时，为了避免 Ingress 对象的状态字段被覆盖，需要将此参数设置为 false，以便 Higress 不会将入口 IP 写入相应 Ingress 对象的状态字段。 |
 | global.externalIstiod | 布尔值 | `false` | 配置由外部 istiod 控制的远程集群数据平面。当设置为 true 时，本地不部署 istiod，仅启用其他发现 chart 的子集。 |
 | global.hostRDSMergeSubset | 布尔值 | `false` |  |
-| global.hub | 字符串 | `"higress-registry.cn-hangzhou.cr.aliyuncs.com/higress"` | Istio 镜像的默认仓库。发布版本发布到 docker hub 的 'istio' 项目下。来自 prow 的开发构建位于 gcr.io |
+| global.hub | 字符串 | `"ccr.ccs.tencentyun.com/tke-market"` | Istio 镜像的默认仓库。发布版本发布到 docker hub 的 'istio' 项目下。来自 prow 的开发构建位于 gcr.io |
 | global.imagePullPolicy | 字符串 | `""` | 如果不需要默认行为，则指定镜像拉取策略。默认行为：最新镜像将始终拉取，否则 IfNotPresent。 |
 | global.imagePullSecrets | 列表 | `[]` | 所有 ServiceAccount 的 ImagePullSecrets，用于引用此 ServiceAccount 的 Pod 拉取任何镜像的同一命名空间中的秘密列表。对于不使用 ServiceAccount 的组件（即 grafana、servicegraph、tracing），ImagePullSecrets 将添加到相应的 Deployment(StatefulSet) 对象中。对于配置了私有 docker 注册表的任何集群，必须设置。 |
 | global.ingressClass | 字符串 | `"higress"` | IngressClass 过滤 higress controller 监听的 ingress 资源。默认的 ingress class 是 higress。有一些特殊情况用于特殊的 ingress class。1. 当 ingress class 设置为 nginx 时，higress controller 将监听带有 nginx ingress class 或没有任何 ingress class 的 ingress 资源。2. 当 ingress class 设置为空时，higress controller 将监听 k8s 集群中的所有 ingress 资源。 |

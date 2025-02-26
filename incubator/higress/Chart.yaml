@@ -9,7 +9,10 @@ dependencies:
   version: 2.0.4
 description: Helm chart for deploying Higress gateways
 home: http://higress.io/
-icon: https://higress.io/img/higress_logo_small.png
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/d80d3c09-d9d7-45c7-9f29-c538e4b281ee.png
+maintainers:
+- name: rockerchen
+  email: rockerchen@tencent.com
 keywords:
 - higress
 - gateways
