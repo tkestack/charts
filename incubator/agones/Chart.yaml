@@ -1,0 +1,20 @@
+apiVersion: v1
+appVersion: 1.47.0
+description: a library for hosting, running and scaling dedicated game servers on
+  Kubernetes.
+home: https://agones.dev
+icon: https://github.com/googleforgames/agones/raw/main/docs/agones.png
+keywords:
+- go
+- golang
+- dedicated-gameservers
+- multiplayer
+- game-development
+maintainers:
+- email: agones-discuss@googlegroups.com
+  name: agones
+  url: https://groups.google.com/forum/#!forum/agones-discuss
+name: agones
+sources:
+- https://github.com/googleforgames/agones
+version: 1.47.0
