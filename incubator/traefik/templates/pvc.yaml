@@ -3,17 +3,14 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ template "traefik.fullname" . }}
-  {{- if .Values.persistence.annotations  }}
+  namespace: {{ template "traefik.namespace" . }}
   annotations:
   {{- with .Values.persistence.annotations  }}
-  {{ toYaml . | indent 4 }}
+  {{ toYaml . | nindent 4 }}
   {{- end }}
-  {{- end }}
+    helm.sh/resource-policy: keep
   labels:
-    app.kubernetes.io/name: {{ template "traefik.name" . }}
-    helm.sh/chart: {{ template "traefik.chart" . }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- include "traefik.labels" . | nindent 4 }}
 spec:
   accessModes:
     - {{ .Values.persistence.accessMode | quote }}
@@ -23,5 +20,7 @@ spec:
   {{- if .Values.persistence.storageClass }}
   storageClassName: {{ .Values.persistence.storageClass | quote }}
   {{- end }}
+  {{- if .Values.persistence.volumeName }}
+  volumeName: {{ .Values.persistence.volumeName | quote }}
+  {{- end }}
 {{- end -}}
-

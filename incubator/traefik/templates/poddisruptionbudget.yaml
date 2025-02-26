@@ -1,22 +1,23 @@
 {{- if .Values.podDisruptionBudget.enabled -}}
+{{- if .Capabilities.APIVersions.Has "policy/v1/PodDisruptionBudget" }}
+apiVersion: policy/v1
+{{- else }}
 apiVersion: policy/v1beta1
+{{- end }}
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "traefik.fullname" . }}
+  namespace: {{ template "traefik.namespace" . }}
   labels:
-    app.kubernetes.io/name: {{ template "traefik.name" . }}
-    helm.sh/chart: {{ template "traefik.chart" . }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- include "traefik.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ template "traefik.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      {{- include "traefik.labelselector" . | nindent 6 }}
   {{- if .Values.podDisruptionBudget.minAvailable }}
-  minAvailable: {{ .Values.podDisruptionBudget.minAvailable | int }}
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
   {{- end }}
   {{- if .Values.podDisruptionBudget.maxUnavailable }}
-  maxUnavailable: {{ .Values.podDisruptionBudget.maxUnavailable | int }}
+  maxUnavailable: {{ .Values.podDisruptionBudget.maxUnavailable }}
   {{- end }}
 {{- end -}}
