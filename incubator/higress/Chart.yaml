@@ -1,0 +1,23 @@
+apiVersion: v2
+appVersion: 2.0.7
+dependencies:
+- name: higress-core
+  repository: file://../core
+  version: 2.0.7
+- name: higress-console
+  repository: https://higress.io/helm-charts/
+  version: 2.0.4
+description: Helm chart for deploying Higress gateways
+home: http://higress.io/
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/d80d3c09-d9d7-45c7-9f29-c538e4b281ee.png
+maintainers:
+- name: rockerchen
+  email: rockerchen@tencent.com
+keywords:
+- higress
+- gateways
+name: higress
+sources:
+- http://github.com/alibaba/higress
+type: application
+version: 2.0.7

@@ -1,0 +1,8 @@
+apiVersion: v2
+appVersion: 2.0.4
+description: Management console for Higress
+name: higress-console
+sources:
+- https://github.com/higress-group/higress-console
+type: application
+version: 2.0.4
