@@ -275,7 +275,7 @@ agones:
     allocationBatchWaitTime: 500ms
     topologySpreadConstraints: {}
   image:
-    registry: us-docker.pkg.dev/agones-images/release
+    registry: ccr.ccs.tencentyun.com/tke-market
     tag: 1.47.0
     controller:
       name: agones-controller
