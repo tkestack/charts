@@ -4,7 +4,7 @@
 kubectl:
   image:
     registry: ""
-    repository: kubesphere/kubectl
+    repository: tke-market/kubesphere-kubectl
     tag: "v1.27.16"
     pullPolicy: IfNotPresent
   resources:

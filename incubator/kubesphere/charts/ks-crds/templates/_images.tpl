@@ -1,5 +1,5 @@
 {{- define "kubectl.image" -}}
-{{ include "common.images.image" (dict "imageRoot" .Values.kubectl.image "global" (default .Values.global (dict "imageRegistry" "docker.io"))) }}
+{{ include "common.images.image" (dict "imageRoot" .Values.kubectl.image "global" (default .Values.global (dict "imageRegistry" "ccr.ccs.tencentyun.com/tke-market"))) }}
 {{- end -}}
 
 {{- define "common.images.image" -}}

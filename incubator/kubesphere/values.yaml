@@ -1,7 +1,7 @@
 ## @param global.imageRegistry Global Docker image registry
 ## @param global.tag Global Docker image tag
 global:
-  imageRegistry: docker.io
+  imageRegistry: ccr.ccs.tencentyun.com
   tag: v4.1.2
   imagePullSecrets: []
 
@@ -109,7 +109,7 @@ internalTLS: false
 apiserver:
   image:
     registry: ""
-    repository: kubesphere/ks-apiserver
+    repository: tke-market/ks-apiserver
     tag: ""
     digest: ""
     pullPolicy: IfNotPresent
@@ -162,7 +162,7 @@ apiserver:
 console:
   image:
     registry: ""
-    repository: kubesphere/ks-console
+    repository: tke-market/ks-console
     tag: ""
     digest: ""
     pullPolicy: IfNotPresent
@@ -209,7 +209,7 @@ console:
 controller:
   image:
     registry: ""
-    repository: kubesphere/ks-controller-manager
+    repository: tke-market/ks-controller-manager
     tag: ""
     digest: ""
     pullPolicy: IfNotPresent
@@ -268,7 +268,7 @@ helmExecutor:
   jobTTLAfterFinished: 0s
   image:
     registry: ""
-    repository: kubesphere/kubectl
+    repository: tke-market/kubesphere-kubectl
     tag: "v1.27.16"
     pullPolicy: IfNotPresent
   resources:
@@ -286,7 +286,7 @@ composedApp:
 kubectl:
   image:
     registry: ""
-    repository: kubesphere/kubectl
+    repository: tke-market/kubesphere-kubectl
     tag: "v1.27.16"
     pullPolicy: IfNotPresent
 
@@ -316,7 +316,7 @@ certmanager:
 nodeShell:
   image:
     registry: ""
-    repository: kubesphere/kubectl
+    repository: tke-market/kubesphere-kubectl
     tag: "v1.27.16"
     pullPolicy: IfNotPresent
 
@@ -360,7 +360,7 @@ redis:
   port: 6379
   image:
     registry: ""
-    repository: kubesphere/redis
+    repository: tke-market/kubesphere-redis
     digest: ""
     tag: 7.2.4-alpine
     pullPolicy: IfNotPresent
@@ -374,7 +374,7 @@ redisHA:
     port: 6379
   image:
     registry: ""
-    repository: kubesphere/redis
+    repository: ccr.ccs.tencentyun.com/tke-market/kubesphere-redis
     tag: 7.2.4-alpine
     digest: ""
     pullPolicy: IfNotPresent
@@ -404,7 +404,7 @@ redisHA:
     containerPort: 6379
     image:
       registry: ""
-      repository: kubesphere/haproxy
+      repository: tke-market/kubesphere-haproxy
       tag: 2.9.6-alpine
       digest: ""
       pullPolicy: IfNotPresent
@@ -424,7 +424,7 @@ ksCRDs:
   kubectl:
     image:
       registry: ""
-      repository: kubesphere/kubectl
+      repository: tke-market/kubesphere-kubectl
       tag: "v1.27.16"
       pullPolicy: IfNotPresent
     resources:
@@ -440,6 +440,6 @@ ksExtensionRepository:
   enabled: true
   image:
     registry: ""
-    repository: kubesphere/ks-extensions-museum
+    repository: tke-market/ks-extensions-museum
     tag: "latest"
     pullPolicy: Always
