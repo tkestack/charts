@@ -1,0 +1,9 @@
+dependencies:
+- name: redis-ha
+  repository: ""
+  version: 4.26.1
+- name: ks-crds
+  repository: ""
+  version: 1.0.0
+digest: sha256:a8333aa426d38909098c7bf99d448960b169fe8666af144e7f92c64132da42e4
+generated: "2024-10-18T06:41:46.689274657Z"
