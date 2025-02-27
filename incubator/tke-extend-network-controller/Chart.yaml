@@ -30,4 +30,4 @@ maintainers:
   - name: rockerchen
     email: rockerchen@tencent.com
 
-kubeVerion: ">= 1.26.0"
+kubeVersion: ">= 1.26.0"
