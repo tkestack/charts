@@ -20,4 +20,4 @@ annotations:
   "artifacthub.io/links": |
     - name: Chart Source
       url: https://github.com/prometheus-community/helm-charts
-kubeVerion: '>= 1.12.0'
+kubeVersion: '>= 1.12.0'

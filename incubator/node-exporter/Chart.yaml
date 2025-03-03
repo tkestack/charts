@@ -14,4 +14,4 @@ sources:
 maintainers:
   - email: willyi@tencent.com
     name: willyi
-kubeVerion: '>=1.12.0-0'
+kubeVersion: '>=1.12.0-0'
