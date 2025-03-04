@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: eklet-{{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
+  finalizers:
+    - cloud.tencent.com/eklet
   labels:
 {{ include "eklet.labels" . | indent 4 }}
 spec:
@@ -35,6 +37,16 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.podIP
+            - name: SECRET_ID
+              valueFrom:
+                secretKeyRef:
+                  name: eks-secret
+                  key: secretID
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: eks-secret
+                  key: secretKey
           args:
             - /usr/local/bin/eklet
             - --runtime-cxm
@@ -52,8 +64,8 @@ spec:
             - --wait-sandbox-running-timeout={{ .Values.eklet.waitSandboxRunningTimeout }}
             - --node-ip=$(POD_IP)
             - --pod-used-apiserver={{ .Values.eklet.podUsedApiserver }}
-            - --secret-id={{ .Values.cloud.secretID }}
-            - --secret-key={{ .Values.cloud.secretKey }}
+            - --secret-id=$(SECRET_ID)
+            - --secret-key=$(SECRET_KEY)
             - --eklet-service-name=eks-eklet
             - --eklet-service-namespace={{ .Release.Namespace }}
           image: {{ .Values.eklet.image.ref }}

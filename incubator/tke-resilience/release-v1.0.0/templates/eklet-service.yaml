@@ -4,6 +4,8 @@ kind: Service
 metadata:
   name: eks-eklet
   namespace: {{ .Release.Namespace }}
+  finalizers:
+    - cloud.tencent.com/eklet
   labels:
 {{ include "eklet.labels" . | indent 4 }}
 spec:
