@@ -72,6 +72,20 @@ helm install tke-resilience --namespace kube-system ./tke-resilience --debug
 ```bash
 helm delete tke-resilience -n kube-system 
 ```
+执行完成卸载命令后，还需要手动将相关资源的finalizer移除，否则相关资源会卡在删除流程中。
+
+```bash
+kubectl patch deploy -n kube-system eklet-tke-resilience --type='json' -p='[{"op": "remove", "path": "/metadata/finalizers", "value": ["cloud.tencent.com/eklet"]}]'
+
+kubectl patch svc -n kube-system eks-eklet --type='json' -p='[{"op": "remove", "path": "/metadata/finalizers", "value": ["cloud.tencent.com/eklet"]}]'
+
+kubectl patch sa -n kube-system eklet-tke-resilience --type='json' -p='[{"op": "remove", "path": "/metadata/finalizers", "value": ["cloud.tencent.com/eklet"]}]'
+
+kubectl patch clusterrole -n kube-system eklet-tke-resilience --type='json' -p='[{"op": "remove", "path": "/metadata/finalizers", "value": ["cloud.tencent.com/eklet"]}]'
+
+kubectl patch ClusterRoleBinding -n kube-system eklet-tke-resilience --type='json' -p='[{"op": "remove", "path": "/metadata/finalizers", "value": ["cloud.tencent.com/eklet"]}]'
+```
+node资源也需要手动移除finalizer，移除方式与其他资源类似，将上面命令中的资源类型和资源名称替换成node资源和node的资源名称。
 
 ## 配置及默认值
 
