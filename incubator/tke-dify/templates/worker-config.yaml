@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "dify.worker.fullname" . }}
+  namespace: {{ include "dify.namespace" . }}
+data:
+  {{- include "dify.worker.config" . | nindent 2 }}

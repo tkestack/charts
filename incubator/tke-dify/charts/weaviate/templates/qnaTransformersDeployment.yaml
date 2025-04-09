@@ -1,0 +1,67 @@
+{{ if index .Values "modules" "qna-transformers" "enabled" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ index .Values "modules" "qna-transformers" "fullnameOverride" }}
+  labels:
+    name: {{ index .Values "modules" "qna-transformers" "fullnameOverride" }}
+    app: {{ index .Values "modules" "qna-transformers" "fullnameOverride" }}
+    app.kubernetes.io/name: weaviate
+    app.kubernetes.io/managed-by: helm
+spec:
+  replicas: {{ index .Values "modules" "qna-transformers" "replicas" }}
+  selector:
+    matchLabels:
+      app: {{ index .Values "modules" "qna-transformers" "fullnameOverride" }}
+  template:
+    metadata:
+      labels:
+        app: {{ index .Values "modules" "qna-transformers" "fullnameOverride" }}
+    spec:
+      {{- if (index .Values "modules" "qna-transformers" "serviceAccountName") }}
+      serviceAccountName: {{ index .Values "modules" "qna-transformers" "serviceAccountName" }}
+      {{- else if (index .Values "serviceAccountName") }}
+      serviceAccountName: {{ index .Values "serviceAccountName" }}
+      {{- end }}
+      containers:
+      - name: {{ index .Values "modules" "qna-transformers" "fullnameOverride" }}
+        image: {{ index .Values "modules" "qna-transformers" "registry" }}/{{ index .Values "modules" "qna-transformers" "repo" }}:{{ index .Values "modules" "qna-transformers" "tag" }}
+        env:
+          - name: ENABLE_CUDA
+            value: "{{ if index .Values "modules" "qna-transformers" "envconfig" "enable_cuda" }}1{{ else }}0{{ end }}"
+          {{ if index .Values "modules" "qna-transformers" "envconfig" "enable_cuda" }}
+          - name: NVIDIA_VISIBLE_DEVICES
+            value: {{ index .Values "modules" "qna-transformers" "envconfig" "nvidia_visible_devices"}}
+          - name: NVIDIA_DRIVER_CAPABILITIES
+            value: {{ index .Values "modules" "qna-transformers" "envconfig" "nvidia_driver_capabilities"}}
+          - name: LD_LIBRARY_PATH
+            value: {{ index .Values "modules" "qna-transformers" "envconfig" "ld_library_path"}}
+          {{ end }}
+        resources:
+{{ index .Values "modules" "qna-transformers" "resources" | toYaml | indent 10 }}
+        livenessProbe:
+          httpGet:
+            path: /.well-known/live
+            port: 8080
+          initialDelaySeconds: {{ index .Values "modules" "qna-transformers" "livenessProbe" "initialDelaySeconds" }}
+          periodSeconds: {{ index .Values "modules" "qna-transformers" "livenessProbe" "periodSeconds" }}
+          timeoutSeconds: {{ index .Values "modules" "qna-transformers" "livenessProbe" "timeoutSeconds" }}
+        readinessProbe:
+          httpGet:
+            path: /.well-known/ready
+            port: 8080
+          initialDelaySeconds: {{ index .Values "modules" "qna-transformers" "readinessProbe" "initialDelaySeconds" }}
+          periodSeconds: {{ index .Values "modules" "qna-transformers" "readinessProbe" "periodSeconds" }}
+      {{- with index .Values "modules" "qna-transformers" "nodeSelector" | default .Values.nodeSelector }}
+      nodeSelector:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with index .Values "modules" "qna-transformers" "affinity" | default .Values.affinity }}
+      affinity:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with index .Values "modules" "qna-transformers" "tolerations" | default .Values.tolerations }}
+      tolerations:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+{{ end }}

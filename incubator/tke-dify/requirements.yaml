@@ -1,0 +1,20 @@
+dependencies:
+  - name: postgresql
+    version: 12.9.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+    tags:
+      - postgres
+  - name: redis
+    version: 20.6.3
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled
+    tags:
+      - redis
+  - name: weaviate
+    version: 16.1.0
+    repository: https://weaviate.github.io/weaviate-helm
+    condition: weaviate.enabled
+    tags:
+      - vector
+      - search

@@ -1,0 +1,56 @@
+{{ if index .Values "modules" "text-spellcheck" "enabled" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ index .Values "modules" "text-spellcheck" "fullnameOverride" }}
+  labels:
+    name: {{ index .Values "modules" "text-spellcheck" "fullnameOverride" }}
+    app: {{ index .Values "modules" "text-spellcheck" "fullnameOverride" }}
+    app.kubernetes.io/name: weaviate
+    app.kubernetes.io/managed-by: helm
+spec:
+  replicas: {{ index .Values "modules" "text-spellcheck" "replicas" }}
+  selector:
+    matchLabels:
+      app: {{ index .Values "modules" "text-spellcheck" "fullnameOverride" }}
+  template:
+    metadata:
+      labels:
+        app: {{ index .Values "modules" "text-spellcheck" "fullnameOverride" }}
+    spec:
+      {{- if (index .Values "modules" "text-spellcheck" "serviceAccountName") }}
+      serviceAccountName: {{ index .Values "modules" "text-spellcheck" "serviceAccountName" }}
+      {{- else if (index .Values "serviceAccountName") }}
+      serviceAccountName: {{ index .Values "serviceAccountName" }}
+      {{- end }}
+      containers:
+      - name: {{ index .Values "modules" "text-spellcheck" "fullnameOverride" }}
+        image: {{ index .Values "modules" "text-spellcheck" "registry" }}/{{ index .Values "modules" "text-spellcheck" "repo" }}:{{ index .Values "modules" "text-spellcheck" "tag" }}
+        resources:
+{{ index .Values "modules" "text-spellcheck" "resources" | toYaml | indent 10 }}
+        livenessProbe:
+          httpGet:
+            path: /.well-known/live
+            port: 8080
+          initialDelaySeconds: {{ index .Values "modules" "text-spellcheck" "livenessProbe" "initialDelaySeconds" }}
+          periodSeconds: {{ index .Values "modules" "text-spellcheck" "livenessProbe" "periodSeconds" }}
+          timeoutSeconds: {{ index .Values "modules" "text-spellcheck" "livenessProbe" "timeoutSeconds" }}
+        readinessProbe:
+          httpGet:
+            path: /.well-known/ready
+            port: 8080
+          initialDelaySeconds: {{ index .Values "modules" "text-spellcheck" "readinessProbe" "initialDelaySeconds" }}
+          periodSeconds: {{ index .Values "modules" "text-spellcheck" "readinessProbe" "periodSeconds" }}
+      {{- with index .Values "modules" "text-spellcheck" "nodeSelector" | default .Values.nodeSelector }}
+      nodeSelector:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with index .Values "modules" "text-spellcheck" "affinity" | default .Values.affinity }}
+      affinity:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with index .Values "modules" "text-spellcheck" "tolerations" | default .Values.tolerations }}
+      tolerations:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+{{ end }}
