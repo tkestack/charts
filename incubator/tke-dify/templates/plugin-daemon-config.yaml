@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "dify.pluginDaemon.fullname" . }}
+  namespace: {{ include "dify.namespace" . }}
+data:
+  {{- include "dify.pluginDaemon.config" . | nindent 2 }}
