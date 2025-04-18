@@ -107,39 +107,6 @@ single:
 
 multinode:
   enable: false
-  replicas: 1
-  metrics:
-    enable: true
-    port: 9092
-    image:
-      repository: ccr.ccs.tencentyun.com/nack/dynamo
-      pullPolicy: IfNotPresent
-      tag: "metrics-202504121542"
-  labels: {}
-  annotations: {}
-    # eks.tke.cloud.tencent.com/root-cbs-size: '512'
-    # eks.tke.cloud.tencent.com/use-image-cache: 'auto'
-    # eks.tke.cloud.tencent.com/image-cache-disk-size: '128'
-  resources:
-    requests:
-      cpu: 10
-      memory: 20Gi
-      nvidia.com/gpu: 1
-    limits:
-      cpu: 10
-      memory: 20Gi
-      nvidia.com/gpu: 1
-  prefill:
-    replicas: 1
-    resources:
-      requests:
-        cpu: 10
-        memory: 20Gi
-        nvidia.com/gpu: 1
-      limits:
-        cpu: 10
-        memory: 20Gi
-        nvidia.com/gpu: 1
 
 natsServerOverride: ""
 etcdEndpointsOverride: ""
