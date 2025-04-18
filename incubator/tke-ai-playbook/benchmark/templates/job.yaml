@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  template:
+    metadata:
+      name: {{ .Release.Name }}
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: benchmark
+        image: ccr.ccs.tencentyun.com/nack/llmbench:v0.0.3
+        env:
+        - name: HF_ENDPOINT
+          value: https://hf-mirror.com
+        - name: BACKEND
+          value: {{ .Values.backend }}
+        - name: ENDPOINT
+          value: {{ .Values.endpoint }}
+        - name: MODEL_NAME
+          value: {{ .Values.modelName }}
+        - name: NUM_PROMPTS
+          value: {{ .Values.numPrompts | quote }}
+        - name: HOST
+          value: {{ .Values.serviceName }}.{{ .Values.serviceNamespace }}.svc.cluster.local
+        - name: PORT
+          value: {{ .Values.servicePort | quote }}
+        command:
+        - bash
+        - -c
+        - |
+          set -ex
+          cd /app
+          source ./vllm-venv/bin/activate
+          bash vllm-bench.sh
+      restartPolicy: OnFailure

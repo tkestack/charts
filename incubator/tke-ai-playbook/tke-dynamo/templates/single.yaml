@@ -1,0 +1,188 @@
+{{- if .Values.single.enable }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dynamo.fullname" . }}-single
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "dynamo.labels" . | nindent 4 }}
+    app.kubernetes.io/dynamo-component: single
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "dynamo.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/dynamo-component: single
+  template:
+    metadata:
+      annotations:
+        {{- if .Values.rdma.enable }}
+        {{- include "rdma.annotations" . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.single.annotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "dynamo.labels" . | nindent 8 }}
+        app.kubernetes.io/dynamo-component: single
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.single.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if and .Values.rdma.enable .Values.rdma.hostNetwork }}
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      {{- end }}
+      containers:
+        - name: single
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - |
+              cd /workspace/examples/llm;
+              dynamo serve graphs.single:Frontend -f ./configs/configs.yaml
+          command:
+          - bash
+          - -lc
+          ports:
+            - name: serve
+              containerPort: 8000
+              protocol: TCP
+          env:
+            - name: NATS_SERVER
+              value: "{{ include "nats.server" . }}"
+            - name: ETCD_ENDPOINTS
+              value: "{{ include "etcd.endpoints" . }}"
+          {{- if .Values.rdma.enable }}
+          securityContext:
+            capabilities:
+              add: [ "IPC_LOCK" ]
+          {{- end }}
+          resources:
+            requests:
+              {{- toYaml .Values.single.resources.requests | nindent 14 }}
+              {{- if .Values.rdma.enable }}
+              tke.cloud.tencent.com/tke-shared-rdma: 1
+              {{- end }}
+            limits:
+              {{- toYaml .Values.single.resources.limits | nindent 14 }}
+              {{- if .Values.rdma.enable }}
+              tke.cloud.tencent.com/tke-shared-rdma: 1
+              {{- end }}
+          volumeMounts:
+            - name: configs
+              mountPath: /workspace/examples/llm/configs
+            - name: graphs
+              mountPath: /workspace/examples/llm/graphs
+            - name: dshm
+              mountPath: /dev/shm
+            {{- if .Values.modelPVC.enable }}
+            - name: model-pvc
+              mountPath: {{ .Values.modelPVC.mountPath }}
+            {{- end }}
+        {{- if .Values.single.metrics.enable }}
+        - name: metrics
+          image: "{{ .Values.single.metrics.image.repository }}:{{ .Values.single.metrics.image.tag }}"
+          imagePullPolicy: {{ .Values.single.metrics.image.pullPolicy }}
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.single.metrics.port }}
+              protocol: TCP
+          command: ["bash", "-lc"]
+          args:
+            - metrics --component VllmWorker --endpoint load_metrics --port {{ .Values.single.metrics.port }}
+          env:
+            - name: NATS_SERVER
+              value: "{{ include "nats.server" . }}"
+            - name: ETCD_ENDPOINTS
+              value: "{{ include "etcd.endpoints" . }}"
+        {{- end }}
+      volumes:
+        - name: configs
+          configMap:
+            name: {{ include "dynamo.fullname" $ }}-configs
+        - name: graphs
+          configMap:
+            name: {{ include "dynamo.fullname" $ }}-graphs
+        - name: dshm
+          emptyDir:
+            medium: Memory
+        {{- if .Values.modelPVC.enable }}
+        - name: model-pvc
+          persistentVolumeClaim:
+            claimName: {{ .Values.modelPVC.name }}
+        {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "dynamo.fullname" . }}-single
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "dynamo.labels" . | nindent 4 }}
+    app.kubernetes.io/dynamo-component: single
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: serve
+      protocol: TCP
+      name: serve
+    {{- if .Values.single.metrics.enable }}
+    - port: {{ .Values.single.metrics.port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+    {{- end }}
+  selector:
+    {{- include "dynamo.labels" . | nindent 4 }}
+    app.kubernetes.io/dynamo-component: single
+    {{- with .Values.podLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.single.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+
+{{- if and .Values.single.metrics.enable .Values.single.metrics.serviceMonitor.enable }}
+---
+apiVersion: {{ .Values.single.metrics.serviceMonitor.apiVersion }}
+kind: ServiceMonitor
+metadata:
+  name: {{ include "dynamo.fullname" . }}
+  namespace: {{ .Values.single.metrics.serviceMonitor.namespace }}
+  labels:
+    {{- include "dynamo.labels" . | nindent 4 }}
+    app.kubernetes.io/dynamo-component: single
+    {{- if .Values.single.metrics.serviceMonitor.additionalLabels }}
+    {{- toYaml .Values.single.metrics.serviceMonitor.additionalLabels | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "dynamo.labels" . | nindent 6 }}
+      app.kubernetes.io/dynamo-component: single
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  endpoints:
+  - port: "metrics"
+    path: "/metrics"
+    interval: "{{ .Values.single.metrics.serviceMonitor.interval }}"
+    honorLabels: {{ .Values.single.metrics.serviceMonitor.honorLabels }}
+    relabelings:
+      {{ toYaml .Values.single.metrics.serviceMonitor.relabelings | nindent 6 }}
+  {{- end -}}
+{{- end }}

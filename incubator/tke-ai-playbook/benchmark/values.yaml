@@ -1,0 +1,7 @@
+backend: openai-chat
+endpoint: /v1/chat/completions
+modelName: deepseek-ai/DeepSeek-R1
+numPrompts: 1000
+serviceName: deepseek-r1
+serviceNamespace: default
+servicePort: 8000

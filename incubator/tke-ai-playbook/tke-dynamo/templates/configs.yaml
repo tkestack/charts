@@ -1,0 +1,22 @@
+{{- with .Values.configs }}
+apiVersion: v1
+data:
+  configs.yaml: |
+    {{- . | toYaml | nindent 4 }}
+kind: ConfigMap
+metadata:
+  name: {{ include "dynamo.fullname" $ }}-configs
+  namespace: {{ $.Release.Namespace | quote }}
+{{- end }}
+---
+{{- with .Values.prefillConfigs }}
+apiVersion: v1
+data:
+  configs.yaml: |
+    {{- . | toYaml | nindent 4 }}
+kind: ConfigMap
+metadata:
+  name: {{ include "dynamo.fullname" $ }}-prefill-configs
+  namespace: {{ $.Release.Namespace | quote }}
+{{- end }}
+---

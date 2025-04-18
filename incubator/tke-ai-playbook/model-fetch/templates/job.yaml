@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.jobName }}
+  labels:
+    app: {{ .Values.jobName }}
+spec:
+  template:
+    metadata:
+      name: {{ .Values.jobName }}
+      labels:
+        app: {{ .Values.jobName }}
+      annotations:
+        eks.tke.cloud.tencent.com/root-cbs-size: '100' # 如果用超级节点，默认系统盘只有 20Gi，vllm 镜像解压后会撑爆磁盘，用这个注解自定义一下系统盘容量（超过20Gi的部分会收费）。
+    spec:
+      containers:
+      - name: vllm
+        image: vllm/vllm-openai:latest
+        env:
+        - name: LLM_MODEL
+          value: {{ .Values.modelName }}
+        - name: USE_MODELSCOPE
+          value: {{ .Values.useModelscope | quote }}
+        command:
+        - bash
+        - -c
+        - |
+          set -ex
+          if [[ "$USE_MODELSCOPE" == "1" ]]; then
+            exec modelscope download --local_dir=/data/$LLM_MODEL --model="$LLM_MODEL"
+          else
+            exec huggingface-cli download --local-dir=/data/$LLM_MODEL $LLM_MODEL
+          fi
+        volumeMounts:
+        - name: data
+          mountPath: /data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: {{ .Values.pvcName }}
+      restartPolicy: OnFailure

@@ -1,0 +1,56 @@
+{{ if index .Values "modules" "text2vec-contextionary" "enabled" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: contextionary
+  labels:
+    name: contextionary
+    app: contextionary
+    app.kubernetes.io/name: weaviate
+    app.kubernetes.io/managed-by: helm
+spec:
+  replicas: {{ index .Values "modules" "text2vec-contextionary" "replicas" }}
+  selector:
+    matchLabels:
+      app: contextionary
+  template:
+    metadata:
+      labels:
+        app: contextionary
+        app.kubernetes.io/name: weaviate
+        app.kubernetes.io/managed-by: helm
+    spec:
+      {{- if (index .Values "modules" "text2vec-contextionary" "serviceAccountName") }}
+      serviceAccountName: {{ index .Values "modules" "text2vec-contextionary" "serviceAccountName" }}
+      {{- else if (index .Values "serviceAccountName") }}
+      serviceAccountName: {{ index .Values "serviceAccountName" }}
+      {{- end }}
+      containers:
+      - name: contextionary
+        image: {{ index .Values "modules" "text2vec-contextionary" "registry" }}/{{ index .Values "modules" "text2vec-contextionary" "repo" }}:{{ index .Values "modules" "text2vec-contextionary" "tag" }}
+        env:
+          - name: OCCURRENCE_WEIGHT_LINEAR_FACTOR
+            value: {{ index .Values "modules" "text2vec-contextionary" "envconfig" "occurrence_weight_linear_factor" | quote }}
+          - name: EXTENSIONS_STORAGE_MODE
+            value: {{ index .Values "modules" "text2vec-contextionary" "envconfig" "extensions_storage_mode" | quote }}
+          - name: EXTENSIONS_STORAGE_ORIGIN
+            value: http://{{ .Values.service.name }}.{{ .Release.Namespace }}.svc.cluster.local
+          - name: NEIGHBOR_OCCURRENCE_IGNORE_PERCENTILE
+            value: {{ index .Values "modules" "text2vec-contextionary" "envconfig" "neighbor_occurrence_ignore_percentile" | quote }}
+          - name: ENABLE_COMPOUND_SPLITTING
+            value: {{ index .Values "modules" "text2vec-contextionary" "envconfig" "enable_compound_splitting" | quote }}
+        resources:
+{{ index .Values "modules" "text2vec-contextionary" "resources" | toYaml | indent 10 }}
+      {{- with index .Values "modules" "text2vec-contextionary" "nodeSelector" | default .Values.nodeSelector }}
+      nodeSelector:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with index .Values "modules" "text2vec-contextionary" "affinity" | default .Values.affinity }}
+      affinity:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with index .Values "modules" "text2vec-contextionary" "tolerations" | default .Values.tolerations }}
+      tolerations:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+{{ end }}

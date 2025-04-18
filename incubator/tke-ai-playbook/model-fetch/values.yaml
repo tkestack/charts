@@ -1,0 +1,7 @@
+pvcName: ai-model
+storageClassName: cfs-ai
+storageSize: 100Gi
+
+jobName: vllm-download-model
+modelName: deepseek-ai/DeepSeek-R1-Distill-Qwen-7B
+useModelscope: "1"

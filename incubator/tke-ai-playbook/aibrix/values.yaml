@@ -1,0 +1,4 @@
+shortModelName: "deepseek-r1"
+modelName: "deepseek-ai/DeepSeek-R1"
+pvcName: "ai-model"
+parallelArgs: ""
