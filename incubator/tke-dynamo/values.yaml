@@ -1,0 +1,165 @@
+image:
+  repository: ccr.ccs.tencentyun.com/tke-market/dynamo
+  pullPolicy: IfNotPresent
+  tag: "v0.1.1-20250415"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+podLabels: {}
+
+service:
+  type: ClusterIP
+  port: 80
+
+modelPVC:
+  enable: true
+  name: ai-model
+  mountPath: /data
+
+configs:
+  Common:
+    model: /data/neuralmagic/DeepSeek-R1-Distill-Llama-70B-FP8-dynamic
+    block-size: 64
+    max-model-len: 16384
+    router: kv
+    kv-transfer-config: '{"kv_connector":"DynamoNixlConnector"}'
+    max-num-batched-tokens: 16384
+
+  Frontend:
+    served_model_name: neuralmagic/DeepSeek-R1-Distill-Llama-70B-FP8-dynamic
+    endpoint: dynamo.Processor.chat/completions
+    port: 8000
+
+  Processor:
+    common-configs: [model, block-size, max-model-len, router]
+
+  Router:
+    min-workers: 1
+    model: neuralmagic/DeepSeek-R1-Distill-Llama-70B-FP8-dynamic
+
+  VllmWorker:
+    enable-prefix-caching: true
+    remote-prefill: true
+    conditional-disagg: true
+    max-local-prefill-length: 10
+    max-prefill-queue-size: 2
+    tensor-parallel-size: 4
+    ServiceArgs:
+      workers: 1
+      resources:
+        gpu: 4
+    common-configs: [model, block-size, max-model-len, router, kv-transfer-config, max-num-batched-tokens]
+
+  PrefillWorker:
+    tensor-parallel-size: 1
+    ServiceArgs:
+      workers: 4
+      resources:
+        gpu: 1
+    common-configs: [model, block-size, max-model-len, kv-transfer-config, max-num-batched-tokens]
+
+graphs:
+  single.py: |
+    from components.frontend import Frontend
+    from components.kv_router import Router
+    from components.prefill_worker import PrefillWorker
+    from components.processor import Processor
+    from components.worker import VllmWorker
+    Frontend.link(Processor).link(Router).link(VllmWorker).link(PrefillWorker)
+
+rdma:
+  enable: false
+  # allowed values: "tke-bridge", "tke-route-eni"
+  networkMode: "tke-route-eni"
+  hostNetwork: true
+
+single:
+  enable: true
+  metrics:
+    enable: false
+    port: 9091
+    image:
+      repository: ccr.ccs.tencentyun.com/tke-market/dynamo
+      pullPolicy: IfNotPresent
+      tag: "v0.1.1-20250415"
+    serviceMonitor:
+      namespace: kube-system
+      apiVersion: "monitoring.coreos.com/v1"
+      enable: false
+      interval: 15s
+      honorLabels: false
+      additionalLabels: {}
+      relabelings: []
+  labels: {}
+  annotations: {}
+    # eks.tke.cloud.tencent.com/root-cbs-size: '512'
+    # eks.tke.cloud.tencent.com/use-image-cache: 'auto'
+    # eks.tke.cloud.tencent.com/image-cache-disk-size: '128'
+  resources:
+    requests:
+      nvidia.com/gpu: 8
+    limits:
+      nvidia.com/gpu: 8
+
+multinode:
+  enable: false
+  # replicas: 1
+  # metrics:
+  #   enable: false
+  #   port: 9091
+  #   image:
+  #     repository: ccr.ccs.tencentyun.com/tke-market
+  #     pullPolicy: IfNotPresent
+  #     tag: "v0.1.1-20250415"
+  # labels: {}
+  # annotations: {}
+  #   # eks.tke.cloud.tencent.com/root-cbs-size: '512'
+  #   # eks.tke.cloud.tencent.com/use-image-cache: 'auto'
+  #   # eks.tke.cloud.tencent.com/image-cache-disk-size: '128'
+  # resources:
+  #   requests:
+  #     nvidia.com/gpu: 8
+  #   limits:
+  #     nvidia.com/gpu: 8
+  # prefill:
+  #   replicas: 1
+  #   resources:
+  #     requests:
+  #       nvidia.com/gpu: 8
+  #     limits:
+  #       nvidia.com/gpu: 8
+
+natsServerOverride: ""
+etcdEndpointsOverride: ""
+
+nats:
+  enable: true
+  config:
+    jetstream:
+      enabled: true
+      fileStore:
+        enabled: true
+        dir: /data
+        pvc:
+          enabled: true
+          size: 10Gi
+
+etcd:
+  enable: true
+  replicaCount: 1
+  # Explicitly remove authentication
+  auth:
+    rbac:
+      create: false
+
+  readinessProbe:
+    enabled: false
+
+  livenessProbe:
+    enabled: false
+
+  persistence:
+    size: 10Gi

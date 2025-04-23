@@ -1,0 +1,9 @@
+{{- with .Values.graphs }}
+apiVersion: v1
+data:
+  {{ . | toYaml | nindent 2 }}
+kind: ConfigMap
+metadata:
+  name: {{ include "dynamo.fullname" $ }}-graphs
+  namespace: {{ $.Release.Namespace | quote }}
+{{- end }}
