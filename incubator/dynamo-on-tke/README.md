@@ -1,6 +1,6 @@
-# dynamo
+# dynamo-on-tke
 
-`tke-dynamo` 是用于在 TKE 上快速尝试 [dynamo](https://github.com/ai-dynamo/dynamo) 的 PD 分离部署的 helm chart。
+`dynamo-on-tke` 是用于在 TKE 上快速尝试 [dynamo](https://github.com/ai-dynamo/dynamo) 的 PD 分离部署的 helm chart。
 
 ## 架构说明
 
@@ -10,7 +10,7 @@
 - **Router**：根据指定策略将请求路由到适当的 Worker。
 - **Worker**：处理实际的 LLM 推理（包括预填充和解码阶段）。
 
-根据以上信息，`tke-dynamo` 使用 vLLM 作为下游推理引擎，将上述组件主要分为了以下两个 Deployment 进行部署。
+根据以上信息，`dynamo-on-tke` 使用 vLLM 作为下游推理引擎，将上述组件主要分为了以下两个 Deployment 进行部署。
 - **frontend**：包含上述的 **FrontEnd**、**Processor**、**Router**，以及主要负责 LLM 推理中的解码阶段的 **VllmWorker**。
 - **prefill-worker（可选）**：属于 **Worker** 组件，处理 LLM 推理中的预填充阶段。
 
@@ -35,7 +35,7 @@ Chart 依赖以下服务：
 | Key               | Description                                                     | Default                                             |
 |-------------------|-----------------------------------------------------------------|-----------------------------------------------------|
 | image.repository  | Docker image repository for the Dynamo component.               | ccr.ccs.tencentyun.com/tke-market/dynamo            |
-| image.tag         | Tag version of the Dynamo Docker image.                         | 202504151804                                        |
+| image.tag         | Tag version of the Dynamo Docker image.                         | v0.1.1-20250415                                     |
 | image.pullPolicy  | Image pull policy for Dynamo containers.                        | IfNotPresent                                        |
 | imagePullSecrets  | Kubernetes secrets for authenticating private image registries. | []                                                  |
 
@@ -75,7 +75,7 @@ Chart 依赖以下服务：
 | single.metrics.port             | Exposed port for metrics service.                                   | 9091                               |
 | single.metrics.image.repository | Docker image repository for metrics component.                      | ccr.ccs.tencentyun.com/tke-market/dynamo |
 | single.metrics.image.pullPolicy | Image pull policy for metrics containers.                           | IfNotPresent                       |
-| single.metrics.image.tag        | Tag version of metrics component Docker image.                      | metrics-202504121542               |
+| single.metrics.image.tag        | Tag version of metrics component Docker image.                      | v0.1.1-20250415                    |
 | single.metrics.serviceMonitor   | Configuration for Prometheus ServiceMonitor integration.            | See `values.yaml`                  |
 | single.labels                   | Extra labels to attach to single-node pods.                         | {}                                 |
 | single.annotations              | Extra annotations to apply to single-node pods.                     | {}                                 |
@@ -90,7 +90,7 @@ Chart 依赖以下服务：
 | multinode.metrics.port            | Exposed port for metrics service.                          | 9091                               |
 | multinode.metrics.image.repository| Docker image repository for metrics component.             | ccr.ccs.tencentyun.com/tke-market/dynamo |
 | multinode.metrics.image.pullPolicy| Image pull policy for metrics containers.                  | IfNotPresent                       |
-| multinode.metrics.image.tag       | Tag version of metrics component Docker image.             | metrics-202504121542               |
+| multinode.metrics.image.tag       | Tag version of metrics component Docker image.             | v0.1.1-20250415                    |
 | multinode.metrics.serviceMonitor  | Configuration for Prometheus ServiceMonitor integration.   | See `values.yaml`                  |
 | multinode.labels                  | Extra labels to attach to multi-node pods.                 | {}                                 |
 | multinode.annotations             | Extra annotations to apply to multi-node pods.             | {}                                 |
