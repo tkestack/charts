@@ -1,5 +1,5 @@
 apiVersion: v2
-name: tke-dynamo
+name: dynamo-on-tke
 version: 0.1.1
 appVersion: "0.1.1"
 description: Helm chart for deploying dynamo resources on TKE.
