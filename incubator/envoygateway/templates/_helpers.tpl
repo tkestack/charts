@@ -70,7 +70,7 @@ The name of the Envoy Gateway image.
 {{- else if .Values.global.images.envoyGateway.image }}
 {{- .Values.global.images.envoyGateway.image }}
 {{- else }}
-ccr.ccs.tencentyun.com/tke-market/envoygateway:{{ .Chart.Version }}
+docker.io/envoyproxy/gateway:{{ .Chart.Version }}
 {{- end }}
 {{- end }}
 
