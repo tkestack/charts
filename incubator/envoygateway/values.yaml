@@ -4,7 +4,7 @@ global:
   images:
     envoyGateway:
       # This is the full image name including the hub, repo, and tag.
-      image: ccr.ccs.tencentyun.com/tke-market/envoygateway:v1.3.0
+      image: docker.io/envoyproxy/gateway:v1.3.2
       # Specify image pull policy if default behavior isn't desired.
       # Default behavior: latest images will be Always else IfNotPresent.
       pullPolicy: IfNotPresent
@@ -12,7 +12,7 @@ global:
       pullSecrets: []
     ratelimit:
       # This is the full image name including the hub, repo, and tag.
-      image: "ccr.ccs.tencentyun.com/tke-market/envoy-ratelimit:60d8e81b"
+      image: "ccr.ccs.tencentyun.com/tke-market/envoy-ratelimit:0141a24f"
       # Specify image pull policy if default behavior isn't desired.
       # Default behavior: latest images will be Always else IfNotPresent.
       pullPolicy: IfNotPresent
