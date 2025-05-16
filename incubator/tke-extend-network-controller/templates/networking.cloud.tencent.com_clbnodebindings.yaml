@@ -1,0 +1,139 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.15.0
+  name: clbnodebindings.networking.cloud.tencent.com
+spec:
+  group: networking.cloud.tencent.com
+  names:
+    kind: CLBNodeBinding
+    listKind: CLBNodeBindingList
+    plural: clbnodebindings
+    shortNames:
+    - cnb
+    singular: clbnodebinding
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - description: State
+      jsonPath: .status.state
+      name: State
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: CLBNodeBinding is the Schema for the clbnodebindings API.
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: CLBBindingSpec defines the desired state of CLBPodBinding.
+            properties:
+              disabled:
+                description: 网络隔离
+                type: boolean
+              ports:
+                description: 需要绑定的端口配置列表
+                items:
+                  description: PortEntry 定义单个端口的绑定配置
+                  properties:
+                    pools:
+                      description: 使用的端口池列表
+                      items:
+                        type: string
+                      type: array
+                    port:
+                      description: 应用监听的端口号
+                      type: integer
+                    protocol:
+                      description: 端口使用的协议
+                      enum:
+                      - TCP
+                      - UDP
+                      - TCPUDP
+                      type: string
+                    useSamePortAcrossPools:
+                      description: 是否跨端口池分配相同端口号
+                      type: boolean
+                  required:
+                  - pools
+                  - port
+                  - protocol
+                  type: object
+                type: array
+            required:
+            - ports
+            type: object
+          status:
+            description: CLBBindingStatus defines the observed state of CLBPodBinding.
+            properties:
+              message:
+                description: 状态信息
+                type: string
+              portBindings:
+                description: 端口绑定详情
+                items:
+                  description: PortBindingStatus 描述单个端口的实际绑定情况
+                  properties:
+                    listenerId:
+                      description: 监听器ID
+                      type: string
+                    loadbalancerEndPort:
+                      description: 负载均衡器端口段结束端口（当使用端口段时）
+                      type: integer
+                    loadbalancerId:
+                      description: 负载均衡器ID
+                      type: string
+                    loadbalancerPort:
+                      description: 负载均衡器端口
+                      type: integer
+                    pool:
+                      description: 使用的端口池
+                      type: string
+                    port:
+                      description: 应用端口
+                      type: integer
+                    protocol:
+                      description: 协议类型
+                      type: string
+                    region:
+                      description: 地域信息
+                      type: string
+                  required:
+                  - listenerId
+                  - loadbalancerId
+                  - loadbalancerPort
+                  - pool
+                  - port
+                  - protocol
+                  - region
+                  type: object
+                type: array
+              state:
+                description: 绑定状态
+                type: string
+            required:
+            - state
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

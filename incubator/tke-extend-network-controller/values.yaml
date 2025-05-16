@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 # -- Replica count of the controller pod
-replicaCount: 1
+replicaCount: 2
 
 # -- Region of the current TKE Cluster, optional.
 region: ""
@@ -15,8 +15,18 @@ secretID: ""
 secretKey: ""
 # -- Cluster ID of the current TKE Cluster.
 clusterID: ""
-# -- Worker count of the controller
-workerCount: 3
+
+# -- Concurrency options of the controller, in large-scale rapid expansion scenarios,
+# the concurrency of the first 3 controllers can be appropriately increased
+# (mainly by batch creating clb listeners and binding rs to speed up the process).
+concurrency:
+  clbPodBindingController: 30
+  clbNodeBindingController: 30
+  dedicatedClbListenerController: 30
+  podController: 30
+  nodeController: 30
+  clbPortPoolController: 1
+  dedicatedClbServiceController: 1
 
 # -- Logging otpions of the controller
 log:
@@ -39,18 +49,17 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-resources:
-  {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+resources: {}
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# limits:
+#   cpu: 100m
+#   memory: 128Mi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
 
 livenessProbe:
   httpGet:

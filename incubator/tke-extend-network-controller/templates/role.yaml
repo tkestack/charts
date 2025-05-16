@@ -78,14 +78,6 @@ rules:
 - apiGroups:
   - ""
   resources:
-  - nodes
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
   - pods
   verbs:
   - get
@@ -98,6 +90,143 @@ rules:
   - pods/status
   verbs:
   - get
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - nodes/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - nodes/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - pods/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - networking.cloud.tencent.com
+  resources:
+  - clbnodebindings
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - networking.cloud.tencent.com
+  resources:
+  - clbnodebindings/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - networking.cloud.tencent.com
+  resources:
+  - clbnodebindings/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - networking.cloud.tencent.com
+  resources:
+  - clbpodbindings
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - networking.cloud.tencent.com
+  resources:
+  - clbpodbindings/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - networking.cloud.tencent.com
+  resources:
+  - clbpodbindings/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - networking.cloud.tencent.com
+  resources:
+  - clbportpools
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - networking.cloud.tencent.com
+  resources:
+  - clbportpools/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - networking.cloud.tencent.com
+  resources:
+  - clbportpools/status
+  verbs:
+  - get
+  - patch
+  - update
 - apiGroups:
   - networking.cloud.tencent.com
   resources:
@@ -125,13 +254,6 @@ rules:
   - patch
   - update
 - apiGroups:
-  - ""
-  resources:
-  - events
-  verbs:
-  - create
-  - patch
-- apiGroups:
   - networking.cloud.tencent.com
   resources:
   - dedicatedclbservices
@@ -157,30 +279,3 @@ rules:
   - get
   - patch
   - update
-- apiGroups:
-  - networking.cloud.tencent.com
-  resources:
-  - dedicatednatgwservices
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - networking.cloud.tencent.com
-  resources:
-  - dedicatednatgwservices/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - networking.cloud.tencent.com
-  resources:
-  - dedicatednatgwservices/status
-  verbs:
-  - get
-  - patch
-  - update
-

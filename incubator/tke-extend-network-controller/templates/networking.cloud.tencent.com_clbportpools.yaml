@@ -1,0 +1,272 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.15.0
+  name: clbportpools.networking.cloud.tencent.com
+spec:
+  group: networking.cloud.tencent.com
+  names:
+    kind: CLBPortPool
+    listKind: CLBPortPoolList
+    plural: clbportpools
+    shortNames:
+    - cpp
+    singular: clbportpool
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - description: State
+      jsonPath: .status.state
+      name: State
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: CLBPortPool is the Schema for the clbportpools API.
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: CLBPortPoolSpec defines the desired state of CLBPortPool.
+            properties:
+              autoCreate:
+                description: 自动创建配置
+                properties:
+                  enabled:
+                    description: 是否启用自动创建
+                    type: boolean
+                  maxLoadBalancers:
+                    description: 自动创建的最大负载均衡器数量
+                    type: integer
+                  parameters:
+                    description: 自动创建参数
+                    properties:
+                      addressIPVersion:
+                        description: 仅适用于公网负载均衡。IP版本，可取值：IPV4、IPV6、IPv6FullChain，不区分大小写，默认值
+                          IPV4。说明：取值为IPV6表示为IPV6 NAT64版本；取值为IPv6FullChain，表示为IPv6版本。
+                        enum:
+                        - IPV4
+                        - IPV6
+                        - IPv6FullChain
+                        type: string
+                      bandwidthPackageId:
+                        description: 带宽包ID，指定此参数时，网络计费方式（InternetAccessible.InternetChargeType）只支持按带宽包计费（BANDWIDTH_PACKAGE），带宽包的属性即为其结算方式。非上移用户购买的
+                          IPv6 负载均衡实例，且运营商类型非 BGP 时 ，不支持指定具体带宽包id。
+                        type: string
+                      dynamicVip:
+                        description: 是否创建域名化负载均衡。
+                        type: boolean
+                      internetAccessible:
+                        description: 仅适用于公网负载均衡。负载均衡的网络计费模式。
+                        properties:
+                          bandwidthpkgSubType:
+                            description: 带宽包的类型，如 SINGLEISP（单线）、BGP（多线）。
+                            enum:
+                            - SINGLEISP
+                            - BGP
+                            type: string
+                          internetChargeType:
+                            description: TRAFFIC_POSTPAID_BY_HOUR 按流量按小时后计费 ; BANDWIDTH_POSTPAID_BY_HOUR
+                              按带宽按小时后计费; BANDWIDTH_PACKAGE 按带宽包计费;BANDWIDTH_PREPAID按带宽预付费。注意：此字段可能返回
+                              null，表示取不到有效值。
+                            enum:
+                            - TRAFFIC_POSTPAID_BY_HOUR
+                            - BANDWIDTH_POSTPAID_BY_HOUR
+                            - BANDWIDTH_PACKAGE
+                            - BANDWIDTH_PREPAID
+                            type: string
+                          internetMaxBandwidthOut:
+                            description: |-
+                              最大出带宽，单位Mbps，仅对公网属性的共享型、性能容量型和独占型 CLB 实例、以及内网属性的性能容量型 CLB 实例生效。
+                              - 对于公网属性的共享型和独占型 CLB 实例，最大出带宽的范围为1Mbps-2048Mbps。
+                              - 对于公网属性和内网属性的性能容量型 CLB实例，最大出带宽的范围为1Mbps-61440Mbps。
+                              （调用CreateLoadBalancer创建LB时不指定此参数则设置为默认值10Mbps。此上限可调整）
+                            format: int64
+                            type: integer
+                        type: object
+                      lbChargeType:
+                        description: 负载均衡实例计费类型，取值：POSTPAID_BY_HOUR，PREPAID，默认是POSTPAID_BY_HOUR。
+                        enum:
+                        - POSTPAID_BY_HOUR
+                        - PREPAID
+                        type: string
+                      loadBalancerName:
+                        description: 负载均衡实例的名称。规则：1-60 个英文、汉字、数字、连接线“-”或下划线“_”。 注意：如果名称与系统中已有负载均衡实例的名称相同，则系统将会自动生成此次创建的负载均衡实例的名称。
+                        type: string
+                      loadBalancerPassToTarget:
+                        description: Target是否放通来自CLB的流量。开启放通（true）：只验证CLB上的安全组；不开启放通（false）：需同时验证CLB和后端实例上的安全组。默认值为
+                          true。
+                        type: boolean
+                      loadBalancerType:
+                        description: 负载均衡实例的网络类型：OPEN：公网属性， INTERNAL：内网属性。默认使用 OPEN（公网负载均衡）。
+                        enum:
+                        - OPEN
+                        - INTERNAL
+                        type: string
+                      masterZoneId:
+                        description: |-
+                          仅适用于公网且IP版本为IPv4的负载均衡。设置跨可用区容灾时的主可用区ID，例如 100001 或 ap-guangzhou-1
+                          注：主可用区是需要承载流量的可用区，备可用区默认不承载流量，主可用区不可用时才使用备可用区。目前仅广州、上海、南京、北京、成都、深圳金融、中国香港、首尔、法兰克福、新加坡地域的 IPv4 版本的 CLB 支持主备可用区。可通过 DescribeResources 接口查询一个地域的主可用区的列表。【如果您需要体验该功能，请通过 工单申请】
+                        type: string
+                      projectId:
+                        description: 负载均衡实例所属的项目 ID，可以通过 DescribeProject 接口获取。不填此参数则视为默认项目。
+                        format: int64
+                        type: integer
+                      slaType:
+                        description: |-
+                          性能容量型规格。
+                          若需要创建性能容量型实例，则此参数必填，取值范围：
+                          clb.c2.medium：标准型规格
+                          clb.c3.small：高阶型1规格
+                          clb.c3.medium：高阶型2规格
+                          clb.c4.small：超强型1规格
+                          clb.c4.medium：超强型2规格
+                          clb.c4.large：超强型3规格
+                          clb.c4.xlarge：超强型4规格
+                          若需要创建共享型实例，则无需填写此参数。
+                        enum:
+                        - clb.c2.medium
+                        - clb.c3.small
+                        - clb.c3.medium
+                        - clb.c4.small
+                        - clb.c4.medium
+                        - clb.c4.large
+                        - clb.c4.xlarge
+                        type: string
+                      subnetId:
+                        description: 在私有网络内购买内网负载均衡实例的情况下，必须指定子网 ID，内网负载均衡实例的 VIP
+                          将从这个子网中产生。创建内网负载均衡实例时，此参数必填，创建公网IPv4负载均衡实例时，不支持指定该参数。
+                        type: string
+                      tags:
+                        description: 购买负载均衡的同时，给负载均衡打上标签，最大支持20个标签键值对。
+                        items:
+                          description: TagInfo 定义标签结构
+                          properties:
+                            tagKey:
+                              description: 标签的键
+                              type: string
+                            tagValue:
+                              description: 标签的值
+                              type: string
+                          required:
+                          - tagKey
+                          - tagValue
+                          type: object
+                        type: array
+                      vip:
+                        description: |-
+                          指定VIP申请负载均衡。此参数选填，不填写此参数时自动分配VIP。IPv4和IPv6类型支持此参数，IPv6 NAT64类型不支持。
+                          注意：当指定VIP创建内网实例、或公网IPv6 BGP实例时，若VIP不属于指定VPC子网的网段内时，会创建失败；若VIP已被占用，也会创建失败。
+                        type: string
+                      vipIsp:
+                        description: 仅适用于公网负载均衡。目前仅广州、上海、南京、济南、杭州、福州、北京、石家庄、武汉、长沙、成都、重庆地域支持静态单线
+                          IP 线路类型，如需体验，请联系商务经理申请。申请通过后，即可选择中国移动（CMCC）、中国联通（CUCC）或中国电信（CTCC）的运营商类型，网络计费模式只能使用按带宽包计费(BANDWIDTH_PACKAGE)。
+                          如果不指定本参数，则默认使用BGP。可通过 DescribeResources 接口查询一个地域所支持的Isp。
+                        enum:
+                        - CMCC
+                        - CUCC
+                        - CTCC
+                        - BGP
+                        type: string
+                      vpcId:
+                        description: 负载均衡后端目标设备所属的网络 ID，如vpc-12345678，可以通过 DescribeVpcs
+                          接口获取。 不填此参数则默认为当前集群所在 VPC。创建内网负载均衡实例时，此参数必填。
+                        type: string
+                      zoneId:
+                        description: 仅适用于公网且IP版本为IPv4的负载均衡。可用区ID，指定可用区以创建负载均衡实例。
+                        type: string
+                    type: object
+                required:
+                - enabled
+                type: object
+              endPort:
+                description: 端口池的结束端口号
+                type: integer
+                x-kubernetes-validations:
+                - message: Value is immutable
+                  rule: self == oldSelf
+              exsistedLoadBalancerIDs:
+                description: 已有负载均衡器ID列表
+                items:
+                  type: string
+                type: array
+              region:
+                description: 地域代码，如ap-chengdu
+                type: string
+                x-kubernetes-validations:
+                - message: Value is immutable
+                  rule: self == oldSelf
+              segmentLength:
+                description: 端口段的长度
+                type: integer
+                x-kubernetes-validations:
+                - message: Value is immutable
+                  rule: self == oldSelf
+              startPort:
+                description: 端口池的起始端口号
+                type: integer
+                x-kubernetes-validations:
+                - message: Value is immutable
+                  rule: self == oldSelf
+            required:
+            - startPort
+            type: object
+          status:
+            description: CLBPortPoolStatus defines the observed state of CLBPortPool.
+            properties:
+              loadbalancerStatuses:
+                description: 负载均衡器状态列表
+                items:
+                  description: LoadBalancerStatus 定义负载均衡器状态
+                  properties:
+                    autoCreated:
+                      type: boolean
+                    hostname:
+                      type: string
+                    ips:
+                      items:
+                        type: string
+                      type: array
+                    loadbalancerID:
+                      type: string
+                    loadbalancerName:
+                      type: string
+                    state:
+                      type: string
+                  required:
+                  - loadbalancerID
+                  - loadbalancerName
+                  - state
+                  type: object
+                type: array
+              message:
+                description: 状态信息
+                type: string
+              state:
+                description: '状态: Pending/Active/Scaling'
+                type: string
+            required:
+            - state
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
