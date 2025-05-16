@@ -25,16 +25,43 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            {{- include "tke-extend-network-controller.selectorLabels" . | nindent 12 }}
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            {{- include "tke-extend-network-controller.selectorLabels" . | nindent 12 }}
       containers:
       - args:
         - --metrics-bind-address=:8443
         - --leader-elect
         - --health-probe-bind-address=:8081
-        - --worker-count={{ .Values.workerCount }}
         - --zap-log-level={{ .Values.log.level }}
         - --zap-encoder={{ .Values.log.encoder }}
         command:
         - /tke-extend-network-controller
+        env:
+        - name: WORKER_CLB_POD_BINDING_CONTROLLER
+          value: "{{ .Values.concurrency.clbPodBindingController }}"
+        - name: WORKER_CLB_NODE_BINDING_CONTROLLER
+          value: "{{ .Values.concurrency.clbNodeBindingController }}"
+        - name: WORKER_DEDICATED_CLB_SERVICE_CONTROLLER
+          value: "{{ .Values.concurrency.dedicatedClbServiceController }}"
+        - name: WORKER_DEDICATED_CLB_LISTENER_CONTROLLER
+          value: "{{ .Values.concurrency.dedicatedClbListenerController }}"
+        - name: WORKER_CLB_PORT_POOL_CONTROLLER
+          value: "{{ .Values.concurrency.clbPortPoolController }}"
+        - name: WORKER_POD_CONTROLLER
+          value: "{{ .Values.concurrency.podController }}"
+        - name: WORKER_NODE_CONTROLLER
+          value: "{{ .Values.concurrency.nodeController }}"
         envFrom:
         - secretRef:
             name: {{ include "tke-extend-network-controller.fullname" . }}-env
