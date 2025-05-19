@@ -403,3 +403,22 @@ Chart 依赖以下服务：
 | `externalMyScaleDB.password`               | The password for accessing the MyScaleDB service.                                                                                                              | `""`                        |
 | `externalMyScaleDB.database`               | The database name to use in MyScaleDB.                                                                                                                         | `"dify"`                    |
 | `externalMyScaleDB.ftsParams`              | Full-text search parameters for MyScaleDB.                                                                                                                     | `""`                        |
+
+## 常见FAQ
+
+1. 如果您在安装过程中，发现 tke-dify-api 和 tke-dify-worker 出现如下报错
+
+```text
+Events:
+  Type     Reason             Age                    From                Message
+  ----     ------             ----                   ----                -------
+  Warning  FailedScheduling   5m                     default-scheduler   0/1 nodes are available: pod has unbound immediate PersistentVolumeClaims. preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.
+```
+
+且pvc tke-dify 出现 pending 状态，其原因是集群中未安装 cfs  存储组件, 请参考[CFS-CSI 组件说明](https://cloud.tencent.com/document/product/457/49258) 安装 cfs 存储组件和创建命名为 cfs 的 storageClass 对象。
+
+2. 如果您卸载 tke-dify，请根据需要手动删除pvc
+
+```bash
+kubectl delete pvc --all -n dify-system
+```  
