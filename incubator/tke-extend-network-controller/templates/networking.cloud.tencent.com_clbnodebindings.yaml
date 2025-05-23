@@ -54,6 +54,9 @@ spec:
                 items:
                   description: PortEntry 定义单个端口的绑定配置
                   properties:
+                    certSecretName:
+                      description: 包含服务端证书的 ID 的 Secret 名称。仅对 TCP_SSL 和 QUIC 协议有效。
+                      type: string
                     pools:
                       description: 使用的端口池列表
                       items:
@@ -68,6 +71,8 @@ spec:
                       - TCP
                       - UDP
                       - TCPUDP
+                      - TCP_SSL
+                      - QUIC
                       type: string
                     useSamePortAcrossPools:
                       description: 是否跨端口池分配相同端口号
@@ -92,6 +97,9 @@ spec:
                 items:
                   description: PortBindingStatus 描述单个端口的实际绑定情况
                   properties:
+                    certId:
+                      description: 服务端证书 ID（仅在 TCP_SSL 和 QUIC 协议下有效）
+                      type: string
                     listenerId:
                       description: 监听器ID
                       type: string
