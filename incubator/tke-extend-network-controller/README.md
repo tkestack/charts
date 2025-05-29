@@ -1,6 +1,6 @@
 # tke-extend-network-controller
 
-![Version: 2.0.2](https://img.shields.io/badge/Version-2.0.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.0.2](https://img.shields.io/badge/AppVersion-2.0.2-informational?style=flat-square)
+![Version: 2.0.5](https://img.shields.io/badge/Version-2.0.5-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.0.5](https://img.shields.io/badge/AppVersion-2.0.5-informational?style=flat-square)
 
 针对 TKE 集群一些特殊场景的的网络控制器。
 
@@ -69,6 +69,10 @@ secretKey: "" # 腾讯云子账号的 SecretKey
 ## 使用 CLB 端口池为 Pod 映射公网地址
 
 参考 [这个文档](https://github.com/tkestack/tke-extend-network-controller/blob/main/docs/clb-port-pool.md)。
+
+## Requirements
+
+Kubernetes: `>= 1.26.0-0`
 
 ## Values
 
