@@ -1,6 +1,6 @@
 # tke-extend-network-controller
 
-![Version: 2.0.5](https://img.shields.io/badge/Version-2.0.5-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.0.5](https://img.shields.io/badge/AppVersion-2.0.5-informational?style=flat-square)
+![Version: 2.0.6](https://img.shields.io/badge/Version-2.0.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.0.6](https://img.shields.io/badge/AppVersion-2.0.6-informational?style=flat-square)
 
 针对 TKE 集群一些特殊场景的的网络控制器。
 
@@ -80,7 +80,7 @@ Kubernetes: `>= 1.26.0-0`
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
 | clusterID | string | `""` | Cluster ID of the current TKE Cluster. |
-| concurrency | object | `{"clbNodeBindingController":30,"clbPodBindingController":30,"clbPortPoolController":1,"dedicatedClbListenerController":30,"dedicatedClbServiceController":1,"nodeController":30,"podController":30}` | Concurrency options of the controller, in large-scale rapid expansion scenarios, the concurrency of the first 3 controllers can be appropriately increased (mainly by batch creating clb listeners and binding rs to speed up the process). |
+| concurrency | object | `{"clbNodeBindingController":20,"clbPodBindingController":20,"clbPortPoolController":10,"dedicatedClbListenerController":20,"dedicatedClbServiceController":1,"nodeController":20,"podController":20}` | Concurrency options of the controller, in large-scale rapid expansion scenarios, the concurrency of the first 3 controllers can be appropriately increased (mainly by batch creating clb listeners and binding rs to speed up the process). |
 | fullnameOverride | string | `""` |  |
 | image | object | `{"pullPolicy":"IfNotPresent","repository":"imroc/tke-extend-network-controller","tag":""}` | Image of the controller |
 | image.pullPolicy | string | `"IfNotPresent"` | ImagePullPolicy of the controller |
