@@ -20,12 +20,12 @@ clusterID: ""
 # the concurrency of the first 3 controllers can be appropriately increased
 # (mainly by batch creating clb listeners and binding rs to speed up the process).
 concurrency:
-  clbPodBindingController: 30
-  clbNodeBindingController: 30
-  dedicatedClbListenerController: 30
-  podController: 30
-  nodeController: 30
-  clbPortPoolController: 1
+  clbPodBindingController: 20
+  clbNodeBindingController: 20
+  dedicatedClbListenerController: 20
+  podController: 20
+  nodeController: 20
+  clbPortPoolController: 10
   dedicatedClbServiceController: 1
 
 # -- Logging otpions of the controller
