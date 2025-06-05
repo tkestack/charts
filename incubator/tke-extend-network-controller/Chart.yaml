@@ -4,6 +4,11 @@ description: A Network Controller for TKE
 
 home: https://github.com/imroc/tke-extend-network-controller
 icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/b76ab4be-8275-4f41-8438-764267b3af73.png
+sources:
+- https://github.com/imroc/tke-extend-network-controller
+maintainers:
+- name: rockerchen
+  email: rockerchen@tencent.com
 
 # A chart can be either an 'application' or a 'library' chart.
 #
