@@ -30,15 +30,15 @@ concurrency:
 
 # -- Precisely control the frequency limit of cloud API calls to avoid frequent over-limits
 # in large-scale scenarios, resulting in excessive retries and reduced scaling speed.
-# apiRateLimit:
-#   DescribeLoadBalancers: 20
-#   CreateListener: 20
-#   DescribeListeners: 20
-#   DeleteLoadBalancerListeners: 20
-#   BatchRegisterTargets: 20
-#   DescribeTargets: 20
-#   BatchDeregisterTargets: 20
-#   DescribeTaskStatus: 20
+apiRateLimit:
+  DescribeLoadBalancers: 20
+  CreateListener: 20
+  DescribeListeners: 20
+  DeleteLoadBalancerListeners: 20
+  BatchRegisterTargets: 20
+  DescribeTargets: 20
+  BatchDeregisterTargets: 20
+  DescribeTaskStatus: 20
 
 # -- Logging otpions of the controller
 log:
