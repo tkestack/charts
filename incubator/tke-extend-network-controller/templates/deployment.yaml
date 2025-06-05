@@ -62,6 +62,38 @@ spec:
           value: "{{ .Values.concurrency.podController }}"
         - name: WORKER_NODE_CONTROLLER
           value: "{{ .Values.concurrency.nodeController }}"
+        {{- with .Values.apiRateLimit.DescribeLoadBalancers }}
+        - name: API_RATELIMIT_DESCRIBE_LOAD_BALANCERS
+          value: "{{ . }}"
+        {{- end }}
+        {{- with .Values.apiRateLimit.CreateListener }}
+        - name: API_RATELIMIT_CREATE_LISTENER
+          value: "{{ . }}"
+        {{- end }}
+        {{- with .Values.apiRateLimit.DescribeListeners }}
+        - name: API_RATELIMIT_DESCRIBE_LISTENERS
+          value: "{{ . }}"
+        {{- end }}
+        {{- with .Values.apiRateLimit.DeleteLoadBalancerListeners }}
+        - name: API_RATELIMIT_DELETE_LOAD_BALANCER_LISTENERS
+          value: "{{ . }}"
+        {{- end }}
+        {{- with .Values.apiRateLimit.BatchRegisterTargets }}
+        - name: API_RATELIMIT_BATCH_REGISTER_TARGETS
+          value: "{{ . }}"
+        {{- end }}
+        {{- with .Values.apiRateLimit.DescribeTargets }}
+        - name: API_RATELIMIT_DESCRIBE_TARGETS
+          value: "{{ . }}"
+        {{- end }}
+        {{- with .Values.apiRateLimit.BatchDeregisterTargets }}
+        - name: API_RATELIMIT_BATCH_DEREGISTER_TARGETS
+          value: "{{ . }}"
+        {{- end }}
+        {{- with .Values.apiRateLimit.DescribeTaskStatus }}
+        - name: API_RATELIMIT_DESCRIBE_TASK_STATUS
+          value: "{{ . }}"
+        {{- end }}
         envFrom:
         - secretRef:
             name: {{ include "tke-extend-network-controller.fullname" . }}-env

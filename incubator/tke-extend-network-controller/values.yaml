@@ -28,6 +28,18 @@ concurrency:
   clbPortPoolController: 10
   dedicatedClbServiceController: 1
 
+# -- Precisely control the frequency limit of cloud API calls to avoid frequent over-limits
+# in large-scale scenarios, resulting in excessive retries and reduced scaling speed.
+# apiRateLimit:
+#   DescribeLoadBalancers: 20
+#   CreateListener: 20
+#   DescribeListeners: 20
+#   DeleteLoadBalancerListeners: 20
+#   BatchRegisterTargets: 20
+#   DescribeTargets: 20
+#   BatchDeregisterTargets: 20
+#   DescribeTaskStatus: 20
+
 # -- Logging otpions of the controller
 log:
   # -- Log level of the controller, be one of 'debug', 'info', 'error', or any integer value > 0 which corresponds to custom debug levels of increasing verbosity
