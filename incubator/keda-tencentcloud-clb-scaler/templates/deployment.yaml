@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "clb-scaler.fullname" . }}
+  labels:
+    {{- include "clb-scaler.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "clb-scaler.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "clb-scaler.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      hostAliases:
+      - hostnames:
+        - clb.tencentcloudapi.com
+        - monitor.tencentcloudapi.com
+        ip: 169.254.0.95
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: '{{ .Values.image.repository }}:{{ .Values.image.tag | default (printf "v%s" .Chart.AppVersion) }}'
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: grpc
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          env:
+            - name: SECRET_ID
+              value: {{ required "credentials.secretId is required!" .Values.credentials.secretId }}
+            - name: SECRET_KEY
+              value: {{ required "credentials.secretKey is required!" .Values.credentials.secretKey }}
+            - name: REGION
+              value: {{ required "region is required!" .Values.region }}
+            {{- if .Values.timeZone }}
+            - name: TZ
+              value: {{ .Values.timeZone }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
