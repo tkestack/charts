@@ -249,21 +249,31 @@ spec:
                 items:
                   description: LoadBalancerStatus 定义负载均衡器状态
                   properties:
+                    allocated:
+                      description: 已分配的监听器数量
+                      type: integer
                     autoCreated:
+                      description: 是否自动创建
                       type: boolean
                     hostname:
+                      description: CLB 实例的域名 (域名化 CLB)
                       type: string
                     ips:
+                      description: CLB 实例的 IP 地址
                       items:
                         type: string
                       type: array
                     loadbalancerID:
+                      description: CLB 实例 ID
                       type: string
                     loadbalancerName:
+                      description: CLB 实例名称
                       type: string
                     state:
+                      description: CLB 状态（Running/NotFound）
                       type: string
                   required:
+                  - allocated
                   - loadbalancerID
                   - loadbalancerName
                   - state
@@ -272,10 +282,15 @@ spec:
               message:
                 description: 状态信息
                 type: string
+              quota:
+                description: 监听器数量的 Quota
+                type: integer
               state:
+                default: Pending
                 description: '状态: Pending/Active/Scaling'
                 type: string
             required:
+            - quota
             - state
             type: object
         type: object

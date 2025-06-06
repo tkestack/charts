@@ -135,6 +135,7 @@ spec:
                   type: object
                 type: array
               state:
+                default: Pending
                 description: 绑定状态
                 type: string
             required:
