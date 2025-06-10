@@ -158,6 +158,22 @@ rules:
   - list
   - watch
 - apiGroups:
+  - game.kruise.io
+  resources:
+  - gameserversets
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - game.kruise.io
+  resources:
+  - gameserversets/status
+  verbs:
+  - get
+- apiGroups:
   - networking.cloud.tencent.com
   resources:
   - clbnodebindings

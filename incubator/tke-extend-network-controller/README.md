@@ -1,6 +1,6 @@
 # tke-extend-network-controller
 
-![Version: 2.0.9](https://img.shields.io/badge/Version-2.0.9-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.0.9](https://img.shields.io/badge/AppVersion-2.0.9-informational?style=flat-square)
+![Version: 2.1.1](https://img.shields.io/badge/Version-2.1.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.1.1](https://img.shields.io/badge/AppVersion-2.1.1-informational?style=flat-square)
 
 针对 TKE 集群一些特殊场景的的网络控制器。
 
@@ -79,6 +79,7 @@ Kubernetes: `>= 1.26.0-0`
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
+| apiRateLimit | object | `{"BatchDeregisterTargets":20,"BatchRegisterTargets":20,"CreateListener":20,"DeleteLoadBalancerListeners":20,"DescribeListeners":20,"DescribeLoadBalancers":20,"DescribeTargets":20,"DescribeTaskStatus":20}` | Precisely control the QPS of cloud API calls to avoid frequent over-limits in large-scale scenarios, resulting in excessive retries and reduced scaling speed. |
 | clusterID | string | `""` | Cluster ID of the current TKE Cluster. |
 | concurrency | object | `{"clbNodeBindingController":20,"clbPodBindingController":20,"clbPortPoolController":10,"dedicatedClbListenerController":20,"dedicatedClbServiceController":1,"nodeController":20,"podController":20}` | Concurrency options of the controller, in large-scale rapid expansion scenarios, the concurrency of the first 3 controllers can be appropriately increased (mainly by batch creating clb listeners and binding rs to speed up the process). |
 | fullnameOverride | string | `""` |  |
