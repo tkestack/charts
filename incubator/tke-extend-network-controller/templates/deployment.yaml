@@ -52,10 +52,6 @@ spec:
           value: "{{ .Values.concurrency.clbPodBindingController }}"
         - name: WORKER_CLB_NODE_BINDING_CONTROLLER
           value: "{{ .Values.concurrency.clbNodeBindingController }}"
-        - name: WORKER_DEDICATED_CLB_SERVICE_CONTROLLER
-          value: "{{ .Values.concurrency.dedicatedClbServiceController }}"
-        - name: WORKER_DEDICATED_CLB_LISTENER_CONTROLLER
-          value: "{{ .Values.concurrency.dedicatedClbListenerController }}"
         - name: WORKER_CLB_PORT_POOL_CONTROLLER
           value: "{{ .Values.concurrency.clbPortPoolController }}"
         - name: WORKER_POD_CONTROLLER

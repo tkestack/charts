@@ -76,20 +76,15 @@ metadata:
     {{- include "tke-extend-network-controller.labels" . | nindent 4 }}
 rules:
 - apiGroups:
-  - ""
+  - agones.dev
   resources:
-  - pods
+  - gameservers
   verbs:
   - get
   - list
+  - patch
   - update
   - watch
-- apiGroups:
-  - ""
-  resources:
-  - pods/status
-  verbs:
-  - get
 - apiGroups:
   - ""
   resources:
@@ -247,58 +242,6 @@ rules:
   - networking.cloud.tencent.com
   resources:
   - clbportpools/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - networking.cloud.tencent.com
-  resources:
-  - dedicatedclblisteners
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - networking.cloud.tencent.com
-  resources:
-  - dedicatedclblisteners/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - networking.cloud.tencent.com
-  resources:
-  - dedicatedclblisteners/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - networking.cloud.tencent.com
-  resources:
-  - dedicatedclbservices
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - networking.cloud.tencent.com
-  resources:
-  - dedicatedclbservices/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - networking.cloud.tencent.com
-  resources:
-  - dedicatedclbservices/status
   verbs:
   - get
   - patch
