@@ -22,13 +22,11 @@ clusterID: ""
 concurrency:
   clbPodBindingController: 20
   clbNodeBindingController: 20
-  dedicatedClbListenerController: 20
   podController: 20
   nodeController: 20
   clbPortPoolController: 10
-  dedicatedClbServiceController: 1
 
-# -- Precisely control the frequency limit of cloud API calls to avoid frequent over-limits
+# -- Precisely control the QPS of cloud API calls to avoid frequent over-limits
 # in large-scale scenarios, resulting in excessive retries and reduced scaling speed.
 apiRateLimit:
   DescribeLoadBalancers: 20
