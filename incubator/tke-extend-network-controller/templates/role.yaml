@@ -97,8 +97,6 @@ rules:
   resources:
   - nodes
   verbs:
-  - create
-  - delete
   - get
   - list
   - patch
@@ -123,8 +121,6 @@ rules:
   resources:
   - pods
   verbs:
-  - create
-  - delete
   - get
   - list
   - patch
