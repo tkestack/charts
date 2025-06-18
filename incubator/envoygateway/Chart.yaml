@@ -1,19 +1,20 @@
 apiVersion: v2
-appVersion: v1.3.2
+appVersion: v1.4.1
 description: The Helm chart for Envoy Gateway
 home: https://gateway.envoyproxy.io/
 icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/92b3d22e-12b4-48c3-a852-daf66b91ea45.png
+maintainers:
+- name: rockerchen
+  email: rockerchen@tencent.com
+name: envoygateway
+kubeVersion: ">= 1.30.0-0"
 keywords:
 - gateway-api
 - envoyproxy
 - envoy-gateway
 - eg
-maintainers:
-- name: rockerchen
-  email: rockerchen@tencent.com
 name: envoygateway
 sources:
 - https://github.com/envoyproxy/gateway
 type: application
-version: v1.3.2
-kubeVersion: ">= 1.29.0-0"
+version: v1.4.1
