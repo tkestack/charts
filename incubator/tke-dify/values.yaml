@@ -472,6 +472,15 @@ postgresql:
       size: 20Gi
     affinity: {}
     tolerations: []
+
+weaviate:
+  enabled: true
+  image:
+    registry: docker.io
+    tag: 1.19.1
+    repo: semitechnologies/weaviate
+    pullPolicy: IfNotPresent
+    pullSecrets: []
   command: ["/bin/weaviate"]
   args:
     - "--host"
