@@ -213,7 +213,10 @@
                 "annotations": {
                   "type": "object",
                   "additionalProperties": {
-                    "type": "string"
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }                  
                   }
                 }
               },
@@ -435,7 +438,7 @@
               "type": "string"
             },
             "customCertSecretPath": {
-              "type": "object"
+              "type": "array"
             },
             "maxCreationParallelism": {
               "type": "integer"
@@ -456,7 +459,7 @@
               "type": "integer"
             },
             "topologySpreadConstraints": {
-              "type": "object"
+              "type": "array"
             },
             "apiServerQPS": {
               "type": "integer"
@@ -736,7 +739,7 @@
               ]
             },
             "topologySpreadConstraints": {
-              "type": "object"
+              "type": "array"
             }
           },
           "allOf": [
@@ -1093,7 +1096,7 @@
               ]
             },
             "topologySpreadConstraints": {
-              "type": "object"
+              "type": "array"
             },
             "healthCheck": {
               "$ref": "#/definitions/healthCheck"
@@ -1209,7 +1212,7 @@
               "type": "boolean"
             },
             "customCertSecretPath": {
-              "type": "object"
+              "type": "array"
             },
             "allocationApiService": {
               "type": "object",
@@ -1286,7 +1289,7 @@
               ]
             },
             "topologySpreadConstraints": {
-              "type": "object"
+              "type": "array"
             }
           },
           "allOf": [
