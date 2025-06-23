@@ -47,7 +47,9 @@ spec:
             description: CLBPortPoolSpec defines the desired state of CLBPortPool.
             properties:
               autoCreate:
-                description: 自动创建配置
+                description: |-
+                  自动创建的配置，如果启用，则当端口池中负载均衡器可用监听器数量不足时会自动创建新的负载
+                  均衡器来补充可分配监听器数量。
                 properties:
                   enabled:
                     description: 是否启用自动创建
@@ -203,10 +205,33 @@ spec:
                 - message: Value is immutable
                   rule: self == oldSelf
               exsistedLoadBalancerIDs:
-                description: 已有负载均衡器ID列表
+                description: |-
+                  已有负载均衡器实例 ID 列表，可动态追加。
+                  该列表的负载均衡器将会被端口池用于分配端口映射。
                 items:
                   type: string
                 type: array
+              lbBlacklist:
+                description: |-
+                  CLB 黑名单，负载均衡实例 ID 的数组，用于禁止某些 CLB 实例被分配端口，可动态追加和移除。
+                  如果发现某个 CLB 被 DDoS 攻击或其他原因导致不可用，可将该 CLB 的实例 ID 加入到黑名单中，
+                  避免后续端口分配使用该 CLB。
+                items:
+                  type: string
+                type: array
+              lbPolicy:
+                description: |-
+                  CLB 分配策略，单个端口池中有多个可分配 CLB ，分配端口时 CLB 的挑选策略。
+                  可选值：Uniform（均匀分配）、InOrder（顺序分配）、Random（随机分配）。默认值为 Random。
+
+
+                  若希望减小 DDoS 攻击的影响，建议使用 Uniform 策略，避免业务使用的 IP 过于集中；若希望提高
+                  CLB 的利用率，建议使用 InOrder 策略。
+                enum:
+                - Uniform
+                - InOrder
+                - Random
+                type: string
               listenerQuota:
                 description: |-
                   监听器数量配额。仅用在单独调整了指定 CLB 实例监听器数量配额的场景（TOTAL_LISTENER_QUOTA），
