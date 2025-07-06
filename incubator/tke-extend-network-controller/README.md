@@ -1,7 +1,5 @@
 # tke-extend-network-controller
 
-![Version: 2.3.1](https://img.shields.io/badge/Version-2.3.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.3.1](https://img.shields.io/badge/AppVersion-2.3.1-informational?style=flat-square)
-
 针对 TKE 集群一些特殊场景的的网络控制器。
 
 ## 支持房间类场景
