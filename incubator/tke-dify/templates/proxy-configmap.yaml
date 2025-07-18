@@ -2,7 +2,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ template "dify.nginx.fullname" . }}
-  namespace: {{ include "dify.namespace" . }}
 data:
   proxy.conf: |-
     {{- include "dify.nginx.config.proxy" . | indent 4 }}

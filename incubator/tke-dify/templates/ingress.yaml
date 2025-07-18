@@ -16,7 +16,6 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ $fullName }}
-  namespace: {{ include "dify.namespace" . }}
   labels:
     {{- include "dify.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}

@@ -1,38 +1,32 @@
-# Default values for dify.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
 image:
   api:
     repository: ccr.ccs.tencentyun.com/tke-market/dify-api
-    tag: "1.1.3"
+    tag: "1.5.0"
     pullPolicy: IfNotPresent
-    ## Optionally specify an array of imagePullSecrets.
-    ## Secrets must be manually created in the namespace.
-    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-    ##
-    # pullSecrets:
-    #   - myRegistryKeySecretName
 
   web:
     repository: ccr.ccs.tencentyun.com/tke-market/dify-web
-    tag: "1.1.3"
+    tag: "1.5.0"
     pullPolicy: IfNotPresent
+
   sandbox:
     repository: ccr.ccs.tencentyun.com/tke-market/dify-sandbox
-    tag: "0.2.11"
+    tag: "0.2.12"
     pullPolicy: IfNotPresent
+
   proxy:
     repository: ccr.ccs.tencentyun.com/tke-market/nginx
     tag: 1.27.4
     pullPolicy: IfNotPresent
+
   ssrfProxy:
     repository: ccr.ccs.tencentyun.com/tke-market/squid
     tag: latest
     pullPolicy: IfNotPresent
+
   pluginDaemon:
     repository: ccr.ccs.tencentyun.com/tke-market/dify-plugin-daemon
-    tag: 0.0.6-local
+    tag: 0.1.2-local
     pullPolicy: IfNotPresent
 
 api:
@@ -42,6 +36,7 @@ api:
   nodeSelector: {}
   affinity: {}
   tolerations: []
+  priorityClassName: ""
   autoscaling:
     enabled: false
     minReplicas: 1
@@ -68,27 +63,14 @@ api:
     timeoutSeconds: 5
     failureThreshold: 5
     successThreshold: 1
+  updateStrategy: {}
   customLivenessProbe: {}
   customReadinessProbe: {}
   customStartupProbe: {}
   podSecurityContext: {}
   containerSecurityContext: {}
   extraEnv:
-  # Apply your own Environment Variables if necessary.
-  # Variables defined here take higher priority than those from `ConfigMap` generated given `.Values`
-  # The direct approach
-  # - name: LANG
-  #   value: "C.UTF-8"
-  #   - name: SECRET_KEY
-  # Use existing k8s secrets
-  #  - name: DB_PASSWORD
-  #    valueFrom:
-  #      secretKeyRef:
-  #        name: my-secret
-  #        key: DB_PASSWORD
   - name: CHECK_UPDATE_URL
-    # Won't check for updates if left empty
-    #   value: https://updates.dify.ai
     value: ""
   - name: CODE_MAX_NUMBER
     value: "9223372036854775807"
@@ -104,10 +86,6 @@ api:
     value: "30"
   - name: CODE_MAX_NUMBER_ARRAY_LENGTH
     value: "1000"
-  - name: CODE_MAX_DEPTH
-    value: "5"
-  - name: CODE_MAX_PRECISION
-    value: "20"
   service:
     port: 5001
     annotations: {}
@@ -145,13 +123,6 @@ api:
       helm.sh/resource-policy: keep
     persistentVolumeClaim:
       existingClaim: ""
-      ## Dify App Data Persistent Volume Storage Class
-      ## If defined, storageClassName: <storageClass>
-      ## If set to "-", storageClassName: "", which disables dynamic provisioning
-      ## If undefined (the default) or set to null, no storageClassName spec is
-      ##   set, choosing the default provisioner.
-      ## ReadWriteMany access mode required for `api` and `worker`
-      ##
       storageClass: "cfs"
       accessModes: ReadWriteMany
       size: 10Gi
@@ -169,6 +140,7 @@ worker:
   nodeSelector: {}
   affinity: {}
   tolerations: []
+  priorityClassName: ""
   autoscaling:
     enabled: false
     minReplicas: 1
@@ -177,15 +149,10 @@ worker:
   customLivenessProbe: {}
   customReadinessProbe: {}
   customStartupProbe: {}
+  updateStrategy: {}
   podSecurityContext: {}
   containerSecurityContext: {}
   extraEnv:
-  # Apply your own Environment Variables if necessary.
-  # Variables defined here take higher priority than those from `ConfigMap` generated given `.Values`
-  # The direct approach
-  # - name: LANG
-  #   value: "C.UTF-8"
-  #   - name: SECRET_KEY
   logLevel: INFO
   serviceAccount:
     create: false
@@ -200,16 +167,15 @@ proxy:
   nodeSelector: {}
   affinity: {}
   tolerations: []
+  priorityClassName: ""
   customLivenessProbe: {}
   customReadinessProbe: {}
   customStartupProbe: {}
   clientMaxBodySize: ""
+  updateStrategy: {}
   podSecurityContext: {}
   containerSecurityContext: {}
   extraEnv:
-  # Apply your own Environment Variables if necessary
-  # - name: LANG
-  #   value: "C.UTF-8"
   log:
     persistence:
       enabled: false
@@ -220,7 +186,7 @@ proxy:
         existingClaim: ""
         storageClass:
         accessModes: ReadWriteMany
-        size: 10Gi
+        size: 1Gi
         subPath: ""
   service:
     port: 80
@@ -240,6 +206,7 @@ web:
   nodeSelector: {}
   affinity: {}
   tolerations: []
+  priorityClassName: ""
   autoscaling:
     enabled: false
     minReplicas: 1
@@ -266,13 +233,13 @@ web:
     timeoutSeconds: 5
     failureThreshold: 5
     successThreshold: 1
+  updateStrategy: {}
   customLivenessProbe: {}
   customReadinessProbe: {}
   customStartupProbe: {}
   podSecurityContext: {}
   containerSecurityContext: {}
   extraEnv:
-  # Apply your own Environment Variables if necessary
   - name: EDITION
     value: "SELF_HOSTED"
   service:
@@ -285,6 +252,7 @@ web:
     name: ""
     automountServiceAccountToken: false
     annotations: {}
+  enableServiceLinks: false
 
 sandbox:
   enabled: true
@@ -293,6 +261,7 @@ sandbox:
   nodeSelector: {}
   affinity: {}
   tolerations: []
+  priorityClassName: ""
   autoscaling:
     enabled: false
     minReplicas: 1
@@ -319,15 +288,13 @@ sandbox:
     timeoutSeconds: 5
     failureThreshold: 2
     successThreshold: 1
+  updateStrategy: {}
   customLivenessProbe: {}
   customReadinessProbe: {}
   customStartupProbe: {}
   podSecurityContext: {}
   containerSecurityContext: {}
   extraEnv:
-  # Apply your own Environment Variables if necessary
-  # - name: LANG
-  #   value: "C.UTF-8"
   - name: WORKER_TIMEOUT
     value: "15"
   service:
@@ -337,7 +304,6 @@ sandbox:
     clusterIP: ""
   auth:
     apiKey: "dify-sandbox"
-  privileged: false
   serviceAccount:
     create: false
     name: ""
@@ -351,15 +317,14 @@ ssrfProxy:
   nodeSelector: {}
   affinity: {}
   tolerations: []
+  priorityClassName: ""
   customLivenessProbe: {}
   customReadinessProbe: {}
   customStartupProbe: {}
+  updateStrategy: {}
   podSecurityContext: {}
   containerSecurityContext: {}
   extraEnv:
-  # Apply your own Environment Variables if necessary
-  # - name: LANG
-  #   value: "C.UTF-8"
   log:
     persistence:
       enabled: false
@@ -368,7 +333,7 @@ ssrfProxy:
         helm.sh/resource-policy: keep
       persistentVolumeClaim:
         existingClaim: ""
-        storageClass:
+        storageClass: cfs
         accessModes: ReadWriteMany
         size: 10Gi
         subPath: ""
@@ -390,15 +355,14 @@ pluginDaemon:
   nodeSelector: {}
   affinity: {}
   tolerations: []
+  priorityClassName: ""
   customLivenessProbe: {}
   customReadinessProbe: {}
   customStartupProbe: {}
+  updateStrategy: {}
   podSecurityContext: {}
   containerSecurityContext: {}
   extraEnv:
-  # Apply your own Environment Variables if necessary
-  # - name: LANG
-  #   value: "C.UTF-8"
   service:
     ports:
       daemon: 5002
@@ -408,7 +372,6 @@ pluginDaemon:
     clusterIP: ""
   auth:
     serverKey: "lYkiYYT6owG+71oLerGzA7GXCgOT++6ovaezWAjpCjf+Sjc3ZtU+qUEi"
-    # A separate key for interactions between `api`(`worker`) and `pluginDaemon`
     difyApiKey: "QaHbTe77CtuXmsfyhR7+vRjI/+XbV1AaFy691iy+kGDv2Jvy0/eAh8Y1"
   persistence:
     mountPath: "/app/storage"
@@ -416,7 +379,7 @@ pluginDaemon:
       helm.sh/resource-policy: keep
     persistentVolumeClaim:
       existingClaim: ""
-      storageClass: "cfs"
+      storageClass: cfs
       accessModes: ReadWriteMany
       size: 10Gi
       subPath: ""
@@ -443,7 +406,7 @@ postgresql:
   image:
     registry: docker.io
     repository: bitnami/postgresql
-    tag: 15.4.0-debian-11-r10
+    tag: 15.3.0-debian-11-r7
     pullPolicy: IfNotPresent
   architecture: replication
   primary:
@@ -455,9 +418,12 @@ postgresql:
       storageClass: "cbs"
       accessModes:
         - ReadWriteOnce
-      size: 50Gi
+      size: 10Gi
+
     affinity: {}
+
     tolerations: []
+
   readReplicas:
     name: read
     replicaCount: 1
@@ -469,8 +435,10 @@ postgresql:
       storageClass: "cbs"
       accessModes:
         - ReadWriteOnce
-      size: 20Gi
+      size: 10Gi
+
     affinity: {}
+
     tolerations: []
 
 weaviate:
@@ -481,6 +449,7 @@ weaviate:
     repo: semitechnologies/weaviate
     pullPolicy: IfNotPresent
     pullSecrets: []
+
   command: ["/bin/weaviate"]
   args:
     - "--host"
@@ -493,6 +462,7 @@ weaviate:
     - "/weaviate-config/conf.yaml"
     - --read-timeout=60s
     - --write-timeout=60s
+
   initContainers:
     sysctlInitContainer:
       enabled: true
@@ -502,89 +472,143 @@ weaviate:
         repo: alpine
         tag: latest
         pullPolicy: IfNotPresent
+
+    extraInitContainers: {}
+
   replicas: 1
   resources:
     {}
+
   serviceAccountName:
+
   storage:
     size: 50Gi
-    storageClassName: "cbs"
+    storageClassName: "cfs"
+
   service:
     name: weaviate
     type: ClusterIP
     loadBalancerSourceRanges: []
     clusterIP:
     annotations: {}
+
   startupProbe:
     enabled: false
+
     initialDelaySeconds: 300
     periodSeconds: 60
     failureThreshold: 50
     successThreshold: 1
     timeoutSeconds: 3
+
   livenessProbe:
     initialDelaySeconds: 900
     periodSeconds: 10
     failureThreshold: 30
     successThreshold: 1
     timeoutSeconds: 3
+
   readinessProbe:
     initialDelaySeconds: 3
     periodSeconds: 10
     failureThreshold: 3
     successThreshold: 1
     timeoutSeconds: 3
+
   terminationGracePeriodSeconds: 600
+
+  authentication:
+    anonymous_access:
+      enabled: false
+    apikey:
+      enabled: true
+      allowed_keys:
+        - "WVF5YThaHlkYwhGUSmCRgsX3tD5ngdN8pkih"
+      users:
+        - hello@dify.ai
+    oidc:
+      enabled: false
+
+  authorization:
+    admin_list:
+      enabled: true
+      users:
+      - hello@dify.ai
+      read_only_users:
+
+  query_defaults:
+    limit: 100
+  debug: false
+
   env:
     CLUSTER_GOSSIP_BIND_PORT: 7000
     CLUSTER_DATA_BIND_PORT: 7001
     GOGC: 100
+
     PROMETHEUS_MONITORING_ENABLED: false
+
+
     QUERY_MAXIMUM_RESULTS: 100000
+
     TRACK_VECTOR_DIMENSIONS: false
+
     REINDEX_VECTOR_DIMENSIONS_AT_STARTUP: false
+
     AUTHENTICATION_APIKEY_ENABLED: "true"
     AUTHENTICATION_APIKEY_ALLOWED_KEYS: "WVF5YThaHlkYwhGUSmCRgsX3tD5ngdN8pkih"
     AUTHENTICATION_APIKEY_USERS: "hello@dify.ai"
     AUTHORIZATION_ADMINLIST_ENABLED: "true"
     AUTHORIZATION_ADMINLIST_USERS: "hello@dify.ai"
   envSecrets:
-    # create a Kubernetes secret with AUTHENTICATION_APIKEY_ALLOWED_KEYS key and its respective value
-    # AUTHENTICATION_APIKEY_ALLOWED_KEYS: name-of-the-k8s-secret-containing-the-comma-separated-api-keys
 
-  # Configure backup providers
   backups:
     filesystem:
       enabled: false
       envconfig:
         BACKUP_FILESYSTEM_PATH: /tmp/backups
+
     s3:
       enabled: false
       serviceAccountName:
+
       envconfig:
         BACKUP_S3_BUCKET: weaviate-backups
+
       secrets: {}
+
       envSecrets: {}
+
     gcs:
       enabled: false
       envconfig:
         BACKUP_GCS_BUCKET: weaviate-backups
+
       secrets: {}
+
       envSecrets: {}
+
     azure:
       enabled: false
       envconfig:
         BACKUP_AZURE_CONTAINER: weaviate-backups
+
       secrets: {}
+
       envSecrets: {}
+
   modules:
     default_vectorizer_module: none
+
   custom_config_map:
     enabled: false
     name: "custom-config"
+
   annotations:
+
   nodeSelector:
+
   tolerations:
+
   affinity:
     podAntiAffinity:
       preferredDuringSchedulingIgnoredDuringExecution:
@@ -607,24 +631,12 @@ ingress:
   className: ""
   annotations:
     {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-    # nginx.ingress.kubernetes.io/backend-protocol: HTTP
-    # nginx.ingress.kubernetes.io/proxy-body-size: 15m
-    # nginx.ingress.kubernetes.io/ssl-redirect: "true"
   hosts:
     - host: dify-example.local
       paths:
         - path: /
           pathType: ImplementationSpecific
-    # - host: dify-example2.local
-    #   paths:
-    #     - path: /
-    #       pathType: Prefix
   tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - dify-example.local
 
 resources:
   {}
@@ -637,7 +649,7 @@ affinity: {}
 
 redis:
   enabled: true
-  dbNumber: "0"
+
   global:
     imageRegistry: ""
     imagePullSecrets: []
@@ -646,6 +658,8 @@ redis:
     storageClass: ""
     redis:
       password: ""
+
+
   kubeVersion: ""
   nameOverride: ""
   fullnameOverride: ""
@@ -657,19 +671,23 @@ redis:
   useHostnames: true
   nameResolutionThreshold: 5
   nameResolutionTimeout: 5
+
   diagnosticMode:
     enabled: false
     command:
       - sleep
     args:
       - infinity
+
   image:
     registry: docker.io
     repository: bitnami/redis
     tag: 7.0.11-debian-11-r12
     digest: ""
     pullPolicy: IfNotPresent
+    pullSecrets: []
     debug: false
+
   architecture: replication
   auth:
     enabled: true
@@ -678,10 +696,12 @@ redis:
     existingSecret: ""
     existingSecretPasswordKey: ""
     usePasswordFiles: false
+
   commonConfiguration: |-
     appendonly yes
     save ""
   existingConfigmap: ""
+
   master:
     count: 1
     configuration: ""
@@ -767,7 +787,7 @@ redis:
       storageClass: "cbs"
       accessModes:
         - ReadWriteOnce
-      size: 20Gi
+      size: 10Gi
       annotations: {}
       labels: {}
       selector: {}
@@ -795,6 +815,7 @@ redis:
       name: ""
       automountServiceAccountToken: true
       annotations: {}
+
   replica:
     replicaCount: 3
     configuration: ""
@@ -884,7 +905,7 @@ redis:
       storageClass: "cbs"
       accessModes:
         - ReadWriteOnce
-      size: 20Gi
+      size: 10Gi
       annotations: {}
       labels: {}
       selector: {}
@@ -897,10 +918,8 @@ redis:
       nodePorts:
         redis: ""
       externalTrafficPolicy: Cluster
-      ## @param replica.service.internalTrafficPolicy Redis&reg; replicas service internal traffic policy (requires Kubernetes v1.22 or greater to be usable)
-      ## ref: https://kubernetes.io/docs/concepts/services-networking/service-traffic-policy/
-      ##
       internalTrafficPolicy: Cluster
+      extraPorts: []
       clusterIP: ""
       loadBalancerIP: ""
       loadBalancerSourceRanges: []
@@ -919,6 +938,7 @@ redis:
       name: ""
       automountServiceAccountToken: true
       annotations: {}
+
   sentinel:
     enabled: false
     image:
@@ -927,6 +947,7 @@ redis:
       tag: 7.0.11-debian-11-r10
       digest: ""
       pullPolicy: IfNotPresent
+      pullSecrets: []
       debug: false
     annotations: {}
     masterSet: mymaster
@@ -979,7 +1000,7 @@ redis:
       storageClass: "cbs"
       accessModes:
         - ReadWriteOnce
-      size: 20Gi
+      size: 10Gi
       annotations: {}
       labels: {}
       selector: {}
@@ -1015,12 +1036,10 @@ redis:
         annotations: {}
     terminationGracePeriodSeconds: 30
 
+
   serviceBindings:
     enabled: false
 
-  ## Network Policy configuration
-  ## ref: https://kubernetes.io/docs/concepts/services-networking/network-policies/
-  ##
   networkPolicy:
     enabled: false
     allowExternal: true
@@ -1053,6 +1072,7 @@ redis:
     certKeyFilename: ""
     certCAFilename: ""
     dhParamsFilename: ""
+
 
   metrics:
     enabled: false
@@ -1164,14 +1184,6 @@ redis:
     annotationKey: external-dns.alpha.kubernetes.io/
     additionalAnnotations: {}
 
-externalRedis:
-  enabled: false
-  host: "redis.example"
-  port: 6379
-  username: ""
-  password: "difyai123456"
-  useSSL: false
-
 externalPostgres:
   enabled: false
   username: "postgres"
@@ -1187,13 +1199,14 @@ externalPostgres:
 externalS3:
   enabled: false
   endpoint: "https://xxx.r2.cloudflarestorage.com"
+  pathStyle: false
   accessKey: "ak-difyai"
   secretKey: "sk-difyai"
   useSSL: false
-  bucketName: "difyai"
-  rootPath: ""
+  bucketName:
+    api: "difyai"
+    pluginDaemon:
   useIAM: false
-  iamEndpoint: ""
   region: "us-east-1"
 
 externalAzureBlobStorage:
@@ -1205,7 +1218,9 @@ externalAzureBlobStorage:
 
 externalGCS:
   enabled: false
-  bucketName: "difyai"
+  bucketName:
+    api: "difyai"
+    pluginDaemon:
   serviceAccountJsonBase64: ""
 
 externalCOS:
@@ -1213,8 +1228,37 @@ externalCOS:
   secretKey: "your-secret-key"
   secretId: "your-secret-id"
   region: "your-region"
-  bucketName: "your-bucket-name"
+  bucketName:
+    api: "your-bucket-name"
+    pluginDaemon:
   scheme: "your-scheme"
+
+externalOBS:
+  enabled: false
+  endpoint: "https://your-endpoint"
+  accessKey: "your-secret-id"
+  secretKey: "your-secret-key"
+  bucketName:
+    api: "your-bucket-name"
+    pluginDaemon:
+
+externalTOS:
+  enabled: false
+  endpoint: "https://tos-cn-beijing.volces.com"
+  accessKey: "your-access-key"
+  secretKey: "your-secret-key"
+  bucketName:
+    api: "your-bucket-name"
+    pluginDaemon:
+  region: "cn-beijing"
+
+externalRedis:
+  enabled: false
+  host: "redis.example"
+  port: 6379
+  username: ""
+  password: "difyai123456"
+  useSSL: false
 
 externalWeaviate:
   enabled: false
@@ -1246,10 +1290,6 @@ externalPgvector:
   port: 5432
   dbName: dify
 
-###################################
-# External Tencent Vector DB
-# - these configs take effect only if both `externalWeaviate.enabled`, `externalQdrant.enabled` and `externalMilvus.enabled` and `externalPgvector.enabled` are set as `false` and `externalTencentVectorDB.enabled` is `true`
-###################################
 externalTencentVectorDB:
   enabled: false
   url: "your-tencent-vector-db-url"
@@ -1268,3 +1308,10 @@ externalMyScaleDB:
   password: ""
   database: "dify"
   ftsParams: ""
+
+externalTableStore:
+  enabled: false
+  endpoint: "endpoint"
+  instanceName: "instance-name"
+  accessKeyId: "your-secret-id"
+  accessKeySecret: "your-secret-key"

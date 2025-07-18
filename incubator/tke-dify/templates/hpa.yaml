@@ -4,7 +4,6 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ template "dify.api.fullname" . }}
-  namespace: {{ include "dify.namespace" . }}
   labels:
 {{ include "dify.labels" . | indent 4 }}
 spec:
