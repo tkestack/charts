@@ -1,11 +1,17 @@
-{{- if not (or .Values.externalS3.enabled .Values.externalAzureBlobStorage.enabled .Values.externalGCS.enabled .Values.externalCOS.enabled) }}
+{{- if not (or
+  .Values.externalS3.enabled
+  .Values.externalAzureBlobStorage.enabled
+  .Values.externalGCS.enabled
+  .Values.externalCOS.enabled
+  .Values.externalOBS.enabled
+  .Values.externalTOS.enabled
+  ) }}
 {{- $pvc := .Values.api.persistence.persistentVolumeClaim -}}
 {{- if (not $pvc.existingClaim) }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ printf "%s" (include "dify.fullname" . | trunc 58) }}
-  namespace: {{ include "dify.namespace" . }}
 {{- with .Values.api.persistence.annotations  }}
   annotations:
 {{ toYaml . | indent 4 }}
@@ -38,7 +44,6 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ printf "%s-logs" (include "dify.nginx.fullname" . | trunc 58) }}
-  namespace: {{ include "dify.namespace" . }}
 {{- with .Values.proxy.log.persistence.annotations  }}
   annotations:
 {{ toYaml . | indent 4 }}
@@ -70,7 +75,6 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ printf "%s-logs" (include "dify.ssrfProxy.fullname" . | trunc 58) }}
-  namespace: {{ include "dify.namespace" . }}
 {{- with .Values.ssrfProxy.log.persistence.annotations  }}
   annotations:
 {{ toYaml . | indent 4 }}
@@ -95,14 +99,20 @@ spec:
 
 {{- $pvc := .Values.pluginDaemon.persistence.persistentVolumeClaim -}}
 {{- if and .Values.pluginDaemon.enabled (not $pvc.existingClaim) }}
-
+{{- if not (or
+  (and .Values.externalS3.enabled .Values.externalS3.bucketName.pluginDaemon)
+  (and .Values.externalGCS.enabled .Values.externalGCS.bucketName.pluginDaemon)
+  (and .Values.externalCOS.enabled .Values.externalCOS.bucketName.pluginDaemon)
+  (and .Values.externalOBS.enabled .Values.externalOBS.bucketName.pluginDaemon)
+  (and .Values.externalTOS.enabled .Values.externalTOS.bucketName.pluginDaemon)
+)
+}}
 ---
 
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ printf "%s" (include "dify.pluginDaemon.fullname" . | trunc 58) }}
-  namespace: {{ include "dify.namespace" . }}
 {{- with .Values.pluginDaemon.persistence.annotations }}
   annotations:
 {{ toYaml . | indent 4 }}
@@ -122,4 +132,5 @@ spec:
   resources:
     requests:
       storage: {{ $pvc.size }}
+{{- end }}
 {{- end }}

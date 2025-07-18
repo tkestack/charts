@@ -11,7 +11,6 @@ metadata:
     # app: {{ template "dify.web.fullname" . }}
 {{ include "dify.ud.labels" . | indent 4 }}
   name: {{ template "dify.web.fullname" . }}
-  namespace: {{ include "dify.namespace" . }}
 spec:
   replicas: {{ .Values.web.replicas }}
   selector:
@@ -21,8 +20,11 @@ spec:
       {{/*
       # Required labels for istio
       # app: {{ template "dify.web.fullname" . }}
-      # version: {{ (print "v" .Values.serviceMesh.version) | quote }}
+      # version: {{ .Values.istioServiceMesh.version | quote }}
       */}}
+  {{- if .Values.web.updateStrategy }}
+  strategy: {{- toYaml .Values.web.updateStrategy | nindent 4 }}
+  {{- end }}
   template:
     metadata:
       annotations:
@@ -34,11 +36,15 @@ spec:
         {{/*
         # Required labels for istio
         # app: {{ template "dify.web.fullname" . }}
-        # version: {{ (print "v" .Values.serviceMesh.version) | quote }}
+        # version: {{ .Values.istioServiceMesh.version | quote }}
         */}}
 {{ include "dify.ud.labels" . | indent 8 }}
     spec:
       serviceAccountName: {{ include "dify.web.serviceAccountName" . }}
+      {{- if .Values.web.priorityClassName }}
+      priorityClassName: {{ .Values.web.priorityClassName | quote }}
+      {{- end }}
+      enableServiceLinks: {{ .Values.web.enableServiceLinks }}
       {{- if .Values.image.web.pullSecrets }}
       imagePullSecrets:
       {{- range .Values.image.web.pullSecrets }}

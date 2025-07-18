@@ -87,13 +87,6 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
-Namespace
-*/}}
-{{- define "dify.namespace" -}}
-    {{ .Release.Namespace }}
-{{- end -}}
-
-{{/*
 Common labels
 */}}
 {{- define "dify.labels" -}}
