@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: kruise-game-webhook-service
+  name: {{ .Values.kruiseGame.webhook.serviceName }}
   namespace: {{ .Values.installation.namespace }}
 spec:
   ports:

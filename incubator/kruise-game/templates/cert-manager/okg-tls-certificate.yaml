@@ -1,0 +1,39 @@
+{{- if .Values.certificates.certManager.enabled }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Values.kruiseGame.fullname }}-cert
+  namespace: {{ .Values.installation.namespace }}
+spec:
+  commonName: {{ .Values.kruiseGame.fullname }}
+  dnsNames:
+  - {{ .Values.kruiseGame.webhook.serviceName }}.{{ .Values.installation.namespace }}
+  - {{ .Values.kruiseGame.webhook.serviceName }}.{{ .Values.installation.namespace }}.svc
+  - {{ .Values.kruiseGame.webhook.serviceName }}.{{ .Values.installation.namespace }}.svc.{{ .Values.clusterDomain }}
+  secretName: {{ .Values.certificates.secretName }}
+  usages:
+    - server auth
+    - client auth
+  privateKey:
+    rotationPolicy: Always
+    algorithm: RSA
+    size: 2048
+  duration: {{ .Values.certificates.certManager.duration }}
+  renewBefore: {{ .Values.certificates.certManager.renewBefore }}
+  issuerRef:
+    {{- if .Values.certificates.certManager.issuer.generate }}
+    name: {{ .Values.kruiseGame.fullname }}-issuer
+    kind: Issuer
+    group: cert-manager.io
+    {{- else }}
+    {{- if .Values.certificates.certManager.issuer.name }}
+    name: {{ .Values.certificates.certManager.issuer.name }}
+    {{- end }}
+    {{- if .Values.certificates.certManager.issuer.kind }}
+    kind: {{ .Values.certificates.certManager.issuer.kind }}
+    {{- end }}
+    {{- if .Values.certificates.certManager.issuer.group }}
+    group: {{ .Values.certificates.certManager.issuer.group }}
+    {{- end }}
+    {{- end }}
+{{- end }}

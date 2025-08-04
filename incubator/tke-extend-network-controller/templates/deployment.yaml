@@ -20,6 +20,7 @@ spec:
       hostAliases:
       - hostnames:
         - clb.tencentcloudapi.com
+        - vpc.tencentcloudapi.com
         ip: 169.254.0.95
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

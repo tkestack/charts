@@ -1,36 +1,52 @@
-# Kruise Game v0.10.0
+# Kruise Game v1.0.0
 
 ## Configuration
 
 The following table lists the configurable parameters of the kruise-game chart and their default values.
 
-| Parameter                        | Description                                                                 | Default                          |
-|----------------------------------|-----------------------------------------------------------------------------|----------------------------------|
-| `installation.namespace`         | Namespace for kruise-game operation installation                            | `kruise-game-system`             |
-| `installation.createNamespace`   | Whether to create the installation.namespace                                | `true`                           |
-| `kruiseGame.fullname`            | Nick name for kruise-game deployment and other configurations               | `kruise-game-controller-manager` |
-| `kruiseGame.healthBindPort`      | Port for checking health of kruise-game container                           | `8082`                           |
-| `kruiseGame.webhook.port`        | Port of webhook served by kruise-game container                             | `443`                            |
-| `kruiseGame.webhook.targetPort`  | ObjectSelector for workloads in MutatingWebhookConfigurations               | `9876`                           |
-| `kruiseGame.apiServerQps`        | Indicates the maximum QPS to the master from kruise-game-controller-manager | `5`                              |
-| `kruiseGame.apiServerQpsBurst`   | Maximum burst for throttle of kruise-game-controller-manager                | `10`                             |
-| `replicaCount`                   | Replicas of kruise-game deployment                                          | `1`                              |
-| `image.repository`               | Repository for kruise-game image                                            | `ccr.ccs.tencentyun.com/tke-market/kruise-game-manager` |
-| `image.tag`                      | Tag for kruise-game image                                                   | `v0.10.0`                        |
-| `image.pullPolicy`               | ImagePullPolicy for kruise-game container                                   | `Always`                         |
-| `serviceAccount.annotations`     | The annotations for serviceAccount of kruise-game                           | ` `                              |
-| `service.port`                   | Port of kruise-game service                                                 | `8443`                           |
-| `resources.limits.cpu`           | CPU resource limit of kruise-game container                                 | `500m`                           |
-| `resources.limits.memory`        | Memory resource limit of kruise-game container                              | `1Gi`                            |
-| `resources.requests.cpu`         | CPU resource request of kruise-game container                               | `10m`                            |
-| `resources.requests.memory`      | Memory resource request of kruise-game container                            | `64Mi`                           |
-| `prometheus.enabled`             | Whether to bind metric endpoint                                             | `true`                           |
-| `prometheus.monitorService.port` | Port of the monitorservice bind to                                          | `8080`                           |
-| `scale.service.port`             | Port of the external scaler server binds to                                 | `6000`                           |
-| `scale.service.targetPort`       | TargetPort of the external scaler server binds to                           | `6000`                           |
-| `network.totalWaitTime`          | Maximum time to wait for network ready, the unit is seconds                 | `60`                             |
-| `network.probeIntervalTime`      | Time interval for detecting network status, the unit is seconds             | `5`                              |
-| `cloudProvider.installCRD`       | Whether to install CloudProvider CRD                                        | `true`                           |
+| Parameter                                  | Description                                                                 | Default                          |
+|--------------------------------------------|-----------------------------------------------------------------------------|----------------------------------|
+| `installation.namespace`                   | Namespace for kruise-game operation installation                            | `kruise-game-system`             |
+| `installation.createNamespace`             | Whether to create the installation.namespace                                | `true`                           |
+| `kruiseGame.fullname`                      | Nick name for kruise-game deployment and other configurations               | `kruise-game-controller-manager` |
+| `kruiseGame.healthBindPort`                | Port for checking health of kruise-game container                           | `8082`                           |
+| `kruiseGame.webhook.port`                  | Port of webhook served by kruise-game container                             | `443`                            |
+| `kruiseGame.webhook.targetPort`            | ObjectSelector for workloads in MutatingWebhookConfigurations               | `9876`                           |
+| `kruiseGame.apiServerQps`                  | Indicates the maximum QPS to the master from kruise-game-controller-manager | `5`                              |
+| `kruiseGame.apiServerQpsBurst`             | Maximum burst for throttle of kruise-game-controller-manager                | `10`                             |
+| `kruiseGame.gameserverWorkers`             | Max concurrent workers for GameServer controller                            | `10`                             |
+| `kruiseGame.gameserversetWorkers`          | Max concurrent workers for GameServerSet controller                         | `10`                             |
+| `replicaCount`                             | Replicas of kruise-game deployment                                          | `1`                              |
+| `image.repository`                         | Repository for kruise-game image                                            | `ccr.ccs.tencentyun.com/tke-market/kruise-game-manager` |
+| `image.tag`                                | Tag for kruise-game image                                                   | `v1.0.0`                         |
+| `image.pullPolicy`                         | ImagePullPolicy for kruise-game container                                   | `Always`                         |
+| `serviceAccount.annotations`               | The annotations for serviceAccount of kruise-game                           | ` `                              |
+| `service.port`                             | Port of kruise-game service                                                 | `8443`                           |
+| `resources.limits.cpu`                     | CPU resource limit of kruise-game container                                 | `500m`                           |
+| `resources.limits.memory`                  | Memory resource limit of kruise-game container                              | `1Gi`                            |
+| `resources.requests.cpu`                   | CPU resource request of kruise-game container                               | `10m`                            |
+| `resources.requests.memory`                | Memory resource request of kruise-game container                            | `64Mi`                           |
+| `prometheus.enabled`                       | Whether to bind metric endpoint                                             | `true`                           |
+| `prometheus.monitorService.port`           | Port of the monitorservice bind to                                          | `8080`                           |
+| `scale.service.port`                       | Port of the external scaler server binds to                                 | `6000`                           |
+| `scale.service.targetPort`                 | TargetPort of the external scaler server binds to                           | `6000`                           |
+| `network.totalWaitTime`                    | Maximum time to wait for network ready, the unit is seconds                 | `60`                             |
+| `network.probeIntervalTime`                | Time interval for detecting network status, the unit is seconds             | `5`                              |
+| `cloudProvider.installCRD`                 | Whether to install CloudProvider CRD                                        | `true`                           |
+| `indexOffsetScheduler.enabled`             | Whether to install index-offset-scheduler                                   | `false`                          |
+| `certificates.autoGenerated`               | Whether to auto-generate webhook certificates                               | `true`                           |
+| `certificates.secretName`                  | Name of the secret containing webhook certificates                          | `kruise-game-certs`              |
+| `certificates.mountPath`                   | Path to mount webhook certificates in container                             | `/tmp/webhook-certs/`            |
+| `certificates.certManager.enabled`         | Whether to use cert-manager for certificate management                      | `false`                          |
+| `certificates.certManager.duration`        | Certificate validity duration                                               | `8760h0m0s`                      |
+| `certificates.certManager.renewBefore`     | Time before expiry to renew certificate                                     | `5840h0m0s`                      |
+| `certificates.certManager.generateCA`      | Whether to generate a Certificate Authority                                 | `true`                           |
+| `certificates.certManager.caSecretName`    | Name of the secret containing the CA certificate                            | `kruise-game-ca`                 |
+| `certificates.certManager.issuer.generate` | Whether to generate the issuer automatically                                | `true`                           |
+| `certificates.certManager.issuer.name`     | Name of the certificate issuer                                              | `kruise-ca`                      |
+| `certificates.certManager.issuer.kind`     | Type of the certificate issuer                                              | `ClusterIssuer`                  |
+| `certificates.certManager.issuer.group`    | API group of the certificate issuer                                         | `cert-manager.io`                |
+
 
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
