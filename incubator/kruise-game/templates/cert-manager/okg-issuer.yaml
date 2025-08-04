@@ -1,0 +1,10 @@
+{{- if and .Values.certificates.certManager.enabled .Values.certificates.certManager.issuer.generate }}
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ .Values.kruiseGame.fullname }}-issuer
+  namespace: {{ .Values.installation.namespace }}
+spec:
+  ca:
+    secretName: {{ .Values.certificates.certManager.caSecretName }}
+{{- end }}

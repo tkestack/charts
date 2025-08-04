@@ -1,0 +1,21 @@
+{{- if and .Values.certificates.certManager.enabled .Values.certificates.certManager.generateCA .Values.certificates.certManager.issuer.generate }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Values.kruiseGame.fullname }}-ca
+  namespace: {{ .Values.installation.namespace }}
+spec:
+  isCA: true
+  commonName: {{ .Values.kruiseGame.fullname }}
+  secretName: {{ .Values.certificates.certManager.caSecretName }}
+  privateKey:
+    rotationPolicy: Always
+    algorithm: RSA
+    size: 2048
+  duration: 8760h0m0s # 1 year
+  renewBefore: 720h0m0s # 1 month
+  issuerRef:
+    name: {{ .Values.kruiseGame.fullname }}-selfsigned-issuer
+    kind: Issuer
+    group: cert-manager.io
+{{- end }}
