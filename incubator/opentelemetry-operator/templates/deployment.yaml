@@ -90,6 +90,8 @@ spec:
               value: {{ .Values.env.APM_TOKEN | quote }}
             - name: ENDPOINT
               value: {{ .Values.env.ENDPOINT | quote }}
+            - name: API_REGION
+              value: {{ .Values.env.API_REGION | quote }}
             - name: JAVA_INSTR_VERSION
               value: {{ .Values.env.JAVA_INSTR_VERSION | quote }}
             - name: PYTHON_INSTR_VERSION
