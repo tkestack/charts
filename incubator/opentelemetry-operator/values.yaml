@@ -273,6 +273,7 @@ env:
   ## Required, obtained from the apm console
   APM_TOKEN: ""
   ENDPOINT: ""
+  API_REGION: ""
 
 
   ## Optional, default latest; If you want to specify the version, you can get it from the apm documentation
