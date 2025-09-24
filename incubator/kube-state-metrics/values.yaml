@@ -279,8 +279,6 @@ securityContext:
   runAsUser: 65534
   fsGroup: 65534
   runAsNonRoot: true
-  seccompProfile:
-    type: RuntimeDefault
 
 ## Specify security settings for a Container
 ## Allows overrides and additional options compared to (Pod) securityContext
