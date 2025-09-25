@@ -64,7 +64,7 @@ securityContext: {}
 # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
   # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
-  type: ClusterIP
+  type: LoadBalancer
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
   portWebUi: 7860
   portApi: 8000
@@ -127,23 +127,17 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
-volumes:
+volumes: []
 # - name: foo
 #   secret:
 #     secretName: mysecret
 #     optional: false
-  - name: shm
-    emptyDir:
-      medium: Memory
-      sizeLimit: 16Gi
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts:
+volumeMounts: []
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true
-  - mountPath: /dev/shm
-    name: shm
 
 nodeSelector: {}
 
