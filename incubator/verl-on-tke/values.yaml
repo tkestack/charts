@@ -1,4 +1,4 @@
-# Default values for llama-factory-on-tke.
+# Default values for verl-on-tke.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -7,20 +7,26 @@ replicaCount: 1
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: "ccr.ccs.tencentyun.com/tke-market/llamafactory"
+  repository: "ccr.ccs.tencentyun.com/tke-market/verl"
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.9.3-0924"
+  tag: "app-verl0.5-transformers4.55.4-vllm0.10.0-mcore0.13.0-te2.2"
 
 env:
-  - name: PIP_INDEX
+  - name: PYTHONUNBUFFERED
+    value: "1"
+  - name: HYDRA_FULL_ERROR
+    value: "1"
+  - name: PIP_INDEX_URL
     value: https://mirrors.cloud.tencent.com/pypi/simple
-  - name: EXTRAS
-    value: metrics
+  # - name: HF_ENDPOINT
+  #   value: https://hf-mirror.com
+  # - name: SWANLAB_API_KEY
+  #   value: ""
 
 args:
-  - llamafactory-cli webui
+  - trap 'exit 0' TERM; sleep infinity & wait
 command:
   - bash
   - -c
@@ -64,10 +70,9 @@ securityContext: {}
 # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
   # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
-  type: LoadBalancer
+  type: ClusterIP
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-  portWebUi: 7860
-  portApi: 8000
+  port: 80
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
@@ -91,32 +96,24 @@ resources:
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-   limits:
-     cpu: "40"
-     memory: 600Gi
-     nvidia.com/gpu: "1"
-   requests:
-     cpu: "20"
-     memory: 400Gi
-     nvidia.com/gpu: "1"
+  limits:
+    cpu: "40"
+    memory: 600Gi
+    nvidia.com/gpu: "1"
+  requests:
+    cpu: "20"
+    memory: 400Gi
+    nvidia.com/gpu: "1"
 
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 livenessProbe:
-  failureThreshold: 3
-  initialDelaySeconds: 10
-  periodSeconds: 10
-  successThreshold: 1
-  tcpSocket:
-    port: web-ui
-  timeoutSeconds: 3
+#  httpGet:
+#    path: /
+#    port: http
 readinessProbe:
-  failureThreshold: 3
-  initialDelaySeconds: 10
-  periodSeconds: 10
-  successThreshold: 1
-  tcpSocket:
-    port: web-ui
-  timeoutSeconds: 3
+#  httpGet:
+#    path: /
+#    port: http
 
 # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
@@ -128,19 +125,19 @@ autoscaling:
 
 # Additional volumes on the output Deployment definition.
 volumes:
-  # - name: foo
-  #   secret:
-  #     secretName: mysecret
-  #     optional: false
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
   - emptyDir:
       sizeLimit: 16Gi
     name: dshm
 
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts:
-  # - name: foo
-  #   mountPath: "/etc/foo"
-  #   readOnly: true
+# - name: foo
+#   mountPath: "/etc/foo"
+#   readOnly: true
   - mountPath: /dev/shm
     name: dshm
 
