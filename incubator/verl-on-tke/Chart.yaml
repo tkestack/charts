@@ -4,17 +4,17 @@ apiVersion: v2
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "1.16.0"
-description: Helm chart for deploying LLaMA-Factory resources on TKE.
-home: https://github.com/hiyouga/LLaMA-Factory
-icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/48bef83f-57d3-460c-bdbe-e8e1c57318e1.png
+description: Helm chart for deploying verl resources on TKE.
+home: https://github.com/volcengine/verl
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/47f8af51-2587-4457-8a14-3e2dddefaffe.png
 keywords:
   - category:AI
-  - LLaMA-Factory
+  - verl
   - tke
 maintainers:
   - email: yuehuazhang@tencent.com
     name: yuehuazhang
-name: llama-factory-on-tke
+name: verl-on-tke
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
