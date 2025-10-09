@@ -132,6 +132,10 @@ volumes:
   - emptyDir:
       sizeLimit: 16Gi
     name: dshm
+  - name: localtime
+    hostPath:
+      path: /etc/localtime
+      type: File
 
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts:
@@ -140,6 +144,9 @@ volumeMounts:
 #   readOnly: true
   - mountPath: /dev/shm
     name: dshm
+  - name: localtime
+    mountPath: /etc/localtime
+    readOnly: true
 
 nodeSelector: {}
 

@@ -18,6 +18,8 @@ env:
     value: https://mirrors.cloud.tencent.com/pypi/simple
   - name: EXTRAS
     value: metrics
+  # - name: HF_ENDPOINT
+  #   value: https://hf-mirror.com
 
 args:
   - llamafactory-cli webui
@@ -135,6 +137,10 @@ volumes:
   - emptyDir:
       sizeLimit: 16Gi
     name: dshm
+  - name: localtime
+    hostPath:
+      path: /etc/localtime
+      type: File
 
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts:
@@ -143,6 +149,9 @@ volumeMounts:
   #   readOnly: true
   - mountPath: /dev/shm
     name: dshm
+  - name: localtime
+    mountPath: /etc/localtime
+    readOnly: true
 
 nodeSelector: {}
 
