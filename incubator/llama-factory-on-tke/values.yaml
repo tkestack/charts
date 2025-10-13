@@ -94,12 +94,12 @@ resources:
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
    limits:
-     cpu: "40"
-     memory: 600Gi
+     # cpu: "40"
+     # memory: 600Gi
      nvidia.com/gpu: "1"
    requests:
-     cpu: "20"
-     memory: 400Gi
+     # cpu: "20"
+     # memory: 400Gi
      nvidia.com/gpu: "1"
 
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
