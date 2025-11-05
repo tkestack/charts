@@ -1,0 +1,16 @@
+apiVersion: v2
+appVersion: "v0.14.3"
+description: Kueue is a set of APIs and controllers for job queueing. It is a job-level manager that decides when a job should be admitted to start (as in pods can be created) and when it should stop (as in active pods should be deleted).
+home: https://kueue.sigs.k8s.io/
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/17d068f1-7a83-4b71-9a29-d4f0343ced20.png
+keywords:
+  - kubernetes
+  - k8s
+  - k8s-sig-scheduling
+maintainers:
+  - email: runtzhang@tencent.com
+    name: runtzhang
+name: kueue
+sources:
+  - https://github.com/kubernetes-sigs/kueue
+version: 0.14.3
