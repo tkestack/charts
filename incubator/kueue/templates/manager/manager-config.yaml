@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kueue.fullname" . }}-manager-config
+  namespace: '{{ .Release.Namespace }}'
+  labels:
+  {{- include "kueue.labels" . | nindent 4 }}
+data:
+  controller_manager_config.yaml: |
+{{- $config := .Values.managerConfig.controllerManagerConfigYaml | fromYaml }}
+  {{- $defaultInternalCert := dict
+        "enable" true
+        "webhookServiceName" (printf "%s-webhook-service" (include "kueue.fullname" .))
+        "webhookSecretName" (printf "%s-webhook-server-cert" (include "kueue.fullname" .)) }}
+  {{- if not $config.internalCertManagement }}
+    {{- $_ := set $config "internalCertManagement" $defaultInternalCert }}
+  {{- end }}
+{{ $config | toYaml | indent 4 }}

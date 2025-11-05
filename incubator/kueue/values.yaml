@@ -1,0 +1,204 @@
+# Default values for kueue.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- Override the resource name
+nameOverride: ""
+# -- Override the resource name
+fullnameOverride: ""
+controllerManager:
+  # -- ControllerManager's feature gates
+  featureGates: []
+  #  - name: PartialAdmission
+  #    enabled: true
+  manager:
+    # -- ControllerManager's pod priorityClassName
+    priorityClassName:
+    image:
+      # -- ControllerManager's image repository
+      repository: ccr.ccs.tencentyun.com/tke-market/kueue
+      # -- ControllerManager's image tag
+      tag: v0.14.3
+      # -- ControllerManager's image pullPolicy.
+      # This should be set to 'IfNotPresent' for released version
+      pullPolicy: Always
+    podAnnotations: {}
+    # -- ControllerManager's pod resources
+    resources:
+      limits:
+        cpu: "2"
+        memory: 512Mi
+      requests:
+        cpu: 500m
+        memory: 512Mi
+    # -- ControllerManager's pod securityContext
+    podSecurityContext:
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+    # -- ControllerManager's container securityContext
+    containerSecurityContext:
+      readOnlyRootFilesystem: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+  # -- ControllerManager's replicas count
+  replicas: 1
+  # -- ControllerManager's imagePullSecrets
+  imagePullSecrets: []
+  readinessProbe:
+    # -- ControllerManager's readinessProbe initialDelaySeconds
+    initialDelaySeconds: 5
+    # -- ControllerManager's readinessProbe periodSeconds
+    periodSeconds: 10
+    # -- ControllerManager's readinessProbe timeoutSeconds
+    timeoutSeconds: 1
+    # -- ControllerManager's readinessProbe failureThreshold
+    failureThreshold: 3
+    # -- ControllerManager's readinessProbe successThreshold
+    successThreshold: 1
+  livenessProbe:
+    # -- ControllerManager's livenessProbe initialDelaySeconds
+    initialDelaySeconds: 15
+    # -- ControllerManager's livenessProbe periodSeconds
+    periodSeconds: 20
+    # -- ControllerManager's livenessProbe timeoutSeconds
+    timeoutSeconds: 1
+    # -- ControllerManager's livenessProbe failureThreshold
+    failureThreshold: 3
+    # -- ControllerManager's livenessProbe successThreshold
+    successThreshold: 1
+  # -- ControllerManager's nodeSelector
+  nodeSelector: {}
+  # -- ControllerManager's tolerations
+  tolerations: []
+  # -- ControllerManager's topologySpreadConstraints
+  topologySpreadConstraints: []
+  podDisruptionBudget:
+    # -- Enable PodDisruptionBudget
+    enabled: false
+    # -- PodDisruptionBudget's topologySpreadConstraints
+    minAvailable: 1
+managerConfig:
+  # -- controller_manager_config.yaml.
+  # ControllerManager utilizes this yaml via manager-config Configmap.
+  # @default -- controllerManagerConfigYaml
+  controllerManagerConfigYaml: |-
+    apiVersion: config.kueue.x-k8s.io/v1beta1
+    kind: Configuration
+    health:
+      healthProbeBindAddress: :8081
+    metrics:
+      bindAddress: :8443
+    # enableClusterQueueResources: true
+    webhook:
+      port: 9443
+    leaderElection:
+      leaderElect: true
+      resourceName: c1f6bfd2.kueue.x-k8s.io
+    controller:
+      groupKindConcurrency:
+        Job.batch: 5
+        Pod: 5
+        Workload.kueue.x-k8s.io: 5
+        LocalQueue.kueue.x-k8s.io: 1
+        ClusterQueue.kueue.x-k8s.io: 1
+        ResourceFlavor.kueue.x-k8s.io: 1
+    clientConnection:
+      qps: 50
+      burst: 100
+    #pprofBindAddress: :8083
+    #waitForPodsReady:
+    #  enable: false
+    #  timeout: 5m
+    #  recoveryTimeout: 3m
+    #  blockAdmission: false
+    #  requeuingStrategy:
+    #    timestamp: Eviction
+    #    backoffLimitCount: null # null indicates infinite requeuing
+    #    backoffBaseSeconds: 60
+    #    backoffMaxSeconds: 3600
+    #manageJobsWithoutQueueName: true
+    #managedJobsNamespaceSelector:
+    #  matchExpressions:
+    #    - key: kubernetes.io/metadata.name
+    #      operator: NotIn
+    #      values: [ kube-system, kueue-system ]
+    #internalCertManagement:
+    #  enable: false
+    #  webhookServiceName: ""
+    #  webhookSecretName: ""
+    integrations:
+      frameworks:
+      - "batch/job"
+      - "kubeflow.org/mpijob"
+      - "ray.io/rayjob"
+      - "ray.io/raycluster"
+      - "jobset.x-k8s.io/jobset"
+      - "trainer.kubeflow.org/trainjob"
+      - "kubeflow.org/paddlejob"
+      - "kubeflow.org/pytorchjob"
+      - "kubeflow.org/tfjob"
+      - "kubeflow.org/xgboostjob"
+      - "kubeflow.org/jaxjob"
+      - "workload.codeflare.dev/appwrapper"
+    #  - "pod"
+    #  - "deployment" (requires enabling pod integration)
+    #  - "statefulset" (requires enabling pod integration)
+    #  - "leaderworkerset.x-k8s.io/leaderworkerset" (requires enabling pod integration)
+    #  externalFrameworks:
+    #  - "Foo.v1.example.com"
+    #fairSharing:
+    #  enable: true
+    #  preemptionStrategies: [LessThanOrEqualToFinalShare, LessThanInitialShare]
+    #admissionFairSharing:
+    #  usageHalfLifeTime: "168h" # 7 days
+    #  usageSamplingInterval: "5m"
+    #  resourceWeights: # optional, defaults to 1 for all resources if not specified
+    #    cpu: 0    # if you want to completely ignore cpu usage
+    #    memory: 0 # ignore completely memory usage
+    #    example.com/gpu: 100 # and you care only about GPUs usage
+    #resources:
+    #  excludeResourcePrefixes: []
+    # transformations:
+    # - input: nvidia.com/mig-4g.5gb
+    #   strategy: Replace | Retain
+    #   outputs:
+    #     example.com/accelerator-memory: 5Gi
+    #     example.com/accelerator-gpc: 4
+    #objectRetentionPolicies:
+    #  workloads:
+    #    afterFinished: null # null indicates infinite retention, 0s means no retention at all
+    #    afterDeactivatedByKueue: null # null indicates infinite retention, 0s means no retention at all
+metricsService:
+  # -- metricsService's ports
+  ports:
+    - name: https
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+  # -- metricsService's type
+  type: ClusterIP
+  # -- metricsService's labels
+  labels: {}
+  # -- metricsService's annotations
+  annotations: {}
+webhookService:
+  ipDualStack:
+    # -- webhookService's ipDualStack enabled
+    enabled: false
+    # -- webhookService's ipDualStack ipFamilies
+    ipFamilies: ["IPv6", "IPv4"]
+    # -- webhookService's ipDualStack ipFamilyPolicy
+    ipFamilyPolicy: "PreferDualStack"
+  # -- webhookService's ports
+  ports:
+    - port: 443
+      protocol: TCP
+      targetPort: 9443
+  # -- webhookService's type
+  type: ClusterIP
+mutatingWebhook:
+  # -- MutatingWebhookConfiguration's reinvocationPolicy
+  reinvocationPolicy: Never
