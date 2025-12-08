@@ -1,0 +1,107 @@
+# DNS Controller Helm Chart 配置
+
+# 基本配置
+config:
+  # 集群 ID (必需)
+  clusterId: ""
+  
+  # VPC ID (必需)
+  vpcId: ""
+  
+  # 腾讯云地域 (必需)
+  region: "ap-guangzhou"
+  
+  # DNS 后缀，完整域名格式: {clusterId}.{dnsSuffix}
+  dnsSuffix: "local"
+
+# 腾讯云凭证配置 (必需)
+credentials:
+  # 腾讯云 Secret ID
+  secretId: ""
+  # 腾讯云 Secret Key
+  secretKey: ""
+
+# 镜像配置
+image:
+  repository: ccr.ccs.tencentyun.com/tke-market/dns-controller
+  tag: "v1.1.1"
+  pullPolicy: Always
+
+# 副本数
+replicas: 2
+
+# 强制重启 Pod（每次 helm upgrade 都会重建 Pod，即使没有配置变更）
+forceRestart: true
+
+# Pod 反亲和性配置
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - dns-controller
+          topologyKey: kubernetes.io/hostname
+
+# 日志配置
+log:
+  level: "info"  # 日志级别: debug, info, warn, error
+
+# 指标配置
+metrics:
+  enabled: true
+  addr: ":8080"
+
+# 健康检查配置
+health:
+  addr: ":8081"
+
+# PrivateDNS 配置
+privateDNS:
+  qps: 90.0  # QPS 限制（腾讯云 PrivateDNS 限制 100，建议留 10 安全边界）
+  timeout: "10s"  # API 调用超时时间
+  debug: false  # 是否启用 debug 模式（会打印详细的 API 请求日志）
+  enableGlobal: false  # 是否启用全局 DNS 解析（覆盖 kube-dns）
+  nameservers:  # PrivateDNS Nameserver 地址
+    - "183.60.83.19"
+    - "183.60.82.98"
+
+# 控制器配置
+controller:
+  leaderElection: true  # 是否启用 Leader 选举（多副本部署时必须启用）
+  concurrentWorkers: 10  # 并发 worker 数量（建议不超过 50）
+  reconcileInterval: "10m"  # 全量对账间隔
+  requeueAfter: "30s"  # 失败重试间隔
+  maxConcurrentApi: 10  # 最大并发 API 调用数
+  retry:
+    maxAttempts: 3  # 最大重试次数
+    initialWait: "1s"  # 初始等待时间
+    maxWait: "60s"  # 最大等待时间
+
+# Webhook 配置
+webhook:
+  enabled: true  # 是否启用 Webhook（默认开启）
+  port: 9443  # Webhook 服务端口
+
+# 垃圾回收配置
+gc:
+  enabled: true  # 是否启用 GC
+  interval: "30m"  # GC 运行间隔
+  safetyPeriod: "5m"  # 安全期（资源删除后多久才能被 GC）
+  concurrency: 3  # GC 并发数
+  maxDeletePerRun: 100  # 每次 GC 最多删除的资源数
+  dryRun: false  # 是否为 Dry Run 模式（仅打印，不实际删除）
+  runOnLeaderElection: true  # 是否在 Leader 选举时立即运行一次 GC
+
+# 资源限制
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 128Mi

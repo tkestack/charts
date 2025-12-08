@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "dns-controller.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dns-controller.labels" . | nindent 4 }}
+data:
+  config.yaml: |
+    # DNS Controller 配置文件
+    
+    # 基本配置
+    clusterId: {{ required "config.clusterId is required" .Values.config.clusterId | quote }}
+    vpcId: {{ required "config.vpcId is required" .Values.config.vpcId | quote }}
+    region: {{ required "config.region is required" .Values.config.region | quote }}
+    secretId: {{ required "credentials.secretId is required" .Values.credentials.secretId | quote }}
+    secretKey: {{ required "credentials.secretKey is required" .Values.credentials.secretKey | quote }}
+    dnsSuffix: {{ .Values.config.dnsSuffix | quote }}
+    
+    # 日志配置
+    log:
+      level: {{ .Values.log.level | quote }}
+    
+    # 指标配置
+    metrics:
+      enabled: {{ .Values.metrics.enabled }}
+      addr: {{ .Values.metrics.addr | quote }}
+    
+    # 健康检查配置
+    health:
+      addr: {{ .Values.health.addr | quote }}
+    
+    # PrivateDNS 配置
+    privateDNS:
+      qps: {{ .Values.privateDNS.qps }}
+      timeout: {{ .Values.privateDNS.timeout | quote }}
+      debug: {{ .Values.privateDNS.debug }}
+      enableGlobal: {{ .Values.privateDNS.enableGlobal }}
+      nameservers:
+        {{- range .Values.privateDNS.nameservers }}
+        - {{ . | quote }}
+        {{- end }}
+    
+    # 控制器配置
+    controller:
+      leaderElection: {{ .Values.controller.leaderElection }}
+      concurrentWorkers: {{ .Values.controller.concurrentWorkers }}
+      reconcileInterval: {{ .Values.controller.reconcileInterval | quote }}
+      requeueAfter: {{ .Values.controller.requeueAfter | quote }}
+      maxConcurrentApi: {{ .Values.controller.maxConcurrentApi }}
+      retry:
+        maxAttempts: {{ .Values.controller.retry.maxAttempts }}
+        initialWait: {{ .Values.controller.retry.initialWait | quote }}
+        maxWait: {{ .Values.controller.retry.maxWait | quote }}
+    
+    # Webhook 配置
+    webhook:
+      enable: {{ .Values.webhook.enabled }}
+      port: {{ .Values.webhook.port }}
+      certDir: "/app/data/certs"
+    
+    # 垃圾回收配置
+    garbageCollect:
+      enabled: {{ .Values.gc.enabled }}
+      interval: {{ .Values.gc.interval | quote }}
+      safetyPeriod: {{ .Values.gc.safetyPeriod | quote }}
+      concurrency: {{ .Values.gc.concurrency }}
+      maxDeletePerRun: {{ .Values.gc.maxDeletePerRun }}
+      dryRun: {{ .Values.gc.dryRun }}
+      runOnLeaderElection: {{ .Values.gc.runOnLeaderElection }}
