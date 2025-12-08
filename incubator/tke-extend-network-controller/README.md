@@ -40,7 +40,10 @@
                     "clb:DescribeTargets",
                     "clb:DescribeQuota",
                     "clb:DescribeTaskStatus",
-                    "vpc:DescribeAddresses"
+                    "vpc:DescribeAddresses",
+                    "cvm:DescribeAddresses",
+                    "tag:TagResources",
+                    "cam:GetUserAppId"
                 ],
                 "resource": [
                     "*"
