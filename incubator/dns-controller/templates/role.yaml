@@ -1,0 +1,55 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "dns-controller.fullname" . }}
+  labels:
+    {{- include "dns-controller.labels" . | nindent 4 }}
+rules:
+  # Service 资源权限
+  # - Service Controller: get, list, watch (监听 Service 变化)
+  # - Endpoints Controller: get, list, watch (读取关联的 Service)
+  # - GC: get (检查 Service 是否存在)
+  # - enableGlobal: update (更新 kube-dns service 移除 selector)
+  # - Webhook: patch (Server-Side Apply 创建 webhook service)
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+  
+  # Service 状态权限
+  # - Service Controller: get (读取 Service 状态)
+  - apiGroups: [""]
+    resources: ["services/status"]
+    verbs: ["get"]
+  
+  # Endpoints 资源权限
+  # - Endpoints Controller: get, list, watch (监听 Endpoints 变化)
+  # - enableGlobal: create, update, patch (CreateOrUpdate kube-dns endpoints)
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  
+  # Namespace 资源权限
+  # - Webhook: get, list, watch (检查 namespace label 用于灰度控制)
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list", "watch"]
+  
+  # Event 记录权限
+  # - Service Controller: create, patch (记录事件)
+  # - Endpoints Controller: create, patch (记录事件)
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "patch"]
+  
+  # Lease 权限
+  # - Leader Election: 所有操作
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  
+  # MutatingWebhookConfiguration 权限
+  # - Webhook: get, list, watch (controller-runtime cache 需要这些权限进行初始化和状态同步)
+  # - Webhook: create, update, patch (Server-Side Apply 创建/更新 webhook 配置)
+  - apiGroups: ["admissionregistration.k8s.io"]
+    resources: ["mutatingwebhookconfigurations"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]

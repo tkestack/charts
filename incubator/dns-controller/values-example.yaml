@@ -1,0 +1,38 @@
+# DNS Controller Helm Chart 配置示例
+# 使用方式: helm install dns-controller ./deploy/helm/dns-controller -f values-example.yaml
+
+# 基本配置（必需）
+config:
+  clusterId: "cls-xxxxxxxx"       # 替换为你的集群 ID
+  vpcId: "vpc-xxxxxxxx"           # 替换为你的 VPC ID
+  region: "ap-guangzhou"          # 腾讯云地域
+
+# 腾讯云凭证配置（必需）
+credentials:
+  secretId: "AKIDxxxxxxxxxxxxxxxx"
+  secretKey: "xxxxxxxxxxxxxxxx"
+
+# 以下为可选配置，使用默认值即可
+# 如需自定义，取消注释并修改
+
+# # PrivateDNS 配置
+# privateDNS:
+#   enableGlobal: false # 是否覆盖 kube-dns（谨慎开启）
+
+# # Webhook 配置
+# webhook:
+#   enabled: true  # 是否启用 Pod DNS 注入
+
+# # 垃圾回收配置
+# gc:
+#   enabled: true
+#   interval: "30m"
+
+# # 资源配置
+# resources:
+#   limits:
+#     cpu: 200m
+#     memory: 256Mi
+#   requests:
+#     cpu: 50m
+#     memory: 128Mi

@@ -1,0 +1,23 @@
+apiVersion: v2
+name: dns-controller
+description: Kubernetes DNS Controller - 自动同步 Service 到腾讯云 PrivateDNS
+type: application
+version: 1.1.1
+appVersion: v1.1.1
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/other_external_resource/56f6fa28-dc5b-4541-b8f9-f0813f714d43.svg
+keywords:
+  - dns
+  - kubernetes
+  - tencent-cloud
+  - privatedns
+  - webhook
+home: https://git.woa.com/kateway/dns-controller
+sources:
+  - https://git.woa.com/kateway/dns-controller
+maintainers:
+  - name: DNS Controller Team
+    email: wallaceqian@tencent.com
+kubeVersion: ">=1.24.0-0"
+annotations:
+  catalog.cattle.io/display-name: DNS Controller
+  catalog.cattle.io/namespace: kube-system
