@@ -1,0 +1,51 @@
+{{- if eq .Values.global.deployMode "mixed" -}}
+  {{- $roles := list
+        (dict "name" "seeder" "leecherMode" false)
+        (dict "name" "leecher" "leecherMode" true)
+  -}}
+  {{- range $roles }}
+    {{- include "p2pagent.agent-resources" (dict "root" $ "role" .) | nindent 0 -}}
+  {{- end }}
+{{- else -}}
+  {{- $role := dict "name" "" "leecherMode" (eq .Values.global.deployMode "leecher") -}}
+  {{- include "p2pagent.agent-resources" (dict "root" . "role" $role) | nindent 0 -}}
+{{- end }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: p2p-agent-service
+  namespace: {{ .Values.global.namespace }}
+spec:
+  clusterIP: None
+  selector:
+    app: p2p-agent
+  ports:
+    - protocol: TCP
+      port: 80 # 实际没有转发作用
+      targetPort: {{ .Values.agent.portHTTP}}
+---
+{{- if .Values.podMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: p2p-agent-monitor
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: p2p-agent
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: p2p-agent
+  podMetricsEndpoints:
+  - port: admin-http
+    path: /metrics
+    interval: {{ .Values.podMonitor.interval | default "30s" }}
+    scrapeTimeout: {{ .Values.podMonitor.scrapeTimeout | default "10s" }}
+    scheme: http
+  namespaceSelector:
+    matchNames:
+    - {{ .Values.global.namespace }}
+{{- end }}

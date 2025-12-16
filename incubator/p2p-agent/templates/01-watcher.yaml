@@ -1,0 +1,68 @@
+{{- if and .Values.watcher.enabled (ne .Values.global.deployMode "leecher") }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: watcher
+  namespace: {{ .Values.global.namespace }}
+spec:
+  replicas: {{ .Values.watcher.replicaCount }}
+  selector:
+    matchLabels:
+      app: watcher
+  template:
+    metadata:
+      labels:
+        app: watcher
+    spec:
+      containers:
+        - name: watcher
+          image: "{{ .Values.images.watcher.image }}:{{ .Values.images.watcher.tag }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config
+          ports:
+            - containerPort: {{ .Values.watcher.port }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: watcher-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: watcher-service
+  namespace: {{ .Values.global.namespace }}
+spec:
+  type: NodePort
+  selector:
+    app: watcher
+  ports:
+    - port: 80
+      targetPort: {{ .Values.watcher.port }}
+      nodePort: {{ .Values.watcher.nodePort }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: watcher-config
+  namespace: {{ .Values.global.namespace }}
+data:
+  watcher.yaml: |
+    seedpeer:
+      max_replicas: {{ .Values.watcher.preheatReplicas }}
+    manager:
+      cluster_id: {{ .Values.watcher.manager.clusterId }}
+      token: {{ .Values.watcher.manager.token }}
+      limit: {{ .Values.watcher.manager.limit}}
+      endpoints: {{ .Values.watcher.manager.endpoints }}
+      seeder_cleanup_interval: {{ .Values.watcher.manager.seederCleanupInterval | default 10800 }}
+    preheat:
+      poll_interval: {{ .Values.watcher.preheatInterval }}
+    registry:
+      enabled: {{ .Values.watcher.registryEnabled | default false }}
+      username: "{{ .Values.watcher.registryUsername | default "" }}"
+      password: "{{ .Values.watcher.registryPassword | default "" }}"
+    http_port: {{ .Values.watcher.port }}
+
+{{- end }}

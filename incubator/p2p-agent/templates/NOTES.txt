@@ -1,0 +1,22 @@
+# P2P Agent Helm Chart 部署成功
+
+## 部署信息
+- 命名空间: {{ .Values.global.namespace }}
+- 部署模式: {{ .Values.global.deployMode }}
+
+## 验证部署
+kubectl get pods -n {{ .Values.global.namespace }}
+
+## 服务访问
+# Tracker 服务
+kubectl port-forward -n {{ .Values.global.namespace }} svc/tracker-service {{ .Values.tracker.nodePort }}:18951
+
+# SeedServer 服务
+kubectl port-forward -n {{ .Values.global.namespace }} svc/seed-server-service {{ .Values.seedServer.nodePort }}:11008
+
+## 故障排查
+# 查看日志
+kubectl logs <agent-pod> -n {{ .Values.global.namespace }}
+
+# 检查配置
+kubectl get configmap -n {{ .Values.global.namespace }}

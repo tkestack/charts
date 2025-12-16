@@ -1,0 +1,184 @@
+# === 全局配置 ===
+global:
+  namespace: p2pagent
+  imagePullPolicy: IfNotPresent
+  deployMode: "mixed"  # seeder/mixed/leecher
+
+# === 镜像统一管理 ===
+images:
+  agent:
+    image: ccr.ccs.tencentyun.com/tke-market/p2p-agent
+    tag: 0.2.0
+    pullPolicy: IfNotPresent
+  tracker:
+    image: ccr.ccs.tencentyun.com/tke-market/tracker
+    tag: 0.2.0
+    pullPolicy: IfNotPresent
+  seedServer:
+    image: ccr.ccs.tencentyun.com/tke-market/seed-server
+    tag: 0.2.0
+    pullPolicy: IfNotPresent
+  watcher:
+    image: ccr.ccs.tencentyun.com/tke-market/watcher
+    tag: 0.2.0
+    pullPolicy: IfNotPresent
+
+# === 资源统一管理 ===
+resources:
+  agent: {}
+  tracker: {}
+  seedServer: {}
+  watcher: {}
+
+# === 亲和性顶层管理 ===
+affinity:
+  seeder:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: tke.cloud.tencent.com/p2p-role
+                operator: In
+                values:
+                  - "seeder"
+  leecher:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: tke.cloud.tencent.com/p2p-role
+                operator: In
+                values:
+                  - "leecher"
+
+# === 基础配置 ===
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# === Agent 组件配置 ===
+agent:
+  # P2P 核心配置（扁平化）
+  adminPort: 65100
+  dataUnitPort: 65101
+  preheatPort: 65102
+  portHTTP: 65001
+  socketDir: /run/p2p-agent
+  hostSocketDir: /run/p2p-agent
+  agentDataDir: ""
+  maxConcurrent: 8
+  shuffleSize: 8
+  minSliceSize: 4
+  maxSliceSize: 128
+  sliceSizeRate: 2.0
+  minP2PTimeout: 10
+  minP2PDownloadSpeed: "5242880"
+  LRUSizeGB: 50
+  trackersAddr: "http://tracker-service/announce"
+  torrentServerAddr: "http://seed-server-service"
+  metaManagerAddr: ""
+  maxMemoryUsageMB: 2048
+  minLayerDownloadSpeed: 5242880
+
+  # 注册表配置（扁平化）
+  registryHttps: "ccr.ccs.tencentyun.com"
+  defaultRegistry: "ccr.ccs.tencentyun.com"
+
+  # BitTorrent 配置（扁平化）
+  btPortRange: "50001-80001"
+  maxPeerConnection: 35
+  requestBlockSize: 1024
+
+  # 工作流配置（扁平化）
+  maxBtConcurrentFlow: 32
+  maxCpuPercentage: 75
+  maxMemoryPercentage: 75
+  maxCpuUpperBound: 300
+  maxMemoryUpperBound: "3221225472"
+  overloadStrategy: 0
+
+  # GC 配置（扁平化）
+  expireTime: 10800
+  detectionInterval: 1800
+  protectionTime: 3600
+  maxFilesNum: 200
+  diskMinRemainRatio: 50
+  maxGcNumWhenDiskClear: 50
+
+  # 日志配置（扁平化）
+  debug: "false"
+  logPath: ""
+  logMaxSize: 500
+  logMaxNum: 10
+
+  # Watcher 配置（扁平化）
+  watcherUrl: ""
+  heartbeatInterval: 5
+  heartbeatTimeout: 10
+  maxFailedHeartbeats: 5
+
+  # 限速配置（扁平化）
+  leecherReadRateLimit: 500
+  leecherWriteRateLimit: 750
+  seederReadRateLimit: 500
+  seederWriteRateLimit: 750
+
+  # 其他配置
+  enableLayerP2PMetrics: false
+
+# === Tracker 组件配置 ===
+tracker:
+  replicaCount: 1
+  # 扁平化配置（移除 config 嵌套）
+  port: 18951
+  nodePort: 30080
+  debug: "true"
+  storageName: "memory"
+  storageRedis: "rediscluster://P2PAgent@redis-cluster-service:6379"
+  chihayaMetricsAddr: "0.0.0.0:19888"
+  chihayaServiceAddr: "0.0.0.0:19898"
+  service:
+    type: NodePort
+    annotations: {}
+
+# === SeedServer 组件配置 ===
+seedServer:
+  replicaCount: 1
+  # 扁平化配置（移除 config 嵌套）
+  port: 11008
+  nodePort: 30081
+  cosUrl: "minio-service:80"
+  cosId: "admin"
+  cosKey: "P2PAgent"
+  service:
+    type: NodePort
+    annotations: {}
+
+# === Watcher 组件配置 ===
+watcher:
+  enabled: false
+  # 扁平化配置
+  replicaCount: 1
+  port: 11378
+  nodePort: 30082
+  preheatReplicas: 1
+  preheatInterval: 3600
+  heartbeatInterval: 5
+  heartbeatTimeout: 10
+  maxFailedHeartbeats: 5
+  registryEnabled: false
+  registryUsername: ""
+  registryPassword: ""
+  manager:
+    clusterId: 1
+    limit: 100
+    token: ""
+    endpoints: "http://p2p-manager-service:8080"
+  service:
+    type: NodePort
+    annotations: {}
+
+podMonitor:
+  enabled: false
+  interval: 30s
+  scrapeTimeout: 10s
