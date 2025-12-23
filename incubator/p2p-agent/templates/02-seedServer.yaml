@@ -1,0 +1,102 @@
+{{- if ne .Values.global.deployMode "leecher" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seed-server
+  namespace: {{ .Values.global.namespace }}
+spec:
+  replicas: {{ .Values.seedServer.replicaCount }}
+  selector:
+    matchLabels:
+      app: seed-server
+  template:
+    metadata:
+      labels:
+        app: seed-server
+    spec:
+      containers:
+        - name: seed-server
+          image: "{{ .Values.images.seedServer.image }}:{{ .Values.images.seedServer.tag }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config
+          ports:
+            - containerPort: {{ .Values.seedServer.port }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: seed-server-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seed-server-service
+  namespace: {{ .Values.global.namespace }}
+spec:
+  type: NodePort
+  selector:
+    app: seed-server
+  ports:
+    - port: 80
+      targetPort: {{ .Values.seedServer.port }}
+      nodePort: {{ .Values.seedServer.nodePort }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: seed-server-config
+  namespace: {{ .Values.global.namespace }}
+data:
+  trpc_go.yaml: |
+    global:
+      namespace: Development
+      env_name: test
+      local_ip: 127.0.0.1
+      admin_port: 11002
+      enable_set: N
+    server:
+      app: P2PSeedServer
+      server: cmd
+      bin_path: /app
+      conf_path: /app/config
+      data_path: /app/seedServer
+      admin:
+        ip: 127.0.0.1
+        port: 11002
+        read_timeout: 3000
+        write_timeout: 60000
+      service:
+        - network: tcp
+          protocol: http_no_protocol
+          timeout: 1000
+          ip: 0.0.0.0
+          port: {{ .Values.seedServer.port }}
+    plugins:
+      log:
+        default:
+          - writer: file
+            level: info
+            writer_config:
+              log_path: /app/seedServer
+              filename: trpc.log
+              roll_type: size
+              max_age: 7
+              max_size: 10
+              max_backups: 10
+              compress: false
+  seedServer.yaml: |
+    upload:
+      extra_upload_default: true
+    cos:
+      url: {{ .Values.seedServer.cosUrl }}
+      secret_id: {{ .Values.seedServer.cosId }}
+      secret_key: {{ .Values.seedServer.cosKey }}
+    gc:
+      seed_keep_days: 30
+      gc_trigger_time: "9:20"
+      polaris_addr: "Development/trpc.P2PSeedServer.P2PSeedApp.peacemoon"
+    keyset_handler:
+      name: default_handler
+      config:
+{{- end }}

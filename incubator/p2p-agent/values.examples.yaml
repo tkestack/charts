@@ -1,0 +1,16 @@
+# === P2P Agent Helm Chart - Mixed Mode 最小化部署示例 ===
+#
+# 此文件展示了如何以最小化配置部署 mixed 模式的 P2P Agent
+# mixed 模式：单个集群中同时部署 Seeder 和 Leecher 角色
+# 该示例配置仅用于测试环境，生产环境请参考 values.yaml 和 VALUES.md 文件
+global:
+  deployMode: "mixed"                     # 部署模式：mixed（推荐用于生产）
+agent:
+  LRUSizeGB: 50
+  maxMemoryUsageMB: 2048
+  registryHttps: "p2p-bj.tencentcloudcr.com"
+  defaultRegistry: "p2p-bj.tencentcloudcr.com"
+seedServer:
+  cosUrl: "s3-service"
+  cosId: "admin"                                   # 请修改为实际的访问密钥
+  cosKey: "P2PAgent"                                # 请修改为实际的密钥

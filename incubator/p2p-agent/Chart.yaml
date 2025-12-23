@@ -1,0 +1,18 @@
+apiVersion: v2
+name: p2p-agent
+description: P2P Agent 是一个容器镜像加速系统，通过 P2P 技术加速容器镜像分发，帮助用户快速部署应用，支持多种部署模式，可以让 50GB 镜像端到端拉取耗时，从 10 分钟降到 5 分钟，分发性能提升 100%。
+type: application
+version: 0.2.0
+appVersion: v0.2.0
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/7dc3b4af-5291-4650-9a43-3a23ce9196bd.png
+keywords:
+  - p2p
+  - kubernetes
+  - docker image
+home: https://git.woa.com/tlinux/image-accelerator/p2pagent
+sources:
+  - https://git.woa.com/tlinux/image-accelerator/p2pagent
+maintainers:
+  - name: P2P Agent Team
+    email: fanjiankong@tencent.com
+kubeVersion: ">=1.18-0"
