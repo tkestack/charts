@@ -6,7 +6,7 @@ image:
 
   web:
     repository: ccr.ccs.tencentyun.com/tke-market/dify-web
-    tag: "1.5.0"
+    tag: "1.5.0-tke"
     pullPolicy: IfNotPresent
 
   sandbox:
