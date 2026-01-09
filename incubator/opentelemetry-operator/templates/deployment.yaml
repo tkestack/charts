@@ -128,6 +128,18 @@ spec:
               name: webhook-server
               protocol: TCP
             {{- end }}
+          {{- if or .Values.admissionWebhooks.create .Values.admissionWebhooks.secretName }}
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.manager.ports.webhookPort }}
+              scheme: HTTPS
+            initialDelaySeconds: 7
+            periodSeconds: 3
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 20
+          {{- end }}
           livenessProbe:
             httpGet:
               path: /healthz
