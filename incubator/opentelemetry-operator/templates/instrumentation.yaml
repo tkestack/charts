@@ -1,35 +1,7 @@
-apiVersion: opentelemetry.io/v1alpha1
-kind: Instrumentation
-metadata:
-  name: default-instrumentation
-  namespace: opentelemetry-operator-system
-  annotations:
-    "helm.sh/hook": "post-install,post-upgrade"
-    "helm.sh/hook-weight": "5"
-    "helm.sh/hook-delete-policy": "before-hook-creation"
-spec:
-  exporter:
-    endpoint: {{.Values.env.ENDPOINT | quote | trim}}
-  propagators:
-    - tracecontext
-    - baggage
-    - b3
-  resource:
-    resourceAttributes:
-      token: {{.Values.env.APM_TOKEN}}
-  java:
-    image:
-  nodejs:
-    image:
-  python:
-    image:
-    env:
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: {{printf "%s/otlp" (include "opentelemetry-operator.host" . ) | quote | trim}}
-  dotnet:
-    image:
-    env:
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: {{printf "%s/otlp" (include "opentelemetry-operator.host" . ) | quote | trim}}
-  go:
-    image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-go:v0.8.0-alpha
+{{- /*
+  此文件仅作为模板参考，实际的 Instrumentation 资源，由 waitformanagerjob.yaml 中的 Job 在确认 Operator 就绪后创建。
+  如需直接通过 Helm hook 创建，设置 .Values.instrumentation.createDirectly = true
+*/ -}}
+{{- if (.Values.env.DIRECTLY_CREATE_INSTRUMENTATION | default false) }}
+{{ include "opentelemetry-operator.instrumentation" . }}
+{{- end }}

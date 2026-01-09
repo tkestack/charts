@@ -151,6 +151,8 @@ rules:
     resources:
       - instrumentations
     verbs:
+      - create
+      - delete
       - get
       - list
       - patch
@@ -183,26 +185,26 @@ rules:
       - patch
       - update
   - apiGroups:
-    - route.openshift.io
+      - route.openshift.io
     resources:
-    - routes
-    - routes/custom-host
+      - routes
+      - routes/custom-host
     verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
   - apiGroups:
-    - discovery.k8s.io
+      - discovery.k8s.io
     resources:
-    - endpointslices
+      - endpointslices
     verbs:
-    - get
-    - list
-    - watch
+      - get
+      - list
+      - watch
 
 {{ if .Values.kubeRBACProxy.enabled }}
 ---
