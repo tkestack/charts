@@ -82,10 +82,16 @@ Create an ordered name of the MutatingWebhookConfiguration
 
 
 {{- define "opentelemetry-operator.host" -}}
-{{- $endpoint :=.Values.env.ENDPOINT}}
+{{- $endpoint := .Values.env.ENDPOINT }}
 {{- $ss := $endpoint | split ":" -}}
-{{- printf "%s:%s" (index $ss "_0") (index $ss "_1") -}}
-{{end}}
+{{- $scheme := index $ss "_0" -}}
+{{- $host := index $ss "_1" | trimPrefix "//" -}}
+{{- if eq $scheme "https" -}}
+{{- printf "%s://%s:91" $scheme $host -}}
+{{- else -}}
+{{- printf "%s://%s:90" $scheme $host -}}
+{{- end -}}
+{{- end }}
 
 
 {{- define "regionRepositoryMap" -}}
@@ -143,4 +149,42 @@ Modify kubeRBACProxy image repository by region.
 {{- define "opentelemetry-operator.proxyImageRepository" -}}
 {{- $parts := regexSplit "/" .Values.kubeRBACProxy.image.repository -1 -}}
 {{- printf "%s/%s" (include "regionRepositoryMap" .Values.env.TKE_REGION) (join "/" (slice $parts 1 (len $parts))) -}}
+{{- end -}}
+
+{{/*
+Instrumentation resource spec definition.
+用于在多个地方复用 Instrumentation 资源定义
+*/}}
+{{- define "opentelemetry-operator.instrumentation" -}}
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: default-instrumentation
+  namespace: opentelemetry-operator-system
+spec:
+  exporter:
+    endpoint: {{ .Values.env.ENDPOINT | quote | trim }}
+  propagators:
+    - tracecontext
+    - baggage
+    - b3
+  resource:
+    resourceAttributes:
+      token: {{ .Values.env.APM_TOKEN }}
+  java:
+    image:
+  nodejs:
+    image:
+  python:
+    image:
+    env:
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: {{ printf "%s/otlp" (include "opentelemetry-operator.host" . ) | quote | trim }}
+  dotnet:
+    image:
+    env:
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: {{ printf "%s/otlp" (include "opentelemetry-operator.host" . ) | quote | trim }}
+  go:
+    image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-go:v0.8.0-alpha
 {{- end -}}

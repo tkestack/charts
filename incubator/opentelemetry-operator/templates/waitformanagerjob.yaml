@@ -1,0 +1,178 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "opentelemetry-operator.fullname" . }}-wait-for-manager
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": "post-install,post-upgrade"
+    "helm.sh/hook-weight": "3"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+  labels:
+    {{- include "opentelemetry-operator.labels" . | nindent 4 }}
+    app.kubernetes.io/component: wait-for-manager
+spec:
+  backoffLimit: 10
+  ttlSecondsAfterFinished: 3600
+  template:
+    metadata:
+      name: {{ template "opentelemetry-operator.fullname" . }}-wait-for-manager
+      labels:
+        {{- include "opentelemetry-operator.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: wait-for-manager
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: {{ template "opentelemetry-operator.serviceAccountName" . }}
+      containers:
+        - name: wait-for-manager
+          image: "{{ .Values.waitForManager.image.repository }}:{{ .Values.waitForManager.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          {{- with .Values.waitForManager.resources }}
+          resources: {{- toYaml . | nindent 12 }}
+          {{- end }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+
+              DEPLOYMENT_NAME="{{ template "opentelemetry-operator.fullname" . }}"
+              NAMESPACE="{{ .Release.Namespace }}"
+              MAX_RETRIES=60
+              RETRY_INTERVAL=3
+
+              echo "==========================================="
+              echo "等待 OpenTelemetry Operator Manager 就绪"
+              echo "==========================================="
+              echo "Deployment: ${DEPLOYMENT_NAME}"
+              echo "Namespace: ${NAMESPACE}"
+              echo "最大重试次数: ${MAX_RETRIES}"
+              echo "重试间隔: ${RETRY_INTERVAL}秒"
+              echo ""
+
+              echo "正在检查 Deployment 是否存在..."
+              retry_count=0
+              while [ $retry_count -lt $MAX_RETRIES ]; do
+                if kubectl get deployment "${DEPLOYMENT_NAME}" -n "${NAMESPACE}" > /dev/null 2>&1; then
+                  echo "✓ Deployment 已存在"
+                  break
+                fi
+                retry_count=$((retry_count + 1))
+                echo "Deployment 尚未创建，等待中... (${retry_count}/${MAX_RETRIES})"
+                sleep ${RETRY_INTERVAL}
+              done
+
+              if [ $retry_count -ge $MAX_RETRIES ]; then
+                echo "✗ 错误: Deployment 在超时时间内未创建"
+                exit 1
+              fi
+
+
+              echo ""
+              echo "正在等待 Deployment available 状态..."
+              echo ""
+              kubectl get deployment "${DEPLOYMENT_NAME}" -n "${NAMESPACE}" -o wide || true
+
+              if kubectl wait --for=condition=available \
+                --timeout=120s \
+                deployment/"${DEPLOYMENT_NAME}" \
+                -n "${NAMESPACE}"; then
+                echo ""
+                echo "==========================================="
+                echo "✓ Manager 已就绪 (包括 webhook server)"
+                echo "==========================================="
+
+                kubectl get deployment "${DEPLOYMENT_NAME}" -n "${NAMESPACE}" -o wide || true
+
+                echo ""
+
+                # 使用 base64 编码传递 YAML 内容 (避免 Shell 解析问题)
+                INSTRUMENTATION_YAML_B64='{{ include "opentelemetry-operator.instrumentation" . | b64enc }}'
+
+                echo "Instrumentation.yaml文件内容如下"
+                echo "${INSTRUMENTATION_YAML_B64}" | base64 -d
+                echo ""
+
+                echo "准备安装Instrumentation资源 (超时时间: 30秒)"
+                echo "开始时间: $(date '+%Y-%m-%d %H:%M:%S')"
+                echo ""
+
+                # 纯管道 + 变量捕获方式，不依赖文件系统写入
+                TIMEOUT_SECONDS=60
+
+                # 后台执行 kubectl apply，并通过变量传递 PID
+                echo "${INSTRUMENTATION_YAML_B64}" | base64 -d | kubectl apply -f - 2>&1 &
+                KUBECTL_PID=$!
+                echo "kubectl apply 进程已启动 PID: ${KUBECTL_PID}"
+
+                # 超时监控循环
+                ELAPSED=0
+                APPLY_EXIT_CODE=""
+                while [ ${ELAPSED} -lt ${TIMEOUT_SECONDS} ]; do
+                  if ! kill -0 ${KUBECTL_PID} 2>/dev/null; then
+                    # kubectl 进程已完成，获取退出码
+                    wait ${KUBECTL_PID}
+                    APPLY_EXIT_CODE=$?
+                    echo "kubectl apply 进程已完成 (耗时: ${ELAPSED}秒)"
+                    break
+                  fi
+                  sleep 1
+                  ELAPSED=$((ELAPSED + 1))
+                  # 每 10 秒输出等待信息
+                  if [ $((ELAPSED % 10)) -eq 0 ]; then
+                    echo "[${ELAPSED}秒] 仍在等待 kubectl apply 完成..."
+                  fi
+                done
+
+                # 检查是否超时
+                if [ -z "${APPLY_EXIT_CODE}" ]; then
+                  echo ""
+                  echo "✗ kubectl apply 超时 (${TIMEOUT_SECONDS}秒)，强制终止进程..."
+                  kill -9 ${KUBECTL_PID} 2>/dev/null || true
+                  wait ${KUBECTL_PID} 2>/dev/null || true
+                  APPLY_EXIT_CODE=124
+                fi
+
+                echo ""
+                echo "结束时间: $(date '+%Y-%m-%d %H:%M:%S')"
+                echo "Instrumentation资源安装结束，退出码: ${APPLY_EXIT_CODE}"
+
+                if [ ${APPLY_EXIT_CODE} -eq 0 ]; then
+                  echo "✓ Instrumentation 资源创建成功"
+                  echo ""
+                  echo "==========================================="
+                  echo "✓ 所有资源已就绪"
+                  echo "==========================================="
+                  exit 0
+                else
+                  echo "✗ Instrumentation 资源创建失败，退出码: ${APPLY_EXIT_CODE}"
+                  exit 1
+                fi
+              else
+                echo ""
+                echo "==========================================="
+                echo "✗ 错误: Manager 未能在超时时间内就绪"
+                echo "==========================================="
+                # 打印 Deployment 状态以便调试
+                echo "当前 Deployment 状态:"
+                kubectl get deployment "${DEPLOYMENT_NAME}" -n "${NAMESPACE}" -o wide || true
+                echo ""
+                echo "Pod 状态:"
+                kubectl get pods -n "${NAMESPACE}" -l app.kubernetes.io/name={{ include "opentelemetry-operator.name" . }} -o wide || true
+                exit 1
+              fi
+          securityContext:
+            runAsNonRoot: false
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations: {{ toYaml . | nindent 8 }}
+      {{- end }}
