@@ -82,10 +82,16 @@ Create an ordered name of the MutatingWebhookConfiguration
 
 
 {{- define "opentelemetry-operator.host" -}}
-{{- $endpoint :=.Values.env.ENDPOINT}}
+{{- $endpoint := .Values.env.ENDPOINT }}
 {{- $ss := $endpoint | split ":" -}}
-{{- printf "%s:%s" (index $ss "_0") (index $ss "_1") -}}
-{{end}}
+{{- $scheme := index $ss "_0" -}}
+{{- $host := index $ss "_1" | trimPrefix "//" -}}
+{{- if eq $scheme "https" -}}
+{{- printf "%s://%s:91" $scheme $host -}}
+{{- else -}}
+{{- printf "%s://%s:90" $scheme $host -}}
+{{- end -}}
+{{- end }}
 
 
 {{- define "regionRepositoryMap" -}}
