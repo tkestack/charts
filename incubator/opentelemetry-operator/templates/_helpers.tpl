@@ -61,6 +61,11 @@ Create the name of the service account to use
 {{- end }}
 {{- end }}
 
+{{- define "opentelemetry-operator.jobName" -}}
+{{- $name := include "opentelemetry-operator.name" . -}}
+{{- printf "%s-wait-for-manager" $name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
 {{- define "opentelemetry-operator.podAnnotations" -}}
 {{- if .Values.manager.podAnnotations }}
 {{- .Values.manager.podAnnotations | toYaml }}

@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ template "opentelemetry-operator.fullname" . }}-wait-for-manager
+  name: {{ include "opentelemetry-operator.jobName" . }}
   namespace: {{ .Release.Namespace }}
   annotations:
     "helm.sh/hook": "post-install,post-upgrade"
@@ -15,7 +15,7 @@ spec:
   ttlSecondsAfterFinished: 3600
   template:
     metadata:
-      name: {{ template "opentelemetry-operator.fullname" . }}-wait-for-manager
+      name: {{ include "opentelemetry-operator.jobName" . }}
       labels:
         {{- include "opentelemetry-operator.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: wait-for-manager
