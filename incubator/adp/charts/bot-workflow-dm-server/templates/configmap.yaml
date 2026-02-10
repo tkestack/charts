@@ -1,0 +1,897 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-bot-workflow-dm-server
+  namespace: {{ .Release.Namespace }}
+data:
+  dm_en-US.json: |
+    {
+      "系统运行异常，请稍后重试": "System error, please try again later",
+      "请选择": "Please select",
+      "{\"提示\": \"内容太长，已隐藏\"}": "{\"Hint\": \"Content too long, hidden\"}",
+      "星期日": "Sunday",
+      "星期一": "Monday",
+      "星期二": "Tuesday",
+      "星期三": "Wednesday",
+      "星期四": "Thursday",
+      "星期五": "Friday",
+      "星期六": "Saturday",
+      "今天是%s，%s。现在时间是：%s%d点%s分": "Today is %s, %s. Current time is: %s%d:%s",
+      "上午": "AM",
+      "下午": "PM",
+      "本轮对话内容": "Current conversation content",
+      "多轮对话中本轮对话改写结果": "Rephrased result of current turn in multi-turn conversation",
+      "对话历史": "Conversation history",
+      "当前时间": "Current time",
+      "用户本轮对话内容": "Current user conversation content",
+      "用户输入": "User",
+      "机器人回答": "Assistant",
+      "必填参数": "Required Parameters",
+      "非必填参数": "Option Parameters",
+      "对话是否结束": "Is the Workflow End",
+      "当前节点是否结束": "Is the Current Node Completed",
+      "回复": "Reply",
+      "是": "Yes",
+      "否": "No",
+      "已停止，可能原因：工作流被终止或运行被取消": "Stopped. Possible reasons: The workflow was terminated or the execution was canceled.",
+      "未知错误": "Unknown error",
+      "系统错误": "System error",
+      "获取输入变量失败": "Failed to get input variables",
+      "参数解析失败": "Parameter parsing failed",
+      "参数引用解析失败": "Parameter reference parsing failed",
+      "参数值不合法，请检查参数值是否正确": "Invalid parameter value, please check if the parameter value is correct",
+      "运行时错误": "Runtime error",
+      "工作流已运行结束": "Workflow has finished running",
+      "数据长度超出限制": "Data length exceeds the limit",
+      "获取应用模型信息失败": "Failed to get application model information",
+      "获取账户计费状态失败": "Failed to get account billing status",
+      "大模型资源不足": "Insufficient LLM resources",
+      "大模型并发数超出限制": "LLM concurrency exceeds the limit",
+      "大模型请求超时": "LLM request timed out",
+      "大模型请求失败": "LLM request failed",
+      "大模型结果异常": "Abnormal LLM result",
+      "大模型逻辑判断失败": "LLM logic judgment failed",
+      "大模型请求的prompt超长": "Prompt for LLM request is too long",
+      "大模型追问次数超过限制": "Number of follow-up questions for LLM exceeds the limit",
+      "设置子工作流输入参数失败": "Failed to set input parameters for sub-workflow",
+      "子工作流的节点运行异常": "Node execution exception in sub-workflow",
+      "初始化子工作流失败": "Failed to initialize sub-workflow",
+      "代码执行失败": "Code execution failed",
+      "意图判断结果异常": "Abnormal intent judgment result",
+      "循环条件判断失败": "Loop condition judgment failed",
+      "循环超过系统最大循环次数": "Loop exceeds the system's maximum number of iterations",
+      "知识库检索失败": "Knowledge base retrieval failed",
+      "存在不支持的比较符": "Unsupported comparator exists",
+      "逻辑判断异常，没有满足条件的分支": "Logic error: No conditional branch matched",
+      "获取插件工具详情失败": "Failed to get plugin tool details",
+      "调用工具异常": "Tool invocation exception",
+      "工具结果异常": "Tool result exception",
+      "调用API失败": "Failed to invoke API",
+      "建立连接失败": "Failed to establish connection",
+      "消息队列类型不支持": "Message queue type not supported",
+      "初始化消息队列生产者失败": "Failed to initialize message queue producer",
+      "消息队列生产者发送消息失败": "Message queue producer failed to send message",
+      "批处理并行数不合法": "Invalid batch processing parallel number",
+      "SQL执行失败": "Failed to execute SQL",
+      "节点运行异常": "Node runtime exception",
+      "思考": "Thinking",
+      "调用工作流": "Invoke workflow",
+      "该工作流中引用了其他工作流，其他工作流因‘未启用’导致不可用，请’启用‘后再进行测试。": "This workflow references other workflows, which are unavailable because they are 'not enabled'. Please 'enable' them before testing again.",
+      "2006年01月02日 15:04:05": "January 02, 2006 15:04:05",
+      "当前工作流配置错误，请调整后重新测试。": "Current workflow configuration is incorrect. Please adjust and retry."
+    }
+  dm_zh-CN.json: |
+    {
+      "系统运行异常，请稍后重试": "系统运行异常，请稍后重试",
+      "请选择": "请选择",
+      "{\"提示\": \"内容太长，已隐藏\"}":"{\"提示\": \"内容太长，已隐藏\"}",
+      "星期日": "星期日",
+      "星期一": "星期一",
+      "星期二": "星期二",
+      "星期三": "星期三",
+      "星期四": "星期四",
+      "星期五": "星期五",
+      "星期六": "星期六",
+      "今天是%s，%s。现在时间是：%s%d点%s分": "今天是%s，%s。现在时间是：%s%d点%s分",
+      "上午": "上午",
+      "下午": "下午",
+      "本轮对话内容": "本轮对话内容",
+      "多轮对话中本轮对话改写结果": "多轮对话中本轮对话改写结果",
+      "对话历史": "对话历史",
+      "当前时间": "当前时间",
+      "用户本轮对话内容": "用户本轮对话内容",
+      "用户输入": "用户输入",
+      "机器人回答": "机器人回答",
+      "必填参数": "必填参数",
+      "非必填参数": "非必填参数",
+      "对话是否结束": "对话是否结束",
+      "当前节点是否结束": "当前节点是否结束",
+      "回复": "回复",
+      "是": "是",
+      "否": "否",
+      "已停止，可能原因：工作流被终止或运行被取消": "已停止，可能原因：工作流被终止或运行被取消",
+      "未知错误": "未知错误",
+      "系统错误": "系统错误",
+      "获取输入变量失败": "获取输入变量失败",
+      "参数解析失败": "参数解析失败",
+      "参数引用解析失败": "参数引用解析失败",
+      "参数值不合法，请检查参数值是否正确": "参数值不合法，请检查参数值是否正确",
+      "运行时错误": "运行时错误",
+      "工作流已运行结束": "工作流已运行结束",
+      "数据长度超出限制": "数据长度超出限制",
+      "获取应用模型信息失败": "获取应用模型信息失败",
+      "获取账户计费状态失败": "获取账户计费状态失败",
+      "大模型资源不足": "大模型资源不足",
+      "大模型并发数超出限制": "大模型并发数超出限制",
+      "大模型请求超时": "大模型请求超时",
+      "大模型请求失败": "大模型请求失败",
+      "大模型结果异常": "大模型结果异常",
+      "大模型逻辑判断失败": "大模型逻辑判断失败",
+      "大模型请求的prompt超长": "大模型请求的prompt超长",
+      "大模型追问次数超过限制": "大模型追问次数超过限制",
+      "设置子工作流输入参数失败": "设置子工作流输入参数失败",
+      "子工作流的节点运行异常": "子工作流的节点运行异常",
+      "初始化子工作流失败": "初始化子工作流失败",
+      "代码执行失败": "代码执行失败",
+      "意图判断结果异常": "意图判断结果异常",
+      "循环条件判断失败": "循环条件判断失败",
+      "循环超过系统最大循环次数": "循环超过系统最大循环次数",
+      "知识库检索失败": "知识库检索失败",
+      "存在不支持的比较符": "存在不支持的比较符",
+      "逻辑判断异常，没有满足条件的分支": "逻辑判断异常，没有满足条件的分支",
+      "获取插件工具详情失败": "获取插件工具详情失败",
+      "调用工具异常": "调用工具异常",
+      "工具结果异常": "工具结果异常",
+      "调用API失败": "调用API失败",
+      "建立连接失败": "建立连接失败",
+      "消息队列类型不支持": "消息队列类型不支持",
+      "初始化消息队列生产者失败": "初始化消息队列生产者失败",
+      "消息队列生产者发送消息失败": "消息队列生产者发送消息失败",
+      "批处理并行数不合法": "批处理并行数不合法",
+      "SQL执行失败": "SQL执行失败",
+      "节点运行异常": "节点运行异常",
+      "思考": "思考",
+      "调用工作流": "调用工作流",
+      "该工作流中引用了其他工作流，其他工作流因‘未启用’导致不可用，请’启用‘后再进行测试。": "该工作流中引用了其他工作流，其他工作流因‘未启用’导致不可用，请‘启用’后再进行测试。",
+      "2006年01月02日 15:04:05": "2006年01月02日 15:04:05",
+      "当前工作流配置错误，请调整后重新测试。": "当前工作流配置错误，请调整后重新测试。"
+    }
+  error_en-US.json: |
+    {
+      "该工作流中引用了其他工作流，其他工作流因‘未启用’或‘待调试’导致不可用，请’启用‘或’调试‘后再进行测试。": "This workflow references other workflows, which are unavailable because they are 'not enabled' or 'not debugged'. Please 'enable' or 'debug' them before testing again.",
+      "WorkflowRuntimeError": "Workflow runtime error​"
+    }
+  error_zh-CN.json: |
+    {
+      "该工作流中引用了其他工作流，其他工作流因‘未启用’或‘待调试’导致不可用，请’启用‘或’调试‘后再进行测试。": "该工作流中引用了其他工作流，其他工作流因‘未启用’或‘待调试’导致不可用，请’启用‘或’调试‘后再进行测试。",
+      "WorkflowRuntimeError": "工作流运行异常"
+    }
+  main.yaml: |
+    # 私有化部署相关配置
+    PrivacyEnv: true
+    Private:
+      EnableMetrics: false
+      EnableFinance: {{ (.Values.global.finance).disabled | default true }}
+    # 向量库配置
+    VectorGroup:
+      Biz: cs
+      Secret: ""
+      EmbeddingModelName: "sn-large-multi-language-v0.2.5"
+      ModelInfos:
+        "embedding_1121_7500":
+          CorpusTemplate: {{`"{{.RewriteQuery}}"`}}
+        "sn-large-multi-language-v0.2.5":
+          CorpusTemplate: {{`"问题:{{.RewriteQuery}}"`}}
+    Retrieve:
+      WorkflowConfidence: 0.0         # 意图置信度
+      WorkflowRelevantTopSize: 100    # 最相关意图的个数
+      WorkflowUniqRelevantTopSize: 5  # 最相关意图的个数
+      EmbeddingLengthLimit: 4090      # Embedding的文本长度限制
+      NERThreshold: 100               # NER阈值，大于阈值不做NER
+    Model:
+      # todo
+      # 参数提取节点要修改的模型名称
+      ParameterModifyModelName: "{{ .Values.apdworkflow.parameter_modify_model_name }}"
+      # 参数提取节点实际的模型名称, 默认 workflow-light-32b
+      ParameterModelName: "{{ .Values.apdworkflow.default_covert_model_name }}"
+      # 逻辑判断的默认模型名称
+      LogicModelName: "{{ .Values.apdworkflow.default_covert_model_name }}"
+      # 选项卡判断的默认模型名称
+      OptionCardModelName: "{{ .Values.apdworkflow.default_covert_model_name }}"
+      IntentModelName: "{{ .Values.apdworkflow.default_covert_model_name }}"
+      RecommendQuestionModelName: "workflow-light-32b"
+      # 逻辑判断、选项卡判断使用生成模型的配置，如果是高级版的模型，转成默认模型
+      ToConvertModelNames: ["cs-normal-70b", "hunyuan", "sn-edu-70b", "lke-deepseek-r1", "lke-deepseek-r1-0528"]
+      # 参数提取、逻辑判断、选项卡判断 根据模型名称前缀配置模型参数
+      PreNameToDefaultParams:
+        workflow-pro: "{\"top_k\":1,\"temperature\":0}"
+        workflow-light-32b: "{\"top_k\":1,\"temperature\":0}"
+        workflow-pro-merge: "{\"top_k\":1,\"temperature\":0}"
+      # 免费的模型。（跳过并发控制和计费上报）
+      FreeModelNames: ["Youtu/youtu-rewrite-7b", "workflow-pro","workflow-light-32b", "cs-rewrite", "workflow-pro-merge"]
+    Session:
+      # session的超时时间（单位：分钟）
+      SaveMaxIdleTime: 1440
+    Finance: # 计费相关配置
+      # 默认QPM配置，当前默认值为50
+      DefaultQPM: 50
+      # 默认TPM配置，当前默认值为100000
+      DefaultTPM: 100000
+      # ds模型默认QPM配置，当前默认值为150000
+      DsDefaultQPM: 50
+      # ds模型默认TPM配置，当前默认值为1200000
+      DsDefaultTPM: 100000
+      # 默认token上报步长
+      DefaultReportStep: 100
+      # 额外计费项配置
+      ExtraConfig:
+        # 知识检索计费开关，暂不开启，待产品通知
+        KnowledgeRetrivalBillingEnabled: false
+    # 上传服务配置
+    storage:
+      {{ include "qbot.bot_workflow_dm_server.s3_storage" . }}
+    # 异步任务相关配置
+    AsyncTask:
+      # 每个服务的处理任务的最大并发数
+      Concurrency: 34
+      # 没有任务的时候，隔多长时间（秒）去检查是否有新的任务过来
+      TaskCheckInterval: 2
+      # 任务恢复检查间隔，隔多长时间（秒）检查一次是否有任务需要恢复
+      RecoverCheckInterval: 30
+      # 调用LLM失败后，隔多长时间（秒）重试
+      LLMFailedRetryInterval: 20
+    # 工作流事件的配置
+    WorkflowEvent:
+      Thought:
+        Title: "思考"
+        Icon: {{ include "qbot.thinking_icon" . }}
+      TokenStat:
+        Title: "调用工作流"
+        Icon: {{ include "qbot.API_icon" . }}
+    Workflow:
+      # 工作流栈的容量
+      WorkflowStackMaxLength: 2
+      # 运行异常时的回复
+      FailedReply: "系统运行异常，请稍后重试"
+      # 假流式输出的时间间隔，单位ms
+      StreamOutputInterval: 20
+      # 最大的循环次数
+      LoopMax: 1000
+      # 最大的执行时间（秒）
+      ExecuteTimeLimit: 1200
+      # 节点的最大运行次数
+      MaxNodePassTimes: 1500
+      # 节点最大的结果数
+      MaxNodeResultTimes: 20000
+      # 选项卡的默认提问
+      OptionCardDefaultQuestion: "请选择"
+      # 回复的最大长度
+      MaxReplyLength: 1000000
+      # 调试信息的最大长度，如Input/Output/TaskOutput
+      MaxDebugDataLength: 4000
+      # 调试信息的报错的最大长度，如Input/Output/TaskOutput，超过就报错退出
+      MaxNodeFailDataLength: 3670016
+      # 结束节点的调试信息的最大长度
+      MaxEndNodeDebugDataLength: 64000
+      # 超过调试信息的最大长度的提示 -- 废弃
+      MaxDebugDataTip: "{\"提示\": \"内容太长，已隐藏\"}"
+      # 回复内容的频率限制。，满足条件（内容的长度<=左边 && 增量>=右边）就回复，否则不回复。
+      ReplyContentFrequency: [[100, 1], [100000000, 10]]
+      # 智能模式。 当前复用来优化性能
+      IntelligentWorkflowIDs:
+        - "58821781-d485-4d82-9532-8c53b2dac9ad"  # rita
+      # 异步工作流的最大处理时间（单位： 秒）
+      AsyncExecuteTimeLimit: 43200
+      # 用户端（发布端）不上传大字段的AppID
+      ProductNotUploadAppIDs:
+        - "1928404831808934976"
+      FileCollectionDefaultQuestion: "请上传"
+      # 完整执行工作流才退出的应用ID
+      FullExecutionAppIDs:
+        - "1970489928394059392"
+    LLM:
+      MaxPromptHistoryLength: 1200    # prompt中的历史信息的最大长度
+      MaxOneHistoryQueryLength: 1200  # 单条历史信息的最大长度
+      ConditionMaxSize: 10            # 条件判断的表达式的最大数
+      ModelLimitCacheTime: 300        # 模型缓存时间（秒）
+
+    RunCode:
+      # 代码结果的最大长度
+      MaxResultLength: 200000000
+      DefaultResultLength: 2000001
+      MaxResultLengthUINWhiteList:
+        - 100044249647
+      ResultSeparator: "_______ResultSeparator_______"
+      # 每个App最大的代码运行并发数
+      MaxAppParallel: 5
+      AppToMaxAppParallel:
+        1854548189164339200: 30
+        1959238998628186112: 170
+      # 代码模板（默认的，pthon）
+      CodeTemplate: |-
+        {{`import time
+        import datetime
+        import json
+        import numpy
+        import pandas
+        import math
+        import cmath
+        import decimal
+        import fractions
+        import random
+        import statistics
+        import re
+        import string
+        import stringprep
+        import collections
+        import numbers
+        import unicodedata
+
+        lke_system_params=json.loads("""{{InputParamObject}}""")
+
+        {{CodeContent}}
+
+        main_result = main(lke_system_params)
+
+        import json
+
+        class SystemJsonEncoder(json.JSONEncoder):
+          def default(self, obj):
+              import numpy as np
+              import pandas as pd
+              if isinstance(obj, np.timedelta64):
+                  return str(obj)
+              elif isinstance(obj, np.integer):
+                  return int(obj)
+              elif isinstance(obj, (np.void)):
+                  return None
+              elif isinstance(obj, np.floating):
+                  return float(obj)
+              elif isinstance(obj, np.complexfloating):
+                  return {'real': obj.real, 'imag': obj.imag}
+              elif isinstance(obj, np.bytes_):
+                  return obj.decode('utf-8')
+              elif isinstance(obj, np.str_):
+                  return str(obj)
+              elif isinstance(obj, np.datetime64):
+                  return str(obj)
+              elif isinstance(obj, np.ndarray):
+                  return obj.tolist()
+              elif isinstance(obj, pd.DataFrame):
+                  return obj.to_dict()
+              elif isinstance(obj, pd.Series):
+                  return obj.to_list()
+              return super(SystemJsonEncoder, self).default(obj)
+
+        print("{{ResultSeparator}}")
+        print(json.dumps(main_result, ensure_ascii=False, cls=SystemJsonEncoder))`}}
+     # Javascript的代码模板
+      JSCodeTemplate: |-
+        {{`const lke_system_params = {{ .InputParamObject }};
+
+        {{ .CodeContent }}
+
+        const main_result = main(lke_system_params);
+
+        console.log("{{ .ResultSeparator }}");
+        console.log(JSON.stringify(main_result)); `}}
+    API:
+      Timeout: 43200
+      # 最大文件大小，单位MB
+      MaxFileSize: 200
+      # 下行带宽限制（字节/秒），0 表示不限制，5MB
+      DownloadLimitBPS: 5242880
+      # 上行带宽限制（字节/秒），0 表示不限制，5MB
+      UploadLimitBPS: 5242880
+      # 普通请求体大小限制（字节），0 表示不限制，5MB
+      MaxRequestBodySize: 5242880
+      # 普通响应体大小限制（字节），0 表示不限制，5MB
+      MaxResponseBodySize: 5242880
+      # 是否启用HTTP限速和大小限制功能，false时降级为仅使用secapi安全客户端
+      EnableHttpLimit : true
+      WhiteURLs: # 这里白名单后续需要记录使用者和有效期，定期清理
+        - allow_all
+        - 9.137.220.143
+        - 11.141.202.206
+        - 9.134.246.215
+        - 11.141.205.6
+        - 11.141.203.151
+        - http.mock.woa.com
+        # xuewenzhang -- 端口：  81 1081 30066  ，有效期：长期
+        - stream-server-online-openapi.turbotke.production.polaris
+        - smart.customer.production.polaris
+        - smart.customer.test.polaris
+      Ports: ["allow_all", "80", "443", "8089", "18080", "1081", "81", "30066", "8090", "8091", "8000", "8080"]
+    MCP:
+      WhiteURLs:
+        - allow_all
+        - mcp.map.qq.com
+        - in.ap-guangzhou.tencentscf.com
+      Ports: ["allow_all"]
+    Parameter:
+      NotUseHistoryRobotIDs: []
+      MaxParameterProbe: 3
+      ResultTemplate:
+        # RequiredParamKey: Required Parameters
+        RequiredParamKey: 必填参数
+        # OptionalParamKey: Option Parameters
+        OptionalParamKey: 非必填参数
+        # HistoricalParamKey: Historical Parameters
+        HistoricalParamKey: 历史参数
+        # DialogEndKey: Is the Workflow End
+        DialogEndKey: 工作流是否结束
+        # CurrentNodeEndKey: Is the Current Node Completed
+        CurrentNodeEndKey: 当前节点是否结束
+        # ModifyNodeKey: Modified Node ID
+        ModifyNodeKey: 修改的节点编号
+        # NodeKey: Node
+        NodeKey: 节点
+        # ReplyKey: Reply
+        ReplyKey: 回复
+        # BooleanTrueKey: Yes
+        BooleanTrueKey: 是
+        # BooleanFalseKey: No
+        BooleanFalseKey: 否
+    OptionCard:
+      MaxSize: 100
+      OneMaxLength: 200
+    Variable:
+      VarIDVisitorBizID: "99999999999"
+    Rewrite:
+        RewriteThreshold: 100
+    Agent:
+      ServiceCallee: "trpc.KEP.bot-agent-server.chat"
+      ServicePath: "/agent/chat"
+    CustomPrompts:
+    Logical:
+      OperationMap:
+        "==": "等价于"
+        "!=": "不等价于"
+        "contains": "父集"
+        "not contains": "不包含"
+        "belongs to": "子集"
+        "not belongs to": "不属于"
+    RecommendQuestion:
+      ResultTemplate:
+        WhetherGenerateKey: "是否生成推荐问"
+        BooleanTrueKey: "是"
+        RecommendQuestionsKey: "生成的三个推荐问"
+    FileCollection:
+      ImageExts: ["jpg", "jpeg", "png", "bmp"]
+      AudioExts: ["mp3", "wav", "m4a", "aac", "flac"]
+      VideoExts: ["mp4", "mov", "avi", "mkv"]
+      DocumentExts: ["doc", "docx", "pdf", "ppt", "pptx", "xls", "xlsx", "csv", "txt", "md"]
+      ImageMaxMB: 50
+      AudioMaxMB: 50
+      VideoMaxMB: 2000
+      DocumentMaxMB: 200
+    Prompts:
+      TagExtractInfo:
+        Strategy: "workflow_tag_extract"
+        Version: "v1"
+      ParameterExtractInfo:
+        Strategy: "workflow_parameter_extract"
+        Version: "v1"
+      ParameterExtractNotCOTInfo:
+        Strategy: "workflow_parameter_extract_not_cot"
+        Version: "v2"
+      LogicEvaluatorInfo:
+        Strategy: "workflow_logic_evaluator"
+        Version: "v1"
+      LogicEvaluatorNotCOTInfo:
+        Strategy: "workflow_logic_evaluator_not_cot"
+        Version: "v1"
+      ParameterProbeInfo:
+        Strategy: "workflow_parameter_probe"
+        Version: "v1"
+      IntentInfo:
+        Strategy: "workflow_intent"
+        Version: "v1"
+      OptionCardInfo:
+        Strategy: "workflow_option_card"
+        Version: "v1"
+      ProbeExceededAnswerInfo:
+        Strategy: "workflow_probe_exceeded_answer"
+        Version: "v1"
+      LLMOutputFormatJsonInfo:
+        Strategy: "workflow_llm_output_format_json"
+        Version: "v1"
+      RecommendQuestionInfo:
+        Strategy: "workflow_recommend_question"
+        Version: "v1"
+
+  placeholder.yaml: |
+
+  trpc_go.yaml: |
+    global:                             #全局配置
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+
+    server:                                            #服务端配置
+      app: KEP                                        #业务的应用名
+      server: bot-workflow-dm-server                             #进程服务名
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - recovery                                     #拦截框架创建的业务处理协程panic
+        - i18n-adp                                    # 在recovery filter之后引用，避免filter里的错误覆盖掉i18n错误
+        - opentelemetry                                # 天机阁
+        - galileo
+      stream_filter:
+        - recovery                                     #拦截框架创建的业务处理协程panic
+        - galileo
+      admin:
+        ip: 0.0.0.0
+        port: 8081
+      service:                                         #业务服务提供的service，可以有多个
+        - name: trpc.KEP.bot-workflow-dm-server.workflow-dm      #service的路由名称
+          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 8000                #服务监听端口 可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: trpc               #应用层协议 trpc http
+          timeout: 6010000                            #请求最长处理时间 单位 毫秒
+          server_async: true                           #开启异步处理
+          idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+        - name: trpc.KEP.bot-workflow-dm-server.workflow-dm-http      #service的路由名称
+          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 8001                #服务监听端口 可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: http               #应用层协议 trpc http
+          timeout: 0                            #请求最长处理时间 单位 毫秒
+          server_async: true                           #开启异步处理
+          idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+        - name: trpc.KEP.bot-workflow-dm-server.workflow-dm-outer      #service的路由名称
+          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 8002                #服务监听端口 可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: trpc               #应用层协议 trpc http
+          timeout: 6010000                            #请求最长处理时间 单位 毫秒
+          server_async: true                           #开启异步处理
+          idletime: 600000
+          filter:
+            - session
+            - permission
+
+    client: #客户端调用的后端配置
+      filter: #针对所有service处理函数前后的拦截器列表
+        # - prometheus
+        - opentelemetry
+        - galileo
+      stream_filter:
+        - galileo
+      service:
+        # redis（主要的存储）
+        - name: redis.bot-workflow-dm-server
+          network: tcp
+          target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/2
+          password: "{{ .Values.global.components.redis.password }}"
+          timeout: 800
+        # redis（并发控制依赖的redis）
+        - name: redis.lke.limiter
+          network: tcp
+          protocol: redis
+          target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/4
+          password: "{{ .Values.global.components.redis.password }}"
+          timeout: 800
+        # DB
+        - name: mysql.qbot.qbot
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_workflow_formal?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        # prompt的DB
+        - name: mysql.adp.prompt
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        # TDSQL
+        - name: tdsql.qbot.qbot
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_workflow?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: trpc.smartassistant.vectordbmanager.VectorObj
+          target: ip://vector-db-manager.{{ .Release.Namespace }}.svc.cluster.local:10001
+          protocol: trpc
+          network: tcp
+          timeout: 600000
+        # 应用配置-登录态接口
+        - name: trpc.KEP.bot_admin_config_server.Login
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 600000
+        # 应用配置-内部接口
+        - name: trpc.KEP.bot_admin_config_server.Api
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 600000
+        # 知识库-内部接口
+        - name: trpc.KEP.bot_knowledge_config_server.Api
+          target: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 600000
+        # chat服务
+        - name: qbot.qbot.chat.StreamChat
+          target: ip://chat.{{ .Release.Namespace }}.svc.cluster.local:9190
+          protocol: trpc
+          timeout: 60000000
+        # 插件配置端
+        - name: trpc.KEP.plugin_config_server.PluginConfigApi
+          target: ip://pluginconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+        # 插件运行时
+        - name: trpc.KEP.plugin_exec_server.PluginExec
+          target: ip://pluginexecserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          protocol: trpc
+          network: tcp
+          timeout: 7200000
+        # CodeExec
+        - name: trpc.KEP.code_interpreter_dispatcher.CodeExec
+          target: ip://codeinterpreterdispatcher.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          network: tcp
+          timeout: 600000
+        # 计费服务, @stanwei 提供
+        - name: qbot.finance.finance.Finance
+          target: ip://finance.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 300000
+        # token计数
+        - name: trpc.KEP.bot_llm_server.llm
+          target: ip://botllmserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          network: tcp
+          timeout: 300000
+        # cos
+        - name: trpc.http.cos.Access
+          network: tcp
+          protocol: http
+          {{ if eq .Values.global.components.s3.providerType "minio" }}
+          target: ip://minio.{{ .Release.Namespace }}.svc.cluster.local:80
+          {{ else if eq .Values.global.components.s3.providerType "obs" }}
+          target: ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}
+          {{ else }}
+          target: dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn
+          {{ end }}
+          timeout: 50000
+        # 记忆服务
+        - name: trpc.KEP.bot_memory_server.MemoryInner
+          target: ip://bot-memory-server.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 500000
+        # agent服务
+        - name: trpc.KEP.bot-agent-server.chat
+          target: ip://bot-agent-server.{{ .Release.Namespace }}.svc.cluster.local:8000
+          network: tcp
+          protocol: http
+          # (0=pb, 1=JCE, 2=json, 3=flat_buffer, 4=bytes_flow)
+          serialization: 2
+          timeout: 60000000
+        # 新大模型服务
+        - name: trpc.adp.ai-gateway.api
+          target: ip://ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+          network: tcp
+          protocol: http
+          timeout: 1800000
+        # 知识问答服务
+        - name: trpc.KEP.bot_rag_server.Chat
+          target: ip://bot-rag-server.{{ .Release.Namespace }}.svc.cluster.local:8001
+          network: tcp
+          protocol: trpc
+          timeout: 60000000
+        # 数据上报服务
+        - name: trpc.KEP.bot_data_statistics_server.Api
+          target: ip://botdatastatisticsserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          network: tcp
+          protocol: trpc
+          timeout: 200000
+        ###################################################################################
+        # 应用配置-内部接口
+        - name: trpc.adp.app_admin_proxy.Api
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 60000
+        # 知识库-内部接口
+        - name: trpc.adp.kb_config.Api
+          target: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 600000
+        # 插件配置端
+        - name: trpc.adp.plugin_config.PluginConfigApi
+          target: ip://pluginconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          network: tcp
+          timeout: 600000
+        # 插件运行时
+        - name: trpc.adp.plugin_exec.PluginExec
+          target: ip://pluginexecserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          protocol: trpc
+          network: tcp
+          timeout: 7200000
+        # 代码执行
+        - name: trpc.adp.plugin_code_interpret.CodeExec
+          target: ip://codeinterpreterdispatcher.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+        # 计费服务, @stanwei 提供
+        - name: trpc.adp.platform_charger.Finance
+          target: ip://finance.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 300000
+        # token计数
+        - name: trpc.adp.model_token_count.Tokenizer
+          target: ip://botllmserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          network: tcp
+          timeout: 3000
+        # 记忆服务
+        - name: trpc.adp.app_memory.MemoryInner
+          target: ip://bot-memory-server.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 500000
+        # agent服务
+        - name: trpc.adp.agent_exec.chat
+          target: ip://bot-agent-server.{{ .Release.Namespace }}.svc.cluster.local:8000
+          network: tcp
+          protocol: http
+          # (0=pb, 1=JCE, 2=json, 3=flat_buffer, 4=bytes_flow)
+          serialization: 2
+          timeout: 6000000
+        # 资源管理服务
+        - name: trpc.adp.resource_gallery.Admin
+          target: ip://resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 20000
+        # 模型网关（embedding相关）
+        - name: trpc.adp.ai-gateway.api
+          target: ip://ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+          network: tcp
+          protocol: http
+          timeout: 1800000
+        # 知识问答服务
+        - name: trpc.adp.rag_exec.Chat
+          target: ip://bot-rag-server.{{ .Release.Namespace }}.svc.cluster.local:8001
+          network: tcp
+          protocol: trpc
+          timeout: 6000000
+        # 资源管理服务-登录态接口
+        - name: trpc.adp.resource_gallery.Login
+          target: ip://resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 200000
+        # 平台管理服务-内部接口
+        - name: trpc.adp.platform_manager.Admin
+          target: ip://platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 60000
+        # 平台管理服务-登录态接口
+        - name: trpc.adp.platform_manager.Login
+          target: ip://platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 60000
+        # 数据上报服务
+        - name: trpc.adp.platform_metrology.Api
+          target: ip://botdatastatisticsserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          network: tcp
+          protocol: trpc
+          timeout: 200000
+
+    plugins:                                          #插件配置
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: console                           #控制台标准输出 默认
+            level: info                              #标准输出日志的级别
+            caller_skip: 3
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+          - writer: file                              #本地文件日志
+            level: info                               #本地文件滚动日志的级别
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/trpc.log    #本地文件滚动日志存放的路径
+              max_size: 100                             #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false                          #日志文件是否压缩
+
+      # metrics: #监控配置
+      #   # 私有化配置（使用helm-charts配置Prometheus主动拉取的方式， 指标serve在admin端口）：
+      #   prometheus:
+      #     path: /metrics
+      #     rawmode: false
+      config:
+        file:
+          providers:
+          - name: rainbow
+            path: /app/
+          - name: rainbow-comm
+            path: /app/
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+        galileo:
+          verbose: error   # 伽利略自身的诊断日志级别，取值范围：debug, info, error, none，日志输出在 ./galileo/galileo.log 中。
+          ocp_addr: "http://127.0.0.1"
+          config: #配置
+            config_server: "http://127.0.0.1"
+            register_server: "http://127.0.0.1"
+            self_monitor:
+              collector:
+                addr: "http://127.0.0.1"
+            metrics_config: # 指标配置
+              enable: false    # 是否启用指标
+            traces_config: # 追踪配置
+              enable: true    # 是否启用追踪，默认 true。如果设置为 false，会中断 trace，让上游的调用链不完整。v0.3.7 以上生效。
+              processor: # 追踪数据处理相关配置
+                sampler: # 采样器配置
+                  fraction: 0   # 采样比例，默认 0。（v0.11.0)
+                  error_fraction: 0
+                  enable_min_sample: true  # 启用每分钟每接口最少 1 个请求采样，默认 true (v0.11.0)。
+                  enable_dyeing: true # 开启染色采样，默认 true。
+                disable_trace_body: true          # 若为 true，则关闭 trace 中对 req 和 rsp 的 body 上报，可以大幅提高上报性能。默认 true。
+                enable_deferred_sample: false     # 开启延迟采样（请求处理完采样），默认 false。0.3.0 以上生效。
+                deferred_sample_error: false      # 开启延迟采样出错采样（请求处理完出现错误采样），默认 false。0.3.0 以上生效。
+                deferred_sample_slow_duration_ms: 1000    # 慢操作阈值（请求耗时超过该值采样），单位 ms，默认 1000。0.3.0 以上生效。
+                disable_parent_sampling: false            # 忽略上游的采样结果，默认 false。v0.3.7 以上生效。
+              exporter:
+                collector:
+                  addr: "127.0.0.1:80"
+            logs_config: # 日志配置
+              enable: false    # 是否启用日志
+              processor: # 日志数据处理相关配置
+                only_trace_log: false  # 是否只上报命中 trace 的 log，默认关闭
+                must_log_traced: false # 是否命中 traced 不管任何级别日志都上报，默认关闭。v0.3.22 以上生效
+                trace_log_mode: 0   # debug 访问日志 (access_log) 打印模式，0,1：单行打印，3：多行打印，2：不打印，默认 0
+                level: debug        # 上报到远程的日志级别，默认 error
+                enable_recovery: true # 是否捕获 panic，默认 true
+            profiles_config:    # profile配置
+              enable: false # 是否启用 profile
+              processor: # profile 数据处理相关配置
+                profile_types: ["cpu", "heap"] # 采集 profile 的类型，支持 cpu、heap、mutex、block、goroutine，默认开启 cpu 和 heap。
+            version: 1        # 版本号，默认 0，此版本号用于控制远程配置和本地配置的优先级，版本号高的优先，一般设置成 1 即可。
+          resource: # resource 资源信息，在 SDK 运行期间不会改变。resource 中的字段一般不需要配置，默认会填充。
+            platform: STKE   # 服务部署的平台，如 PCG-123, STKE, 默认 PCG-123
+
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+            - zh-CN
+            - en-US
+          data_provider:
+            type: rainbow
+            prefix: dm
+            error_prefix: error
+            char_scaling_factor:
+              zh-CN: 1
+              en-US: 3

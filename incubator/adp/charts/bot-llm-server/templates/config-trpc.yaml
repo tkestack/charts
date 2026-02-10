@@ -1,0 +1,63 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: botllmserver-trpc
+  namespace: {{ .Release.Namespace }}
+data:
+  trpc_python.yaml: |
+    global: #全局配置
+      namespace: ${NAME_SPACE}            #环境类型，分正式production和非正式development两种类型
+      env_name: ${ENV}                    #环境名称，非正式环境下多环境的名称
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+    server:                                            #服务端配置
+      app: KEP                                 #业务的应用名
+      server: bot_llm_server                           #进程服务名
+      bin_path: /usr/local/trpc/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /usr/local/trpc/conf/                 #业务配置文件所在路径
+      data_path: /usr/local/trpc/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - m007
+        #- trpc_limiter
+        #- prometheus
+      service:                                         #业务服务提供的service，可以有多个
+        - name: trpc.KEP.bot_llm_server.llm #把Generater换成自己服务pb里的service名
+          network: tcp                                 #网络监听类型  tcp udp
+          protocol: trpc                               #应用层协议 trpc http
+          timeout: 3000                                #请求最长处理时间 单位 毫秒
+          ip: ${POD_IP}                                #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 8000                                   #服务监听端口
+    client:                                            #客户端调用的后端配置
+      # timeout: 1000                                  #针对所有后端的请求最长处理时间
+      # namespace: default                             #针对所有后端的环境
+      filter:                                          #针对所有后端调用函数前后的拦截器列表
+        - m007
+        #- prometheus
+    plugins:                                           #插件配置
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: file                              #本地文件日志
+            level: debug                               #本地文件滚动日志的级别
+            writer_config:
+              filename: /usr/local/trpc/log/trpc.log                      #本地文件滚动日志存放���路径
+              max_size: 1024                              #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false                          #日志文件是否压缩
+        init:                                      # 业务自定义的logger配置，名字随便定，每个服务可以有多个logger,可以使用get_logger("custom").debug("xxx")打日志
+          - writer: file                              #本地文件日志
+            level: debug                               #本地文件滚动日志的级别
+            writer_config:
+              filename: /usr/local/trpc/log/init.log                       #本地文件滚动日志存放的路径
+              max_size: 1024                              #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false                          #日志文件是否压缩
+      metrics:
+        m007:                                           #007 monitor
+          app:       KEP                        #业务名。[可选，未配置则与server.app一致]
+          server:    bot_llm_server                     #服务名。[可选，未配置则与server.server一致]
+        # 私有化配置（使用helm-charts配置Prometheus主动拉取的方式， 指标serve在admin端口）：
+        # prometheus:
+        #   path: /metrics
+        #   rawmode: false

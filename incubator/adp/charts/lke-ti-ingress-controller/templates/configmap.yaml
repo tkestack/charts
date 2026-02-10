@@ -1,0 +1,43 @@
+apiVersion: v1
+data:
+  config.yaml: |
+    # log options
+    log_level: "info"    # the error log level, default is info, optional values are:
+                         # debug
+                         # info
+                         # warn
+                         # error
+                         # panic
+                         # fatal
+    log_output: "ti-ingress-controller.log" # the output file path of error log, default is stderr, when
+                         # the file path is "stderr" or "stdout", logs are marshalled
+                         # plainly, which is more readable for human; otherwise logs
+                         # are marshalled in JSON format, which can be parsed by
+                         # programs easily.
+
+    http_listen: ":9093"   # the HTTP Server listen address, default is ":8080"
+    enable_profiling: true # enable profiling via web interfaces
+                           # host:port/debug/pprof, default is true.
+    need_sync_delete_event: true
+
+    # Kubernetes related configurations.
+    kubernetes:
+      kubeconfig: ""         # the Kubernetes configuration file path, default is
+                             # "", so the in-cluster configuration will be used.
+      resync_interval: "6h" # how long should apisix-ingress-controller
+                             # re-synchronizes with Kubernetes, default is 6h,
+                             # and the minimal resync interval is 30s.
+      event_max_retry_times: 200
+
+    # APISIX related configurations.
+    apisix:
+      base_url: "http://ti-gateway.{{ .Release.Namespace }}.svc.cluster.local:9080/apisix/admin" # the APISIX admin api / manager api
+                                               # base url, it's required.
+      admin_key: "2bffd108f0a56053e665440292bc529a"
+      filter_key_word: "ingress-controller"
+kind: ConfigMap
+metadata:
+  annotations:
+    cpaas.io/display-name: ti-ingress-controller-config
+  name: ti-ingress-controller-config
+  namespace: {{ .Release.Namespace }}

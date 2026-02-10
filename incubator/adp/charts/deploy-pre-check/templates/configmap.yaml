@@ -1,0 +1,17 @@
+{{- if .Values.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "pre-install-check.fullname" . }}-script
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "pre-install-check.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": {{ .Values.hook.deletePolicy }}
+    "meta.helm.sh/release-time": {{ now | date "2006-01-02T15:04:05Z07:00" | quote }}
+data:
+  check.py: |
+{{ .Files.Get "scripts/check.py" | indent 4 }}
+{{- end }}

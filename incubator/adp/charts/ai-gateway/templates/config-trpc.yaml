@@ -1,0 +1,114 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: ai-gateway-trpc
+  namespace: {{ .Release.Namespace }}
+data:
+  trpc_go.yaml: |
+    global: #全局配置
+        namespace: {{ .Release.Namespace }}            #环境类型，分正式Production和非正式Development两种类型
+        admin_port: 18888                              #管理命令服务端口
+        enable_set: N                      #是否启用set
+    server:                                            #服务端配置
+      app: adp                                 #业务的应用名
+      server: ai-gateway                           #进程服务名
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - recovery                                     #拦截框架创建的业务处理协程panic
+        - opentelemetry
+      stream_filter:
+        - opentelemetry
+      admin:
+        ip: ${POD_IP}                                  # 必须填外部可访问的ip, 不能填127.0.0.1
+        port: 18888                                    # admin 端口
+        read_timeout: 3000                             #ms. 请求被接受到请求信息被完全读取的超时时间设置，防止慢客户端
+        write_timeout: 60000                           #ms. 处理的超时时间
+      service:                                         #业务服务提供的service，可以有多个
+        - name: trpc.adp.ai-gateway.api           # service 的路由名称
+          port: 9090
+          ip: ${POD_IP}
+          network: tcp
+          protocol: http_no_protocol
+          timeout: 2700000
+          method:
+            /v1/chat/completions:
+              timeout: 2700000
+        - name: trpc.adp.ai-gateway.admin           # service 的路由名称
+          port: 9092
+          ip: ${POD_IP}
+          network: tcp
+          protocol: trpc
+    client:                                            #客户端调用的后端配置
+      namespace: {{ .Release.Namespace }}                          #针对所有后端的环境
+      timeout: 2700000                                    #针对所有后端的请求最长处理时间
+      filter:
+        - opentelemetry
+      service:                                         #针对单个后端的配置，默认都有默认值，可以完全不用配置
+        - name: trpc.adp.ai-gateway.db
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_ai_gateway_adp?timeout=3s&parseTime=true
+        - name: trpc.adp.ai-gateway.redis
+          target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379
+          password: '{{ .Values.global.components.redis.password }}'
+          timeout: 800                                 #当前这个请求最长处理时间
+    plugins:                                           #插件配置
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: console                           #控制台标准输出 默认
+            level: error                              #标准输出日志的级别
+            caller_skip: 4
+          - writer: file                              #本地文件日志
+            level: debug                               #本地文件滚动日志的级别
+            writer_config:
+              filename: /app/logs/trpc.log    #本地文件滚动日志存放的路径
+              max_size: 100                             #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false                          #日志文件是否压缩
+        llm-log:                                      #默认日志的配置，可支持多输出
+          - writer: file                              #本地文件日志
+            level: info                               #本地文件滚动日志的级别
+            formatter: json
+            formatter_config:
+              time_fmt: milliseconds  # 日志时间格式。"2006-01-02 15:04:05"为常规时间格式，"seconds"为秒级时间戳，"milliseconds"为毫秒时间戳，"nanoseconds"为纳秒时间戳
+              time_key: time  # 日志时间字段名称，不填默认"T"，填 "none" 可禁用此字段
+              level_key: level  # 日志级别字段名称，不填默认"L"，填 "none" 可禁用此字段
+              name_key: none  # 日志名称字段名称，不填默认"N"，填 "none" 可禁用此字段
+              caller_key: none  # 日志调用方字段名称，不填默认"C"，填 "none" 可禁用此字段
+              message_key: message  # 日志消息体字段名称，不填默认"M"，填 "none" 可禁用此字段
+              stacktrace_key: none  # 日志堆栈字段名称，不填默认"S"，填 "none" 可禁用此字段
+            writer_config:
+              filename: /app/logs/llm.log                     #本地文件滚动日志存放的路径
+              max_size: 10                              #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false 
+      telemetry:
+        opentelemetry:  # 或者tpstelemetry
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}

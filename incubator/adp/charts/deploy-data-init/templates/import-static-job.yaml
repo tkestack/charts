@@ -1,0 +1,72 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-import-static-job
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-import-static-job
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-succeeded": continue
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 300
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-import-static-job
+        release: {{ .Release.Name }}
+    spec:
+      restartPolicy: OnFailure
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      volumes:
+      - name: static-data
+        emptyDir: {}
+      containers:
+      - name: import-static
+        image: {{ (index .Values.tad.images "cs-data-init").url }}
+        imagePullPolicy: Always
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          
+          echo "解压静态文件..."
+          # https://${STORAGE_HOST}/qbot/public/xxx
+          mkdir -p /tmp/qbot/
+          tar -xzf /app/cs-data/static/static.tar.gz -C /tmp/qbot/
+          
+          echo "准备上传文件到S3存储..."
+          python3 /app/script/cos_uploader.py /tmp/
+          
+          echo "静态文件上传完成!"
+
+          echo "调整cors配置..."
+          python3 /app/script/cos_cors_config.py --clb {{ .Values.global.clb }} --scheme {{ .Values.global.scheme }}
+
+          echo "调整acl配置..."
+          python3 /app/script/cos_acl_config.py --keys public/ --acl public-read
+
+          echo "CORS配置调整完成!"
+        volumeMounts:
+        - name: static-data
+          mountPath: /tmp
+        env:
+        - name: STORAGE_TYPE
+          value: {{ .Values.global.components.s3.providerType | default "minio" }}
+        - name: STORAGE_HOST
+          value: {{ include "ex.s3_host" . }}
+        - name: SECRET_ID
+          value: {{ include "ex.s3_AK" . }}
+        - name: SECRET_KEY
+          value: {{ include "ex.s3_SK" . }}
+        - name: STORAGE_BUCKET
+          value: {{ .Values.global.components.s3.cos.bucket | default ""}}
+        - name: STORAGE_REGION
+          value: {{ .Values.global.components.s3.cos.region | default "" }}

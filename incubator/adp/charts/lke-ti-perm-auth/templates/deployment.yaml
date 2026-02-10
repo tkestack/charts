@@ -1,0 +1,190 @@
+{{- $helmfileEnvName := .Values.global.helmfileEnvName | default "tke" }}
+{{- $re_nu   := 1}}
+{{- if or (eq $helmfileEnvName "tcs") (eq $helmfileEnvName "tke") }}
+  {{- $re_nu = 2 }}
+{{- end}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    configmap.reloader.stakater.com/reload: "{{.Values.serviceName}}-cm"
+  name: {{.Values.serviceName}}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{.Values.serviceName}}
+    k8s-app: {{.Values.serviceName}}
+    app.cpaas.io/name: {{.Values.serviceName}}.{{ .Release.Namespace }}
+    project.cpaas.io/name: {{ .Release.Namespace }}
+  selfLink: /apis/apps/v1/namespaces/{{ .Release.Namespace }}/deployments/{{.Values.serviceName}}
+spec:
+  progressDeadlineSeconds: 600
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: {{.Values.serviceName}}
+      k8s-app: {{.Values.serviceName}}
+      app.cpaas.io/name: {{.Values.serviceName}}.{{ .Release.Namespace }}
+      project.cpaas.io/name: {{ .Release.Namespace }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 50%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{.Values.serviceName}}
+        k8s-app: {{.Values.serviceName}}
+        app.cpaas.io/name: {{.Values.serviceName}}.{{ .Release.Namespace }}
+        project.cpaas.io/name: {{ .Release.Namespace }}
+    spec:
+      priorityClassName: system-cluster-critical
+      dnsConfig:
+        options:
+        - name: timeout
+          value: "2"
+        - name: attempts
+          value: "3"
+        - name: rotate
+        - name: single-request-reopen
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - env:
+          - name: grpcListenAddr
+            value: :8080
+          - name: gatewayListenAddr
+            value: :8081
+          - name: mysql_timeout
+            value: 5s
+          - name: mysql_max_conn
+            value: "16"
+          - name: mysql_max_idle_conn
+            value: "3"
+          - name: Level
+            value: debug
+          - name: MaxSize
+            value: 100M
+          - name: MaxNum
+            value: '10'
+          - name: TOFAccessTokenUrl
+            value: http:\/\/idc.rio.tencent.com\/ebus\/tof4\/api\/v1\/passport\/AccessToken?code=
+          - name: MYSQL_HOST
+            value: {{ .Values.global.components.db.host | quote }}
+          - name: MYSQL_PORT
+            value: {{ .Values.global.components.db.port | quote }}
+          - name: MYSQL_PWD
+            value: {{ .Values.global.components.db.password | quote }}
+          - name: MYSQL_USER
+            value: {{ .Values.global.components.db.user | quote }}
+          - name: GatewayTimeout
+            value: 30s
+          - name: MYSQL_DB
+            value: ti_perm_auth
+          - name: OrganizationLevel
+            value: "5"
+          - name: ModuleLevel
+            value: "4"
+          - name: logLevel
+            value: info
+          - name: LOG_LEVEL
+            value: info
+          - name: LEVEL
+            value: info
+          - name: SSOServerUrl
+            value: http:\/\/ip:port\/aplt-gateway\/udp-aplt\/token\/verifyTioneToken
+          - name: RedisMod
+            value: sentine
+          - name: RedisMasterName
+            value: mymaster
+          - name: RedisAddr
+            value: master://{{- range $host := .Values.global.components.redis.hosts -}} {{- $host}}:{{$.Values.global.components.redis.port -}} {{- end }}
+          - name: RedisPassword
+            value: {{ .Values.global.components.redis.password | quote }}
+          - name: RedisPort
+            value: {{ .Values.global.components.redis.port | quote }}
+          - name: RsaPrivateKey
+            valueFrom:
+              secretKeyRef:
+                key: RSA_PRIVATE_KEY
+                name: ti-auth-secret
+          image: {{(index .Values.tad.images "ti-perm-auth").url}}
+          #command: ["sh", "-c", "while true; do sleep 100; done"]
+          imagePullPolicy: IfNotPresent
+          name: tiauth
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "1"
+              memory: "1Gi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+          {{- end }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /app/log
+            name: new-volume
+          - mountPath: /app/conf/config.yaml
+            name: {{.Values.serviceName}}-cm
+            subPath: config.yaml
+          - mountPath: /app/conf/trpc_go.yaml
+            name: {{.Values.serviceName}}-cm
+            subPath: trpc_go.yaml
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+        - name: {{ $.Values.imagePullSecretName }}
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      {{- include "dependencyChecker.volumes" . | nindent 6 }}
+      - name: {{.Values.serviceName}}-cm
+        configMap:
+          name: {{.Values.serviceName}}-cm
+          items:
+            - key: key-trpc_go.yaml
+              path: trpc_go.yaml
+            - key: config.yaml
+              path: config.yaml
+      - hostPath:
+          path: /data/ti-platform/log/{{.Values.serviceName}}
+          type: ""
+        name: new-volume

@@ -1,0 +1,24 @@
+tad:
+  type: helm
+  images:
+    bot-llm-server:
+      url: "ccr.ccs.tencentyun.com/tke-market/bot-llm-server:V0.0.1.private-b05e7b8-pri-svc"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+botllmserver:
+  resources:
+    limits:
+      cpu: 1
+      memory: 4Gi
+    requests:
+      cpu: 1
+      memory: 1Gi
+
+imagePullSecretName: qcloudregistrykey

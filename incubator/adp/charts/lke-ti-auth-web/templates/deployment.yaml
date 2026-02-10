@@ -1,0 +1,123 @@
+{{- $helmfileEnvName := .Values.global.helmfileEnvName | default "tke" }}
+{{- $re_nu   := 1}}
+{{- if or (eq $helmfileEnvName "tcs") (eq $helmfileEnvName "tke") }}
+  {{- $re_nu = 2 }}
+{{- end}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ti-auth-web
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    configmap.reloader.stakater.com/reload: "ti-auth-web-config,ti-web-nginx-config"
+  labels:
+    app: ti-auth-web
+spec:
+  progressDeadlineSeconds: 600
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: ti-auth-web
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: ti-auth-web
+    spec:
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - env:
+            - name: pathprefix
+              value: {{.Values.global.rsa.publicKey}}
+            - name: RsaPublicKey
+              value: {{.Values.global.rsa.publicKey}}
+          image: {{(index .Values.tad.images "ti-auth-web").url}}
+          #command: ["sh", "-c", "nginx -c /etc/nginx/nginx.conf -g 'daemon off;'"]
+          imagePullPolicy: IfNotPresent
+          name: ti-auth-web
+          ports:
+            - containerPort: 12000
+              protocol: TCP
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "1"
+              memory: "1Gi"
+          {{- end }}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+
+          volumeMounts:
+            - mountPath: /web/config/config.js
+              name: ti-auth-web-config
+              subPath: config.js
+            - mountPath: /etc/nginx/conf.d/ti.conf
+              name: ti-web-nginx-config
+              subPath: ti.conf
+          readinessProbe:
+            tcpSocket:
+              port: 12000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: 12000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - configMap:
+            defaultMode: 420
+            name: ti-auth-web-config
+          name: ti-auth-web-config
+        - configMap:
+            defaultMode: 420
+            name: ti-web-nginx-config
+          name: ti-web-nginx-config

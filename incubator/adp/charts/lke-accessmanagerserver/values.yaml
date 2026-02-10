@@ -1,0 +1,12 @@
+tad:
+  type: helm
+  namespace: ti-base
+  registries:
+    images: registry.tce.com
+    packages: registry.tce.com:1181
+  images:
+    accessmanagerserver:
+      url: ccr.ccs.tencentyun.com/tke-market/accessmanagerserver:master_private-ff5f4e-20260123
+env: TEST
+namespace: ti-base
+imagePullSecretName: qcloudregistrykey

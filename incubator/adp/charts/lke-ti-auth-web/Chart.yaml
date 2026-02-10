@@ -1,0 +1,10 @@
+apiVersion: v1
+name: lke-ti-auth-web
+version: 1.0.0
+appVersion: 3.0.0
+description: TI auth web
+
+sources:
+  - https://git.woa.com/sppd_ai_web/yunxiaowei-home.git
+maintainers:
+  - name: qingyuhan

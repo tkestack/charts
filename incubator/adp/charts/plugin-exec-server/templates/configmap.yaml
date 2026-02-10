@@ -1,0 +1,2596 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-plugin-exec-server
+  namespace: {{ .Release.Namespace }}
+data:
+  error_en-US.json: |
+    {
+      "参数不合法。": "Invalid parameters.",
+      "返回不合法。": "Invalid response.",
+      "应用不存在。": "Application does not exist.",
+      "工具不存在。": "Tool does not exist.",
+      "工具调用超时。": "Tool call timed out.",
+      "工具调用失败。": "Tool call failed.",
+      "未查询到相关信息。": "No relevant information found.",
+      "位置信息不合法。": "Invalid location information.",
+      "应用配置不合法。": "Invalid application configuration.",
+      "腾讯云SDK错误。": "Tencent Cloud SDK error.",
+      "调用服务错误。": "Service call error.",
+      "插件不支持腾讯云CAM角色授权。": "The plug-in does not support Tencent Cloud CAM role authorization.",
+      "CAM授权信息不合法。": "CAM authorization information is illegal.",
+      "Header信息不合法。": "The header information is invalid.",
+      "插件计费状态异常。": "The plug-in billing status is abnormal.",
+      "用量上报失败。": "Usage reporting failed.",
+      "Prompt 渲染失败": "Prompt Rendering Failed",
+      "签名/鉴权错误": "Signature/authentication error",
+      "工具调用失败":"Tool call failed.",
+      "请求的次数超过了频率限制": "The number of requests exceeds the rate limit",
+      "超过配额限制": "Exceeding quota limit",
+      "腾讯云地域错误": "Tencent Cloud region error",
+      "腾讯云资源错误": "Tencent Cloud resource error",
+      "返回内容为空": "The returned content is empty",
+      "http状态码错误": "HTTP status code error"
+    }
+  error_zh-CN.json: |
+    {
+      "参数不合法。": "参数不合法。",
+      "返回不合法。": "返回不合法。",
+      "应用不存在。": "应用不存在。",
+      "工具不存在。": "工具不存在。",
+      "工具调用超时。": "工具调用超时。",
+      "工具调用失败。": "工具调用失败。",
+      "未查询到相关信息。": "未查询到相关信息。",
+      "位置信息不合法。": "位置信息不合法。",
+      "应用配置不合法。": "应用配置不合法。",
+      "腾讯云SDK错误。": "腾讯云SDK错误。",
+      "调用服务错误。": "调用服务错误。",
+      "插件不支持腾讯云CAM角色授权。": "插件不支持腾讯云CAM角色授权。",
+      "CAM授权信息不合法。": "CAM授权信息不合法。",
+      "Header信息不合法。": "Header信息不合法。",
+      "插件计费状态异常。": "插件计费状态异常。",
+      "用量上报失败。": "用量上报失败。",
+      "Prompt 渲染失败": "Prompt 渲染失败",
+      "签名/鉴权错误": "签名/鉴权错误",
+      "工具调用失败":"工具调用失败",
+      "请求的次数超过了频率限制": "请求的次数超过了频率限制",
+      "超过配额限制": "超过配额限制",
+      "腾讯云地域错误": "腾讯云地域错误",
+      "腾讯云资源错误": "腾讯云资源错误",
+      "返回内容为空": "返回内容为空",
+      "http状态码错误": "http状态码错误"
+    }
+  main.yaml: |
+    # main.yaml
+    # 是否私有化
+    privacy_env: false
+    # 工具配置
+    tool:
+      official_tool_name: # 官方插件工具ID名称映射
+        "c78ea687-08d9-40d4-9bf2-3bd2c2fa4b5a": "ImageUnderstand"
+        "40800552-c520-44d9-90cf-1d0fe66845a5": "WebPageParse"
+        "09721e75-4e28-4953-a771-e1bd0e5a5927": "GetWeatherInfo"
+        "ec6f8b82-2638-4153-b41c-ae40e5deebeb": "GetNews"
+        "926efbd0-2394-4712-a46f-d3e03baabb27": "GetStockInfo"
+        "62205fd8-cd76-4202-9ce9-55ac826e7fde": "GetBaikeInfo"
+        "3af56855-015a-48d8-a6e0-b3ad0a6eddcb": "CodeInterpreter"
+        "3ea907b0-0978-4f37-a771-7c53383c9a8e": "GenerateCharts"
+        "7624299e-490c-4ca6-8378-0fe432421491": "Calculator"
+        "16bfcfea-2ed8-4c00-b73d-3c1757d3d843": "HunyuanSearchSummary"
+        "0ca8d482-1e77-462b-bc21-807c8f052f69": "KnowledgeRetrievalAnswer"
+        "6f7a8b9c-0d1e-4f2a-3456-789abcdef01a": "ImageQuiz"
+        "5c7d2f4a-2b5e-4f8c-9a7d-3b2c1d4e5f8c": "WebpageParsingQA"
+        "8a8c9d0e-1f2a-4b3c-8d4e-5f6a7b8c9d0f": "DocParsingQA"
+        "2c3d4e5f-6a7b-8c9d-0e1f-2a3b4c5d6e7f": "DeepSeekR1Search"
+        "8e7d6c5b-4a3f-2e1d-0c9b-8f7e6d5c4b3a": "DeepSeekV3Search"
+        "0d8d0939-198c-45b3-85cf-5b7b373f32d2": "SearchAround"
+        "da9264a2-a7ed-4095-b2fa-e94265e370dc": "TextToImage"
+        "d501c588-94ec-468c-accb-c0d2537ca5b4": "AlbumSearch"
+        "feb82411-9e39-4749-aae3-faa1314eb9f3": "TrackSearch"
+        "f2e5a9b3-c4d1-4e2f-8a7b-3c5d6e1f2a3b": "MedicalSearch"
+        "cf91a5ca-002b-4909-9118-9ffaffa81a0f": "AsrRecognition"
+        "72393c18-6bdc-43e2-8530-c30108867998": "SentenceRecognition"
+        "44b4c776-b1a4-4b3a-a2dc-7355c1ad193b": "DocParse"
+        "69a2edb6-b87a-4c10-87ae-59e47a9c8eac": "TextToVoice"
+        "4d127f72-4456-47c3-96ec-852b51eee3fc": "ImageTranslate"
+        "974d0fe0-3e38-43ff-a627-92d2e1e35d9c": "SubmitPortraitSingJob"
+        "b217be01-9ce0-4cd8-a525-1fad3c144e0a": "DescribePortraitSingJob"
+        "6b671d13-bc6a-41c1-b0f9-bea4641f4551": "CreateAudioModerationTask"
+        "a97cb61b-313c-4921-b91a-aa9d30354c4f": "DescribeTaskDetail"
+        "52d52f32-48a3-42d0-814a-7c2ae9259e58": "CreateVideoModerationTask"
+        "65446f49-069e-4d6a-9d74-d48025a02dc6": "DescribeVideoTaskDetail"
+        "eb820430-ffd9-4088-bccf-84a79958b5e8": "MindMapGenerate"
+        "79b36bc0-790f-4a57-8d24-6319362f73c8": "EsWebSearch"
+        "737e1ed3-7273-4a03-9b9e-b6f4abe0304a": "MediaVideoCut"
+        "f37425fc-f305-40fb-9f6b-e01906b031d4": "MediaImageTag"
+        "658827ba-8392-49ec-9acb-d0fdc29b4b7b": "MediaImageFlagDetect"
+        "05824871-08c6-4cda-987d-4cb665cc531e": "CreateTtsTask"
+        "69fa34c4-aebb-4887-87b1-35f53eadd191": "DescribeTtsTaskStatus"
+        "4e379a5e-18a3-449d-b4a9-395569eb9ab8": "MediaCover"
+        "15fb61b6-60a7-40a6-a6c4-9a6e8884821c": "MediaSceneAnalysis"
+        "9f847474-a093-46df-9b96-324782b8b4de": "MediaImageTvLogo"
+        "d27287ed-ebf4-430c-9f13-2e7991be367d": "MediaExtractAudio"
+        "3935817f-fc0d-428e-a7b2-e9b38b54d64d": "MediaImageExtract"
+        "a3f5970d-de98-4915-8f28-d4e8d4b30788": "MediaLargeExtractImage"
+        "4f2c15fb-fa44-44f0-a753-f9f47b55e1cf": "MediaVideoCaptureFace"
+        "195d94da-adbe-442e-8f3b-e41d8680644f": "MediaImageCaptureFace"
+        "080bbce6-b02b-466e-a152-967c1546eb05": "BoundedKnowledgeQA"
+        "cf5b121f-57d7-47c1-937a-2f9993ec0a63": "Text2Sql"
+        "a3f5b7c9-8e2d-4f1a-9b6c-3e8d7f1a2c3e": "SQLExecutor"
+        "1db7b95f-fbd4-427e-9ab1-471238e736f8": "RunRerank"
+        "07236926-7bd0-4ec5-80a5-6ca12237a6e1": "SQLGenerator"
+        "14fdd51e-3957-4cf7-be6e-c6574951898c": "SQLQuery"
+        "e9e51363-f912-4749-afba-3fe4899e3b43": "VideoCodec"
+        "c378a4fe-090d-4e0a-ad6c-66633c4c3ab9": "VarietySegcut"
+        
+    # 模型配置
+    model:
+      token_limit: 8000 # 模型token限制
+      response_channel_size: 1500 # 响应channel大小
+    
+    # 代码配置
+    code:
+      # code_interpreter_http_url: http://code-interpreter-dispatcher.dispatch.production.polaris:8000/execute
+    
+    # 混元配置
+    hunyuan:
+      hunyuan_search: "hunyuan-search" # 混元搜索模型名称
+      hunyuan_search_whitelist: #混元搜索白名单
+        1846899622633275392: hunyuan-search
+    
+    # 多模态模型配置
+    multi_modal:
+      model_name_dialog: "{{ .Values.adppluginexec.multi_model_name }}"# 多模态模型名称
+      model_name_whitelist: # 多模态模型白名单
+        1846899622633275392: hunyuan-turbos-vision
+      single_img_prompt: "描述一下这张图片" # 单张图片描述Prompt
+      multi_img_prompt: "描述以上图片的内容" # 多张图片描述Prompt
+      placeholder: "<ut_im##age_here_index>%d</ut_im##age_here_index>" # 图片占位符
+    
+    # 公有云调用的密钥配置
+    cloud_secret:
+      secret_id: {{ include "adppluginexec.secret_id" . }}
+      secret_key: {{ include "adppluginexec.secret_key" . }}
+    
+    # 上传服务配置
+    storage:
+      {{ include "qbot.s3_storage" . }}
+    
+    # 百科配置
+    baike:
+      baike_search_url: "https://api.baike.sogou.com/sg/open/baikeInfo/V2"
+      baike_ch: "tencent.yunxiaowei"
+      baike_secret: ""
+    
+    # 天气配置
+    weather:
+      tencent_location_path: "/ws/geocoder/v1?address=%s&key=%s"
+      tencent_location_key: ""
+      tencent_location_sk: ""
+      caiyun_path: "/v2.6/PN8mBpYnvMt=0X5x/%f,%f/weather?dailysteps=%d&begin=%d"
+      location_expire_time: 604800
+      max_daily: 15
+      max_pass_day: 1
+    
+    # 股市配置
+    stock:
+      search_code_url: "https://open.finance.qq.com/smartbox/"
+      search_stock_url: "https://open.finance.qq.com/qt/"
+      stock_app: "qqbrowser_dingdang"
+      base_dst_url: "https://finance.qq.com/wxzixuangu/index.htm#/stock/"
+    
+    # 新闻配置
+    news:
+      hot_types: ["热门", "必读"]
+      types: ["财经", "体育", "科技", "娱乐", "房产", "汽车", "军事", "时政", "社会"]
+      news_valid_time: 345600
+      hot_news_limit: 350
+      type_news_limit: 40
+      get_news_limit: 5
+      load_interval: 7200
+    
+    # 网页解析配置
+    web_page_parse:
+      page_url_expire_time: 18000
+      model_name_llm: {{ .Values.adppluginexec.web_page_parse_model_name }}
+      model_prompt_version: hunyuan
+    
+    # 图片配置
+    image:
+      max_image_count: 5
+      dir_name:  "image/image_file"
+    
+    deepseek:
+      search_result_size: 9
+      search_secret_id: {{ include "adppluginexec.secret_id" . }}
+      search_secret_key: {{ include "adppluginexec.secret_key" . }}
+      deepSeek_r1_name: "lke-deepseek-r1-0528-search"
+      deepSeek_v3_name: "lke-deepseek-v3-0324-search"
+      summary_prompt_tpl: |-
+        {{`下面我会给你用户当前问题question、当前检索结果search_result。你的任务是依据上述内容生成答案来回答用户问题，在答案中使用[num]来注明这个信息来源是来自哪篇搜索文章。请注意现在的时间是{{.CurDate}}。
+        <question>{{.CurQuestion}}</question>
+    
+        <search_result>
+        {{range .SearchResult}}
+        [{{.Num}}]<发布时间>{{.Date}}</发布时间><标题>{{.Title}}</标题><内容片段>{{.RefDoc}}</内容片段>
+        {{end}}
+        </search_result>
+    
+        问题：{{.RepQuestion}}
+        回答：`}}
+    
+    doc:
+      doc_parse_secret_id: {{ include "adppluginexec.secret_id" . }}
+      doc_parse_secret_key: {{ include "adppluginexec.secret_key" . }}
+      doc_parse_endpoint: "{{ .Values.adppluginexec.doc_parse_endpoint }}"
+      doc_protocol: "http"
+      doc_parse_timeout: 600
+      doc_parse_region: "ap-guangzhou"
+      doc_parse_size: 15360
+      model_name_llm: {{ .Values.adppluginexec.model_name_llm }}
+    
+    api:
+      timeout: 120
+      white_urls: ["allow_all","{{ .Values.global.clb }}", "106.55.200.246","21.89.36.89","cos.ap-guangzhou.myqcloud.com"]
+      ports: ["allow_all"]
+    
+    # 腾讯地图配置
+    tx_map:
+      tencent_location_key: ""
+      tencent_location_sk: ""
+      radius_default: 1000
+    
+    # 图片转存配置
+    transfer_img:
+      upload_path: transfer_img/image/
+      transfer_concurrent: 1
+      download_img_timeout: 5000
+    
+    # 文生图插件配置
+    text2image:
+      query_job_interval: 1000
+    
+    # 喜马拉雅插件配置
+    ximalaya:
+      app_key: ""
+      app_secret: ""
+      server_authenticate_static_key: ""
+      album_search_max_count: 50
+      track_search_max_count: 50
+      
+    custom_code:
+      max_result_length: 200000
+      result_separator: "_______ResultSeparator_______"
+      code_template: |-
+        {{`import time
+        import datetime
+        import json
+        import numpy
+        import pandas
+        import math
+        import cmath
+        import decimal
+        import fractions
+        import random
+        import statistics
+        import re
+        import string
+        import stringprep
+        import collections
+        import numbers
+        import unicodedata
+    
+        lke_system_params=json.loads("""{{InputParamObject}}""")
+    
+        {{CodeContent}}
+        
+        main_result = main(lke_system_params)
+    
+        import json
+    
+        class SystemJsonEncoder(json.JSONEncoder):
+          def default(self, obj):
+              import numpy as np
+              if isinstance(obj, np.timedelta64):
+                  return str(obj)
+              elif isinstance(obj, np.integer):
+                  return int(obj)
+              elif isinstance(obj, (np.void)):
+                  return None
+              elif isinstance(obj, np.floating):
+                  return float(obj)
+              elif isinstance(obj, np.complexfloating):
+                  return {'real': obj.real, 'imag': obj.imag}
+              elif isinstance(obj, np.bytes_):
+                  return obj.decode('utf-8')
+              elif isinstance(obj, np.str_):
+                  return str(obj)
+              elif isinstance(obj, np.datetime64):
+                  return str(obj)
+              elif isinstance(obj, np.ndarray):
+                  return obj.tolist()
+              elif isinstance(obj, pd.DataFrame):
+                  return obj.to_dict()
+              elif isinstance(obj, pd.Series):
+                  return obj.to_list()
+              return super(SystemJsonEncoder, self).default(obj)
+        
+        print("{{ResultSeparator}}")
+        print(json.dumps(main_result, ensure_ascii=False, cls=SystemJsonEncoder))`}}
+    
+    reference:
+      patterns:
+        - 【passage (\d+)】
+        - 【引用passage (\d+)】
+        - （passage (\d+)）
+        - \[passage (\d+?)\]
+        - \n以上信息来源于(。|和。)
+        - 引用:【(?:passage\s+\d+(?:,\s*passage\s+\d+)*)】
+        - passage\s+(\d+)
+        - \n引用的passage编号：(\d+)
+        - \n引用的passage编号是：(\d+)
+        - \n\*\*引用passage编号\*\*：\[(\d+)\]
+        - \[passage (\d+)\]
+        - \n引用的passage编号是：
+        - \n引用的passage编号为：
+        - 引用形式：在答案最后给出引用的passage，格式引用:【passage x】。
+        - \n\*\*引用passage编号：\*\*
+        - \*\*引用:\ \*\*$
+        - 引用:$
+        - 引用:\ $
+        - 引用：$
+    
+    medical:
+      search_url: "https://h5.baike.qq.com/trpcapi/SearchEmbDocs/SearchEmbDocs"
+      limit_doc_count: 10
+      app_id: ""
+      app_secret: ""
+      noncestr: "0.623706833876"
+      adtag: "zsyq.znwd.test"
+    
+    asr: 
+      asr_end_point: "asr.tencentcloudapi.com"
+      query_task_interval: 1000
+      query_task_expire_time: 180
+    
+    tts:
+      tts_end_point: "tts.tencentcloudapi.com"
+      dir_name: "tts/audio_file"
+    
+    tmt:
+      tmt_end_point: "tmt.tencentcloudapi.com"
+    
+    #  图片唱演任务 配置
+    portrait_sing_job:
+      end_point: "vclm.tencentcloudapi.com"
+      query_job_interval: 1000
+      job_expire_hours: 24    
+    
+    # 音频内容安全
+    ams: 
+      ams_end_point: "ams.tencentcloudapi.com"
+    
+    # 视频内容安全
+    vm: 
+      vm_end_point: "vm.tencentcloudapi.com"
+    # 文字识别
+    ocr:
+      end_point: "ocr.tencentcloudapi.com"
+      service: "ocr"  
+    # 人脸识别
+    iai:
+      end_point: "iai.tencentcloudapi.com"
+      service: "iai"  
+    # 短信
+    sms:
+      sms_end_point: "sms.tencentcloudapi.com"
+    
+    # 邮件
+    ses:
+      ses_end_point: "ses.tencentcloudapi.com"
+    
+    # 图片内容安全
+    ims: 
+      ims_end_point: "ims.tencentcloudapi.com"
+    
+    # 搜狗搜索AIGC配置
+    search_pro:
+      end_point: "tms.tencentcloudapi.com"
+      secret_id: {{ include "adppluginexec.secret_id" . }}
+      secret_key: {{ include "adppluginexec.secret_id" . }}
+      service: "tms"
+      version: "2020-12-29"
+      action: "SearchPro"
+    
+    # 网页搜索配置
+    es_web_search:
+      end_point: "es.tencentcloudapi.com"
+      region: "ap-beijing"
+      service: "es"
+      action: "WebSearch"
+      version: "2025-01-01"
+      method: "POST"
+    
+    # 大模型图像创作插件配置
+    ai_art:
+      ai_art_end_point: "aiart.tencentcloudapi.com"
+    
+    # 图像识别插件配置
+    tiia:
+      tiia_end_point: "tiia.tencentcloudapi.com"
+    
+    # 英文作文批改插件
+    ecc:
+      ecc_end_point: "ecc.tencentcloudapi.com"
+    
+    # 医疗报告结构化插件
+    mrs:
+      mrs_end_point: "mrs.tencentcloudapi.com"
+    
+    hcm:
+      hcm_end_point: "hcm.tencentcloudapi.com"
+    # 人脸美颜插件
+    fmu: 
+      fmu_end_point: "fmu.tencentcloudapi.com"
+    # 人像变换
+    ft:
+      ft_end_point: "ft.tencentcloudapi.com"
+    # 混元生3D插件配置
+    ai_3d:
+      end_point: "ai3d.tencentcloudapi.com"
+    # 人脸核身插件配置
+    face_id:
+      end_point: "faceid.tencentcloudapi.com"
+    
+    # 媒体适配器
+    adapter:
+      adapter_service_name: "trpc.aimedia.adapter.Adapter"  
+    
+    # 脑图配置
+    mind_map_generate:
+      end_point: "markmap-sidecar.{{ .Release.Namespace }}.svc.cluster.local"
+      port: 7001
+      action: "getSvgFromMarkdown"
+      schema: "HTTP"
+      white_urls: ["allow_all", "markmap-sidecar.{{ .Release.Namespace }}.svc.cluster.local"]
+      ports: ["allow_all"]
+    
+    le_xiang_knowledge:
+      search_url: {{ .Values.adppluginexec.le_xiang_knowledge.search_url }} # online
+      token_url: {{ .Values.adppluginexec.le_xiang_knowledge.token_url }}
+      token_expire_time: 7000
+      white_ports: [ "allow_all" ]
+    
+    text2image_fast:
+      endpoint: "aiart.tencentcloudapi.com"
+      service: "aiart"
+      version: "2022-12-29"
+      action: "TextToImageRapid"
+      
+    rerank:
+      docs_limit: 20
+    
+    mcp:
+      base_path_prefix: "/mcp/"
+      ping_interval: 30
+      ping_time_out: 10
+      mcp_server_files: ["mcp_server_1.yaml", "mcp_server_2.yaml"]
+    
+    
+    wx_pay:
+      mcp_server_url: "https://1300986092-2qgl5jiebb.in.ap-guangzhou.tencentscf.com/sse"
+      timeout: 5
+      sse_read_timeout: 180
+      headers:
+        WECHATPAY_APP_ID: ""
+        WECHATPAY_MCHID: ""
+        WECHATPAY_SUB_MCHID: ""
+        WECHATPAY_MCH_SERIAL_NUMBER: ""
+        WECHATPAY_PRIVATE_KEY: ""
+        MCH_ORDER_MANAGE_SERVER: ""
+    
+      
+    video_understand:
+      action: "ChatCompletions"
+      service: "hunyuan"
+      version: "2023-09-01"
+      model_name: "hunyuan-turbos-vision-video"
+      end_point: "hunyuan.tencentcloudapi.com"
+      region: "ap-guangzhou"
+    
+    # SQLQuery工具配置
+    sql_query:
+      # 最多返回行数 默认1000
+      max_rows_count: 1000
+      # 每个字段的大小最大值 默认1MB
+      max_field_size: 1048576
+      # 返回的数据总量最大限制 默认3.5MB
+      max_data_size: 3670016
+      # SQL语句字符限制 默认4000
+      sql_length_limit: 4000
+    
+    # 计费上报相关配置
+    finance:
+      plugins:
+    
+    # python脚本路径
+    script_path: "/app/bin/"
+    
+    #网关配置
+    gateway_config: 
+      enable_auth: false
+      enable_rate_limit: false
+      enable_metrics_report: false
+    
+    # chat sse 调用配置
+    chat_sse:
+      url: {{ .Values.global.scheme }}://{{ .Values.global.clb }}/adp/v2/chat
+  mcp_server_1.yaml: |
+    servers:
+      - name: "image_creation"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "ReplaceBackground"
+            handler_name: "ReplaceBackground"
+            description: "商品背景生成"
+            properties:
+              - name: "ProductUrl"
+                type: "string"
+                required: true
+                description: "商品原图 Url。图片限制：单边分辨率小于4000，长宽比在2:5 ~ 5:2之间，转成 Base64 字符串后小于 6MB，格式支持 jpg、jpeg、png、bmp、tiff、webp"
+              - name: "Prompt"
+                type: "string"
+                required: true
+                description: "对新背景的文本描述。最多支持256个 utf-8 字符，支持中、英文"
+              - name: "Product"
+                type: "string"
+                required: true
+                description: "商品图中的商品主体名称。最多支持50个 utf-8 字符，支持中、英文"
+      - name: "image_recognition"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "DetectLabelPro"
+            handler_name: "DetectLabelPro"
+            description: "通用图像标签"
+            properties:
+              - name: "ImageUrl"
+                type: "string"
+                required: false
+                description: "图片URL地址。图片限制：图片格式：PNG、JPG、JPEG、BMP。图片大小：所下载图片经Base64编码后不超过4M。图片下载时间不超过3秒，推荐将图片存储在腾讯云COS"
+              - name: "ImageBase64"
+                type: "string"
+                required: false
+                description: "图片Base64编码数据。与ImageUrl同时存在时优先使用ImageUrl字段，图片限制：图片格式：PNG、JPG、JPEG、BMP。图片大小：经Base64编码后不超过4M。注意：图片需要Base64编码，并且要去掉编码头部"
+      - name: "english_correction"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "CorrectMultiImage"
+            handler_name: "CorrectMultiImage"
+            description: "多图像识别批改"
+            properties:
+              - name: "Image"
+                type: "array"
+                required: true
+                description: "图片的url链接或base64数据。每张图片数据作为数组的一个元素，数组个数与图片个数保持一致。存放类别依据InputType而定，url与base64编码不能混合使用"
+                items:
+                  type: "string"
+              - name: "InputType"
+                type: "integer"
+                required: true
+                description: "图片类型，0表示Image字段是图片所在的url，1表示Image字段是base64编码后的图像数据"
+      - name: "medical_report"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "TurnPdfToObject"
+            handler_name: "TurnPdfToObject"
+            description: "体检报告PDF文件结构化"
+            properties:
+              - name: "PdfBase64"
+                type: "string"
+                required: false
+                description: "体检报告PDF文件信息, 支持传PDF文件的Base64编码字符"
+              - name: "PdfUrl"
+                type: "string"
+                required: false
+                description: "体检报告PDF的url，如果与PdfBase64同时填写以PdfBase64为准"
+      - name: "math_correction"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "Evaluation"
+            handler_name: "Evaluation"
+            description: "速算题目批改"
+            properties:
+              - name: "ImageBase64"
+                type: "string"
+                description: "图片数据，需要使用base64对图片的二进制数据进行编码，与url参数二者填一即可，如果同时填写以base64为准"
+              - name: "ImageUrl"
+                type: "string"
+                description: "图片的url，与ImageBase64参数二者填一即可 如果同时填写以base64为准"
+      - name: "sgweb_search"
+        tools:
+          - name: "SougouWebSearch"
+            handler_name: "SougouWebSearch"
+            description: "搜狗搜索工具，支持对全网范围进行网页搜索。"
+            properties:
+              - name: "Query"
+                required: true
+                type: "string"
+                description: "检索内容，建议长为128字节（约40～64个中英文字符）； 1.超过128字节的query，只会用前128字节进行搜索"
+              - name: "Insite"
+                required: false
+                type: "string"
+                description: "指定网址搜索，仅支持单域名筛选，例如:zhihu.com"  
+      - name: "general_ocr"
+        headers: ["SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "GeneralAccurateOCR"
+            handler_name: "GeneralAccurateOCR"
+            description: "通用印刷体识别（高精度版）"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片的Url地址。要求图片经Base64编码后不超过7M，分辨率建议600*800以上，支持PNG、JPG、JPEG、BMP格式。载时间不超过3秒"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。要求图片经Base64编码后不超过7M，分辨率建议600*800以上，支持PNG、JPG、JPEG、BMP格式。如果有ImageUrl，使用ImageUrl"
+              - name: "IsPdf"
+                required: false
+                type: "boolean"
+                description: "是否开启PDF识别，默认值为false，开启后可同时支持图片和PDF的识别"
+              - name: "PdfPageNumber"
+                required: false
+                type: "integer"
+                description: "需要识别的PDF页面的对应页码，仅支持PDF单页识别,默认值1"
+      - name: "question_ocr"
+        headers: ["SECRET_ID","SECRET_KEY"]
+        tools:              
+          - name: "QuestionOCR"
+            handler_name: "QuestionOCR"
+            description: "试题识别"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片的Url地址。所下载图片经Base64编码后不超过10M，分辨率建议600*800以上，支持PNG、JPG、JPEG、BMP格式。载时间不超过3秒"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。所下载图片经Base64编码后不超过10M，分辨率建议600*800以上，支持PNG、JPG、JPEG、BMP格式。如果有ImageUrl，使用ImageUrl"
+              - name: "IsPdf"
+                required: false
+                type: "boolean"
+                description: "是否开启PDF识别，默认值为false，开启后可同时支持图片和PDF的识别"
+              - name: "PdfPageNumber"
+                required: false
+                type: "integer"
+                description: "需要识别的PDF页面的对应页码，仅支持PDF单页识别,默认值1"
+      - name: "send_sms"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "SendSms"
+            handler_name: "SendSms"
+            description: "短信"
+            properties:
+              - name: "PhoneNumberSet"
+                required: true
+                type: "array"
+                description: "下发手机号码，采用 E.164 标准，格式为+[国家或地区码][手机号]，单次请求最多支持200个手机号且要求全为境内手机号或全为境外手机号。发送国内短信格式还支持0086、86或无任何国家或地区码的11位手机号码，前缀默认为+86。"
+                items:
+                  type: "string"
+              - name: "SmsSdkAppId"
+                required: true
+                type: "string"
+                description: "短信SdkAppId在[短信控制台](https://console.cloud.tencent.com/smsv2/app-manage)  添加应用后生成的实际SdkAppId，示例如1400006666。"
+              - name: "TemplateId"
+                required: true
+                type: "string"
+                description: "模板 ID，必须填写已审核通过的模板 ID。模板 ID 可前往 国内短信 或 国际/港澳台短信 的正文模板管理查看，若向境外手机号发送短信，仅支持使用国际/港澳台短信模板。"
+              - name: "SignName"
+                required: false
+                type: "string"
+                description: "短信签名内容，签名信息可前往 [国内短信](https://console.cloud.tencent.com/smsv2/csms-sign) 或 [国际/港澳台短信] 的签名管理查看。注：国内短信为必须，国际/港澳台短信为选填。"
+              - name: "TemplateParamSet"
+                required: false
+                type: "array"
+                description: "模板参数，若无模板参数，则设置为空。模板参数的个数需要与 TemplateId 对应模板的变量个数保持一致。"
+                items:
+                  type: "string"
+              - name: "SenderId"
+                required: false
+                type: "string"
+                description: "国内短信无需填写该项；国际/港澳台短信已申请独立 SenderId 需要填写该字段，默认使用公共 SenderId，无需填写该字段。"
+      - name: "send_email"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "SendEmail"
+            handler_name: "SendEmail"
+            description: "发送邮件"
+            properties:
+              - name: "FromEmailAddress"
+                required: true
+                type: "string"
+                description: "发件人邮箱地址。例如：noreply@mail.qcloud.com，具体请查看 https://console.cloud.tencent.com/ses/address"
+              - name: "Destination"
+                required: false
+                type: "array"
+                description: "收信人邮箱地址，最多支持群发50人。示例值：destination@mail.qcloud.com"
+                items:
+                  type: "string"
+              - name: "Subject"
+                required: true
+                type: "string"
+                description: "邮件主题。示例值：YourTestSubject"
+              - name: "TemplateID"
+                required: true
+                type: "integer"
+                description: "模板ID。如果没有模板，请先新建一个"
+              - name: "TemplateData"
+                required: true
+                type: "string"
+                description: "模板中的变量参数，该对象是一组键值对"
+      - name: "image_moderation"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "ImageModeration"
+            handler_name: "ImageModeration"
+            description: "图片内容安全"
+            properties:
+              - name: "FileUrl"
+                required: true
+                type: "string"
+                description: "图片内容链接"
+              - name: "BizType"
+                required: false
+                type: "string"
+                description: "该字段表示特定审核策略的编号，用于接口调度。需要提前在内容安全控制台中创建策略后获取该Biztype字段，传入该字段，会根据业务场景在审核时调用相应的审核策略"
+      - name: "text_moderation"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "TextModeration"
+            handler_name: "TextModeration"
+            description: "文本内容安全"
+            properties:
+              - name: "Content"
+                required: true
+                type: "string"
+                description: "文本内容 base64加密"
+              - name: "BizType"
+                required: false
+                type: "string"
+                description: "该字段表示特定审核策略的编号，用于接口调度。需要提前在内容安全控制台中创建策略后获取该Biztype字段，传入该字段，会根据业务场景在审核时调用相应的审核策略"
+      - name: "doc_parse"
+        tools:
+          - name: "DocParse"
+            handler_name: "DocParse"
+            description: "将文档解析为markdown格式"
+            properties:
+              - name: "DocUrl"
+                required: true
+                type: "string"
+                description: "文件的Url地址"
+      - name: "weather"
+        tools:
+          - name: "GetWeatherInfo"
+            handler_name: "GetWeatherInfo"
+            description: "获取指定日期和地点的天气信息，只支持查询中国国内城市的天气"
+            properties:
+              - name: "Location"
+                required: true
+                type: "string"
+                description: "地点，可以包含省、市、区县等"
+              - name: "StartTime"
+                required: false
+                type: "string"
+                description: "查询开始时间，格式为2006-01-02"
+              - name: "EndTime"
+                required: false
+                type: "string"
+                description: "查询结束时间，格式为2006-01-02"
+      - name: "table_ocr"
+        headers: ["SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "RecognizeTableAccurateOCR"
+            handler_name: "RecognizeTableAccurateOCR"
+            description: "表格识别（V3）"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片/PDF的Url地址。要求图片/PDF经Base64编码后不超过7M，分辨率建议600*800以上，支持PNG、JPG、JPEG、BMP、PDF格式。图片支持的像素范围：需介于20-10000px之间。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片/PDF的Base64值。要求图片/PDF经Base64编码后不超过7M，分辨率建议600*800以上，支持PNG、JPG、JPEG、BMP、PDF格式。图片支持的像素范围：需介于20-10000px之间。如果提供了ImageUrl以ImageUrl为主"
+      - name: "formula_ocr"
+        headers: ["SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "RecognizeFormulaOCR"
+            handler_name: "RecognizeFormulaOCR"
+            description: "公式识别"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片的Url地址。支持格式：PNG、JPG、JPEG，不支持GIF格式。所下载图片经 Base64 编码后不超过10M。图片下载时间不超过3秒。支持的图片像素：需介于20-10000px之间。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。支持格式：PNG、JPG、JPEG，不支持GIF格式。所下载图片经Base64编码后不超过10M。图片下载时间不超过3秒。支持的图片像素：需介于20-10000px之间。如果都提供，只使用 ImageUrl"
+      - name: "qrcode_ocr"
+        headers: ["SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "QrcodeOCR"
+            handler_name: "QrcodeOCR"
+            description: "二维码和条形码识别"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片的 Url 地址。要求图片经Base64编码后不超过 7M，支持PNG、JPG、JPEG格式。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。要求图片经Base64编码后不超过7M，支持PNG、JPG、JPEG格式。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。"
+      - name: "smart_ocr_pro"
+        headers: ["SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "SmartStructuralPro"
+            handler_name: "SmartStructuralPro"
+            description: "智能结构化高级版识别"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片的Url地址。支持格式：PNG、JPG、JPEG，WORD，EXCEL，不支持GIF格式。大小：下载后经Base64编码后不超过7M。图片下载时间不超过3秒。像素：需介于20-10000px之间。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "格式：PNG、JPG、JPEG，WORD，EXCEL，不支持GIF格式。大小：所下载图片经Base64编码后不超过7M。下载时间不超过3秒。像素：需介于20-10000px之间。如果都提供，只使用ImageUrl。"
+      - name: "tx_meeting"
+        headers: ["SECRET_ID","SECRET_KEY","APP_ID","SDK_ID"]
+        tools:
+          - name: "GetMeetingRecordList"
+            handler_name: "GetMeetingRecordList"
+            description: "查询腾讯会议会议录制列表"
+            properties:
+              - name: "UserId"
+                type: "string"
+                description: "用户ID"
+                required: true
+              - name: "MeetingCode"
+                type: "string"
+                description: "会议code"
+                required: false
+              - name: "StartTime"
+                type: "string"
+                description: "查询起始时间戳，UNIX 时间戳（单位秒），时间区间不允许超过31天"
+                required: true
+              - name: "EndTime"
+                type: "string"
+                description: "查询结束时间戳，UNIX 时间戳（单位秒），时间区间不允许超过31天"
+                required: true
+          - name: "GetRecordDetail"
+            handler_name: "GetRecordDetail"
+            description: "查询腾讯会议单个会议的录制详情，录制详情包括文件、转写、纪要"
+            properties:
+              - name: "UserId"
+                type: "string"
+                description: "用户ID"
+                required: true
+              - name: "RecordFileId"
+                type: "string"
+                description: "录制文件 ID，列表接口返回的 record_file_id"
+                required: true
+      - name: "image_outpainting"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "ImageOutpainting"
+            handler_name: "ImageOutpainting"
+            description: "支持对输入图像按指定宽高比实现智能扩图。"
+            properties:
+              - name: "Ratio"
+                required: true
+                type: "string"
+                description: "扩展后的比例（宽:高），需要不等于原图比例。支持：1:1、4:3、3:4、16:9、9:16"
+              - name: "InputImage"
+                required: false
+                type: "string"
+                description: "输入图Base64数据。Base64和Url必须提供一个，如果都提供以Url为准。图片限制：单边分辨率小于5000且大于128，转成Base64字符串后小于6MB，格式支持 jpg、jpeg、png、bmp、tiff、webp"
+              - name: "InputUrl"
+                required: false
+                type: "string"
+                description: "输入图Url。Base64和Url必须提供一个，如果都提供以Url为准。图片限制：单边分辨率小于5000且大于128，转成Base64字符串后小于6MB，格式支持 jpg、jpeg、png、bmp、tiff、webp"
+      - name: "sketch_to_image"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "SketchToImage"
+            handler_name: "SketchToImage"
+            description: "支持上传一张黑白线稿图，按照指定的主体对象以及样式、颜色、材质、风格等的文本描述prompt ，对线稿图进行色彩填充与细节描绘，得到一张完整绘制的图像。"
+            properties:
+              - name: "Prompt"
+                required: true
+                type: "string"
+                description: "用于线稿生图的文本描述。最多支持200个utf-8字符。建议格式：线稿中的主体对象+画面场景+配色/材质/元素/风格等"
+              - name: "InputImage"
+                required: false
+                type: "string"
+                description: "线稿图Base64数据。Base64和Url必须提供一个，如果都提供以Url为准。图片限制：黑白线稿图片，单边分辨率小于5000且大于128，转成Base64字符串后小于6MB，格式支持 jpg、jpeg、png、bmp、tiff、webp"
+              - name: "InputUrl"
+                required: false
+                type: "string"
+                description: "线稿图Url。Base64和Url必须提供一个，如果都提供以Url为准。图片限制：黑白线稿图片，单边分辨率小于5000且大于128，转成Base64字符串后小于6MB，格式支持 jpg、jpeg、png、bmp、tiff、webp"
+      - name: "refine_image"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "RefineImage"
+            handler_name: "RefineImage"
+            description: "将图像变清晰，增强图像细节。变清晰后的图片将保持原图比例，长边为2048。"
+            properties:
+              - name: "InputImage"
+                required: false
+                type: "string"
+                description: "输入图Base64数据。Base64和Url必须提供一个，如果都提供以Url为准。图片限制：转成Base64字符串后小于6MB，格式支持 jpg、jpeg、png、bmp、tiff、webp"
+              - name: "InputUrl"
+                required: false
+                type: "string"
+                description: "输入图Url。Base64和Url必须提供一个，如果都提供以Url为准。图片限制：转成Base64字符串后小于6MB，格式支持 jpg、jpeg、png、bmp、tiff、webp"
+      - name: "tmt_text_translate"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "TextTranslate"
+            handler_name: "TextTranslate"
+            description: "文本翻译"
+            properties:
+              - name: "SourceText"
+                required: true
+                type: "string"
+                description: "待翻译的文本，文本统一使用utf-8格式编码，非utf-8格式编码字符会翻译失败，请传入有效文本，html标记等非常规翻译文本可能会翻译失败。单次请求的文本长度需要低于6000字符。"
+              - name: "Source"
+                required: true
+                type: "string"
+                description: "源语言。支持情况详见：https://cloud.tencent.com/document/api/551/15619"
+              - name: "Target"
+                required: true
+                type: "string"
+                description: "目标语言。 各源语言的目标语言支持列表情况详见 https://cloud.tencent.com/document/api/551/15619"
+      - name: "tmt_lang_detect"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "LanguageDetect"
+            handler_name: "LanguageDetect"
+            description: "语种识别"
+            properties:
+              - name: "Text"
+                required: true
+                type: "string"
+                description: "待识别的文本，文本统一使用utf-8格式编码，非utf-8格式编码字符会翻译失败。单次请求的文本长度需要低于2000。"
+      - name: "detect_product"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "DetectProduct"
+            handler_name: "DetectProduct"
+            description: "支持识别图片中包含的商品，能够输出商品的品类名称、类别。支持一张图片多个商品的识别。"
+            properties:
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片经过base64编码的内容。最大不超过4M。与ImageUrl同时存在时优先使用ImageUrl字段。注意：图片需要base64编码，并且要去掉编码头部"
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片URL地址。图片限制：•图片格式：PNG、JPG、JPEG。•图片大小：所下载图片经Base64编码后不超过4M。图片下载时间不超过3秒。建议：•图片像素：大于50*50像素，否则影响识别效果"
+      - name: "crop_image"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "CropImage"
+            handler_name: "CropImage"
+            description: "根据输入的裁剪比例，智能判断一张图片的最佳裁剪区域。"
+            properties:
+              - name: "Width"
+                required: true
+                type: "integer"
+                description: "需要裁剪区域的宽度，与Height共同组成所需裁剪的图片宽高比例。输入数字请大于0、小于图片宽度的像素值"
+              - name: "Height"
+                required: true
+                type: "integer"
+                description: "需要裁剪区域的高度，与Width共同组成所需裁剪的图片宽高比例。输入数字请大于0、小于图片高度的像素值。宽高比例会简化为最简分数，即如果Width输入10、Height输入20，会简化为1：2。宽高比例建议取值在[1, 2.5]之间，超过这个范围可能会影响效果"
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片URL地址。图片限制：•图片格式：PNG、JPG、JPEG。•图片大小：所下载图片经Base64编码后不超过4M。图片下载时间不超过3秒。建议：•图片像素：大于50*50像素，否则影响识别效果"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片经过base64编码的内容。最大不超过4M。与ImageUrl同时存在时优先使用ImageUrl字段。注意：图片需要base64编码，并且要去掉编码头部"
+      - name: "text_english_correct"
+        headers: ["SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "TextEnglishCorrect"
+            handler_name: "TextEnglishCorrect"
+            description: "覆盖英语学习全周期，提供高考价值、高人评拟合度的纯文本英文作文批改"
+            properties:
+              - name: "Content"
+                required: true
+                type: "string"
+                description: "作文文本"
+      - name: "change_clothes"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "ChangeClothes"
+            handler_name: "ChangeClothes"
+            description: "上传正面全身模特照和服装平铺图，生成模特换装后的图片。生成的换装图片分辨率和模特照分辨率一致。"
+            properties:
+              - name: "ModelUrl"
+                required: true
+                type: "string"
+                description: "模特图片Url。图片限制：单边分辨率小于3000，且大于512，转成Base64字符串后小于8MB，具体要求可查看文档https://cloud.tencent.com/document/api/1668/108532"
+              - name: "ClothesUrl"
+                required: true
+                type: "string"
+                description: "服装图片Url。图片限制：单边分辨率小于3000，且大于512，转成Base64字符串后小于8MB，具体要求可查看文档https://cloud.tencent.com/document/api/1668/108532" 
+              - name: "ClothesType"
+                required: true
+                type: "string"
+                description: "服装类型，需要和服装图片保持一致。取值：Upper-body：上衣，Lower-body：下装，Dress：连衣裙" 
+      - name: "generate_avatar"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "GenerateAvatar"
+            handler_name: "GenerateAvatar"
+            description: "将根据输入的人像、宠物照片，生成风格百变的头像。"
+            properties:
+              - name: "InputImage"
+                required: false
+                type: "string"
+                description: "输入图Base64数据。Base64和Url必须提供一个，如果都提供以Url为准。图片限制：黑白线稿图片，单边分辨率小于5000且大于128，转成Base64字符串后小于6MB，格式支持 jpg、jpeg、png、bmp、tiff、webp"
+              - name: "InputUrl"
+                required: false
+                type: "string"
+                description: "输入图Url。Base64和Url必须提供一个，如果都提供以Url为准。图片限制：黑白线稿图片，单边分辨率小于5000且大于128，转成Base64字符串后小于6MB，格式支持 jpg、jpeg、png、bmp、tiff、webp" 
+              - name: "Type"
+                required: false
+                type: "string"
+                description: "图像类型，默认为人像。human：人像头像，仅支持人像图片输入，建议避免上传无人、多人、人像过小的图片。pet：萌宠贴纸，仅支持动物图片输入，建议避免上传无动物、多动物、动物过小的图片" 
+              - name: "Style"
+                required: false
+                type: "string"
+                description: "头像风格，仅在人像模式下生效。若使用人像模式，请在文档【https://cloud.tencent.com/document/product/1668/107741】列表中选择期望的风格，传入风格编号，不传默认使用flower风格。若使用萌宠贴纸模式，无需选择风格，该参数不生效" 
+      - name: "image_to_image"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "ImageToImage"
+            handler_name: "ImageToImage"
+            description: "提供生成式的图生图风格转化能力，将根据输入的图像及文本描述，智能生成风格转化后的图像。"
+            properties:
+              - name: "InputImage"
+                required: false
+                type: "string"
+                description: "输入图Base64数据。Base64和Url必须提供一个，如果都提供以Url为准。图片限制：黑白线稿图片，单边分辨率小于5000且大于128，转成Base64字符串后小于6MB，格式支持 jpg、jpeg、png、bmp、tiff、webp"
+              - name: "InputUrl"
+                required: false
+                type: "string"
+                description: "输入图Url。Base64和Url必须提供一个，如果都提供以Url为准。图片限制：黑白线稿图片，单边分辨率小于5000且大于128，转成Base64字符串后小于6MB，格式支持 jpg、jpeg、png、bmp、tiff、webp" 
+              - name: "Prompt"
+                required: false
+                type: "string"
+                description: "文本描述。用于在输入图的基础上引导生成图效果，增加生成结果中出现描述内容的可能。推荐使用中文。最多支持256个utf-8字符" 
+              - name: "Styles"
+                required: false
+                type: "array"
+                description: "绘画风格，仅在人像模式下生效。请在文档【https://cloud.tencent.com/document/product/1668/86250】列表中选择期望的风格，传入风格编号，推荐使用且只使用一种风格。不传默认使用201（日系动漫风格）" 
+                items:
+                  type: "string"
+      - name: "drug_instruction_object"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "DrugInstructionObject"
+            handler_name: "DrugInstructionObject"
+            description: "药品说明书结构化"
+            properties:
+              - name: "PdfBase64"
+                type: "string"
+                required: false
+                description: "药品说明书信息信息, 支持传PDF文件的Base64编码字符"
+              - name: "PdfUrl"
+                type: "string"
+                required: false
+                description: "药品说明书PDF的url，如果与PdfBase64同时填写以PdfBase64为准"
+      - name: "image_to_object"
+        headers: ["REGION","SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "ImageToObject"
+            handler_name: "ImageToObject"
+            description: "医疗报告图片结构化"
+            properties:
+              - name: "ImageBase64"
+                type: "string"
+                required: false
+                description: "图片信息, 支持传图片的Base64编码字符"
+              - name: "ImageUrl"
+                type: "string"
+                required: false
+                description: "图片的url，如果与ImageBase64同时填写以ImageBase64为准"
+              - name: "Type"
+                type: "integer"
+                required: true
+                description: "报告类型，目前支持11（检验报告），12（检查报告），15（病理报告），28（出院报告），29（入院报告），210（门诊病历），212（手术记录），218（诊断证明），363（心电图），27（内窥镜检查），215（处方单），219（免疫接种证明），301（C14呼气试验）。如果不清楚报告类型，可以使用分类引擎，该字段传0（同时IsUsedClassify字段必须为True，否则无法输出结果）"
+              - name: "IsUsedClassify"
+                type: "boolean"
+                required: true
+                description: "是否使用分类引擎，当不确定报告类型时，可以使用收费的报告分类引擎服务。若该字段为False，则Type字段不能为0，否则无法输出结果。"
+    
+  mcp_server_2.yaml: |
+    servers:
+      - name: "lexiang_ai_search"
+        headers: ["AppSecret","AppKey", "StaffId"]
+        tools:
+          - name: "LexianglaKnowledge"
+            handler_name: "LexianglaKnowledge"
+            description: "查询腾讯乐享知识库"
+            properties:
+              - name: "query"
+                type: "string"
+                required: true
+                description: "用户输入的问题，最长1024字符"
+              - name: "top_n"
+                type: "integer"
+                required: true
+                description: "指定输出rerank后排名前几的文档（1-50），建议控制在20以内"
+              - name: "targets"
+                type: "array"
+                required: false
+                description: "知识范围，可以通过传入参数限制知识来源的范围，仅支持指定单一知识范围，不传则默认为全站知识"
+                items:
+                  type: "object"
+                  properties:
+                    - name: "type"
+                      type: "string"
+                      required: false
+                      description: "表示范围类型，可设置为space(知识库)/team(团队空间）"
+                    - name: "id"
+                      type: "string"
+                      required: false
+                      description: "space(知识库)对应id获取位置：指定知识库url链接中“space/xxx”，xxx为知识库id"
+      - name: "english"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "EnglishOCR"
+            handler_name: "EnglishOCR"
+            description: "支持图像英文文字的检测和识别，返回文字内容。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片的Url地址。支持图片格式：PNG、JPG、JPEG，暂不支持GIF格式。下载图片经Base64编码后不超过7M。图片下载时间不超过 3 秒。像素须介于20-10000px之间。如果都提供，只使用ImageUrl。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。支持图片格式：PNG、JPG、JPEG，暂不支持GIF格式。下载图片经Base64编码后不超过7M。图片下载时间不超过3秒。像素须介于20-10000px之间。如果都提供，只使用ImageUrl。"
+      - name: "advertise"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "AdvertiseOCR"
+            handler_name: "AdvertiseOCR"
+            description: "支持广告商品图片内文字的检测和识别，返回文字内容。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片的 Url 地址。图片经Base64编码后不超过7M，分辨率建议600*800以上，支持PNG、JPG、JPEG、BMP格式。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。要求图片经Base64编码后不超过7M，分辨率建议600*800以上，支持PNG、JPG、JPEG、BMP格式。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。"
+      - name: "bank_car"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "BankCardOCR"
+            handler_name: "BankCardOCR"
+            description: "支持识别卡号、卡类型、卡名字、银行信息、有效期。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片的Url地址。图片经Base64编码后不超过7M，分辨率建议500*800以上，支持PNG、JPG、JPEG、BMP格式。建议卡片部分占据图片2/3以上。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。要求图片经Base64编码后不超过7M，分辨率建议500*800以上，支持PNG、JPG、JPEG、BMP格式。建议卡片部分占据图片2/3以上。如果都提供，只使用ImageUrl。"
+      - name: "enterprise_license"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "EnterpriseLicenseOCR"
+            handler_name: "EnterpriseLicenseOCR"
+            description: "识别各类企业登记证书、许可证书、企业执照、三证合一类证书，结构化输出统一社会信用代码、公司名称、法定代表人、公司地址、注册资金、企业类型、经营范围、成立日期、有效期、开办资金、经费来源、举办单位等关键字段。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片Url地址。支持图片格式：PNG、JPG、JPEG，暂不支持GIF格式。所下载图片经Base64编码后不超过7M。图片下载时间不超过3秒。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。支持图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载图片经Base64编码后不超过7M。图片下载时间不超过3秒。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。"
+      - name: "general_handwriting"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "GeneralHandwritingOCR"
+            handler_name: "GeneralHandwritingOCR"
+            description: "支持图片内手写体文字的检测和识别，针对手写字体无规则、字迹潦草、模糊等特点进行了识别能力的增强。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片Url地址。支持图片格式：NG、JPG、JPEG，暂不支持 GIF 格式。所下载图片经Base64编码后不超过7M。图片下载时间不超过3秒。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载图片经Base64编码后不超过7M。图片下载时间不超过3秒。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。"          
+      - name: "license_plate"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "LicensePlateOCR"
+            handler_name: "LicensePlateOCR"
+            description: "支持对中国大陆机动车车牌的自动定位和识别，返回地域编号和车牌号码与车牌颜色信息。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片Url地址。支持图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。所下载图片经Base64编码后不超过7M。图片下载时间不超过3秒。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。支持图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载图片经Base64编码后不超过7M。图片下载时间不超过3秒。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。"
+      - name: "question_split"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "QuestionSplitOCR"
+            handler_name: "QuestionSplitOCR"
+            description: "试卷切题识别可将整页练习册、试卷或教辅中的题目进行自动切题，并识别出其中的文字内容。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片Url地址。支持图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载图片经 Base64 编码后不超过 10M。图片下载时间不超过 3 秒。支持的图片像素：需介于20-10000px之间。图片下载时间不超过3秒。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。支持的图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载图片经Base64编码后不超过 10M。图片下载时间不超过 3 秒。支持的图片像素：需介于20-10000px之间。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。"          
+      - name: "recognize_medical_invoice"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "RecognizeMedicalInvoiceOCR"
+            handler_name: "RecognizeMedicalInvoiceOCR"
+            description: "医疗发票识别目前支持全国统一门诊发票、全国统一住院发票、以及部分地方的门诊和住院发票的识别。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片Url地址。支持的文件格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经 Base64 编码后不超过 7M。文件下载时间不超过 3 秒。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。支持的图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经Base64编码后不超过 7M。文件下载时间不超过 3 秒。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。"          
+      - name: "vin"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "VinOCR"
+            handler_name: "VinOCR"
+            description: "支持图片内车辆识别代号（VIN）的检测和识别。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片Url地址。支持图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经 Base64 编码后不超过 7M。文件下载时间不超过 3 秒。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。支持的图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经Base64编码后不超过 7M。文件下载时间不超过 3 秒。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。"          
+      - name: "vehicle_reg_cert"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "VehicleRegCertOCR"
+            handler_name: "VehicleRegCertOCR"
+            description: "支持识别国内机动车登记证书的机动车所有人、身份证明名称、号码、车辆型号、车辆识别代号、发动机号、制造厂名称等。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片Url地址。支持图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经 Base64 编码后不超过 7M。文件下载时间不超过 3 秒。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。支持的图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经Base64编码后不超过 7M。文件下载时间不超过 3 秒。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。"    
+      - name: "beautify_pic"
+        headers: ["REGION","SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "BeautifyPic"
+            handler_name: "BeautifyPic"
+            description: "上传一张人脸图片，实现美肤、亮肤、祛痘等美颜功能。"
+            properties:
+              - name: "Image"
+                type: "string"
+                required: false
+                description: "图片base64数据，base64编码后大小不可超过5M，单边分辨率不超过4000。支持PNG、JPG、JPEG、BMP，不支持GIF图片。暂不支持带有alpha透明通道的图片"
+              - name: "Url"
+                type: "string"
+                required: false
+                description: "图片的Url。对应图片base64编码后大小不可超过5M。，单边分辨率不超过4000。Url、Image必须提供一个，如果都提供，只使用Url，支持PNG、JPG、JPEG、BMP，不支持GIF图片。暂不支持带有alpha透明通道的图片"
+              - name: "Whitening"
+                type: "integer"
+                required: false
+                description: "美白程度，取值范围[0,100]。0不美白，100代表最高程度。默认值30"
+              - name: "Smoothing"
+                type: "integer"
+                required: false
+                description: "磨皮程度，取值范围[0,100]。0不磨皮，100代表最高程度。默认值10"
+              - name: "FaceLifting"
+                type: "integer"
+                required: false
+                description: "瘦脸程度，取值范围[0,100]。0不瘦脸，100代表最高程度。默认值70"
+              - name: "EyeEnlarging"
+                type: "integer"
+                required: false
+                description: "大眼程度，取值范围[0,100]。0不大眼，100代表最高程度。默认值70"
+      - name: "finan_bill_ocr"
+        headers: ["REGION","SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+            - name: "FinanBillOCR"
+              handler_name: "FinanBillOCR"
+              description: "整单识别包括支票（含现金支票、普通支票、转账支票），承兑汇票（含银行承兑汇票、商业承兑汇票）以及进账单等。"
+              properties:
+                - name: "ImageUrl"
+                  required: false
+                  type: "string"
+                  description: "图片Url地址。支持图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经 Base64 编码后不超过 7M。文件下载时间不超过 3 秒。支持的图片像素：需介于20-10000px之间。图片下载时间不超过3秒。"
+                - name: "ImageBase64"
+                  required: false
+                  type: "string"
+                  description: "图片的Base64值。支持的图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经Base64编码后不超过 7M。文件下载时间不超过 3 秒。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。"               
+      - name: "waybill_ocr"
+        headers: ["REGION","SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "WaybillOCR"
+            handler_name: "WaybillOCR"
+            description: "支持市面上主流版式电子运单的识别，包括收件人和寄件人的姓名、电话、地址以及运单号等字段。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片Url地址。支持图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经 Base64 编码后不超过 7M。文件下载时间不超过 3 秒。支持的图片像素：需介于20-10000px之间。图片下载时间不超过3秒。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。支持的图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经Base64编码后不超过 7M。文件下载时间不超过 3 秒。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。" 
+      - name: "idcard_ocr"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "IDCardOCR"
+            handler_name: "IDCardOCR"
+            description: "支持中国大陆居民二代身份证正反面所有字段的识别，包括姓名、性别、民族、出生日期、住址、公民身份证号、签发机关、有效期限。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片的 Url 地址。要求图片经Base64编码后不超过 7M，分辨率建议500*800以上，支持PNG、JPG、JPEG、BMP格式。建议卡片部分占据图片2/3以上。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的 Base64 值。要求图片经Base64编码后不超过 7M，分辨率建议500*800以上，支持PNG、JPG、JPEG、BMP格式。建议卡片部分占据图片2/3以上。如果都提供，只使用 ImageUrl。"                                                                                                                 
+      - name: "vehicle_license_ocr"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "VehicleLicenseOCR"
+            handler_name: "VehicleLicenseOCR"
+            description: "支持行驶证主页和副页所有字段的自动定位与识别。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片的 Url 地址。要求图片经Base64编码后不超过 7M，分辨率建议500*800以上，支持PNG、JPG、JPEG、BMP格式。建议卡片部分占据图片2/3以上。图片下载时间不超过 3 秒。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的 Base64 值。要求图片经Base64编码后不超过 7M，分辨率建议500*800以上，支持PNG、JPG、JPEG、BMP格式。建议卡片部分占据图片2/3以上。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。"
+              - name: "CardSide"
+                required: false
+                type: "string"
+                description: "FRONT 为行驶证主页正面（有红色印章的一面），BACK 为行驶证副页正面（有号码号牌的一面），DOUBLE 为行驶证主页正面和副页正面。默认值为：FRONT。"
+      - name: "driver_license_ocr"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "DriverLicenseOCR"
+            handler_name: "DriverLicenseOCR"
+            description: "支持驾驶证主页和副页所有字段的自动定位与识别。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片的 Url 地址。要求图片经Base64编码后不超过 7M，分辨率建议500*800以上，支持PNG、JPG、JPEG、BMP格式。建议卡片部分占据图片2/3以上。图片下载时间不超过 3 秒。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的 Base64 值。要求图片经Base64编码后不超过 7M，分辨率建议500*800以上，支持PNG、JPG、JPEG、BMP格式。建议卡片部分占据图片2/3以上。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。"
+              - name: "CardSide"
+                required: false
+                type: "string"
+                description: "FRONT 为行驶证主页正面（有红色印章的一面），BACK 为行驶证副页正面（有号码号牌的一面），DOUBLE 为行驶证主页正面和副页正面。默认值为：FRONT。"
+      - name: "biz_license_ocr"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "BizLicenseOCR"
+            handler_name: "BizLicenseOCR"
+            description: "精准识别营业执照上的统一社会信用代码、公司名称、主体类型、法定代表人、注册资本、组成形式、成立日期、营业期限和经营范围等字段。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片Url地址。支持图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经 Base64 编码后不超过 7M。文件下载时间不超过 3 秒。图片下载时间不超过3秒。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。支持的图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经Base64编码后不超过 7M。文件下载时间不超过 3 秒。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。"
+      - name: "passport_ocr"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "PassportOCR"
+            handler_name: "PassportOCR"
+            description: "支持中国大陆地区护照个人资料页识别包括英文姓名、中文姓名、国家码、护照号、出生地、出生日期、国籍英文、性别英文、有效期、签发地点英文、签发日期、持证人签名、护照机读码（MRZ码）等。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片的 Url 地址。要求图片经Base64编码后不超过 7M，分辨率建议500*800以上，支持PNG、JPG、JPEG、BMP格式。建议卡片部分占据图片2/3以上。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的 Base64 值。要求图片经Base64编码后不超过 7M，分辨率建议500*800以上，支持PNG、JPG、JPEG、BMP格式。建议卡片部分占据图片2/3以上。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。"
+      - name: "mlid_passport_ocr"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "MLIDPassportOCR"
+            handler_name: "MLIDPassportOCR"
+            description: "支持护照识别地区范围：可机读护照国家。包括中国港澳台地区、新加坡、马来西亚、泰国、美国、韩国、越南、澳大利亚、缅甸、印度尼西亚、日本、加拿大、老挝、巴基斯坦、哈萨克斯坦、法国、英国、德国、菲律宾、新西兰、印度、意大利、蒙古、孟加拉国、尼日利亚、柬埔寨、西班牙、摩洛哥、吉尔吉斯斯坦、埃及、荷兰、塔吉克斯坦、巴西、乌兹别克斯坦、伊拉克、阿尔及利亚、土耳其、南非、墨西哥、尼泊尔、白俄罗斯、叶门、阿富汗、沙特、肯尼亚、波兰、比利时、瑞典、奥地利、坦桑尼亚、委内瑞拉、阿根廷、喀麦隆、斯里兰卡、衣索比亚、约旦、瑞士、加纳、爱尔兰、哥伦比亚、苏丹、匈牙利、罗马尼亚、阿联酋、文莱、希腊、以色列、巴拿马、丹麦、伊朗、乌干达、挪威、秘鲁、葡萄牙、智利、塞尔维亚、芬兰、尚比亚、亚美尼亚、叙利亚、黎巴嫩、斯洛伐克、卡塔尔、古巴、朝鲜。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片的 Url 地址。要求图片经Base64编码后不超过 7M，分辨率建议500*800以上，支持PNG、JPG、JPEG、BMP、PDF格式。建议卡片部分占据图片2/3以上。图片下载时间不超过 3 秒。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。要求图片经Base64编码后不超过 7M，分辨率建议500*800以上，支持PNG、JPG、JPEG、BMP、PDF格式。建议卡片部分占据图片2/3以上。"
+      - name: "text_to_video"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "SubmitHunyuanTextToVideoJob"
+            handler_name: "SubmitHunyuanTextToVideoJob"
+            description: "在prompt中输入对视频内容的描述之后提交文生视频任务，会返回一个JobId。"
+            properties:
+              - name: "Prompt"
+                required: true
+                type: "string"
+                description: "视频内容的描述，中文正向提示词。最多支持200个 utf-8 字符（首尾空格不计入字符数）。"
+              - name: "NegativePrompt"
+                required: false
+                type: "string"
+                description: "视频内容的反向描述，中文反向提示词。最多支持200个 utf-8 字符。"
+              - name: "Resolution"
+                required: false
+                type: "string"
+                description: "生成视频的分辨率。当前支持输入：1280:720、720:1280、960:960、1104:816、816:1104，默认值为1280:720"
+              - name: "DirectorMode"
+                required: false
+                type: "integer"
+                description: "导演模式：视频会按照导演意图与视角呈现。1:开启 0:关闭，默认值为0"
+              - name: "LogoAdd"
+                required: false
+                type: "integer"
+                description: "为生成视频添加标识的开关，1：添加标识，0：不添加标识"
+                default: 1
+              - name: "LogoAdd"
+                required: false
+                type: "integer"
+                description: "为生成视频添加标识的开关，1：添加标识，0：不添加标识"
+                default: 1
+              - name: "LogoParam"
+                required: false
+                type: "object"
+                description: "标识内容设置，默认在生成视频的右下角添加“视频由 AI 生成”字样，您可根据自身需要替换为其他的标识图片。"
+                properties:
+                  - name: "LogoUrl"
+                    type: "string"
+                    required: false
+                    description: "水印Url"
+                  - name: "LogoImage"
+                    type: "string"
+                    required: false
+                    description: "水印Base64，Url和Base64二选一传入，如果都提供以Url为准。"
+                  - name: "LogoRect"
+                    type: "object"
+                    required: false
+                    description: "水印图片位于生成结果图中的坐标及宽高，将按照坐标对标识图片进行位置和大小的拉伸匹配。"
+                    properties:
+                      - name: "X"
+                        type: "integer"
+                        required: false
+                        description: "水印图框X坐标值。当值大于0时，坐标轴原点位于原图左侧，方向指右；当值小于0时，坐标轴原点位于原图右侧，方向指左。"
+                      - name: "Y"
+                        type: "integer"
+                        required: false
+                        description: "水印图框Y坐标值。当值大于0时，坐标轴原点位于原图上侧，方向指下；当值小于0时，坐标轴原点位于原图下侧，方向指上。"
+                      - name: "Width"
+                        type: "integer"
+                        required: false
+                        description: "水印图框宽度。"                   
+                      - name: "Height"
+                        type: "integer"
+                        required: false
+                        description: "水印图框高度。"             
+          - name: "QueryHunyuanTextToVideoJob"
+            handler_name: "QueryHunyuanTextToVideoJob"
+            description: "通过JobId提交请求获取混元文生视频的结果信息。"
+            properties:
+              - name: "JobId"
+                required: true
+                type: "string"
+                description: "任务ID。"
+      - name: "flight_invoice_ocr"
+        headers: ["SECRET_ID","SECRET_KEY","REGION"]
+        tools:
+          - name: "FlightInvoiceOCR"
+            handler_name: "FlightInvoiceOCR"
+            description: "支持机票行程单关键字段的识别，包括旅客姓名、有效身份证件号码、电子客票号码、验证码、填开单位、其他税费、燃油附加费、民航发展基金、保险费、销售单位代号、始发地、目的地、航班号、时间、日期、座位等级、承运人、发票消费类型、票价、合计金额、填开日期、国内国际标签、印刷序号、客票级别/类别、客票生效日期、有效期截止日期、免费行李等字段，支持航班信息多行明细输出。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片Url地址。支持图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经 Base64 编码后不超过 7M。文件下载时间不超过 3 秒。图片下载时间不超过3秒。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。支持的图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经Base64编码后不超过 7M。文件下载时间不超过 3 秒。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。"
+      - name: "vat_roll_invoice_ocr"
+        headers: ["SECRET_ID","SECRET_KEY","REGION"]
+        tools:
+          - name: "VatRollInvoiceOCR"
+            handler_name: "VatRollInvoiceOCR"
+            description: "对增值税发票（卷票）识别包括发票代码、合计金额(小写)、合计金额(大写)、开票日期、发票号码、购买方识别号、销售方识别号、校验码、销售方名称、购买方名称、发票消费类型、省、市、是否有公司印章、单价、金额、数量、服务类型、品名、种类等。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片Url地址。支持图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经 Base64 编码后不超过 7M。文件下载时间不超过 3 秒。图片下载时间不超过3秒。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。支持的图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经Base64编码后不超过 7M。文件下载时间不超过 3 秒。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。"
+      - name: "quota_invoice_ocr"
+        headers: ["SECRET_ID","SECRET_KEY","REGION"]
+        tools:
+          - name: "QuotaInvoiceOCR"
+            handler_name: "QuotaInvoiceOCR"
+            description: "支持定额发票的发票号码、发票代码、金额(大小写)、发票消费类型、地区及是否有公司印章等关键字段的识别。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片Url地址。支持图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经 Base64 编码后不超过 3M。文件下载时间不超过 3 秒。图片下载时间不超过3秒。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。支持的图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经Base64编码后不超过 3M。文件下载时间不超过 3 秒。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。"
+      - name: "duty_paid_proof_ocr"
+        headers: ["SECRET_ID","SECRET_KEY","REGION"]
+        tools:
+          - name: "DutyPaidProofOCR"
+            handler_name: "DutyPaidProofOCR"
+            description: "支持对完税证明的税号、纳税人识别号、纳税人名称、金额合计大写、金额合计小写、填发日期、税务机关、填票人等关键字段的识别。"
+            properties:
+              - name: "ImageUrl"
+                required: false
+                type: "string"
+                description: "图片Url地址。支持图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经 Base64 编码后不超过 7M。文件下载时间不超过 3 秒。图片下载时间不超过3秒。"
+              - name: "ImageBase64"
+                required: false
+                type: "string"
+                description: "图片的Base64值。支持的图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载文件经Base64编码后不超过 7M。文件下载时间不超过 3 秒。图片的ImageUrl、ImageBase64必须提供一个，如果都提供，只使用ImageUrl。"
+      - name: "search_faces"
+        headers: ["SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "SearchFaces"
+            handler_name: "SearchFaces"
+            description: "对给定一张人脸照片，和已有人脸库中的N个人脸进行比对，找出最相似的一张脸或多张脸，并给出相似度排序。"
+            properties:
+              - name: "GroupIds"
+                required: true
+                type: "array"
+                description: "希望搜索的人员库列表，上限100个。"
+                items:
+                  type: "string"
+              - name: "Url"
+                required: false
+                type: "string"
+                description: "图片的 Url 。支持PNG、JPG、JPEG、BMP，不支持 GIF 图片。对应图片 base64 编码后大小不可超过5M。Url、Image必须提供一个，如果都提供，只使用 Url。"
+              - name: "Image"
+                required: false
+                type: "string"
+                description: "图片 base64 数据，base64 编码后大小不可超过5M。支持PNG、JPG、JPEG、BMP，不支持 GIF 图片。"
+      - name: "wxpay"
+        headers: []
+        tools:
+          - name: "create-native-payment"
+            mcp_tool_handler: "WxPay"
+            description: "微信支付Native下单接口（服务商模式），生成支付二维码链接"
+            properties:
+              - name: "description"
+                required: true
+                type: "string"
+                description: "商品描述"
+              - name: "amount"
+                required: true
+                type: "integer"
+                description: "订单金额（单位：分）"
+          - name: "query-order-by-out-trade-no"
+            mcp_tool_handler: "WxPay"
+            description: "通过商户订单号查询微信支付订单状态（服务商模式）"
+            properties:
+              - name: "out_trade_no"
+                required: true
+                type: "string"
+                description: "商户订单号（6-32位字母数字组合）"
+      - name: "text_to_image_fast"
+        headers: ["SECRET_ID","SECRET_KEY","REGION"]
+        tools:
+          - name: "TextToImageFast"
+            handler_name: "TextToImageFast"
+            description: "根据输入的文本描述，智能生成与之相关的结果图（极速版）"
+            properties:
+              - name: "Prompt"
+                required: true
+                type: "string"
+                description: "文本描述。算法将根据输入的文本智能生成与之相关的图像。建议详细描述画面主体、细节、场景等，文本描述越丰富，生成效果越精美。不能为空，推荐使用中文。最多可传256个utf-8字符。"
+              - name: "Resolution"
+                required: false
+                type: "string"
+                description: "生成图分辨率，默认1024:1024。持的图像宽高比例: 1:1，3:4，4:3，9:16，16:9。支持的长边分辨率: 160，200，225，258，512，520，608，768，1024，1080，1280，1600，1620，1920，2048，2400，2560，2592，3440，3840，4096。"
+              - name: "Seed"
+                required: false
+                type: "integer"
+                description: "随机种子，默认随机。0：随机种子生成。不传：随机种子生成。正数：固定种子生成。"
+              - name: "Image"
+                required: false
+                type: "object"
+                description: "参考图。Base64 和 Url 必须提供一个，如果都提供以 Url 为准。当传入Image参数时，Style和Resolution参数不生效，输出图分辨率将保持Image传入图分辨率。图片限制：单边分辨率大于128且小于2048；图片小于6M；格式支持 jpg、jpeg、png、bmp、tiff、webp。"
+                properties:
+                  - name: "Url"
+                    type: "string"
+                    required: false
+                    description: "图片Url"
+                  - name: "Base64"
+                    type: "string"
+                    required: false
+                    description: "图片Base64"
+              - name: "Style"
+                required: false
+                type: "string"
+                description: "生成的图片风格，参考值：1：宫崎骏风格；2：新海诚风格；3：去旅行风格；4：水彩风格；5：像素风格；6：童话世界风格；7：奇趣卡通风格；8：赛博朋克风格；9：极简风格；10：复古风格；11：暗黑系风格；12：波普风风格；13：糖果色风格；14：胶片电影风格；15：素描风格；16：水墨画风格；17：油画风格；18：粉笔风格；19：粘土风格；20：毛毡风格；21：刺绣风格；22：彩铅风格；23：莫奈风格；24：毕加索风格；25：穆夏风格；26：古风二次元风格；27：都市二次元风格；28：悬疑风格；29：校园风格；30：都市异能风格。"
+              - name: "LogoAdd"
+                required: false
+                type: "integer"
+                description: "为生成结果图添加标识的开关，默认为1。1：添加标识。0：不添加标识。"
+                default: 1
+              - name: "LogoParam"
+                required: false
+                type: "object"
+                description: "标识内容设置。默认在生成结果图右下角添加“图片由 AI 生成”字样，您可根据自身需要替换为其他的标识图片。"
+                properties:
+                  - name: "LogoUrl"
+                    type: "string"
+                    required: false
+                    description: "水印Url"
+                  - name: "LogoImage"
+                    type: "string"
+                    required: false
+                    description: "水印Base64，Url和Base64二选一传入，如果都提供以Url为准。"
+                  - name: "LogoRect"
+                    type: "object"
+                    required: false
+                    description: "水印图片位于生成结果图中的坐标，将按照坐标对标识图片进行位置和大小的拉伸匹配。"
+                    properties:
+                      - name: "X"
+                        type: "integer"
+                        required: false
+                        description: "左上角X坐标"
+                      - name: "Y"
+                        type: "integer"
+                        required: false
+                        description: "左上角Y坐标"
+                      - name: "Width"
+                        type: "integer"
+                        required: false
+                        description: "方框宽度"                   
+                      - name: "Height"
+                        type: "integer"
+                        required: false
+                        description: "方框高度" 
+              - name: "RspImgType"
+                required: false
+                type: "string"
+                description: "返回图像方式（base64或url) ，二选一，默认为url。url 有效期为1小时。"
+      - name: "video_understand"
+        headers: ["SECRET_ID","SECRET_KEY"]
+        tools:
+          - name: "VideoUnderstand"
+            handler_name: "VideoUnderstand"
+            description: "根据输入的视频文件地址或视频帧，理解并返回具体的视频内容。视频时长支持2s～10min，最大支持传入数量为512帧，视频文件大小不超过100M， 最大图片数量支持不超过600张。"
+            properties:
+              - name: "VideoFrames"
+                required: false
+                type: "array"
+                description: "视频帧列表，传入视频帧的url"
+                items:
+                  type: "string"
+              - name: "VideoUrl"
+                required: false
+                type: "string"
+                description: "视频的Url。支持mpeg4/x264 mp4格式、avi格式、ogv,webm格式，视频时长支持2s～10min，最大支持传入数量为512帧。"
+              - name: "Fps"
+                required: false
+                type: "number"
+                description: "控制视频抽帧频率，取值范围为 0.1 ~5，表示每隔 1/fps秒抽取一帧，默认为1s抽取一帧"
+              - name: "Query"
+                required: false
+                type: "string"
+                description: "用户查询问题"  
+      - name: "video_make"
+        headers: ["APP_KEY","ACCESS_TOKEN"]
+        tools:
+          - name: "VideoMakeNoTrain"
+            handler_name: "VideoMakeNoTrain"
+            description: "无需训练，即可基于一个真人照片或视频素材，通过输入文本或音频，生成人物说话口型与输入内容相匹配的新视频。"
+            properties: 
+              - name: "VideoOrPhoto"
+                required: true
+                type: "integer"
+                description: "视频或图片，该字段必填。0：模板视频URL，1：模板照片URL"
+              - name: "DriverType"
+                required: false
+                type: "string"
+                description: "驱动类型。Text：文本驱动，要求InputSsml字段必填；OriginalVoice：原声音频驱动，要求InputAudioUrl字段必填。"
+              - name: "RefVideoUrl"
+                required: false
+                type: "string"
+                description: "模板视频URL，VideoOrPhoto为0时必填；支持mp4、mov、avi格式，文件大小不超过5G,单边像素要求在360-4096之间,视频时长支持1 - 600秒，建议时长在10秒到120秒。"
+              - name: "RefPhotoUrl"
+                required: false
+                type: "string"
+                description: "模板照片URL，VideoOrPhoto为1时必填；格式支持 jpg、jpeg、png、bmp、webp，文件大小必须在10M内，图片单边分辨率要求在[192~4096]之间，图片宽高比在1:2到2:1范围内，需要有真人或类真人的卡通人脸，避免上传无人脸、人脸不完整、不清晰、偏转角度过大、嘴部被遮挡的图片"
+              - name: "InputSsml"
+                required: false
+                type: "string"
+                description: "播报文本内容，支持 SSML 标签，支持的标签类型<phoneme>、<break>、<word>、<sub>、<say-as>、<insert-action>,不少于4个字（字数按 unicode 字符数计算）,上限300字"
+              - name: "InputAudioUrl"
+                required: false
+                type: "string"
+                description: "驱动数智人的音频URL。DriverType为OriginalVoice时，该字段必填。支持wav、mp3、wma、m4a、aac、ogg格式，时长不超过10分钟，不少于1秒，大小不超过100MB"
+              - name: "SpeechParam"
+                required: false
+                type: "object"
+                description: "定义音频的详细参数。DriverType 为 Text 时，该字段必填。"
+                properties:
+                  - name: "Speed"
+                    type: "number"
+                    required: false
+                    description: "语速（1.0为正常语速，范围[0.5-1.5]，值为0.5时播报语速最慢，值为1.5时播报语速最快。DriverType 为 Text 时，该字段必填。"
+                  - name: "TimbreKey"
+                    type: "string"
+                    required: false
+                    description: "音色 key，DriverType 为Text时，该字段必填。在 male_1-20、female_1-23（即男声1-20、女声1-23）间的音色不支持音量调节。"
+          - name: "DescribeTimbre"
+            handler_name: "DescribeTimbre"
+            description: "查询客户拥有的声音资产信息，包括复刻声音和公共声音"
+            properties:
+              - name: "PageIndex"
+                required: true
+                type: "integer"
+                description: "当前页"
+              - name: "PageSize"
+                required: true
+                type: "integer"
+                description: "页面大小（最大不超过100）"
+              - name: "TimbreKey"
+                required: false
+                type: "string"
+                description: "数智人音色 code，支持精确匹配"
+              - name: "TimbreName"
+                required: false
+                type: "string"
+                description: "数智人音色名称，支持模糊匹配"
+          - name: "GetProgress"
+            handler_name: "GetProgress"
+            description: "通过 TaskId 来查询任务的制作进度和结果，当返回值里的 Progress 字段值为100时，即可通过 MediaUrl 获取最终音视频的下载地址，如果是视频制作也会返回 SubtitlesUrl 字段获取最终 SRT 字幕地址。"
+            properties:
+              - name: "TaskId"
+                required: true
+                type: "string"
+                description: "任务ID"
+      - name: "extract_doc_basic_ocr"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "ExtractDocBasic"
+            handler_name: "ExtractDocBasic"
+            description: "支持识别并提取制式卡证、票据、表单等结构化场景的字段信息。"
+            properties:
+              - name: "ImageUrl"
+                type: "string"
+                required: false
+                description: "图片的 Url 地址。支持的图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载图片经 Base64 编码后不超过 10M。"
+              - name: "ImageBase64"
+                type: "string"
+                required: false
+                description: "图片的 Base64 值。支持的图片格式：PNG、JPG、JPEG，暂不支持 GIF 格式。支持的图片大小：所下载图片经Base64编码后不超过 10M。图片下载时间不超过 3 秒。图片的 ImageUrl、ImageBase64 必须提供一个，如果都提供，只使用 ImageUrl。"
+              - name: "ConfigId"
+                type: "string"
+                required: false
+                description: "配置id支持"
+      - name: "extract_doc_multi_ocr"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "ExtractDocMulti"
+            handler_name: "ExtractDocMulti"
+            description: "支持识别并提取场景复杂、版式多等结构化场景的字段信息。"
+            properties:
+              - name: "ImageUrl"
+                type: "string"
+                required: false
+                description: "图片的 Url 地址。支持的图片格式：PNG、JPG、JPEG，WORD，EXCEL，暂不支持 GIF 格式。支持的图片大小：所下载图片经 Base64 编码后不超过 10M。图片下载时间不超过 3 秒。"
+              - name: "ImageBase64"
+                type: "string"
+                required: false
+                description: "图片的 Base64 值。支持的图片格式：PNG、JPG、JPEG，WORD，EXCEL，暂不支持 GIF 格式。支持的图片大小：所下载图片经Base64编码后不超过 10M。。图片的 ImageUrl、ImageBase64 必须提供一个，如果都提供，只使用 ImageUrl。"
+              - name: "ConfigId"
+                type: "string"
+                required: false
+                description: "配置id支持"
+      - name: "recognize_general_invoice_ocr"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "RecognizeGeneralInvoice"
+            handler_name: "RecognizeGeneralInvoice"
+            description: "通用票据识别，支持单选识别某类票据，已支持票种30+，并支持非包含类型的其他发票的智能识别。"
+            properties:
+              - name: "ImageUrl"
+                type: "string"
+                required: false
+                description: "图片的 Url 地址。支持的图片格式：PNG、JPG、JPEG、PDF，暂不支持 GIF 格式。支持的图片大小：所下载图片经 Base64 编码后不超过 10M。图片下载时间不超过 3 秒。"
+              - name: "ImageBase64"
+                type: "string"
+                required: false
+                description: "图片的 Base64 值。支持的图片格式：PNG、JPG、JPEG、PDF，暂不支持 GIF 格式。支持的图片大小：所下载图片经Base64编码后不超过 10M。图片下载时间不超过 3 秒。图片的 ImageUrl、ImageBase64 必须提供一个，如果都提供，只使用 ImageUrl。"
+              - name: "Types"
+                type: "array"
+                required: false
+                description: "需要识别的票据类型列表，为空或不填表示识别全部类型。当传入单个类型时，图片均采用该票类型进行处理。"
+                items:
+                  type: "integer"
+      - name: "hunyuan_to_3d_job"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "SubmitHunyuanTo3DJob"
+            handler_name: "SubmitHunyuanTo3DJob"
+            description: "提交混元生3D任务，基于混元大模型，根据输入的文本描述/图片智能生成3D。"
+            properties:
+              - name: "Prompt"
+                type: "string"
+                required: false
+                description: "文生3D，3D内容的描述，中文正向提示词。最多支持1024个 utf-8 字符。"
+              - name: "ImageBase64"
+                type: "string"
+                required: false
+                description: "输入图 Base64 数据。格式：jpg，png，jpeg，webp。ImageBase64、ImageUrl和 Prompt必填其一，且Prompt和ImageBase64/ImageUrl不能同时存在。"
+              - name: "ImageUrl"
+                type: "string"
+                required: false
+                description: "输入图Url。格式：jpg，png，jpeg，webp。ImageBase64/ImageUrl和 Prompt必填其一，且Prompt和ImageBase64/ImageUrl不能同时存在。"
+              - name: "ResultFormat"
+                type: "string"
+                required: false
+                description: "生成模型的格式，仅限制生成一种格式。生成模型文件组默认返回obj格式。可选值：OBJ，GLB，STL，USDZ，FBX，MP4。"
+          - name: "QueryHunyuanTo3DJob"
+            handler_name: "QueryHunyuanTo3DJob"
+            description: "查询混元生3D任务，输出文件和预览图片url。"
+            properties:
+              - name: "JobId"
+                type: "string"
+                required: false
+                description: "任务ID。"
+      - name: "detect_pet"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "DetectPet"
+            handler_name: "DetectPet"
+            description: "传入一张图片，识别出图片中是否存在宠物。"
+            properties:
+              - name: "ImageUrl"
+                type: "string"
+                required: false
+                description: "图片的URL地址。图片格式支持JPG、PNG、BMP。"
+              - name: "ImageBase64"
+                type: "string"
+                required: false
+                description: "图片经过base64编码的内容。与ImageUrl同时存在时优先使用ImageUrl字段。图片格式支持JPG、PNG、BMP。"
+      - name: "detect_security"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "DetectSecurity"
+            handler_name: "DetectSecurity"
+            description: "安全属性识别可对图片中人体安全防护属性进行识别，支持识别安全帽，反光衣，护目镜，工服，手套，工地安全带，口罩，抽烟，玩手机等多种属性。"
+            properties:
+              - name: "ImageUrl"
+                type: "string"
+                required: false
+                description: "图片的 Url 。ImageUrl和ImageBase64必须提供一个，同时存在时优先使用ImageUrl字段。图片格式支持PNG、JPG、JPEG、不支持 GIF 图片。"
+              - name: "ImageBase64"
+                type: "string"
+                required: false
+                description: "图片经过base64编码的内容。图片格式支持PNG、JPG、JPEG、暂不支持GIF格式。"
+      - name: "assess_quality"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "AssessQuality"
+            handler_name: "AssessQuality"
+            description: "评估输入图片在视觉上的质量，从多个方面评估，并同时给出综合的、客观的清晰度评分，和主观的美观度评分。"
+            properties:
+              - name: "ImageUrl"
+                type: "string"
+                required: false
+                description: "图片URL地址。图片格式支持PNG、JPG、JPEG。"
+              - name: "ImageBase64"
+                type: "string"
+                required: false
+                description: "图片经过Base64编码的内容。最大不超过4M。与ImageUrl同时存在时优先使用ImageUrl字段。图片格式支持PNG、JPG、JPEG。"
+      - name: "detect_ai_fake_faces"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "DetectAIFakeFaces"
+            handler_name: "DetectAIFakeFaces"
+            description: "提供对人脸图片、视频的防攻击检测能力，可针对性有效识别高仿真的AIGC换脸、高清翻拍、批量黑产攻击、水印等攻击痕迹。"
+            properties:
+              - name: "FaceInput"
+                type: "string"
+                required: false
+                description: "传入需要检测的人脸图片或人脸视频（当前仅支持单人脸检测），使用base64编码的形式。图片支持jpg、png格式，视频支持mp4、avi、flv格式。"
+              - name: "FaceInputType"
+                type: "integer"
+                required: false
+                description: "传入的类型。取值范围：1：传入的是图片类型。2：传入的是视频类型。"
+              - name: "Url"
+                type: "string"
+                required: false
+                description: "传入图片或视频的url地址，当FaceInput为空时有效"
+      - name: "try_lipstick_pic"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "TryLipstickPic"
+            handler_name: "TryLipstickPic"
+            description: "对图片中的人脸嘴唇进行着色。"
+            properties:
+              - name: "LipColorInfos"
+                type: "array"
+                required: true
+                description: "唇色信息。"
+                items:
+                  type: "object"
+                  properties:
+                    - name: "RGBA"
+                      type: "object"
+                      description: "使用RGBA模型试唇色。"
+                      required: false
+                      properties:
+                        - name: "R"
+                          type: "integer"
+                          description: "R通道数值。[0,255]。"
+                        - name: "G"
+                          type: "integer"
+                          description: "G通道数值。[0,255]。"
+                        - name: "B"
+                          type: "integer"
+                          description: "B通道数值。[0,255]。"
+                        - name: "A"
+                          type: "integer"
+                          description: "A通道数值。[0,100]。建议取值50。"
+                    - name: "ModelId"
+                      type: "string"
+                      description: "使用已注册的 LUT 文件试唇色。ModelId 和 RGBA 两个参数只需提供一个，若都提供只使用 ModelId。"
+                      required: false
+                    - name: "FaceRect"
+                      type: "object"
+                      description: "人脸框位置。若不输入则选择 Image 或 Url 中面积最大的人脸。"
+                      required: false
+                      properties:
+                        - name: "X"
+                          type: "integer"
+                          description: "人脸框左上角横坐标。"
+                        - name: "Y"
+                          type: "integer"
+                          description: "人脸框左上角纵坐标。"
+                        - name: "Width"
+                          type: "integer"
+                          description: "人脸框宽度。"
+                        - name: "Height"
+                          type: "integer"
+                          description: "人脸框高度。"
+                    - name: "ModelAlpha"
+                      type: "integer"
+                      description: "涂妆浓淡[0,100]。建议取值50。本参数仅控制ModelId对应的涂妆浓淡。"
+                      required: false
+              - name: "Image"
+                type: "string"
+                required: false
+                description: "图片 base64 数据，base64 编码后大小不可超过6M。支持PNG、JPG、JPEG、BMP，不支持 GIF 图片。暂不支持带有alpha透明通道的图片。"
+              - name: "Url"
+                type: "string"
+                required: false
+                description: "图片的 Url ，对应图片 base64 编码后大小不可超过6M。图片的 Url、Image必须提供一个，如果都提供，只使用 Url。支持PNG、JPG、JPEG、BMP，不支持 GIF 图片。"
+              - name: "RspImgType"
+                type: "string"
+                required: false
+                description: "返回图像方式（base64 或 url ) ，二选一。url有效期为1天。"
+      - name: "style_image_pro"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "StyleImagePro"
+            handler_name: "StyleImagePro"
+            description: "上传一张照片，输出滤镜处理后的图片。"
+            properties:
+              - name: "FilterType"
+                type: "integer"
+                description: "滤镜类型"
+                required: true
+              - name: "Image"
+                type: "string"
+                required: false
+                description: "图片 base64 数据，base64 编码后大小不可超过5M。支持PNG、JPG、JPEG、BMP，不支持 GIF 图片。"
+              - name: "Url"
+                type: "string"
+                required: false
+                description: "图片的 Url ，对应图片 base64 编码后大小不可超过5M。图片的 Url、Image必须提供一个，如果都提供，只使用 Url。支持PNG、JPG、JPEG、BMP，不支持 GIF 图片。"
+              - name: "RspImgType"
+                type: "string"
+                required: false
+                description: "返回图像方式（base64 或 url ) ，二选一。url有效期为1天。默认为base64。"
+      - name: "submit_volcano_engine_video"
+        headers: ["ARK_API_KEY"]
+        tools:
+          - name: "SubmitVolcengineVideo"
+            handler_name: "SubmitVolcengineVideo"
+            description: "模型会依据传入的图片及文本信息生成视频。异步接口，获取ID后，需要通过 QueryVolcengineVideo 来查询任务的状态。"
+            properties:
+              - name: "model"
+                type: "string"
+                required: true
+                description: "您需要调用的模型的ID（Model ID）。"
+              - name: "content"
+                type: "array"
+                required: true
+                description: "输入给模型，生成视频的信息，支持文本信息和图片信息。"
+                items:
+                  type: "object"
+                  properties:
+                    - name: "type"
+                      type: "string"
+                      required: false
+                      description: "输入内容的类型。text：输入给模型的文本内容，描述期望生成的视频，image_url：输入给模型的图片对象。"
+                    - name: "text"
+                      type: "string"
+                      required: false
+                      description: "输入给模型的文本内容，描述期望生成的视频。如果type=text，则此字段必填。"
+                    - name: "image_url"
+                      type: "string"
+                      required: false
+                      description: "输入给模型的图片对象。如果type=image_url，则此字段必填，可以是图片URL或图片 Base64 编码。"
+                    - name: "role"
+                      type: "string"
+                      required: false
+                      description: "图片的位置或用途。"
+              - name: "callback_url"
+                type: "string"
+                required: false
+                description: "填写本次生成任务结果的回调通知地址。当视频生成任务有状态变化时，方舟将向此地址推送 POST 请求。"
+              - name: "return_last_frame"
+                type: "boolean"
+                required: false
+                description: "(Seedance 系列模型支持该参数)。true：返回生成视频的尾帧图像。false：不返回生成视频的尾帧图像。"
+          - name: "QueryVolcengineVideo" 
+            handler_name: "QueryVolcengineVideo"
+            description: "输入您需要查询的视频生成任务的 ID，获取生成的视频信息。任务为成功时，会输出生成视频的video_url。"
+            properties:
+              - name: "id"
+                type: "string"
+                required: true
+                description: "您需要查询的视频生成任务的 ID。"
+      - name: "change_age_pic"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "ChangeAgePic"
+            handler_name: "ChangeAgePic"
+            description: "上传一张人脸图片，实现人脸年龄变化功能，可以让人脸看起来更年轻或更成熟。"
+            properties:
+              - name: "Image"
+                type: "string"
+                required: false
+                description: "图片base64数据，base64编码后大小不可超过5M，单边分辨率不超过4000。支持PNG、JPG、JPEG、BMP，不支持GIF图片。Image和Url必须提供一个，如果都提供，只使用Url。"
+              - name: "Url"
+                type: "string"
+                required: false
+                description: "图片的Url地址。对应图片base64编码后大小不可超过5M，单边分辨率不超过4000。支持PNG、JPG、JPEG、BMP，不支持GIF图片。Image和Url必须提供一个，如果都提供，只使用Url。"
+              - name: "Age"
+                type: "integer"
+                required: true
+                description: "变化到的人脸年龄 [10,80]"
+              - name: "RspImgType"
+                type: "string"
+                required: false
+                description: "返回图片类型，url：返回图片链接，base64：返回base64编码。默认为url。"
+      - name: "swap_gender_pic"
+        headers: ["SECRET_ID","SECRET_KEY", "REGION"]
+        tools:
+          - name: "SwapGenderPic"
+            handler_name: "SwapGenderPic"
+            description: "用户上传一张人脸图片，基于人脸编辑与生成算法，输出一张人脸性别转换的图片。男变女可实现美颜、淡妆、加刘海和长发的效果；女变男可实现加胡须、变短发的效果。"
+            properties:
+              - name: "Image"
+                type: "string"
+                required: false
+                description: "图片base64数据，base64编码后大小不可超过5M，单边分辨率不超过4000。支持PNG、JPG、JPEG、BMP，不支持GIF图片。Image和Url必须提供一个，如果都提供，只使用Url。"
+              - name: "Url"
+                type: "string"
+                required: false
+                description: "图片的Url地址。对应图片base64编码后大小不可超过5M，单边分辨率不超过4000。支持PNG、JPG、JPEG、BMP，不支持GIF图片。Image和Url必须提供一个，如果都提供，只使用Url。"
+              - name: "Gender"
+                type: "integer"
+                required: true
+                description: "性别转换类型，0表示男变女，1表示女变男。"
+              - name: "RspImgType"
+                type: "string"
+                required: false
+                description: "返回图片类型，url：返回图片链接，base64：返回base64编码。默认为url。"
+  placeholder.yaml: |
+    # placeholder.yaml
+  plugin-exec_en-US.json: |
+    {
+      "参数不合法。": "Invalid parameters.",
+      "返回不合法。": "Invalid response.",
+      "应用不存在。": "Application does not exist.",
+      "工具不存在。": "Tool does not exist.",
+      "工具调用超时。": "Tool call timed out.",
+      "工具调用失败。": "Tool call failed.",
+      "未查询到相关信息。": "No relevant information found.",
+      "位置信息不合法。": "Invalid location information.",
+      "应用配置不合法。": "Invalid application configuration.",
+      "腾讯云SDK错误。": "Tencent Cloud SDK error.",
+      "调用服务错误。": "Service call error.",
+      "插件不支持腾讯云CAM角色授权。": "The plug-in does not support Tencent Cloud CAM role authorization.",
+      "CAM授权信息不合法。": "CAM authorization information is illegal.",
+      "Header信息不合法。": "The header information is invalid.",
+      "插件计费状态异常。": "The plug-in billing status is abnormal.",
+      "用量上报失败。": "Usage reporting failed.",
+      "Prompt 渲染失败": "Prompt Rendering Failed",
+      "签名/鉴权错误": "Signature/authentication error",
+      "工具调用失败":"Tool call failed.",
+      "请求的次数超过了频率限制": "The number of requests exceeds the rate limit",
+      "超过配额限制": "Exceeding quota limit",
+      "腾讯云地域错误": "Tencent Cloud region error",
+      "腾讯云资源错误": "Tencent Cloud resource error",
+      "返回内容为空": "The returned content is empty",
+      "http状态码错误": "HTTP status code error"
+    }
+  plugin-exec_zh-CN.json: |
+    {
+      "参数不合法。": "参数不合法。",
+      "返回不合法。": "返回不合法。",
+      "应用不存在。": "应用不存在。",
+      "工具不存在。": "工具不存在。",
+      "工具调用超时。": "工具调用超时。",
+      "工具调用失败。": "工具调用失败。",
+      "未查询到相关信息。": "未查询到相关信息。",
+      "位置信息不合法。": "位置信息不合法。",
+      "应用配置不合法。": "应用配置不合法。",
+      "腾讯云SDK错误。": "腾讯云SDK错误。",
+      "调用服务错误。": "调用服务错误。",
+      "插件不支持腾讯云CAM角色授权。": "插件不支持腾讯云CAM角色授权。",
+      "CAM授权信息不合法。": "CAM授权信息不合法。",
+      "Header信息不合法。": "Header信息不合法。",
+      "插件计费状态异常。": "插件计费状态异常。",
+      "用量上报失败。": "用量上报失败。",
+      "Prompt 渲染失败": "Prompt 渲染失败",
+      "签名/鉴权错误": "签名/鉴权错误",
+      "工具调用失败":"工具调用失败",
+      "请求的次数超过了频率限制": "请求的次数超过了频率限制",
+      "超过配额限制": "超过配额限制",
+      "腾讯云地域错误": "腾讯云地域错误",
+      "腾讯云资源错误": "腾讯云资源错误",
+      "返回内容为空": "返回内容为空",
+      "http状态码错误": "http状态码错误"
+    }
+  trpc_go.yaml: |
+    global:                             #全局配置
+      namespace: ${NAME_SPACE}           #环境类型，分正式production和非正式development两种类型
+      env_name: ${ENV}                    #环境名称，非正式环境下多环境的名称
+      enable_set: ${ENABLE_SET}         #是否启用set
+      full_set_name: ${FULL_SET_NAME}   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+    
+    server:                                            #服务端配置
+      app: KEP                                         #业务的应用名
+      server: plugin-exec-server                       #进程服务名
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - recovery
+        - galileo
+        - i18n-adp
+        - opentelemetry                               # 天机阁
+      stream_filter:
+        - galileo
+      admin:
+        ip: ${POD_IP}  # admin 的 ip，配置网卡 nic 也可以
+        port: 8081     # admin 的 port，必须同时配置这里的 ip port 才会启动 admin 
+      service:                                          #业务服务提供的service，可以有多个
+        - name: trpc.KEP.plugin-exec-server.PluginExec  #service的路由名称
+          ip: ${POD_IP}                                 #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+          port: 8000                                    #服务监听端口 可使用占位符 ${port}
+          network: tcp                                  #网络监听类型  tcp udp
+          protocol: trpc                                #应用层协议 trpc http
+          timeout: 7200000                               #请求最长处理时间 单位 毫秒
+          server_async: true                            #开启异步处理
+          idletime: 7200000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+        - name: trpc.KEP.plugin-exec-server.PluginMCP  #service的路由名称
+          ip: ${POD_IP}                                 #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+          port: 8001                                    #服务监听端口 可使用占位符 ${port}
+          network: tcp                                  #网络监听类型  tcp udp
+          protocol: http_no_protocol                                #应用层协议 trpc http
+          timeout: 600000                               #请求最长处理时间 单位 毫秒
+          server_async: true                            #开启异步处理
+          idletime: 6000000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+        - name: trpc.KEP.plugin-exec-server.PluginGateway  #service的路由名称
+          ip: ${POD_IP}                                 #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+          port: 8002                                    #服务监听端口 可使用占位符 ${port}
+          network: tcp                                  #网络监听类型  tcp udp
+          protocol: http_no_protocol                    #应用层协议 trpc http
+          timeout: 600000                               #请求最长处理时间 单位 毫秒
+          server_async: true                            #开启异步处理
+          idletime: 6000000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+    
+    client:                                            #客户端调用的后端配置
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - galileo
+        - opentelemetry
+      stream_filter:
+        - galileo
+      service:
+        # 大模型底座
+        - name: trpc.SmartAssistant.LLMManagerServer.Chat
+          target: ip://llm-manager-server.{{ .Release.Namespace }}.svc.cluster.local:10001
+          protocol: trpc
+          network: tcp
+          timeout: 600000
+        - name: trpc.adp.ai-gateway.api
+          network: tcp
+          protocol: http
+          target: ip://ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 1800000
+    
+        - name: trpc.KEP.bot-admin-config-server.Api
+          callee: trpc.KEP.bot_admin_config_server.Api
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+    
+        # Admin
+        - callee: trpc.adp.app_admin_proxy.Api
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 60000
+    
+        # PluginConfigApi
+        - callee: trpc.KEP.plugin_config_server.PluginConfigApi
+          name: trpc.KEP.plugin-config-server.PluginConfigApi
+          target: ip://pluginconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+    
+        # PluginConfigApi
+        - callee: trpc.adp.plugin_config.PluginConfigApi
+          target: ip://pluginconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+    
+        # CodeExec
+        - callee: trpc.KEP.code_interpreter_dispatcher.CodeExec
+          name: trpc.KEP.code-interpreter-dispatcher
+          target: ip://codeinterpreterdispatcher.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          network: tcp
+          timeout: 6000000
+    
+        # CodeExec
+        - callee: trpc.adp.plugin_code_interpret.CodeExec
+          target: ip://codeinterpreterdispatcher.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          network: tcp
+          timeout: 6000000
+    
+        # URL 解析
+        - name: trpc.SmartAssistant.WebParserServer.ParserObj 
+          target: ip://web-parser-server.{{ .Release.Namespace }}.svc.cluster.local:10001
+          protocol: trpc
+          network: tcp
+          timeout: 30000
+    
+        # Chat
+        - name: qbot.qbot.chat.StreamChat
+          target: ip://chat.{{ .Release.Namespace }}.svc.cluster.local:9190
+          protocol: trpc
+          timeout: 60000000
+    
+        # rag
+        - callee: trpc.KEP.bot_rag_server.Chat
+          target: ip://bot-rag-server.{{ .Release.Namespace }}.svc.cluster.local:8001
+          network: tcp
+          protocol: trpc
+          timeout: 60000000
+    
+        # rag
+        - callee: trpc.adp.rag_exec.Chat
+          target: ip://bot-rag-server.{{ .Release.Namespace }}.svc.cluster.local:8001
+          network: tcp
+          protocol: trpc
+          timeout: 6000000
+    
+        # # 彩云天气
+        # - name: weather.caiyun
+        #   protocol: http
+        #   network: tcp
+        #   timeout: 5000
+        #   target: dns://api.caiyunapp.com
+    
+        # 腾讯位置服务
+        # - name: tencent.location
+        #   protocol: http
+        #   network: tcp
+        #   timeout: 5000
+        #   target: dns://apis.map.qq.com
+    
+        # redis
+        - name: redis.plugin-exec-server
+          target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/14
+          network: tcp
+          password: "{{ .Values.global.components.redis.password }}"
+          timeout: 800
+    
+        # 新闻db
+        #- name: mysql.news
+        #  target: dsn://writeuser:NCc5OaxKk6hZZyHp@tcp(SmartService.mdb.mig:15276)/db_digital_content?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+         # token截断服务
+    
+        - name: trpc.KEP.bot-llm-server.llm
+          callee: trpc.KEP.bot_llm_server.llm
+          target: ip://botllmserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          network: tcp
+          timeout: 6000
+    
+        # token计数
+        - name: trpc.adp.model_token_count.Tokenizer
+          target: ip://botllmserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          network: tcp
+          timeout: 6000
+    
+        # cos
+        - name: trpc.http.cos.Access
+          namespace: Production
+          network: tcp
+          protocol: http
+          {{ if eq .Values.global.components.s3.providerType "minio" }}
+          target: ip://minio.{{ .Release.Namespace }}.svc.cluster.local:80
+          {{ else if eq .Values.global.components.s3.providerType "obs" }}
+          target: ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}
+          {{ else }}
+          target: dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn
+          {{ end }}
+          timeout: 5000
+    
+        # # 喜马拉雅api
+        # - name: ximalaya.api
+        #   protocol: http
+        #   network: tcp
+        #   timeout: 5000
+        #   target: dns://api.ximalaya.com
+    
+        # 腾讯医典服务
+        # - name: medbaike.partner-agent-server
+        #   protocol: http
+        #   network: tcp
+        #   timeout: 5000
+        #   target: dns://preview.baike.qq.com
+        #   namespace: Test
+    
+        # 媒体AI适配器
+        # - name: trpc.aimedia.adapter.Adapter
+        #   namespace: Development
+        #   network: tcp
+        #   protocol: http
+        #   target: polaris://trpc.aimedia.adapter.Adapter
+        #   timeout: 600000
+    
+        - name: trpc.KEP.bot_knowledge_config_server.Api
+          target: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+    
+        - callee: trpc.adp.kb_config.Api
+          name: trpc.KEP.bot-knowledge-config-server.Api
+          target: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 600000
+    
+        # 计费服务
+        - name: qbot.finance.finance.Finance
+          target: ip://finance.{{ .Release.Namespace }}.svc.cluster.local:9090
+          network: tcp
+          timeout: 300000
+    
+        - name: mysql.adp.prompt
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+    
+        # app-config Api
+        - name: trpc.adp.app_config.Api
+          target: ip://app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 60000
+    
+        # chat sse TODO….
+        - callee: trpc.chat.sse
+          name: trpc.chat.sse
+          namespace: Production
+          network: tcp
+          protocol: http
+          timeout: 300000
+    
+    plugins:                                          #插件配置
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: console                           #控制台标准输出 默认
+            level: error                              #标准输出日志的级别
+            caller_skip: 3
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+          - writer: file                              #本地文件日志
+            level: info                               #本地文件滚动日志的级别
+            writer_config:
+              filename: /app/logs/trpc.log    #本地文件滚动日志存放的路径
+              max_size: 100                             #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false                          #日志文件是否压缩
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+        galileo:
+          verbose: error   # 伽利略自身的诊断日志级别，取值范围：debug, info, error, none，日志输出在 ./galileo/galileo.log 中。
+          ocp_addr: "http://127.0.0.1"
+          config: #配置
+            config_server: "http://127.0.0.1"
+            register_server: "http://127.0.0.1"
+            self_monitor:
+              collector:
+                addr: "http://127.0.0.1"
+            metrics_config: # 指标配置
+              enable: false    # 是否启用指标
+            traces_config: # 追踪配置
+              enable: true    # 是否启用追踪，默认 true。如果设置为 false，会中断 trace，让上游的调用链不完整。v0.3.7 以上生效。
+              processor: # 追踪数据处理相关配置
+                sampler: # 采样器配置
+                  fraction: 0   # 采样比例，默认 0。（v0.11.0)
+                  error_fraction: 0
+                  enable_min_sample: true  # 启用每分钟每接口最少 1 个请求采样，默认 true (v0.11.0)。
+                  enable_dyeing: true # 开启染色采样，默认 true。
+                disable_trace_body: true          # 若为 true，则关闭 trace 中对 req 和 rsp 的 body 上报，可以大幅提高上报性能。默认 true。
+                enable_deferred_sample: false     # 开启延迟采样（请求处理完采样），默认 false。0.3.0 以上生效。
+                deferred_sample_error: false      # 开启延迟采样出错采样（请求处理完出现错误采样），默认 false。0.3.0 以上生效。
+                deferred_sample_slow_duration_ms: 1000    # 慢操作阈值（请求耗时超过该值采样），单位 ms，默认 1000。0.3.0 以上生效。
+                disable_parent_sampling: false            # 忽略上游的采样结果，默认 false。v0.3.7 以上生效。
+              exporter:
+                collector:
+                  addr: "127.0.0.1:80"
+            logs_config: # 日志配置
+              enable: false    # 是否启用日志
+              processor: # 日志数据处理相关配置
+                only_trace_log: false  # 是否只上报命中 trace 的 log，默认关闭
+                must_log_traced: false # 是否命中 traced 不管任何级别日志都上报，默认关闭。v0.3.22 以上生效
+                trace_log_mode: 0   # debug 访问日志 (access_log) 打印模式，0,1：单行打印，3：多行打印，2：不打印，默认 0
+                level: debug        # 上报到远程的日志级别，默认 error
+                enable_recovery: true # 是否捕获 panic，默认 true
+            profiles_config:    # profile配置
+              enable: false # 是否启用 profile
+              processor: # profile 数据处理相关配置
+                profile_types: ["cpu", "heap"] # 采集 profile 的类型，支持 cpu、heap、mutex、block、goroutine，默认开启 cpu 和 heap。
+            version: 1        # 版本号，默认 0，此版本号用于控制远程配置和本地配置的优先级，版本号高的优先，一般设置成 1 即可。
+          resource: # resource 资源信息，在 SDK 运行期间不会改变。resource 中的字段一般不需要配置，默认会填充。
+            platform: STKE   # 服务部署的平台，如 PCG-123, STKE, 默认 PCG-123
+            
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/
+            - name: rainbow-comm
+              path: /app/
+      # registry: #服务注册配置
+      #   polaris: #北极星名字注册服务的配置
+      #     debug: true
+      #     register_self: false
+      #     heartbeat_interval: 3000                    #名字注册服务心跳上报间隔
+      #     heartbeat_timeout: 1000                     #名字服务心跳超时
+      #     service:
+      #       - name: trpc.KEP.plugin-exec-server.PluginExec    #service name 与上面的service配置一一对应
+      #         namespace: Development              #环境类型，分正式Production和非正式Development两种类型
+      #         token: 83e144f7b44241ab95d831db5aa795f9             #服务注册所需要的 token
+      #       - name: trpc.KEP.plugin-exec-server.PluginMCP    #service name 与上面的service配置一一对应
+      #         namespace: Development              #环境类型，分正式Production和非正式Development两种类型
+      #         token: f52d84a19f284b8d955d5d4d260204cd             #服务注册所需要的 token
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+            - zh-CN
+            - en-US
+          data_provider:
+            type: rainbow
+            prefix: plugin-exec
+            error_prefix: error
+            char_scaling_factor:
+              zh-CN: 1
+              en-US: 3
+      selector: #针对用户自定义的selector的配置
+        polaris: #针对polaris整体api的内部配置
+          protocol: grpc                              #名字服务远程交互协议类型

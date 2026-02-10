@@ -1,0 +1,874 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-agent-config
+  namespace: {{ .Release.Namespace }}
+data:
+  agent-config_en-US.json: |
+    {
+      "应用ID为空": "Application ID cannot be empty",
+      "AgentID为空": "Agent ID cannot be empty",
+      "获取测试环境Agent失败": "Failed to retrieve test environment agent",
+      "获取发布环境Agent失败": "Failed to retrieve production environment agent",
+      "Agent": "Agent",
+      "名称": "Name",
+      "模型": "Model",
+      "模型选择": "Model Selection",
+      "温度": "Temperature",
+      "Top-P": "Top-P",
+      "最大推理轮数": "Max Reasoning Rounds",
+      "上下文记忆轮数": "History Limit",
+      "转交描述": "Handoff Description",
+      "转交关系": "Handoff Relationship",
+      "提示词": "Prompt",
+      "插件": "Plugin",
+      "新增": "Add",
+      "修改": "Modify",
+      "删除": "Delete",
+      "知识库问答": "Knowledge Base QA",
+      "是": "Yes",
+      "否": "No",
+      "；": ";",
+      ".": ".",
+      "/": "/",
+      "变更为": "Changed to",
+      "工具描述变更为": "Tool description changed to",
+      "值变更为": "Value changed to",
+      "必填属性变更为": "Required attribute changed to",
+      "模型名称变更为": "Model name changed to",
+      "配置": "Configuration",
+      "配置参数": "Configuration Parameters",
+      "头部参数": "Header Parameter",
+      "输入参数": "Input Parameter",
+      "输出参数": "Output Parameter",
+      "子参数": "Sub Parameter",
+      "单选参数": "Single-choice Parameter",
+      "多选参数": "Multiple-choice Parameter",
+      "知识库": "Knowledge Base",
+      "参数": "Parameter",
+      "新增参数": "Add Parameter",
+      "删除参数": "Delete Parameter",
+      "参数名称变更为": "Parameter name changed to",
+      "Input配置发生变更": "Input configuration changed",
+      "描述变更为": "Description changed to",
+      "类型变更为": "Type changed to",
+      "默认值变更为": "Default value changed to",
+      "模型是否可见变更为": "Model visibility changed to",
+      "分析方法变更为": "Analysis method changed to",
+      "新增转交Agent:": "Added handoff agent:",
+      "删除转交Agent:": "Removed handoff agent:",
+      "整体检索范围变更为": "Overall retrieval scope changed to",
+      "问答开关变更为": "QA toggle changed to",
+      "文档列表发生变更": "Document list changed",
+      "标签过滤操作符变更为": "Tag filter operator changed to",
+      "标签过滤标签发生变更": "Tag filter labels changed",
+      "知识库类型变更为：": "Knowledge base type changed to:",
+      "知识库检索范围变更为：": "Knowledge base retrieval scope changed to:",
+      "知识库文档列表发生变更": "Knowledge base document list changed",
+      "知识库问答开关变更为：": "Knowledge base QA toggle changed to:",
+      "知识库标签发生变更": "Knowledge base tags changed",
+      "全部知识": "All knowledge",
+      "按知识库": "By knowledge base",
+      "按特定知识": "By specific knowledge",
+      "按标签": "By tags",
+      "且": "AND",
+      "或": "OR",
+      "默认知识库": "Default Knowledge Base",
+      "共享知识库": "Shared Knowledge Base",
+      "高级设置": "Advanced Setting",
+      "开启": "Enable",
+      "关闭": "Disable",
+      "澄清询问": "Clarification",
+      "思考模式": "Thinking Mode",
+      "结构化输出": "Structured Output",
+      "效率优先": "Effect First",
+      "速度优先": "Speed First",
+      "工具": "Tool"
+    }
+  agent-config_zh-CN.json: |
+    {
+      "应用ID为空": "应用ID为空",
+      "AgentID为空": "AgentID为空",
+      "获取测试环境Agent失败": "获取测试环境Agent失败",
+      "获取发布环境Agent失败": "获取发布环境Agent失败",
+      "Agent": "Agent",
+      "名称": "名称",
+      "模型": "模型",
+      "模型选择": "模型选择",
+      "温度": "温度",
+      "Top-P": "Top-P",
+      "最大推理轮数": "最大推理轮数",
+      "上下文记忆轮数": "上下文记忆轮数",
+      "转交描述": "转交描述",
+      "转交关系": "转交关系",
+      "提示词": "提示词",
+      "插件": "插件",
+      "新增": "新增",
+      "修改": "修改",
+      "删除": "删除",
+      "知识库问答": "知识库问答",
+      "是": "是",
+      "否": "否",
+      "；": "；",
+      ".": ".",
+      "/": "/",
+      "变更为": "变更为",
+      "工具描述变更为": "工具描述变更为",
+      "值变更为": "值变更为",
+      "必填属性变更为": "必填属性变更为",
+      "模型名称变更为": "模型名称变更为",
+      "配置": "配置",
+      "配置参数": "配置参数",
+      "头部参数": "头部参数",
+      "输入参数": "输入参数",
+      "输出参数": "输出参数",
+      "子参数": "子参数",
+      "单选参数": "单选参数",
+      "多选参数": "多选参数",
+      "知识库": "知识库",
+      "参数": "参数",
+      "新增参数": "新增参数",
+      "删除参数": "删除参数",
+      "参数名称变更为": "参数名称变更为",
+      "Input配置发生变更": "Input配置发生变更",
+      "描述变更为": "描述变更为",
+      "类型变更为": "类型变更为",
+      "默认值变更为": "默认值变更为",
+      "模型是否可见变更为": "模型是否可见变更为",
+      "分析方法变更为": "分析方法变更为",
+      "新增转交Agent:": "新增转交Agent:",
+      "删除转交Agent:": "删除转交Agent:",
+      "整体检索范围变更为": "整体检索范围变更为",
+      "问答开关变更为": "问答开关变更为",
+      "文档列表发生变更": "文档列表发生变更",
+      "标签过滤操作符变更为": "标签过滤操作符变更为",
+      "标签过滤标签发生变更": "标签过滤标签发生变更",
+      "知识库类型变更为：": "知识库类型变更为：",
+      "知识库检索范围变更为：": "知识库检索范围变更为：",
+      "知识库文档列表发生变更": "知识库文档列表发生变更",
+      "知识库问答开关变更为：": "知识库问答开关变更为：",
+      "知识库标签发生变更": "知识库标签发生变更",
+      "全部知识": "全部知识",
+      "按知识库": "按知识库",
+      "按特定知识": "按特定知识",
+      "按标签": "按标签",
+      "且": "且",
+      "或": "或",
+      "默认知识库": "默认知识库",
+      "共享知识库": "共享知识库",
+      "高级设置": "高级设置",
+      "开启": "开启",
+      "关闭": "关闭",
+      "澄清询问": "澄清询问",
+      "思考模式":"思考模式",
+      "结构化输出":"结构化输出",
+      "效率优先":"效率优先",
+      "速度优先":"速度优先",
+      "工具":"工具"
+    }
+  error_en-US.json: |
+    {
+      "应用信息不存在": "Application information does not exist",
+      "资源权限不足": "Insufficient resource permissions",
+      "您的服务已到期，请联系架构师续费": "Your service has expired, please contact our SA to renew",
+      "系统内部错误": "Internal system error",
+      "参数异常，请重试": "Parameter error, please try again",
+      "当前用户无权限": "Current user has no permission",
+      "版本号异常，请检查是否为最新版本": "Version number error, please check if it is the latest version",
+      "数据不存在": "Data does not exist",
+      "调用api失败": "API call failed",
+      "agent_id已存在": "agent_id already exists",
+      "同一应用下agent名称重复": "Duplicate agent name under the same application",
+      "同一应用下启动agent已存在": "A startup agent already exists under the same application",
+      "图标不合法": "Invalid icon",
+      "头像尺寸不合法": "Invalid avatar size",
+      "Agent数量超出限制": "Number of agents exceeds the limit",
+      "发布中，不允许删除": "Cannot delete during publishing",
+      "发布中，不允许编辑": "Cannot edit during publishing",
+      "Agent加载失败": "Failed to load agent",
+      "发布任务加载失败": "Failed to load publishing task",
+      "发布任务记录加载失败": "Failed to load publishing task record",
+      "配置数据查询错误": "Configuration data query error",
+      "配置数据发布错误": "Configuration data publishing error",
+      "运行数据发布错误": "Runtime data publishing error",
+      "机器人不存在": "Bot does not exist",
+      "插件不存在": "Plugin does not exist",
+      "Agent插件数量超出限制": "Number of agent plugins exceeds the limit",
+      "工具不存在": "Tool does not exist",
+      "该插件工具已存在": "This plugin tool already exists",
+      "该插件工具未添加": "This plugin tool has not been added",
+      "没有可删除的工具": "No tools available for deletion",
+      "Agent(工具+转交)数量超出限制": "Number of agent (tools + handoff) exceeds the limit",
+      "Agent工具信息内容超出容量限制": "Agent tool information exceeds capacity limit",
+      "缺少必填信息，不允许添加该工具": "Required information is missing, cannot add this tool",
+      "请求参数错误: %s": "Request parameter error: %s",
+      "内部服务器错误: %s": "Internal server error: %s"
+    }
+  error_zh-CN.json: |
+    {
+      "应用信息不存在": "应用信息不存在",
+      "资源权限不足": "资源权限不足",
+      "您的服务已到期，请联系架构师续费": "您的服务已到期，请联系架构师续费",
+      "系统内部错误": "系统内部错误",
+      "参数异常，请重试": "参数异常，请重试",
+      "当前用户无权限": "当前用户无权限",
+      "版本号异常，请检查是否为最新版本": "版本号异常，请检查是否为最新版本",
+      "数据不存在": "数据不存在",
+      "调用api失败": "调用api失败",
+      "agent_id已存在": "agent_id已存在",
+      "同一应用下agent名称重复": "同一应用下agent名称重复",
+      "同一应用下启动agent已存在": "同一应用下启动agent已存在",
+      "图标不合法": "图标不合法",
+      "头像尺寸不合法": "头像尺寸不合法",
+      "Agent数量超出限制": "Agent数量超出限制",
+      "发布中，不允许删除": "发布中，不允许删除",
+      "发布中，不允许编辑": "发布中，不允许编辑",
+      "Agent加载失败": "Agent加载失败",
+      "发布任务加载失败": "发布任务加载失败",
+      "发布任务记录加载失败": "发布任务记录加载失败",
+      "配置数据查询错误": "配置数据查询错误",
+      "配置数据发布错误": "配置数据发布错误",
+      "运行数据发布错误": "运行数据发布错误",
+      "机器人不存在": "机器人不存在",
+      "插件不存在": "插件不存在",
+      "Agent插件数量超出限制": "Agent插件数量超出限制",
+      "工具不存在": "工具不存在",
+      "该插件工具已存在": "该插件工具已存在",
+      "该插件工具未添加": "该插件工具未添加",
+      "没有可删除的工具": "没有可删除的工具",
+      "Agent(工具+转交)数量超出限制": "Agent(工具+转交)数量超出限制",
+      "Agent工具信息内容超出容量限制": "Agent工具信息内容超出容量限制",
+      "缺少必填信息，不允许添加该工具": "缺少必填信息，不允许添加该工具",
+      "请求参数错误: %s": "请求参数错误: %s",
+      "内部服务器错误: %s": "内部服务器错误: %s"
+    }
+  main.yaml: |
+    experience_center_uin: {{ .Values.experience_center_uin }}
+    knowledge_qa_tool:
+      tool_name: KnowledgeRetrievalAnswer
+      plugin_id: 3ad93aae-587e-4bcc-ae07-ad13bfb1aaca
+      tool_id: 0ca8d482-1e77-462b-bc21-807c8f052f69
+      tool_id_map:
+        0ca8d482-1e77-462b-bc21-807c8f052f69: KnowledgeRetrievalAnswer
+        080bbce6-b02b-466e-a152-967c1546eb05: BoundedKnowledgeQA
+        cf5b121f-57d7-47c1-937a-2f9993ec0a63: Text2SQL
+    workflow_tool:
+      icon_url: "{{ include "qbot.workflow_tool_icon" . }}"
+    agent_config:
+      default_starting_agent_handoff_description:
+      default_history_limit: 5
+    agent_check:
+      agent_name_min_len: 1
+      agent_name_max_len: 100
+      agent_handoff_description_min_len: 0
+      agent_handoff_description_max_len: 0
+      agent_instructions_min_len: 0
+      agent_instructions_max_len: 10000 # 若动态拉取不到模型配置，则启用此处限制
+      max_page_size: 200
+      default_icon: "{{ include "qbot.default_icon" . }}"
+      max_icon_size: 524288
+      agent_limit: 10 # 同一应用下Agent数量限制
+      agent_plugin_limit: 0 # 同一应用下Agent插件数量限制
+      agent_limit_by_uin:
+        "100043750483": 30
+      agent_limit_by_app:
+        "1985242682422722560": 13               # 应用纬度和uin纬度同时设置时，以uin纬度为准
+      agent_tool_limit: 50 # 同一应用下Agent工具数量限制，包括插件工具和转交Agent
+      white_list: ["100034812856"] # 主要用于hank效果测试
+
+
+    # 数据同步任务
+    data_sync_task:
+      release_queue_length: 200
+      release_items_per_batch: 100
+
+    # 定时任务
+    task_config:
+      task_prefix: agent-config-server:task
+      task_fetch_num: 400
+      task_fetch_timeout: 2s
+      task_fetch_period: 2s
+      task_max_timeout: 1h
+      tasks:
+        agent_app_delete:
+          runners: 5 #处理协程数，无法动态调整
+          retry_wait_time: 1m #重试等待时间
+          max_retry: 2 #最大重试次数
+          timeout: 5m #超时时间
+          fail_timeout: 3s # 失败回调超时
+          delay: 0s #启动延迟
+          batch:  1
+          batch_size: 0
+          stopped_resume_time: 720h
+    agent_app_delete_config:
+      delete_batch_size: 10
+      query_batch_size: 10
+    pe_config:
+      tool_info:
+        read_file:
+          plugin_id: "3de4a6c6-e055-4d78-9e09-c4410aee79e4"
+          plugin_name: "BangBox MCP Server"
+          plugin_type: 2
+          tool_id: "f546f2ff-6245-41a0-945d-cd710ec7e4db"
+          icon_url: "{{ include "qbot.QQ_brower" . }}"
+          tool_description: "Read file content. Use for checking file contents, analyzing logs, or reading configuration files."
+          # 参数可见性配置
+          parameters:
+            path:
+              agent_hidden: false  # 文件路径对模型可见
+            end_line:
+              agent_hidden: true   # 结束行号对模型不可见，由系统控制
+            start_line:
+              agent_hidden: true   # 开始行号对模型不可见，由系统控制
+            sudo:
+              agent_hidden: true   # sudo权限对模型不可见，由系统控制
+
+        write_file:
+          plugin_id: "3de4a6c6-e055-4d78-9e09-c4410aee79e4"
+          plugin_name: "BangBox MCP Server"
+          plugin_type: 2
+          tool_id: "be07cc91-4017-4a68-8168-c77c8e888921"
+          icon_url: "{{ include "qbot.QQ_brower" . }}"
+          tool_description: "Overwrite or append content to a file. Use for creating new files, appending content, or modifying existing files."
+          # 参数可见性配置
+          parameters:
+            path:
+              agent_hidden: false  # 文件路径对模型可见
+            content:
+              agent_hidden: false  # 文件内容对模型可见
+            append:
+              agent_hidden: false   # 追加模式对模型不可见，由系统控制
+            sudo:
+              agent_hidden: true   # sudo权限对模型不可见，由系统控制
+            leading_newline:
+              agent_hidden: true   # 前导换行符对模型不可见，由系统控制
+            trailing_newline:
+              agent_hidden: true   # 尾随换行符对模型不可见，由系统控制
+
+        shell_exec:
+          plugin_id: "3de4a6c6-e055-4d78-9e09-c4410aee79e4"
+          plugin_name: "BangBox MCP Server"
+          plugin_type: 2
+          tool_id: "18d9f76b-ffcb-4b9f-881a-61b424bf056b"
+          icon_url: "{{ include "qbot.QQ_brower" . }}"
+          tool_description: "Executes Bash commands. Returns stdout, stderr, and execution status."
+          # 参数可见性配置
+          parameters:
+            command:
+              agent_hidden: false  # 命令对模型可见
+            exec_dir:
+              agent_hidden: true   # 执行目录对模型不可见，由系统控制
+            session_id:
+              agent_hidden: true   # 会话ID对模型不可见，由系统控制
+
+        code_interpreter:
+          plugin_id: "3de4a6c6-e055-4d78-9e09-c4410aee79e4"
+          plugin_name: "BangBox MCP Server"
+          plugin_type: 2
+          tool_id: "b9cc0a1c-ab0c-4919-84d5-4d69e63d2b34"
+          icon_url: "{{ include "qbot.QQ_brower" . }}"
+          tool_description: "Executes Python code string."
+          # 参数可见性配置
+          parameters:
+            Code:
+              agent_hidden: false  # 代码对模型可见
+
+        file_str_replace:
+          plugin_id: "3de4a6c6-e055-4d78-9e09-c4410aee79e4"
+          plugin_name: "BangBox MCP Server"
+          plugin_type: 2
+          tool_id: "89993c80-c3f9-476e-bf3e-e8e460f8f83d"
+          icon_url: "{{ include "qbot.QQ_brower" . }}"
+          tool_description: "Replace specified string in the file. Use for updating specific content in files or fixing errors in code."
+          # 参数可见性配置
+          parameters:
+            path:
+              agent_hidden: false  # 文件路径对模型可见
+            old_str:
+              agent_hidden: false  # 旧字符串对模型可见
+            new_str:
+              agent_hidden: false  # 新字符串对模型可见
+            sudo:
+              agent_hidden: true   # sudo权限对模型不可见，由系统控制
+
+      common_tools: []
+      model_name: "lke-deepseek-v3-function-call"
+      filter_agent: Assigner Agent
+      agents:
+        planner:
+          name: "Planner Agent"
+          instructions: ""
+          handoff_description: "Plan and execute complex tasks with detailed step-by-step planning and coordination."
+          icon_url: {{ include "qbot.pe_icon" . }}
+          action: "plan_task"
+          special_tools: []
+          model_name: "lke-deepseek-v3-function-call"
+          model_params:
+            temperature: 0.3  # 温度参数，控制输出的随机性
+            top_p: 0.9
+
+        assigner:
+          name: "Assigner Agent"
+          instructions: ""
+          handoff_description: "Can handoff to all executor agents for task distribution and coordination."
+          icon_url: {{ include "qbot.pe_icon" . }}
+          action: "assign_task"
+          model_name: "lke-deepseek-v3-function-call"
+          special_tools: []
+          model_params:
+            temperature: 0.3  # 温度参数，控制输出的随机性
+            top_p: 0.9
+
+        search:
+          name: "Search Agent"
+          instructions: ""
+          handoff_description: "Perform web search and information retrieval tasks."
+          icon_url: {{ include "qbot.pe_icon" . }}
+          action: "search_info"
+          model_name: "lke-deepseek-v3-function-call"
+          special_tools: []
+          model_params:
+            temperature: 0.3  # 温度参数，控制输出的随机性
+            top_p: 0.9
+
+        code:
+          name: "Code Agent"
+          instructions: ""
+          handoff_description: "Write and execute code in various programming languages."
+          icon_url: {{ include "qbot.pe_icon" . }}
+          action: "write_code"
+          model_name: "lke-deepseek-v3-function-call"
+          special_tools:
+            - "code_interpreter"
+          model_params:
+            temperature: 0.3  # 温度参数，控制输出的随机性
+            top_p: 0.9
+
+        shell:
+          name: "Shell Agent"
+          instructions: ""
+          handoff_description: "Execute shell commands and perform system operations."
+          icon_url: {{ include "qbot.pe_icon" . }}
+          action: "execute_shell"
+          model_name: "lke-deepseek-v3-function-call"
+          model_params:
+            temperature: 0.3  # 温度参数，控制输出的随机性
+            top_p: 0.9
+          special_tools:
+            - "shell_exec"
+            - "read_file"
+            - "write_file"
+            - "file_str_replace"
+
+        report:
+          name: "Report Agent"
+          instructions: ""
+          handoff_description: "Generate professional reports and documentation."
+          icon_url: {{ include "qbot.pe_icon" . }}
+          action: "generate_report"
+          model_name: "lke-deepseek-r1-0528-agent"
+          model_params:
+            temperature: 0.6  # 温度参数，控制输出的随机性
+            top_p: 0.95
+            max_tokens: 32000
+          special_tools:
+            - "write_file"
+
+        webpage:
+          name: "Webpage Generation Agent"
+          instructions: ""
+          handoff_description: "Create and deploy web pages with HTML, CSS, and JavaScript."
+          icon_url: {{ include "qbot.pe_icon" . }}
+          action: "create_webpage"
+          model_name: "lke-deepseek-r1-0528-agent"
+          model_params:
+            temperature: 0.6  # 温度参数，控制输出的随机性
+            top_p: 0.95
+            max_tokens: 32000
+          special_tools:
+            - "write_file"
+            - "deploy_html"
+
+        assist:
+          name: "Assist Agent"
+          instructions: ""
+          handoff_description: "You are a versatile assistant agent, serving as a general-purpose helper that can provide guidance and support across a wide range of tasks and domains."
+          icon_url: {{ include "qbot.pe_icon" . }}
+          action: "assist"
+          model_name: "lke-deepseek-v3-function-call"
+          model_params:
+            temperature: 0.3  # 温度参数，控制输出的随机性
+            top_p: 0.9
+          special_tools: []
+  placeholder.yaml: |
+    {}
+
+  trpc_go.yaml: |
+    global:                             #全局配置
+      namespace: "{{`{{ .Release.Namespace}}`}}"          #环境类型，分正式production和非正式development两种类型
+      full_set_name: ${FULL_SET_NAME}   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+
+    server:                                            #服务端配置
+      app: KEP                                        #业务的应用名
+      server: agent-config-server                             #进程服务名
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+      - recovery                                       #拦截框架创建的业务处理协程panic
+      - galileo
+      - debuglog
+      - i18n-adp
+      - cle-route-propagator
+      - opentelemetry                                # 天机阁
+      stream_filter:
+      - galileo
+      - recovery
+      admin:
+        ip: ${POD_IP}  # admin 的 ip，配置网卡 nic 也可以
+        port: 8081     # admin 的 port，必须同时配置这里的 ip port 才会启动 admin
+      service:                                         #业务服务提供的service，可以有多个
+      - name: trpc.KEP.agent-config-server.AgentConfig        #service的路由名称
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+        port: 8000                  #服务监听端口 可使用占位符 ${port}
+        network: tcp                               #网络监听类型  tcp udp
+        protocol: trpc                 #应用层协议 trpc http
+        timeout: 0                              #请求最长处理时间 单位 毫秒
+        server_async: true                             #开启异步处理
+        idletime: 600000                               # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+        filter:
+        - session
+      - name: trpc.KEP.agent-config-server.AgentConfigApi        #service的路由名称
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+        port: 8001                  #服务监听端口 可使用占位符 ${port}
+        network: tcp                               #网络监听类型  tcp udp
+        protocol: trpc                 #应用层协议 trpc http
+        timeout: 0                              #请求最长处理时间 单位 毫秒
+        server_async: true                             #开启异步处理
+        idletime: 600000                               # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+      - name: trpc.KEP.agent-config-server.TimerCheckAgentSchedulerTasks     # 分布式定时器 任务流迁移任务定时校验
+        ip: ${POD_IP}
+        port: 8002                                                            # 服务监听端口 可使用占位符 ${port}
+        network: 0 */2 * * * * ?startAtOnce=0&scheduler=redis&holdTime=60     # 使用redis分布式锁
+        protocol: timer                                                       # 应用层协议 timer
+        timeout: 120000                                                     # 请求最长处理时间 单位 毫秒
+      - name: trpc.KEP.agent-config-server.TimerMarkedInvalidAgentRecords        # 本地定时器
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+        port: 8003                  #服务监听端口 可使用占位符 ${port}
+        network: 0 0 2 * * *
+        protocol: timer                 #应用层协议 trpc http
+        timeout: 600000                 # 请求最长处理时间 单位 毫秒
+      - name: trpc.KEP.agent-config-server.TimerCleanDeletedAgentsMonthly
+        ip: ${POD_IP}
+        port: 8004
+        network: 0 0 3 1 * *      # 每月1号凌晨3点执行
+        protocol: timer
+        timeout: 600000
+    plugins:                                          #插件配置
+      tracing:
+        debuglog:
+          log_type: simple # 默认日志打印方式
+          err_log_level: error # 错误日志打印级别
+          nil_log_level: info # 非错误日志打印级别
+          server_log_type: prettyjson # server 日志打印方式，会覆盖 log_type 的设定
+          client_log_type: json # client 日志打印方式，会覆盖 log_type 的设定
+          enable_color: true # 开启日志显示不同颜色   默认 false
+          include: # 包含的匹配规则，当配置不为空时，exclude 选项将无效。
+              # match_type 不设置时，默认为全字匹配，v0.1.13 后生效
+              # method 和 retcode 选项同时指定时，都命中才包含。
+          - method: /trpc.app.server.service/methodA
+            retcode: 51
+              # method 和 err_is_nil 同时指定时，都命中才包含。
+          - method: /trpc.app.server.service/methodB
+            err_is_nil: true   # 此选项一般与 method 进行搭配使用
+                               # err_is_nil 主要用于解决 errcode 与 err 多对一的映射问题
+                               # 详情可见 https://git.woa.com/trpc-go/trpc-filter/issues/82
+                               # 详情可见 https://git.woa.com/trpc-go/trpc-filter/-/merge_requests/370
+              # 只按方法名包含
+          - method: /trpc.app.server.service/methodC
+              # 只按正则表达式包含
+          - method: ^/trpc\.app\.server\.service/methodD.*
+            match_type: regex   # v0.1.13 后生效。
+              # 只按前缀包含
+          - method: /trpc.app.server.service/methodE
+            match_type: prefix   # v0.1.13 后生效。
+              # 只按后缀包含
+          - method: methodF
+            match_type: suffix   # v0.1.13 后生效。
+              # 只按错误码包含
+          - retcode: 52
+              # 同时设置 retcode 和 err_is_nil 来对 ErrServerNoResponse / ErrClientNoResponse 进行处理
+              # 请注意，不要设置 retcode != 0 && err_is_nil == true，没有错误但是错误码不为 0 的情况并不存在
+          - err_is_nil: true
+          exclude: # 忽略打印的匹配规则，当 include 选项不为空时，该项配置不生效。
+              # method 和 retcode 选项同时指定时，都命中才排除。
+          - method: /trpc.app.server.service/methodD
+            retcode: 53
+              # method 和 err_is_nil 同时指定时，都命中才排除。
+          - method: /trpc.app.server.service/methodH
+            err_is_nil: false   # 此选项一般与 method 进行搭配使用
+                                # err_is_nil 主要用于解决 errcode 与 err 多对一的映射问题
+                                # 详情可见 https://git.woa.com/trpc-go/trpc-filter/issues/82
+                                # 详情可见 https://git.woa.com/trpc-go/trpc-filter/-/merge_requests/370
+              # 只按方法名排除
+          - method: /trpc.app.server.service/methodI
+              # 只按正则表达式排除
+          - method: ^/trpc\.app\.server\.service/methodJ.*
+            match_type: regex   # v0.1.13 后生效。
+              # 只按前缀排除
+          - method: /trpc.app.server.service/methodK
+            match_type: prefix   # v0.1.13 后生效。
+              # 只按后缀排除
+          - method: methodL
+            match_type: suffix   # v0.1.13 后生效。
+              # 只按错误码排除
+          - retcode: 54
+              # 同时设置 retcode 和 err_is_nil 来对 ErrServerNoResponse / ErrClientNoResponse 进行处理
+              # 请注意，不要设置 retcode != 0 && err_is_nil == true，没有错误但是错误码不为 0 的情况并不存在
+          - err_is_nil: true
+      log:                                            #日志配置
+        default:                                  #默认日志的配置，可支持多输出
+        - writer: console                         #控制台标准输出 默认
+          level: error                            #标准输出日志的级别
+          #caller_skip: 3
+          formatter: json
+          formatter_config:
+            time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+            time_key: time
+            level_key: level
+            name_key: name
+            caller_key: caller
+            message_key: message
+        - writer: file                            #本地文件日志
+          level: info                             #本地文件滚动日志的级别
+          formatter: json
+          formatter_config:
+            time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+            time_key: time
+            level_key: level
+            name_key: name
+            caller_key: caller
+            message_key: message
+            stacktrace_key: stackTrace
+          writer_config:
+            filename: /app/logs/trpc.log  #本地文件滚动日志存放的路径
+            write_mode: 2
+            roll_type: time
+            max_age: 7
+            max_backups: 10
+            compress: false
+            time_unit: day
+        clues:
+        - writer: console                         #控制台标准输出 默认
+          level: none                            #标准输出日志的级别
+        - writer: file
+          level: info
+          formatter: json
+          writer_config:
+            filename: /app/logs/clues.log
+            write_mode: 2
+            roll_type: time
+            max_age: 7
+            max_backups: 10
+            compress: false
+            time_unit: day
+      telemetry:
+        opentelemetry:
+          addr: {{ (.Values.global.observability.apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if (.Values.global.observability.apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if (.Values.global.observability.apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+        galileo:
+          verbose: error # 伽利略自身的诊断日志级别，取值范围：debug, info, error, none，日志输出在 ./galileo/galileo.log 中。
+          ocp_addr: http://127.0.0.1
+          config: #配置
+            config_server: http://127.0.0.1
+            register_server: http://127.0.0.1
+            self_monitor:
+              collector:
+                addr: http://127.0.0.1
+            metrics_config: # 指标配置
+              enable: false # 是否启用指标
+            traces_config: # 追踪配置
+              enable: true # 是否启用追踪，默认 true。如果设置为 false，会中断 trace，让上游的调用链不完整。v0.3.7 以上生效。
+              processor: # 追踪数据处理相关配置
+                sampler: # 采样器配置
+                  fraction: 0 # 采样比例，默认 0。（v0.11.0)
+                  error_fraction: 0
+                  enable_min_sample: true # 启用每分钟每接口最少 1 个请求采样，默认 true (v0.11.0)。
+                  enable_dyeing: true # 开启染色采样，默认 true。
+                disable_trace_body: true    # 若为 true，则关闭 trace 中对 req 和 rsp 的 body 上报，可以大幅提高上报性能。默认 true。
+                enable_deferred_sample: false # 开启延迟采样（请求处理完采样），默认 false。0.3.0 以上生效。
+                deferred_sample_error: false # 开启延迟采样出错采样（请求处理完出现错误采样），默认 false。0.3.0 以上生效。
+                deferred_sample_slow_duration_ms: 1000 # 慢操作阈值（请求耗时超过该值采样），单位 ms，默认 1000。0.3.0 以上生效。
+                disable_parent_sampling: false      # 忽略上游的采样结果，默认 false。v0.3.7 以上生效。
+              exporter:
+                collector:
+                  addr: 127.0.0.1:80
+            logs_config: # 日志配置
+              enable: false # 是否启用日志
+              processor: # 日志数据处理相关配置
+                only_trace_log: false # 是否只上报命中 trace 的 log，默认关闭
+                must_log_traced: false # 是否命中 traced 不管任何级别日志都上报，默认关闭。v0.3.22 以上生效
+                trace_log_mode: 0 # debug 访问日志 (access_log) 打印模式，0,1：单行打印，3：多行打印，2：不打印，默认 0
+                level: debug  # 上报到远程的日志级别，默认 error
+                enable_recovery: true # 是否捕获 panic，默认 true
+            profiles_config: # profile配置
+              enable: false # 是否启用 profile
+              processor: # profile 数据处理相关配置
+                profile_types: [cpu, heap] # 采集 profile 的类型，支持 cpu、heap、mutex、block、goroutine，默认开启 cpu 和 heap。
+            version: 1  # 版本号，默认 0，此版本号用于控制远程配置和本地配置的优先级，版本号高的优先，一般设置成 1 即可。
+          resource: # resource 资源信息，在 SDK 运行期间不会改变。resource 中的字段一般不需要配置，默认会填充。
+            platform: STKE # 服务部署的平台，如 PCG-123, STKE, 默认 PCG-123
+      config:
+        file:
+          providers:
+          - name: rainbow
+            path: /app/conf/
+      registry: #服务注册配置
+        polaris: #北极星名字注册服务的配置
+          # debug: true
+          # register_self: false
+          # heartbeat_interval: 3000                    #名字注册服务心跳上报间隔
+          # heartbeat_timeout: 1000                     #名字服务心跳超时
+          # service:
+          # - name: trpc.KEP.agent-config-server.AgentConfig      #service name 与上面的service配置一一对应
+          #   namespace: Test                #环境类型，分正式Production和非正式Development两种类型
+          #   token: 770930bc3e984b58acf031ac951ff6b7               #服务注册所需要的 token
+          # - name: trpc.KEP.agent-config-server.AgentConfig      #service name 与上面的service配置一一对应
+          #   namespace: Test                #环境类型，分正式Production和非正式Development两种类型
+          #   token: eed8e4f89d924e7a8ed3568a6e9263cb               #服务注册所需要的 token
+          # - name: trpc.KEP.agent-config-server.AgentConfigApi      #service name 与上面的service配置一一对应
+          #   namespace: Test                #环境类型，分正式Production和非正式Development两种类型
+          #   token: 9c825c35475842dbbabb90b1e13c8725               #服务注册所需要的 token
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+          - zh-CN
+          - en-US
+          data_provider:
+            type: rainbow
+            prefix: agent-config
+            error_prefix: error
+            char_scaling_factor:
+              zh-CN: 1
+              en-US: 3
+      selector: #针对用户自定义的selector的配置
+        polaris: #针对polaris整体api的内部配置
+          protocol: grpc                              #名字服务远程交互协议类型
+          enable_trans_meta: true
+      noticer:
+        wecom:
+          wx_robot_url: https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=756330d2-17f3-4f12-a564-16e1ea1f60fd
+    client:                                            #客户端调用的后端配置
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - galileo
+        - debuglog
+        - cle-route-propagator
+        - opentelemetry
+      stream_filter:
+        - galileo
+      service:
+        - name: redis.plugin-config-server
+          target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/12
+          network: tcp
+          password: "{{ .Values.global.components.redis.password }}"
+          timeout: 30000
+
+        - name: mysql.db_llm_plugin
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.db_llm_prod_plugin
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_plugin_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+
+        - name: trpc.redis.agent_config
+          target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/11
+          network: tcp
+          password: "{{ .Values.global.components.redis.password }}"
+          timeout: 30000
+
+        - name: trpc.mysql.agent_config
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+
+        - name: trpc.mysql.agent_config_prod
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_plugin_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.qbot.admin
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+
+          # 插件中心-内部接口(旧协议，待废弃)
+        - callee: trpc.KEP.plugin_config_server.PluginConfigApi
+          name: trpc.KEP.plugin-config-server.PluginConfigApi
+          target: ip://pluginconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+          # 插件中心-内部接口
+        - callee: trpc.adp.plugin_config.PluginConfigApi
+          name: trpc.adp.plugin_config.PluginConfigApi
+          target: ip://pluginconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+          # 工作流配置端-内部接口(旧协议，待废弃)
+        - callee: trpc.KEP.bot_task_config_server.TaskConfig
+          name: trpc.KEP.bot_task_config_server.TaskConfig
+          target: ip://bottaskconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+          # 工作流配置端-内部接口
+        - callee: trpc.adp.workflow_config.WorkflowConfig
+          name: trpc.adp.workflow_config.WorkflowConfig
+          target: ip://bottaskconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          timeout: 60000
+        # admin Login (旧协议，待废弃)
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+        - callee: trpc.adp.app_admin_proxy.Login
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.app_admin_proxy.Api
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 60000
+          # 知识库-内部接口(旧协议，待废弃)
+        - callee: trpc.KEP.bot_knowledge_config_server.Api
+          name: trpc.KEP.bot-knowledge-config-server.Api
+          target: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 600000
+          # 知识库-内部接口
+        - callee: trpc.adp.kb_config.Api
+          target: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 60000
+

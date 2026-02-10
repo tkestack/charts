@@ -1,0 +1,61 @@
+tad:
+  type: helm
+  images:
+    plugin-exec-server:
+      url: "ccr.ccs.tencentyun.com/tke-market/plugin-exec-server:100_2601301941_release_private_v3.2.4_ai_gateway_956d358e_private"
+    plugin-exec-server-sidecar:
+      url: "ccr.ccs.tencentyun.com/tke-market/webappchatbot:markmap-96aaeac-24"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+pluginexecserver:
+  resources:
+    limits:
+      cpu: 1
+      memory: 4Gi
+    requests:
+      cpu: 1
+      memory: 1Gi
+
+sidecar:
+  sidecarImage: ccr.ccs.tencentyun.com/tke-market/webappchatbot:markmap-96aaeac-24
+  resources:
+    limits:
+      cpu: 1
+      memory: 4Gi
+    requests:
+      cpu: 1
+      memory: 1Gi
+
+
+# 插件配置，这里主要是 搜狗插件、图片生成(混元生图)，deepseeks搜索，文档重排序
+adppluginexec:
+  secret_id: "" # 密钥ID
+  secret_key: "" # 密钥KEY
+
+  doc_parse_secret_id: "MOCK_CAPI_SECRET_ID_VALUE"  # 文档解析密钥ID
+  doc_parse_secret_key: "MOCK_CAPI_SECRET_KEY_VALUE" # 文档解析密钥Key
+  
+  doc_parse_endpoint: "lkeap.tencentcloudapi.com"
+  doc_parse_region: "ap-guangzhou"
+  doc_parse_size: 15360
+  model_name_llm: "cs-normal-70b"
+
+  # 多模态模型配置， 图片理解/图文问答插件
+  multi_model_name: "cs-normal-mllm-72B"
+  # 网页解析模型配置
+  web_page_parse_model_name: "cs-normal-70b"
+
+  #  # 乐享插件配置
+  le_xiang_knowledge:
+    search_url: "https://lxapi.lexiangla.com/cgi-bin/v1/ai/search" # online
+    token_url: "https://lxapi.lexiangla.com/cgi-bin/token"
+    token_expire_time: 7000
+
+imagePullSecretName: qcloudregistrykey

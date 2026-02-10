@@ -1,0 +1,16 @@
+tad:
+  type: helm
+  images:
+    pyright:
+      url: "ccr.ccs.tencentyun.com/tke-market/webappchatbot:pyright-681d856-83"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+
+imagePullSecretName: qcloudregistrykey

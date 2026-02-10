@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: ti-ingress-controller
+    app.cpaas.io/name: ti-ingress-controller
+  name: ti-ingress-controller
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - name: tcp-9093-9093
+    port: 9093
+    protocol: TCP
+    targetPort: 9093
+  selector:
+    service.cpaas.io/name: deployment-ti-ingress-controller-workload
+  sessionAffinity: None
+  type: ClusterIP

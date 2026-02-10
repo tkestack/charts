@@ -1,0 +1,29 @@
+tad:
+  type: helm
+  images:
+    bot-workflow-dm-server:
+      url: "ccr.ccs.tencentyun.com/tke-market/bot-workflow-dm-server:117_2512022143_release_private_v3.2.4_dcecfb6c_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+  replicas: 1
+  resources:
+    limits:
+      cpu: 2
+      memory: 4Gi
+    requests:
+      cpu: 1
+      memory: 1Gi
+
+apdworkflow:
+  # 选项卡、逻辑判断节点，使用生成模型配置的模型选择了ToConvertModelNames下面的模型会转化下面默认模型
+  # 参数提取节点：优先使用选择的模型，只有思考模型高级版（workflow-pro），会转成工作流默认模型
+  default_covert_model_name: workflow-light-32b
+  parameter_modify_model_name: workflow-pro
+imagePullSecretName: qcloudregistrykey

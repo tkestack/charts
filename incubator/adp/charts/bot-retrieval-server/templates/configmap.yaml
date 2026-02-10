@@ -1,0 +1,1144 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-retrieval
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    # zeus检索库前缀
+    zeus_prefix: __qd:qbot
+    # 任务前缀
+    task_prefix: retrieval:task
+    # 锁前缀
+    lock_prefix: retrieval:lock
+    # 最大层数, 当层数 > 最大层时, 会触发合并到最小层数
+    max_overlays: 2
+    # 最小层数
+    min_overlays: 2
+    # 节点批量创建每批次大小
+    insert_nodes_chunk: 100
+    # 节点批量获取每批次大小
+    get_nodes_chunk: 200
+    # 批量读写es的条数
+    es_batch_size: 100
+    # 获取id的批量大小 默认5w 即一次获取5w个id
+    get_ids_chunk_size: 50000
+    # 批量删除数据的数量，默认100
+    delete_chunk_size: 100
+    # embedding调用的并发数
+    embedding_batch_size: {{ .Values.vector_doc.embedding_batch_size }}
+    # 图片embedding调用的并发数
+    image_embedding_batch_size: {{ .Values.vector_doc.image_embedding_batch_size }}
+    # 批量添加向量的数量
+    batch_add_vector_size: {{ .Values.vector_doc.batch_add_vector_size }}
+    # 批量删除向量的数量
+    batch_delete_vector_size: 1000
+    # 是否取图片原始url并转为cos前缀
+    enable_image_cos_url: true
+    # 临时开关，是否从robot表里取最新版本
+    enable_get_last_qa_version: true
+    # 临时开关，检索是否替换不存在的标签
+    enable_replace_invalid_labels: false
+    disable_use_vdb: false
+    # 评测端检索并发限制
+    search_preview_concurrency_limit: 5
+    # 发布端检索并发限制
+    search_release_concurrency_limit: 5
+
+    # 查询日志
+    query_log:
+      num: 200 # 满200条保存一次
+      time: 1s # 每隔1秒保存一次
+      timeout: 3s # 超时时间
+      write_all_to_log: false
+      includes:
+        # server
+        "/qbot.qbot.vector_doc.VectorDoc/Search": true
+        "/qbot.qbot.vector_doc.VectorDoc/MatchRefer": true
+        "/qbot.qbot.vector_doc.DirectIndex/SearchVector": true
+        "/qbot.qbot.vector_doc.DirectIndex/AddVector": true
+        # client
+        "/trpc.smartassistant.vectordbmanager.VectorObj/Embedding": false
+    error_rewrite:
+      mode: whitelist
+      codes: [1-999,10000-11000]
+      msg: "系统繁忙，请稍后重试"
+      overwrite:
+        # 1: "系统繁忙，请稍后重试"
+    # 每批次任务拉取个数
+    task_fetch_num: 20
+    # 拉取任务超时
+    task_fetch_timeout: 2s
+    # 拉取任务周期
+    task_fetch_period: 3s
+    # 任务配置
+    tasks:
+      publish:
+        runners: 3 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 30 # 最大重试次数
+        timeout: 30m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 5
+        batch_size: 100
+        stopped_resume_time: 720h
+      publish_done_notify:
+        runners: 3 # 处理协程数, 无法动态调整
+        retry_wait_time: 30s # 重试等待时间
+        max_retry: 30 # 最大重试次数
+        timeout: 10s # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 3s # 启动延迟
+        batch: 1
+        batch_size: 0
+        stopped_resume_time: 720h
+      combine_overlay:
+        runners: 3 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 3 # 最大重试次数
+        timeout: 10m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 3s # 启动延迟
+        batch: 1
+        batch_size: 0
+        stopped_resume_time: 720h
+      delete_detached_overlay:
+        runners: 5 # 处理协程数, 无法动态调整
+        retry_wait_time: 30s # 重试等待时间
+        max_retry: 120 # 最大重试次数
+        timeout: 10m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 3s # 启动延迟
+        batch: 1
+        batch_size: 0
+        stopped_resume_time: 720h
+      rebuild_index:
+        runners: 1 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 10 # 最大重试次数
+        timeout: 10m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 1
+        batch_size: 0
+        stopped_resume_time: 720h
+      prod_embedding_upgrade:
+        runners: 2 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 30 # 最大重试次数
+        timeout: 240m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 5
+        batch_size: 100
+        stopped_resume_time: 720h
+      prod_embedding_upgrade_v2:
+        runners: 2 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 30 # 最大重试次数
+        timeout: 60m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 10
+        batch_size: 100
+        stopped_resume_time: 720h
+      publish_incremental:
+        runners: 3 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 30 # 最大重试次数
+        timeout: 10h # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 10
+        batch_size: 0
+        stopped_resume_time: 720h
+      add_label:
+        runners: 1 # 处理协程数，无法动态调整
+        retry_wait_time: 10m #重试等待时间
+        max_retry: 9999 #最大重试次数
+        timeout: 4h #超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s #启动延迟
+        batch:  1
+        batch_size: 0
+        stopped_resume_time: 720h
+      delete_app_data:
+        runners: 1 # 处理协程数，无法动态调整
+        retry_wait_time: 10m #重试等待时间
+        max_retry: 5 #最大重试次数
+        timeout: 4h #超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s #启动延迟
+        batch:  1
+        batch_size: 0
+        stopped_resume_time: 720h
+      zeus2vdb:
+        runners: 2 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 30 # 最大重试次数
+        timeout: 30m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 1
+        batch_size: 100
+        stopped_resume_time: 720h
+      update_qa_id:
+        runners: 1 # 处理协程数，无法动态调整
+        retry_wait_time: 2m #重试等待时间
+        max_retry: 1 #最大重试次数
+        timeout: 12h #超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s #启动延迟
+        batch:  1
+        batch_size: 10
+        stopped_resume_time: 720h
+    embedding:
+      default_image_model: sn-multimodal-embedding-V0.2-visual
+      default_text_search_image: sn-multimodal-embedding-V0.2-text
+      versions:
+        1:
+          doc:
+            model_name: doc-normal-500-v4.5
+            max_len: 500
+            dimension: 1024
+            max_retry: 1
+          qa:
+            model_name: qa-normal-500-v4.5
+            max_len: 500
+            dimension: 1024
+            max_retry: 1
+          reject_qa:
+            model_name: qa-normal-500-v4.5
+            max_len: 500
+            dimension: 1024
+            max_retry: 1
+          search_engine:
+            model_name: doc-normal-500-v4.5
+            max_len: 500
+            dimension: 1024
+            max_retry: 1
+        2:
+          doc:
+            model_name: doc-normal-500-v5.8
+            max_len: 500
+            dimension: 1024
+            max_retry: 1
+          qa:
+            model_name: qa-normal-500-v4.0
+            max_len: 500
+            dimension: 1024
+            max_retry: 1
+          reject_qa:
+            model_name: qa-normal-500-v4.0
+            max_len: 500
+            dimension: 1024
+            max_retry: 1
+          search_engine:
+            model_name: doc-normal-500-v5.8
+            max_len: 500
+            dimension: 1024
+            max_retry: 1
+        3:
+          doc:
+            model_name: sn-large-zh-v0.2.1
+            max_len: 500
+            dimension: 1024
+            max_retry: 1
+            prefix: 为这个句子生成表示以用于检索相关文章：
+          qa:
+            model_name: qa-normal-500-v4.0
+            max_len: 500
+            dimension: 1024
+            max_retry: 1
+          reject_qa:
+            model_name: qa-normal-500-v4.0
+            max_len: 500
+            dimension: 1024
+            max_retry: 1
+          search_engine:
+            model_name: sn-large-zh-v0.2.1
+            max_len: 500
+            dimension: 1024
+            max_retry: 1
+            prefix: 为这个句子生成表示以用于检索相关文章：
+        4:
+          doc:
+            model_name: sn-large-zh-v0.2.3
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+          qa:
+            model_name: qa-normal-500-v4.0
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+          reject_qa:
+            model_name: qa-normal-500-v4.0
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+          search_engine:
+            model_name: sn-large-zh-v0.2.3
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+        5:
+          doc:
+            model_name: sn-large-zh-v0.2.3
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+          qa:
+            model_name: sn-large-zh-v0.2.3
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+          reject_qa:
+            model_name: sn-large-zh-v0.2.3
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+          search_engine:
+            model_name: sn-large-zh-v0.2.3
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+            ## 图片embedding模型
+          image:
+            model_name: sn-multimodal-embedding-V0.1-visual
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+          ## 文本跨模态embedding模型，用于文搜图
+          text_search_image:
+            model_name: sn-multimodal-embedding-V0.1-text
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+        6:
+          doc:
+            model_name: sn-large-multi-language-v0.2.4.1
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+            prefix: "问题:"
+          qa:
+            model_name: sn-large-multi-language-v0.2.4.1
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+            prefix: "问题:"
+            content_prefix: "问题:"
+          reject_qa:
+            model_name: sn-large-multi-language-v0.2.4.1
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+            prefix: "问题:"
+            content_prefix: "问题:"
+          image:
+            model_name: sn-multimodal-embedding-V0.1-visual
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+          text_search_image:
+            model_name: sn-multimodal-embedding-V0.1-text
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+        7:
+          doc:
+            model_name: sn-large-multi-language-v0.2.5
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+            prefix: "问题:"
+          qa:
+            model_name: sn-large-multi-language-v0.2.5
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+            prefix: "问题:"
+            content_prefix: "问题:"
+          reject_qa:
+            model_name: sn-large-multi-language-v0.2.5
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+            prefix: "问题:"
+            content_prefix: "问题:"
+          image:
+            model_name: sn-multimodal-embedding-V0.2-visual
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+          text_search_image:
+            model_name: sn-multimodal-embedding-V0.2-text
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+        8:
+          doc:
+            model_name: sn-llm-embedding-2b-v0.2.1
+            max_len: 10000
+            dimension: 2304
+            max_retry: 1
+            q_instruction: "<s><|user|>\nRepresent the query:\n<|embed|>\n"
+            d_instruction: "<s><|user|>\nRepresent the passage:\n<|embed|>\n"
+          qa:
+            model_name: sn-llm-embedding-2b-v0.2.1
+            max_len: 10000
+            dimension: 2304
+            max_retry: 1
+            q_instruction: "<s><|user|>\nRepresent the query:\n<|embed|>\n"
+            d_instruction: "<s><|user|>\nRepresent the passage:\n<|embed|>\n"
+          reject_qa:
+            model_name: sn-llm-embedding-2b-v0.2.1
+            max_len: 10000
+            dimension: 2304
+            max_retry: 1
+            q_instruction: "<s><|user|>\nRepresent the query:\n<|embed|>\n"
+            d_instruction: "<s><|user|>\nRepresent the passage:\n<|embed|>\n"
+          image:
+            model_name: sn-multimodal-embedding-V0.2-visual
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+            retry_wait_ms: 300
+          text_search_image:
+            model_name: sn-multimodal-embedding-V0.2-text
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+
+
+    # ES配置( 不使用 trpc-go/goes 的插件)
+    elastic_search_config:
+      # 评测库
+      index_big_data: doc_big_data_preview
+      # prod库
+      index_big_data_prod: doc_big_data_prod
+      name: trpc.elasticsearch.lke.vector_doc
+      #es地址
+      url: http://{{ (index .Values.global.components.es.hosts 0) }}:{{ .Values.global.components.es.port }}
+      #用户名
+      user: {{ .Values.global.components.es.user }}
+      #密码
+      password: "{{ .Values.global.components.es.password }}"
+      #超时时间
+      timeout: 20000
+      log:
+        #是否开启日志
+        enabled: true
+        #是否开启请求日志
+        request_enabled: true
+        #是否开启请求body日志
+        request_body: true
+      index_knowledge_preview: "knowledge_segment_preview"
+      index_knowledge_prod: "knowledge_segment_prod"
+      es_version: 7
+      enable_big_data_hard_delete: true
+
+    ## es索引名称配置
+    es_index_name_config:
+      knowledge:
+        - sub_type: ""
+          preview: knowledge_segment_preview
+          prod: knowledge_segment_prod
+      big_data:
+        - sub_type: ""
+          preview: doc_big_data_preview
+          prod: doc_big_data_prod
+      realtime_knowledge:
+        - sub_type: ""
+          preview: realtime_knowledge_segment
+      realtime_big_data:
+        - sub_type: ""
+          preview: realtime_big_data
+      text2sql_es1:
+        - sub_type: ""
+          preview: text2sql_meta_preview
+          prod: text2sql_meta_prod
+      text2sql_es2:
+        - sub_type: "1_20"
+          preview: text2sql_content_1_20_preview
+          prod: text2sql_content_1_20_prod
+        - sub_type: "21_50"
+          preview: text2sql_content_21_50_preview
+          prod: text2sql_content_21_50_prod
+        - sub_type: "51_100"
+          preview: text2sql_content_51_100_preview
+          prod: text2sql_content_51_100_prod
+        - sub_type: "101_900"
+          preview: text2sql_content_101_900_preview
+          prod: text2sql_content_101_900_prod
+
+    # text2sql es2的sub_type配置
+    text2sql_es2_sub_type:
+      - min: 1
+        max: 20
+        sub_type: "1_20"
+      - min: 21
+        max: 50
+        sub_type: "21_50"
+      - min: 51
+        max: 100
+        sub_type: "51_100"
+      - min: 101
+        max: 900
+        sub_type: "101_900"
+
+    ## 混合检索全局配置
+    retrieval_config:
+      # 文档向量召回数量 默认20
+      doc_vec_recall_num: 20
+      # 问答向量召回数量 默认20
+      qa_vec_recall_num: 20
+      # es召回数量 默认20
+      es_recall_num: 20
+      # 召回数量超过时 es做rerank的数量 默认7
+      es_rerank_min_num: 7
+      # rerank分数阈值 默认-6.0
+      rerank_threshold: -6.0
+      # rrf向量排序的权重 默认2
+      rrf_vec_weight: 2
+      # rrf es排序的权重 默认2
+      rrf_es_weight: 2
+      # rrf rerank排序的权重 默认3
+      rrf_rerank_weight: 3
+      # rrf倒数常量 默认1
+      rrf_reciprocal_const: 1
+      # 子问题的数量 默认3
+      sub_question_num: 3
+
+    # 属性标签
+    # general_vector_attr_key: 通用向量属性，用于通用知识的标记
+    # full_label_value: 属性的全量标签值
+    attribute_label:
+      general_vector_attr_key: general_vector
+      full_label_value: default
+      not_exist_label_value: not_exist
+
+    # 参数限制配置
+    param_limit_config:
+      page_content_len_limit: 2000
+      # 批量添加实时文档切片的数量限制 默认100
+      add_knowledge_batch_size: 100
+      # 批量删除实时文档切片的数量限制 默认100
+      delete_knowledge_batch_size: 100
+      # 检索请求的query长度限制
+      query_len_limit: 4000
+      #限制 text2sql es召回 和 es检索 的输入截断大小
+      es_input_trunk_size: 1000
+
+    # text2sql的配置
+    text_2_sql_config:
+      # 总开关
+      enabled: true
+      # 在数据库中执行时候的最长时间
+      exec_timeout_s: 5
+      # 从 es1 检索 table的数量 默认5
+      es_1_recall_num: 5
+      # 从 es2 检索 数据的数量
+      es_2_recall_num: 100
+      use_default_length: false
+      # text2sql生成的markdown的默认最大长度
+      default_length: 3200
+      # text2sql生成的markdown的最大长度
+      max_length: 20000
+      # query2sql的 model, (2024-05-28)是 nl2sql
+      text_2_sql_model: nl2sql
+      # 请求query2sql的 biz
+      text_2_sql_llm_biz: cs
+      # dsl工具,支持值： esapi, cadence
+      dsl_tool: cadence
+      # 多查一次 es1，带上多个example
+      multi_example: false
+      # 外部数据库信息盐值
+      db_source_salt: 8NbMXhMPVAdZBYIwwl10tZ7BwxyMKdVTAieH4iNR8jE=
+      db_source_sql_formatted: false
+      excel_query_db_first: true
+      text_2_sql_model_config:
+        model_name: lke-deepseek-v3-0324
+        max_len:
+          nl2sql: 6000
+          nl2sql-16b: 30000
+          lke-deepseek-v3-0324: 30000
+          nl2sql-32b: 30000
+        prompt:
+          nl2sql-16b: |-
+            你是一个数据库专家，以下提供了数据库表信息和一个待回答的问题。你的任务是理解数据库表信息并生成一个有效的SQL语句来回答这个问题。
+            ## 通用要求：
+            - 生成的SQL语句符合数据库查询方言的规范。
+            - 请一步步思考后，给出最终的SQL。
+            - SQL语句的格式使用Markdown的SQL代码块, ```sql\n Your SQL \n```。
+            - 如果根据已知信息无法推理出对应问题的SQL，请说明原因后回答:"no sql"。
+            数据库查询方言：{{`{{.DBType}}`}}
+            数据库表信息：
+            {{`{{range .DBTables}}`}}
+
+            {{`{{.}}`}}{{`{{end}}`}}
+            问题：{{`{{.Query}}`}}
+          nl2sql-32b: |-
+            你是一个数据库专家，以下提供了数据库表信息和一个待回答的问题。你的任务是理解数据库表信息并生成一个有效的SQL语句来回答这个问题。
+            ## 通用要求：
+            - 生成的SQL语句符合数据库查询方言的规范。
+            - 请一步步思考后，给出最终的SQL。
+            - SQL语句的格式使用Markdown的SQL代码块, ```sql\n Your SQL \n```。
+            - 如果根据已知信息无法推理出对应问题的SQL，请说明原因后回答:"no sql"。
+            数据库查询方言：{{`{{.DBType}}`}}
+            数据库表信息：
+            {{`{{range .DBTables}}`}}
+
+            {{`{{.}}`}}{{`{{end}}`}}
+            问题：{{`{{.Query}}`}}
+          lke-deepseek-v3-0324: |-
+            你是一个数据库专家，以下提供了数据库表信息和一个待回答的问题。你的任务是理解数据库表信息并生成一个有效的SQL语句来回答这个问题。
+            ## 通用要求：
+            - 生成的SQL语句符合数据库查询方言的规范。
+            - 请直接给出SQL，不要加思考过程。
+            - SQL语句的格式使用Markdown的SQL代码块, ```sql\nYour SQL\n```。
+            - 如果根据已知信息无法推理出对应问题的SQL，请直接回答:"no sql"，然后结束。
+            当前时间戳：{{`{{.TimeStr}}`}}
+            数据库查询方言：{{`{{.DBType}}`}}
+            数据库表信息：
+            {{`{{range .DBTables}}`}}
+
+            {{`{{.}}`}}{{`{{end}}`}}
+            问题：{{`{{.Query}}`}}
+        model_params:
+          nl2sql-16b: |-
+            {"top_p": 1, "temperature": 0, "presence_penalty": 1}
+          nl2sql-32b: |-
+            {"top_p": 1, "temperature": 0, "presence_penalty": 1}
+          lke-deepseek-v3-0324: |-
+            {"top_p": 1, "temperature": 0, "presence_penalty": 1}
+      # query2sql的 prompt 中拼接example时单个单元格的最大长度
+      prompt_cell_max_length: 20
+      # 是否开启example中的数字替换；如果Prompt中example的value是数字,example中的 {height: 10} 替换为 {height: NUMERIC}
+      replace_numeric: false
+      # text2sql的结果拼装给阅读理解大模型时，最终的结果样式
+      text_2_sql_result: |-
+        给定用户问题：{{`{{.Query}}`}}
+        {{`{{if .FromDB}}`}}相关数据表：{{`{{else}}`}}相关文档名：{{`{{end}}`}}{{`{{.FileNames}}`}}
+        根据用户问题执行sql语句：{{`{{.SQLCommand}}`}}
+        返回参考结果：
+        {{`{{.Markdown}}`}}
+        {{`{{if .IsTruncated}}`}}由于查询到的内容长度超长，未能全部展示。{{`{{end}}`}}
+        {{`{{if .Columns}}`}}
+        {{`{{range .Columns}}`}} {{`{{.Name}}`}}释义：{{`{{.ColumnDesc}}`}}，{{`{{.AliasName}}`}}，{{`{{.DataType}}`}}
+        {{`{{end}}`}}{{`{{end}}`}}
+        如果参考结果不准确，请不要采纳用于回答用户问题。
+      ## 日期时间格式及对应转换的格式和类型配置
+      date_time_format_configs:
+        - date_time_format: "2006-1-2"
+          trans_format: "2006-01-02"
+          date_time_type: "day"
+        - date_time_format: "2006-1"
+          trans_format: "2006-01"
+          date_time_type: "month"
+        - date_time_format: "2006"
+          trans_format: "2006"
+          date_time_type: "year"
+        - date_time_format: "2006-1-2 15:04:05"
+          trans_format: "2006-01-02T15:04:05"
+          date_time_type: "second"
+        - date_time_format: "2006-1-2 15:04"
+          trans_format: "2006-01-02T15:04"
+          date_time_type: "minute"
+        - date_time_format: "2006-1-2 15"
+          trans_format: "2006-01-02T15"
+          date_time_type: "hour"
+      # 字段名长度限制,限制63个字符
+      field_name_len_limit: 63
+      # DB配置，用于存储表格内容（每个表格单独存表）
+      sql_db_config:
+        # 是否开启分库
+        enable_split_db: true
+        # 分库的数量
+        split_db_num: 100
+        # 评测端DB名称
+        db_name_preview: db_text2sql_preview
+        # 发布端DB名称
+        db_name_prod: db_text2sql_prod
+      # 是否使用向量召回
+      vector_recall_enable: {{ .Values.retrieval_config.vector_recall_enable }}
+      # 使用向量召回的TOP N
+      vector_recall_top_n: 100
+      # 向量召回保留的表数量
+      vector_retain_table_count: 5
+      # 向量召回每个表保留的切片数量
+      vector_retain_seg_cont: 2
+      # 向量召回的置信度
+      vector_recall_confidence: 0.2
+      # es召回的权重
+      es_weight: 2
+      # vector召回的权重
+      vector_weight: 2
+      # vector召回的权重
+      rrf_const: 1
+      # RRF最终保留送给nl2sql模型的数量
+      rrf_top_n: 5
+
+    # 发布任务的参数配置
+    publish_param_config:
+      # 发布时批量同步节点数据数量
+      batch_add_nodes_size: 100
+      # embedding调用的并发数
+      embedding_batch_size: {{ .Values.vector_doc.publish.embedding_batch_size }}
+      # 发布时图片embedding调用的并发数
+      image_embedding_batch_size: {{ .Values.vector_doc.publish.image_embedding_batch_size }}
+      # 批量添加向量的数量
+      batch_add_vector_size: {{ .Values.vector_doc.publish.batch_add_vector_size }}
+      # 发布时写入redis kv单key节点数量
+      kv_node_batch_size: 100
+      # 回调admin的并发数量
+      notify_batch_size: 3
+      # 添加向量/ES等失败的调用次数（重试1次）
+      retry_times: 2
+      delete_batch_size: 100
+
+    # 发布任务的参数配置
+    zeus_to_vdb_config:
+      # 发布时批量同步节点数据数量
+      batch_add_nodes_size: 100
+      # embedding调用的并发数
+      embedding_batch_size: 20
+      # 发布时图片embedding调用的并发数
+      image_embedding_batch_size: 20
+      # 批量添加向量的数量
+      batch_add_vector_size: 100
+      # 添加向量/ES等失败的重试次数
+      retry_times: 2
+
+    ## 图搜图/文搜图filter配置
+    filter:
+      - doc_type: 6
+        confidence: 0.85
+        top_n: 1
+        is_enable: false
+      - doc_type: 7
+        confidence: 0.7
+        top_n: 1
+        is_enable: false
+
+    # 清理APP下数据配置
+    clear_app_data_config:
+      db_batch_del_size: 1000
+      es_per_second_del_size: 5000
+      mysql_db_table_name:
+        - t_text2sql_meta_mapping_prod
+        - t_text2sql_meta_mapping_preview
+        - t_version_overlay
+      tdsql_db_table_name:
+        - t_knowledge_vector
+        - t_retrieval_node_info
+        - t_image_vector
+
+    cron_clean_data_config:
+      enable_cron_clean: true # 是否开启定时删除
+      debug_time_minutes_not_use: 0
+      expired_time_day: {{ (.Values.global.delete_data).retrieval_server_retention_days | default 60 }}  # 多长时间之前的数据认为是可以过期删除的
+      delete_batch_size: 100 # 每次执行sql批量删除的数量
+      times_in_one_round: 50 # 每一轮执行执行多少次删除
+      delete_interval_ms: 10 # 每次执行删除延时的毫秒
+      exec_sql_warning_ms: 4000 # 执行删除语句的时候超过这个值会打ERROR日志，用于告警
+    disable_image_embedding: true # 禁用多模态embedding，包括文搜图、图片入库和图搜图
+
+    ai_gateway_config:
+      enable_rerank: true # 是否使用大模型网的 rerank 模型
+      enable_embedding: true # 是否使用大模型网的 embedding 模型
+      default_rerank_model: sn-reranker-large-v0.4 # 默认的 rerank 模型，大模型网关内置模型
+      rerank_models:
+        sn-reranker-large-v0.4: true
+        sn-llm-reranker-2b-v0.2: false
+
+
+
+  error_en-US.json: |
+    {
+        "ErrCreateGroup": "create group failed",
+        "ErrAddVectors": "add vectors failed",
+        "ErrEmbeddingNotExists": "embedding not exists",
+        "ErrVersionNotExists": "version not exists",
+        "ErrEmptyOverlay": "empty overlay",
+        "ErrNoOverlayAccessor": "no accessor for overlay",
+        "ErrOverlayNotExists": "overlay not exists",
+        "ErrUpdateVectors": "update vectors failed",
+        "ErrDeleteVectors": "delete vectors failed",
+        "ErrGetVector": "get vectors failed",
+        "ErrLockFail": "lock fail",
+        "ErrUnlockFail": "unlock fail",
+        "ErrNoVersionOverlayAccessor": "no accessor for version overlay",
+        "ErrUnknownDocType": "unknown doc type",
+        "ErrGetEmbeddingEmpty": "get embedding empty",
+        "ErrGetEmbedding": "get embedding fail",
+        "ErrGetRerank": "get rerank fail",
+        "ErrNotEnabledWebContent": "not enabled web content",
+        "ErrInvalidURL": "invalid URL",
+        "ErrFetchFail": "fetch fail",
+        "ErrFetchTooBig": "fetch too big",
+        "ErrSearchVector": "search vector fail",
+        "ErrVectorQueryTask": "vector query task fail",
+        "ErrDeleteGroup": "delete group fail",
+        "ErrVectorCreateTask": "vector create task fail",
+        "ErrVectorFinishTask": "vector finish task fail",
+        "ErrUnknownVectorLabelExprOp": "unknown vector label expr op",
+        "ErrVectorLabelExprParamNum": "vector label expr param num error",
+        "ErrUnknownVectorLabelExprType": "unknown vector label expr type",
+        "ErrSogouEmptyAttribute": "empty attribute",
+        "ErrSogouEmptyGuJia": "empty guJia group",
+        "ErrInternalError": "Internal error. Please try again later.",
+        "ErrParam": "error parament",
+        "ErrUpdateLabelEsFail": "Failed to update es labels",
+        "ErrSQLGenerateFailedNoDataInDB": "No data in table. Insert data, refresh table, and retry.",
+        "ErrSQLGenerateFailed": "SQL generation failed. Modify your query and retry."
+
+    }
+  error_zh-CN.json: |
+    {
+        "ErrCreateGroup": "create group failed",
+        "ErrAddVectors": "add vectors failed",
+        "ErrEmbeddingNotExists": "embedding not exists",
+        "ErrVersionNotExists": "version not exists",
+        "ErrEmptyOverlay": "empty overlay",
+        "ErrNoOverlayAccessor": "no accessor for overlay",
+        "ErrOverlayNotExists": "overlay not exists",
+        "ErrUpdateVectors": "update vectors failed",
+        "ErrDeleteVectors": "delete vectors failed",
+        "ErrGetVector": "get vectors failed",
+        "ErrLockFail": "lock fail",
+        "ErrUnlockFail": "unlock fail",
+        "ErrNoVersionOverlayAccessor": "no accessor for version overlay",
+        "ErrUnknownDocType": "unknown doc type",
+        "ErrGetEmbeddingEmpty": "get embedding empty",
+        "ErrGetEmbedding": "get embedding fail",
+        "ErrGetRerank": "get rerank fail",
+        "ErrNotEnabledWebContent": "not enabled web content",
+        "ErrInvalidURL": "invalid URL",
+        "ErrFetchFail": "fetch fail",
+        "ErrFetchTooBig": "fetch too big",
+        "ErrSearchVector": "search vector fail",
+        "ErrVectorQueryTask": "vector query task fail",
+        "ErrDeleteGroup": "delete group fail",
+        "ErrVectorCreateTask": "vector create task fail",
+        "ErrVectorFinishTask": "vector finish task fail",
+        "ErrUnknownVectorLabelExprOp": "unknown vector label expr op",
+        "ErrVectorLabelExprParamNum": "vector label expr param num error",
+        "ErrUnknownVectorLabelExprType": "unknown vector label expr type",
+        "ErrSogouEmptyAttribute": "empty attribute",
+        "ErrSogouEmptyGuJia": "empty guJia group",
+        "ErrInternalError": "内部错误。请稍后重试",
+        "ErrParam": "参数错误！",
+        "ErrUpdateLabelEsFail": "Failed to update es labels",
+        "ErrSQLGenerateFailedNoDataInDB": "No SQL, 数据表中无数据，请写入数据后停用、启用数据表，然后发布后重试",
+        "ErrSQLGenerateFailed": "No SQL, SQL 生成失败，请修改提问后重试"
+    }
+  placeholder.yaml: |
+    # ---------- client.yaml start -----------
+    #mysql.db_llm_robot
+    MYSQL_USER: root
+    MYSQL_PASSWORD:
+    MYSQL_HOST:
+    MYSQL_PORT: 3306
+
+    #mysql.db_text2sql
+    TEXT2SQL_MYSQL_USER: root
+    TEXT2SQL_MYSQL_PASSWORD:
+    TEXT2SQL_MYSQL_HOST:
+    TEXT2SQL_MYSQL_PORT: 3306
+
+    #tdsql.db_llm_robot
+    TDSQL_USER: retrieval
+    TDSQL_PASSWORD:
+    TDSQL_HOST:
+    TDSQL_PORT: 3306
+
+    #mysql.qbot.admin.delete
+    ADMIN_MYSQL_USER: app_delete
+    ADMIN_MYSQL_PASSWORD:
+    ADMIN_MYSQL_HOST:
+    ADMIN_MYSQL_PORT: 3306
+
+    #isearch.tdsql.db_llm_robot
+    ISEARCH_TDSQL_USER: retrieval
+    ISEARCH_TDSQL_PASSWORD:
+    ISEARCH_TDSQL_HOST:
+    ISEARCH_TDSQL_PORT: 3306
+
+
+    REDIS_HOST:
+    REDIS_PORT: 6380
+    REDIS_PASSWORD:
+
+    VECTOR_DOC_SEARCH_ENGINE_TARGET: ip://google.serper.dev/search
+    VECTOR_DOC_SOGOU_SEARCH_ENGINE_TARGET: ip://m.sogou.com/commonsearch
+    BOT_ADMIN_CONFIG_SERVER_TARGET: polaris://trpc.KEP.bot-admin-config-server.Api
+
+    #pipeline-flow-detail
+    PIPELINE_MYSQL_USER: bot_task_config_server
+    PIPELINE_MYSQL_PASSWORD:
+    PIPELINE_MYSQL_HOST:
+    PIPELINE_MYSQL_PORT: 3306
+
+    ADP_AI_GATEWAY_TARGET: polaris://trpc.adp.ai-gateway.api
+    # ---------- client.yaml end -----------
+
+    # ---------- application.yaml start -----------
+    # 禁用多模态embedding，包括文搜图、图片入库和图搜图，私有化设置为true disable_image_embedding
+    DISABLE_IMAGE_EMBEDDING: false
+
+    ELASTIC_SEARCH_URL:
+    ELASTIC_SEARCH_USER:
+    ELASTIC_SEARCH_PASSWORD:
+
+    # 是否开启分库，私有化不开启 enable_split_db
+    TEXT2SQL_ENABLE_SPLIT_DB: true
+    # 是否使用向量召回，私有化当前模型窗口小，不开启  vector_recall_enable
+    TEXT2SQL_VECTOR_RECALL_ENABLE: true
+
+    # 数据库代理，私有化不需要
+    DB_PROXY:
+    DB_PROXY_USER:
+    DB_PROXY_PD:
+    DB_PROXY_EFFECT_TIME: "2025-11-05 10:04:05"
+    # ---------- application.yaml end -----------
+  retrieval_en-US.json: |
+    {
+      "DocNamePrefix": "File name: ",
+      "DocSegmentPrefix": "Passage: ",
+      "NoDataInDB": "No SQL. The data table contains no data. Please write data to it, then disable and re-enable the data table, and retry after publishing.",
+      "SQLGenerateFailed": "No SQL. SQL generation failed. Please modify your query and try again."
+    }
+  retrieval_zh-CN.json: |
+    {
+      "DocNamePrefix": "文档名：",
+      "DocSegmentPrefix": "文档片段：",
+      "NoDataInDB": "No SQL, 数据表中无数据，请写入数据后停用、启用数据表，然后发布后重试",
+      "SQLGenerateFailed": "No SQL, SQL 生成失败，请修改提问后重试"
+    }
+  trpc_go.yaml: |
+    global:
+      env_name: test
+      namespace: Development
+
+    server:                                            #服务端配置
+      app: KEP                                        #业务的应用名
+      server: bot-retrieval-server                             #进程服务名
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      admin:
+        ip: ${POD_IP}
+        port: 8081
+        write_timeout: 600000 # ms. 处理的超时时间
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+      - validation
+      - recovery
+      - i18n-adp
+      - debuglog
+      - querylog
+      - errorrewrite
+      - cle-route-propagator
+      - opentelemetry
+      service:
+      - name: trpc.KEP.bot-retrieval-server.retrieval
+        ip: ${POD_IP}
+        port: 8000
+        network: tcp
+        protocol: trpc
+        timeout: 20000   # 请求最长处理时间，单位毫秒
+      - name: trpc.KEP.bot-retrieval-server.Retrieval
+        ip: ${POD_IP}
+        port: 9090
+        network: tcp
+        protocol: trpc
+        timeout: 20000   # 请求最长处理时间，单位毫秒
+      - name: trpc.KEP.bot-retrieval-server.DirectIndex
+        ip: ${POD_IP}
+        port: 9091
+        network: tcp
+        protocol: trpc
+        timeout: 20000
+      - name: trpc.KEP.bot-retrieval-server.CronCleanData   #service的路由名称,
+        ip: ${POD_IP}   # 私有云使用eth0
+        port: 9900   #服务监听端口
+        network: 0 */10 0-6,20-23 * * *       # 每天 每10分钟执行一次
+        protocol: timer   #应用层协议
+        timeout: 480000   # 请求最长处理时间，单位毫秒
+    plugins:                                          #插件配置
+      error:
+        rewrite:
+      tracing:
+        querylog:
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      config:
+        file:
+          providers:
+          - name: rainbow
+            path: /app/conf/
+      registry: #服务注册配置
+        polaris: #北极星名字注册服务的配置
+          register_self: false
+          heartbeat_interval: 3000                    #名字注册服务心跳上报间隔
+          heartbeat_timeout: 1000                     #名字服务心跳超时
+          service:
+          - name: trpc.KEP.bot-retrieval-server.retrieval      #service name 与上面的service配置一一对应
+            namespace: Test                #环境类型，分正式Production和非正式Development两种类型
+            token: 222c513b81e740678506dd4fb0b25cc0               #服务注册所需要的 token
+          - name: trpc.KEP.bot-retrieval-server.Retrieval      #service name 与上面的service配置一一对应
+            namespace: Test                #环境类型，分正式Production和非正式Development两种类型
+            token: 73633e9b19994090868a3b28a0e19443               #服务注册所需要的 token
+          - name: trpc.KEP.bot-retrieval-server.DirectIndex      #service name 与上面的service配置一一对应
+            namespace: Test                #环境类型，分正式Production和非正式Development两种类型
+            token: 4722875950d34464ac30a7aded13781e               #服务注册所需要的 token
+      log:
+        default:                                  #默认日志的配置，可支持多输出
+        - writer: console                         #控制台标准输出 默认
+          level: info                            #标准输出日志的级别
+        #caller_skip: 3
+          formatter: json
+          formatter_config:
+            time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+            time_key: time
+            level_key: level
+            name_key: name
+            caller_key: caller
+            message_key: message
+        - writer: file                            #本地文件日志
+          level: info                             #本地文件滚动日志的级别
+          formatter: json
+          formatter_config:
+            time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+            time_key: time
+            level_key: level
+            name_key: name
+            caller_key: caller
+            message_key: message
+            stacktrace_key: stackTrace
+          writer_config:
+            filename: /app/logs/trpc.log  #本地文件滚动日志存放的路径
+            write_mode: 2
+            roll_type: time
+            max_age: 7
+            max_backups: 10
+            compress: false
+            time_unit: day
+        clues:
+        - writer: console                         #控制台标准输出 默认
+          level: info                            #标准输出日志的级别
+        - writer: file
+          level: info
+          formatter: json
+          writer_config:
+            filename: /app/logs/clues.log
+            write_mode: 2
+            roll_type: time
+            max_age: 7
+            max_backups: 10
+            compress: false
+            time_unit: day
+      selector:
+        polaris:
+          enable_servicerouter: true # 注意这里一定要使用 true
+      # noticer:
+      #   wecom:
+      #     wx_robot_url: https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=f7a0c872-4bd4-4f5a-98b5-269e749a5d35
+      i18n:
+        i18n-adp:                    # [可选]: i18n配置，如未设置，不进行任何翻译
+          default_lang: zh-CN    # [可选]: 如未设置，默认为en-US; 如需使用简体中文，需要显式设置为zh-CN
+          supported_languages:   # [可选]: 系统支持的语言列表
+          - zh-CN
+          - en-US
+          data_provider:         # [可选]: 多语言数据提供者，如不配置，不进行翻译
+            type: rainbow        # [可选]: 多语言数据提供者类型，当前只支持rainbow
+            prefix: retrieval         # [可选]: 完整key为{prefix}_{lang}.json。多语言文件key的前缀，与语言后缀拼成完整的key，如 chat_zh-CN.json
+            error_prefix: error  # [可选]: 错误码文件前缀，完整可以为{error_prefix}_{lang}.json, 如 error_zh-CN.json
+            char_scaling_factor:
+              zh: 1
+              en: 3
+    client:
+      namespace: Test
+      filter:
+      - opentelemetry
+      - cle-route-propagator
+      service:
+      - name: mysql.db_llm_robot
+        target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - name: mysql.db_text2sql
+        target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - name: tdsql.db_llm_robot
+        target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - name: mysql.qbot.admin.delete
+        target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - name: isearch.tdsql.db_llm_robot
+        target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - name: redis.qbot.qbot
+        target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/1
+        password: "{{ .Values.global.components.redis.password }}"
+        timeout: 3000
+      - name: trpc.SmartAssistant.VectorDBManager.VectorObj
+        callee: trpc.smartassistant.vectordbmanager.VectorObj
+        target: ip://vector-db-manager.{{ .Release.Namespace }}.svc.cluster.local:10001
+        protocol: trpc
+        network: tcp
+        timeout: 3000
+        method:
+          DeleteGroup:
+            timeout: 10000
+          Embedding:
+            timeout: 5000
+          AddVector:
+            timeout: 5000
+          CreateGroup:
+            timeout: 10000
+          DeleteCollection:
+            timeout: 10000
+      - callee: trpc.KEP.bot_admin_config_server.Api
+        namespace: Test
+        target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+        protocol: trpc
+        timeout: 20000
+      - name: pipeline-flow-detail
+        target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot_history_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - name: trpc.SmartAssistant.LLMManagerServer.Chat
+        target: ip://llm-manager-server.{{ .Release.Namespace }}.svc.cluster.local:10001
+        service_name: trpc.SmartAssistant.LLMManagerServer.Chat
+        timeout: 15000
+      - name: trpc.adp.ai-gateway.api
+        target: ip://ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+        protocol: http
+        network: tcp
+        timeout: 14000
+      - name: trpc.adp.app_config.Admin
+        namespace: Test
+        target: ip://app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+        timeout: 30000
+
+  whitelist.yaml: |
+    # 内网数据库，只允许内部账号访问，kb-config和kb-retrieval需要同时配置
+    internal_db_white_list:
+

@@ -1,0 +1,136 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-import-sql-job
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-succeeded": continue
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 1
+  # ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      restartPolicy: Never
+      serviceAccountName: ti-helm-hook-serviceaccount
+      volumes:
+      containers:
+      - name: import-sql
+        image: {{ (index .Values.tad.images "cs-data-init").url }}
+        imagePullPolicy: Always
+        command:
+        - "/bin/sh"
+        - "-ecx"
+        - |
+          cd /app/cs-data
+
+          if [ ! -d "db/init-sql-324/sql" ]; then
+            echo "db/init-sql-324/sql directory not found"
+            exit 1
+          fi
+
+          # Replace RESOURCE_HOST_PLACEHOLDER in SQL files
+          STORAGE_TYPE="${STORAGE_TYPE:-minio}"
+          if [ "$STORAGE_TYPE" = "minio" ]; then
+            STORAGE_URL="http://${STORAGE_CLB}"
+          elif [ "$STORAGE_TYPE" = "obs" ]; then
+            STORAGE_URL="http://qbot.${STORAGE_HOST}"
+          elif [ "$STORAGE_TYPE" = "cos" ]; then
+            STORAGE_URL="https://${STORAGE_HOST}"
+          else
+            STORAGE_URL="http://${STORAGE_CLB}"
+          fi
+          echo "Replacing RESOURCE_HOST_PLACEHOLDER with $STORAGE_URL"
+          find db/init-sql-324/sql -name '*.sql' -exec sed -i "s#RESOURCE_HOST_PLACEHOLDER#${STORAGE_URL}#g" {} \;
+
+          # Replace ADP_APIKEY_PLACEHOLDER in SQL files
+          echo "Replacing ADP_APIKEY_PLACEHOLDER with $ADP_APIKEY"
+          find db/init-sql-324/sql -name '*.sql' -exec sed -i "s#ADP_APIKEY_PLACEHOLDER#${ADP_APIKEY}#g" {} \;
+
+          # Replace HUNYUAN_APIKEY_PLACEHOLDER in SQL files
+          echo "Replacing HUNYUAN_APIKEY_PLACEHOLDER with $HUNYUAN_APIKEY"
+          find db/init-sql-324/sql -name '*.sql' -exec sed -i "s#HUNYUAN_APIKEY_PLACEHOLDER#${HUNYUAN_APIKEY}#g" {} \;
+
+          # Replace CLB_PLACEHOLDER in SQL files
+          echo "Replacing CLB_PLACEHOLDER with $CLB_URL"
+          find db/init-sql-324/sql -name '*.sql' -exec sed -i "s#CLB_PLACEHOLDER#${CLB_URL}#g" {} \;
+
+          IFS=',' read -r -a serviceList <<< "$SERVICE_LIST"
+
+          # 声明数组用于跟踪后台任务和状态
+          declare -a pids
+          declare -a service_names
+
+          # 并行执行MySQL导入
+          for serviceName in "${serviceList[@]}"; do
+            if [ -f "db/init-sql-324/sql/$serviceName.sql" ]; then
+              echo "$serviceName ready to import SQL files."
+              
+              # 在后台执行mysql导入
+              mysql -u$DB_USER -p$DB_PASSWORD -h$DB_HOST -P $DB_PORT --default-character-set=utf8 < db/init-sql-324/sql/$serviceName.sql &
+              pid=$!
+              pids+=($pid)
+              service_names[$pid]=$serviceName
+            else
+              echo "db/init-sql-324/sql/$serviceName.sql file not found"
+              exit 1
+            fi
+          done
+
+          # 等待所有后台任务完成并检查错误
+          has_error=0
+          for pid in "${pids[@]}"; do
+            wait $pid
+            exit_code=$?
+            if [ $exit_code -ne 0 ]; then
+              echo "${service_names[$pid]} SQL import failed with exit code $exit_code."
+              has_error=1
+            else
+              echo "${service_names[$pid]} SQL import completed successfully."
+            fi
+          done
+
+          # 如果有任何错误，则退出
+          if [ $has_error -ne 0 ]; then
+            echo "Some SQL imports failed. Exiting."
+            exit 1
+          fi
+
+          echo "All SQL imports completed successfully."
+        env:
+        - name: NAMESPACE
+          value: {{ .Release.Namespace }}
+        - name: SERVICE_LIST
+          value: {{ .Values.ServiceList }}
+        {{- if .Values.global.updatefrom }}
+        - name: updatefrom
+          value: {{ .Values.global.updatefrom }}
+        {{- end }}
+        - name: DB_PROVIDER
+          value: {{ .Values.global.components.db.provider }}
+        - name: DB_HOST
+          value: {{ .Values.global.components.db.host }}
+        - name: DB_PORT
+          value: {{ .Values.global.components.db.port | quote }}
+        - name: DB_USER
+          value: {{ .Values.global.components.db.user }}
+        - name: DB_PASSWORD
+          value: {{ .Values.global.components.db.password }}
+        - name: STORAGE_TYPE
+          value: {{ .Values.global.components.s3.providerType | default "minio" }}
+        - name: STORAGE_CLB
+          value: {{ .Values.global.clb | default "" }}
+        - name: STORAGE_HOST
+          value: {{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com
+        - name: STORAGE_BUCKET
+          value: {{ .Values.global.components.s3.cos.bucket | default "" }}
+        - name: ADP_APIKEY
+          value: {{ .Values.global.modelServices.adp.apiKey | default "" }}
+        - name: HUNYUAN_APIKEY
+          value: {{ .Values.global.modelServices.hunyuan.apiKey | default "" }}
+        - name: CLB_URL
+          value: {{ .Values.global.scheme | default "http" }}://{{ .Values.global.clb | default "" }}
+

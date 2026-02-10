@@ -1,0 +1,77 @@
+{{- if .Values.global }}          # 第一层：判断 global 配置是否存在
+  {{- if .Values.global.observability }}  # 第二层：判断 observability 配置是否存在
+    {{- if .Values.global.observability.prometheus }}  # 第三层：判断 prometheus 配置是否存在
+      {{- if .Values.global.observability.prometheus.enabled }}  # 第四层：判断 prometheus 总开关是否开启
+        {{- if .Values.global.observability.prometheus.alerts }}  # 第五层：判断 alerts 配置是否存在
+          {{- if .Values.global.observability.prometheus.alerts.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ .Release.Name }}-alerts
+  namespace: {{ .Values.global.observability.prometheus.alertsNamespace | default .Release.Namespace }}
+  labels:
+    release: {{ .Values.global.observability.prometheus.release | default "prometheus" }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  groups:
+    - name: {{ .Release.Name }}.rules
+      rules:
+        # Pod 频繁重启告警
+        - alert: PodFrequentRestart
+          expr: increase(kube_pod_container_status_restarts_total{namespace="{{ .Release.Namespace }}"}[1h]) > {{ .Values.global.observability.prometheus.alerts.podRestartThreshold | default 5 }}
+          for: 5m
+          labels:
+            severity: warning
+            namespace: {{ .Release.Namespace }}
+          annotations:
+            summary: "Pod {{ "{{" }} $labels.pod {{ "}}" }} 频繁重启"
+            description: "Pod {{ "{{" }} $labels.pod {{ "}}" }} 在过去1小时内重启超过{{ .Values.global.observability.prometheus.alerts.podRestartThreshold | default 5 }}次"
+
+        # 高错误率告警
+        - alert: HighErrorRate
+          expr: |
+            sum(rate(trpc_server_handled_total{namespace="{{ .Release.Namespace }}", code!="0"}[5m])) 
+            / sum(rate(trpc_server_handled_total{namespace="{{ .Release.Namespace }}"}[5m])) > {{ .Values.global.observability.prometheus.alerts.errorRateThreshold | default 0.01 }}
+          for: 5m
+          labels:
+            severity: critical
+            namespace: {{ .Release.Namespace }}
+          annotations:
+            summary: "服务错误率过高"
+            description: "当前错误率: {{ "{{" }} $value | humanizePercentage {{ "}}" }}"
+
+        # 响应时间告警 (P99 > 2s)
+        - alert: HighLatency
+          expr: |
+            histogram_quantile(0.99, 
+              sum(rate(trpc_server_handled_seconds_bucket{namespace="{{ .Release.Namespace }}"}[5m])) by (le, app)
+            ) > {{ .Values.global.observability.prometheus.alerts.latencyThreshold | default 2 }}
+          for: 5m
+          labels:
+            severity: warning
+            namespace: {{ .Release.Namespace }}
+          annotations:
+            summary: "服务 {{ "{{" }} $labels.app {{ "}}" }} 响应时间过长"
+            description: "P99 延迟: {{ "{{" }} $value | humanizeDuration {{ "}}" }}"
+
+        # Pod 不可用告警
+        - alert: PodUnavailable
+          expr: kube_deployment_status_replicas_unavailable{namespace="{{ .Release.Namespace }}"} > 0
+          for: 5m
+          labels:
+            severity: warning
+            namespace: {{ .Release.Namespace }}
+          annotations:
+            summary: "Deployment {{ "{{" }} $labels.deployment {{ "}}" }} 存在不可用副本"
+            description: "不可用副本数: {{ "{{" }} $value {{ "}}" }}"
+
+        {{- if .Values.global.observability.prometheus.alerts.customRules }}
+        # 自定义告警规则
+        {{- toYaml .Values.global.observability.prometheus.alerts.customRules | nindent 8 }}
+        {{- end }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,24 @@
+tad:
+  type: helm
+  images:
+    kernel:
+      url: "ccr.ccs.tencentyun.com/tke-market/kernel:master_private-pri-svc"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+kernel:
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 1
+      memory: 1Gi
+
+imagePullSecretName: qcloudregistrykey

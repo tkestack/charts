@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: botllmserver
+  name: botllmserver
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: botllmserver-8000
+      port: 8000
+      protocol: TCP
+      targetPort: 8000
+    - name: botllmserver-8081
+      port: 8081
+      protocol: TCP
+      targetPort: 8081
+  selector:
+    app: botllmserver
+  sessionAffinity: None
+  type: ClusterIP

@@ -1,0 +1,555 @@
+# Helmfile for tke-access-test
+# 用于管理多个 Helm Charts 的部署
+
+# 依赖检查器全局配置
+dependencyChecker:
+  # 检查间隔（秒）
+  checkInterval: 5
+  # 最大重试次数（120次 * 5秒 = 10分钟）
+  maxRetries: 120
+  # 是否启用详细日志
+  verbose: true
+
+# Helmfile 配置
+helmDefaults:
+  # 等待所有资源就绪
+  wait: true
+  # 超时时间（秒）
+  timeout: 600
+  # 如果 release 不存在则创建，存在则更新
+  createNamespace: true
+  # 强制更新
+  force: false
+  # 原子操作：如果失败则回滚
+  atomic: true
+  # 清理失败的 release
+  cleanupOnFail: true
+  # Helm 命令的额外参数
+  args:
+    - "--debug"
+
+
+# Release 配置
+releases:
+  # 1. ti-common - 公共资源，最先部署
+  - name: ti-common
+    chart: ./charts/ti-common
+    namespace: default
+    installed: {{ env "TI_COMMON_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+
+  # 2. etcd - 基础存储服务
+  - name: etcd
+    chart: ./charts/etcd
+    namespace: default
+    installed: {{ env "ETCD_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+
+  #####################  ti-base  #######################
+
+  # 3. lke-accessmanagerserver - 访问管理服务
+  - name: lke-accessmanagerserver
+    chart: ./charts/lke-accessmanagerserver
+    namespace: default
+    installed: {{ env "LKE_ACCESSMANAGERSERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - etcd
+
+  # 5. lke-aiconfmanagerserver - AI配置管理服务
+  - name: lke-aiconfmanagerserver
+    chart: ./charts/lke-aiconfmanagerserver
+    namespace: default
+    installed: {{ env "LKE_AICONFMANAGERSERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - etcd
+
+  # 6. lke-ti-auth-web - 认证前端服务
+  - name: lke-ti-auth-web
+    chart: ./charts/lke-ti-auth-web
+    namespace: default
+    installed: {{ env "LKE_TI_AUTH_WEB_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - etcd
+
+  # 7. lke-ti-gateway - 网关服务
+  - name: lke-ti-gateway
+    chart: ./charts/lke-ti-gateway
+    namespace: default
+    installed: {{ env "LKE_TI_GATEWAY_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - etcd
+
+  # 8. lke-ti-ingress-controller - Ingress控制器
+  - name: lke-ti-ingress-controller
+    chart: ./charts/lke-ti-ingress-controller
+    namespace: default
+    installed: {{ env "LKE_TI_INGRESS_CONTROLLER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - etcd
+
+  # 9. lke-ti-perm-auth - 权限认证服务
+  - name: lke-ti-perm-auth
+    chart: ./charts/lke-ti-perm-auth
+    namespace: default
+    installed: {{ env "LKE_TI_PERM_AUTH_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - etcd
+
+  #####################  业务后台服务  #######################
+  # 0. lke-admin
+  - name: lke-admin
+    chart: ./charts/lke-admin
+    namespace: default
+    installed: { { env "ADMIN_ENABLED" | default "true" } }
+    wait: true
+    timeout: 600
+    needs:
+      - ti-perm-auth
+
+  # 1. adp-app-config
+  - name: adp-app-config
+    chart: ./charts/adp-app-config
+    namespace: default
+    installed: { { env "ADP_APP_CONFIG_ENABLED" | default "true" } }
+    wait: true
+    timeout: 600
+    needs:
+      - admin
+
+  # 2. agent-config-server
+  - name: agent-config-server
+    chart: ./charts/agent-config-server
+    namespace: default
+    installed: { { env "CHAT_ENABLED" | default "true" } }
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 3. apex
+  - name: apex
+    chart: ./charts/apex
+    namespace: default
+    installed: { { env "CHAT_ENABLED" | default "true" } }
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 3. atomic-api
+  - name: atomic-api
+    chart: ./charts/atomic-api
+    namespace: default
+    installed: { { env "CHAT_ENABLED" | default "true" } }
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 4. atomic
+  - name: atomic
+    chart: ./charts/atomic
+    namespace: default
+    installed: {{ env "ATOMIC_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 5. bot-agent-server
+  - name: bot-agent-server
+    chart: ./charts/bot-agent-server
+    namespace: default
+    installed: {{ env "BOT_AGENT_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 6. bot-data-statistics-server
+  - name: bot-data-statistics-server
+    chart: ./charts/bot-data-statistics-server
+    namespace: default
+    installed: {{ env "BOT_DATA_STATISTICS_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 7. bot-dm-server
+  - name: bot-dm-server
+    chart: ./charts/bot-dm-server
+    namespace: default
+    installed: {{ env "BOT_DM_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 8. bot-evaluate-config-server
+  - name: bot-evaluate-config-server
+    chart: ./charts/bot-evaluate-config-server
+    namespace: default
+    installed: {{ env "BOT_EVALUATE_CONFIG_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 9. bot-knowledge-config-server
+  - name: bot-knowledge-config-server
+    chart: ./charts/bot-knowledge-config-server
+    namespace: default
+    installed: {{ env "BOT_KNOWLEDGE_CONFIG_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 10. bot-llm-server
+  - name: bot-llm-server
+    chart: ./charts/bot-llm-server
+    namespace: default
+    installed: {{ env "BOT_LLM_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 11. bot-memory-server
+  - name: bot-memory-server
+    chart: ./charts/bot-memory-server
+    namespace: default
+    installed: {{ env "BOT_MEMORY_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 12. bot-rag-server
+  - name: bot-rag-server
+    chart: ./charts/bot-rag-server
+    namespace: default
+    installed: {{ env "BOT_RAG_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 13. bot-retrieval-server
+  - name: bot-retrieval-server
+    chart: ./charts/bot-retrieval-server
+    namespace: default
+    installed: {{ env "BOT_RETRIEVAL_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 14. bot-task-config-server
+  - name: bot-task-config-server
+    chart: ./charts/bot-task-config-server
+    namespace: default
+    installed: {{ env "BOT_TASK_CONFIG_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 15. bot-workflow-dm-server
+  - name: bot-workflow-dm-server
+    chart: ./charts/bot-workflow-dm-server
+    namespace: default
+    installed: {{ env "BOT_WORKFLOW_DM_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 16. channel-msg-svr
+  - name: channel-msg-svr
+    chart: ./charts/channel-msg-svr
+    namespace: default
+    installed: {{ env "CHANNEL_MSG_SVR_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 17. channel-proxy-svr
+  - name: channel-proxy-svr
+    chart: ./charts/channel-proxy-svr
+    namespace: default
+    installed: {{ env "CHANNEL_PROXY_SVR_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 18. channel-token-svr
+  - name: channel-token-svr
+    chart: ./charts/channel-token-svr
+    namespace: default
+    installed: {{ env "CHANNEL_TOKEN_SVR_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 19. chat
+  - name: chat
+    chart: ./charts/chat
+    namespace: default
+    installed: {{ env "CHAT_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 20. code-interpreter-dispatcher
+  - name: code-interpreter-dispatcher
+    chart: ./charts/code-interpreter-dispatcher
+    namespace: default
+    installed: {{ env "CODE_INTERPRETER_DISPATCHER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 21. common-config-map
+  - name: common-config-map
+    chart: ./charts/common-config-map
+    namespace: default
+    installed: {{ env "COMMON_CONFIG_MAP_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 22. ai-gateway
+  - name: ai-gateway
+    chart: ./charts/ai-gateway
+    namespace: default
+    installed: {{ env "AI_GATEWAY_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 23. ai-gateway-dbsql
+  - name: ai-gateway-dbsql
+    chart: ./charts/ai-gateway-dbsql
+    namespace: default
+    installed: {{ env "AI_GATEWAY_DBSQL_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 24. llm-manager-server
+  - name: llm-manager-server
+    chart: ./charts/llm-manager-server
+    namespace: default
+    installed: {{ env "LLM_MANAGER_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 25. finance-bill
+  - name: finance-bill
+    chart: ./charts/finance-bill
+    namespace: default
+    installed: {{ env "FINANCE_BILL_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 26. finance-stat
+  - name: finance-stat
+    chart: ./charts/finance-stat
+    namespace: default
+    installed: {{ env "FINANCE_STAT_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 27. finance
+  - name: finance
+    chart: ./charts/finance
+    namespace: default
+    installed: {{ env "FINANCE_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 28. infosec
+  - name: infosec
+    chart: ./charts/infosec
+    namespace: default
+    installed: {{ env "INFOSEC_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 29. kernel
+  - name: kernel
+    chart: ./charts/kernel
+    namespace: default
+    installed: {{ env "KERNEL_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 30. op
+  - name: op
+    chart: ./charts/op
+    namespace: default
+    installed: {{ env "OP_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 31. platform-manager
+  - name: platform-manager
+    chart: ./charts/platform-manager
+    namespace: default
+    installed: {{ env "PLATFORM_MANAGER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 32. plugin-config-server
+  - name: plugin-config-server
+    chart: ./charts/plugin-config-server
+    namespace: default
+    installed: {{ env "PLUGIN_CONFIG_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 33. plugin-exec-server
+  - name: plugin-exec-server
+    chart: ./charts/plugin-exec-server
+    namespace: default
+    installed: {{ env "PLUGIN_EXEC_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 34. resource-gallery
+  - name: resource-gallery
+    chart: ./charts/resource-gallery
+    namespace: default
+    installed: {{ env "RESOURCE_GALLERY_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 35. resource-schedule-server
+  - name: resource-schedule-server
+    chart: ./charts/resource-schedule-server
+    namespace: default
+    installed: {{ env "RESOURCE_SCHEDULE_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 36. sandbox-mcp-server
+  - name: sandbox-mcp-server
+    chart: ./charts/sandbox-mcp-server
+    namespace: default
+    installed: {{ env "SANDBOX_MCP_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 37. sandbox-proxy-server
+  - name: sandbox-proxy-server
+    chart: ./charts/sandbox-proxy-server
+    namespace: default
+    installed: {{ env "SANDBOX_PROXY_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 38. short-url
+  - name: short-url
+    chart: ./charts/short-url
+    namespace: default
+    installed: {{ env "SHORT_URL_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 39. vector-db-manager
+  - name: vector-db-manager
+    chart: ./charts/vector-db-manager
+    namespace: default
+    installed: {{ env "VECTOR_DB_MANAGER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+
+  #####################  前端服务  #######################
+
+
+  - name: web-app
+    chart: ./charts/web-app
+    namespace: default
+    installed: { { env "WEB_APP_ENABLED" | default "true" } }
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+
+#############################################################################
+# 模板配置（可选）
+#############################################################################
+templates:
+  # 默认配置模板
+  default: &default
+    missingFileHandler: Warn
+    values:
+      - ./values.yaml
+    verify: false
+
+#############################################################################
+# 全局 Hooks（可选）
+#############################################################################
+helmfiles:
+  # 如果有其他 helmfile 需要包含
+  # - path: ./helmfiles/monitoring.yaml
+  #   selectors:
+  #     - name=prometheus

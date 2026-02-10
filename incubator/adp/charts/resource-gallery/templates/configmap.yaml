@@ -1,0 +1,838 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-resource-gallery
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    cache_limit:
+      corp_expire: 720h
+      staff_expire: 120h
+      intent_expire: 120h
+      app_expire: 120h
+      model_expire: 120h
+    tione:
+      secret_id: ""
+      secret_key: ""
+      region: "ap-guangzhou"
+      sts_host: sts.test.tencentcloudapi.com
+      tione_host: tione.test.tencentcloudapi.com
+      service_role_name: ADP_QCSLinkedRoleInTIONE
+      tione_regions:
+        - ap-beijing
+        - ap-guangzhou
+        - ap-nanjing
+        - ap-shanghai
+      tione_enable_white: true
+      tione_white_uin: ${tione_white_uin}
+    # 模型广场
+    model_hub:
+      model_type: llm
+      model_params:
+        - name: temperature
+          max: 2
+          min: 0
+          default: 0.7
+        - name: top_p
+          max: 1
+          min: 0
+          default: 1
+        - name: seed
+          max: 10000
+          min: 0
+          default: 1024
+        - name: presence_penalty
+          max: 2
+          min: -2
+          default: 0
+        - name: frequency_penalty
+          max: 2
+          min: -2
+          default: 0
+        - name: repetition_penalty
+          max: 2
+          min: 1
+          default: 1
+        - name: max_tokens
+          max: 262144
+          min: 1
+          default: 4096
+      model_tags:
+        - KeyModelTagOmniModal
+      model_properties:
+        # 模型上下文长度
+        model_length: 64k
+        # 模型输入长度56K（1024）
+        input_length: 57344
+      model_category_to_tags:
+        generate: [文本推理, 工具调用, 全模态,KeyModelTagTextReasoning,KeyModelTagToolCalling,KeyModelTagOmniModal]
+        thought: [文本推理, 工具调用, 全模态,KeyModelTagTextReasoning,KeyModelTagToolCalling,KeyModelTagOmniModal]
+        rerank: [排序模型,KeyModelTagRerankingModel]
+        embedding: [向量模型,KeyModelTagVectorModel]
+      embedding_limit:
+        enable: true
+        max_vector_dimension: 4096
+        default_vector_dimension: 1024
+      model_finance_free_white:
+        - workflow-light-32b
+    robot_default:
+      # 模型模型列表
+      app_default_model:
+        knowledge_qa: ${app_default_model}
+      # 思考模型模型列表
+      app_thought_model:
+        standard: ${app_thought_model_standard}
+        agent: ${app_thought_model_agent}
+      # rerank 和embedding模型
+      app_rerank_model:
+        #- alias_name: youtu-reranker-llm
+        #  name: sn-llm-reranker-2b-v0.2
+        #  desc: |
+        #    LLM 增强排序模型，准确率更高，耗时将会有所增加。
+        #  is_default: true
+        #  is_free: true
+        - alias_name: youtu-reranker
+          name: sn-reranker-large-v0.4
+          desc: |
+            通用文本排序模型
+          is_default: true
+          is_free: true
+      app_embedding_model:
+        - alias_name: youtu-embedding
+          name: sn-large-multi-language-v0.2.5
+          is_default: true
+          is_free: true
+      # 大模型输入框，角色描述，对话历史上下文上限设置
+      llm_word_limit:
+        default:
+          input_limit: 2500   # 对话框模型输入上限
+          role_len_limit: 4000  # 角色描述输入上限
+          history_words_limit: 2000  # 历史上下文输入上限
+        4K:
+          input_limit: 2500
+          role_len_limit: 4000
+          history_words_limit: 2000
+        8K:
+          input_limit: 6000
+          role_len_limit: 4000
+          history_words_limit: 4000
+        16K:
+          input_limit: 12000
+          role_len_limit: 4000
+          history_words_limit: 8000
+        32K:
+          input_limit: 12000
+          role_len_limit: 10000
+          history_words_limit: 8000
+        64K:
+          input_limit: 20000
+          role_len_limit: 20000
+          history_words_limit: 12000
+        96K:
+          input_limit: 20000
+          role_len_limit: 20000
+          history_words_limit: 12000
+        128K:
+          input_limit: 20000
+          role_len_limit: 20000
+          history_words_limit: 12000
+        256K:
+          input_limit: 200000
+          role_len_limit: 20000
+          history_words_limit: 20000
+        512K:
+          input_limit: 200000
+          role_len_limit: 50000
+          history_words_limit: 100000
+        1000K:
+          input_limit: 500000
+          role_len_limit: 100000
+          history_words_limit: 200000
+      search_model_free:
+        - lke-deepseek-r1
+        - lke-deepseek-v3
+        - lke-deepseek-r1-vip
+      # 模型对AI通话支持的类型
+      llm_support_ai_call:
+        support: ${llm_support_ai_call_support}
+        poor_support: ${llm_support_ai_call_poor_support}
+        not_support: ${llm_support_ai_call_not_support}
+    finance:
+      disabled: ${finance_disabled}
+      search_disabled: ${finance_search_disabled}
+    license: ${license}
+    limit_config_info: #限流信息设置
+      expire: 4m
+      max_unlock_retry: 3
+      try_lock_interval: 50ms
+      concurrency_key_expire: 1800
+      qpm: ${qpm}
+      tpm: ${tpm}
+      ds_qpm: ${ds_qpm}
+      ds_tpm: ${ds_tpm}
+    managed_account_ids: ${managed_account_ids}
+    experience_uin: ${experience_uin}
+    #国内版多语言开关
+    language_all_switch: ${language_all_switch}
+    permission_app_category: ${permission_app_category}
+    cipher_config:
+      default_version: 1
+      iv: hBb3Ls3edFBzYyrpQzTGSA==
+      versions:
+        1: Od3J9Ig47ztUpmdqfkRcAqXhqE7dlWHYLOFK/NDA+yU=
+        2: 1ofPtcXorwOy8r74H9DYO5ZMxoTFWdTZVf0bxv5zKqQ=
+        3: woEahOi+Bo6ejhBm2DqJL9wcVzQmoOx+lEE0DjYAaVo=
+    prompt_version:
+      max_limit: 50
+      max_version: 20
+
+  biz_en-US.json: |
+    {
+        "KeyModelConnectivityErr": "模型连通性错误:%s",
+        "KeyProviderAliasNameYoutu": "Tencent Youtu",
+        "KeyProviderAliasNameHunyuan": "Tencent Hunyuan",
+        "KeyProviderAliasNameQwen": "Qwen",
+        "KeyProviderAliasNameBaichuan": "Baichuan Intelligent",
+        "KeyProviderAliasNameZhipu": "Zhipu AI",
+        "KeyProviderAliasNameOpenAI": "OpenAI Compatible",
+        "KeyProviderAliasNameMoonshot": "Moonshot AI",
+        "KeyProviderAliasNameDeepSeek": "DeepSeek",
+        "KeyProviderAliasNameMinimax": "Minimax",
+        "KeyProviderAliasNameStepfun": "Stepfun",
+        "KeyProviderAliasNameVolcengine": "Volcengine",
+        "KeyProviderAliasNameTIONE": "Tencent Cloud TI-ONE",
+        "KeyProviderAliasNameYi": "01.AI",
+        "KeyProviderAliasNameOfficial": "OpenAI",
+        "KeyProviderAliasNameAnthropic": "ANTHROPIC\\C",
+        "KeyProviderAliasNameXAI": "xAI",
+        "KeyProviderAliasNameGemini": "Gemini",
+        "KeyProviderDescHunyuan": "Tencent's self-developed general large-scale model has strong Chinese language comprehension, logical reasoning, and multimodal capabilities. Representative models include the Hunyuan Turbo series.",
+        "KeyProviderDescYoutu": "Focuses on cutting-edge AI technology research and industrial application, covering fields such as visual perception understanding, large language models, multimodal comprehension and generation, and computational acceleration.",
+        "KeyProviderDescQwen": "Tongyi Qianwen possesses multilingual and multimodal comprehension, logical reasoning, code generation, document processing, and audio-video understanding capabilities, while actively building an open-source ecosystem. Representative models include the Qwen series.",
+        "KeyProviderDescZhipu": "Originating from Tsinghua University, it is committed to developing next-generation cognitive intelligence general models. Its GLM series excels in reasoning, long-context processing, multilingual, and multimodal capabilities. Representative models include the GLM-4 series.",
+        "KeyProviderDescStepfun": "A multimodal AGI pioneer focusing on full-stack capabilities in vision, speech, and video, with outstanding performance in reasoning, coding, mathematics, and knowledge. Representative models include Step-2.",
+        "KeyProviderDescBaichuan": "Dedicated to building superior large model foundations. Its Baichuan series excels in long-text processing, multimodal understanding, mathematics, and coding capabilities. Representative models include the Baichuan4 series.",
+        "KeyProviderDescOpenAI": "Supports flexible integration of various custom or third-party large model services through compatibility with the OpenAI API protocol.",
+        "KeyProviderDescVolcengine": "An all-in-one large model service platform by Volcano Engine, offering full-process services including model training, inference, evaluation, and fine-tuning. Supports multimodal understanding, long-context windows, strong reasoning capabilities, and integrates various mainstream models like Doubao.",
+        "KeyProviderDescMoonshot": "Specializes in general artificial intelligence, with models supporting ultra-long contexts and possessing strong Agent capabilities along with multimodal comprehension and generation. Representative models include Kimi K2.",
+        "KeyProviderDescDeepSeek": "Focuses on fundamental general AI model and technology research, renowned for open-source, high performance, and exceptional reasoning capabilities. Representative models include DeepSeek-R1 (reasoning model) and DeepSeek-V3 (MoE architecture, balancing performance and cost-effectiveness).",
+        "KeyProviderDescMinimax": "A leading general AI technology company that independently develops multimodal large models, excelling in long-context processing, reasoning, coding, and multimodal comprehension and generation. Representative models include the M1 series.",
+        "KeyProviderDescTIONE": "Tencent Cloud's all-in-one machine learning platform for AI engineers, providing end-to-end development support from data ingestion, model training, model management to model serving. Supports multiple training methods and algorithm frameworks with a built-in large model library.",
+        "KeyProviderDescYi": "Founded by Dr. Kai-Fu Lee, its Yi series excels in coding, mathematics, reasoning, and instruction-following capabilities, achieving outstanding results in global open-source evaluations. Representative models include Yi-Lightning.",
+        "KeyProviderDescOfficial": "Models provided by OpenAI, such as GPT-4, GPT-5, and others.",
+        "KeyProviderDescAnthropic": "The Claude models provided by Anthropic.",
+        "KeyProviderDescXAI": "The LLMs provided by xAI, where xAI is a company dedicated to developing artificial intelligence (AI) to accelerate human scientific discovery.",
+        "KeyProviderDescGemini": "The Gemini models provided by Google.",
+        "KeyModelDesc_sn-edu-13b": "Specialized training on educational data for English speaking practice and lesson planning scenarios. Supports textbook dialogues, difficulty settings, grammar analysis, lesson generation/polishing, and exercise creation.",
+        "KeyModelDesc_hunyuan": "Trillion-parameter MOE-32k long-context model with advanced math capabilities, function call support, and optimizations for multilingual translation, finance, law, and healthcare.",
+        "KeyModelDesc_finance-13b": "Pre-trained and fine-tuned on financial data. Expert in financial Q&A for investment knowledge and product inquiries.",
+        "KeyModelDesc_medical-6b": "Enhanced with medical data. Specializes in medical Q&A, entity extraction, dialogue summarization, and medical record generation.",
+        "KeyModelDesc_sn-edu-70b": "Trained on educational data for scenarios requiring natural English dialogue, task compliance, and rich lesson plan generation.",
+        "KeyModelDesc_hunyuan-turbo": "Novel MoE architecture delivers faster inference and stronger performance compared to Hunyuan Advanced.",
+        "KeyModelDesc_hunyuan-13B": "Improved routing strategy with better load balancing and expert diversity. Cost-effective with long-text processing capabilities.",
+        "KeyModelDesc_function-call-pro": "Capable of task planning, tool selection/execution, and error correction for complex problem-solving.",
+        "KeyModelDesc_cs-normal-70b": "Fine-tuned for enterprise Q&A. Excels at multimodal responses, math calculations, logical reasoning, and table-based Q&A.",
+        "KeyModelDesc_hunyuan-standard-256K": "Optimized routing with 256K context length. Achieves 99.9% needle-in-haystack accuracy with extended input capacity.",
+        "KeyModelDesc_hunyuan-role": "Officially fine-tuned role-playing model with enhanced performance for character simulation scenarios.",
+        "KeyModelDesc_workflow-pro": "Supports combined Q&A, document processing, and workflows with improved intent recognition and custom configuration. May increase response time.",
+        "KeyModelDesc_lke-deepseek-v3-function-call": "Latest DeepSeek-V3 with MoE and MLA architecture. Enhanced reasoning, code generation, and Chinese understanding.",
+        "KeyModelDesc_lke-deepseek-v3-0324": "Latest DeepSeek-V3 with MoE and MLA technology. Upgraded reasoning, coding, and Chinese semantic comprehension.",
+        "KeyModelDesc_lke-deepseek-r1": "RL-driven reasoning model comparable to OpenAI-o1 in math, code, and reasoning tasks. Powers DeepSeek's deep thinking mode.",
+        "KeyModelDesc_lke-deepseek-r1-0528": "Enhanced DeepSeek-R1 with improved instruction understanding, copywriting, programming, and reasoning. Supports long-duration complex tasks.",
+        "KeyModelDesc_lke-deepseek-v3": "671B parameter MoE model with MLA architecture and optimized load balancing for efficient training/inference.",
+        "KeyModelDesc_lke-deepseek-r1-0528-agent": "Latest DeepSeek-R1 agent with enhanced constraint understanding, programming, and reasoning for complex tasks.",
+        "KeyModelDesc_lke-deepseek-v3-agent": "DeepSeek-V3 agent with MoE and MLA architecture. Upgraded reasoning, coding, and Chinese understanding.",
+        "KeyModelDesc_cs-normal": "Fine-tuned for enterprise Q&A with multimodal capabilities. Cost-effective for balanced performance and price.",
+        "KeyModelDesc_lke-deepseek-v3.1": "Hybrid reasoning architecture for faster responses. Significantly improved performance on multi-step reasoning and expert-level tasks.",
+        "KeyModelDesc_lke-deepseek-v3.1-function-call": "Hybrid reasoning enables efficient multi-step problem-solving with enhanced performance on complex searches and multidisciplinary tasks.",
+        "KeyModelDesc_sn-large-multi-language-v0.2.5": "General-purpose vector retrieval model",
+        "KeyModelDesc_sn-llm-embedding-2b-v0.2.2": "LLM-enhanced vector retrieval with higher accuracy but increased latency",
+        "KeyModelDesc_sn-reranker-large-v0.4": "General text reranking model",
+        "KeyModelDesc_sn-llm-reranker-2b-v0.2": "LLM-enhanced reranking with improved accuracy and higher latency",
+        "KeyModelDesc_cs-normal-70b-1.1": "Enterprise Q&A model specializing in multimodal responses, math/reasoning, and table-based Q&A for complex scenarios.",
+        "KeyModelDesc_hunyuan-turbos": "The latest version of Hunyuan's flagship large model, featuring enhanced reasoning capabilities and an improved user experience.",
+        "KeyModelDesc_hunyuan-t1": "The industry's first ultra-large-scale Hybrid-Transformer-Mamba inference model, expanding reasoning capabilities with ultra-fast decoding speed and further alignment with human preferences.",
+        "KeyModelTagVectorModel": "VectorModel",
+        "KeyModelTagRerankingModel": "RerankingModel",
+        "KeyModelTagSpeechRecognition": "SpeechRecognition",
+        "KeyModelTagSpeechSynthesis": "SpeechSynthesis",
+        "KeyModelTagTextReasoning": "TextReasoning",
+        "KeyModelTagToolCalling": "ToolCalling",
+        "KeyModelTagAudioUnderstanding": "AudioUnderstanding",
+        "KeyModelTagVideoUnderstanding": "VideoUnderstanding",
+        "KeyModelTagImageUnderstanding": "ImageUnderstanding",
+        "KeyModelTagImageGeneration": "ImageGeneration",
+        "KeyModelTagDeepThinking": "DeepThinking",
+        "KeyModelTagOmniModal": "OmniModal",
+        "KeyPromptVersionTypeStand": "Role Instruction",
+        "KeyPromptVersionTypeAgent": "Agent Prompt",
+        "KeyPromptVersionTypeWorkflowSys": "Workflow Node System Prompt",
+        "KeyPromptVersionTypeWorkflowCust": "Workflow Node User Prompt"
+    }
+  biz_zh-CN.json: |
+    {
+        "KeyModelConnectivityErr": "模型连通性错误:%s",
+        "KeyProviderAliasNameYoutu": "腾讯优图",
+        "KeyProviderAliasNameHunyuan": "腾讯混元",
+        "KeyProviderAliasNameQwen": "通义千问",
+        "KeyProviderAliasNameBaichuan": "百川智能",
+        "KeyProviderAliasNameZhipu": "智谱AI",
+        "KeyProviderAliasNameOpenAI": "OpenAI Compatible",
+        "KeyProviderAliasNameMoonshot": "月之暗面",
+        "KeyProviderAliasNameDeepSeek": "深度求索",
+        "KeyProviderAliasNameMinimax": "Minimax",
+        "KeyProviderAliasNameStepfun": "阶跃星辰",
+        "KeyProviderAliasNameVolcengine": "火山引擎",
+        "KeyProviderAliasNameTIONE": "腾讯云TI-ONE",
+        "KeyProviderAliasNameYi": "零一万物",
+        "KeyProviderAliasNameOfficial": "OpenAI",
+        "KeyProviderAliasNameAnthropic": "ANTHROPIC\\C",
+        "KeyProviderAliasNameXAI": "xAI",
+        "KeyProviderAliasNameGemini": "Gemini",
+        "KeyProviderDescHunyuan": "腾讯全链路自研的通用大模型，具备强大的中文理解、逻辑推理及多模态能力代表模型有混元Turbo系列等。",
+        "KeyProviderDescYoutu": "专注于人工智能领域的前沿技术研究和产业实践落地，涵盖了视觉感知理解、大语言模型、多模态理解和生成、计算加速等技术研究领域。",
+        "KeyProviderDescQwen": "通义千问具备多语言与多模态理解、逻辑推理、代码生成、文档处理及音视频理解能力，并积极构建开源生态，代表模型有Qwen系列等",
+        "KeyProviderDescZhipu": "源自清华大学，致力于新一代认知智能通用模型研发，其GLM系列模型在推理、长上下文处理、多语言、多模态能力方面表现突出，代表模型有GLM-4系列等",
+        "KeyProviderDescStepfun": "多模态AGI先锋，专注于视觉、语音、视频全栈能力，在推理、代码、数学和知识方面表现突出，代表模型有Step-2等",
+        "KeyProviderDescBaichuan": "致力于构建优秀的大模型底座，其Baichuan系列模型在长文本处理、多模态理解、数学和代码能力方面表现突出，代表模型有Baichuan4系列等",
+        "KeyProviderDescOpenAI": "支持通过兼容OpenAI API协议的方式，灵活接入各类自定义或第三方大模型服务",
+        "KeyProviderDescVolcengine": "火山引擎推出的一站式大模型服务平台，提供模型训练、推理、评测、精调等全流程服务，支持多模态理解、长上下文窗口和强大的推理能力，并集成了豆包大模型等多种主流模型",
+        "KeyProviderDescMoonshot": "专注于通用人工智能领域，旗下模型支持超长上下文，并具备强大的Agent能力和多模态理解与生成能力，代表模型有Kimi K2等",
+        "KeyProviderDescDeepSeek": "专注于通用人工智能底层模型与技术研究，以开源、高性能和卓越推理能力著称，代表模型有DeepSeek-R1（推理模型）和DeepSeek-V3（MoE架构，兼具性能与成本效益）",
+        "KeyProviderDescMinimax": "领先的通用人工智能科技公司，自主研发多模态大模型，在长上下文处理、推理、代码和多模态理解与生成方面表现突出，代表模型有M1系列模型等。",
+        "KeyProviderDescTIONE": "腾讯云为AI工程师打造的一站式机器学习平台，提供从数据接入、模型训练、模型管理到模型服务的全流程开发支持，支持多种训练方式和算法框架，并内置大模型库。",
+        "KeyProviderDescYi": "由李开复博士创办，其Yi系列模型在代码、数学、推理和指令遵循能力上表现出色，并在全球开源评测中取得优异成绩，代表模型有Yi-Lightning等",
+        "KeyProviderDescOfficial": "OpenAI提供的模型，例如GPT-4、GPT5等。",
+        "KeyProviderDescAnthropic": "Anthropic提供的Claude系列模型",
+        "KeyProviderDescXAI": "xAI 提供的LLMs，xAI是一家致力于研发人工智能（AI）以加速人类科学发现的公司。",
+        "KeyProviderDescGemini": "谷歌提供的Gemini模型",
+        "KeyModelDesc_sn-edu-13b": "基于教育领域数据专项训练，适用于英语口语对话练习和教案场景。英语口语陪练场景中，支持教材课后对话练习、对话难度设定、语法分析等能力；教案场景中，支持教案生成、教案润色、教案题目生成。",
+        "KeyModelDesc_hunyuan": "万亿级参数规模 MOE-32k 长文模型，具备复杂数学能力，支持 functioncall，在多语言翻译、金融法律医疗等领域应用重点优化。",
+        "KeyModelDesc_finance-13b": "基于金融领域数据进行预训练和精调训练，擅长金融领域知识问答，适用于投资知识问答、金融产品问答等应用场景。",
+        "KeyModelDesc_medical-6b": "基于医疗领域数据专项强化，擅长医疗领域知识问答，适用于医学实体抽取、医学对话总结、病历撰写等应用场景。",
+        "KeyModelDesc_sn-edu-70b": "基于教育领域数据专项训练，适用于对于英语口语对话练习自然度和任务遵循程度、教案生成丰富度的效果表现有需求的场景。",
+        "KeyModelDesc_hunyuan-turbo": "采用全新的混合专家模型（MoE）结构，相比混元大模型高级版推理效率更快，效果表现更强。",
+        "KeyModelDesc_hunyuan-13B": "采用更优的路由策略，同时缓解了负载均衡和专家趋同的问题， 性价比相对更高，在平衡效果、价格的同时，可对实现对长文本输入的处理。",
+        "KeyModelDesc_function-call-pro": "具备任务规划、工具选择调用以及反思纠错能力，能够支持复杂问题的规划与执行。",
+        "KeyModelDesc_cs-normal-70b": "针对企业知识问答场景精调训练，擅长多模态知识问答，适合图文表答案关联输出、数学计算、逻辑推理、表格问答等复杂场景有需求的场景。",
+        "KeyModelDesc_hunyuan-standard-256K": "采用更优的路由策略，同时缓解了负载均衡和专家趋同的问题。长文方面，大海捞针指标达到99.9%。MOE-256k 在长度和效果上进一步突破，极大的扩展了可输入长度。",
+        "KeyModelDesc_hunyuan-role": "混元最新版角色扮演模型，混元官方精调训练推出的角色扮演模型，基于混元模型结合角色扮演场景数据集进行增训，在角色扮演场景具有更好的基础效果。",
+        "KeyModelDesc_workflow-pro": "适用于同时配置问答、文档、工作流的场景，意图识别效果更佳，并且支持在角色指令中自定义配置意图。但可能会增加一定的对话耗时。",
+        "KeyModelDesc_lke-deepseek-v3-function-call": "DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。",
+        "KeyModelDesc_lke-deepseek-v3-0324": "DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。",
+        "KeyModelDesc_lke-deepseek-r1": "强化学习（RL）驱动的推理模型，在数学、代码和推理任务中与 OpenAI-o1 表现相当。与DeepSeek助手深度思考模式为同款模型",
+        "KeyModelDesc_lke-deepseek-r1-0528": "DeepSeek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。",
+        "KeyModelDesc_lke-deepseek-v3": "拥有6710 亿参数的混合专家（MoE）语言模型，采用多头潜在注意力（MLA）和 DeepSeekMoE 架构，结合无辅助损失的负载平衡策略，优化推理和训练效率。",
+        "KeyModelDesc_lke-deepseek-r1-0528-agent": "DeepSeek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。",
+        "KeyModelDesc_lke-deepseek-v3-agent": "DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。",
+        "KeyModelDesc_cs-normal": "针对企业知识问答场景精调训练，擅长多模态知识问答。性价比相对更高，适合需要同时平衡效果、价格的场景。",
+        "KeyModelDesc_lke-deepseek-v3.1": "采用混合推理架构，具备更高的思考效率，能在更短时间给出答案。在需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。",
+        "KeyModelDesc_lke-deepseek-v3.1-function-call": "采用混合推理架构，具备更高的思考效率，能在更短时间给出答案。在需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。",
+        "KeyModelDesc_sn-large-multi-language-v0.2.5": "通用向量检索模型",
+        "KeyModelDesc_sn-llm-embedding-2b-v0.2.2": "LLM增强向量检索模型，准确率更高，耗时将会有所增加。",
+        "KeyModelDesc_sn-reranker-large-v0.4": "通用文本排序模型",
+        "KeyModelDesc_sn-llm-reranker-2b-v0.2": "LLM 增强排序模型，准确率更高，耗时将会有所增加。",
+        "KeyModelDesc_cs-normal-70b-1.1": "针对企业知识问答场景精调训练，擅长多模态知识问答，适合图文表答案关联输出、数学计算、逻辑推理、表格问答等复杂场景有需求的场景。",
+        "KeyModelDesc_hunyuan-turbos": "混元旗舰大模型最新版本，具备更强的思考能力，更优的体验效果",
+        "KeyModelDesc_hunyuan-t1": "业内首个超大规模Hybrid-Transformer-Mamba 推理模型，扩展推理能力，超强解码速度，进一步对齐人类偏好。",
+        "KeyModelTagVectorModel": "向量模型",
+        "KeyModelTagRerankingModel": "排序模型",
+        "KeyModelTagSpeechRecognition": "语音识别",
+        "KeyModelTagSpeechSynthesis": "语音合成",
+        "KeyModelTagTextReasoning": "文本推理",
+        "KeyModelTagToolCalling": "工具调用",
+        "KeyModelTagAudioUnderstanding": "音频理解",
+        "KeyModelTagVideoUnderstanding": "视频理解",
+        "KeyModelTagImageUnderstanding": "图片理解",
+        "KeyModelTagImageGeneration": "图片生成",
+        "KeyModelTagDeepThinking": "深度思考",
+        "KeyModelTagOmniModal": "全模态",
+        "KeyPromptVersionTypeStand": "角色指令",
+        "KeyPromptVersionTypeAgent": "agent提示词",
+        "KeyPromptVersionTypeWorkflowSys": "工作流节点系统提示词",
+        "KeyPromptVersionTypeWorkflowCust": "工作流节点用户提示词"
+    }
+  errors_en-US.json: |
+    {
+      "ErrSystem": "System error",
+      "ErrParams": "Parameter error, please retry",
+      "ErrOperateDoing": "Request processing, please wait",
+      "ErrCorpNotFound": "Enterprise does not exist",
+      "ErrPermissionDenied": "Insufficient permissions",
+      "ErrAppNotFound": "Application does not exist",
+      "ErrModelDebugNotFound": "Model debugging information does not exist",
+      "ErrModelProviderNotFound": "Model provider does not exist",
+      "ErrModelProviderCredentialsInvalid": "Model provider key configuration information is incorrect",
+      "ErrModelProviderNoNeedCredentials": "No configuration required for the model provider",
+      "ErrModelProviderAssociated": "The model information of the model provider is associated with applications or knowledge bases",
+      "ErrModelProviderConfigMissing": "Model provider is not configured",
+      "ErrProviderModelImmutable": "The models of the model provider are not allowed to be enabled or disabled",
+      "ErrProviderModelAssociated": "The model information is associated with applications or knowledge bases, disabling not allowed",
+      "ErrProviderModelNotFound": "The model of the model provider does not exist",
+      "ErrModelVectorDimension": "The model does not support this vector dimension temporarily",
+      "ErrModelConnectivity": "Model connectivity exception, please check if the model, call address, and key are correct",
+      "ErrModelProviderExist": "Model provider already exists",
+      "ErrProviderModelExist": "The model of the model provider already exists",
+      "ErrGetModelProvider": "Failed to get model provider information",
+      "ErrGetCorpModelProvider": "Failed to get enterprise-associated model provider",
+      "ErrCreateCorpModelProvider": "Failed to associate enterprise with model provider",
+      "ErrGetCorpProviderModel": "Failed to get enterprise-associated model information",
+      "ErrModifyProviderModelStatus": "Failed to modify provider model status",
+      "ErrGetProviderMode": "Failed to get model information",
+      "ErrCreateCorpProviderModel": "Failed to add enterprise-associated provider model information",
+      "ErrRegisterTioneModel": "Failed to register model information in Tione",
+      "ErrGetModelAssociatedInfo": "Failed to get model-associated information",
+      "ErrTioneProviderAuth": "Tione provider authorization failed",
+      "ErrDeleteCorpModelProvider": "Failed to delete enterprise-associated model provider",
+      "ErrNotFoundModel": "Model configuration not found",
+      "ErrCreateModelDebug": "Failed to create model debugging information",
+      "ErrDeleteModelDebug": "Failed to delete model debugging information",
+      "ErrGetModelDebug": "Failed to get model debugging information",
+      "ErrModelIDIsEmpty": "Model ID is empty",
+      "ErrModelLength": "Input length limit must be less than the model's context length limit",
+      "ErrModelCallMethod": "Model call method configuration error, please check the field's help configuration rules",
+      "ErrNotIsCustom": "Not a custom provider",
+      "ErrRegisterModel": "Failed to register model information",
+      "ErrGetProviderModelCacheOfAdp": "Failed to get model cache",
+      "ErrModelNameExist": "Model name already exists",
+      "ErrCreateProviderModel": "Failed to create enterprise-associated provider model information",
+      "ErrModifyCustomModel": "Failed to modify custom model",
+      "ErrDeleteCorpProviderModel": "Failed to delete enterprise-associated provider model information",
+      "ErrDeleteDeleteProviderModel": "Failed to delete enterprise-associated provider model information",
+      "ErrGetCorpByUin": "Failed to get enterprise information",
+      "ErrGetModelList": "Failed to get model list",
+      "ErrGetModelStatus": "Failed to get model billing status",
+      "ErrGetPromptTemplateFavorite": "Failed to get favorite templates",
+      "ErrGetPromptTemplate": "Failed to get prompt templates",
+      "ErrMsgPromptTemplateExist": "Title already exists",
+      "ErrGetPromptTemplateLabel": "Failed to get prompt template labels",
+      "ErrCreatePromptTemplate": "Failed to create custom prompt template",
+      "ErrModifyPromptTemplate": "Failed to modify custom prompt template",
+      "ErrDeletePromptTemplate": "Failed to delete custom prompt template",
+      "ErrCreatePromptTemplateFavorite": "Failed to favorite prompt template",
+      "ErrDeletePromptTemplateFavorite": "Failed to unfavorite prompt template",
+      "ErrCreatePromptTemplateLabel": "Failed to create prompt template label",
+      "ErrDeletePromptTemplateLabel": "Failed to delete prompt template label",
+      "ErrExpNoManagedAccountIDs": "Experience center manager account ID is not configured",
+      "ErrGetDisplayDocs": "Failed to get the list of publicly displayed documents for the experience application",
+      "ErrDescribeExpInfo": "Failed to get experience application details",
+      "ErrModifyExpInfo": "Failed to modify application template data",
+      "ErrGetExperienceApps": "Failed to get experience application list",
+      "ErrGetBilling": "Error getting billing items",
+      "ErrAppNotSupportModelList": "Corresponding model list not found for the application",
+      "ErrGetPromptVersion": "Failed to query prompt version",
+      "ErrGetPromptVersionEmpty": "This prompt version does not exist",
+      "ErrCreatePromptVersion": "Failed to create prompt version",
+      "ErrGetPromptMaxVersion": "Failed to get the maximum prompt version",
+      "ErrPromptVersionLimit": "Prompt version count has reached the limit"
+    }
+  errors_zh-CN.json: |
+    {
+      "ErrSystem": "系统错误",
+      "ErrParams": "参数异常，请重试",
+      "ErrOperateDoing": "请求处理中，请稍候",
+      "ErrCorpNotFound": "企业不存在",
+      "ErrPermissionDenied": "权限不足",
+      "ErrAppNotFound": "应用不存在",
+      "ErrModelDebugNotFound": "模型调试信息不存在",
+      "ErrModelProviderNotFound": "模型提供商不存在",
+      "ErrModelProviderCredentialsInvalid": "模型提供商秘钥配置信息错误",
+      "ErrModelProviderNoNeedCredentials": "模型提供商无需配置",
+      "ErrModelProviderAssociated": "模型提供商的模型信息被应用或知识库关联",
+      "ErrModelProviderConfigMissing": "模型提供商未配置",
+      "ErrProviderModelImmutable": "模型提供商的模型不允许开启或关闭",
+      "ErrProviderModelAssociated": "模型信息被应用或知识库关联,不允许关闭",
+      "ErrProviderModelNotFound": "模型提供商的模型不存在",
+      "ErrModelVectorDimension": "模型暂不支持该向量维度",
+      "ErrModelConnectivity": "模型连通性异常，请检查模型、调用地址、秘钥是否正确",
+      "ErrModelProviderExist": "模型提供商已存在",
+      "ErrProviderModelExist": "模型提供商的模型已存在",
+      "ErrGetModelProvider": "获取模型提供商信息失败",
+      "ErrGetCorpModelProvider": "获取企业关联模型提供商失败",
+      "ErrCreateCorpModelProvider": "企业关联模型提供商失败",
+      "ErrGetCorpProviderModel": "获取企业关联模型信息失败",
+      "ErrModifyProviderModelStatus": "修改提供商模型状态失败",
+      "ErrGetProviderMode": "获取模型信息失败",
+      "ErrCreateCorpProviderModel": "添加企业关联的提供商模型信息失败",
+      "ErrRegisterTioneModel": "tione注册模型信息失败",
+      "ErrGetModelAssociatedInfo": "获取模型关联信息失败",
+      "ErrTioneProviderAuth": "tione权限校验失败",
+      "ErrDeleteCorpModelProvider": "删除企业关联的模型提供商失败",
+      "ErrNotFoundModel": "未找到模型配置",
+      "ErrCreateModelDebug": "创建模型调试信息失败",
+      "ErrDeleteModelDebug": "删除模型调试信息失败",
+      "ErrGetModelDebug": "获取模型调试信息失败",
+      "ErrModelIDIsEmpty": "模型ID为空",
+      "ErrModelLength": "输入长度限制需要小于模型上下文长度限制",
+      "ErrModelCallMethod": "调用方式配置错误，请查看字段的小问号配置规则",
+      "ErrNotIsCustom": "不是自定义提供商",
+      "ErrRegisterModel": "注册模型信息失败",
+      "ErrGetProviderModelCacheOfAdp": "获取模型缓存失败",
+      "ErrModelNameExist": "模型名称已存在",
+      "ErrCreateProviderModel": "创建企业关联的提供商模型信息失败",
+      "ErrModifyCustomModel": "编辑自定义模型失败",
+      "ErrDeleteCorpProviderModel": "删除企业关联的提供商模型信息失败",
+      "ErrDeleteDeleteProviderModel": "删除企业关联的提供商模型信息失败",
+      "ErrGetCorpByUin": "获取企业信息失败",
+      "ErrGetModelList": "获取模型列表失败",
+      "ErrGetModelStatus": "获取模型计费状态失败",
+      "ErrGetPromptTemplateFavorite": "获取收藏模版失败",
+      "ErrGetPromptTemplate": "获取提示词模版失败",
+      "ErrMsgPromptTemplateExist": "标题已存在",
+      "ErrGetPromptTemplateLabel": "获取提示词模版标签失败",
+      "ErrCreatePromptTemplate": "创建自定义提示词模版失败",
+      "ErrModifyPromptTemplate": "修改自定义提示词模版失败",
+      "ErrDeletePromptTemplate": "删除自定义提示词模版失败",
+      "ErrCreatePromptTemplateFavorite": "收藏提示词模板失败",
+      "ErrDeletePromptTemplateFavorite": "取消收藏提示词模板失败",
+      "ErrCreatePromptTemplateLabel": "创建提示词模板标签失败",
+      "ErrDeletePromptTemplateLabel": "删除提示词模板标签失败",
+      "ErrExpNoManagedAccountIDs": "未配置体验中心管理者账户ID",
+      "ErrGetDisplayDocs": "获取体验应用对外显示文档列表失败",
+      "ErrDescribeExpInfo": "获取体验应用详情失败",
+      "ErrModifyExpInfo": "修改应用模板数据失败",
+      "ErrGetExperienceApps": "获取体验应用列表失败",
+      "ErrGetBilling": "获取计费项异常",
+      "ErrAppNotSupportModelList": "未找到相应模型列表",
+      "ErrGetPromptVersion": "查询提示词版本失败",
+      "ErrGetPromptVersionEmpty": "该提示词版本不存在",
+      "ErrCreatePromptVersion": "创建提示词版本失败",
+      "ErrGetPromptMaxVersion": "获取提示词最大版本失败",
+      "ErrPromptVersionLimit": "提示词版本数量达到最大"
+    }
+  placeholder.yaml: |
+    tione_white_uin:
+     - 700000306554
+    app_default_model:
+      {{ if eq ((.Values.global.admin).no_default_model | default false) true }}
+      {{ else }}
+      - alias_name: youtu-mrc-pro
+        name: cs-normal-70b
+        desc: |-
+          针对企业知识问答场景精调训练，擅长多模态知识问答，适合图文表答案关联输出、数学计算、逻辑推理、表格问答等复杂场景有需求的场景。
+        is_default: true
+        source: Hunyuan
+        icon: {{ include "qbot.hunyuanIconUrl" . }}
+      - alias_name: youtu-mrc-standard
+        name: cs-normal
+        desc: |-
+          针对企业知识问答场景精调训练，擅长多模态知识问答。性价比相对更高，适合需要同时平衡效果、价格的场景。
+        is_default: false
+        source: Hunyuan
+        icon: {{ include "qbot.hunyuanIconUrl" . }}
+      - alias_name: DeepSeek-R1-0528
+        name: lke-deepseek-r1-0528
+        desc: |-
+          DeepSeek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。
+        is_default: false
+        source: Experience
+        icon: {{ include "qbot.dsIconUrl" . }}
+      - alias_name: DeepSeek-V3-0324
+        name: lke-deepseek-v3-0324
+        desc: |-
+          DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
+        is_default: false
+        source: Experience
+        icon: {{ include "qbot.dsIconUrl" . }}
+      - alias_name: 精调知识大模型多功能版
+        name: cs-normal-merge
+        desc: |-
+          针对企业智能化场景深度优化的三合一解决方案，集成意图识别、阅读理解、参数提取三大核心能力，适合需要平衡效果、价格的场景。
+        is_default: false
+        source: Hunyuan
+        icon: {{ include "qbot.hunyuanIconUrl" . }}
+      {{ end }}
+    app_thought_model_standard:
+      - alias_name: youtu-intent-pro
+        name: workflow-pro
+        chat_words_limit: 2000
+        desc: |-
+          适用于同时配置问答、文档、工作流和插件的场景，意图识别效果更佳，并且支持在角色指令中自定义配置意图。但可能会增加一定的对话耗时。
+        is_default: true
+        source: Hunyuan
+        icon: {{ include "qbot.hunyuanIconUrl" . }}
+        is_free: false
+      - alias_name: DeepSeek-V3-0324
+        name: lke-deepseek-v3-0324
+        desc: |-
+          DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
+        is_default: false
+        source: Experience
+        icon: {{ include "qbot.dsIconUrl" . }}
+        is_free: false
+      - alias_name: 精调知识大模型多功能版
+        name: workflow-pro-merge
+        desc: |-
+          针对企业智能化场景深度优化的三合一解决方案，集成意图识别、阅读理解、参数提取三大核心能力，适合需要平衡效果、价格的场景。
+        is_default: false
+        source: Hunyuan
+        icon: {{ include "qbot.hunyuanIconUrl" . }}
+        is_free: false
+    app_thought_model_agent:
+      - alias_name: youtu-agent
+        name: function-call-pro
+        chat_words_limit: 2000
+        desc: |-
+          具备任务规划、工具选择调用以及反思纠错能力，能够支持复杂问题的规划与执行。
+        icon: {{ include "qbot.hunyuanIconUrl" . }}
+        is_free: false
+        is_default: false
+      - alias_name: DeepSeek-V3-0324
+        name: lke-deepseek-v3-function-call
+        desc: |-
+          DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
+        is_default: true
+        source: Experience
+        icon: {{ include "qbot.dsIconUrl" . }}
+        finance_model_name: lke-deepseek-v3-0324
+    llm_support_ai_call_support: ["lke-deepseek-v3", "lke-deepseek-r1", "cs-normal-70b", "hunyuan", "sn-edu-70b","lke-deepseek-r1-vip","lke-deepseek-v3-vip","lke-deepseek-v3-0324","lke-deepseek-r1-0528"]
+    llm_support_ai_call_poor_support: ["cs-normal","hunyuan-13B", "hunyuan-standard-256K", "hunyuan-turbo", "hunyuan-role", "finance-13b", "sn-edu-13b"]
+    llm_support_ai_call_not_support: ["medical-6b"]
+    finance_disabled: true
+    finance_search_disabled: {{ (.Values.global.finance).search_disabled | default true }}
+    license:
+      type: ""
+      apis:
+      app_license_ids:
+      atomic_license_ids:
+      model_license_ids:
+      model_license_map:
+    qpm: {{ (.Values.global.admin).qpm | default 100 | int }}
+    tpm: {{ (.Values.global.admin).tpm | default 10000 | int }}
+    ds_qpm: {{ (.Values.global.admin).qpm | default 100 | int }}
+    ds_tpm: {{ (.Values.global.admin).tpm | default 10000 | int }}
+    managed_account_ids:
+     - 1888888
+    experience_uin: {{ .Values.experience_center_uin }}
+    language_all_switch: false
+    permission_app_category:
+      - permission_id: lkeRepository
+        app_type: knowledge_qa
+        name: 知识库问答
+        logo: {{ include "knowledge.icon" . }}
+      - permission_id: lkeSummary
+        app_type: summary
+        name: 知识摘要
+        logo: {{ include "summary.icon" . }}
+      - permission_id: lkeClassify
+        app_type: classify
+        name: 标签提取
+        logo: {{ include "classify.icon" . }}
+
+    mysqlCli: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+    redisCli: redis://:{{ .Values.global.components.redis.password }}@{{ (index .Values.global.components.redis.hosts 0) }}:6379/4
+    agentConfigApi: ip://agentconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+    ai_gateway_admin: ip://ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
+    finance: ip://finance.{{ .Release.Namespace }}.svc.cluster.local:9090
+    ai_gateway_api: ip://ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+    pluginConfigApi: ip://pluginconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+    task_config: ip://bottaskconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+    statistics_server_Api: ip://botdatastatisticsserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+    admin_login: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+    admin_api: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+    kb_config_Api: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+    platform_manager_Admin: ip://platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+    app_config_Admin: ip://app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+  trpc_go.yaml: |
+    global:                             #全局配置
+      namespace: Test            #环境类型，分正式production和非正式development两种类型
+      env_name: test                    #环境名称，非正式环境下多环境的名称
+      enable_set: ${ENABLE_SET}         #是否启用set
+      full_set_name: ${FULL_SET_NAME}   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+
+    server:                                            #服务端配置
+      app: adp                                        #业务的应用名
+      server: resource-gallery                         #进程服务名
+      bin_path: /usr/local/trpc/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /usr/local/trpc/conf/                 #业务配置文件所在路径
+      data_path: /usr/local/trpc/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+      - recovery
+      - opentelemetry
+      - i18n-adp
+      - cle-route-propagator
+      admin:
+        ip: ${POD_IP}  # admin 的 ip，配置网卡 nic 也可以
+        port: 8081   # admin 的 port，必须同时配置这里的 ip port 才会启动 admin
+      service:                                         #业务服务提供的service，可以有多个
+      - name: trpc.adp.resource_gallery.Login   # service的路由名称，格式：`业务领域.功能模块.项目名.Pb定义的服务名`
+        ip: ${POD_IP}
+        port: 9092   # 服务监听端口
+        network: tcp   # 网络监听类型 tcp/udp
+        protocol: trpc   # 应用层协议 trpc/restful
+        timeout: 5000   # 请求最长处理时间，单位毫秒
+        filter:
+        - session
+        - permission
+      - name: trpc.adp.resource_gallery.Admin   # service的路由名称，格式：`业务领域.功能模块.项目名.Pb定义的服务名`
+        ip: ${POD_IP}
+        port: 9090   # 服务监听端口
+        network: tcp   # 网络监听类型 tcp/udp
+        protocol: trpc   # 应用层协议 trpc/restful
+        timeout: 120000   # 请求最长处理时间，单位毫秒
+      - name: trpc.adp.resource_gallery.Http   # service的路由名称，格式：`业务领域.功能模块.项目名.Pb定义的服务名`
+        ip: ${POD_IP}
+        port: 9091   # 服务监听端口
+        network: tcp   # 网络监听类型 tcp/udp
+        protocol: http   # 应用层协议 trpc/restful
+        timeout: 120000   # 请求最长处理时间，单位毫秒
+    plugins:
+      log:                                            #日志配置
+        default:                                  #默认日志的配置，可支持多输出
+        - writer: console                         #控制台标准输出 默认
+          level: info                            #标准输出日志的级别
+        #caller_skip: 3
+          formatter: json
+          formatter_config:
+            time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+            time_key: time
+            level_key: level
+            name_key: name
+            caller_key: caller
+            message_key: message
+        - writer: file                            #本地文件日志
+          level: info                             #本地文件滚动日志的级别
+          formatter: json
+          formatter_config:
+            time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+            time_key: time
+            level_key: level
+            name_key: name
+            caller_key: caller
+            message_key: message
+            stacktrace_key: stackTrace
+          writer_config:
+            filename: /app/logs/trpc.log  #本地文件滚动日志存放的路径
+            write_mode: 2
+            roll_type: time
+            max_age: 7
+            max_backups: 10
+            compress: false
+            time_unit: day
+        clues:
+        - writer: console                         #控制台标准输出 默认
+          level: info                            #标准输出日志的级别
+        - writer: file
+          level: info
+          formatter: json
+          writer_config:
+            filename: /app/logs/clues.log
+            write_mode: 2
+            roll_type: time
+            max_age: 7
+            max_backups: 10
+            compress: false
+            time_unit: day
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      config:
+        file:
+          providers:
+          - name: rainbow
+            path: /app/conf/
+      i18n:
+        i18n:
+          default_lang: zh-CN
+          supported_languages:
+          - zh-CN
+          - en-US
+          data_provider:
+            type: rainbow
+            prefix: biz
+            error_prefix: errors
+            char_scaling_factor:
+              zh-CN: 1
+              en-US: 3
+      selector:
+        polaris:
+          enable_servicerouter: true # 注意这里一定要使用 true
+    client:
+      namespace: Test
+      filter:
+      - opentelemetry
+      - cle-route-propagator
+      service:
+      - name: mysql.qbot.admin
+        target: ${mysqlCli}
+      - name: tdsql.qbot.qbot
+        target: ${mysqlCli}
+      - name: redis.qbot.admin
+        target: ${redisCli}
+        timeout: 3000
+      - callee: trpc.KEP.agent_config_server.AgentConfigApi
+        name: trpc.KEP.agent-config-server.AgentConfigApi
+        target: ${agentConfigApi}
+        protocol: trpc
+        timeout: 60000
+      - name: trpc.adp.ai_gateway.Admin
+        network: tcp
+        protocol: trpc
+        target: ${ai_gateway_admin}
+        timeout: 2000
+      - callee: qbot.finance.finance.Finance
+        name: qbot.finance.finance.Finance
+        target: ${finance}
+        network: tcp
+        protocol: trpc
+        timeout: 20000
+      - name: trpc.adp.ai-gateway.api
+        network: tcp
+        timeout: 4500000
+        target: ${ai_gateway_api}
+        protocol: http
+      - callee: trpc.KEP.plugin_config_server.PluginConfigApi
+        name: trpc.KEP.plugin-config-server.PluginConfigApi
+        target: ${pluginConfigApi}
+        protocol: trpc
+        timeout: 60000
+      - name: trpc.KEP.bot-task-config-server.task-config
+        target: ${task_config}
+        callee: trpc.KEP.bot_task_config_server.TaskConfig
+        timeout: 3000
+      - name: trpc.adp.kb-config.Api
+        target: ${kb_config_Api}
+        protocol: trpc
+        callee: trpc.adp.kb_config.Api
+        timeout: 5000
+      - name: trpc.adp.platform_manager.Admin
+        target: ${platform_manager_Admin}
+        timeout: 30000
+      - name: trpc.adp.app_config.Admin
+        target: ${app_config_Admin}
+        protocol: trpc
+        timeout: 5000
+      - callee: trpc.KEP.bot_data_statistics_server.Api
+        target: ${statistics_server_Api}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.KEP.bot_admin_config_server.Login
+        target: ${admin_login}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.KEP.bot_admin_config_server.Api
+        target: ${admin_api}
+        protocol: trpc
+        timeout: 20000

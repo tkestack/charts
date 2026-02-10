@@ -1,0 +1,45 @@
+# Default values for ti-common
+# CLS 配置通过 global.observability.cls 传入
+# Prometheus 监控配置通过 global.observability.prometheus 传入
+
+# 以下是 global 配置的默认值示例（实际值在主 Chart 的 values.yaml 中配置）
+# global:
+#   observability:
+#     cls:
+#       enabled: false
+#       logsetId: ""
+#       topicId: ""
+#       logType: "json_log"
+#       timeKey: "timestamp"
+#       timeFormat: "%Y-%m-%dT%H:%M:%S.%fZ"
+#       allContainers: false
+#       includeLabels:
+#         app: "*"
+#       excludeLabels: {}
+#
+#     prometheus:
+#       enabled: false
+#       release: "prometheus"           # Prometheus Operator release name
+#       port: "metrics"                 # Service 端口名称
+#       interval: "30s"                 # 采集间隔
+#       path: "/metrics"                # 指标路径
+#       scheme: "http"                  # 协议
+#       matchLabels:                    # ServiceMonitor 选择器
+#         monitoring: enabled
+#       relabelings: []                 # 自定义 relabeling 配置
+#       alertsNamespace: ""             # 告警规则部署的 namespace（默认与 Release 同 namespace）
+#       alerts:
+#         enabled: false                # 是否启用告警规则
+#         podRestartThreshold: 5        # Pod 重启次数告警阈值
+#         errorRateThreshold: 0.01      # 错误率告警阈值 (1%)
+#         latencyThreshold: 2           # P99 延迟告警阈值 (秒)
+#         customRules: []               # 自定义告警规则
+#       podMonitor:
+#         enabled: false                # 是否启用 PodMonitor（用于无 Service 的 Pod）
+#         port: "metrics"
+#         interval: "30s"
+#         path: "/metrics"
+#         matchLabels:
+#           monitoring: enabled
+
+imagePullSecretName: qcloudregistrykey

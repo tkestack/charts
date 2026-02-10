@@ -1,0 +1,817 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-bot-rag-server
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    sse:
+      data_channel: 1000
+    bot:
+      timeout: 60
+      rejected_reply: 这个问题我不是很清楚，我所提供的答案或建议可能会存在不准确的地方。建议您转到人工，由专业顾问为您提供服务。
+      empty_reply: 抱歉，目前我无法提供关于这个问题的答复。为了更好地帮助您，请您尝试提出其他问题或需求。
+      multi_intent_reply: 在知识库中找到多个内容可以回答您的问题。请问您是想问哪个问题：
+      clarify_confirm_reply: 请描述您的问题
+      intent_achievements:
+        0 : ["qa","workflow","model_chat","self_awareness","doc","search_engine","llm","default"]
+      rewrite:
+        rewrite_threshold: 100
+      busy_replies:
+        1: 抱歉，当前咨询量大，请重新再问我一次。
+        4: 当前用量大，会话小结生成失败。
+        5: 当前用量大，会话小结生成失败。
+      throttles:
+        check: 10
+        streaming: 5
+      response_channel_size: 1500
+      answer_from_knowledge_timeout: 2
+      single_message_limit: 150
+      role_description: 你是腾讯云智能体开发平台，一个善于进行文档阅读、知识问答的智能平台。具备海量的行业知识，对垂直行业超过10项基础能力进行精调优化，涵盖了文档阅读理解、语义理解、安全合规等，可以帮助用户解决行业问题、提高工作效率。
+      bot_role_description:
+        lke-deepseek-r1: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题"
+        lke-deepseek-v3: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题"
+        lke-deepseek-r1-vip: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题"
+        lke-deepseek-v3-vip: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题"
+        lke-deepseek-r1-lichan: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题"
+        lke-deepseek-v3-0324: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3-0324。你会尽你所能帮助用户回答问题、解决问题"
+        lke-deepseek-r1-0528: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1-0528。你会尽你所能帮助用户回答问题、解决问题"
+        lke-deepseek-v3.1: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3.1。你会尽你所能帮助用户回答问题、解决问题"
+      content_limit: 13000
+      role_command_regx:
+        role_name_regex: "#+\\s*角色名称: (.*)"
+        speech_style_regex: "#+\\s*言谈风格:\\n((?:.|\\n)+?)\\n\\n#+\\s*性格特点:"
+        personality_regex: "#+\\s*性格特点:\\n((?:.|\\n)+?)\\n\\n#+\\s*经历和背景:"
+        experience_regex: "#+\\s*经历和背景:\\n((?:.|\\n)+?)\\n\\n#+\\s*能力限制:"
+        capability_limit_regex: "#+\\s*能力限制:\\n(.*?)\\n\\n"
+        skills_regex: "(#+\\s*意图\\s*\\d+)：([\\s\\S]*?)(#+\\s*意图描述)：([\\s\\S]*?)(#+\\s*意图实现)：([\\s\\S]*?)#"
+      recommend_regex: "\\[推荐问题.*?\\](.*?)\\n"
+      placeholder_conf:
+        start_placeholders:
+          "[" : 17
+    reject_answer_judge_length: 20
+    use_placeholder_models:
+      - cs-normal
+      - cs-normal-70b
+      - lke-deepseek-v3
+      - lke-deepseek-r1
+    multi_modal:
+      model_name_dialog: hunyuan-turbos-vision
+      only_cos_url: []
+      white_list:
+        176724: snvl-10b-0.4
+        1904370549674213376: hunyuan-turbos-vision
+      history_limit: 3
+      get_caption_prompt: 用200字以内描述这张图片
+      get_multi_prompt: 分别用200字以内描述以上图片
+      rewrite_prefix: 用户的问题是：
+      placeholder: <ut_im##age_here_index>%d</ut_im##age_here_index>
+      placeholderv2: "Picture %d: <image>[Picture %d]"
+      max_image_count: 20
+      one_image_token_length: 832
+      multi_modal_comprehension:
+        model_name: cs-normal-mllm-72B
+        white_list:
+          176724: snvl-10b-0.4
+      can_use_multi_modal_search: [1828326601925328896,1854148566857809920]
+    procedure:
+      knowledge: 调用知识库
+      task_flow: 调用任务流程
+      search_engine: 调用搜索引擎
+      image: 调用图片理解
+      large_language_model: 大模型直接回复
+      pot_math: 调用计算器
+      file: 阅读文件
+      workflow: 调用工作流
+      agent: 运行Agent
+      model_generate: 大模型生成中
+    limiter:
+      report_judge_length: 100
+    hunyuan_config:
+      # 注意这里B是大写 跟其他的不一样
+      hunyuan_standard: hunyuan-13B
+      hunyuan_search:
+      whitelist:
+        1780863647047221248: hunyuan-speed-search
+      enable_instruction_list: [1868500601205424128]
+    workflow_config:
+      model_name: {{ .Values.RagServer.workflow_config_model_name }}
+      close_token_report: true
+    model:
+    finance:
+      disabled: ${RAG_FINANCE_DISABLE}
+      search_disabled: ${RAG_SEARCH_DISABLE}
+      report_disabled: ${RAG_REPORT_DISABLE}
+      default_qpm: ${RAG_DEFAULT_QPM}
+      default_tpm: ${RAG_DEFAULT_TPM}
+      ds_default_qpm: ${RAG_DS_DEFAULT_QPM}
+      ds_default_tpm: ${RAG_DS_DEFAULT_TPM}
+    clarify_confirm:
+      top_n: 3
+      white_list: [1812732010083385344]
+    reference:
+      patterns:
+        - 【passage (\d+)】
+        - \[passage (\d+?)\]
+        - （passage (\d+)）
+        - 引用:【(?:passage\s+\d+(?:,\s*passage\s+\d+)*)】
+        - passage\s+(\d+)
+        - \*引用:\*$
+        - \*\*引用:\ \*\*$
+        - 引用:$
+        - 引用:\ $
+        - 引用：$
+        - 引用：\ $
+        - 参考：
+        - 引用的passage编号：和
+        - 引用的passage编号:$
+        - 引用的passage编号：
+        # 元宝角标
+        #- \[\^(\d+)\]
+      hunyuan_switch: [1763480855187816448]
+      hunyuan_patterns:
+        - （passage (\d+)）
+        - 以上信息来源于【passage (\d+)】(。|和【passage (\d+)】。)
+        - \n引用的passage编号：(\d+)
+        - \n引用的passage编号是：(\d+)
+        - \n\*\*引用passage编号\*\*：\[(\d+)\]
+        - \[passage (\d+)\]
+        - \n引用的passage编号是：
+        - \n引用的passage编号为：
+        - \n\*\*引用passage编号：\*\*
+    intent_model:
+      white_list: [1854443425674035200]
+      no_faq: []
+      ds_faq_reject_model: {{ .Values.RagServer.ds_faq_reject_model_name }}
+      system_intent:
+        -1: 其他问题
+        1: 指令跟随回答
+        2: 代码问题
+        3: 数学计算
+        4: 逻辑推理
+        5: 自我认知
+        6: 聊天
+        7: 天气
+        8: 全文处理
+        9: 知识问答
+      system_intent_map:
+        指令跟随回答: knowledge_qa
+        代码问题: knowledge_qa
+        数学计算: mathematics_calculate
+        逻辑推理: mathematics_calculate
+        自我认知: knowledge_qa
+        聊天: knowledge_qa
+        天气: knowledge_qa
+        全文处理: doc_summary
+        其他问题: knowledge_qa
+        知识问答: knowledge_qa
+        搜索引擎: search_engine
+      system_intent_white_list:
+        数学计算: [1111]
+        逻辑推理: [111]
+      explicit_intent:
+        1869298177072693248: 知识问答
+      rerank_score: -3
+      guide_of_opt_cards: "请从下面几个选项中进行选择。"
+      is_free: ${RAG_INTENT_MODEL_FREE}
+    mock:
+      enable_llm: false
+      enable_search: false
+      enable_workflow: false
+    retrieval_config:
+      close_priority: []
+      ner_threshold: 100
+    need_search_global_knowledge:
+      - 1868500601205424128
+    thought_conf:
+      thought_icon: ${RAG_THOUGHT_ICON}
+      status_title:
+        stop: 思考已停止
+        success: 思考已完成
+        processing: 思考中
+    stage_task_name:
+      dialog_ppl: 1_dialog_ppl
+      basic_search: 2.2_basic_search
+      query_rewrite: 2.3_query_rewrite
+      intent_recognize: 3_intent_recognize
+      search_pro_for_ds: 4_search_pro_for_ds
+      search_knowledge: 4_search_knowledge
+      workflow: 5_workflow
+      llm_reply: 5_llm_reply
+    error_downgrade_conf: ["msg:您选择的工作流","type:business, code:460032","msg:超出并发数限制"]
+    deep_seek_conf:
+      model_name: ["lke-deepseek-r1", "lke-deepseek-v3","lke-deepseek-v3-0324","lke-deepseek-r1-0528","lke-deepseek-v3.1"]
+      model_has_think: ["lke-deepseek-r1", "lke-deepseek-r1-vip","lke-deepseek-r1-lichan", "lke-deepseek-r1-0528"]
+      image_quiz_white_list: ["1904877520508682240",'1909556204524011520', '1933456525487491264', '1922191304271899776'] # 图文问答白名单列表
+      qd_ds_start_time: "2025-05-20 00:00:00"
+      search_model:
+        "lke-deepseek-r1": "lke-deepseek-r1-search"
+        "lke-deepseek-v3": "lke-deepseek-v3-search"
+        "lke-deepseek-r1-vip": "lke-deepseek-r1-search"
+        "lke-deepseek-v3-vip": "lke-deepseek-v3-search"
+        "lke-deepseek-r1-lichan": "lke-deepseek-r1-lichan-search"
+        "lke-deepseek-v3-0324": "lke-deepseek-v3-0324-search"
+        "lke-deepseek-r1-0528": "lke-deepseek-r1-0528-search"
+        "lke-deepseek-v3.1": "lke-deepseek-v3.1-search"
+      search_secret_id: ${RAG_SEARCH_SECRET_ID}
+      search_secret_key: ${RAG_SEARCH_SECRET_KEY}
+      search_result_size: 9
+      search_enable_free: true
+      exclude_search_engine: ["mp"]
+    local_cache:
+      app_cache:
+        switch: true
+        capacity: 10000
+        expiration: 1800
+        update_cache_interval: 30
+    
+  error_en-US.json: |
+    {
+        "ErrUserNotLogin": "User is not logged in",
+        "ErrIntentNotFound": "Intent does not exist",
+        "ErrAdminAppKeyInvalid": "Invalid APPKEY, please verify the APPKEY source",
+        "ErrBadRequest": "Invalid request parameters, please refer to the integration documentation.",
+        "ErrAuthTokenFailed": "Token verification failed",
+        "ErrEventHandlerNotExist": "Event handler does not exist",
+        "ErrSeatNotExist": "Seat user does not exist",
+        "ErrAdminRobotNotExist": "Robot does not exist",
+        "ErrRobotNotExist": "Robot does not exist",
+        "ErrSessionNotTransfered": "Session was not transferred to human",
+        "ErrInvalidMsgRecord": "Message does not exist or no operation permission",
+        "ErrCreateSessionFailed": "Session creation failed",
+        "ErrRenderTemplate": "Prompt rendering failed",
+        "ErrVisitorNotExist": "Visitor user does not exist",
+        "ErrSessionNotFound": "Session does not exist or no operation permission",
+        "ErrConcurrenceExceeded": "Exceeded concurrency limit",
+        "ErrLLMTimeout": "Model request timeout",
+        "ErrKnowledgeNotPublished": "Knowledge base not published",
+        "ErrCreateVisitorFailed": "Visitor creation failed",
+        "ErrRateMsgRecordFailed": "Message rating failed",
+        "ErrInvalidVisitorLabel": "Invalid label",
+        "ErrImageRecognitionFailed": "Image recognition failed",
+        "ErrRobotStopOrArrearage": "Robot is disabled or in arrears",
+        "ErrAppTypeNotSupported": "This application type does not support the current request",
+        "ErrAppRateLimiter": "Current application connections exceed request limit, please try again later",
+        "ErrNoBalance": "Insufficient model balance for current application",
+        "ErrInvalidApp": "Application does not exist or no operation permission",
+        "ErrContentTooLong": "Input content too long",
+        "ErrCalcContentTooLong": "Calculation content too long, stopped",
+        "ErrTaskFlowNodePreview": "Task flow node preview parameter exception",
+        "ErrNoSearchEngineBalance": "Search resources exhausted, call failed",
+        "ErrAppIDInBlacklist": "This AppID has abnormal behavior, call failed",
+        "ErrMsgRecordErr": "Message record is invalid",
+        "ErrAudioInteractNotEnabled": "Voice interaction function not enabled",
+        "ErrRTCNotEnabled": "Voice call function not enabled",
+        "ErrRTCResourceInsufficient": "Voice call lines busy, please try again later",
+        "ErrRTCVoiceNotConfig": "Voice call sound not configured",
+        "ErrRTCDigitalHumanNotConfig": "Voice call avatar not configured",
+        "ErrRTCDigitalHumanNotEnabled": "Voice call avatar not enabled",
+        "ErrRTCConcurrencyLimiter": "Current voice calls exceed request limit, please try again later",
+        "ErrRTCTaskNotExist": "Voice call task does not exist",
+        "ErrThoughtNoBalance": "Insufficient thought model balance",
+        "ErrWorkflowDisable": "Workflow function not enabled",
+        "ErrWorkflowRunError": "Workflow running exception",
+        "ErrWorkflowClose": "The workflow you selected is not enabled, please enable it before debugging",
+        "ErrWorkflowDebug": "The workflow you selected is pending debugging, please debug it in the workflow first",
+        "ErrWorkflowDelete": "The workflow you selected has been deleted, please select again",
+        "ErrWorkflowRelease": "The workflow you selected is not published, please enable it in the workflow first",
+        "ErrWorkflowReference": "This workflow references other workflows that are unavailable due to 'not enabled' or 'pending debugging', please 'enable' or 'debug' before testing.",
+        "ErrWorkflowIsEmpty": "You have not selected a workflow, please make a selection",
+        "ErrAgentImageUnsupported": "Agent temporarily does not support images",
+        "ErrAgentFileUnsupported": "Agent temporarily does not support files",
+        "ErrAgentRunError": "Agent running exception",
+        "ErrAgentNoToolsError": "Agent currently has no executable tools",
+        "ErrAgentToolsRunError": "Agent tool failed",
+        "ErrAgentLocalToolOuputsRedundant": "Invalid request parameters, last chat did not request local tool calls, please do not configure LocalToolOuputs parameter.",
+        "ErrAgentLocalToolsNotFound": "Invalid request parameters, tool name reported in LocalToolOuputs does not exist",
+        "ErrRedisNotFound": "Redis data does not exist",
+        "ErrForbidden": "Forbidden",
+        "ErrInternalServerError": "Internal Server Error"
+    }
+  error_zh-CN.json: |
+    {
+        "ErrUserNotLogin": "用户未登录",
+        "ErrIntentNotFound": "意图不存在",
+        "ErrAdminAppKeyInvalid": "APPKEY无效，请核实APPKEY来源",
+        "ErrBadRequest": "请求参数错误, 请参阅接入文档.",
+        "ErrAuthTokenFailed": "Token 校验失败",
+        "ErrEventHandlerNotExist": "事件处理器不存在",
+        "ErrSeatNotExist": "坐席用户不存在",
+        "ErrAdminRobotNotExist": "机器人不存在",
+        "ErrRobotNotExist": "机器人不存在",
+        "ErrSessionNotTransfered": "会话未被转人工",
+        "ErrInvalidMsgRecord": "消息不存在或没有操作权限",
+        "ErrCreateSessionFailed": "会话创建失败",
+        "ErrRenderTemplate": "Prompt 渲染失败",
+        "ErrVisitorNotExist": "访客用户不存在",
+        "ErrSessionNotFound": "会话不存在或没有操作权限",
+        "ErrConcurrenceExceeded": "超出并发数限制",
+        "ErrLLMTimeout": "模型请求超时",
+        "ErrKnowledgeNotPublished": "知识库未发布",
+        "ErrCreateVisitorFailed": "访客创建失败",
+        "ErrRateMsgRecordFailed": "消息点赞点踩失败",
+        "ErrInvalidVisitorLabel": "标签不合法",
+        "ErrImageRecognitionFailed": "图像识别失败",
+        "ErrRobotStopOrArrearage": "机器人停用或者欠费",
+        "ErrAppTypeNotSupported": "该应用类型不支持当前请求",
+        "ErrAppRateLimiter": "当前应用连接数超出请求限制，请稍后再试",
+        "ErrNoBalance": "当前应用模型余额不足",
+        "ErrInvalidApp": "应用不存在或没有操作权限",
+        "ErrContentTooLong": "输入内容过长",
+        "ErrCalcContentTooLong": "计算内容过长, 已经停止",
+        "ErrTaskFlowNodePreview": "任务流程节点预览参数异常",
+        "ErrNoSearchEngineBalance": "搜索资源已用尽，调用失败",
+        "ErrAppIDInBlacklist": "该AppID请求存在异常行为，调用失败",
+        "ErrMsgRecordErr": "消息记录不合法",
+        "ErrAudioInteractNotEnabled": "语音互动功能未开启",
+        "ErrRTCNotEnabled": "语音通话功能未开启",
+        "ErrRTCResourceInsufficient": "语音通话线路繁忙，请稍后再试",
+        "ErrRTCVoiceNotConfig": "语音通话声音未配置",
+        "ErrRTCDigitalHumanNotConfig": "语音通话形象未配置",
+        "ErrRTCDigitalHumanNotEnabled": "语音通话形象未启用",
+        "ErrRTCConcurrencyLimiter": "当前语音通话数超出请求限制，请稍后再试",
+        "ErrRTCTaskNotExist": "语音通话任务不存在",
+        "ErrThoughtNoBalance": "当前思考模型余额不足",
+        "ErrWorkflowDisable": "工作流功能未启用",
+        "ErrWorkflowRunError": "工作流运行异常",
+        "ErrWorkflowClose": "您选择的工作流未开启，请开启后再调试",
+        "ErrWorkflowDebug": "您选择的工作流待调试，请先在工作流中对其进行调试",
+        "ErrWorkflowDelete": "您选择的工作流已被删除，请重新选择",
+        "ErrWorkflowRelease": "您选择的工作流未发布，请先在工作流中对其进行开启",
+        "ErrWorkflowReference": "该工作流中引用了其他工作流，其他工作流因‘未启用’或‘待调试’导致不可用，请’启用‘或’调试‘后再进行测试。",
+        "ErrWorkflowIsEmpty": "您尚未选择工作流，请进行选择",
+        "ErrAgentImageUnsupported": "Agent暂时不支持图片",
+        "ErrAgentFileUnsupported": "Agent暂时不支持文件",
+        "ErrAgentRunError": "Agent运行异常",
+        "ErrAgentNoToolsError": "Agent当前没有可执行的工具",
+        "ErrAgentToolsRunError": "Agent工具失败",
+        "ErrAgentLocalToolOuputsRedundant": "请求参数错误，上次聊天没有请求本地工具调用，请不要配置 LocalToolOuputs 参数。",
+        "ErrAgentLocalToolsNotFound": "请求参数错误，LocalToolOuputs 上报的工具名称不存在",
+        "ErrRedisNotFound": "Redis数据不存在",
+        "ErrForbidden": "Forbidden",
+        "ErrInternalServerError": "Internal Server Error"
+    }
+  placeholder.yaml: |
+    RAG_MYSQL_USER: {{ .Values.global.components.db.user }}
+    RAG_MYSQL_PASSWORD: "{{ .Values.global.components.db.password }}"
+    RAG_MYSQL_HOST: {{ .Values.global.components.db.host }}
+    RAG_MYSQL_PORT: {{ .Values.global.components.db.port }}
+    
+    RAG_TDSQL_USER: {{ .Values.global.components.db.user }}
+    RAG_TDSQL_PASSWORD: "{{ .Values.global.components.db.password }}"
+    RAG_TDSQL_HOST: {{ .Values.global.components.db.host }}
+    RAG_TDSQL_PORT: {{ .Values.global.components.db.port }}
+    
+    RAG_ADP_PROMPT_MYSQL_USER: {{ .Values.global.components.db.user }}
+    RAG_ADP_PROMPT_MYSQL_PASSWORD: "{{ .Values.global.components.db.password }}"
+    RAG_ADP_PROMPT_MYSQL_HOST: {{ .Values.global.components.db.host }}
+    RAG_ADP_PROMPT_MYSQL_PORT: {{ .Values.global.components.db.port }}
+    
+    RAG_LIMITER_REDIS_HOST: {{ (index .Values.global.components.redis.hosts 0) }}
+    RAG_LIMITER_REDIS_PORT: 6379
+    RAG_LIMITER_REDIS_PASSWORD: "{{ .Values.global.components.redis.password }}"
+    
+    RAG_REDIS_HOST: {{ (index .Values.global.components.redis.hosts 0) }}
+    RAG_REDIS_PORT: 6379
+    RAG_REDIS_PASSWORD: "{{ .Values.global.components.redis.password }}"
+    
+    RAG_KNOWLEDGE_CONFIG_SERVER_TARGET: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+    RAG_FINANCE_SERVER_TARGET: ip://finance.{{ .Release.Namespace }}.svc.cluster.local:9090
+    RAG_LLM_SERVER_TARGET: ip://botllmserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+    RAG_ADMIN_CONFIG_SERVER_TARGET: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+    RAG_WORKFLOW_DM_SERVER_TARGET: ip://botworkflowdmserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+    RAG_WORKFLOW_DM_HTTP_SERVER_TARGET: ip://botworkflowdmserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+    RAG_AI_GATEWAY_HTTP_SERVER_TARGET: ip://ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+    RAG_DATA_STATISTICS_SERVER_TARGET: ip://botdatastatisticsserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+    RAG_APP_ADMIN_PROXY_TARGET: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+    RAG_WORKFLOW_EXEC_SERVER_TARGET: ip://botworkflowdmserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+    RAG_KB_CONFIG_SERVER_TARGET: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+    
+    RAG_THOUGHT_ICON: {{ include "qbot.thoughtIcon" . }}
+    
+    RAG_SEARCH_SECRET_ID: {{ .Values.RagServer.search_secret_id }}
+    RAG_SEARCH_SECRET_KEY: {{ .Values.RagServer.search_secret_key }}
+    
+    RAG_INTENT_MODEL_FREE: true
+    
+    RAG_FINANCE_DISABLE: {{ (.Values.global.finance).disabled | default true }}
+    RAG_SEARCH_DISABLE: {{ (.Values.global.finance).search_disabled | default true }}
+    RAG_REPORT_DISABLE: {{ (.Values.global.finance).report_disabled | default true }}
+    
+    RAG_DEFAULT_QPM: 50
+    RAG_DEFAULT_TPM: 10000000
+    RAG_DS_DEFAULT_QPM: 50
+    RAG_DS_DEFAULT_TPM: 10000000
+    
+  rag_en-US.json: |
+    {
+      "PureImageRewriteQuery": "What does this picture say",
+      "RewriteQuerySummary": "《%s》summary：%s\n\n",
+      "RewriteQueryImageSummary": "[image%d] description：%s\n\n",
+      "RewriteQueryAllFilesAndPic": "describe all files and images",
+      "NoResultInKnowledgeReply": "no relevant results were found in the knowledge base",
+      "KnowledgeQAndA": "question:\n%s\n\nanswer:\n%s",
+      "GuessYouWantAsk": "guess you want to ask:<br><br>%s",
+      "BuildThisIs": "it's %s",
+      "BuildAlsoIs": ", also %s",
+      "BuildImageIdx": "[image%d]",
+      "PlaceHolderLeft": "[image",
+      "ContentFailed": "fail",
+    
+      "抱歉，您这个问题我暂时无法回答，建议您换一个问题试试呢！": "Sorry, I can't answer your question at the moment. I suggest you try asking another question!",
+      "调用图片理解": "Calling image understanding",
+      "用200字以内描述这张图片": "describe this picture in 200 words or less",
+      "分别用200字以内描述以上图片": "describe the above pictures in 200 words or less",
+      "调用知识库": "Calling the knowledge base",
+      "文档问答": "Documentation Q&A",
+    
+      "该结果依照法律法规不能展示，已被系统隐藏。": "This result cannot be displayed in accordance with laws and regulations and has been hidden by the system.",
+      "这个问题我不是很清楚，我所提供的答案或建议可能会存在不准确的地方。建议您转到人工，由专业顾问为您提供服务。": "I am not very clear about this question, and the answers or suggestions I provide may be inaccurate. It is recommended that you switch to manual and let professional consultants provide services for you.",
+      "抱歉，目前我无法提供关于这个问题的答复。为了更好地帮助您，请您尝试提出其他问题或需求。": "Sorry, I cannot provide an answer to this question at this time. To better help you, please try to ask other questions or requests.",
+      "对不起，作为知识库问答应用里的人工智能，我无法帮您总结文档。请告诉我你需要了解的其他信息，我会尽力为你提供帮助。": "Sorry, as an AI in a knowledge Q&A app, I can't help you summarize the document. Please tell me what else you need to know and I'll do my best to help you.",
+      "抱歉，当前咨询量大，请重新再问我一次。": "Sorry, the current volume of inquiries is high. Please ask me again.",
+      "当前用量大，会话摘要生成失败。": "The current usage is high and session summary generation failed.",
+      "当前用量大，会话小结生成失败。": "The current usage is high and the session summary generation failed.",
+      "你是腾讯云智能体开发平台，一个善于进行文档阅读、知识问答的智能平台。具备海量的行业知识，对垂直行业超过10项基础能力进行精调优化，涵盖了文档阅读理解、语义理解、安全合规等，可以帮助用户解决行业问题、提高工作效率。": "You are the Tencent Cloud Agent Development Platform, an intelligent platform that is good at document reading and knowledge question and answer. With a vast amount of industry knowledge, you can fine-tune and optimize more than 10 basic capabilities in vertical industries, covering document reading comprehension, semantic understanding, security compliance, etc., which can help users solve industry problems and improve work efficiency.",
+      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题": "The large language model you chose is the intelligent assistant DeepSeek-R1 developed by China's DeepSeek company. You will do your best to help users answer questions and solve problems.",
+      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题": "The large language model you chose is DeepSeek-V3, an intelligent assistant developed by China's DeepSeek company. You will do your best to help users answer questions and solve problems.",
+      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1-0528。你会尽你所能帮助用户回答问题、解决问题": "The large language model you chose is DeepSeek-R1-0528, an intelligent assistant developed by China's DeepSeek company. You will do your best to help users answer questions and solve problems.",
+      "抱歉，未从您提供的信息中提取出标签结果": "Sorry, no label results were extracted from the information you provided",
+    
+      "调用任务流程": "Calling task flow",
+      "调用搜索引擎": "Calling search engine",
+      "大模型直接回复": "LLM direct reply",
+      "调用计算器": "Calling calculator",
+      "阅读文件": "Reading file",
+      "调用工作流": "Calling workflow",
+      "运行Agent": "Running Agent",
+      "大模型生成中": "LLM generating",
+      "思考已停止": "Thinking has stopped",
+      "思考已完成": "Thinking is complete",
+      "思考中": "Thinking",
+      "正在思考中": "Thinking",
+      "思考": "Thinking",
+      "描述一下这张图片": "Describe this picture",
+      "描述以上图片的内容": "Describe the content of the above pictures",
+      "以客服的语气，根据以下信息，用简短的语言询问用户每个槽位具体是什么：": "In a customer service tone, based on the following information, use short language to ask the user what each slot is:",
+    
+      "role_name_regex": "#+\\s*Role Name: (.*)",
+      "speech_style_regex": "#+\\s*Language style:\\n((?:.|\\n)+?)\\n\\n#+\\s*Personality and characteristics:",
+      "personality_regex": "#+\\s*Personality and characteristics:\\n((?:.|\\n)+?)\\n\\n#+\\s*Experience and Background:",
+      "experience_regex": "#+\\s*Experience and Background:\\n((?:.|\\n)+?)\\n\\n#+\\s*Capacity Limitations:",
+      "capability_limit_regex": "#+\\s*Capacity Limitations:\\n(.*?)\\n\\n",
+      "skills_regex": "(#+\\s*Intention\\s*\\d+)：([\\s\\S]*?)(#+\\s*Description of intention)：([\\s\\S]*?)(#+\\s*Fulfillment of Intention)：([\\s\\S]*?)#",
+      "recommend_regex": "\\[Recommended Question.*?\\](.*?)\\n",
+    
+      "工具{%s}不存在, 请尝试使用其他工具": "Tool {%s} Not Exist Please Try Other Tools",
+      "工具{%s}不可用, 请尝试使用其他工具": "Tool {%s} Not Available Please Try Other Tools",
+      "工具{%s}调用失败: %s": "Tool {%s} Invocation Failed %s",
+      "[链接](%s)": "[Link](%s)",
+      "文档URL%d:%s": "Document URL %d:%s",
+      "KeyQueryWithImageAndFile": "The picture shows:\n %s\n\n%s",
+      "调用思考模型": "Invoking the thinking model",
+      "KeyTimeNowPrompt": " Please note that the current time is %s "
+    }
+  rag_zh-CN.json: |
+    {
+      "PureImageRewriteQuery":"这个图片讲得是什么",
+      "RewriteQuerySummary": "《%s》摘要：%s\n\n",
+      "RewriteQueryImageSummary": "【图%d】描述：%s\n\n",
+      "RewriteQueryAllFilesAndPic": "描述所有的文件和图片",
+      "NoResultInKnowledgeReply": "知识库中未检索到相关结果",
+      "KnowledgeQAndA": "问题:\n%s\n\n答案:\n%s",
+      "GuessYouWantAsk": "猜你想问:<br><br>%s",
+      "BuildThisIs": "就是%s",
+      "BuildAlsoIs": "，也是%s",
+      "BuildImageIdx":"【图%d】",
+      "PlaceHolderLeft": "【图",
+      "ContentFailed": "失败",
+    
+      "抱歉，您这个问题我暂时无法回答，建议您换一个问题试试呢！": "抱歉，您这个问题我暂时无法回答，建议您换一个问题试试呢！",
+      "调用图片理解": "调用图片理解",
+      "用200字以内描述这张图片": "用200字以内描述这张图片",
+      "分别用200字以内描述以上图片": "分别用200字以内描述以上图片",
+      "调用知识库": "调用知识库",
+      "文档问答": "文档问答",
+    
+      "该结果依照法律法规不能展示，已被系统隐藏。": "该结果依照法律法规不能展示，已被系统隐藏。",
+      "这个问题我不是很清楚，我所提供的答案或建议可能会存在不准确的地方。建议您转到人工，由专业顾问为您提供服务。": "这个问题我不是很清楚，我所提供的答案或建议可能会存在不准确的地方。建议您转到人工，由专业顾问为您提供服务。",
+      "抱歉，目前我无法提供关于这个问题的答复。为了更好地帮助您，请您尝试提出其他问题或需求。": "抱歉，目前我无法提供关于这个问题的答复。为了更好地帮助您，请您尝试提出其他问题或需求。",
+      "对不起，作为知识库问答应用里的人工智能，我无法帮您总结文档。请告诉我你需要了解的其他信息，我会尽力为你提供帮助。": "对不起，作为知识库问答应用里的人工智能，我无法帮您总结文档。请告诉我你需要了解的其他信息，我会尽力为你提供帮助。",
+      "抱歉，当前咨询量大，请重新再问我一次。": "抱歉，当前咨询量大，请重新再问我一次。",
+      "当前用量大，会话摘要生成失败。": "当前用量大，会话摘要生成失败。",
+      "当前用量大，会话小结生成失败。": "当前用量大，会话小结生成失败。",
+      "你是腾讯云智能体开发平台，一个善于进行文档阅读、知识问答的智能平台。具备海量的行业知识，对垂直行业超过10项基础能力进行精调优化，涵盖了文档阅读理解、语义理解、安全合规等，可以帮助用户解决行业问题、提高工作效率。": "你是腾讯云智能体开发平台，一个善于进行文档阅读、知识问答的智能平台。具备海量的行业知识，对垂直行业超过10项基础能力进行精调优化，涵盖了文档阅读理解、语义理解、安全合规等，可以帮助用户解决行业问题、提高工作效率。",
+      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题": "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题",
+      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题": "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题",
+      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1-0528。你会尽你所能帮助用户回答问题、解决问题": "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1-0528。你会尽你所能帮助用户回答问题、解决问题",
+      "抱歉，未从您提供的信息中提取出标签结果": "抱歉，未从您提供的信息中提取出标签结果",
+    
+      "调用任务流程": "调用任务流程",
+      "调用搜索引擎": "调用搜索引擎",
+      "大模型直接回复": "大模型直接回复",
+      "调用计算器": "调用计算器",
+      "阅读文件": "阅读文件",
+      "调用工作流": "调用工作流",
+      "运行Agent": "运行Agent",
+      "大模型生成中": "大模型生成中",
+      "思考已停止": "思考已停止",
+      "思考已完成": "思考已完成",
+      "思考中": "思考中",
+      "正在思考中": "正在思考中",
+      "思考": "思考",
+      "描述一下这张图片": "描述一下这张图片",
+      "描述以上图片的内容": "描述以上图片的内容",
+      "以客服的语气，根据以下信息，用简短的语言询问用户每个槽位具体是什么：": "以客服的语气，根据以下信息，用简短的语言询问用户每个槽位具体是什么：",
+    
+      "role_name_regex": "#+\\s*角色名称: (.*)",
+      "speech_style_regex": "#+\\s*言谈风格:\\n((?:.|\\n)+?)\\n\\n#+\\s*性格特点:",
+      "personality_regex": "#+\\s*性格特点:\\n((?:.|\\n)+?)\\n\\n#+\\s*经历和背景:",
+      "experience_regex": "#+\\s*经历和背景:\\n((?:.|\\n)+?)\\n\\n#+\\s*能力限制:",
+      "capability_limit_regex": "#+\\s*能力限制:\\n(.*?)\\n\\n",
+      "skills_regex": "(#+\\s*意图\\s*\\d+)：([\\s\\S]*?)(#+\\s*意图描述)：([\\s\\S]*?)(#+\\s*意图实现)：([\\s\\S]*?)#",
+      "recommend_regex": "\\[推荐问题.*?\\](.*?)\\n",
+    
+      "工具{%s}不存在, 请尝试使用其他工具": "工具{%s}不存在，请尝试其他工具",
+      "工具{%s}不可用, 请尝试使用其他工具": "工具{%s}不可用，请尝试其他工具",
+      "工具{%s}调用失败: %s": "工具{%s}调用失败：%s",
+      "[链接](%s)": "[链接](%s)",
+      "文档URL%d:%s": "文档URL%d：%s",
+      "调用思考模型": "调用思考模型",
+      "KeyQueryWithImageAndFile": "图片中显示了:\n %s\n\n%s",
+      "KeyTimeNowPrompt": " 请注意现在的时间是 %s "
+    }
+  trpc_go.yaml: |
+    global:                             #全局配置
+      namespace: Test            #环境类型，分正式production和非正式development两种类型
+      env_name: test                    #环境名称，非正式环境下多环境的名称
+      enable_set: ${ENABLE_SET}         #是否启用set
+      full_set_name: ${FULL_SET_NAME}   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+    
+    server:                                            #服务端配置
+      app: KEP                                        #业务的应用名
+      server: bot-rag-server                             #进程服务名
+      bin_path: /usr/local/trpc/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /data/app/conf/                 #业务配置文件所在路径
+      data_path: /usr/local/trpc/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+      - recovery                                       #拦截框架创建的业务处理协程panic
+      - cle-route-propagator
+      - i18n-adp
+      - opentelemetry
+      - galileo
+      stream_filter:
+      - galileo
+      admin:
+        ip: ${POD_IP}
+        port: 8081
+      service:
+      - name: trpc.KEP.bot-rag-server.rpc
+        ip: ${POD_IP}
+        port: 8001
+        network: tcp
+        protocol: trpc
+        timeout: 30000                                            #业务服务提供的service，可以有多个
+      - name: trpc.KEP.bot-rag-server.chat        #service的路由名称
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+        port: 8000                  #服务监听端口 可使用占位符 ${port}
+        network: tcp                               #网络监听类型  tcp udp
+        protocol: http                 #应用层协议 trpc http
+        timeout: 0                              #请求最长处理时间 单位 毫秒
+        server_async: true                             #开启异步处理
+        idletime: 600000                               # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+      - name: qbot.chat.chat.LoadPromptVersionFromDB        # 本地定时器
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+        port: 9001                  #服务监听端口 可使用占位符 ${port}
+        network: 0 */2 * * * * ?startAtOnce=1       # 启动立马执行
+        protocol: timer                 #应用层协议 trpc http
+        timeout: 600000                 # 请求最长处理时间 单位 毫秒
+      - name: qbot.chat.chat.GetRejectAnswer        # 本地定时器
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+        port: 9002                  #服务监听端口 可使用占位符 ${port}
+        network: 0 */2 * * * * ?startAtOnce=1       # 启动立马执行
+        protocol: timer                 #应用层协议 trpc http
+        timeout: 600000
+    
+    plugins:                                          #插件配置
+      log:                                            #日志配置
+        default:                                  #默认日志的配置，可支持多输出
+        - writer: console                         #控制台标准输出 默认
+          level: info                            #标准输出日志的级别
+        #caller_skip: 3
+          formatter: json
+          formatter_config:
+            time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+            time_key: time
+            level_key: level
+            name_key: name
+            caller_key: caller
+            message_key: message
+        - writer: file                            #本地文件日志
+          level: info                             #本地文件滚动日志的级别
+          formatter: json
+          formatter_config:
+            time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+            time_key: time
+            level_key: level
+            name_key: name
+            caller_key: caller
+            message_key: message
+            stacktrace_key: stackTrace
+          writer_config:
+            filename: /app/logs/trpc.log  #本地文件滚动日志存放的路径
+            write_mode: 2
+            roll_type: time
+            max_age: 7
+            max_backups: 10
+            compress: false
+            time_unit: day
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+        galileo:
+          verbose: error   # 伽利略自身的诊断日志级别，取值范围：debug, info, error, none，日志输出在 ./galileo/galileo.log 中。
+          ocp_addr: "http://127.0.0.1"
+          config: #配置
+            config_server: "http://127.0.0.1"
+            register_server: "http://127.0.0.1"
+            self_monitor:
+              collector:
+                addr: "http://127.0.0.1"
+            metrics_config: # 指标配置
+              enable: false    # 是否启用指标
+            traces_config: # 追踪配置
+              enable: true    # 是否启用追踪，默认 true。如果设置为 false，会中断 trace，让上游的调用链不完整。v0.3.7 以上生效。
+              processor: # 追踪数据处理相关配置
+                sampler: # 采样器配置
+                  fraction: 0   # 采样比例，默认 0。（v0.11.0)
+                  error_fraction: 0
+                  enable_min_sample: true  # 启用每分钟每接口最少 1 个请求采样，默认 true (v0.11.0)。
+                  enable_dyeing: true # 开启染色采样，默认 true。
+                disable_trace_body: true          # 若为 true，则关闭 trace 中对 req 和 rsp 的 body 上报，可以大幅提高上报性能。默认 true。
+                enable_deferred_sample: false     # 开启延迟采样（请求处理完采样），默认 false。0.3.0 以上生效。
+                deferred_sample_error: false      # 开启延迟采样出错采样（请求处理完出现错误采样），默认 false。0.3.0 以上生效。
+                deferred_sample_slow_duration_ms: 1000    # 慢操作阈值（请求耗时超过该值采样），单位 ms，默认 1000。0.3.0 以上生效。
+                disable_parent_sampling: false            # 忽略上游的采样结果，默认 false。v0.3.7 以上生效。
+              exporter:
+                collector:
+                  addr: "127.0.0.1:80"
+            logs_config: # 日志配置
+              enable: false    # 是否启用日志
+              processor: # 日志数据处理相关配置
+                only_trace_log: false  # 是否只上报命中 trace 的 log，默认关闭
+                must_log_traced: false # 是否命中 traced 不管任何级别日志都上报，默认关闭。v0.3.22 以上生效
+                trace_log_mode: 0   # debug 访问日志 (access_log) 打印模式，0,1：单行打印，3：多行打印，2：不打印，默认 0
+                level: debug        # 上报到远程的日志级别，默认 error
+                enable_recovery: true # 是否捕获 panic，默认 true
+            profiles_config:    # profile配置
+              enable: false # 是否启用 profile
+              processor: # profile 数据处理相关配置
+                profile_types: ["cpu", "heap"] # 采集 profile 的类型，支持 cpu、heap、mutex、block、goroutine，默认开启 cpu 和 heap。
+            version: 1        # 版本号，默认 0，此版本号用于控制远程配置和本地配置的优先级，版本号高的优先，一般设置成 1 即可。
+          resource: # resource 资源信息，在 SDK 运行期间不会改变。resource 中的字段一般不需要配置，默认会填充。
+            platform: STKE   # 服务部署的平台，如 PCG-123, STKE, 默认 PCG-123
+      config:
+        file:
+          providers:
+          - name: rainbow
+            path: /app/conf/
+      registry: #服务注册配置
+        polaris: #北极星名字注册服务的配置
+          register_self: false
+          heartbeat_interval: 3000                    #名字注册服务心跳上报间隔
+          heartbeat_timeout: 1000                     #名字服务心跳超时
+          service:
+          - name: trpc.KEP.bot-rag-server.chat      #service name 与上面的service配置一一对应
+            namespace: ${NAME_SPACE}                #环境类型，分正式Production和非正式Development两种类型
+            token: 4a6624b0230d4b68ab0790febeb3eb6a               #服务注册所需要的 token
+      selector: #针对用户自定义的selector的配置
+        polaris: #针对polaris整体api的内部配置
+          protocol: grpc                              #名字服务远程交互协议类型
+          enable_trans_meta: true
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+          - zh-CN
+          - en-US
+          data_provider:
+            type: rainbow
+            prefix: rag
+            error_prefix: error
+            char_scaling_factor:
+              zh: 1
+              en: 3
+    client:
+      namespace: Test
+      filter:
+      - opentelemetry
+      - cle-route-propagator
+      - galileo
+      stream_filter:
+      - galileo
+      service:
+      - name: mysql.qbot.qbot
+        target: dsn://${RAG_MYSQL_USER}:${RAG_MYSQL_PASSWORD}@tcp(${RAG_MYSQL_HOST}:${RAG_MYSQL_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - name: tdsql.qbot.qbot
+        target: dsn://${RAG_TDSQL_USER}:${RAG_TDSQL_PASSWORD}@tcp(${RAG_TDSQL_HOST}:${RAG_TDSQL_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - name: mysql.adp.prompt
+        target: dsn://${RAG_ADP_PROMPT_MYSQL_USER}:${RAG_ADP_PROMPT_MYSQL_PASSWORD}@tcp(${RAG_ADP_PROMPT_MYSQL_HOST}:${RAG_ADP_PROMPT_MYSQL_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - name: redis.lke.limiter
+        network: tcp
+        protocol: redis
+        target: ip://${RAG_LIMITER_REDIS_HOST}:${RAG_LIMITER_REDIS_PORT}/4
+        password: "${RAG_LIMITER_REDIS_PASSWORD}"
+        timeout: 800
+      - name: redis.qbot.qbot
+        network: tcp
+        protocol: redis
+        target: ip://${RAG_REDIS_HOST}:${RAG_REDIS_PORT}
+        password: "${RAG_REDIS_PASSWORD}"
+        timeout: 800
+        # 知识库
+      - name: trpc.KEP.bot-knowledge-config-server.Api
+        callee: trpc.KEP.bot_knowledge_config_server.Api
+        target: ${RAG_KNOWLEDGE_CONFIG_SERVER_TARGET}
+        protocol: trpc
+        network: tcp
+        timeout: 600000
+        # 计费
+      - name: qbot.finance.finance.Finance
+        target: ${RAG_FINANCE_SERVER_TARGET}
+        network: tcp
+        protocol: trpc
+        timeout: 30000
+        # token截断服务
+      - name: trpc.KEP.bot-llm-server.llm
+        callee: trpc.KEP.bot_llm_server.llm
+        target: ${RAG_LLM_SERVER_TARGET}
+        network: tcp
+        protocol: trpc
+        timeout: 5000
+        # admin
+      - callee: trpc.KEP.bot_admin_config_server.Api
+        target: ${RAG_ADMIN_CONFIG_SERVER_TARGET}
+        network: tcp
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.adp.app_admin_proxy.Api
+        target: ${RAG_APP_ADMIN_PROXY_TARGET}
+        protocol: trpc
+        timeout: 20000
+        # Workflow服务
+      - name: trpc.KEP.bot-workflow-dm-server.workflow-dm
+        callee: trpc.KEP.bot_workflow_dm_server.WorkflowDm
+        target: ${RAG_WORKFLOW_DM_SERVER_TARGET}
+        network: tcp
+        protocol: trpc
+        timeout: 600000
+      - callee: trpc.adp.workflow_exec.WorkflowExec
+        target: ${RAG_WORKFLOW_EXEC_SERVER_TARGET}
+        namespace: Test
+        timeout: 600000
+      - callee: trpc.KEP.bot-workflow-dm-server.workflow-dm-http
+        target: ${RAG_WORKFLOW_DM_HTTP_SERVER_TARGET}
+        network: tcp
+        protocol: http
+        timeout: 600000
+        # llm 接入
+      - name: trpc.adp.ai-gateway.api
+        target: ${RAG_AI_GATEWAY_HTTP_SERVER_TARGET}
+        network: tcp
+        protocol: http
+        timeout: 1800000
+        # 数据统计
+      - callee: trpc.KEP.bot_data_statistics_server.Api
+        target: ${RAG_DATA_STATISTICS_SERVER_TARGET}
+        network: tcp
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.adp.kb_config.Api
+        protocol: trpc
+        timeout: 60000
+        target: ${RAG_KB_CONFIG_SERVER_TARGET}
+    

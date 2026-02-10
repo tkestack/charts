@@ -1,0 +1,16 @@
+tad:
+  type: helm
+  images:
+    bot-data-statistics-server:
+      url: "ccr.ccs.tencentyun.com/tke-market/bot-data-statistics-server:90_2512291729_release_private_v3.2.4_a6fab400_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+
+imagePullSecretName: qcloudregistrykey

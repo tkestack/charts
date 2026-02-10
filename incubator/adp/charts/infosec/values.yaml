@@ -1,0 +1,16 @@
+tad:
+  type: helm
+  images:
+    infosec:
+      url: "ccr.ccs.tencentyun.com/tke-market/bot-infosec-server:58_2602042130_release_private_v3.2.4_iaas_0b0637e6_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+
+imagePullSecretName: qcloudregistrykey

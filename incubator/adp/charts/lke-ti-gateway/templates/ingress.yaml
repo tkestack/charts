@@ -1,0 +1,328 @@
+{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gateway
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    ingress.cloud.tencent.com/direct-access: "true"
+    kubernetes.io/ingress.class: qcloud
+    kubernetes.io/ingress.existLbId: {{ .Values.global.clbId }}
+spec:
+  {{- if .Values.ingress }}
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  {{- end }}
+  rules:
+  - host: {{ .Values.global.clb }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /lke/
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /adp/
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /tiweb
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /gateway
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /ti-ems-terminal-server
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /cos/proxy
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /apisix
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /DescribeUploadUrlNoS3
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /DescribeFileListNoS3
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /socket.io
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /hubti
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /asr
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /DownloadTrainFileUrl
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /UploadTrainFileUrl
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /DownloadDeduceFileUrl
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /UploadDeduceFileUrl
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /FileManager
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /DownloadFile
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /DownloadTrainFile
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /UploadTrainFile
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /tensorboard/
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /grafana
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /tiauth/oauth2/
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /user/
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /image/
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /docs/
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /label/
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /personallabel/
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /dataset/
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /vision/
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /one/
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /tim/
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /matrix/
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /tcff/
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /studio
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /terminal
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-web-monitor
+            port:
+              number: 8080
+        path: /speed
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-web-monitor
+            port:
+              number: 8080
+        path: /collect
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-svapdoc-web
+            port:
+              number: 6598
+        path: /svapdocs/
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: pluginexecserver
+            port:
+              number: 8001
+        path: /mcp
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: chat
+            port:
+              number: 9099
+        path: /adp/v2/chat
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: infosec
+            port:
+              number: 9091
+        path: /formal/qbot/infosec/tianyuCallback
+        pathType: ImplementationSpecific
+  {{- if eq $.Values.global.scheme "https" }}
+  tls:
+  - hosts:
+      - {{ $.Values.global.clb }}
+    secretName: {{ $.Values.global.clb }}-secret
+  {{- end }}
+{{- end }}

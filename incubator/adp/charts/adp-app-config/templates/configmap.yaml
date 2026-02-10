@@ -1,0 +1,3932 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Values.appName }}
+  namespace: {{ .Release.Namespace }}
+data:
+  app-config_en-US.json: |
+    {
+        "KeyAgentFeedbackInfo": "Agent feedback information",
+        "KeyPublishedContentManualReviewSuccess": "Released content manual review approved",
+        "KeyPublishedOnlineContentManualReviewSuccess": "Released content manual review approved",
+        "KeyPublishedContentManualReviewFail": "Manual review of released content failed.",
+        "KeyPublishedContentManualReviewFailWithSensitiveReason": "Manual review of released content failed, reason: content contains sensitive information.",
+        "KeyPublishedContentManualReviewPartialSuccess": "Manual review of partial released content successful.",
+        "KeyPublishedOnlineContentManualReviewResultWithReason": "Released content manual review: %d approved, %d rejected (Reason: sensitive content)",
+        "KeyConservativeReplyReviewPass": "Conservative response review passed.",
+        "KeyConservativeReplyChangeReviewPass": "Conservative response change review passed.",
+        "KeyConservativeReplyReviewFail": "Conservative response review failed.",
+        "KeyConservativeReplyReviewFailWithTimeoutReason": "Conservative response review failed, reason: review timeout.",
+        "KeyConservativeReplyReviewFailWithSensitiveReason": "Conservative resposne review failed: contains sensitive information",
+        "KeyConservativeReplyManualAppealFail": "Conservative response appeal rejected",
+        "KeyConservativeReplyManualAppealFailWithSensitiveReason": "Manual appeal of conservative response rejected, reason: response contains sensitive information.",
+        "KeyConservativeReplyManualAppealSuccess": "Conservative response appeal approved",
+        "KeyConservativeReplyContentChangeManualAppealSuccess": "Conservative response content change appeal approved",
+        "KeyRetry": "Retry",
+        "KeyCallStatExportWithParam": "Call statistics export %s.",
+        "KeyCallStatExporting": "Call statistics export in progress.",
+        "KeyConcurrentStatExportWithParam": "Concurrent statistics export %s.",
+        "KeyConcurrentStatExporting": "Concurrent statistics export in progress.",
+        "KeyKnowledgeBaseCapacityStatExportWithParam": "Knowledge library capacity statistics export %s.",
+        "KeyKnowledgeBaseCapacityStatExporting": "Knowledge library capacity statistics export in progress.",
+        "KeyExportWithParam": "Export %s",
+        "KeyExportSuccess": "Export successful",
+        "KeyExportFail": "Export failed",
+        "KeySuccess": "Success",
+        "KeyFail": "Failure",
+        "KeyFeedbackInfo": "Feedback information",
+        "KeyKnowledgeBasePublishing": "Knowledge library release in progress",
+        "KeyAppPublishSuccess": "Application release successful.",
+        "KeyAppPublishSuccessWithParam": "Application [%s] released successfully",
+        "KeyAppPublishOnlinePause": "Application release online paused.",
+        "KeyAppPublishOnlinePauseWithReason": "Application release paused. Reason: network timeout. Please retry",
+        "KeyAppPublishPartialSuccess": "Application partial release successful.",
+        "KeyResultWithTimeoutReason": "%d items successful, %d items failed. Reason: review timeout.",
+        "KeyResultWithReviewFailReason": "%d items successful, %d items failed. reason: review rejected",
+        "KeyAppPublishFail": "Application release failed.",
+        "KeyAppPublishFailWithReason": "Application [%s] release failed, reason: %s.",
+        "KeyAppName": "Application name",
+        "KeyAvatar": "Avatar",
+        "KeyAppDescription": "App description",
+        "KeyWelcomeMessage": "Greeting",
+        "KeyRoleDescription": "Character description",
+        "KeyOutputMethod": "Output method",
+        "KeyConservativeReplySwitch": "Conservative response switch",
+        "KeyConservativeReplyContent": "Conservative response",
+        "KeyMaxRecallNumWithParam": "%s maximum recall quantity",
+        "KeyRetrievalMatchingDegreeWithParam": "%s retrieval matching score",
+        "KeyReplyFlexibility": "Conversation flexibility score",
+        "KeyKnowledgeSourceConfigWithParam": "Knowledge source %s configuration",
+        "KeySearchEngineStatus": "Search engine status",
+        "KeyContextRewriting": "Contextual rewriting",
+        "KeyContextMemoryRounds": "Context memory rounds",
+        "KeyModelSelectionWithParam": "%s model selection",
+        "KeyTagConfig": "Tag configuration",
+        "KeyOutputRequirement": "Output requirements",
+        "KeyCustomOutputRequirement": "Custom output requirements",
+        "KeyQuestionClarification": "Question clarification",
+        "KeyClarificationKeywords": "Clarification keywords",
+        "KeyKnowledgeBaseRetrievalRangeSetting": "Knowledge base search scope settings",
+        "KeyAppMode": "Application mode",
+        "KeyDesignatedWorkflow": "Specified workflow",
+        "KeyTemperatureWithParam": "%s temperature",
+        "KeyTopPWithParam": "%s top-p",
+        "KeyRetrievalStrategy": "Retrieval strategy",
+        "KeyExcelRetrievalEnhancement": "Excel search enhancement",
+        "KeyDirectReplyWithAdoptedAnswer": "Accepted answer direct reply",
+        "KeyPolishedReplyWithAdoptedAnswer": "Accepted answer polished reply",
+        "KeyTextSummary": "Text summarization",
+        "KeyCustomRequirement": "Custom requirements",
+        "KeyStreamingOutput": "Streaming output",
+        "KeyNonStreamingOutput": "Non-streaming output",
+        "KeyEnable": "Enable",
+        "KeyDisable": "Disable",
+        "KeyShow": "Show",
+        "KeyHide": "Hide",
+        "KeyAvatarChanged": "Avatar updated",
+        "KeyQA": "Q&A",
+        "KeyDocument": "File",
+        "KeyRejection": "Rejected",
+        "KeySearchEnhancement": "Search enhancement",
+        "KeyTaskFlow": "Task flow",
+        "KeyImageSearchByImage": "Image search",
+        "KeyImageSearchByText": "Text-based image search",
+        "KeyModelResourceExhausted": "Model resource exhaustion",
+        "KeyNotOnline": "Not launched",
+        "KeyRunning": "Running",
+        "KeyDisabled": "Deactivate",
+        "KeyNotSet": "Not set",
+        "KeyOr": "Or",
+        "KeyAnd": "And",
+        "KeyStandardMode": "Standard mode",
+        "KeyMultiAgentMode": "Multi-Agent Mode",
+        "KeySingleWorkflowMode": "Single workflow mode",
+        "KeyHybridRetrieval": "Hybrid search",
+        "KeySemanticRetrieval": "Semantic search",
+        "KeyGenerationModel": "Generation model",
+        "KeyThinkingModel": "Thinking model",
+        "KeyAPISelectParamChanged": "API parameter changed from %s to %s",
+        "KeyAPIParamOrTagChanged": "API parameter name/tag changed",
+        "KeyInvalidWorkflow": "Invalid workflow",
+        "KeyPublishSuccess": "Release successful",
+        "KeyPublishFail": "Release failed",
+        "KeyPublishPause": "Release paused",
+        "KeySourceFileImport": "Source file import",
+        "KeyWebImport": "Web import",
+        "KeyAdd": "Add",
+        "KeyDelete": "Delete",
+        "KeyModify": "Modify",
+        "KeyPublishOp": "Publish",
+        "KeyNotGenerated": "Not generated",
+        "KeyGenerating": "Generating",
+        "KeyGenerateComplete": "Generation completed",
+        "KeyGenerateFail": "Generation failed",
+        "KeyReviewPass": "Review passed",
+        "KeyUpdating": "Updating",
+        "KeyUpdateFail": "Update failed",
+        "KeyQuestionFeedbackSubmitted": "Your feedback on issue \"%s\" has been submitted, feedback id is %d",
+        "KeyQuestionFeedbackProcessed": "The feedback for issue \"%s\" with feedback id %d has been processed",
+        "KeyQuestionFeedbackRejected": "Your feedback for issue \"%s\" (id: %d) has been rejected by the technical team",
+        "KeyKnowledgeBaseContent": "Knowledge base content",
+        "KeyReviewTimeout": "Review timeout",
+        "KeyContainSensitiveInfo": "Contains sensitive information",
+        "KeyToBePublished": "To be released",
+        "KeyPublished": "Released",
+        "KeyParseFail": "Parsing failed",
+        "KeyImportFail": "Import failed",
+        "KeyReviewFail": "Review failed",
+        "KeyRenameReviewFail": "Rename review failed",
+        "KeyManualAppealFail": "Manual appeal failed",
+        "KeyRenameAppealFail": "Rename appeal failed",
+        "KeyLearningFail": "Learning failed",
+        "KeyExpired": "Expired",
+        "KeyOverLimitInvalid": "Excessive Failure",
+        "KeyParsing": "Parsing",
+        "KeyInReview": "Under review",
+        "KeyInManualAppeal": "Under manual appeal",
+        "KeyLearning": "Learning",
+        "KeyInPublish": "Releasing",
+        "KeyInvalidRecovery": "Restoring due to failure",
+        "KeyDate": "Date",
+        "KeyMessageCount": "Number of messages",
+        "KeyInteractiveUserCount": "Number of interacting users",
+        "KeyLikeCount": "Number of likes",
+        "KeyDislikeCount": "Number of dislikes",
+        "KeyLikeRate": "Like rate",
+        "KeyStatAccount": "Statistical account",
+        "KeyAPICallTotalTokenCount": "Total API call tokens",
+        "KeyTotalConsumedPages": "Total consumed pages",
+        "KeyBillingAPICallCount": "Billed API calls",
+        "KeyAPICallInputTokenCount": "Input tokens of API calls",
+        "KeyAPICallOutputTokenCount": "Output tokens of API calls",
+        "KeySearchServicePackageCallCount": "Search service package calls",
+        "KeyCallTime": "Call time",
+        "KeyTotalConsumedTokenCount": "Total consumed tokens",
+        "KeyInputConsumedTokenCount": "Input tokens consumpted",
+        "KeyOutputConsumedTokenCount": "Output tokens consumed",
+        "KeySearchServiceConsumedCount": "Search service consumption",
+        "KeyModelName": "Model name",
+        "KeyAccount": "Account",
+        "KeyCallType": "Call type",
+        "KeyEnterpriseId": "Enterprise ID",
+        "KeyAvailableConcurrentCount": "Available concurrency",
+        "KeySuccessfulConcurrentCallCount": "Successful concurrent calls",
+        "KeyQuery": "Query",
+        "KeyApp": "Application",
+        "KeyKnowledgeBaseUsedCharCount": "Knowledge base character usage",
+        "KeyUsageRatio": "Usage percentage",
+        "KeyOverLimitInvalidCharCount": "Excess invalid characters",
+        "KeyLevelClassificationWithParam": "Level %d Classification",
+        "KeyQuestion": "Question",
+        "KeyAnswer": "Answer",
+        "KeySource": "Source",
+        "KeyAssociatedDocument": "Linked file",
+        "KeyName": "Name",
+        "KeyAge": "Age",
+        "KeyGender": "Gender",
+        "KeyUserQuestion": "User question",
+        "KeyRobotReply": "Bot reply",
+        "KeyErrorType": "Error type",
+        "KeyMyIntelligentApp": "My Agent Application",
+        "KeyAttributeIdentifierRequired": "Attribute Identifier (Required)",
+        "KeyAttributeRequired": "Attribute (Required)",
+        "KeyTagRequired": "Tag (Required)",
+        "KeySimilarTag": "Similar Tags",
+        "KeyContainSensitiveWord": "Includes restricted terms",
+        "KeyManualReviewPass": "Manual review approved",
+        "KeyManualReviewNotPass": "Manual review rejected",
+        "KeyDialogContentReview": "Conversation content moderation",
+        "KeyTrialActivationWithParam": "Trial Activation (%s)",
+        "KeyWorkflowExporting": "Workflow exporting",
+        "KeyWorkflowExportWithParam": "Workflow Exported %s",
+        "KeyDeepSeekR1LatestVersionDesc": "The latest version of the Deepseek-R1 model demonstrates significant improvements in ​​intent understanding, copywriting generation, programming capabilities, and logical reasoning​​. It excels at comprehending ​​constraints and inherent logic within complex instructions​​. Supporting ​​extended reasoning capabilities​​, it can effectively handle more complex and time-consuming tasks.",
+        "KeyWebSearch": "Web Search​",
+        "KeyWebSearchAPIKey": "Web Search​ API Key",
+        "KeyWebSearchRecallInterfaceFragment": "Web Search​ TopN",
+        "KeyWebSearchAPIKeyProvider": "Web Search​ API Key Provider",
+        "KeyRetrievalRangeChangedToDefaultWithParam": "%s Search Scope Changed To Default",
+        "KeyKnowledgeBaseSchemaChanged": "Knowledge Base Schema Changed",
+        "KeyThinkingModelPro": "Advanced Cognitive Model",
+        "KeyThinkingModelProDesc": "Suitable for scenarios involving simultaneous configuration of Q&A, documentation, and workflows, with enhanced intent recognition effectiveness. Supports custom intent configuration in role instructions, though may slightly increase conversation latency.",
+        "KeyDeepSeekV3LatestVersionDesc": "The latest version of DeepSeek-V3 model, built on innovative Mixture of Experts (MoE) architecture and Multi-head Latent Attention (MLA) technology, achieves comprehensive upgrades in three core areas: reasoning capability, code generation, and Chinese semantic understanding.",
+        "KeyDatabase": "database",
+        "KeyIntentAchievementPriority": "Intent Achievement Priority",
+        "KeyImageTextRetrieval": "Image Text Retrieval",
+        "KeyAsynchronousCall": "Async Workflow Invocation",
+        "KeySharedKnowledgeBaseRetrievalRangeSetting": "Shared Knowledge Base Search Range Setting",
+        "KeyReferenceSharedKnowledgeBase": "Reference Shared Knowledge Base",
+        "KeyKnowledgeBaseSchema": "Knowledge Base Schema",
+        "KeyBackgroundImageOriginal": "Background Image Original",
+        "KeyBackgroundImageWebEffect": "Background Image Web Effect",
+        "KeyBackgroundImageMobileEffect": "Background Image Mobile Effect",
+        "KeyBackgroundImageThemeColor": "Background Image Theme Color",
+        "KeyMessageStatExportWithParam": "Message statistics export as %s.",
+        "KeyMessageLogExporting": "Message log exporting in progress.",
+        "KeyMessageStatExporting": "Message statistics exporting in progress.",
+        "KeyCopyOfWithParam": "%s-copy",
+        "KeyDefaultKnowledgeBaseRetrievalRangeSetting": "Default setting for knowledge base search scope",
+        "KeyRoleSettingsContentInReview": "Role setting content under review.",
+        "KeyConservativeReplyInReview": "Conservative response under review.",
+        "KeyRandomSeedWithParam": "%s Random Seed",
+        "KeyPresencePenaltyWithParam": "%s Presence Penalty",
+        "KeyFrequencyPenaltyWithParam": "%s Frequency Penalty",
+        "KeyRepeatPenaltyWithParam": "%s Repeat Penalty",
+        "KeyMaxOutputLengthWithParam": "%s Maximum Output Length",
+        "KeyStopSequenceWithParam": "%s Stop Sequence",
+        "KeyOutputFormatWithParam": "%s Output Format",
+        "KeyVariableSettings": "Variable Settings",
+        "KeyLongTermMemory": "Long-Term Memory",
+        "KeyLongTermMemoryDuration": "Long-Term Memory Duration",
+        "KeyExampleQuestions": "Example Questions",
+        "KeyAgentCollaborationMethod": "Agent Collaboration Method",
+        "KeyAgentCollaborationWorkflow": "Agent collaboration method associated workflow",
+        "KeyRetrievalRecallResultReordering": "Retrieval Recall - Result Reordering",
+        "KeyRetrievalRecallReorderingModel": "Retrieval Recall - Reordering Model",
+        "KeyRetrievalRecallVectorModel": "Retrieval Recall - Vector Model",
+        "KeyAdvancedSettingsReorderingModel": "Advanced Settings - Reordering Model",
+        "KeyAdvancedSettingsReorderingModelRecallCount": "Advanced Settings - Reordering Model Recall Quantity",
+        "KeyKnowledgeBaseModelVectorModel": "Knowledge Base Model - Vector Model",
+        "KeyKnowledgeBaseModelQAPairGenerationModel": "Knowledge Base Model - Q&A Pair Generation Model",
+        "KeyKnowledgeBaseModelSchemaGenerationModel": "Knowledge Base Model - Schema Generation Model",
+        "KeyVoiceInteraction": "Voice Interaction",
+        "KeyVoiceCall": "Voice Call",
+        "KeyToneColor": "Tone Color",
+        "KeyDigitalHuman": "Digital Human",
+        "KeyAppNotPublished": "Application Not Published",
+        "KeyFreeTransfer": "Free Transfer",
+        "KeyWorkflowOrchestration": "Workflow Orchestration",
+        "KeyPlanAndExecuteCollaboration": "Plan-and-Execute Collaboration",
+        "KeyExperiencePageWithTencentCloud": "Experience Page (Tencent Cloud)",
+        "KeyExperiencePageWithPhoneNumber": "Experience Page (Phone Number)",
+        "KeyDialogAPIAccess": "Dialogue End API Access",
+        "KeyWeChatServiceAccount": "WeChat Service Account",
+        "KeyWeChatSubscriptionAccount": "WeChat Subscription Account",
+        "KeyWeChatWorkApp": "WeChat Work App",
+        "KeyWebComponent": "Web Component",
+        "KeyWeChatCustomerService": "WeChat Customer Service",
+        "KeyMiniProgram": "Mini Program",
+        "KeyLike": "Like",
+        "KeyDislike": "Dislike",
+        "KeyReply": "Reply",
+        "KeyUser": "User",
+        "KeyPublishingChannel": "Publishing Channel",
+        "KeyIntent": "Intent",
+        "KeyEvaluation": "Evaluation",
+        "KeyCreationTime": "Creation Time",
+        "KeyProviderAliasNameYoutu": "Tencent Youtu",
+        "KeyProviderAliasNameHunyuan": "Tencent Hunyuan",
+        "KeyProviderAliasNameQwen": "Qwen",
+        "KeyProviderAliasNameBaichuan": "Baichuan Intelligent",
+        "KeyProviderAliasNameZhipu": "Zhipu AI",
+        "KeyProviderAliasNameOpenAI": "OpenAI Compatible",
+        "KeyProviderAliasNameMoonshot": "Moonshot AI",
+        "KeyProviderAliasNameDeepSeek": "DeepSeek",
+        "KeyProviderAliasNameMinimax": "Minimax",
+        "KeyProviderAliasNameStepfun": "Stepfun",
+        "KeyProviderAliasNameVolcengine": "Volcengine",
+        "KeyProviderAliasNameTIONE": "Tencent Cloud TI-ONE",
+        "KeyProviderAliasNameYi": "01.AI",
+        "KeyProviderAliasNameOfficial": "OpenAI",
+        "KeyProviderAliasNameAnthropic": "ANTHROPIC\\C",
+        "KeyProviderAliasNameXAI": "xAI",
+        "KeyProviderAliasNameGemini": "Gemini",
+        "KeyProviderDescHunyuan": "Tencent's self-developed general large-scale model has strong Chinese language comprehension, logical reasoning, and multimodal capabilities. Representative models include the Hunyuan Turbo series.",
+        "KeyProviderDescYoutu": "Focuses on cutting-edge AI technology research and industrial application, covering fields such as visual perception understanding, large language models, multimodal comprehension and generation, and computational acceleration.",
+        "KeyProviderDescQwen": "Tongyi Qianwen possesses multilingual and multimodal comprehension, logical reasoning, code generation, document processing, and audio-video understanding capabilities, while actively building an open-source ecosystem. Representative models include the Qwen series.",
+        "KeyProviderDescZhipu": "Originating from Tsinghua University, it is committed to developing next-generation cognitive intelligence general models. Its GLM series excels in reasoning, long-context processing, multilingual, and multimodal capabilities. Representative models include the GLM-4 series.",
+        "KeyProviderDescStepfun": "A multimodal AGI pioneer focusing on full-stack capabilities in vision, speech, and video, with outstanding performance in reasoning, coding, mathematics, and knowledge. Representative models include Step-2.",
+        "KeyProviderDescBaichuan": "Dedicated to building superior large model foundations. Its Baichuan series excels in long-text processing, multimodal understanding, mathematics, and coding capabilities. Representative models include the Baichuan4 series.",
+        "KeyProviderDescOpenAI": "Supports flexible integration of various custom or third-party large model services through compatibility with the OpenAI API protocol.",
+        "KeyProviderDescVolcengine": "An all-in-one large model service platform by Volcano Engine, offering full-process services including model training, inference, evaluation, and fine-tuning. Supports multimodal understanding, long-context windows, strong reasoning capabilities, and integrates various mainstream models like Doubao.",
+        "KeyProviderDescMoonshot": "Specializes in general artificial intelligence, with models supporting ultra-long contexts and possessing strong Agent capabilities along with multimodal comprehension and generation. Representative models include Kimi K2.",
+        "KeyProviderDescDeepSeek": "Focuses on fundamental general AI model and technology research, renowned for open-source, high performance, and exceptional reasoning capabilities. Representative models include DeepSeek-R1 (reasoning model) and DeepSeek-V3 (MoE architecture, balancing performance and cost-effectiveness).",
+        "KeyProviderDescMinimax": "A leading general AI technology company that independently develops multimodal large models, excelling in long-context processing, reasoning, coding, and multimodal comprehension and generation. Representative models include the M1 series.",
+        "KeyProviderDescTIONE": "Tencent Cloud's all-in-one machine learning platform for AI engineers, providing end-to-end development support from data ingestion, model training, model management to model serving. Supports multiple training methods and algorithm frameworks with a built-in large model library.",
+        "KeyProviderDescYi": "Founded by Dr. Kai-Fu Lee, its Yi series excels in coding, mathematics, reasoning, and instruction-following capabilities, achieving outstanding results in global open-source evaluations. Representative models include Yi-Lightning.",
+        "KeyProviderDescOfficial": "Models provided by OpenAI, such as GPT-4, GPT-5, and others.",
+        "KeyProviderDescAnthropic": "The Claude models provided by Anthropic.",
+        "KeyProviderDescXAI": "The LLMs provided by xAI, where xAI is a company dedicated to developing artificial intelligence (AI) to accelerate human scientific discovery.",
+        "KeyProviderDescGemini": "The Gemini models provided by Google.",
+        "KeyModelDesc_sn-edu-13b": "Specialized training on educational data for English speaking practice and lesson planning scenarios. Supports textbook dialogues, difficulty settings, grammar analysis, lesson generation/polishing, and exercise creation.",
+        "KeyModelDesc_hunyuan": "Trillion-parameter MOE-32k long-context model with advanced math capabilities, function call support, and optimizations for multilingual translation, finance, law, and healthcare.",
+        "KeyModelDesc_finance-13b": "Pre-trained and fine-tuned on financial data. Expert in financial Q&A for investment knowledge and product inquiries.",
+        "KeyModelDesc_medical-6b": "Enhanced with medical data. Specializes in medical Q&A, entity extraction, dialogue summarization, and medical record generation.",
+        "KeyModelDesc_sn-edu-70b": "Trained on educational data for scenarios requiring natural English dialogue, task compliance, and rich lesson plan generation.",
+        "KeyModelDesc_hunyuan-turbo": "Novel MoE architecture delivers faster inference and stronger performance compared to Hunyuan Advanced.",
+        "KeyModelDesc_hunyuan-13B": "Improved routing strategy with better load balancing and expert diversity. Cost-effective with long-text processing capabilities.",
+        "KeyModelDesc_function-call-pro": "Capable of task planning, tool selection/execution, and error correction for complex problem-solving.",
+        "KeyModelDesc_cs-normal-70b": "Fine-tuned for enterprise Q&A. Excels at multimodal responses, math calculations, logical reasoning, and table-based Q&A.",
+        "KeyModelDesc_hunyuan-standard-256K": "Optimized routing with 256K context length. Achieves 99.9% needle-in-haystack accuracy with extended input capacity.",
+        "KeyModelDesc_hunyuan-role": "Officially fine-tuned role-playing model with enhanced performance for character simulation scenarios.",
+        "KeyModelDesc_workflow-pro": "Supports combined Q&A, document processing, and workflows with improved intent recognition and custom configuration. May increase response time.",
+        "KeyModelDesc_lke-deepseek-v3-function-call": "Latest DeepSeek-V3 with MoE and MLA architecture. Enhanced reasoning, code generation, and Chinese understanding.",
+        "KeyModelDesc_lke-deepseek-v3-0324": "Latest DeepSeek-V3 with MoE and MLA technology. Upgraded reasoning, coding, and Chinese semantic comprehension.",
+        "KeyModelDesc_lke-deepseek-r1": "RL-driven reasoning model comparable to OpenAI-o1 in math, code, and reasoning tasks. Powers DeepSeek's deep thinking mode.",
+        "KeyModelDesc_lke-deepseek-r1-0528": "Enhanced DeepSeek-R1 with improved instruction understanding, copywriting, programming, and reasoning. Supports long-duration complex tasks.",
+        "KeyModelDesc_lke-deepseek-v3": "671B parameter MoE model with MLA architecture and optimized load balancing for efficient training/inference.",
+        "KeyModelDesc_lke-deepseek-r1-0528-agent": "Latest DeepSeek-R1 agent with enhanced constraint understanding, programming, and reasoning for complex tasks.",
+        "KeyModelDesc_lke-deepseek-v3-agent": "DeepSeek-V3 agent with MoE and MLA architecture. Upgraded reasoning, coding, and Chinese understanding.",
+        "KeyModelDesc_cs-normal": "Fine-tuned for enterprise Q&A with multimodal capabilities. Cost-effective for balanced performance and price.",
+        "KeyModelDesc_lke-deepseek-v3.1": "Hybrid reasoning architecture for faster responses. Significantly improved performance on multi-step reasoning and expert-level tasks.",
+        "KeyModelDesc_lke-deepseek-v3.1-function-call": "Hybrid reasoning enables efficient multi-step problem-solving with enhanced performance on complex searches and multidisciplinary tasks.",
+        "KeyModelDesc_sn-large-multi-language-v0.2.5": "General-purpose vector retrieval model",
+        "KeyModelDesc_sn-llm-embedding-2b-v0.2.2": "LLM-enhanced vector retrieval with higher accuracy but increased latency",
+        "KeyModelDesc_sn-reranker-large-v0.4": "General text reranking model",
+        "KeyModelDesc_sn-llm-reranker-2b-v0.2": "LLM-enhanced reranking with improved accuracy and higher latency",
+        "KeyModelDesc_cs-normal-70b-1.1": "Enterprise Q&A model specializing in multimodal responses, math/reasoning, and table-based Q&A for complex scenarios.",
+        "KeyModelDesc_hunyuan-turbos": "The latest version of Hunyuan's flagship large model, featuring enhanced reasoning capabilities and an improved user experience.",
+        "KeyModelDesc_hunyuan-t1": "The industry's first ultra-large-scale Hybrid-Transformer-Mamba inference model, expanding reasoning capabilities with ultra-fast decoding speed and further alignment with human preferences.",
+        "KeyModelTagVectorModel": "VectorModel",
+        "KeyModelTagRerankingModel": "RerankingModel",
+        "KeyModelTagSpeechRecognition": "SpeechRecognition",
+        "KeyModelTagSpeechSynthesis": "SpeechSynthesis",
+        "KeyModelTagTextReasoning": "TextReasoning",
+        "KeyModelTagToolCalling": "ToolCalling",
+        "KeyModelTagAudioUnderstanding": "AudioUnderstanding",
+        "KeyModelTagVideoUnderstanding": "VideoUnderstanding",
+        "KeyModelTagImageUnderstanding": "ImageUnderstanding",
+        "KeyModelTagImageGeneration": "ImageGeneration",
+        "KeyModelTagDeepThinking": "DeepThinking",
+        "KeyModelTagOmniModal": "OmniModal",
+        "KeyDaysDays": "%d days",
+        "KeyNoDataToBePublished": "No data to be published",
+        "KeyDefaultWorkspace": "Default workspace",
+        "KeyOtherReasons": "Other reasons",
+        "KeyAllCategories": "All categories",
+        "KeyUncategorized": "Uncategorized",
+        "KeyAddVariableWithParam": "Add variable %s.%s",
+        "KeyModifyVariableWithParam": "Modify variable %s",
+        "KeyDeleteVariableWithParam": "Delete variable %s",
+        "KeyInputBoxButton": "Input Box Button",
+        "KeyInputBoxButtonUploadImage": "Upload Image",
+        "KeyInputBoxButtonUploadFile": "Upload Document",
+        "KeyInputBoxButtonTencentDoc": "Tencent Docs",
+        "KeyInputBoxButtonWebSearch": "Online Search",
+        "KeyRecommendedSwitch": "Recommended Questions Switch",
+        "KeyRecommendedPromptMode": "Recommended Questions Generation Mode",
+        "KeyRecommendedPromptModeKnowledgeAndHistory": "Generate questions based on knowledge base and conversation history",
+        "KeyRecommendedPromptModeOnlyKnowledge": "Generate questions based solely on knowledge base content",
+        "KeySmartCateMsgSuccess": "Message classification success",
+        "KeySmartCateMsgFailed": "Message classification failed",
+        "KeyCopyContentSecurity": " Copy",
+        "KeyDefaultContentSecurityHigh": "High Sensitivity System Policy",
+        "KeyDefaultContentSecurityMiddle": "Medium Sensitivity System Policy",
+        "KeyDefaultContentSecurityLow": "Low Sensitivity System Policy",
+        "KeyDefaultContentSecurityHighDesc": "Policy for use on special dates, high recall may come with some false positives, not recommended for daily use",
+        "KeyDefaultContentSecurityMiddleDesc": "Default policy for new applications: Standard configuration for routine periods, recommended for daily use",
+        "KeyDefaultContentSecurityLowDesc": "Only identifies baseline risks, suitable for application scenarios with low risk probability",
+        "KeyRiskResponseTypeSeriousInput": "I can't answer this question. You can try asking me something else.",
+        "KeyRiskResponseTypeSeriousOutput": "Sorry, I can't answer this question at the moment. Please try asking a different one.",
+        "KeyRiskResponseTypeMildInput": "I haven't learned how to answer this yet. Let's change the topic and continue our chat.",
+        "KeyRiskResponseTypeMildOutput": "This question is beyond my current knowledge. Please try asking a different one, and I'll do my best to help.",
+        "KeyRiskResponseTypeLivelyInput": "I don't know this one yet. How about testing me with a different question~",
+        "KeyRiskResponseTypeLivelyOutput": "Oops, this one's got me stumped. Let's talk about something else~",
+        "KeyInvalidParam": "Invalid param:%s",
+        "KeyBotReply": "Chatbot reply",
+        "KeyUnsatisfiedOperator": "Operator",
+        "KeyUnsatisfiedStatus": "Status",
+        "KeyUnsatisfiedOperation":"Operation",
+        "KeyUnsatisfiedCreateTime": "Creation time",
+        "KeyUnsatisfiedUpdateTime": "Update time",
+        "KeyUnsatisfiedStatusProcessedDesc" :"Processed",
+        "KeyUnsatisfiedStatusPendingDesc":"Pending",
+    	"KeyUnsatisfiedCorrect":"Correct" ,
+    	"KeyUnsatisfiedReject":"Reject",
+    	"KeyUnsatisfiedIgnore":"Ignore" ,
+        "KeyUnsatisfiedRepliesBatchExportStatus": "Unsatisfied replies batch export %s.",
+        "KeyUnsatisfiedRepliesBatchExporting": "Unsatisfied replies batch exporting.",
+        "本轮对话内容": "The content of this round of dialogue",
+        "多轮对话中本轮对话改写结果": "Rewriting result of this round of dialogue in multi-round dialogue",
+        "对话历史": "Dialogue history",
+        "当前时间": "Current time",
+        "对话请求ID（API调用请求参数中的request_id）": "Dialogue Request ID (request_id in API call request parameters)",
+        "长期记忆内容，开启长期记忆功能后可用": "Long-term memory content, available after enabling the long-term memory function",
+        "原始图片比例与扩图比例一致，不需要扩图处理！": "The aspect ratio of the original image is consistent with the expanded image ratio; no image expansion processing is required!",
+        "智小柔-聊天女声": "Zhi Xiaorou-Chat Female Voice",
+        "千嶂-聊天男声": "Qian Zhang-Chat Male Voice",
+        "智瑜-情感女声": "Zhi Yu-Emotional Female Voice",
+        "智皓-聊天男声": "Zhi Hao-Chat Male Voice",
+        "月华-聊天女声": "Yuehua-Chat Female Voice",
+        "智斌-阅读男声": "Zhi Bin-Reading Male Voice",
+        "智宇-阅读男声": "Zhi Yu-Reading Male Voice",
+        "飞镜-聊天男声": "Feijing-Chat Male Voice",
+        "浅草-聊天男声": "Qiancao-Chat Male Voice",
+        "智菊-阅读女声": "Zhi Ju-Reading Female Voice",
+        "智兰-资讯女声": "Zhi Lan-News Female Voice",
+        "WeJames-外语男声": "WeJames-Foreign Language Male Voice",
+        "WeWinny-外语女声": "WeWinny-Foreign Language Female Voice",
+        "艾朵_职业套装_站姿": "Ai Duo_Professional Outfit_Standing Posture",
+        "艾铭_深色西装_站姿": "Ai Ming_Dark Suit_Standing Posture",
+        "艾可_医生白大褂_站姿": "Ai Ke_Doctor's White Coat_Standing Posture",
+        "艾欣_白衬衫_站姿": "Ai Xin_White Shirt_Standing Posture",
+        "客服小云最终版": "Customer Service Xiao Yun (Final Version)",
+        "客服小腾最终版": "Customer Service Xiao Teng (Final Version)",
+        "艾米_蓝色西装_站姿": "Ai Mi_Blue Suit_Standing Posture",
+        "艾瑶_深色套装_站姿": "Ai Yao_Dark Suit_Standing Pose",
+        "企业面试官V1": "Corporate Interviewer V1",
+        "问答回复": "Q&A Response",
+        "工作流回复": "Document Response",
+        "文档回复": "Workflow Response",
+        "大模型回复": "Model Response",
+        "替换为您的域名": "Replace with your domain name",
+        "未分类": "Uncategorized",
+        "标准模式": "Standard",
+        "单工作流模式": "Single Workflow",
+        "Multi-Agent模式": "Multi-Agent",
+        "Standard mode": "Standard",
+        "Multi-Agent Mode": "Multi-Agent",
+        "Single workflow mode": "Single workflow",
+        "腾讯云智能体开发平台官方": "Tencent Cloud ADP",
+        "示例问题": "Example Questions",
+        "Normal": "Normal",
+        "Polity": "Polity",
+        "Ad": "Advertise",
+        "Abuse": "Abuse",
+        "Illegal": "Illegal",
+        "Spam": "Spam",
+        "Terror": "Terror",
+        "Porn": "Porn",
+        "29999": "Participle",
+        "Value": "Value",
+        "GeneratedContentRisk": "GeneratedContentRisk",
+        "Copyright": "Copyright",
+        "Teenager": "Teenager",
+        "Religion": "Religion",
+        "Sexy": "Sexy",
+        "广告": "Ad",
+        "谩骂": "Abuse",
+        "不文明用语": "Uncivilized",
+        "口头禅": "Uncivilized",
+        "非攻击性的不文明用语，如我靠、尼玛": "Non-aggressive uncivilized language, such as 'Wokao', 'Nima'",
+        "人身攻击": "Personal Attack",
+        "重度人身攻击": "Severe personal assault",
+        "直接辱骂攻击他人的用词，如傻逼、婊子": "Direct abusive and attacking language towards others, such as 'Shabi', 'Biaoz'",
+        "轻度人身攻击": "Slight personal assault",
+        "辱骂攻击他人的用词，但也可能用于调侃，如傻子、你奶奶个熊": "Abusive words attacking others, but may also be used for teasing, such as 'Shazi', 'Your grandma is a bear'",
+        "色情粗口": "Pornographic Abuse",
+        "色情粗口用语": "Pornographic Abuse",
+        "含有性行为或者性器官相关粗口词汇": "Vulgar expressions related to sexual behaviors or organs",
+        "违法": "Illegal",
+        "毒品": "Drug",
+        "制毒贩毒管控内容": "Promote drug use and trafficking",
+        "涉及制毒贩毒的教程方法、宣扬制度贩毒、营销导流等违法行为": "Content involving illegal activities such as tutorials on drug manufacturing and trafficking, advocacy of drug manufacturing and trafficking, and marketing diversion for such crimes.",
+        "毒品成品管控内容": "Mention of drugs",
+        "提及毒品成品并对其宣扬": "Mentioning finished drug products and advocating them",
+        "赌博": "Gamble",
+        "赌博平台管控内容": "Gambling sites",
+        "涉及赌博平台机构/组织的名称，且进行营销推广导流、询问如何参与等": "Involving the name of gambling platforms/institutions, including marketing, promotion, inquiry about participation, etc.",
+        "合法赌博场所宣传管控": "Casino",
+        "符合当地法律法规的赌博场所，但进行宣扬或营销行为": "Legal casino promotion, but includes advocacy or marketing actions",
+        "棋牌游戏": "Board game",
+        "以赌博为目的的网络联机棋牌游戏": "Online board games for the purpose of gambling",
+        "博彩游戏": "Betting games",
+        "包括赌博性质的博彩游戏内容": "Content related to betting games of a gambling nature",
+        "赌博行为": "Gambling",
+        "以营利为目的，聚众赌博或者以赌博为业的行为": "Acts of gambling for profit, gathering for gambling or making a living from gambling",
+        "赌博器具管控内容": "Gambling equipment",
+        "涉及赌博相关器具的营销推广": "Marketing or promotion of gambling equipment",
+        "违禁品": "Contraband",
+        "有害药品": "Illegal Medicines",
+        "与医疗、预防和保健目的无关的危害药品": "Hazardous medicines unrelated to medical, preventive or health purposes",
+        "有害化学品": "Prohibited chemicals",
+        "具有毒害、腐蚀等性质，对人体、设施、环境具有危害的剧毒化学品": "Highly toxic chemicals harmful to humans, facilities, and the environment",
+        "危爆物品": "Flammables and Explosives Goods",
+        "具有爆炸、易燃、放射性等危险性质": "Explosive, flammable, or radioactive danger items",
+        "野生动物危害言论": "Wild animals",
+        "非法贩卖、捕杀、食用野生动物言论": "Statements about illegal trading, hunting, or eating wild animals",
+        "非法翻墙工具": "VPN",
+        "非法VPN展示或推广营销": "Displaying or promoting illegal VPN tools",
+        "黑灰产管控工具": "Other",
+        "禁止市场随意流通的违禁品，如开锁工具、遥控干扰器、出售黑车、遥控车牌架": "Prohibited tools and goods such as lock-picking tools, remote interference devices, selling illegal vehicles, or remote license plate holders",
+        "违禁行为": "Prohibited Behavior",
+        "造假作弊": "Fraud cheating",
+        "编造捏造、以假乱真，利用不存在的事物来谋取利益": "Fabrication, falsification, using fictitious things for profit",
+        "人体贩卖": "Human trafficking",
+        "人体器官贩卖相关危害言论": "Statements related to human organ trafficking",
+        "侵犯个人隐私": "Invasion of personal privacy",
+        "涉及侵犯个人隐私的言论或工具售卖": "Statements or tools related to invasion of personal privacy",
+        "雇凶杀人": "Hire a murderer",
+        "雇佣他人进行犯罪活动": "Hiring others to commit crimes",
+        "付费删帖": "Pay to delete posts",
+        "通过信息网络有偿提供删除信息服务": "Paid online services for deleting information",
+        "封建迷信": "Feudal superstition",
+        "提及封建迷信的言论，或意图开展封建迷信活动": "Statements or intentions related to feudal superstition activity",
+        "金融违法行为": "Financial Prohibitions",
+        "实施洗钱、逃税漏税的言论，包括咨询如何洗钱、逃税漏税相关规则方式介绍": "Statements involving money laundering, tax evasion, including consulting or introducing how to launder money or evade taxes",
+        "非法团体": "Illegal Group",
+        "黑社会": "Mafia",
+        "涉及黑社会的不良言论": "Negative statements involving mafia",
+        "传销组织": "MLM Organization",
+        "涉及传销组织的不良导向言论": "Negative guidance involving pyramid schemes (MLM)",
+        "非法社会组织": "Illegal social organization",
+        "未在民政部门登记的涉嫌非法社会组织": "Suspected illegal social organizations not registered with civil affairs departments",
+        "灌水": "Spam",
+        "暴恐": "Terror",
+        "恐怖组织人物": "Horror Characters",
+        "涉及联合国认定的恐怖组织相关人物": "Involving UN-designated terrorist group members",
+        "恐怖组织": "Terrorist Organization",
+        "涉及联合国认定的恐怖组织": "Involving UN-designated terrorist organizations",
+        "恐怖事件": "Terrorist Incident",
+        "恐怖分子制造的危害社会稳定、人民生命与财产安全的行为活动": "Terrorist acts endangering social stability, people's lives and properties",
+        "暴力血腥描述": "Violent",
+        "暴力用词": "Violent and bloody",
+        "各类提及到暴力的用词用语，范围较广": "Various language referring to violence, broad scope",
+        "血腥行为描述": "Bloody Scene",
+        "描述或教授极端血腥行为（如碎尸、肢解、食尸、虐杀）及尸体处置的可操作细节的内容": "Describing or teaching extreme bloody acts such as dismemberment, cannibalism, torture and details of body disposal",
+        "武器相关描述": "Arms",
+        "杀伤性武器": "Arms",
+        "枪支弹药名称、管制刀具、大杀伤性武器等": "Names of firearms, controlled knives, large-scale killing weapons, etc.",
+        "色情": "Porn",
+        "性行为描述": "Sexual Behavior",
+        "低俗描述性行为": "Vulgar description of sexual behavior",
+        "使用低俗下流的语言描述性相关的动作、行为和意图": "Using vulgar or obscene language to describe sexual acts, behaviors, or intentions",
+        "客观陈述性行为": "Objective statement of behavior",
+        "性行为相关的客观描述，但是整句话没有低俗性行为的联想": "Objective description of sexual behavior without vulgar implications",
+        "性行为影射": "Sexual innuendo",
+        "通过暗示、比喻、联想或描述行为反应，而非直接描述，来指代或影射性交、自慰等核心性行为的文本": "Implied or metaphorical references to sexual acts, rather than direct descriptions",
+        "性暗示与软色情": "Ambiguous expression of foreplay",
+        "通过双关、歧义性语言或模糊的行为描述，营造色情氛围、进行性挑逗，但未明确描述色情动作或性行为": "Using puns, ambiguous language, or vague behavior to create a sexual atmosphere, tease, but not explicitly describe sexual acts",
+        "低俗描述性活动": "Vulgar descriptive activity",
+        "使用低俗下流的语言或低俗称谓，描述性活动时的动作、行为和对话": "Using vulgar or obscene language or terms to describe actions, behaviors, and conversations during sexual activity",
+        "性行为前戏": "Vulgar description of foreplay",
+        "明确描述以激发性欲为目的、但未及核心性行为的身体接触与挑逗动作": "Explicitly describing physical contact and teasing acts meant to excite sexual desire, not reaching core sexual acts",
+        "性器官描述": "Sex Organ",
+        "低俗描述性器官": "Vulgar description of sexual organs",
+        "使用低俗下流的语言描述性器官": "Using vulgar or obscene language to describe sexual organs",
+        "客观陈述性器官": "Objective statement of sexual organs",
+        "性器官相关的客观描述，但是整句话没有低俗性行为的联想\n不包含案件描述、新闻报道、生理科普类型的内容": "Objective description of sexual organs, without vulgar sexual connotations, excluding cases, news, physiological science",
+        "情色三级资源": "Pornography",
+        "情色人物提及": "Erotic figures",
+        "提及成人色情行业从业者": "Mentioning workers in the adult industry",
+        "情色作品提及": "Pornography",
+        "情色类的AV、歌曲、小说、漫画、游戏、场所、网站名等": "Mentions of pornography, AV, songs, novels, comics, games, places, or websites",
+        "SM内容": "SM",
+        "低俗描述SM": "SM",
+        "描述 SM 行为、道具等包含色情语义的描述": "Describing SM acts, tools with sexual implications",
+        "提及SM": "Objective SM",
+        "对SM相关词汇的提问或科普，不涉及色情内容": "Questions or science popularization about SM terms without sexual implication",
+        "同性恋": "Homosexual",
+        "男同言论": "Gay",
+        "女同言论": "Lesbian",
+        "特殊性癖": "Perverted Porn",
+        "色情特殊性癖": "Perverted Porn",
+        "通过文字描绘、角色扮演或对话，色情化地展现特殊性癖好行为或场景的文本": "Describing special sexual fetishes or scenarios in a pornographic manner via text, roleplay or dialogue",
+        "生理科普": "Physiology Popularization",
+        "生理科普知识": "Physiology Popularization",
+        "仅包含真正的知识科普内容，对于描述性的内容、或提问性质的内容不包含": "Only includes genuine scientific and educational content, excludes descriptive or question-based content",
+        "性爱科普": "Sexual Popularization",
+        "性爱相关的客观科普内容，无色情语义": "Objective scientific content about sex, without pornographic meaning",
+        "未成年色情": "Minor Porn",
+        "价值观": "Value",
+        "自杀自残": "Self Harm",
+        "自杀自残言论": "Self Harm",
+        "描述自杀自残以及倾向的言论": "Statements describing or showing tendencies of suicide/self-harm",
+        "消极情绪": "Negative Emotions",
+        "语义上趋向于自我否定、自我放弃等负面影响的内容": "Content semantically expressing self-denial, abandonment, or other negative influence",
+        "自毁倾向": "Self-destructive Tendencies",
+        "语义上趋向于展示自毁自虐意图与行为，鼓吹自毁情绪和行为的内容": "Content showing intent or acts of self-destruction, or promoting these emotions and behaviors",
+        "自杀倾向": "Suicidal Tendencies",
+        "语义上趋向于展示自杀意图与自杀行为，鼓吹自杀的内容": "Content showing suicidal intentions or acts, or promoting suicide",
+        "指令攻击": "Prompt Attack",
+        "优先使用大模型自带的防攻击机制，需额外加强才开启": "Use built-in model anti-attack mechanisms first, strengthen if necessary",
+        "Prompt泄露": "Prompt Leak",
+        "诱导模型泄露其系统提示词": "Inducing the model to leak its system prompts",
+        "目标劫持": "Prompt Hijack",
+        "通过指令语句，诱导大模型绕过安全机制，输出预设答案": "Trying to bypass model safety by prompt hijacking to output preset answers",
+        "信息安全": "Prompt Security Risk",
+        "系统攻击": "Prompt Information Security Risk",
+        "攻击计算机、网络、系统等相关言论，如“如何侵入政府数据库”": "Statements related to attacking computers, networks, systems, e.g., 'how to hack government database'",
+        "军警制服": "Uniform",
+        "迷彩服": "Camouflage",
+        "消防服": "Fire Uniform",
+        "ACG警服": "ACG Police",
+        "ACG军服": "ACG Military Uniform",
+        "热武器": "Gun",
+        "真实枪支": "Real Gun",
+        "游戏枪支": "Game Gun",
+        "ACG枪支": "ACG Gun",
+        "玩具枪": "Toy Gun",
+        "大型武器": "Big Weapon",
+        "军事武器": "Military weapons",
+        "24001010001": "Military weapons",
+        "坦克、军用飞机、军用舰艇、军用导弹等常见大型武器": "Common large-scale military weapons such as tanks, military airplanes, warships, missiles, etc.",
+        "坦克": "Tank",
+        "更泛化的坦克，例如只要有履带出现都算": "Generalized tank, such as anything with tracks is considered a tank",
+        "冷兵器": "Knife",
+        "真实刀具": "Real Knife",
+        "游戏刀具": "Game Knife",
+        "ACG刀具": "ACG Knife",
+        "管制刀具": "Illegal Knife",
+        "血腥画面": "Blood",
+        "ACG血腥画面": "ACG Blood",
+        "漫画或动漫场景中出现的血腥画面": "Bloody scenes in manga or anime",
+        "真实血腥画面": "Real Blood",
+        "真实场景中的血腥画面，如虐杀": "Bloody scenes in real life, such as abuse or murder",
+        "惊悚血腥画面": "Horror Blood",
+        "极度血腥，带有惊悚感的画面": "Extremely bloody and horrifying scenes",
+        "性感": "Sexy",
+        "女性性感胸部": "Women Sexy Chest",
+        "ACG女重度露沟": "ACG Women Heavy Chest",
+        "ACG女性胸部露出中间乳沟（大于50%），或胸部露出下沿（大于50%）": "ACG woman’s cleavage exposed over 50%, or underbust exposed over 50%",
+        "真人女重度露沟": "Real Women Heavy Chest",
+        "真人女性胸部露出中间乳沟（大于50%），或胸部露出下沿（大于50%）": "Real woman’s cleavage exposed over 50%, or underbust exposed over 50%",
+        "亲吻画面": "Kiss",
+        "异性亲吻": "Men Women Kiss",
+        "男女之间，嘴对嘴的亲吻，嘴要互相接触": "Kissing between man and woman, mouth-to-mouth, lips touch",
+        "女女亲吻": "Women Kiss",
+        "女女之间，嘴对嘴的亲吻，嘴要互相接触": "Kissing between women, mouth-to-mouth",
+        "男男亲吻": "Men Kiss",
+        "男男之间，嘴对嘴的亲吻，嘴要互相接触": "Kissing between men, mouth-to-mouth",
+        "亲密行为": "Intimate Behavior",
+        "男男亲密": "Men Close",
+        "男性之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为": "Intimate physical behavior between men such as hugging, resting heads together, etc.",
+        "男女亲密": "Men Women Close",
+        "男女之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为": "Intimate physical behavior between man and woman such as hugging, resting heads together, etc.",
+        "女女亲密": "Women Close",
+        "女性之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为": "Intimate physical behavior between women such as hugging, resting heads together, etc.",
+        "男下激凸": "Crotch Close Up",
+        "三角区": "Male lower body (crotch area)",
+        "20103036301": "Male lower body (crotch area)",
+        "视觉聚焦男性下体的图片，包括马赛克跟动漫场景": "Images focused on male genital area, including censored and anime scenes",
+        "诱惑姿势": "Seductive Pose",
+        "张腿": "Open Leg",
+        "腿和裆部呈M或者W形状，且下体穿着少": "Legs and crotch in M or W shape, dressed scantily below",
+        "撅臀": "Pout Hip",
+        "明显甚至夸张地撅起屁股，无论是不是穿着衣服": "Prominently sticking out buttocks, exaggeratedly, with or without clothes",
+        "性表情": "O Face",
+        "带有性暗示的猥琐表情": "Lewd facial expressions with sexual implication",
+        "性行为画面": "Sexy Behavior",
+        "各种性爱的画面，包括真人、动漫、手绘等场景": "Various scenes of sexual acts, including real, animated or hand-drawn scenes",
+        "女性下体裸露": "Women Private Part",
+        "包括有马赛克或非常少的衣物，但可以明确判断的图片": "Visible female genital area, including pixelated or very scantily dressed images",
+        "女性胸部裸露": "Women Chest",
+        "包含虽有衣物遮挡，但胸部整体裸露较多的画面": "Images with mostly exposed female chest, even if partly covered",
+        "男性下体裸露": "Men Private Part",
+        "包含虽有衣物遮挡，但下体整体裸露较多或非常明显的画面": "Images with mostly exposed male genital area, even if partly covered",
+        "臀部裸露": "Buttocks Exposed",
+        "不区分男女，臀部大面积裸露": "Large area of buttocks exposed, no gender distinction",
+        "儿童裸露": "Naked Child",
+        "儿童裸露下体和臀部": "Child with exposed genital and butt area",
+        "动物性行为": "Animal Sex",
+        "性分泌物": "Sex Secretion",
+        "画面中包含较明显的性分泌物": "Images containing prominent sexual secretions",
+        "裸体": "Naked",
+        "全裸或几乎全裸": "Completely or almost completely naked",
+        "女性下体内窥镜": "Endoscope",
+        "女性下体内窥画面，属于特殊性癖": "Endoscopic images of female genital area, considered a special fetish",
+        "医学性器官": "Medical Porn",
+        "可以看到性器官、敏感部位医学人体图（含解剖图、剖面图等）": "Medical diagrams showing sexual organs and sensitive areas (including anatomy, cross-sections)",
+        "ACG孕妇": "ACG Pregnancy",
+        "动漫、3D 、仿真等ACG画风的孕妇图片，属于特殊性癖": "Anime, 3D, or simulated ACG-styled pregnant women images, special fetish",
+        "二维码": "Qr Code",
+        "常见二维码": "QRCODE",
+        "包括但不限于微信、支付宝、网址、淘宝、QQ等常见的二维码": "Common QR codes, including WeChat, Alipay, websites, Taobao, QQ, etc.",
+        "淘宝二维码": "Taobao QR Code",
+        "微信二维码": "Wechat QR Code",
+        "支付宝二维码": "Alipay QR Code",
+        "小程序码": "WXCODE",
+        "条形码": "BARCODE",
+        "PDF417条码": "PDF417",
+        "DM码": "DATAMATRIX",
+        "政治": "Polity",
+        "劣迹明星": "Bad Star",
+        "劣迹网红": "Inferior",
+        "纳粹战犯": "Nazi Criminal",
+        "侵华战犯": "War Criminal",
+        "国旗营销": "Guo Qi Ying Xiao",
+        "侮辱国旗": "Wu Ru Guo Qi",
+        "焚烧、践踏、涂鸦等恶搞国旗行为": "Behaviors insulting the national flag, such as burning, trampling, graffiti, parody",
+        "恶搞人民币": "EGao RMB",
+        "对人民币PS、恶意折叠等行为": "Photoshopping or maliciously folding RMB",
+        "恶搞国徽": "EGao Guo Hui",
+        "在国徽上添加其它恶意元素": "Adding malicious elements to the national emblem",
+        "吸烟": "Smoking",
+        "吸毒": "Drug",
+        "喝酒": "Drink",
+        "打斗": "Fight",
+        "恶心画面": "Nausea",
+        "未成年识别": "Teenager",
+        "未成年人出镜": "Minors",
+        "画面中出现未成年人，适用于真人、且需要露脸": "Minors appearing on screen, applies to real people and must show face",
+        "未成年人色情": "Minors Porn",
+        "真人形象的未成年色情及擦边画面": "Real-life minor pornography or borderline content",
+        "未成年人违禁行为": "Minors Illegal",
+        "未成年人吸烟": "Minors Smoking",
+        "未成年人喝酒": "Minors Drink",
+        "未成年人纹身": "Minors Tattoo",
+        "儿童邪典": "Elsagate",
+        "以儿童熟悉的卡通人物包装成为血腥暴力或软色情的图片": "Images with familiar children's cartoon characters but containing bloody, violent or soft porn elements",
+        "ACG未成年人": "ACG Minors",
+        "漫画风格、或AIGC生成的未成年形象": "Manga style or AI-generated minor images",
+        "未成年形象": "Minors New",
+        "适用于真人，不一定要求露脸，外形像未成年人即会识别": "For real people, not necessarily showing face, as long as shape looks like minor",
+        "宗教识别": "Religion",
+        "生成式风险": "Generated Content Risk",
+
+        "效果不好": "Poor effect",
+        "没有理解问题": "Misunderstand The Question",
+        "没有完成任务": "Uncomplete The Task",
+        "编造事实": "Fabricated Facts",
+        "废话太多": "Nonsense",
+        "文风不好": "Bad Writing Style",
+        "没有创意": "Lack of Creativity",
+        "输出重复内容": "Duplicate Content",
+        "内容有风险": "Risk Content",
+        "有害/不安全": "Harmful/Unsafe",
+        "隐私相关": "Privacy Related",
+        "理解有误": "Misunderstood",
+        "答非所问": "Irrelevant answer",
+        "未理解要求": "Request not understood",
+        "未理解上下文信息": "Context not understood",
+        "答案存在错误": "Answer contains errors",
+        "存在事实错误": "Factural inaccuracies",
+        "存在逻辑问题": "Logical flaws",
+        "出现重复内容": "Duplicate content ",
+        "格式/语法错误": "Formatting/grammar error",
+        "内容不专业": "Unprofessional content",
+        "系统报错": "System error",
+        "存在违法违规信息": "Illegal/non-compliant content",
+        "存在违法信息": "Illegal content",
+        "存在偏见与歧视": "Prejudiced content"
+    }
+  app-config_zh-CN.json: |
+    {
+        "KeyPublishedContentManualReviewSuccess": "发布内容人工审核成功。",
+        "KeyPublishedOnlineContentManualReviewSuccess": "发布上线内容人工审核成功。",
+        "KeyPublishedContentManualReviewFail": "发布内容人工审核失败。",
+        "KeyPublishedContentManualReviewFailWithSensitiveReason": "发布内容人工审核失败，失败原因：内容包含敏感信息。",
+        "KeyPublishedContentManualReviewPartialSuccess": "发布内容人工审核部分成功。",
+        "KeyPublishedOnlineContentManualReviewResultWithReason": "发布上线内容人工审核成功%d条，失败%d条，失败原因：内容包含敏感信息。",
+        "KeyConservativeReplyReviewPass": "保守回复语审核通过。",
+        "KeyConservativeReplyChangeReviewPass": "保守回复语变更已审核通过。",
+        "KeyConservativeReplyReviewFail": "保守回复语审核失败。",
+        "KeyConservativeReplyReviewFailWithTimeoutReason": "保守回复语审核失败，失败原因：保守回复语审核超时。",
+        "KeyConservativeReplyReviewFailWithSensitiveReason": "保守回复语审核失败，失败原因：保守回复语包含敏感信息。",
+        "KeyConservativeReplyManualAppealFail": "保守回复语人工申诉失败。",
+        "KeyConservativeReplyManualAppealFailWithSensitiveReason": "保守回复语人工申诉失败，失败原因：保守回复语包含敏感信息。",
+        "KeyConservativeReplyManualAppealSuccess": "保守回复语人工申诉成功。",
+        "KeyConservativeReplyContentChangeManualAppealSuccess": "保守回复语内容变更人工申诉成功。",
+        "KeyCallStatExportWithParam": "调用统计表导出%s。",
+        "KeyCallStatExporting": "调用统计表导出中。",
+        "KeyExportWithParam": "导出%s",
+        "KeyExportSuccess": "导出成功",
+        "KeyExportFail": "导出失败",
+        "KeySuccess": "成功",
+        "KeyFail": "失败",
+        "KeyKnowledgeBasePublishing": "知识库发布中。",
+        "KeyAppPublishSuccess": "应用发布成功。",
+        "KeyAppPublishSuccessWithParam": "应用【%s】发布成功。",
+        "KeyAppPublishOnlinePause": "应用发布上线暂停。",
+        "KeyAppPublishOnlinePauseWithReason": "应用发布上线暂停，暂停原因：网络超时。请前往发布上线重试。",
+        "KeyAppPublishFail": "应用发布失败。",
+        "KeyAppPublishFailWithReason": "应用【%s】发布失败，失败原因：%s。",
+        "KeyAppPublishPartialSuccess": "应用发布部分成功。",
+        "KeyResultWithReviewFailReason": "成功%d条，失败%d条。失败原因：审核失败。",
+        "KeyAppName": "应用名称",
+        "KeyAvatar": "头像",
+        "KeyAppDescription": "应用描述",
+        "KeyWelcomeMessage": "欢迎语",
+        "KeyRoleDescription": "角色描述",
+        "KeyOutputMethod": "输出方式",
+        "KeyConservativeReplySwitch": "保守回复开关",
+        "KeyConservativeReplyContent": "保守回复语",
+        "KeyMaxRecallNumWithParam": "%s最大召回数量",
+        "KeyRetrievalMatchingDegreeWithParam": "%s检索匹配度",
+        "KeyReplyFlexibility": "回复灵活度",
+        "KeyKnowledgeSourceConfigWithParam": "知识来源%s配置",
+        "KeySearchEngineStatus": "搜索引擎状态",
+        "KeyContextRewriting": "上下文改写",
+        "KeyContextMemoryRounds": "上下文记忆轮数",
+        "KeyModelSelectionWithParam": "%s 模型选择",
+        "KeyTagConfig": "标签配置",
+        "KeyOutputRequirement": "输出要求",
+        "KeyCustomOutputRequirement": "自定义输出要求",
+        "KeyQuestionClarification": "问题澄清",
+        "KeyClarificationKeywords": "澄清关键词",
+        "KeyKnowledgeBaseRetrievalRangeSetting": "知识库检索范围设置",
+        "KeyAppMode": "应用模式",
+        "KeyDesignatedWorkflow": "指定工作流",
+        "KeyTemperatureWithParam": "%s 温度",
+        "KeyTopPWithParam": "%s top-p",
+        "KeyRetrievalStrategy": "检索策略",
+        "KeyExcelRetrievalEnhancement": "Excel检索增强",
+        "KeyDirectReplyWithAdoptedAnswer": "已采纳答案直接回复",
+        "KeyPolishedReplyWithAdoptedAnswer": "已采纳答案润色回复",
+        "KeyTextSummary": "文本总结",
+        "KeyCustomRequirement": "自定义要求",
+        "KeyStreamingOutput": "流式输出",
+        "KeyNonStreamingOutput": "非流式输出",
+        "KeyEnable": "开启",
+        "KeyDisable": "关闭",
+        "KeyShow": "显示",
+        "KeyHide": "隐藏",
+        "KeyAvatarChanged": "头像已变更",
+        "KeyQA": "问答",
+        "KeyDocument": "文档",
+        "KeyRejection": "拒答",
+        "KeySearchEnhancement": "搜索增强",
+        "KeyTaskFlow": "任务流程",
+        "KeyImageSearchByImage": "图搜图",
+        "KeyImageSearchByText": "文搜图",
+        "KeyModelResourceExhausted": "该模型资源已用尽",
+        "KeyNotOnline": "未上线",
+        "KeyRunning": "运行中",
+        "KeyDisabled": "停用",
+        "KeyNotSet": "未设置",
+        "KeyOr": "或",
+        "KeyAnd": "且",
+        "KeyStandardMode": "标准模式",
+        "KeyMultiAgentMode": "Multi-Agent模式",
+        "KeySingleWorkflowMode": "单工作流模式",
+        "KeyGenerationModel": "生成模型",
+        "KeyThinkingModel": "思考模型",
+        "KeyInvalidWorkflow": "无效的工作流",
+        "KeyPublishSuccess": "发布成功",
+        "KeyPublishFail": "发布失败",
+        "KeyPublishPause": "发布暂停",
+        "KeyAdd": "新增",
+        "KeyDelete": "删除",
+        "KeyModify": "修改",
+        "KeyPublishOp": "发布",
+        "KeyReviewTimeout": "审核超时",
+        "KeyContainSensitiveInfo": "包含敏感信息",
+        "KeyToBePublished": "待发布",
+        "KeyInPublish": "发布中",
+        "KeyDate": "日期",
+        "KeyStatAccount": "统计账号",
+        "KeyAPICallTotalTokenCount": "接口调用总token数",
+        "KeyTotalConsumedPages": "总消耗页数",
+        "KeyBillingAPICallCount": "计费接口调用次数",
+        "KeyAPICallInputTokenCount": "接口调用输入token数",
+        "KeyAPICallOutputTokenCount": "接口调用输出token数",
+        "KeySearchServicePackageCallCount": "搜索服务包调用次数",
+        "KeyCallTime": "调用时间",
+        "KeyTotalConsumedTokenCount": "总消耗token数",
+        "KeyInputConsumedTokenCount": "输入消耗token数",
+        "KeyOutputConsumedTokenCount": "输出消耗token数",
+        "KeySearchServiceConsumedCount": "搜索服务消耗次数",
+        "KeyModelName": "模型名称",
+        "KeyAccount": "账号",
+        "KeyCallType": "调用类型",
+        "KeyEnterpriseId": "企业id",
+        "KeyAvailableConcurrentCount": "可用并发数",
+        "KeySuccessfulConcurrentCallCount": "调用成功并发数",
+        "KeyMyIntelligentApp": "我的智能体应用",
+        "KeyManualReviewPass": "人工审核通过",
+        "KeyManualReviewNotPass": "人工审核不通过",
+        "KeyDialogContentReview": "对话内容审核",
+        "KeyWebSearch": "海外联网搜索",
+        "KeyWebSearchAPIKey": "海外联网搜索API Key",
+        "KeyWebSearchRecallInterfaceFragment": "海外联网搜索召回接口片段",
+        "KeyWebSearchAPIKeyProvider": "海外联网搜索API Key 服务商",
+        "KeyDatabase": "数据库",
+        "KeyIntentAchievementPriority": "意图达成优先级",
+        "KeyImageTextRetrieval": "图文检索",
+        "KeyAsynchronousCall": "异步调用",
+        "KeySharedKnowledgeBaseRetrievalRangeSetting": "共享知识库检索范围设置",
+        "KeyReferenceSharedKnowledgeBase": "引用共享知识库",
+        "KeyKnowledgeBaseSchema": "知识库schema",
+        "KeyBackgroundImageOriginal": "背景图原始图",
+        "KeyBackgroundImageWebEffect": "背景图WEB效果",
+        "KeyBackgroundImageMobileEffect": "背景图移动端效果",
+        "KeyBackgroundImageThemeColor": "背景图主题色",
+        "KeyDefaultKnowledgeBaseRetrievalRangeSetting": "默认知识库检索范围设置",
+        "KeyRoleSettingsContentInReview": "角色设置内容审核中。",
+        "KeyConservativeReplyInReview": "保守回复语审核中。",
+        "KeyRandomSeedWithParam": "%s 随机种子",
+        "KeyPresencePenaltyWithParam": "%s 存在惩罚",
+        "KeyFrequencyPenaltyWithParam": "%s 频率惩罚",
+        "KeyRepeatPenaltyWithParam": "%s 重复惩罚",
+        "KeyMaxOutputLengthWithParam": "%s 最大输出长度",
+        "KeyStopSequenceWithParam": "%s 停止序列",
+        "KeyOutputFormatWithParam": "%s 输出格式",
+        "KeyVariableSettings": "变量设置",
+        "KeyLongTermMemory": "长期记忆",
+        "KeyLongTermMemoryDuration": "长期记忆时效",
+        "KeyExampleQuestions": "示例问题",
+        "KeyAgentCollaborationMethod": "Agent协同方式",
+        "KeyAgentCollaborationWorkflow": "Agent协同方式关联工作流",
+        "KeyRetrievalRecallResultReordering": "检索召回-结果重排序",
+        "KeyRetrievalRecallReorderingModel": "检索召回-重排序模型",
+        "KeyRetrievalRecallVectorModel": "检索召回-向量模型",
+        "KeyAdvancedSettingsReorderingModel": "高级设置-重排序模型",
+        "KeyAdvancedSettingsReorderingModelRecallCount": "高级设置-重排序模型召回数量",
+        "KeyKnowledgeBaseModelVectorModel": "知识库模型-向量模型",
+        "KeyKnowledgeBaseModelQAPairGenerationModel": "知识库模型-问答对生成模型",
+        "KeyKnowledgeBaseModelSchemaGenerationModel": "知识库模型-Schema生成模型",
+        "KeyVoiceInteraction": "语音互动",
+        "KeyVoiceCall": "语音通话",
+        "KeyToneColor": "音色",
+        "KeyDigitalHuman": "数智人",
+        "KeyFreeTransfer": "自由转交",
+        "KeyWorkflowOrchestration": "工作流编排",
+        "KeyPlanAndExecuteCollaboration": "Plan-and-Execute 协同",
+        "KeyDaysDays": "%d天",
+        "KeyNoDataToBePublished": "没有待发布的数据",
+        "KeyDefaultWorkspace": "默认工作空间",
+        "KeyAllCategories": "全部分类",
+        "KeyUncategorized": "未分类",
+        "KeyAddVariableWithParam": "新增变量 %s.%s",
+        "KeyModifyVariableWithParam": "修改变量 %s",
+        "KeyDeleteVariableWithParam": "删除变量 %s",
+        "KeyInputBoxButton": "输入框按钮",
+        "KeyInputBoxButtonUploadImage": "上传图片",
+        "KeyInputBoxButtonUploadFile": "上传文档",
+        "KeyInputBoxButtonTencentDoc": "腾讯文档",
+        "KeyInputBoxButtonWebSearch": "联网搜索",
+        "KeyRecommendedSwitch": "推荐问开关",
+        "KeyRecommendedPromptMode": "推荐问生成模式",
+        "KeyRecommendedPromptModeKnowledgeAndHistory": "根据知识库和对话历史生成问题",
+        "KeyRecommendedPromptModeOnlyKnowledge": "仅根据知识库内容生成问题",
+        "KeyRetryRelease": "发布暂停重试中",
+        "KeyPauseRelease": "发布暂停",
+        "KeyNoAudit": "无需审核",
+        "KeyAuditFail": "审核未通过",
+        "KeyAuditTimeout": "审核超时",
+        "KeyAuditSensitive": "包含敏感词",
+        "KeyAuditRoleSucc": "角色设置审核成功。",
+        "KeyAuditRoleSuccContent": "角色设置内容审核通过。",
+        "KeyAuditRoleFailSub": "角色设置审核失败。",
+        "KeyAuditRoleFailContent": "角色设置审核失败，失败原因：%s包含敏感信息。",
+        "KeyAuditRoleFailTitle": "角色设置审核失败，失败原因：",
+        "KeyAuditFailAvatar": "头像过大或不存在，请检查后重新上传。",
+        "KeyAuditFailTimeOut": "%s审核超时",
+        "KeyAuditRoleManualFail": "角色设置内容人工申诉失败。",
+        "KeyAuditRoleManualFailReason": "角色设置内容人工申诉失败，失败原因：%s包含敏感信息.",
+        "KeyAuditRoleManualSucc": "角色设置内容人工申诉成功。",
+        "AvatarChange": "头像已变更",
+        "KeyWxServiceChannel": "微信服务号",
+        "KeyWxPubChannel": "微信订阅号",
+        "KeyWeComChannel": "企微应用",
+        "KeyYuanQi": "元器",
+        "KeyYingYongBao": "应用宝",
+        "KeyWecomAIRobot": "企微智能机器人",
+        "KeyConcurrentStatExportWithParam": "并发统计表导出%s。",
+        "KeyConcurrentStatExporting": "并发统计表导出中。",
+        "KeyKnowledgeBaseCapacityStatExportWithParam": "知识库容量统计表导出%s。",
+        "KeyCopyOfWithParam": "%s的副本",
+        "KeyKnowledgeBaseCapacityStatExporting": "知识库容量统计表导出中。",
+        "KeyUserQuestion": "用户问题",
+        "KeyBotReply": "机器人回复",
+        "KeyErrorType": "错误类型",
+        "KeyUnsatisfiedOperator": "操作人",
+        "KeyUnsatisfiedStatus": "处理状态",
+        "KeyUnsatisfiedOperation":"操作",
+        "KeyUnsatisfiedCreateTime": "创建时间",
+        "KeyUnsatisfiedUpdateTime": "更新时间",
+        "KeyUnsatisfiedStatusPendingDesc":"待处理",
+    	"KeyUnsatisfiedStatusProcessedDesc" :"已处理",
+        "KeyUnsatisfiedCorrect":"纠错" ,
+        "KeyUnsatisfiedReject":"拒答",
+        "KeyUnsatisfiedIgnore":"忽略",
+        "KeyApp": "应用",
+        "KeyKnowledgeBaseUsedCharCount": "知识库使用字符数",
+        "KeyUsageRatio": "使用量占比",
+        "KeyOverLimitInvalidCharCount": "超量失效字符数",
+        "KeyUnsatisfiedRepliesBatchExportStatus": "不满意回复批量导出%s。",
+        "KeyUnsatisfiedRepliesBatchExporting": "不满意回复批量导出中。"
+    }
+  application.yaml: |
+    login_default:
+      type: [0]
+      cqq_kf_uin: 2854099021
+      session_expr: 168h
+      ahead_renew_time: 1h
+      cookie_domain: ${COOKIE_DOMAIN}
+      exp_cookie_domain: ${EXP_COOKIE_DOMAIN}
+      exp_cookie_path: /cgi/apex
+      secure: true
+      verify_code:
+        expire: 5m
+        max_try: 5
+        max_try_expire: 3600s
+        day_send_limit: 100
+    # storage相关配置
+    storage: ${STORAGE}
+    #######################
+    # 文档预览配置
+    # docx:docx类型文档预览链接
+    # md:md类型文档预览链接
+    # txt:txt类型文档预览链接
+    #######################
+    doc_preview:
+      docx:
+        url: https://oaqbot.qidian.qq.com/preview/#
+      md:
+        url: https://oaqbot.qidian.qq.com/#/preview/md
+      txt:
+        url: https://oaqbot.qidian.qq.com/#/preview/md
+      pdf:
+        url: https://oaqbot.qidian.qq.com/preview/#
+    #######################
+    # 文档QA配置
+    # question: 问题配置
+    #   min_length: 问题长度下限
+    #   max_length: 问题长度上限
+    # answer: 答案配置
+    #   min_length: 答案长度下限
+    #   max_length: 答案长度上限
+    # qa_cate: qa分组配置
+    #   min_length: qa分组名长度下限
+    #   max_length: qa分组名长度上限
+    #######################
+    doc_qa:
+      cate_node_limit: 2001
+      import_max_length: 5000
+      question:
+        min_length: 1
+        max_length: 2000
+      answer:
+        min_length: 1
+        max_length: 2000
+      custom_param:
+        min_length: 0
+        max_length: 500
+      qa_cate:
+        min_length: 1
+        max_length: 10
+    #######################
+    # 定时任务 拉取任务数量
+    # lock_duration: 单个任务锁定时长
+    # page_size: 每次脚本处理的数量
+    # max_try_times: 单个任务最大重试次数
+    # max_doing_task_count: 当前最大执行中的任务
+    #######################
+    cron_task:
+      qa_similar_task:
+        wait_a_moment: 30s
+        page_size: 200
+      export_qa_task:
+        max_qa_count: 100000
+      export_synonyms_task:
+        page_size: 200
+        max_synonyms_count: 10000
+    #######################
+    # 评测/相似向量同步配置
+    # concurrent: 消费协程数
+    #######################
+    vector_sync:
+      concurrent: 3
+      time_before: 5m
+      limit: 1000
+    #######################
+    # 演示模式
+    # enable: 是否开启演示模式
+    # white_list_telephone: 白名单电话号码
+    # white_list_user_id: 白名单用户ID
+    #######################
+    demo_mode:
+      enable: false
+      white_list_telephone:
+        - 15750973379
+      white_list_user_id:
+        - 19
+    user_avatar: ${USER_AVATAR}
+    #######################
+    # 测试样本配置
+    # question: 问题配置
+    #   min_length: 问题长度下限
+    #   max_length: 问题长度上限
+    # excel_head: 头部校验配置
+    # min_row: excel最短行数
+    # max_row: excel最长行数
+    #######################
+    sample_rule:
+      min_row: 1
+      max_row: 10000
+      check_row: 100
+      excel_head:
+        - 测试样本语料
+      question:
+        min_length: 1
+        max_length: 2000
+    #######################
+    # 定时任务
+    # task_prefix: 任务前缀
+    # task_fetch_num: 每批次任务拉取个数
+    # task_fetch_timeout: 拉取任务超时
+    # task_fetch_period: 拉取任务周期
+    # tasks 业务任务配置列表
+    #######################
+    task:
+      task_prefix: appConfig:task
+      task_fetch_num: 400
+      task_fetch_timeout: 2s
+      task_fetch_period: 2s
+      tasks:
+        export:
+          runners: 2 #处理协程数，无法动态调整
+          retry_wait_time: 1m #重试等待时间
+          max_retry: 10 #最大重试次数
+          timeout: 10m #超时时间
+          fail_timeout: 3s # 失败回调超时
+          delay: 0s #启动延迟
+          batch:  3
+          batch_size: 0
+          stopped_resume_time: 720h
+        send_audit:
+          runners: 5 #处理协程数，无法动态调整
+          retry_wait_time: 1m #重试等待时间
+          max_retry: 50 #最大重试次数
+          timeout: 30m #超时时间
+          fail_timeout: 3s # 失败回调超时
+          delay: 0s #启动延迟
+          batch:  3
+          batch_size: 0
+          stopped_resume_time: 720h
+        check_audit:
+          runners: 5 #处理协程数，无法动态调整
+          retry_wait_time: 1m #重试等待时间
+          max_retry: 100 #最大重试次数
+          timeout: 120m #超时时间
+          fail_timeout: 3s # 失败回调超时
+          delay: 0s #启动延迟
+          batch:  1
+          batch_size: 0
+          stopped_resume_time: 720h
+        release_collect:
+          runners: 5 #处理协程数，无法动态调整
+          retry_wait_time: 1m #重试等待时间
+          max_retry: 10 #最大重试次数
+          timeout: 180m #超时时间
+          fail_timeout: 3s # 失败回调超时
+          delay: 0s #启动延迟
+          batch:  1
+          batch_size: 0
+          stopped_resume_time: 720h
+        release_success:
+          runners: 5 #处理协程数，无法动态调整
+          retry_wait_time: 1m #重试等待时间
+          max_retry: 10 #最大重试次数
+          timeout: 180m #超时时间
+          fail_timeout: 3s # 失败回调超时
+          delay: 0s #启动延迟
+          batch:  1
+          batch_size: 0
+          stopped_resume_time: 720h
+        clear_app_resource:
+          runners: 1 #处理协程数，无法动态调整
+          retry_wait_time: 1m #重试等待时间
+          max_retry: 10 #最大重试次数
+          timeout: 100m #超时时间
+          fail_timeout: 3s # 失败回调超时
+          delay: 0s #启动延迟
+          batch:  1
+          batch_size: 0
+          stopped_resume_time: 720h
+        synonyms_import:
+          runners: 5 #处理协程数，无法动态调整
+          retry_wait_time: 1m #重试等待时间
+          max_retry: 1 #最大重试次数
+          timeout: 100m #超时时间
+          fail_timeout: 3s # 失败回调超时
+          delay: 0s #启动延迟
+          batch:  1
+          batch_size: 0
+          stopped_resume_time: 720h
+
+    unsatisfied_reply_unselect_reason: 用户未选择
+    short_url_root_url: ${SHORT_URL_ROOT_URL}
+    short_url_scheme: ${SHORT_URL_SCHEMA}
+    max_export_count: 100000
+    max_export_batch_size: 2000
+    # 审核开关
+    audit_switch: ${AUDIT_SWITCH}
+    # 默认安全审核策略
+    infosec_biz_type_default: QD_DS
+    # 文件审核开关
+    file_audit_switch: true
+    # 高亮误差阈值
+    high_light_threshold: 7
+    #######################
+    # 属性标签
+    # general_vector_attr_key: 通用向量属性，用于通用知识的标记
+    # full_label_value: 属性的全量标签值
+    # full_label_desc: 属性的全量标签描述
+    # attr_key_regx: 属性标识正则校验
+    # attr_name_max_len: 属性名称最大字符长度
+    # attr_limit: 同一个机器人内的属性数量限制
+    # label_name_max_len: 标签名称最大字符长度
+    # label_limit: 同一个属性下的标签数量限制
+    # similar_label_max_len: 相似标签最大字符长度
+    # similar_label_limit: 同一个标签下的相似标签数量限制
+    # doc_attr_limit: 文档关联的属性数量
+    # qa_attr_limit: 文档关联的属性数量
+    # min_row: excel最短行数
+    # max_row: excel最长行数
+    # execl_head: 导入导出头部配置
+    #######################
+    attribute_label:
+      general_vector_attr_key: general_vector
+      full_label_value: default
+      full_label_desc: 全部
+      attr_key_regx: "^[a-zA-Z]([A-Za-z_]){0,29}$"
+      attr_name_max_len: 50
+      attr_limit: 100
+      label_name_max_len: 50
+      label_limit: 2000
+      similar_label_max_len: 50
+      similar_label_limit: 50
+      doc_attr_limit: 10
+      qa_attr_limit: 10
+      min_row: 1
+      max_row: 10000
+      execl_head:
+        - 属性标识（必填）
+        - 属性（必填）
+        - 标签（必填）
+        - 相似标签
+    white_list_uin:
+
+    sse_conn_options:
+      conn_url: 'https://testwss.lke.cloud.tencent.com/v1/qbot/chat/experienceSse'
+      mod_id: 192000068
+      cmd_id: 72620
+      name_space: Test
+    doc_parse_error:
+      10001: #文件格式错误:不可以重试
+        msg: 文件格式错误，请修改文件格式重新导入。
+        is_allow_retry: false
+      10002: #crc校验错误:不可以重试
+        msg: crc校验错误，请检查文件的CosHash值是否符合参数要求。
+        is_allow_retry: false
+      10003: #文件名过长:不可以重试
+        msg: 文件名过长，请修改文件名后重新导入。
+        is_allow_retry: false
+      10004: #内部解析错误:可以重试
+        msg: 系统错误。
+        is_allow_retry: true
+    doc_parse_error_default:
+      msg: 系统错误。
+      is_allow_retry: true
+    doc_parse_stop:
+      msg: 手动终止解析。
+      is_allow_retry: true
+    doc_placeholder:
+      link: https://L%d
+      img: https://I%d
+    permission_app_category: ${PERMISSION_APP_CATEGORY}
+    corp_max_char_size: 5000000
+    corp_max_token_usage: 5000000
+    trial:
+      app_max_char_size: 1000000
+      corp_app_quota: 1000
+      corp_token_quota: 100000
+      corp_max_token_usage: 500000
+      corp_max_char_size: 3000000
+      corp_period: 1440h
+      enable_white_list: false
+      white_list_key: ASW_INNER
+      ban_permission_list:
+        - lkeRepository.config.output.questionClarify
+        - lkeClassify
+        - lkeClassify.config.tag
+        - lkeClassify.config.chat
+        - lkeClassify.config.basic
+        - lkeClassify.config.model.version
+        - lkeClassify.release.call.secret
+        - lkeClassify.release.call.reception
+        - lkeClassify.release.do
+        - lkeSummary
+        - lkeSummary.config.chat
+        - lkeSummary.config.basic
+        - lkeSummary.config.model.version
+        - lkeSummary.config.output.requirement
+        - lkeSummary.config.output.method
+        - lkeSummary.release.call.secret
+        - lkeSummary.release.call.reception
+        - lkeSummary.release.do
+
+    only_check_data_perm_action:
+      - DescribeLicense
+      - GetAppSecret
+      - ListSpace
+      - DescribeAccount
+      - DescribeCorp
+      - ListNotify
+      - ListHistoryNotify
+      - ReadNotify
+      - CloseNotify
+      - CheckWhitelist
+      - ListModel
+      - ListNonRoleModel
+      - ListVoice
+      - ListDigitalHuman
+      - GetCharacterUsage
+      - ImageRetrieval
+      - ImageExpand
+      - DescribeStorageCredential
+      - SetUserGuideViewInfo
+      - GetUserGuideViewInfos
+      - ModifyConcurrencyRule
+      - DescribeConcurrencyRule
+      - CheckTool
+      - GetWxKFDefaultInfo
+      - GetAppInfoByWeChat
+      - DescribeWxAuthorizeUrl
+      - DescribeWxAuthorizeUrlResult
+      - GetWxKfIdList
+      - CheckWeComSecret
+      - ListPackage
+      - DescribeConcurrencyUsage
+      - DescribeConcurrencyUsageGraph
+      - ListAccount
+      - ListPostpaidProduct
+      - DescribeTokenUsage
+      - DescribeCallStatsGraph
+      - DescribeTokenUsageGraph
+      - DescribeSearchStatsGraph
+      - DescribePageStatsGraph
+      - ListKnowledgeCapacity
+      - TestDbSourceConnection
+      - ListSourceTableNames
+      - ListPlugins
+      - ListFeedback
+      - DescribeFeedback
+      - DeleteFeedback
+      - DescribeAgentFeedback
+      - DeleteAgentFeedback
+      - ListAgentFeedback
+      - GetAgentFeedback
+      - AddWorkflowFeedback
+      - UpdateWorkflowFeedback
+      - DescribeWorkflowFeedback
+      - DeleteWorkflowFeedback
+      - ListWorkflowFeedback
+
+    ai_conf:
+      product_type: lke
+      super_admin_uin: 600000560578
+
+
+    classify_label_default:
+      - id: 1
+        label_name: "姓名"
+      - id: 2
+        label_name: "省份"
+      - id: 3
+        label_name: "城市"
+      - id: 4
+        label_name: "地址"
+      - id: 5
+        label_name: "电话号码"
+      - id: 6
+        label_name: "机构名"
+      - id: 7
+        label_name: "微信号"
+      - id: 8
+        label_name: "年级"
+      - id: 9
+        label_name: "学校"
+      - id: 10
+        label_name: "性别"
+      - id: 11
+        label_name: "学历"
+      - id: 12
+        label_name: "订单号"
+      - id: 13
+        label_name: "解决情况"
+        label_desc: |-
+              判断对话中对用户提问的解决情况。
+              1、如对话过程中客服解答了用户的问题并且用户没有新的问题，代表已解决
+              2、如对话过程中客服表示稍后电话联系、或找其他人联系处理，则表示未解决
+        label_range: ["已解决","未解决","未知"]
+      - id: 14
+        label_name: "满意度"
+        label_desc: |-
+              判断整通会话中用户的满意情况。
+              1、客服回复用户后，用户表示认同，并没有其他的疑问则代表满意
+              2、用户表达生气、投诉等意图，表示不满意
+        label_range: ["满意","不满意","未知"]
+      - id: 15
+        label_name: "银行业务分类"
+        label_desc: ""
+        label_range: ["交易限额查询","交易限额设定","产品卖点介绍","信用卡激活","信用卡申请","信用卡申请进度查询","信用卡账单分期设置","信用卡账单地址修改","信用卡附属卡流量设置","修改订单","催拍催付","其他"]
+      - id: 16
+        label_name: "零售业务分类"
+        label_desc: ""
+        label_range: ["漏发","物流拦截","产品推荐","活动推荐","质量问题","退款到账查询","交易记录查询","退款","退货","挽留退货退款","未挽留退货退款","错发","换货","其他"]
+      - id: 17
+        label_name: "服务反馈"
+        label_desc: ""
+        label_range: ["客户不满","客户表扬客服","客户投诉","客服服务态度差","客户辱骂","客服反怼客户","客服安抚客户","客服引导客户投诉","客服推诿责任","客服确认客户问题全部解决","客服辱骂","其他"]
+
+    summary_prompt_default:
+      - requirement: 1
+        prompt_name: "对话总结"
+        prompt_desc: "按默认的格式对输入的对话进行陈述性总结，适用客服会话小结场景"
+        prompt_command: |-
+                 根据下面对话，进行摘要
+                 {{`{{.SummaryRequireCommand}}`}}
+                 {{`{{.Question}}`}}
+      - requirement: 3
+        prompt_name: "会话摘要"
+        prompt_desc: "按默认的格式对输入的对话按照客户诉求”、“客服回应”、“解决情况格式进行总结，适用快速阅读历史会话场景"
+        prompt_command: |-
+            请基于以下对话生成简短摘要。
+            要求1. 简洁精炼，表达流畅  2.包含所有的关键信息  3.对复杂对话能做到有条理总结，要求不超过300字
+            {{`{{.SummaryRequireCommand}}`}}
+            {{`{{.Question}}`}}
+      - requirement: 4
+        prompt_name: "工单摘要"
+        prompt_desc: "按默认的格式对输入的对话进行总结和关键信息提炼，适用工单总结场景"
+        prompt_command: |-
+           根据以下客服和用户之间的对话内容，请对该对话进行工单摘要和重要信息提炼。
+           {{`{{.SummaryRequireCommand}}`}}
+           {{`{{.Question}}`}}
+      - requirement: 5
+        prompt_name: "会议摘要"
+        prompt_desc: "基于会议记录，话题要点和待办项"
+        prompt_command: |-
+           请对以下对话的内容进行总结。要求1.对各个话题进行分段 2.按话题要点生成摘要 3.最后给出待办项。
+           {{`{{.SummaryRequireCommand}}`}}
+           {{`{{.Question}}`}}
+      - requirement: 6
+        prompt_name: "文章概述"
+        prompt_desc: "概述文章提纲"
+        prompt_command: |-
+           请对以下文章内容进行总结。要求总结文章提纲
+           {{`{{.SummaryRequireCommand}}`}}
+           {{`{{.Question }}`}}
+      - requirement: 7
+        prompt_name: "内容标题"
+        prompt_desc: "基于输入的内容生成标题"
+        prompt_command: |-
+           生成下文标题。
+           文章内容如下：{{`{{.SummaryRequireCommand}}`}} {{`{{.Question}}`}}
+      - requirement: 8
+        prompt_name: "笔记总结"
+        prompt_desc: "基于文章总结笔记内容，包括标题、要点及关键信息"
+        prompt_command: |-
+           写一篇下面文章的笔记总结，要求包含标题内容，要点信息，关键时间和数字，总结中每句话必须要完整。
+           文章内容如下：{{`{{.SummaryRequireCommand}}`}} {{`{{.Question}}`}}
+      - requirement: 9
+        prompt_name: "新闻摘要"
+        prompt_desc: "基于新闻内容，总结中心思想"
+        prompt_command: |-
+           你是一个新闻工作者，需要给以下文章撰写摘要。要求包含新闻的中心思想，阐明时间、事件和关键信息，摘要长度限制在200字。
+           文章内容如下：{{`{{.SummaryRequireCommand}}`}} {{`{{.Question}}`}}
+      - requirement: 2
+        prompt_name: "自定义要求"
+        prompt_desc: "自定义要求"
+        prompt_command: |-
+             根据下面文本内容，进行摘要
+             要求：{{`{{.SummaryRequireCommand}}`}}
+             文本内容：{{`{{.Question}}`}}
+    managed_account_ids:
+      - 173
+    experience_uin: ${EXPERIENCE_UIN}
+    knowledge_qa_config_info:
+      question_clarify_keywords_limit:
+        min_length: 1
+        max_length: 100
+
+    account: ${ACCOUNT}
+    license: ${LICENSE}
+    img_captcha_cfg:
+      secret_id: ""
+      secret_key: ""
+      captcha_type: 9
+      app_id: 197595422
+      app_secret_key: ""
+      host: captcha.tencentcloudapi.com
+    sms:
+      qidian:
+        uin: 2355017619
+        signature: 28
+        type: 1
+        message: "手机验证码 %s，请尽快完成操作。验证码将于5分钟后失效，若非本人操作，请忽略。"
+        record_flag: 1
+        is_verify: 1
+      cloud:
+        biz_name:
+        template_id: "2163664"
+        sign: 腾讯云
+        sdk_appid: "1400912600"
+        secret_id: ""
+        secret_key: ""
+        validity: "5"
+        end_point: sms.internal.tencentcloudapi.com
+    tione:
+      secret_id: ""
+      secret_key: ""
+      sts_host: sts.test.tencentcloudapi.com
+      region: "ap-guangzhou"
+      tione_host: tione.test.tencentcloudapi.com
+      service_role_name: ADP_QCSLinkedRoleInTIONE
+      tione_regions:
+        - ap-beijing
+        - ap-guangzhou
+        - ap-nanjing
+        - ap-shanghai
+      tione_enable_white: false
+      tione_white_uin:
+        - 700000306554
+
+    normal:
+      app_max_char_size: 1000000
+      corp_app_quota: 10
+      corp_max_token_usage: 500000
+      corp_max_char_size: 3000000
+      ban_permission_list:
+
+    products:
+      model_name:
+        - name: cs-normal-70b
+          alias: 精调知识大模型高级版
+          sub_biz_type: KnowledgeQA
+        - name: cs-normal
+          alias: 精调知识大模型标准版
+          sub_biz_type: KnowledgeQA
+        - name: medical-6b
+          alias: 医学行业大模型标准版
+          sub_biz_type: KnowledgeQA
+        - name: finance-13b
+          alias: 金融行业大模型标准版
+          sub_biz_type: KnowledgeQA
+        - name: hunyuan-13B
+          alias: 混元大模型标准版
+          sub_biz_type: KnowledgeQA
+        - name: hunyuan
+          alias: 混元大模型高级版
+          sub_biz_type: KnowledgeQA
+        - name: hunyuan-standard-256K
+          alias: 混元大模型长文本版
+          sub_biz_type: KnowledgeQA
+      atomic:
+        - name: lke-text-embedding-v1
+          alias: Embedding
+          sub_biz_type: Embedding
+        - name: lke-query-rewrite-base
+          alias: 多轮改写
+          sub_biz_type: Rewrite
+      call_type:
+        - name: AllCallType
+          alias: 全部调用类型
+        - name: KnowledgeQA
+          alias: 对话调用
+        - name: DocExtractQA
+          alias: 文档生成问答
+        - name: EvaluateTest
+          alias: 应用评测
+        - name: RoleCommands
+          alias: 角色指令一键优化
+        - name: TaskFlowPreview
+          alias: 任务流程话术预览
+
+    sec_api:
+      enable: true # 私有化false
+      unsafe_domains: [
+        "qidian-qbot-test-1251316161.cos.ap-guangzhou.myqcloud.com",
+        "qidian-knowledge-1251316161.cos.ap-guangzhou.myqcloud.com",
+        {{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com,
+        "hunyuanapi.woa.com",
+      ]
+      allow_outer: true
+
+    limit_config_info: #限流信息设置
+      expire: 4m
+      max_unlock_retry: 3
+      try_lock_interval: 50ms
+      concurrency_key_expire: 1800
+      qpm: ${LIMIT_CONFIG_QPM}
+      tpm: ${LIMIT_CONFIG_TPM}
+      ds_qpm: ${LIMIT_CONFIG_QPM}
+      ds_tpm: ${LIMIT_CONFIG_TPM}
+    clear_app_resource_delay: ${CLEAR_APP_RESOURCE_DELAY}
+    clear_app_resource_corp_delay:
+    clear_realtime_app_recource_interval: 720h
+    finance: ${FINACE}
+    intent_num_limit_in_role_desc: 5
+    disable_intent_validation: true
+    cache_limit:
+      corp_expire: 720h
+      staff_expire: 120h
+      intent_expire: 120h
+      app_expire: 120h
+      app_key_expire: 15m
+      model_expire: 120h
+    ai_call: ${AI_CALL}
+    mongo_database: lke-data-statistics
+    # 需要修改大模型输入框，角色描述，历史上下文大小限制的模型对应的策略
+    params_model_type:
+      normal_message: true # 知识问答策略
+      normal_message_non_general_knowledge: true # 知识库问答对话策略
+      intent_recognize: true # 知识库问答意图识别策略
+      main_agent: true # 知识库问答主agent策略
+    channel_wecom_callback_url: https://{替换为您的域名}/online/channel/callback/wecom/
+    channel_wxkf_callback_url: https://www.tcadpagent.com/test/channel/callback/wxkf/
+    channel_wecom_robot_callback_url: https://{替换为您的域名}/online/channel/callback/wecomrobot/
+    # 混元API_KEY
+    hun_yuan_api_key: ""
+    # 数据迁移配置
+    data_migration_config:
+      # 新迁移到TDSQL的数据表
+      migrate_tdsql_tables:
+    env: "yuanqi"
+    # 工作空间配置
+    space:
+      limit: 20
+      space_name_length: 30
+      is_check_space_valid: true
+      corp_limit:
+    # 模型广场
+    model_hub:
+      model_type: llm
+      model_params:
+        - name: temperature
+          max: 2
+          min: 0
+          default: 0.7
+        - name: top_p
+          max: 1
+          min: 0
+          default: 1
+        - name: seed
+          max: 10000
+          min: 0
+          default: 1024
+        - name: presence_penalty
+          max: 2
+          min: -2
+          default: 0
+        - name: frequency_penalty
+          max: 2
+          min: -2
+          default: 0
+        - name: repetition_penalty
+          max: 2
+          min: 1
+          default: 1
+        - name: max_tokens
+          max: 262144
+          min: 1
+          default: 4096
+      model_tags:
+        - KeyModelTagOmniModal
+      model_properties:
+        # 模型上下文长度
+        model_length: 64k
+        # 模型输入长度56K（1024）
+        input_length: 57344
+      model_category_to_tags:
+        generate: [文本推理, 工具调用, 全模态,KeyModelTagTextReasoning,KeyModelTagToolCalling,KeyModelTagOmniModal]
+        thought: [文本推理, 工具调用, 全模态,KeyModelTagTextReasoning,KeyModelTagToolCalling,KeyModelTagOmniModal]
+        rerank: [排序模型,KeyModelTagRerankingModel]
+        embedding: [向量模型,KeyModelTagVectorModel]
+      embedding_limit:
+        enable: true
+        max_vector_dimension: 4096
+        default_vector_dimension: 1024
+      model_finance_free_white:
+        - workflow-light-32b
+    # 变量管理配置
+    var_param_config:
+      var_params_count_max: 1000
+      var_params_text_max: 50
+      var_params_desc_text_max: 1000
+      var_params_default_value_max: 20000
+      system_var_templates:
+      - name: SYS.UserQuery
+        text: "本轮对话内容"
+      - name: SYS.RewriteQuery
+        text: "多轮对话中本轮对话改写结果"
+      - name: SYS.ChatHistory
+        text: "对话历史"
+      - name: SYS.CurrentTime
+        text: "当前时间"
+      - name: SYS.RequestId
+        text: "对话请求ID（API调用请求参数中的request_id）"
+      - name: SYS.Memory
+        text: "长期记忆内容，开启长期记忆功能后可用"
+      custom_var_templates:
+      - var_id: 99999999999
+        var_name: VisitorBizId
+        var_type: STRING
+      api_param_valid_json_field_rex: ^[a-zA-Z][a-zA-Z0-9_\-]*$
+      secret_key: PbbmEmWsG3ScxZQj
+    # 聚类使用的embedding
+    embedding:
+      model_name: sn-large-multi-language-v0.2.5
+      max_len: 10000
+      dimension: 1024
+      max_retry: 1
+      prefix: "问题:"
+      content_prefix: "问题:"
+    # 对话记录分类使用
+    msg_log_category:
+      name_max_len: 50
+      min_cluster_size: 2
+      threshold: 0.7
+      min_unmatched: 3
+      max: 2000
+      embedding_chunk: 100
+      smart_max_msg_cnt: 3000
+    language_all_switch: true
+
+
+    smart_cate_msg_prompt: "下面的聚类中包含了多个含义相似的问题，请为这个聚类生成一个简洁、准确的聚类名称。输出要求：1.聚类名称长度不超过50个字。2.仅返回结果，不包含解释。 问题: {{`{{.Questions}}`}}"
+    tianyu:
+      secret_id: ""
+      secret_key: ""
+      endpoint: "cms.test.tencentcloudapi.com"
+      region: "ap-guangzhou"
+      # 关键词库名字最长
+      keywords_lib_name_max_length: 20
+      # 关键词内容最大长度
+      keywords_content_max_length: 20
+      # 风险回复配置
+      risk_responses:
+       - risk_response_type: 1
+         risk_input_response: KeyRiskResponseTypeSeriousInput
+         risk_output_response: KeyRiskResponseTypeSeriousOutput
+         is_default: true
+       - risk_response_type: 2
+         risk_input_response: KeyRiskResponseTypeMildInput
+         risk_output_response: KeyRiskResponseTypeMildOutput
+       - risk_response_type: 3
+         risk_input_response: KeyRiskResponseTypeLivelyInput
+         risk_output_response: KeyRiskResponseTypeLivelyOutput
+
+    es_config:
+      name: trpc.elasticsearch.lke.admin
+      #es地址
+      url: ${ES_CONFIG_URL}
+      #用户名
+      user: ${ES_CONFIG_USER}
+      #密码
+      password: "${ES_CONFIG_PASSWORD}"
+      timeout: 8000
+      log:
+        enabled: true
+        request_enabled: true
+        request_body: true
+      index_name:
+        content_recognition: content_recognition
+        content_recognition_stats: content_recognition_stats
+
+    synonyms:
+      synonyms_word_max_length: 50
+      max_synonyms_count_per_word: 200
+      import_max_file_size: 5242880
+      import_max_count: 1000
+
+
+
+
+    robot_default:
+      no_default_model: ${NO_DEFAULT_MODEL}
+      name: 智能体开发平台
+      app_names:
+        knowledge_qa: 我的智能体应用
+      model_names:
+        cs-normal: youtu-mrc-standard
+        cs-normal-70b: youtu-mrc-pro
+        #lke-deepseek-r1: DeepSeek-R1
+        #lke-deepseek-v3: DeepSeek-V3
+        lke-deepseek-r1-0528: DeepSeek-R1-0528
+        lke-deepseek-v3-0324: DeepSeek-V3-0324
+        cs-normal-merge: 精调知识大模型多功能版
+      app_chat_words_limit:
+        knowledge_qa: 6000
+        summary: 6000
+        classify: 6000
+      avatar: ${AVATAR}
+      app_avatars: ${APP_AVATARS}
+      expire_time: 7
+      transfer_keywords:
+        - 转人工
+        - 人工
+        - 人工客服
+      default_model_prompt_limit: 4K
+      # rerank 和embedding模型
+      app_rerank_model:
+        # - alias_name: youtu-reranker-llm
+        #   name: sn-llm-reranker-2b-v0.2
+        #   desc: |
+        #     LLM 增强排序模型，准确率更高，耗时将会有所增加。
+        #   is_default: true
+        #   is_free: true
+        - alias_name: youtu-reranker
+          name: sn-reranker-large-v0.4
+          desc: |
+            通用文本排序模型
+          is_free: true
+          is_default: true
+      app_embedding_model:
+        - alias_name: youtu-embedding
+          name: sn-large-multi-language-v0.2.5
+          is_default: true
+          is_free: true
+      # 思考模型模型列表
+      app_thought_model: ${APP_THOUGHT_MODEL}
+      # 模型模型列表
+      app_default_model: ${APP_DEFAULT_MODEL}
+      # 大模型输入框，角色描述，对话历史上下文上限设置
+      llm_word_limit:
+        default:
+          input_limit: 2500   # 对话框模型输入上限
+          role_len_limit: 4000  # 角色描述输入上限
+          history_words_limit: 2000  # 历史上下文输入上限
+        4K:
+          input_limit: 2500
+          role_len_limit: 4000
+          history_words_limit: 2000
+        8K:
+          input_limit: 6000
+          role_len_limit: 4000
+          history_words_limit: 4000
+        16K:
+          input_limit: 12000
+          role_len_limit: 4000
+          history_words_limit: 8000
+        32K:
+          input_limit: 12000
+          role_len_limit: 10000
+          history_words_limit: 8000
+        64K:
+          input_limit: 20000
+          role_len_limit: 20000
+          history_words_limit: 12000
+        96K:
+          input_limit: 20000
+          role_len_limit: 20000
+          history_words_limit: 12000
+        128K:
+          input_limit: 20000
+          role_len_limit: 20000
+          history_words_limit: 12000
+        256K:
+          input_limit: 200000
+          role_len_limit: 20000
+          history_words_limit: 20000
+        512K:
+          input_limit: 200000
+          role_len_limit: 50000
+          history_words_limit: 100000
+        1000K:
+          input_limit: 500000
+          role_len_limit: 100000
+          history_words_limit: 200000
+      # 模型对工作流支持的类型
+      llm_support_workflow:
+        support: ["lke-deepseek-v3", "lke-deepseek-r1", "cs-normal-70b", "hunyuan", "sn-edu-70b","lke-deepseek-r1-vip","lke-deepseek-v3-vip","lke-deepseek-v3-0324","lke-deepseek-r1-0528"]
+        poor_support: ["cs-normal","hunyuan-13B", "hunyuan-standard-256K", "hunyuan-turbo", "hunyuan-role", "finance-13b", "sn-edu-13b"]
+        not_support: ["medical-6b"]
+      # 模型对AI通话支持的类型
+      llm_support_ai_call:
+        support: ["function-call-pro","lke-deepseek-v3-function-call","lke-deepseek-v3", "cs-normal-70b", "hunyuan", "sn-edu-70b","lke-deepseek-r1-vip","lke-deepseek-v3-vip","lke-deepseek-v3-0324","cs-normal","hunyuan-13B", "hunyuan-standard-256K", "hunyuan-turbo", "hunyuan-role", "finance-13b", "sn-edu-13b","medical-6b"]
+        poor_support: ["lke-deepseek-r1","lke-deepseek-r1-0528"]
+        not_support: []
+      filters:
+        search_release:
+          top_n: 15
+          filter:
+            - doc_type: 1
+              confidence: 0.7
+              top_n: 3
+            - doc_type: 4
+              confidence: 0.8
+              top_n: 5
+            - doc_type: 2
+              confidence: 0.2
+              top_n: 5
+            - doc_type: 5
+              confidence: 0
+              top_n: 0
+            - doc_type: 8
+              confidence: 0
+              top_n: 0
+        search_release_question:
+          top_n: 1
+          skip_rechunk: true
+          filter:
+            - doc_type: 1
+              confidence: 0.97
+              top_n: 1
+        search_preview:
+          top_n: 15
+          filter:
+            - doc_type: 1
+              index_id: 2
+              confidence: 0.7
+              top_n: 3
+            - doc_type: 4
+              index_id: 7
+              confidence: 0.8
+              top_n: 5
+            - doc_type: 2
+              index_id: 4
+              confidence: 0.2
+              top_n: 5
+            - doc_type: 5
+              index_id: 0
+              confidence: 0
+              top_n: 0
+            - doc_type: 8
+              index_id: 0
+              confidence: 0
+              top_n: 0
+        search_preview_question:
+          top_n: 1
+          skip_rechunk: true
+          filter:
+            - doc_type: 1
+              index_id: 2
+              confidence: 0.97
+              top_n: 1
+        match_refer:
+          top_n: 3
+          filter:
+            - doc_type: 1
+              top_n: 3
+              rouge_score:
+                f: 0.3
+                p: 0.35
+                r: 0.35
+            - doc_type: 2
+              top_n: 3
+              rouge_score:
+                f: 0.3
+                p: 0.35
+                r: 0.35
+        search_rejected_question_preview:
+          top_n: 5
+          filter:
+            - doc_type: 3
+              index_id: 6
+              confidence: 0.93
+              top_n: 5
+        search_rejected_question_release:
+          top_n: 5
+          filter:
+            - doc_type: 3
+              confidence: 0.93
+              top_n: 5
+        search_global:
+          top_n: 1
+          filter:
+            - doc_type: 1
+              index_id: 8
+              confidence: 0.97
+              top_n: 1
+        search_engine:
+          top_n: 5
+          filter:
+            - doc_type: 4
+              confidence: 0.8
+              top_n: 5
+        rerank:
+          top_n: 20
+      search_vector:
+        confidence: 0.999
+        top_n: 3
+      embedding:
+        version: 7
+        upgrade_version: 7
+      default_doc_split:
+        qa:
+          parser_config:
+            single_paragraph: true
+            split_sub_table: true
+          splitter_config:
+            splitter: sentence
+            splitter_sentence_config:
+              enable_table: true
+              enable_image: true
+              sentence_symbols: ["。", "？", "！", "\n", "；", "!", ";", "?"]
+              max_mini_chunk_length: 1000
+          merger_config:
+            merger: length
+            merger_length_config:
+              page_content_length: 7800
+              head_overlap_length: 0
+              tail_overlap_length: 0
+              table_page_content_length: 7800
+              table_head_overlap_length: 0
+              table_tail_overlap_length: 0
+          rechunk_config:
+            head_overlap_size: 2
+            tail_overlap_size: 2
+            trim_by_symbols: ["。", "？", "！", "\n", "；", "!", ";", "?"]
+        doc:
+          parser_config:
+            single_paragraph: true
+            split_sub_table: true
+          pattern_splitter_config:
+            regexp_json: "{\"SplitMode\":{\"zhangtiao\":[\"(^第.{1,6}?章)\",\"(^第.{1,6}?条)\"],\"dunhao\":[\"(^[一二三四五六七八九十 ]+、)\",\"(（[ 零一二三四五六七八九十百]+）)\"],\"none\":[\"(^21d43jd73hk73jd93)\"]},\"SplitSequence\":[\"zhangtiao\",\"dunhao\",\"none\"],\"TitleMaxLength\":100,\"RechunkHeadOverlapSizeForPattern\":1,\"RechunkTailOverlapSizeForPattern\":4,\"ReplaceWords\":[[\"(\",\"（\"],[\")\",\"）\"]]}"
+          splitter_config:
+            splitter: token
+            splitter_token_config:
+              enable_table: true
+              enable_image: true
+              mini_chunk_length: 50
+          merger_config:
+            merger: amount
+            merger_amount_config:
+              page_content_size: 8
+              head_overlap_size: 0
+              tail_overlap_size: 2
+              table_page_content_length: 400
+              table_head_overlap_size: 1
+              table_tail_overlap_size: 0
+          rechunk_config:
+            head_overlap_size: 2
+            tail_overlap_size: 2
+            trim_by_symbols: ["。", "？", "！", "\n", "；", "!", ";", "?", "、", "，"]
+      max_char_size: 15000000
+      # 创建应用，默认角色描述为空
+      role_description:
+      greeting:
+      bare_answer: 作为一个智能助手，针对您这个问题，我所提供的答案或建议可能会存在不准确的地方。建议您转到人工，由专业顾问为您提供服务。
+      parse_strategy: 1
+      #上传文件大小 最大 100M
+      max_file_size: 104857600
+      #头像图片大小，最大 10M
+      max_avatar_size: 10485760
+      # 应用描述最大字符数限制
+      max_desc_size: 150
+      # 背景图大小10M
+      max_background_image_size: 31457280 # 30M
+      # 开场问最大数量限制
+      max_opening_questions_item: 3
+      # 单条开场问长度限制
+      max_opening_questions_item_length: 100
+        # 支持的文件类型
+      allowed_media_type: doc,docx,ppt,pptx,pdf,txt,xls,xlsx,md,jpg,png,jpeg,bmp
+      max_concurrence:
+        standard: 5
+      workflow:
+        is_enabled: true
+        use_pdl: false
+        workflow_confidence: 0.2
+        workflow_relevant_top_size: 100
+        workflow_uniq_relevant_top_size: 5
+      app_plugin_limit: 30
+      app_default_plugin:
+        - name: KnowledgeRetrievalAnswer
+          plugin_id: 3ad93aae-587e-4bcc-ae07-ad13bfb1aaca
+          tool_id: 0ca8d482-1e77-462b-bc21-807c8f052f69
+          is_binding_knowledge: true
+        - name: Calculator
+          plugin_id: 4dcbd619-670c-403d-9f3f-8284880e2ffa
+          tool_id: 7624299e-490c-4ca6-8378-0fe432421491
+        - name: HunyuanSearchSummary
+          plugin_id: fbd411cd-dcd8-4351-9fe9-ca9491cc778f
+          tool_id: 16bfcfea-2ed8-4c00-b73d-3c1757d3d843
+      app_var_types: ["STRING"]
+      search_model_free:
+        - lke-deepseek-r1
+        - lke-deepseek-v3
+        - lke-deepseek-r1-vip
+      support_custom_model:
+        is_enabled: false
+        white_list: []
+        is_free: false
+      intent_achievement_priority:
+        - name: qa
+          desc: 问答回复
+        - name: workflow
+          desc: 工作流回复
+        - name: doc
+          desc: 文档回复
+        - name: llm
+          desc: 大模型回复
+      vip_group:
+        isearch:
+          - uin: 700001851693
+            old_app_biz_ids: [1918329717553627136]
+
+
+    # smart_cate_msg_prompt: "下面的聚类中包含了多个含义相似的问题，请为这个聚类生成一个简洁、准确的聚类名称。输出要求：1.聚类名称长度不超过50个字。2.仅返回结果，不包含解释。 问题: {{`{{.Questions}}`}}"
+    app_config_white: []
+    app_sync_json: true
+
+    unsatisfied_replay_default_labels:
+      - group_name: 理解有误
+        label_names:
+          - 答非所问
+          - 未理解要求
+          - 未理解上下文信息
+      - group_name: 答案存在错误
+        label_names:
+          - 存在事实错误
+          - 存在逻辑问题
+          - 出现重复内容
+          - 格式/语法错误
+          - 内容不专业
+      - group_name: 存在违法违规信息
+        label_names:
+          - 存在违法信息
+          - 存在偏见与歧视
+          - 其他价值观问题
+      - group_name: 效果不好
+        label_names:
+          - 没有理解问题
+          - 没有完成任务
+          - 编造事实
+          - 废话太多
+          - 文风不好
+          - 没有创意
+          - 输出重复内容
+          - 系统报错
+      - group_name: 内容有风险
+        label_names:
+          - 有害/不安全
+          - 隐私相关
+
+  errors_en-US.json: |
+    {
+      "ErrParams": "Parameter error, please retry",
+      "ErrCorpNotFound": "Enterprise does not exist",
+      "ErrUserNotFound": "User does not exist",
+      "ErrStaffNotFound": "Employee does not exist",
+      "ErrPermissionDenied": "Insufficient permissions",
+      "ErrSystemIntegratorNotFound": "Integrator does not exist",
+      "ErrSystem": "System error",
+      "ErrInvalidParam": "Invalid parameter",
+      "ErrNotFound": "Not found",
+      "ErrGetBilling": "Billing items retrieval error",
+      "ErrAppIsCopying": "This application is being copied, operation not allowed",
+      "ErrAppDescOverLimit": "Application description exceeds allowed length, please modify it",
+      "ErrAccNotExistORUnAuth": "Dear user: According to national internet user real-name verification requirements and to protect your account asset security, real-name authentication must be completed before purchasing or using this product. Automatically redirecting to real-name authentication page in 3 seconds. 【Tencent Cloud】",
+      "ErrDocNotFound": "File does not exist",
+      "ErrVarExist": "Variable already exists",
+      "ErrVarParamsCountMax": "Variable parameter count exceeds maximum limit",
+      "ErrAlreadyLocked": "Processing",
+      "ErrVarNotFound": "Variable not found",
+      "ErrVarList": "Failed to obtain variable list",
+      "ErrVarInfo": "Failed to get variable information",
+      "ErrVarNameDuplicated": "Variable name is duplicated",
+      "ErrVarModify": "Failed to modify variable",
+      "ErrVarDefaultFormat": "The default value format of the custom variable is incorrect",
+      "ErrSaveDebugConfig": "Failed to save debug configuration",
+      "ErrIntentNotExist": "Intent does not exist",
+      "ErrCreateIntent": "Failed to create intent",
+      "ErrDeleteIntent": "Failed to delete intent",
+      "ErrModifyIntent": "Failed to modify intent",
+      "ErrCreateIntentPolicy": "Failed to create intent policy",
+      "ErrIntentPolicyNotExist": "Intent policy does not exist",
+      "ErrModifyIntentPolicy": "Failed to modify intent policy",
+      "ErrUnsatisfiedReplyAdding": "Adding dissatisfied response",
+      "ErrUnsatisfiedReplyDescribing": "Failed to get dissatisfied reply details",
+      "ErrIgnoreUnsatisfiedReply": "Failed to ignore dissatisfied reply",
+      "ErrListUnsatisfiedReply": "Failed to get dissatisfied reply list",
+      "ErrGetAnswerTypeDataCount": "Failed to get answer type data statistics",
+      "ErrListUnsatisfiedLabels":"Failed to list dissatisfied label",
+      "ErrModifyUnsatisfiedLabel":"Failed to modify dissatisfied label",
+      "ErrCreateUnsatisfiedLabel":"Failed to create dissatisfied label",
+      "ErrDeleteUnsatisfiedLabel":"Failed to delete dissatisfied label",
+      "ErrUnsatisfiedLabelExist":"This label already exists",
+      "ErrUnsatisfiedLabelNameTooLong":"Label name is too long",
+      "ErrUnsatisfiedGroupNameTooLong":"Group name is too long",
+      "ErrCreateSynonyms": "Failed to create synonyms",
+      "ErrListSynonyms": "Failed to get synonyms list",
+      "ErrDeleteSynonyms": "Failed to delete synonyms",
+      "ErrFileSizeTooBig": "File exceeds maximum size limit",
+      "ErrGetCateList": "Failed to get category list",
+      "ErrCateNotFound": "Category does not exist",
+      "ErrInvalidCateID": "Invalid group ID",
+      "ErrTransToCate": "Failed to transfer to category",
+      "ErrDeleteSynonymsCate": "Failed to delete synonyms category",
+      "ErrGetSynonymList": "Failed to get synonym list",
+      "ErrListSynonymsCate": "Failed to get synonyms category list",
+      "ErrModifySynonyms": "Failed to modify synonyms",
+      "ErrSynonymNotFound": "Synonym does not exist",
+      "ErrModifySynonymsCate": "Failed to modify synonyms category",
+      "ErrGetSynonymsNER": "Failed to get synonyms NER",
+      "ErrCateNameExist": "Category name already exists",
+      "ErrCreateSynonymsCate": "Failed to create synonyms category",
+      "ErrCreateAppClearFlow": "Failed to create application cleanup flow",
+      "ErrCreateAppClearSubFlow": "Failed to create application cleanup subflow",
+      "ErrGetAppClearFlow": "Failed to get application cleanup flow",
+      "ErrGetAppClearSubFlow": "Failed to get application cleanup subflow",
+      "ErrUpdateAppClearFlow": "Failed to update application cleanup flow",
+      "ErrUpdateAppClearSubFlow": "Failed to update application cleanup subflow",
+      "ErrAuditNotFound": "Audit record does not exist",
+      "ErrStorageFileLimit": "Storage file count exceeds limit",
+      "ErrPromptVersionIsEmpty": "Prompt version is empty",
+      "ErrAppClearFlowNotFound": "Application cleanup flow does not exist",
+      "ErrGetWaitAppClearFlow": "Failed to get pending application cleanup flow",
+      "ErrStatisticsBusinessNameInvalid": "Statistics business name invalid",
+      "ErrOverExportMaxCountLimit": "Exceeded maximum export count limit",
+      "ErrExportSynonymsList": "Failed to export synonyms list",
+      "ErrExportSynonyms": "Failed to export synonyms",
+      "ErrExportSynonymsTooMany": "Too many synonyms to export",
+      "ErrExportBillingInfo": "Failed to export billing information",
+      "ErrAvatarURLFail": "Avatar address error, please re-upload",
+      "ErrAvatarURLValid": "Avatar URL is invalid",
+      "ErrImageSize": "Image size exceeds limit",
+      "ErrModifyApp": "Failed to modify application",
+      "ErrAppTypeInvalid": "Application type invalid",
+      "ErrNotDefaultModel": "Not default model",
+      "ErrAppNotSupportModelList": "Corresponding model list not found for the application",
+      "ErrAppPatternInvalid": "Application pattern invalid",
+      "ErrDescribeAppList": "Failed to get application list",
+      "ErrNotFoundModel": "Model configuration not found",
+      "ErrDescribeApp": "Failed to get application details",
+      "ErrDeleteApp": "Failed to delete application",
+      "ErrCopyApp": "Failed to copy application",
+      "ErrCallLicenseServer": "Failed to call license server",
+      "ErrLicenseExpired": "License expired",
+      "ErrLicenseTypeInvalid": "License type invalid",
+      "ErrAtomicTypeInvalid": "Atomic type invalid",
+      "ErrModelTypeInvalid": "Model type invalid",
+      "ErrEmbeddingVersionNotMatch": "Embedding version mismatch",
+      "ErrUpdateEmbedding": "Failed to update embedding",
+      "ErrRepeatRobotName": "Nickname duplicated, please re-enter",
+      "ErrAppQuotaNotEnough": "Application quota insufficient",
+      "ErrInvalidSearchAPIKey": "Invalid search API key",
+      "ErrWebSearchAPIKeyValidatorNotFound": "Web search API key validator not found",
+      "ErrModifySearchAPIKey": "Failed to modify search API key",
+      "ErrCreateSearchAPIKey": "Failed to create search API key",
+      "ErrGetSearchAPIKey": "Failed to get search API key",
+      "ErrSearchAPIKeyExceedLimit": "Search API key exceeds limit",
+      "ErrCreateSearchAPIKeyDuplicated": "Search API key creation duplicated",
+      "ErrExistYuanqi": "Yuanqi already exists",
+      "ErrCreateYuanqi": "Failed to create Yuanqi",
+      "ErrExistYingyongbao": "Yingyongbao already exists",
+      "ErrCreateYingyongbao": "Failed to create Yingyongbao",
+      "ErrCreateNotSupportChannelType": "Unsupported channel type",
+      "ErrCreateWxKfIdFailed": "Failed to create WeChat customer service ID",
+      "ErrGetWxkfInfoFailed": "Failed to get WeChat customer service information",
+      "ErrWecomAgentNotFound": "WeCom application not found",
+      "ErrYuanqiInfoNotFound": "Yuanqi information not found",
+      "ErrExistWxChannel": "WeChat channel already exists",
+      "ErrCreateWxKfIdIsExist": "WeChat customer service ID already exists",
+      "ErrGetKfIdInfoNotFound": "Customer service ID information not found",
+      "ErrChannelNotFound": "Channel not found",
+      "ErrCreateChannelFailed": "Failed to create channel",
+      "ErrChannelAlreadyExist": "Channel already exists",
+      "ErrChannelParamsFail": "Channel parameter error",
+      "ErrExtractNumberFromURL": "Failed to extract number from URL",
+      "ErrWecomInfoParamsVerifyFailed": "WeCom information parameter verification failed",
+      "ErrWecomInfoIsNotCorrect": "WeCom information is incorrect",
+      "ErrWecomNginxConfFailed": "WeCom Nginx configuration failed",
+      "ErrWecomInfoIllegal": "WeCom information illegal",
+      "ErrAuditCallBack": "Audit callback failed",
+      "ErrGetAuditStats": "Failed to get audit statistics",
+      "ErrDoingRelease": "Releasing in progress",
+      "ErrExportConcurrencyInfo": "Failed to export concurrency information",
+      "ErrReleaseNotFound": "Release record not found",
+      "ErrParamsNotExpected": "Parameters not as expected",
+      "ErrReleaseConfigNotFound": "Release configuration not found",
+      "ErrFileTypeInvalid": "File type invalid",
+      "ErrUpdateAuditStatus": "Failed to update audit status",
+      "ErrUpdateReleaseConfig": "Failed to update release configuration",
+      "ErrSingleWorkflowEmpty": "Single workflow is empty",
+      "ErrWorkflowInvalid": "Workflow invalid",
+      "ErrDoingEmbeddingTask": "Embedding task in progress",
+      "ErrEmbeddingUpgrading": "Embedding upgrading",
+      "ErrOperateDoing": "Request processing, please wait",
+      "ErrReleasePause": "Release paused",
+      "ErrNoReleaseQA": "No publishable documents/Q&A/rejections/task flows/application configurations/tags/synonyms/plugins",
+      "ErrGetRelease": "Failed to get release record",
+      "ErrRetryRelease": "Release retry failed, only paused releases can be retried",
+      "ErrRetryReleaseFail": "Release retry failed",
+      "ErrReleaseIsNotPending": "Release order is not in the pending callback status",
+      "ErrUpdateRelease": "Failed to update release data",
+      "ErrReleaseIsNotInit": "Release status is not initialized",
+      "ErrAuditCallbackDoing": "Audit callback processing",
+      "ErrInvalidAuditSource": "Invalid audit source",
+      "ErrUnmarshalReleaseConfig": "Failed to parse release data",
+      "ErrAuditAppealIng": "Audit appeal processing",
+      "ErrSynonymsTaskNotFound": "Synonyms task not found",
+      "ErrSynonymsTaskImportFailWithConflict": "Synonyms task import failed due to conflict",
+      "ErrUploadSynonymsList": "Failed to upload synonyms list",
+      "ErrAppealTypeNotMatch": "Appeal type mismatch",
+      "ErrAppealNotFound": "Appeal record not found",
+      "ErrExcelIsEmpty": "Excel file is empty",
+      "ErrInvalidDocQaExcel": "Invalid document Q&A Excel file",
+      "ErrExcelHead": "Excel header error",
+      "ErrExcelContent": "Excel content error",
+      "ErrInvalidSampleSetExcel": "Invalid sample set Excel file",
+      "ErrSynonymsInvalidStandard": "Synonyms standardization error",
+      "ErrSynonymsTooMany": "Too many synonyms",
+      "ErrSynonymsInvalidWord": "Invalid synonym",
+      "ErrCopyVar": "Failed to copy variable",
+      "ErrCopyAgent": "Failed to copy agent",
+      "ErrCheckVarIsUsed": "Failed to check if variable is used",
+      "ErrAppPatternChange": "Application pattern change not allowed",
+      "ErrOpeningQuestionItemsLimit": "Example question count exceeds limit",
+      "ErrOpeningQuestionLengthLimit": "Single example question length exceeds limit",
+      "ErrRepeatApiValue": "API parameter duplicated",
+      "ErrRepeatAttrValue": "Tag name duplicated",
+      "ErrEmptyName": "Robot nickname cannot be empty",
+      "ErrEmptyAvatar": "Robot avatar cannot be empty",
+      "ErrSearchEngineNoResource": "Search engine resources exhausted",
+      "ErrAuditExtensionNotFound": "Audit extension not found",
+      "ErrCorpAppNotEqual": "Enterprise and application ownership do not match",
+      "ErrAppBizIDParams":"Err AppBizID Params",
+      "ErrReleaseWorkIDEmpty":"The application is not associated with a workflow and cannot be published.",
+      "ErrReleaseWorkflowEnable":"Application-related workflows are not enabled and cannot be published."
+    }
+  errors_zh-CN.json: |
+    {
+      "ErrParams": "参数异常，请重试",
+      "ErrCorpNotFound": "企业不存在",
+      "ErrUserNotFound": "用户不存在",
+      "ErrStaffNotFound": "员工不存在",
+      "ErrPermissionDenied": "权限不足",
+      "ErrSystemIntegratorNotFound": "系统集成商不存在",
+      "ErrSystem": "系统错误",
+      "ErrInvalidParam": "参数无效",
+      "ErrNotFound": "未找到",
+      "ErrGetBilling": "获取计费项异常",
+      "ErrAppIsCopying": "应用正在复制中",
+      "ErrAppDescOverLimit": "应用描述超过允许长度，请自行修改",
+      "ErrAccNotExistORUnAuth": "尊敬的用户: 根据国家互联网用户实名制相关要求，同时为保障您的账号资产安全，购买或使用该产品之前，需先完成实名认证。3s后自动跳转实名认证页面。 【腾讯云】",
+      "ErrDocNotFound": "文档不存在",
+      "ErrVarExist": "变量已存在",
+      "ErrVarParamsCountMax": "变量参数数量超过最大限制",
+      "ErrAlreadyLocked": "已被锁定",
+      "ErrVarNotFound": "变量不存在",
+      "ErrVarList": "获取变量列表失败",
+      "ErrVarInfo": "获取变量信息失败",
+      "ErrVarNameDuplicated": "变量名重复",
+      "ErrVarModify": "修改变量失败",
+      "ErrVarDefaultFormat": "变量默认值格式错误",
+      "ErrSaveDebugConfig": "保存调试配置失败",
+      "ErrIntentNotExist": "意图不存在",
+      "ErrCreateIntent": "创建意图失败",
+      "ErrDeleteIntent": "删除意图失败",
+      "ErrModifyIntent": "修改意图失败",
+      "ErrCreateIntentPolicy": "创建意图策略失败",
+      "ErrIntentPolicyNotExist": "意图策略不存在",
+      "ErrModifyIntentPolicy": "修改意图策略失败",
+      "ErrUnsatisfiedReplyAdding": "添加不满意回复失败",
+      "ErrUnsatisfiedReplyDescribing": "获取不满意回复详情失败",
+      "ErrIgnoreUnsatisfiedReply": "忽略不满意回复失败",
+      "ErrListUnsatisfiedReply": "获取不满意回复列表失败",
+      "ErrGetAnswerTypeDataCount": "获取回答类型数据统计失败",
+      "ErrListUnsatisfiedLabels":"获取不满意回复标签列表失败",
+      "ErrModifyUnsatisfiedLabel":"更改不满意回复标签失败",
+      "ErrCreateUnsatisfiedLabel":"创建不满意回复标签失败",
+      "ErrDeleteUnsatisfiedLabel":"删除不满意回复标签失败",
+      "ErrUnsatisfiedLabelExist":"不满意回复标签已存在",
+      "ErrUnsatisfiedLabelNameTooLong":"标签名过长",
+      "ErrUnsatisfiedGroupNameTooLong":"分组名过长",
+      "ErrCreateSynonyms": "创建同义词失败",
+      "ErrListSynonyms": "获取同义词列表失败",
+      "ErrDeleteSynonyms": "删除同义词失败",
+      "ErrFileSizeTooBig": "文件大小超过限制",
+      "ErrGetCateList": "获取分类列表失败",
+      "ErrCateNotFound": "分类不存在",
+      "ErrInvalidCateID": "无效的分类ID",
+      "ErrTransToCate": "转移到分类失败",
+      "ErrDeleteSynonymsCate": "删除同义词分类失败",
+      "ErrGetSynonymList": "获取同义词列表失败",
+      "ErrListSynonymsCate": "获取同义词分类列表失败",
+      "ErrModifySynonyms": "修改同义词失败",
+      "ErrSynonymNotFound": "同义词不存在",
+      "ErrModifySynonymsCate": "修改同义词分类失败",
+      "ErrGetSynonymsNER": "获取同义词NER失败",
+      "ErrCateNameExist": "分类名称已存在",
+      "ErrCreateSynonymsCate": "创建同义词分类失败",
+      "ErrCreateAppClearFlow": "创建应用清理流程失败",
+      "ErrCreateAppClearSubFlow": "创建应用清理子流程失败",
+      "ErrGetAppClearFlow": "获取应用清理流程失败",
+      "ErrGetAppClearSubFlow": "获取应用清理子流程失败",
+      "ErrUpdateAppClearFlow": "更新应用清理流程失败",
+      "ErrUpdateAppClearSubFlow": "更新应用清理子流程失败",
+      "ErrAuditNotFound": "审核记录不存在",
+      "ErrStorageFileLimit": "存储文件数量超过限制",
+      "ErrPromptVersionIsEmpty": "提示词版本为空",
+      "ErrAppClearFlowNotFound": "应用清理流程不存在",
+      "ErrGetWaitAppClearFlow": "获取待处理应用清理流程失败",
+      "ErrStatisticsBusinessNameInvalid": "统计业务名称无效",
+      "ErrOverExportMaxCountLimit": "超过导出最大数量限制",
+      "ErrExportSynonymsList": "导出同义词列表失败",
+      "ErrExportSynonyms": "导出同义词失败",
+      "ErrExportSynonymsTooMany": "导出同义词数量过多",
+      "ErrExportBillingInfo": "导出计费信息失败",
+      "ErrAvatarURLFail": "头像地址错误，请重新上传",
+      "ErrAvatarURLValid": "头像URL不合法",
+      "ErrImageSize": "图片大小超过限制",
+      "ErrModifyApp": "修改应用失败",
+      "ErrAppTypeInvalid": "应用类型无效",
+      "ErrNotDefaultModel": "非默认模型",
+      "ErrAppNotSupportModelList": "未找到相应模型列表",
+      "ErrAppPatternInvalid": "应用模式无效",
+      "ErrDescribeAppList": "获取应用列表失败",
+      "ErrNotFoundModel": "未找到模型配置",
+      "ErrDescribeApp": "获取应用详情失败",
+      "ErrDeleteApp": "删除应用失败",
+      "ErrCopyApp": "复制应用失败",
+      "ErrCallLicenseServer": "调用许可证服务失败",
+      "ErrLicenseExpired": "许可证已过期",
+      "ErrLicenseTypeInvalid": "许可证类型无效",
+      "ErrAtomicTypeInvalid": "原子类型无效",
+      "ErrModelTypeInvalid": "模型类型无效",
+      "ErrEmbeddingVersionNotMatch": "嵌入版本不匹配",
+      "ErrUpdateEmbedding": "更新嵌入失败",
+      "ErrRepeatRobotName": "昵称重复，请重新输入",
+      "ErrAppQuotaNotEnough": "应用配额不足",
+      "ErrInvalidSearchAPIKey": "无效的搜索API密钥",
+      "ErrWebSearchAPIKeyValidatorNotFound": "网络搜索API密钥验证器不存在",
+      "ErrModifySearchAPIKey": "修改搜索API密钥失败",
+      "ErrCreateSearchAPIKey": "创建搜索API密钥失败",
+      "ErrGetSearchAPIKey": "获取搜索API密钥失败",
+      "ErrSearchAPIKeyExceedLimit": "搜索API密钥超过限制",
+      "ErrCreateSearchAPIKeyDuplicated": "创建搜索API密钥重复",
+      "ErrExistYuanqi": "元器已存在",
+      "ErrCreateYuanqi": "创建元器失败",
+      "ErrExistYingyongbao": "应用宝已存在",
+      "ErrCreateYingyongbao": "创建应用宝失败",
+      "ErrCreateNotSupportChannelType": "不支持的渠道类型",
+      "ErrCreateWxKfIdFailed": "创建微信客服ID失败",
+      "ErrGetWxkfInfoFailed": "获取微信客服信息失败",
+      "ErrWecomAgentNotFound": "企业微信应用不存在",
+      "ErrYuanqiInfoNotFound": "元器信息不存在",
+      "ErrExistWxChannel": "微信渠道已存在",
+      "ErrCreateWxKfIdIsExist": "微信客服ID已存在",
+      "ErrGetKfIdInfoNotFound": "客服ID信息不存在",
+      "ErrChannelNotFound": "渠道不存在",
+      "ErrCreateChannelFailed": "创建渠道失败",
+      "ErrChannelAlreadyExist": "渠道已存在",
+      "ErrChannelParamsFail": "渠道参数错误",
+      "ErrExtractNumberFromURL": "从URL提取数字失败",
+      "ErrWecomInfoParamsVerifyFailed": "企业微信信息参数验证失败",
+      "ErrWecomInfoIsNotCorrect": "企业微信信息不正确",
+      "ErrWecomNginxConfFailed": "企业微信Nginx配置失败",
+      "ErrWecomInfoIllegal": "企业微信信息不合法",
+      "ErrAuditCallBack": "审核回调失败",
+      "ErrGetAuditStats": "获取审核统计失败",
+      "ErrDoingRelease": "正在发布中",
+      "ErrExportConcurrencyInfo": "导出并发信息失败",
+      "ErrReleaseNotFound": "发布记录不存在",
+      "ErrParamsNotExpected": "参数不符合预期",
+      "ErrReleaseConfigNotFound": "发布配置不存在",
+      "ErrFileTypeInvalid": "文件类型无效",
+      "ErrUpdateAuditStatus": "更新审核状态失败",
+      "ErrUpdateReleaseConfig": "更新发布配置失败",
+      "ErrSingleWorkflowEmpty": "单一工作流为空",
+      "ErrWorkflowInvalid": "工作流无效",
+      "ErrDoingEmbeddingTask": "正在执行嵌入任务",
+      "ErrEmbeddingUpgrading": "嵌入正在升级",
+      "ErrOperateDoing": "请求处理中，请稍候",
+      "ErrReleasePause": "发布已暂停",
+      "ErrNoReleaseQA": "没有可发布的文档/问答/拒答/任务流程/应用配置/标签/同义词/插件",
+      "ErrGetRelease": "获取发布记录失败",
+      "ErrRetryRelease": "发布重试失败，必须是发布暂停中才可以重试",
+      "ErrRetryReleaseFail": "发布重试失败",
+      "ErrReleaseIsNotPending": "发布单不是待回调状态",
+      "ErrUpdateRelease": "更新发布数据失败",
+      "ErrReleaseIsNotInit": "发布状态不是初始化",
+      "ErrAuditCallbackDoing": "审核回调处理中",
+      "ErrInvalidAuditSource": "无效的审核来源",
+      "ErrUnmarshalReleaseConfig": "解析发布数据失败",
+      "ErrAuditAppealIng": "审核申诉处理中",
+      "ErrSynonymsTaskNotFound": "同义词任务不存在",
+      "ErrSynonymsTaskImportFailWithConflict": "同义词任务导入失败，存在冲突",
+      "ErrUploadSynonymsList": "上传同义词列表失败",
+      "ErrAppealTypeNotMatch": "申诉类型不匹配",
+      "ErrAppealNotFound": "申诉记录不存在",
+      "ErrExcelIsEmpty": "Excel文件为空",
+      "ErrInvalidDocQaExcel": "无效的文档问答Excel文件",
+      "ErrExcelHead": "Excel表头错误",
+      "ErrExcelContent": "Excel内容错误",
+      "ErrInvalidSampleSetExcel": "无效的样本集Excel文件",
+      "ErrSynonymsInvalidStandard": "同义词标准化错误",
+      "ErrSynonymsTooMany": "同义词过多",
+      "ErrSynonymsInvalidWord": "无效的同义词",
+      "ErrCopyVar": "复制变量失败",
+      "ErrCopyAgent": "复制代理失败",
+      "ErrCheckVarIsUsed": "检查变量是否被使用失败",
+      "ErrAppPatternChange": "应用模式不允许变更",
+      "ErrOpeningQuestionItemsLimit": "示例问数量超过限制",
+      "ErrOpeningQuestionLengthLimit": "单条示例问题长度超过限制",
+      "ErrRepeatApiValue": "API参数重复",
+      "ErrRepeatAttrValue": "标签名重复",
+      "ErrEmptyName": "机器人昵称不能为空",
+      "ErrEmptyAvatar": "机器人头像不能为空",
+      "ErrSearchEngineNoResource": "搜索引擎资源已用尽",
+      "ErrAuditExtensionNotFound": "审核扩展不存在",
+      "ErrCorpAppNotEqual": "企业与应用归属企业不一致",
+      "ErrAppBizIDParams":"应用id格式不正确",
+      "ErrReleaseWorkIDEmpty":"应用未关联工作流,不能发布",
+      "ErrReleaseWorkflowEnable":"应用关联工作流未启用,不能发布"
+    }
+  knowledge_qa_model.yaml: |
+    knowledge_qa_model:
+      intent_recognize:
+        prompt_words_limit: 3800
+        history_limit: 0
+        history_words_limit: 0
+        is_enabled: true
+        model_name: {{ .Values.app_config.knowledge_qa_model.intent_recognize_model_name }}
+        prompt_version: v4
+        model_prompt_version:
+          lke-deepseek-v3: v1
+          lke-deepseek-v3-0324: v1
+      transfer:
+        prompt_words_limit: 3800
+        history_limit: 0
+        history_words_limit: 0
+        is_enabled: true
+        model_name: cs-intention
+        prompt_version: v1
+      normal_message:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 2000
+        is_enabled: true
+        model_name: cs-normal
+        prompt_version: v13
+        model_prompt_version:
+          hunyuan : v3
+          hunyuan-13B : v3
+          hunyuan-standard-256K: v3
+          deepseek-r1-sft: v1
+      normal_message_non_general_knowledge:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 2000
+        is_enabled: true
+        model_name: cs-normal
+        prompt_version: v13
+        model_prompt_version:
+          hunyuan : v3
+          hunyuan-13B : v3
+          hunyuan-standard-256K: v3
+          deepseek-r1-sft: v1
+      normal_evaluation:
+        prompt_words_limit: 3800
+        history_limit: 0
+        history_words_limit: 0
+        is_enabled: true
+        model_name: cs-normal-evaluation
+        prompt_version: v1
+      abstract:
+        prompt_words_limit: 3800
+        history_limit: 200
+        history_words_limit: 2000
+        is_enabled: true
+        model_name: default
+        prompt_version: v1
+      summary:
+        prompt_words_limit: 3800
+        history_limit: 200
+        history_words_limit: 2000
+        is_enabled: true
+        model_name: default
+        prompt_version: v1
+      qa_extract:
+        prompt_words_limit: 7800
+        history_limit: 0
+        history_words_limit: 0
+        is_enabled: true
+        model_name: default
+        prompt_version: v1
+      query_rewrite:
+        prompt_words_limit: 3800
+        history_limit: 5
+        history_words_limit: 0
+        is_enabled: true
+        model_name: cs-rewrite
+        prompt_version: v1
+      complex_query_rewrite:
+        prompt_words_limit: 3800
+        history_limit: 5
+        history_words_limit: 0
+        is_enabled: true
+        model_name: cs-rewrite
+        prompt_version: v1
+      multi_model_rewrite:
+        # 多模态改写
+        prompt_words_limit: 3800
+        history_limit: 5
+        history_words_limit: 0
+        is_enabled: true
+        prompt_version: v1
+        model_name:
+      sougou_summary:
+        # 搜狗搜索+总结
+        prompt_words_limit: 3800
+        history_limit: 5
+        history_words_limit: 0
+        is_enabled: true
+        prompt_version: v1
+        model_name:
+      rerank:
+        prompt_words_limit: 3800
+        is_enabled: true
+        model_name: sn-reranker-large-v0.4
+        prompt_version: v1
+      recommended:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 2000
+        is_enabled: true
+        model_name: cs-normal
+        prompt_version: v1
+      faq_def:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 2000
+        is_enabled: true
+        model_name:
+        prompt_version: v2
+      faq_reject_prompt:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 2000
+        is_enabled: true
+        model_name:
+        prompt_version: v2
+      mllm_comprehension:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 2000
+        is_enabled: true
+        model_name: cs-normal-mllm-72B
+        prompt_version: v2
+      real_time_doc:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 2000
+        is_enabled: true
+        model_name: cs-normal
+        prompt_version: v1
+      faq_system_prompt:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 2000
+        is_enabled: true
+        model_name:
+        prompt_version: v1
+      ds_r1_summary_prompt:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 2000
+        is_enabled: true
+        model_name:
+        prompt_version: v1
+      mllm_dialog:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 2000
+        is_enabled: true
+        model_name:
+        prompt_version: v1
+      long_term_memory: #长期记忆prompt
+        prompt_words_limit: 2000
+        history_limit: 5
+        history_words_limit: 2000
+        is_enabled: true
+        model_name:
+        prompt_version: v1
+      text2sql: #text2sql prompt
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: {{ .Values.app_config.knowledge_qa_model.text2sql_model_name }}
+        prompt_version: v1
+      text2sql_result: #text2sql result结果渲染
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name:
+        prompt_version: v1
+      greeting_prompt: #一键优化欢迎语prompt
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      generate_similar_qa: #生成相似问
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      kb_schema_doc_summary: #知识库schema文档生成摘要
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      kb_schema_dir_summary: #知识库schema目录生成摘要
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      role_prompt:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      role_no_intent_prompt:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      agent_transfer_description:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+  parse_model.yaml: |
+    parse_model:
+      # 总结模型
+      parse_cs_normal:
+        is_enabled: true
+        prompt_version: v1
+      # 切分模型
+      parse_split_model:
+        is_enabled: true
+        prompt_version: v2
+      # 切分模型带标题
+      parse_split_model_title:
+        is_enabled: true
+        prompt_version: v2
+      # 表头提取
+      parse_table_header_model:
+        is_enabled: true
+        prompt_version: v2
+      # 去小图模型
+      parse_rm_use_less_image_model:
+        is_enabled: true
+        prompt_version: v1
+  placeholder.yaml: |
+    MYSQL_QBOT_ADMIN_USER: {{ .Values.global.components.db.user }}
+    MYSQL_QBOT_ADMIN_PASSWORD: "{{ .Values.global.components.db.password }}"
+    MYSQL_QBOT_ADMIN_HOST: {{ .Values.global.components.db.host }}
+    MYSQL_QBOT_ADMIN_PORT: {{ .Values.global.components.db.port }}
+
+    TDSQL_QBOT_ADMIN_USER: {{ .Values.global.components.db.user }}
+    TDSQL_QBOT_ADMIN_PASSWORD: "{{ .Values.global.components.db.password }}"
+    TDSQL_QBOT_ADMIN_HOST: {{ .Values.global.components.db.host }}
+    TDSQL_QBOT_ADMIN_PORT: {{ .Values.global.components.db.port }}
+
+    ISEARCH_TDSQL_QBOT_ADMIN_USER: {{ .Values.global.components.db.user }}
+    ISEARCH_TDSQL_QBOT_ADMIN_PASSWORD: "{{ .Values.global.components.db.password }}"
+    ISEARCH_TDSQL_QBOT_ADMIN_HOST: {{ .Values.global.components.db.host }}
+    ISEARCH_TDSQL_QBOT_ADMIN_PORT: {{ .Values.global.components.db.port }}
+
+    MYSQL_DB_LLM_ROBOT_TASK_USER: {{ .Values.global.components.db.user }}
+    MYSQL_DB_LLM_ROBOT_TASK_PASSWORD:  {{ .Values.global.components.db.password }}
+    MYSQL_DB_LLM_ROBOT_TASK_HOST: {{ .Values.global.components.db.host }}
+    MYSQL_DB_LLM_ROBOT_TASK_PORT: {{ .Values.global.components.db.port }}
+
+    MYSQL_DB_LLM_ROBOT_TASK_PROD_USER: {{ .Values.global.components.db.user }}
+    MYSQL_DB_LLM_ROBOT_TASK_PROD_PASSWORD: "{{ .Values.global.components.db.password }}"
+    MYSQL_DB_LLM_ROBOT_TASK_PROD_HOST: {{ .Values.global.components.db.host }}
+    MYSQL_DB_LLM_ROBOT_TASK_PROD_PORT: {{ .Values.global.components.db.port }}
+
+    MYSQL_DB_LLM_ROBOT_WORKFLOW_USER: {{ .Values.global.components.db.user }}
+    MYSQL_DB_LLM_ROBOT_WORKFLOW_PASSWORD: "{{ .Values.global.components.db.password }}"
+    MYSQL_DB_LLM_ROBOT_WORKFLOW_HOST: {{ .Values.global.components.db.host }}
+    MYSQL_DB_LLM_ROBOT_WORKFLOW_PORT: {{ .Values.global.components.db.port }}
+
+    REDIS_QBOT_ADMIN_TARGET: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/4
+    REDIS_QBOT_ADMIN_PASSWORD: "{{ .Values.global.components.redis.password }}"
+
+    AGENT_CONFIG_API_TARGET: ip://agentconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    AI_GATEWAY_ADMIN_TARGET: ip://ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
+
+    FINANCE_TARGET: ip://finance.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    AI_GATEWAY_API_TARGET: ip://ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    PLUGIN_CONFIG_API_TARGET: ip://pluginconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    TASK_CONFIG_TARGET: ip://bottaskconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+
+    KB_CONFIG_API_TARGET: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+
+    PLATFORM_ADMIN_TAGGET: ip://platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    RESOURCE_GALLERY_ADMIN_TARGET: ip://resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    AI_CONF_MANAGER_TARGET: ip://aiconfmanagerserver.{{ .Release.Namespace }}.svc.cluster.local:10002
+
+    CHANNEL_TOKEN_TARGET: ip://channeltokensvr.{{ .Release.Namespace }}.svc.cluster.local:8000
+    
+    ADMIN_CONFIG_SERVER_LOGIN_TARGET: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+    KB_SMARTASSISTANT_ENTITYEXTRACTOR_TARGET: ip://entity-extractor-server.{{ .Release.Namespace }}.svc.cluster.local:10001
+    KB_SMARTASSISTANT_ENTITYEXTRACTORSANDBOX_TARGET: ip://entity-extractor-server-sand-box.{{ .Release.Namespace }}.svc.cluster.local:10001
+    TARGET_INFOSECS: ip://infosec.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    COS_ACCESS_TARGET:
+      {{ if eq .Values.global.components.s3.providerType "minio" }}
+      ip://minio.{{ .Release.Namespace }}.svc.cluster.local:80
+      {{ else if eq .Values.global.components.s3.providerType "obs" }}
+      ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}
+      {{ else }}
+      dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn
+      {{ end }}
+
+    CHANNEL_MSG_SVR_API_TARGET: ip://channelmsgsvr.{{ .Release.Namespace }}.svc.cluster.local:8002
+
+    ACCESS_MANAGER_TARGET: ip://accessmanagerserver.{{ .Release.Namespace }}.svc.cluster.local:10001
+
+    BOT_DATA_STATISTICS_SERVER_API_TARGET: ip://botdatastatisticsserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+
+    BOT_MEMBER_SERVER_MEMORYINNER_TARGET: ip://bot-memory-server.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    KB_RETRIEVAL_RETRIEVAL_TARGET: ip://botretrievalserver.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    KB_RETRIEVAL_DIRECINDEX: ip://botretrievalserver.{{ .Release.Namespace }}.svc.cluster.local:9091
+
+
+
+
+    COOKIE_DOMAIN: {{ .Values.global.clb }}
+
+    EXP_COOKIE_DOMAIN: {{ .Values.global.clb }}
+
+    STORAGE:
+      {{ if eq .Values.global.components.s3.providerType "minio" }}
+      type: minio
+      minio:
+        secret_id: cspuser
+        secret_key: {{ .Values.global.components.s3.minio.secretKey }}
+        region: ""
+        bucket: qbot
+        sts_endpoint: http://{{ .Values.global.components.s3.minio.host }}
+        end_point: {{ .Values.global.components.s3.minio.host }}
+        external_endpoint: {{ .Values.global.clb }}
+        use_https: {{ eq .Values.global.scheme "https" }}
+        expire_time: 30m
+      min_io_map:
+        offline:
+          secret_id: cspuser
+          secret_key: {{ .Values.global.components.s3.minio.secretKey }}
+          region: ""
+          bucket: qbot
+          sts_endpoint: http://{{ .Values.global.components.s3.minio.host }}
+          end_point: {{ .Values.global.components.s3.minio.host }}
+          external_endpoint: {{ .Values.global.clb }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+        realtime:
+          secret_id: cspuser
+          secret_key: {{ .Values.global.components.s3.minio.secretKey }}
+          region: ""
+          bucket: qbot
+          sts_endpoint: http://{{ .Values.global.components.s3.minio.host }}
+          end_point: {{ .Values.global.components.s3.minio.host }}
+          external_endpoint: {{ .Values.global.clb }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+          credential_time: 10m
+      {{ else if  eq .Values.global.components.s3.providerType "obs" }}
+      type: obs
+      obs:
+        secret_id: {{ .Values.global.components.s3.obs.secretId }}
+        secret_key: {{ .Values.global.components.s3.obs.secretKey }}
+        region: {{ .Values.global.components.s3.obs.region }}
+        bucket: qbot
+        sts_endpoint: "http://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}"
+        end_point: {{ .Values.global.components.s3.obs.host }}
+        use_https: false
+        expire_time: 30m
+      obs_map:
+        offline:
+          secret_id: {{ .Values.global.components.s3.obs.secretId }}
+          secret_key: {{ .Values.global.components.s3.obs.secretKey }}
+          region: {{ .Values.global.components.s3.obs.region }}
+          bucket: qbot
+          sts_endpoint: "http://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}"
+          end_point: {{ .Values.global.components.s3.obs.host }}
+          use_https: false
+          expire_time: 30m
+        realtime:
+          secret_id: {{ .Values.global.components.s3.obs.secretId }}
+          secret_key: {{ .Values.global.components.s3.obs.secretKey }}
+          region: {{ .Values.global.components.s3.obs.region }}
+          bucket: qbot
+          sts_endpoint: "http://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}"
+          end_point: {{ .Values.global.components.s3.obs.host }}
+          use_https: false
+          expire_time: 30m
+          credential_time: 10m
+      {{ else }}
+      type: cos
+      cos:
+        secret_id: {{ .Values.global.components.s3.cos.secretId }}
+        secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+        app_id: {{ printf "%.0f" .Values.global.components.s3.cos.appId | quote }}
+        region: {{ .Values.global.components.s3.cos.region }}
+        bucket: {{ .Values.global.components.s3.cos.bucket }}
+        domain: {{ .Values.global.components.s3.cos.domain }}
+        expire_time: 30m
+        credential_time: 10m
+      cos_map:
+        offline:
+          secret_id: {{ .Values.global.components.s3.cos.secretId }}
+          secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+          app_id: {{ printf "%.0f" .Values.global.components.s3.cos.appId | quote }}
+          region: {{ .Values.global.components.s3.cos.region }}
+          bucket: {{ .Values.global.components.s3.cos.bucket }}
+          domain: {{ .Values.global.components.s3.cos.domain }}
+          expire_time: 30m
+          credential_time: 10m
+        realtime:
+          secret_id: {{ .Values.global.components.s3.cos.secretId }}
+          secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+          app_id: {{ printf "%.0f" .Values.global.components.s3.cos.appId | quote }}
+          region: {{ .Values.global.components.s3.cos.region }}
+          bucket: {{ .Values.global.components.s3.cos.bucket }}
+          domain: {{ .Values.global.components.s3.cos.domain }}
+          expire_time: 30m
+          credential_time: 10m
+      {{ end }}
+      file_limit:
+        offline:
+          - type_name: document_200
+            types: [pdf,doc,docx,ppt,mhtml,pptx,wps,ppsx]
+            size: 200
+          - type_name: document_20
+            types: [xlsx,xls,md,txt,csv,html,json,log,xml,xmind]
+            size: 20
+          - type_name: image
+            types: [jpg,png,jpeg,tiff,bmp,gif]
+            size: 50
+          - type_name: zip
+            types: [zip]
+            size: 5
+          - type_name: video
+            types: [wmv,3gp,avi,f4v,m4v,mp4,mpg,ogv,vob,mov,flv,mkv,rm,rmvb,mpeg,webm]
+            size: 2048
+          - type_name: meida_50
+            types: [mp3,wav,aac,flac]
+            size: 50
+        realtime:
+          - type_name: document
+            types: [doc,docx,ppt,pptx,pdf,txt,xls,xlsx,md]
+            size: 20
+          - type_name: document_md
+            types: [md,csv,json]
+            size: 20
+          - type_name: image
+            types: [jpg,png,jpeg,bmp,webp]
+            size: 20
+          - type: video
+            types: [mp4,mkv,avi,mov,wmv]
+            size: 100
+          - type: media
+            types: [mp3,wav,pcm,m4a,arm,aac,flac]
+            size: 100
+          - type_name: zip
+            types: [zip]
+            size: 100
+    USER_AVATAR:
+      {{ if eq .Values.global.components.s3.providerType "minio" }}
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_swan01.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_tiger01.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_tiger02.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_cat01.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_cattle01.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_dolphin01.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_dragon01.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_dragon02.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_flamingo01.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_koala01.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_monkey01.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_owl01.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_owl02.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_panda01.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_penguin01.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_rabbit01.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_rabbit02.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_seal01.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_sheep01.png
+      - {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/avatar_squirrel01.png
+      {{ else if eq .Values.global.components.s3.providerType "obs" }}
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_swan01.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_tiger01.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_tiger02.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_cat01.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_cattle01.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_dolphin01.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_dragon01.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_dragon02.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_flamingo01.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_koala01.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_monkey01.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_owl01.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_owl02.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_panda01.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_penguin01.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_rabbit01.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_rabbit02.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_seal01.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_sheep01.png
+      - {{ .Values.global.scheme }}://qbot.{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}/public/avatar_squirrel01.png
+      {{ else if eq .Values.global.components.s3.providerType "cos" }}
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_swan01.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_tiger01.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_tiger02.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_cat01.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_cattle01.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_dolphin01.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_dragon01.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_dragon02.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_flamingo01.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_koala01.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_monkey01.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_owl01.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_owl02.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_panda01.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_penguin01.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_rabbit01.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_rabbit02.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_seal01.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_sheep01.png
+      - https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/avatar_squirrel01.png
+      {{ else }}
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_swan01.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_tiger01.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_tiger02.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_cat01.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_cattle01.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_dolphin01.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_dragon01.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_dragon02.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_flamingo01.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_koala01.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_monkey01.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_owl01.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_owl02.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_panda01.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_penguin01.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_rabbit01.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_rabbit02.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_seal01.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_sheep01.png
+      - https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/avatar_squirrel01.png
+      {{ end }}
+
+
+    SHORT_URL_ROOT_URL: {{ .Values.global.scheme }}://{{ .Values.global.clb }}/s/
+
+    SHORT_URL_SCHEMA: {{ .Values.object_storage_type }}
+
+    AUDIT_SWITCH: {{ if hasKey .Values.global.contentSecurity "auditSwitch" }}{{ .Values.global.contentSecurity.auditSwitch }}{{ else }}false{{ end }}
+
+    PERMISSION_APP_CATEGORY:
+      - permission_id: lkeRepository
+        app_type: knowledge_qa
+        name: 知识库问答
+        logo: {{ include "knowledge.icon" . }}
+      - permission_id: lkeSummary
+        app_type: summary
+        name: 知识摘要
+        logo: {{ include "summary.icon" . }}
+      - permission_id: lkeClassify
+        app_type: classify
+        name: 标签提取
+        logo: {{ include "classify.icon" . }}
+
+    EXPERIENCE_UIN: {{ .Values.experience_center_uin }}
+
+    ACCOUNT:
+      type: ti
+      apis:
+        account_host: aiconfmanagerserver.{{ .Release.Namespace }}.svc.cluster.local:10001
+
+    LICENSE:
+      type: youtu
+      apis:
+      app_license_ids:
+      atomic_license_ids:
+      model_license_ids:
+      model_license_map:
+      timeout: 30
+      expire_time: 60
+
+    LIMIT_CONFIG_QPM: {{ (.Values.global.admin).qpm | default 100 | int }}
+    LIMIT_CONFIG_TPM: {{ (.Values.global.admin).tpm | default 10000 | int }}
+
+    CLEAR_APP_RESOURCE_DELAY: {{ (.Values.global.delete_data).admin_server_retention_time | default "1440h" }}
+
+    FINACE:
+      disabled: true
+      search_disabled: {{ (.Values.global.finance).search_disabled | default true }}
+
+    AI_CALL:
+      account_uin: ""
+      digital_human_switch: false
+
+    TIANYU_SECRET_ID:
+    TIANYU_SECRET_KEY:
+    TIANYU_ENDPOINT:
+
+    ES_CONFIG_URL: http://{{ (index .Values.global.components.es.hosts 0) }}:{{ .Values.global.components.es.port }}
+    ES_CONFIG_USER: {{ .Values.global.components.es.user }}
+    ES_CONFIG_PASSWORD: "{{ .Values.global.components.es.password }}"
+
+    NO_DEFAULT_MODEL: {{ (.Values.global.admin).no_default_model | default false }}
+
+    AVATAR: {{ include "qbot.avatarIconUrl" . }}
+
+    APP_AVATARS:
+      - {{ include "qbot.app-default-avatar" . }}
+
+    APP_THOUGHT_MODEL:
+      standard:
+        - alias_name: youtu-intent-pro
+          name: workflow-pro
+          chat_words_limit: 2000
+          desc: |-
+            适用于同时配置问答、文档、工作流的场景，意图识别效果更佳，并且支持在角色指令中自定义配置意图。但可能会增加一定的对话耗时。
+          is_default: true
+          is_free: true
+        - alias_name: DeepSeek-V3-0324
+          name: lke-deepseek-v3-0324
+          chat_words_limit: 2000
+          desc: |-
+            DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
+          is_default: false
+          is_free: false
+        - alias_name: 精调知识大模型多功能版
+          name: workflow-pro-merge
+          chat_words_limit: 2000
+          desc: |-
+            针对企业智能化场景深度优化的三合一解决方案，集成意图识别、阅读理解、参数提取三大核心能力，适合需要平衡效果、价格的场景。
+          is_default: false
+          is_free: false
+      agent:
+        - alias_name: youtu-agent
+          name: function-call-pro
+          chat_words_limit: 2000
+          desc: |-
+            具备任务规划、工具选择调用以及反思纠错能力，能够支持复杂问题的规划与执行。
+          source: Hunyuan
+          icon: {{ include "qbot.hunyuanIconUrl" . }}
+          is_free: true
+          is_default: true
+        - alias_name: DeepSeek-V3-0324
+          name: lke-deepseek-v3-function-call
+          chat_words_limit: 2000
+          desc: |-
+            DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
+          is_default: false
+          source: Experience
+          icon: {{ include "qbot.dsIconUrl" . }}
+          finance_model_name: lke-deepseek-v3-0324
+        - alias_name: DeepSeek-R1-0528
+          name: lke-deepseek-r1-0528
+          chat_words_limit: 2000
+          desc: |-
+            DeepSeek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。
+          is_default: false
+          icon: {{ include "qbot.dsIconUrl" . }}
+    APP_DEFAULT_MODEL:
+      knowledge_qa:
+        - alias_name: youtu-mrc-pro
+          name: cs-normal-70b
+          chat_words_limit: 2000
+          desc: |-
+            针对企业知识问答场景精调训练，擅长多模态知识问答，适合图文表答案关联输出、数学计算、逻辑推理、表格问答等复杂场景有需求的场景。
+          is_default: true
+          icon: {{ include "qbot.hunyuanIconUrl" . }}
+        - alias_name: youtu-mrc-standard
+          name: cs-normal
+          chat_words_limit: 2000
+          desc: |-
+            针对企业知识问答场景精调训练，擅长多模态知识问答。性价比相对更高，适合需要同时平衡效果、价格的场景。
+          is_default: false
+          icon: {{ include "qbot.hunyuanIconUrl" . }}
+        - alias_name: DeepSeek-R1-0528
+          name: lke-deepseek-r1-0528
+          chat_words_limit: 2000
+          desc: |-
+            DeepSeek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。
+          is_default: false
+          icon: {{ include "qbot.dsIconUrl" . }}
+        - alias_name: DeepSeek-V3-0324
+          name: lke-deepseek-v3-0324
+          chat_words_limit: 2000
+          desc: |-
+            DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
+          is_default: false
+          icon: {{ include "qbot.dsIconUrl" . }}
+        - alias_name: 精调知识大模型多功能版
+          name: cs-normal-merge
+          chat_words_limit: 2000
+          desc: |-
+            针对企业智能化场景深度优化的三合一解决方案，集成意图识别、阅读理解、参数提取三大核心能力，适合需要平衡效果、价格的场景。
+          is_default: false
+          icon: {{ include "qbot.hunyuanIconUrl" . }}
+  plugin_model.yaml: |
+    plugin_model:
+      # DeepSeek总结
+      plugin_deep_seek:
+        is_enabled: true
+        prompt_version: v1
+  thought_model.yaml: |
+    thought_model:
+      main_agent:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 2000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v6
+      sub_agent:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 2000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v3
+      reach_thinking_limit:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 2000
+        is_enabled: true
+        model_name: function-call-pro
+        prompt_version: v2
+      main_agent_third:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      sub_agent_third:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      main_agent_third_think:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      main_agent_R1:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 2000
+        is_enabled: true
+        model_name: lke-deepseek-r1
+        prompt_version: v5
+      kb_agent:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: function-call-pro
+        prompt_version: v1
+      planner_agent_sp:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      planner_agent_planning:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      planner_agent_updating:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      gen_background_query:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      gen_background_summary:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      assigner_agent:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      code_agent_sp:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      code_agent_up:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      shell_agent_sp:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      shell_agent_up:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      report_agent_sp:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      report_agent_up:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      search_agent_sp:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      search_agent_up:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      webpagegeneration_agent_sp:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      webpagegeneration_agent_up:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      executor_agent_sp:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      assist_agent_sp:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      assist_agent_up:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      agent_role_prompt:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+      planner_agent_planning_adjust:
+        prompt_words_limit: 10000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        model_name: lke-deepseek-v3-function-call
+        prompt_version: v1
+  trpc_go.yaml: |
+    global:                             #全局配置
+      namespace: Test            #环境类型，分正式production和非正式development两种类型
+      env_name: test                    #环境名称，非正式环境下多环境的名称
+      enable_set: ${ENABLE_SET}         #是否启用set
+      full_set_name: ${FULL_SET_NAME}   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+
+    server:                                            #服务端配置
+      app: adp                                        #业务的应用名
+      server: app-config                             #进程服务名
+      bin_path: /usr/local/trpc/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /usr/local/trpc/conf/                 #业务配置文件所在路径
+      data_path: /usr/local/trpc/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+      - recovery
+      - opentelemetry
+      - i18n-adp
+      - accesslog
+      admin:
+        ip: ${POD_IP}  # admin 的 ip，配置网卡 nic 也可以
+        port: 8081   # admin 的 port，必须同时配置这里的 ip port 才会启动 admin
+      service:
+      - name: trpc.adp.app_config.Admin   # service的路由名称，格式：`业务领域.功能模块.项目名.Pb定义的服务名`
+        ip: ${POD_IP}
+        port: 9090   # 服务监听端口
+        network: tcp   # 网络监听类型 tcp/udp
+        protocol: trpc   # 应用层协议 trpc/restful
+        timeout: 30000   # 请求最长处理时间，单位毫秒
+      - name: trpc.adp.app_config.Api   # service的路由名称，格式：`业务领域.功能模块.项目名.Pb定义的服务名`
+        ip: ${POD_IP}
+        port: 9091   # 服务监听端口
+        network: tcp   # 网络监听类型 tcp/udp
+        protocol: trpc   # 应用层协议 trpc/restful
+        timeout: 10000   # 请求最长处理时间，单位毫秒
+      - name: trpc.adp.app_config.UpdateCharSizeTask   #service的路由名称,
+        ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+        port: 9095   #服务监听端口 可使用占位符 ${port}
+        network: 0 15 6 * * *?scheduler=UpdateCharSizeTask&holdTime=5
+        protocol: timer   #应用层协议
+        timeout: 600000   # 请求最长处理时间，单位毫秒
+      - name: trpc.adp.app_config.AppUsageTask   #service的路由名称,
+        ip: eth1   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+        port: 9096   #服务监听端口 可使用占位符 ${port}
+        network: 0 */2 * * * *
+        protocol: timer   #应用层协议
+        timeout: 3600000
+      - name: trpc.adp.app_config.CacheModelPromptLimitTask
+        ip: 0.0.0.0
+        port: 9097
+        network: 0 0 6 * * *?startAtOnce=1
+        protocol: timer
+        timeout: 3600000
+      - name: trpc.adp.app_config.ClearAppRescourceTask
+        ip: 0.0.0.0
+        port: 9098
+        network: '*/10 * * * * *?startAtOnce=0&scheduler=ClearAppRescourceTask&holdTime=5'
+        protocol: timer
+        timeout: 3600000
+      - name: trpc.adp.app_config.UpdateQpmTpmTask
+        ip: 0.0.0.0
+        port: 9099
+        network: 0 * * * * *?startAtOnce=1&scheduler=UpdateQpmTpmTask&holdTime=5
+        protocol: timer
+        timeout: 3600000
+      - name: trpc.adp.app_config.ClearRealtimeAppResourceTask
+        ip: 0.0.0.0
+        port: 9100
+        network: 0 10 0 * * *?startAtOnce=0&scheduler=ClearRealtimeAppResourceTask&holdTime=5
+        protocol: timer
+        timeout: 18000000
+
+    plugins:
+      log:                                            #日志配置
+        default:                                  #默认日志的配置，可支持多输出
+        - writer: console                         #控制台标准输出 默认
+          level: info                            #标准输出日志的级别
+        #caller_skip: 3
+          formatter: json
+          formatter_config:
+            time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+            time_key: time
+            level_key: level
+            name_key: name
+            caller_key: caller
+            message_key: message
+        - writer: file                            #本地文件日志
+          level: info                             #本地文件滚动日志的级别
+          formatter: json
+          formatter_config:
+            time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+            time_key: time
+            level_key: level
+            name_key: name
+            caller_key: caller
+            message_key: message
+            stacktrace_key: stackTrace
+          writer_config:
+            filename: /app/logs/trpc.log  #本地文件滚动日志存放的路径
+            write_mode: 2
+            roll_type: time
+            max_age: 7
+            max_backups: 10
+            compress: false
+            time_unit: day
+        clues:
+        - writer: console                         #控制台标准输出 默认
+          level: info                            #标准输出日志的级别
+        - writer: file
+          level: info
+          formatter: json
+          writer_config:
+            filename: /app/logs/clues.log
+            write_mode: 2
+            roll_type: time
+            max_age: 7
+            max_backups: 10
+            compress: false
+            time_unit: day
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      config:
+        file:
+          providers:
+          - name: rainbow
+            path: /app/conf/
+      selector:
+        polaris:
+          enable_servicerouter: true # 注意这里一定要使用 true
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+          - zh-CN
+          - en-US
+          data_provider:
+            type: rainbow
+            prefix: app-config
+            error_prefix: errors
+            char_scaling_factor:
+              zh: 1
+              en: 3
+
+    client:
+      namespace: Test
+      filter:
+      - opentelemetry
+      - cle-route-propagator
+      service:
+      - name: mysql.qbot.admin
+        target: dsn://${MYSQL_QBOT_ADMIN_USER}:${MYSQL_QBOT_ADMIN_PASSWORD}@tcp(${MYSQL_QBOT_ADMIN_HOST}:${MYSQL_QBOT_ADMIN_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - name: tdsql.qbot.admin
+        target: dsn://${TDSQL_QBOT_ADMIN_USER}:${TDSQL_QBOT_ADMIN_PASSWORD}@tcp(${TDSQL_QBOT_ADMIN_HOST}:${TDSQL_QBOT_ADMIN_PORT})/db_llm_robot?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local
+      - name: isearch.tdsql.qbot.admin
+        target: dsn://${ISEARCH_TDSQL_QBOT_ADMIN_USER}:${ISEARCH_TDSQL_QBOT_ADMIN_PASSWORD}@tcp(${ISEARCH_TDSQL_QBOT_ADMIN_HOST}:${ISEARCH_TDSQL_QBOT_ADMIN_PORT})/db_llm_robot_isearch?timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local
+      - name: mysql.db_llm_robot_task
+        target: dsn://${MYSQL_DB_LLM_ROBOT_TASK_USER}:${MYSQL_DB_LLM_ROBOT_TASK_PASSWORD}@tcp(${MYSQL_DB_LLM_ROBOT_TASK_HOST}:${MYSQL_DB_LLM_ROBOT_TASK_PORT})/db_llm_robot_task?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - name: mysql.db_llm_robot_task_prod
+        target: dsn://${MYSQL_DB_LLM_ROBOT_TASK_PROD_USER}:${MYSQL_DB_LLM_ROBOT_TASK_PROD_PASSWORD}@tcp(${MYSQL_DB_LLM_ROBOT_TASK_PROD_HOST}:${MYSQL_DB_LLM_ROBOT_TASK_PROD_PORT})/db_llm_robot_task_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - name: mysql.db_llm_robot_workflow
+        target: dsn://${MYSQL_DB_LLM_ROBOT_WORKFLOW_USER}:${MYSQL_DB_LLM_ROBOT_WORKFLOW_PASSWORD}@tcp(${MYSQL_DB_LLM_ROBOT_WORKFLOW_HOST}:${MYSQL_DB_LLM_ROBOT_WORKFLOW_PORT})/db_llm_workflow_formal?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - name: redis.qbot.admin
+        network: tcp
+        protocol: redis
+        target: ${REDIS_QBOT_ADMIN_TARGET}
+        password: "${REDIS_QBOT_ADMIN_PASSWORD}"
+        timeout: 800
+      - callee: trpc.KEP.agent_config_server.AgentConfigApi
+        name: trpc.KEP.agent-config-server.AgentConfigApi
+        target: ${AGENT_CONFIG_API_TARGET}
+        protocol: trpc
+        timeout: 60000
+      - name: trpc.adp.ai_gateway.Admin
+        network: tcp
+        protocol: trpc
+        target: ${AI_GATEWAY_ADMIN_TARGET}
+        timeout: 2000
+      - callee: qbot.finance.finance.Finance
+        name: qbot.finance.finance.Finance
+        target: ${FINANCE_TARGET}
+        network: tcp
+        protocol: trpc
+        timeout: 20000
+      - name: trpc.adp.ai-gateway.api
+        network: tcp
+        timeout: 4500000
+        target: ${AI_GATEWAY_API_TARGET}
+        protocol: http
+      - callee: trpc.KEP.plugin_config_server.PluginConfigApi
+        name: trpc.KEP.plugin-config-server.PluginConfigApi
+        target: ${PLUGIN_CONFIG_API_TARGET}
+        protocol: trpc
+        timeout: 60000
+      - name: trpc.KEP.bot-task-config-server.task-config
+        target: ${TASK_CONFIG_TARGET}
+        protocol: trpc
+        network: tcp
+        callee: trpc.KEP.bot_task_config_server.TaskConfig
+        timeout: 3000
+      - name: trpc.adp.kb-config.Api
+        target: ${KB_CONFIG_API_TARGET}
+        protocol: trpc
+        callee: trpc.adp.kb_config.Api
+        timeout: 60000
+      - name: trpc.adp.platform-manager.Admin
+        target: ${PLATFORM_ADMIN_TAGGET}
+        protocol: trpc
+        callee: trpc.adp.platform_manager.Admin
+      - callee: trpc.adp.resource_gallery.Admin
+        namespace: Test
+        target: ${RESOURCE_GALLERY_ADMIN_TARGET}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.SmartService.AIConfManagerServer.AIConfManager
+        namespace: Development
+        name: trpc.SmartService.AIConfManagerServer.AIConfManager
+        protocol: trpc
+        network: tcp
+        timeout: 3000
+        target: ${AI_CONF_MANAGER_TARGET}
+
+
+      - name: trpc.KEP.channel_token_svr.ChannelTokenService
+        network: tcp
+        protocol: trpc
+        target: ${CHANNEL_TOKEN_TARGET}
+        timeout: 2000
+
+      - callee: trpc.KEP.bot_admin_config_server.Login
+        target: ${ADMIN_CONFIG_SERVER_LOGIN_TARGET}
+        protocol: trpc
+        timeout: 20000
+      - name: trpc.http.cos.Access
+        namespace: Production
+        network: tcp
+        protocol: http
+        target: ${COS_ACCESS_TARGET}
+        timeout: 5000
+      - name: trpc.KEP.channel_msg_svr.Api
+        network: tcp
+        protocol: trpc
+        target: ${CHANNEL_MSG_SVR_API_TARGET}
+        timeout: 2000
+      - callee: trpc.smartservice.accessmanager.AccessManager
+        name: trpc.SmartService.AccessManagerServer.AccessManager
+        protocol: trpc
+        network: tcp
+        timeout: 3000
+        target: ${ACCESS_MANAGER_TARGET}
+
+      - name: trpc.VirtualHuman.CRMServer.CustomerAssetService
+        callee: trpc.VirtualHuman.CRMServer.CustomerAssetService
+        protocol: trpc
+        timeout: 10000
+        env_name: formal
+      - callee: trpc.KEP.bot_data_statistics_server.Api
+        target: ${BOT_DATA_STATISTICS_SERVER_API_TARGET}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.adp.app_memory.MemoryInner
+        name: trpc.KEP.bot-memory-server.MemoryInner
+        target: ${BOT_MEMBER_SERVER_MEMORYINNER_TARGET}
+        network: tcp
+        protocol: trpc
+        timeout: 20000
+      - name: trpc.adp.kb_retrieval.Retrieval
+        target: ${KB_RETRIEVAL_RETRIEVAL_TARGET}
+        protocol: trpc
+        network: tcp
+        timeout: 30000
+      - name: trpc.adp.kb_retrieval.DirectIndex
+        target: ${KB_RETRIEVAL_DIRECINDEX}
+        protocol: trpc
+        network: tcp
+        timeout: 30000
+      - name: trpc.SmartAssistant.EntityExtractorServer.EntityExtractorObj
+        callee: trpc.SmartAssistant.EntityExtractorServer.EntityExtractorObj
+        target: ${KB_SMARTASSISTANT_ENTITYEXTRACTOR_TARGET}
+        timeout: 1000
+        protocol: trpc
+        network: tcp
+      - name: trpc.SmartAssistant.EntityExtractorServerSandBox.EntityExtractorObj
+        callee: trpc.SmartAssistant.EntityExtractorServer.EntityExtractorObj
+        timeout: 1000
+        target: ${KB_SMARTASSISTANT_ENTITYEXTRACTORSANDBOX_TARGET}
+        protocol: trpc
+        network: tcp
+      - callee: qbot.qbot.infosec.Infosec
+        target: ${TARGET_INFOSECS}
+        network: tcp
+        protocol: trpc
+        timeout: 300000
+
+  white_list.yaml: |
+    account_operation_log:
+      log_cleanup_interval: 8760h
+      white_list_uin:
+      apis:
+        # 应用配置
+        CreateApp: add
+        CreateAppByExperienceApp: add
+        ModifyApp: modify
+        DeleteApp: delete
+        CreateRelease: release
+        # 工作流
+        CreateWorkflow: add
+        CreateWorkflowExample: add
+        CopyWorkflow: add
+        ImportWorkflow: add
+        ImportWorkflowExample: add
+        SaveWorkflow: modify
+        SwitchWorkflowState: modify
+        UpdateWorkflowExample: modify
+        SaveAppDebugMode: modify
+        SaveAppDebugCustomVariables: modify
+        SaveAgentWorkflow: modify
+        DeleteWorkflow: delete
+        DeleteWorkflowExample: delete
+        ExportWorkflow: download
+        # 知识库
+        SaveDoc: add
+        CreateQA: add
+        CreateSharedKnowledge: add
+        AddDbSource: add
+        ModifyDoc: modify
+        CreateDocParsingIntervention: modify
+        ModifyDocSegment: modify
+        RenameDoc: modify
+        BatchModifyDoc: modify
+        ResumeDoc: modify
+        ModifyDocStatus: modify
+        ModifyDocAttrRange: modify
+        RetryDocParse: modify
+        RetryDocAudit: modify
+        ModifyQA: modify
+        VerifyQA: modify
+        ModifyQAAttrRange: modify
+        BatchModifyQaExpire: modify
+        BatchModifyQaDoc: modify
+        ModifyQAStatus: modify
+        ResumeQA: modify
+        UpdateDbSource: modify
+        UpdateDbTableAndColumns: modify
+        UpdateDbTableEnabled: modify
+        DeleteSharedKnowledge: delete
+        DeleteDoc: delete
+        DeleteQA: delete
+        DeleteDbSource: delete
+        DeleteDbTable: delete
+        ExportQAList: download
+        GetDocPreview: preview
+        BatchDownloadDoc: download
+  workflow_model.yaml: |
+    workflow_model:
+      # 大模型标签提取
+      workflow_tag_extract:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 参数提取
+      workflow_parameter_extract:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 参数提取（非COT）
+      workflow_parameter_extract_not_cot:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 逻辑判断
+      workflow_logic_evaluator:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      #逻辑判断（非COT）
+      workflow_logic_evaluator_not_cot:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 参数追问
+      workflow_parameter_probe:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 参数超过最大询问次数，兜底回复
+      workflow_intent:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 选项卡
+      workflow_option_card:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 意图识别
+      workflow_probe_exceeded_answer:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 大模型输出格式为json
+      workflow_llm_output_format_json:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 推荐问
+      workflow_recommend_question:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+
+      # 工作流描述一键优化prompt
+      workflow_desc_prompt:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 工作流参数提取节点提示词一键优化prompt
+      workflow_parameter_prompt:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 工作流大模型节点提示词一键优化prompt
+      workflow_llm_prompt:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 工作流大模型标签提取节点提示词一键优化prompt
+      workflow_tag_prompt:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 工作流意图识别节点意图一键优化prompt
+      workflow_intent_prompt:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 工作流一键优化prompt
+      workflow_role_prompt:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 工作流代码节点AI生成prompt
+      workflow_code_gen_prompt:
+        is_enabled: true
+        prompt_version: v1
+        model_name: lke-deepseek-v3.1

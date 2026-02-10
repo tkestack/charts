@@ -1,0 +1,154 @@
+# ADP Platform - 对外配置
+# global 下的配置会自动传递给所有子 Chart
+
+# ============================
+# 全局配置 (自动传递给子 Chart)
+# ============================
+global:
+  # 集群类型：包含 [minimal]、[standard] 和 [recommended] 三个配置段
+  clusterSize: minimal
+  # CLB 域名（必填）https://console.cloud.tencent.com/clb/instance
+  clb: "xx.adp-private.com"
+  # CLB ID（必填）
+  clbId: lb-751o5566
+  # 协议: http 或 https （必填）
+  scheme: http
+
+  # RSA 密钥配置（必填）用于前后端加解密登录密码
+  # 生成方法:
+  #   1. 生成私钥: openssl genrsa -out private.pem 2048
+  #   2. 生成公钥: openssl rsa -in private.pem -pubout -out public.pem
+  #   3. Base64编码: cat private.pem | base64 -w 0 > privateKey.txt
+  #                  cat public.pem | base64 -w 0 > publicKey.txt
+  rsa:
+    privateKey: "<YOUR_RSA_PRIVATE_KEY_BASE64>"
+    publicKey: "<YOUR_RSA_PUBLIC_KEY_BASE64>"
+
+  # ============================
+  # 模型服务配置 (modelServices)
+  # ============================
+  # 支持以下模型服务类型:
+  # - adp: 腾讯云知识引擎 https://console.cloud.tencent.com/lkeap
+  # - hunyuan: 腾讯混元大模型 https://console.cloud.tencent.com/hunyuan/start
+
+  modelServices:
+    # 腾讯云知识引擎 ADP（必填）
+    adp:
+      apiKey: "<YOUR_ADP_API_KEY>"
+    # 腾讯混元大模型（必填）
+    hunyuan:
+      apiKey: "<YOUR_HUNYUAN_API_KEY>"
+
+
+  # ============================
+  # 基础组件配置 (components)
+  # ============================
+  # vendor: 云厂商标识 (tencent/aws/alibaba/azure/gcp/huawei/self)
+  # providerType: 具体产品类型，结合 vendor 唯一标识组件实现
+  components:
+    # 数据库配置 (必填) https://cloud.tencent.com/product/tdsql
+    db:
+      vendor: tencent
+      providerType: tdsql  # tencent: tdsql/cynosdb | aws: aurora/rds | alibaba: polardb | self: mysql/mariadb
+      host: "192.168.0.1"
+      port: 3306
+      user: "<YOUR_DB_USER>"
+      password: "<YOUR_DB_PASSWORD>"
+
+    # Redis 缓存配置 (必填) https://cloud.tencent.com/product/crs
+    redis:
+      vendor: tencent
+      providerType: crs  # tencent: crs | aws: elasticache | alibaba: kvstore | self: redis
+      cluster: master
+      hosts:
+        - 192.168.0.1
+      port: 6379
+      password: "<YOUR_REDIS_PASSWORD>"
+
+    # Elasticsearch 配置 (必填) https://cloud.tencent.com/product/es
+    es:
+      vendor: tencent
+      providerType: es  # tencent: es | aws: opensearch | alibaba: elasticsearch | self: elasticsearch
+      hosts:
+        - 192.168.0.1
+      port: 9200
+      user: elastic
+      password: "<YOUR_ES_PASSWORD>"
+
+    # 对象存储配置 (必填) https://cloud.tencent.com/product/cos
+    s3:
+      vendor: tencent
+      providerType: cos  # tencent: cos | aws: s3 | alibaba: oss | azure: blob | gcp: gcs | self: minio
+      # COS 专用配置 (providerType=cos 时生效)
+      cos:
+        secretId: "<YOUR_COS_SECRET_ID>"
+        secretKey: "<YOUR_COS_SECRET_KEY>"
+        appId: "<YOUR_COS_APP_ID>"
+        bucket: "<YOUR_COS_BUCKET>"
+        region: "<YOUR_COS_REGION>"
+        domain: myqcloud.com
+        subPath: "public"
+        expireTime: 3600s
+        credentialTime: 3600s
+
+    # 消息队列CKafka版 https://console.cloud.tencent.com/ckafka/instance
+    kafka:
+      vendor: tencent
+      providerType: kafka
+      hosts:
+        - 192.168.0.1
+      port: 9092
+
+    # 向量数据库配置 (必填，数组格式支持多实例) https://cloud.tencent.com/product/vdb
+    vdb:
+      - vendor: tencent
+        providerType: vdb  # tencent: vdb | self: milvus
+        addr: http://192.168.0.1
+        account: root
+        apiKey: "<YOUR_VDB_API_KEY>"
+
+  # ============================
+  # 可观测性配置 (observability)
+  # ============================
+  observability:
+    # CLS 日志收集配置 (可选) https://console.cloud.tencent.com/cls/topic
+    cls:
+      enabled: true
+      logsetId: "<YOUR_CLS_LOGSET_ID>"
+      topicId: "<YOUR_CLS_TOPIC_ID>"
+
+    # Prometheus 监控配置 (可选) https://console.cloud.tencent.com/tke2/prometheus2
+    prometheus:
+      enabled: false
+
+    # APM 链路追踪配置 (可选) https://console.cloud.tencent.com/monitor/apm/system/list
+    apm:
+      vendor: tencent
+      providerType: tps  # tencent: tps | aws: xray | self: jaeger
+      otlp: "pl.ap-beijing.apm.tencentcs.com:4319"
+      registry: ""
+      attributes:
+        token: "<YOUR_APM_TOKEN>"
+
+  # ============================
+  # 内容安全配置 (content-security)
+  # ===========================
+  contentSecurity:
+    # 类型: sdk（必填）
+    type: sdk
+    # 是否禁用内容检查（可选，填写 true 或 false）
+    disableContentCheck: false
+    # 审核开关（可选，填写 true 或 false）
+    auditSwitch: true
+    # 是否禁用图片检查（可选，填写 true 或 false）
+    disableImageCheck: false
+    # `bizType` （启用审核时 必选）
+    bizType: "<YOUR_BIZ_TYPE>"
+    # 文本内容安全配置 (可选) https://cloud.tencent.com/document/product/1124/51860
+    region: ap-beijing
+    appId: "<YOUR_APP_ID>"
+    uin: "<YOUR_UIN>"
+    subUin: "<YOUR_SUB_UIN>"
+    secretId: "<YOUR_SECRET_ID>"
+    secretKey: "<YOUR_SECRET_KEY>"
+    callbackUrl: "<YOUR_CALLBACK_URL>"

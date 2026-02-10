@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: etcd
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: etcd
+    app.kubernetes.io/name: etcd
+spec:
+  serviceName: etcd-headless
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 3
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 3
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  selector:
+    matchLabels:
+      app: etcd
+  template:
+    metadata:
+      labels:
+        app: etcd
+    spec:
+      {{- if .Values.imagePullSecretName }}
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      {{- end }}
+      containers:
+        - name: etcd
+          image: {{ (index .Values.tad.images "etcd").url }}
+          imagePullPolicy: IfNotPresent
+          command:
+            - etcd
+          ports:
+            - containerPort: {{ .Values.ports.client | default 2379 }}
+              name: client
+            - containerPort: {{ .Values.ports.peer | default 2380 }}
+              name: peer
+          env:
+            - name: ETCD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ETCD_DATA_DIR
+              value: /var/lib/etcd
+            - name: ETCD_INITIAL_CLUSTER_STATE
+              value: new
+            - name: ETCD_INITIAL_CLUSTER_TOKEN
+              value: etcd-cluster
+            - name: ETCD_LISTEN_CLIENT_URLS
+              value: http://0.0.0.0:2379
+            - name: ETCD_ADVERTISE_CLIENT_URLS
+              value: http://$(ETCD_NAME).etcd-headless.{{ .Release.Namespace }}.svc.cluster.local:2379
+            - name: ETCD_LISTEN_PEER_URLS
+              value: http://0.0.0.0:2380
+            - name: ETCD_INITIAL_ADVERTISE_PEER_URLS
+              value: http://$(ETCD_NAME).etcd-headless.{{ .Release.Namespace }}.svc.cluster.local:2380
+            - name: ETCD_INITIAL_CLUSTER
+              value: "etcd-0=http://etcd-0.etcd-headless.{{ .Release.Namespace }}.svc.cluster.local:2380,etcd-1=http://etcd-1.etcd-headless.{{ .Release.Namespace }}.svc.cluster.local:2380,etcd-2=http://etcd-2.etcd-headless.{{ .Release.Namespace }}.svc.cluster.local:2380"
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+          {{- end }}
+          volumeMounts:
+            - name: etcd-data
+              mountPath: /var/lib/etcd
+          livenessProbe:
+            tcpSocket:
+              port: 2379
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 2379
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+  volumeClaimTemplates:
+    - metadata:
+        name: etcd-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        {{- if .Values.storage.storageClass }}
+        storageClassName: {{ .Values.storage.storageClass }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.storage.size | default "15Gi" }}

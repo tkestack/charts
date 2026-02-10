@@ -1,0 +1,19 @@
+tad:
+  type: helm
+  namespace: ti-base
+  registries:
+    images: registry.tce.com
+    packages: registry.tce.com:1181
+  images:
+    ti-gateway-filebeat-oss:
+      url: ccr.ccs.tencentyun.com/tke-market/ti-gateway-filebeat-oss:7.5.2.3_6_0
+    ti-gateway:
+      url: ccr.ccs.tencentyun.com/tke-market/ti-gateway:master_private_2f6e784c_20260126
+# 服务本身部署的命名空间
+namespace: ti-base
+
+# 依赖的用户权限服务部署的命名空间
+authNamespace: ti-base
+
+# 拉取镜像需要使用的密钥名称
+imagePullSecretName: qcloudregistrykey

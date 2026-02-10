@@ -1,0 +1,120 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ti-gateway-init-route-crd
+  namespace: {{ .Release.Namespace }}
+data:
+  init-route-crd.sh: |
+    #!/bin/bash
+    # -*- coding: UTF-8 -*- 
+
+    # wait ti-gateway
+    INGRESS_CONTROLLER=ti-ingress-controller.{{ .Release.Namespace }}.svc.cluster.local:9093
+    if [ -z "$DEV" ]; then
+      echo $INGRESS_CONTROLLER
+    elif [ "$DEV" = true ]; then
+      INGRESS_CONTROLLER=$INGRESS_ADDRESS
+      echo $INGRESS_CONTROLLER
+    else
+      echo $INGRESS_CONTROLLER
+    fi
+
+    while true; do
+      status_code=$(curl --write-out %{http_code} --silent --output /dev/null -H 'X-API-KEY:  2bffd108f0a56053e665440292bc529a' "127.0.0.1:9080/apisix/admin/upstreams")
+
+      if [[ "$status_code" -ne 200 ]]; then
+        echo "$status_code"
+      else
+        touch /usr/local/apisix/utils/diao2.txt
+        break
+      fi
+      sleep 5
+    done
+
+    # wait ti-ingress-controller
+    while true; do
+      status_code=$(curl --write-out %{http_code} --silent --output /dev/null "$INGRESS_CONTROLLER/apisix/admin/routes")
+
+      if [[ "$status_code" -ne 200 ]]; then
+        echo "$status_code"
+      else
+        touch /usr/local/apisix/utils/diao2.txt
+        break
+      fi
+      sleep 5
+    done
+
+    cd /usr/local/apisix/utils/register_crd_tool
+
+    # register file_manager stream routes
+    upload_stream_route() {
+      curl http://127.0.0.1:9080/apisix/admin/stream_routes/ti_file_manager_upload -H 'X-API-KEY: 2bffd108f0a56053e665440292bc529a' -X PUT -d '
+      {
+        "remote_addr": "127.0.0.1",
+        "server_addr": "127.0.0.1",
+        "server_port": 9082,
+        "upstream": {
+            "nodes": {
+                "ti-file-manager.{{ .Release.Namespace }}.svc.cluster.local:55325": 100
+            },
+            "type": "roundrobin"
+        }
+      }'
+    }
+
+    # register ti-web static server routes
+    ti_web_static_route() {
+      curl -X PUT 'http://127.0.0.1:9080/apisix/admin/upstreams/ti-web-static' -H 'X-API-KEY:  2bffd108f0a56053e665440292bc529a' -H 'Content-Type: application/json' -d '{
+        "nodes": {
+            "ti-web.{{ .Release.Namespace }}.svc.cluster.local:9876": 1
+        },
+        "type": "roundrobin",
+        "name": "ti-web",
+        "desc": "ti-web qingyuhan"
+      }'
+
+      curl -X PUT 'http://127.0.0.1:9080/apisix/admin/routes/ti-web-static' -H 'X-API-KEY: 2bffd108f0a56053e665440292bc529a' -H 'Content-Type: application/json' -d '{
+        "uris": ["/", "*.js", "*.html", "*.htm", "*.png", "*.jpg", "*.jpeg", "*.bmp", "*.gif", "*.ico", "*.css", "*.txt", "/blocked/*", "/iframe/*", "/noauth*", "/login*", "/refresh*", "/tmp/*", "*.map"],
+        "plugins": {
+            "response-rewrite": {
+                "headers": {
+                    "X-Frame-Options": "SAMEORIGIN",
+                    "X-XSS-Protection": 1
+                }
+            }
+        },
+        "priority": 35,
+        "enable_websocket": true,
+        "labels": {"interface_type": "ti-web"},
+        "desc": "ti-web 前端静态资源 qingyuhan",
+        "upstream_id": "ti-web-static"
+      }'
+    }
+
+    # from version 2.13 prometheus api need to add plugin public-api
+    enable_prometheus_api() {
+    curl -XPUT 'http://127.0.0.1:9080/apisix/admin/routes/public-api-prometheus' \
+       -H 'X-API-KEY: 2bffd108f0a56053e665440292bc529a' \
+       -H 'Content-Type: application/json' \
+       -d'{
+           "uri": "/apisix/prometheus/metrics",
+           "plugins": {
+               "public-api": {}
+           }
+       }'
+    }
+
+    # register crd route info to k8s
+    if [ -z "$DEV" ]; then
+      upload_stream_route
+      ti_web_static_route
+      enable_prometheus_api
+      python3 register_from_xls.py -t csv -g 127.0.0.1:9080 -cg $INGRESS_CONTROLLER --type csv 
+    elif [ "$DEV" = true ]; then
+      python3 register_from_xls.py -t csv -g 127.0.0.1:9080 -cg $INGRESS_CONTROLLER --api_key whoisyourdaddy --type csv
+    else
+      upload_stream_route
+      ti_web_static_route
+      enable_prometheus_api
+      python3 register_from_xls.py -t csv -g 127.0.0.1:9080 -cg $INGRESS_CONTROLLER --type csv
+    fi

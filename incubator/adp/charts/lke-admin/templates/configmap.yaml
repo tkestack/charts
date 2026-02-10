@@ -1,0 +1,3294 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-lke-admin
+  namespace: {{ .Release.Namespace }}
+data:
+  admin_en-US.json: |
+    {
+        "KeyAgentFeedbackInfo": "Agent feedback information",
+        "KeyPublishedContentManualReviewSuccess": "Released content manual review approved",
+        "KeyPublishedOnlineContentManualReviewSuccess": "Released content manual review approved",
+        "KeyPublishedContentManualReviewFail": "Manual review of released content failed.",
+        "KeyPublishedContentManualReviewFailWithSensitiveReason": "Manual review of released content failed, reason: content contains sensitive information.",
+        "KeyPublishedContentManualReviewPartialSuccess": "Manual review of partial released content successful.",
+        "KeyPublishedOnlineContentManualReviewResultWithReason": "Released content manual review: %d approved, %d rejected (Reason: sensitive content)",
+        "KeyConservativeReplyReviewPass": "Conservative response review passed.",
+        "KeyConservativeReplyChangeReviewPass": "Conservative response change review passed.",
+        "KeyConservativeReplyReviewFail": "Conservative response review failed.",
+        "KeyConservativeReplyReviewFailWithTimeoutReason": "Conservative response review failed, reason: review timeout.",
+        "KeyConservativeReplyReviewFailWithSensitiveReason": "Conservative resposne review failed: contains sensitive information",
+        "KeyConservativeReplyManualAppealFail": "Conservative response appeal rejected",
+        "KeyConservativeReplyManualAppealFailWithSensitiveReason": "Manual appeal of conservative response rejected, reason: response contains sensitive information.",
+        "KeyConservativeReplyManualAppealSuccess": "Conservative response appeal approved",
+        "KeyConservativeReplyContentChangeManualAppealSuccess": "Conservative response content change appeal approved",
+        "KeyRetry": "Retry",
+        "KeyCallStatExportWithParam": "Call statistics export %s.",
+        "KeyCallStatExporting": "Call statistics export in progress.",
+        "KeyConcurrentStatExportWithParam": "Concurrent statistics export %s.",
+        "KeyConcurrentStatExporting": "Concurrent statistics export in progress.",
+        "KeyKnowledgeBaseCapacityStatExportWithParam": "Knowledge library capacity statistics export %s.",
+        "KeyKnowledgeBaseCapacityStatExporting": "Knowledge library capacity statistics export in progress.",
+        "KeyExportWithParam": "Export %s",
+        "KeyExportSuccess": "Export successful",
+        "KeyExportFail": "Export failed",
+        "KeySuccess": "Success",
+        "KeyFail": "Failure",
+        "KeyFeedbackInfo": "Feedback information",
+        "KeyKnowledgeBasePublishing": "Knowledge library release in progress",
+        "KeyAppPublishSuccess": "Application release successful.",
+        "KeyAppPublishSuccessWithParam": "Application [%s] released successfully",
+        "KeyAppPublishOnlinePause": "Application release online paused.",
+        "KeyAppPublishOnlinePauseWithReason": "Application release paused. Reason: network timeout. Please retry",
+        "KeyAppPublishPartialSuccess": "Application partial release successful.",
+        "KeyResultWithTimeoutReason": "%d items successful, %d items failed. Reason: review timeout.",
+        "KeyResultWithReviewFailReason": "%d items successful, %d items failed. reason: review rejected",
+        "KeyAppPublishFail": "Application release failed.",
+        "KeyAppPublishFailWithReason": "Application [%s] release failed, reason: %s.",
+        "KeyAppName": "Application name",
+        "KeyAvatar": "Avatar",
+        "KeyAppDescription": "App description",
+        "KeyWelcomeMessage": "Greeting",
+        "KeyRoleDescription": "Character description",
+        "KeyOutputMethod": "Output method",
+        "KeyConservativeReplySwitch": "Conservative response switch",
+        "KeyConservativeReplyContent": "Conservative response",
+        "KeyMaxRecallNumWithParam": "%s maximum recall quantity",
+        "KeyRetrievalMatchingDegreeWithParam": "%s retrieval matching score",
+        "KeyReplyFlexibility": "Conversation flexibility score",
+        "KeyKnowledgeSourceConfigWithParam": "Knowledge source %s configuration",
+        "KeySearchEngineStatus": "Search engine status",
+        "KeyContextRewriting": "Contextual rewriting",
+        "KeyContextMemoryRounds": "Context memory rounds",
+        "KeyModelSelectionWithParam": "%s model selection",
+        "KeyTagConfig": "Tag configuration",
+        "KeyOutputRequirement": "Output requirements",
+        "KeyCustomOutputRequirement": "Custom output requirements",
+        "KeyQuestionClarification": "Question clarification",
+        "KeyClarificationKeywords": "Clarification keywords",
+        "KeyKnowledgeBaseRetrievalRangeSetting": "Knowledge base search scope settings",
+        "KeyAppMode": "Application mode",
+        "KeyDesignatedWorkflow": "Specified workflow",
+        "KeyTemperatureWithParam": "%s temperature",
+        "KeyTopPWithParam": "%s top-p",
+        "KeyRetrievalStrategy": "Retrieval strategy",
+        "KeyExcelRetrievalEnhancement": "Excel search enhancement",
+        "KeyDirectReplyWithAdoptedAnswer": "Accepted answer direct reply",
+        "KeyPolishedReplyWithAdoptedAnswer": "Accepted answer polished reply",
+        "KeyTextSummary": "Text summarization",
+        "KeyCustomRequirement": "Custom requirements",
+        "KeyStreamingOutput": "Streaming output",
+        "KeyNonStreamingOutput": "Non-streaming output",
+        "KeyEnable": "Enable",
+        "KeyDisable": "Disable",
+        "KeyShow": "Show",
+        "KeyHide": "Hide",
+        "KeyAvatarChanged": "Avatar updated",
+        "KeyQA": "Q&A",
+        "KeyDocument": "File",
+        "KeyRejection": "Rejected",
+        "KeySearchEnhancement": "Search enhancement",
+        "KeyTaskFlow": "Task flow",
+        "KeyImageSearchByImage": "Image search",
+        "KeyImageSearchByText": "Text-based image search",
+        "KeyModelResourceExhausted": "Model resource exhaustion",
+        "KeyNotOnline": "Not launched",
+        "KeyRunning": "Running",
+        "KeyDisabled": "Deactivate",
+        "KeyNotSet": "Not set",
+        "KeyOr": "Or",
+        "KeyAnd": "And",
+        "KeyStandardMode": "Standard mode",
+        "KeyMultiAgentMode": "Multi-Agent Mode",
+        "KeySingleWorkflowMode": "Single workflow mode",
+        "KeyHybridRetrieval": "Hybrid search",
+        "KeySemanticRetrieval": "Semantic search",
+        "KeyGenerationModel": "Generation model",
+        "KeyThinkingModel": "Thinking model",
+        "KeyAPISelectParamChanged": "API parameter changed from %s to %s",
+        "KeyAPIParamOrTagChanged": "API parameter name/tag changed",
+        "KeyInvalidWorkflow": "Invalid workflow",
+        "KeyPublishSuccess": "Release successful",
+        "KeyPublishFail": "Release failed",
+        "KeyPublishPause": "Release paused",
+        "KeySourceFileImport": "Source file import",
+        "KeyWebImport": "Web import",
+        "KeyAdd": "Add",
+        "KeyDelete": "Delete",
+        "KeyModify": "Modify",
+        "KeyPublishOp": "Publish",
+        "KeyNotGenerated": "Not generated",
+        "KeyGenerating": "Generating",
+        "KeyGenerateComplete": "Generation completed",
+        "KeyGenerateFail": "Generation failed",
+        "KeyReviewPass": "Review passed",
+        "KeyUpdating": "Updating",
+        "KeyUpdateFail": "Update failed",
+        "KeyQuestionFeedbackSubmitted": "Your feedback on issue \"%s\" has been submitted, feedback id is %d",
+        "KeyQuestionFeedbackProcessed": "The feedback for issue \"%s\" with feedback id %d has been processed",
+        "KeyQuestionFeedbackRejected": "Your feedback for issue \"%s\" (id: %d) has been rejected by the technical team",
+        "KeyKnowledgeBaseContent": "Knowledge base content",
+        "KeyReviewTimeout": "Review timeout",
+        "KeyContainSensitiveInfo": "Contains sensitive information",
+        "KeyToBePublished": "To be released",
+        "KeyPublished": "Released",
+        "KeyParseFail": "Parsing failed",
+        "KeyImportFail": "Import failed",
+        "KeyReviewFail": "Review failed",
+        "KeyRenameReviewFail": "Rename review failed",
+        "KeyManualAppealFail": "Manual appeal failed",
+        "KeyRenameAppealFail": "Rename appeal failed",
+        "KeyLearningFail": "Learning failed",
+        "KeyExpired": "Expired",
+        "KeyOverLimitInvalid": "Excessive Failure",
+        "KeyParsing": "Parsing",
+        "KeyInReview": "Under review",
+        "KeyInManualAppeal": "Under manual appeal",
+        "KeyLearning": "Learning",
+        "KeyInPublish": "Releasing",
+        "KeyInvalidRecovery": "Restoring due to failure",
+        "KeyDate": "Date",
+        "KeyMessageCount": "Number of messages",
+        "KeyInteractiveUserCount": "Number of interacting users",
+        "KeyLikeCount": "Number of likes",
+        "KeyDislikeCount": "Number of dislikes",
+        "KeyLikeRate": "Like rate",
+        "KeyStatAccount": "Statistical account",
+        "KeyAPICallTotalTokenCount": "Total API call tokens",
+        "KeyTotalConsumedPages": "Total consumed pages",
+        "KeyBillingAPICallCount": "Billed API calls",
+        "KeyAPICallInputTokenCount": "Input tokens of API calls",
+        "KeyAPICallOutputTokenCount": "Output tokens of API calls",
+        "KeySearchServicePackageCallCount": "Search service package calls",
+        "KeyCallTime": "Call time",
+        "KeyTotalConsumedTokenCount": "Total consumed tokens",
+        "KeyInputConsumedTokenCount": "Input tokens consumpted",
+        "KeyOutputConsumedTokenCount": "Output tokens consumed",
+        "KeySearchServiceConsumedCount": "Search service consumption",
+        "KeyModelName": "Model name",
+        "KeyAccount": "Account",
+        "KeyCallType": "Call type",
+        "KeyEnterpriseId": "Enterprise ID",
+        "KeyAvailableConcurrentCount": "Available concurrency",
+        "KeySuccessfulConcurrentCallCount": "Successful concurrent calls",
+        "KeyQuery": "Query",
+        "KeyApp": "Application",
+        "KeyKnowledgeBaseUsedCharCount": "Knowledge base character usage",
+        "KeyUsageRatio": "Usage percentage",
+        "KeyOverLimitInvalidCharCount": "Excess invalid characters",
+        "KeyLevelClassificationWithParam": "Level %d Classification",
+        "KeyQuestion": "Question",
+        "KeyAnswer": "Answer",
+        "KeySource": "Source",
+        "KeyAssociatedDocument": "Linked file",
+        "KeyName": "Name",
+        "KeyAge": "Age",
+        "KeyGender": "Gender",
+        "KeyUserQuestion": "User question",
+        "KeyRobotReply": "Bot reply",
+        "KeyErrorType": "Error type",
+        "KeyMyIntelligentApp": "My Agent Application",
+        "KeyAttributeIdentifierRequired": "Attribute Identifier (Required)",
+        "KeyAttributeRequired": "Attribute (Required)",
+        "KeyTagRequired": "Tag (Required)",
+        "KeySimilarTag": "Similar Tags",
+        "KeyContainSensitiveWord": "Includes restricted terms",
+        "KeyManualReviewPass": "Manual review approved",
+        "KeyManualReviewNotPass": "Manual review rejected",
+        "KeyDialogContentReview": "Conversation content moderation",
+        "KeyTrialActivationWithParam": "Trial Activation (%s)",
+        "KeyWorkflowExporting": "Workflow exporting",
+        "KeyWorkflowExportWithParam": "Workflow Exported %s",
+        "KeyDeepSeekR1LatestVersionDesc": "The latest version of the Deepseek-R1 model demonstrates significant improvements in ​​intent understanding, copywriting generation, programming capabilities, and logical reasoning​​. It excels at comprehending ​​constraints and inherent logic within complex instructions​​. Supporting ​​extended reasoning capabilities​​, it can effectively handle more complex and time-consuming tasks.",
+        "KeyWebSearch": "Web Search​",
+        "KeyWebSearchAPIKey": "Web Search​ API Key",
+        "KeyWebSearchRecallInterfaceFragment": "Web Search​ TopN",
+        "KeyWebSearchAPIKeyProvider": "Web Search​ API Key Provider",
+        "KeyRetrievalRangeChangedToDefaultWithParam": "%s Search Scope Changed To Default",
+        "KeyKnowledgeBaseSchemaChanged": "Knowledge Base Schema Changed",
+        "KeyThinkingModelPro": "Advanced Cognitive Model",
+        "KeyThinkingModelProDesc": "Suitable for scenarios involving simultaneous configuration of Q&A, documentation, and workflows, with enhanced intent recognition effectiveness. Supports custom intent configuration in role instructions, though may slightly increase conversation latency.",
+        "KeyDeepSeekV3LatestVersionDesc": "The latest version of DeepSeek-V3 model, built on innovative Mixture of Experts (MoE) architecture and Multi-head Latent Attention (MLA) technology, achieves comprehensive upgrades in three core areas: reasoning capability, code generation, and Chinese semantic understanding.",
+        "KeyDatabase": "database",
+        "KeyIntentAchievementPriority": "Intent Achievement Priority",
+        "KeyImageTextRetrieval": "Image Text Retrieval",
+        "KeyAsynchronousCall": "Async Workflow Invocation",
+        "KeySharedKnowledgeBaseRetrievalRangeSetting": "Shared Knowledge Base Search Range Setting",
+        "KeyReferenceSharedKnowledgeBase": "Reference Shared Knowledge Base",
+        "KeyKnowledgeBaseSchema": "Knowledge Base Schema",
+        "KeyBackgroundImageOriginal": "Background Image Original",
+        "KeyBackgroundImageWebEffect": "Background Image Web Effect",
+        "KeyBackgroundImageMobileEffect": "Background Image Mobile Effect",
+        "KeyBackgroundImageThemeColor": "Background Image Theme Color",
+        "KeyMessageStatExportWithParam": "Message statistics export as %s.",
+        "KeyMessageLogExporting": "Message log exporting in progress.",
+        "KeyMessageStatExporting": "Message statistics exporting in progress.",
+        "KeyCopyOfWithParam": "%s-copy",
+        "KeyDefaultKnowledgeBaseRetrievalRangeSetting": "Default setting for knowledge base search scope",
+        "KeyRoleSettingsContentInReview": "Role setting content under review.",
+        "KeyConservativeReplyInReview": "Conservative response under review.",
+        "KeyRandomSeedWithParam": "%s Random Seed",
+        "KeyPresencePenaltyWithParam": "%s Presence Penalty",
+        "KeyFrequencyPenaltyWithParam": "%s Frequency Penalty",
+        "KeyRepeatPenaltyWithParam": "%s Repeat Penalty",
+        "KeyMaxOutputLengthWithParam": "%s Maximum Output Length",
+        "KeyStopSequenceWithParam": "%s Stop Sequence",
+        "KeyOutputFormatWithParam": "%s Output Format",
+        "KeyVariableSettings": "Variable Settings",
+        "KeyLongTermMemory": "Long-Term Memory",
+        "KeyLongTermMemoryDuration": "Long-Term Memory Duration",
+        "KeyExampleQuestions": "Example Questions",
+        "KeyAgentCollaborationMethod": "Agent Collaboration Method",
+        "KeyRetrievalRecallResultReordering": "Retrieval Recall - Result Reordering",
+        "KeyRetrievalRecallReorderingModel": "Retrieval Recall - Reordering Model",
+        "KeyRetrievalRecallVectorModel": "Retrieval Recall - Vector Model",
+        "KeyAdvancedSettingsReorderingModel": "Advanced Settings - Reordering Model",
+        "KeyAdvancedSettingsReorderingModelRecallCount": "Advanced Settings - Reordering Model Recall Quantity",
+        "KeyKnowledgeBaseModelVectorModel": "Knowledge Base Model - Vector Model",
+        "KeyKnowledgeBaseModelQAPairGenerationModel": "Knowledge Base Model - Q&A Pair Generation Model",
+        "KeyKnowledgeBaseModelSchemaGenerationModel": "Knowledge Base Model - Schema Generation Model",
+        "KeyVoiceInteraction": "Voice Interaction",
+        "KeyVoiceCall": "Voice Call",
+        "KeyToneColor": "Tone Color",
+        "KeyDigitalHuman": "Digital Human",
+        "KeyAppNotPublished": "Application Not Published",
+        "KeyFreeTransfer": "Free Transfer",
+        "KeyWorkflowOrchestration": "Workflow Orchestration",
+        "KeyPlanAndExecuteCollaboration": "Plan-and-Execute Collaboration",
+        "KeyExperiencePageWithTencentCloud": "Experience Page (Tencent Cloud)",
+        "KeyExperiencePageWithPhoneNumber": "Experience Page (Phone Number)",
+        "KeyDialogAPIAccess": "Dialogue End API Access",
+        "KeyWeChatServiceAccount": "WeChat Service Account",
+        "KeyWeChatSubscriptionAccount": "WeChat Subscription Account",
+        "KeyWeChatWorkApp": "WeChat Work App",
+        "KeyWebComponent": "Web Component",
+        "KeyWeChatCustomerService": "WeChat Customer Service",
+        "KeyMiniProgram": "Mini Program",
+        "KeyLike": "Like",
+        "KeyDislike": "Dislike",
+        "KeyReply": "Reply",
+        "KeyUser": "User",
+        "KeyPublishingChannel": "Publishing Channel",
+        "KeyIntent": "Intent",
+        "KeyEvaluation": "Evaluation",
+        "KeyCreationTime": "Creation Time",
+        "KeyProviderAliasNameYoutu": "Tencent Youtu",
+        "KeyProviderAliasNameHunyuan": "Tencent Hunyuan",
+        "KeyProviderAliasNameQwen": "Qwen",
+        "KeyProviderAliasNameBaichuan": "Baichuan Intelligent",
+        "KeyProviderAliasNameZhipu": "Zhipu AI",
+        "KeyProviderAliasNameOpenAI": "OpenAI Compatible",
+        "KeyProviderAliasNameMoonshot": "Moonshot AI",
+        "KeyProviderAliasNameDeepSeek": "DeepSeek",
+        "KeyProviderAliasNameMinimax": "Minimax",
+        "KeyProviderAliasNameStepfun": "Stepfun",
+        "KeyProviderAliasNameVolcengine": "Volcengine",
+        "KeyProviderAliasNameTIONE": "Tencent Cloud TI-ONE",
+        "KeyProviderAliasNameYi": "01.AI",
+        "KeyProviderDescHunyuan": "Tencent's self-developed general large-scale model has strong Chinese language comprehension, logical reasoning, and multimodal capabilities. Representative models include the Hunyuan Turbo series.",
+        "KeyProviderDescYoutu": "Focuses on cutting-edge AI technology research and industrial application, covering fields such as visual perception understanding, large language models, multimodal comprehension and generation, and computational acceleration.",
+        "KeyProviderDescQwen": "Tongyi Qianwen possesses multilingual and multimodal comprehension, logical reasoning, code generation, document processing, and audio-video understanding capabilities, while actively building an open-source ecosystem. Representative models include the Qwen series.",
+        "KeyProviderDescZhipu": "Originating from Tsinghua University, it is committed to developing next-generation cognitive intelligence general models. Its GLM series excels in reasoning, long-context processing, multilingual, and multimodal capabilities. Representative models include the GLM-4 series.",
+        "KeyProviderDescStepfun": "A multimodal AGI pioneer focusing on full-stack capabilities in vision, speech, and video, with outstanding performance in reasoning, coding, mathematics, and knowledge. Representative models include Step-2.",
+        "KeyProviderDescBaichuan": "Dedicated to building superior large model foundations. Its Baichuan series excels in long-text processing, multimodal understanding, mathematics, and coding capabilities. Representative models include the Baichuan4 series.",
+        "KeyProviderDescOpenAI": "Supports flexible integration of various custom or third-party large model services through compatibility with the OpenAI API protocol.",
+        "KeyProviderDescVolcengine": "An all-in-one large model service platform by Volcano Engine, offering full-process services including model training, inference, evaluation, and fine-tuning. Supports multimodal understanding, long-context windows, strong reasoning capabilities, and integrates various mainstream models like Doubao.",
+        "KeyProviderDescMoonshot": "Specializes in general artificial intelligence, with models supporting ultra-long contexts and possessing strong Agent capabilities along with multimodal comprehension and generation. Representative models include Kimi K2.",
+        "KeyProviderDescDeepSeek": "Focuses on fundamental general AI model and technology research, renowned for open-source, high performance, and exceptional reasoning capabilities. Representative models include DeepSeek-R1 (reasoning model) and DeepSeek-V3 (MoE architecture, balancing performance and cost-effectiveness).",
+        "KeyProviderDescMinimax": "A leading general AI technology company that independently develops multimodal large models, excelling in long-context processing, reasoning, coding, and multimodal comprehension and generation. Representative models include the M1 series.",
+        "KeyProviderDescTIONE": "Tencent Cloud's all-in-one machine learning platform for AI engineers, providing end-to-end development support from data ingestion, model training, model management to model serving. Supports multiple training methods and algorithm frameworks with a built-in large model library.",
+        "KeyProviderDescYi": "Founded by Dr. Kai-Fu Lee, its Yi series excels in coding, mathematics, reasoning, and instruction-following capabilities, achieving outstanding results in global open-source evaluations. Representative models include Yi-Lightning.",
+        "KeyModelDesc_sn-edu-13b": "Specialized training on educational data for English speaking practice and lesson planning scenarios. Supports textbook dialogues, difficulty settings, grammar analysis, lesson generation/polishing, and exercise creation.",
+        "KeyModelDesc_hunyuan": "Trillion-parameter MOE-32k long-context model with advanced math capabilities, function call support, and optimizations for multilingual translation, finance, law, and healthcare.",
+        "KeyModelDesc_finance-13b": "Pre-trained and fine-tuned on financial data. Expert in financial Q&A for investment knowledge and product inquiries.",
+        "KeyModelDesc_medical-6b": "Enhanced with medical data. Specializes in medical Q&A, entity extraction, dialogue summarization, and medical record generation.",
+        "KeyModelDesc_sn-edu-70b": "Trained on educational data for scenarios requiring natural English dialogue, task compliance, and rich lesson plan generation.",
+        "KeyModelDesc_hunyuan-turbo": "Novel MoE architecture delivers faster inference and stronger performance compared to Hunyuan Advanced.",
+        "KeyModelDesc_hunyuan-13B": "Improved routing strategy with better load balancing and expert diversity. Cost-effective with long-text processing capabilities.",
+        "KeyModelDesc_function-call-pro": "Capable of task planning, tool selection/execution, and error correction for complex problem-solving.",
+        "KeyModelDesc_cs-normal-70b": "Fine-tuned for enterprise Q&A. Excels at multimodal responses, math calculations, logical reasoning, and table-based Q&A.",
+        "KeyModelDesc_hunyuan-standard-256K": "Optimized routing with 256K context length. Achieves 99.9% needle-in-haystack accuracy with extended input capacity.",
+        "KeyModelDesc_hunyuan-role": "Officially fine-tuned role-playing model with enhanced performance for character simulation scenarios.",
+        "KeyModelDesc_workflow-pro": "Supports combined Q&A, document processing, and workflows with improved intent recognition and custom configuration. May increase response time.",
+        "KeyModelDesc_lke-deepseek-v3-function-call": "Latest DeepSeek-V3 with MoE and MLA architecture. Enhanced reasoning, code generation, and Chinese understanding.",
+        "KeyModelDesc_lke-deepseek-v3-0324": "Latest DeepSeek-V3 with MoE and MLA technology. Upgraded reasoning, coding, and Chinese semantic comprehension.",
+        "KeyModelDesc_lke-deepseek-r1": "RL-driven reasoning model comparable to OpenAI-o1 in math, code, and reasoning tasks. Powers DeepSeek's deep thinking mode.",
+        "KeyModelDesc_lke-deepseek-r1-0528": "Enhanced DeepSeek-R1 with improved instruction understanding, copywriting, programming, and reasoning. Supports long-duration complex tasks.",
+        "KeyModelDesc_lke-deepseek-v3": "671B parameter MoE model with MLA architecture and optimized load balancing for efficient training/inference.",
+        "KeyModelDesc_lke-deepseek-r1-0528-agent": "Latest DeepSeek-R1 agent with enhanced constraint understanding, programming, and reasoning for complex tasks.",
+        "KeyModelDesc_lke-deepseek-v3-agent": "DeepSeek-V3 agent with MoE and MLA architecture. Upgraded reasoning, coding, and Chinese understanding.",
+        "KeyModelDesc_cs-normal": "Fine-tuned for enterprise Q&A with multimodal capabilities. Cost-effective for balanced performance and price.",
+        "KeyModelDesc_lke-deepseek-v3.1": "Hybrid reasoning architecture for faster responses. Significantly improved performance on multi-step reasoning and expert-level tasks.",
+        "KeyModelDesc_lke-deepseek-v3.1-function-call": "Hybrid reasoning enables efficient multi-step problem-solving with enhanced performance on complex searches and multidisciplinary tasks.",
+        "KeyModelDesc_sn-large-multi-language-v0.2.5": "General-purpose vector retrieval model",
+        "KeyModelDesc_sn-llm-embedding-2b-v0.2.2": "LLM-enhanced vector retrieval with higher accuracy but increased latency",
+        "KeyModelDesc_sn-reranker-large-v0.4": "General text reranking model",
+        "KeyModelDesc_sn-llm-reranker-2b-v0.2": "LLM-enhanced reranking with improved accuracy and higher latency",
+        "KeyModelDesc_cs-normal-70b-1.1": "Enterprise Q&A model specializing in multimodal responses, math/reasoning, and table-based Q&A for complex scenarios.",
+        "KeyModelTagVectorModel": "VectorModel",
+        "KeyModelTagRerankingModel": "RerankingModel",
+        "KeyModelTagSpeechRecognition": "SpeechRecognition",
+        "KeyModelTagSpeechSynthesis": "SpeechSynthesis",
+        "KeyModelTagTextReasoning": "TextReasoning",
+        "KeyModelTagToolCalling": "ToolCalling",
+        "KeyModelTagAudioUnderstanding": "AudioUnderstanding",
+        "KeyModelTagVideoUnderstanding": "VideoUnderstanding",
+        "KeyModelTagImageUnderstanding": "ImageUnderstanding",
+        "KeyModelTagImageGeneration": "ImageGeneration",
+        "KeyModelTagDeepThinking": "DeepThinking",
+        "KeyModelTagOmniModal": "OmniModal",
+        "KeyDaysDays": "%d days",
+        "KeyNoDataToBePublished": "No data to be published",
+        "KeyDefaultWorkspace": "Default workspace",
+        "KeyOtherReasons": "Other reasons",
+        "KeyAllCategories": "All categories",
+        "KeyUncategorized": "Uncategorized",
+        "KeyAddVariableWithParam": "Add variable %s.%s",
+        "KeyModifyVariableWithParam": "Modify variable %s",
+        "KeyDeleteVariableWithParam": "Delete variable %s",
+        "KeyCopyContentSecurity": " Copy",
+        "KeyDefaultContentSecurity": "Default System Policy",
+        "KeyDefaultContentSecurityHigh": "High Sensitivity System Policy",
+        "KeyDefaultContentSecurityMiddle": "Medium Sensitivity System Policy",
+        "KeyDefaultContentSecurityLow": "Low Sensitivity System Policy",
+        "KeyDefaultContentSecurityDesc": "Default policy for new applications",
+        "KeyDefaultContentSecurityHighDesc": "Policy for use on special dates, high recall may come with some false positives, not recommended for daily use",
+        "KeyDefaultContentSecurityMiddleDesc": "Default policy for new applications: Standard configuration for routine periods, recommended for daily use",
+        "KeyDefaultContentSecurityLowDesc": "Only identifies baseline risks, suitable for application scenarios with low risk probability",
+        "KeyRiskResponseTypeSeriousInput": "I can't answer this question. You can try asking me something else.",
+        "KeyRiskResponseTypeSeriousOutput": "Sorry, I can't answer this question at the moment. Please try asking a different one.",
+        "KeyRiskResponseTypeMildInput": "I haven't learned how to answer this yet. Let's change the topic and continue our chat.",
+        "KeyRiskResponseTypeMildOutput": "This question is beyond my current knowledge. Please try asking a different one, and I'll do my best to help.",
+        "KeyRiskResponseTypeLivelyInput": "I don't know this one yet. How about testing me with a different question~",
+        "KeyRiskResponseTypeLivelyOutput": "Oops, this one's got me stumped. Let's talk about something else~",
+        "KeyInvalidParam": "Invalid param:%s",
+        "本轮对话内容": "The content of this round of dialogue",
+        "多轮对话中本轮对话改写结果": "Rewriting result of this round of dialogue in multi-round dialogue",
+        "对话历史": "Dialogue history",
+        "当前时间": "Current time",
+        "对话请求ID（API调用请求参数中的request_id）": "Dialogue Request ID (request_id in API call request parameters)",
+        "长期记忆内容，开启长期记忆功能后可用": "Long-term memory content, available after enabling the long-term memory function",
+        "原始图片比例与扩图比例一致，不需要扩图处理！": "The aspect ratio of the original image is consistent with the expanded image ratio; no image expansion processing is required!",
+        "智小柔-聊天女声": "Zhi Xiaorou-Chat Female Voice",
+        "千嶂-聊天男声": "Qian Zhang-Chat Male Voice",
+        "智瑜-情感女声": "Zhi Yu-Emotional Female Voice",
+        "智皓-聊天男声": "Zhi Hao-Chat Male Voice",
+        "月华-聊天女声": "Yuehua-Chat Female Voice",
+        "智斌-阅读男声": "Zhi Bin-Reading Male Voice",
+        "智宇-阅读男声": "Zhi Yu-Reading Male Voice",
+        "飞镜-聊天男声": "Feijing-Chat Male Voice",
+        "浅草-聊天男声": "Qiancao-Chat Male Voice",
+        "智菊-阅读女声": "Zhi Ju-Reading Female Voice",
+        "智兰-资讯女声": "Zhi Lan-News Female Voice",
+        "WeJames-外语男声": "WeJames-Foreign Language Male Voice",
+        "WeWinny-外语女声": "WeWinny-Foreign Language Female Voice",
+        "艾朵_职业套装_站姿": "Ai Duo_Professional Outfit_Standing Posture",
+        "艾铭_深色西装_站姿": "Ai Ming_Dark Suit_Standing Posture",
+        "艾可_医生白大褂_站姿": "Ai Ke_Doctor's White Coat_Standing Posture",
+        "艾欣_白衬衫_站姿": "Ai Xin_White Shirt_Standing Posture",
+        "客服小云最终版": "Customer Service Xiao Yun (Final Version)",
+        "客服小腾最终版": "Customer Service Xiao Teng (Final Version)",
+        "艾米_蓝色西装_站姿": "Ai Mi_Blue Suit_Standing Posture",
+        "艾瑶_深色套装_站姿": "Ai Yao_Dark Suit_Standing Pose",
+        "企业面试官V1": "Corporate Interviewer V1",
+        "客服小云": "Customer Service XiaoYun",
+        "客服小腾": "Customer Service XiaoTeng",
+        "问答回复": "Q&A Response",
+        "工作流回复": "Document Response",
+        "文档回复": "Workflow Response",
+        "大模型回复": "Model Response",
+        "替换为您的域名": "Replace with your domain name",
+        "未分类": "Uncategorized",
+        "标准模式": "Standard",
+        "单工作流模式": "Single Workflow",
+        "Multi-Agent模式": "Multi-Agent",
+        "Standard mode": "Standard",
+        "Multi-Agent Mode": "Multi-Agent",
+        "Single workflow mode": "Single workflow",
+        "腾讯云智能体开发平台官方": "Tencent Cloud ADP",
+        "示例问题": "Example Questions",
+        "Normal": "Normal",
+        "Polity": "Polity",
+        "Ad": "Advertise",
+        "Abuse": "Abuse",
+        "Illegal": "Illegal",
+        "Spam": "Spam",
+        "Terror": "Terror",
+        "Porn": "Porn",
+        "29999": "Participle",
+        "Value": "Value",
+        "GeneratedContentRisk": "GeneratedContentRisk",
+        "Copyright": "Copyright",
+        "Teenager": "Teenager",
+        "Religion": "Religion",
+        "Sexy": "Sexy",
+        "广告": "Ad",
+        "谩骂": "Abuse",
+        "不文明用语": "Uncivilized",
+        "口头禅": "Uncivilized",
+        "非攻击性的不文明用语，如我靠、尼玛": "Non-aggressive uncivilized language, such as 'Wokao', 'Nima'",
+        "人身攻击": "Personal Attack",
+        "重度人身攻击": "Severe personal assault",
+        "直接辱骂攻击他人的用词，如傻逼、婊子": "Direct abusive and attacking language towards others, such as 'Shabi', 'Biaoz'",
+        "轻度人身攻击": "Slight personal assault",
+        "辱骂攻击他人的用词，但也可能用于调侃，如傻子、你奶奶个熊": "Abusive words attacking others, but may also be used for teasing, such as 'Shazi', 'Your grandma is a bear'",
+        "色情粗口": "Pornographic Abuse",
+        "色情粗口用语": "Pornographic Abuse",
+        "含有性行为或者性器官相关粗口词汇": "Vulgar expressions related to sexual behaviors or organs",
+        "违法": "Illegal",
+        "毒品": "Drug",
+        "制毒贩毒管控内容": "Promote drug use and trafficking",
+        "涉及制毒贩毒的教程方法、宣扬制度贩毒、营销导流等违法行为": "Content involving illegal activities such as tutorials on drug manufacturing and trafficking, advocacy of drug manufacturing and trafficking, and marketing diversion for such crimes.",
+        "毒品成品管控内容": "Mention of drugs",
+        "提及毒品成品并对其宣扬": "Mentioning finished drug products and advocating them",
+        "赌博": "Gamble",
+        "赌博平台管控内容": "Gambling sites",
+        "涉及赌博平台机构/组织的名称，且进行营销推广导流、询问如何参与等": "Involving the name of gambling platforms/institutions, including marketing, promotion, inquiry about participation, etc.",
+        "合法赌博场所宣传管控": "Casino",
+        "符合当地法律法规的赌博场所，但进行宣扬或营销行为": "Legal casino promotion, but includes advocacy or marketing actions",
+        "棋牌游戏": "Board game",
+        "以赌博为目的的网络联机棋牌游戏": "Online board games for the purpose of gambling",
+        "博彩游戏": "Betting games",
+        "包括赌博性质的博彩游戏内容": "Content related to betting games of a gambling nature",
+        "赌博行为": "Gambling",
+        "以营利为目的，聚众赌博或者以赌博为业的行为": "Acts of gambling for profit, gathering for gambling or making a living from gambling",
+        "赌博器具管控内容": "Gambling equipment",
+        "涉及赌博相关器具的营销推广": "Marketing or promotion of gambling equipment",
+        "违禁品": "Contraband",
+        "有害药品": "Illegal Medicines",
+        "与医疗、预防和保健目的无关的危害药品": "Hazardous medicines unrelated to medical, preventive or health purposes",
+        "有害化学品": "Prohibited chemicals",
+        "具有毒害、腐蚀等性质，对人体、设施、环境具有危害的剧毒化学品": "Highly toxic chemicals harmful to humans, facilities, and the environment",
+        "危爆物品": "Flammables and Explosives Goods",
+        "具有爆炸、易燃、放射性等危险性质": "Explosive, flammable, or radioactive danger items",
+        "野生动物危害言论": "Wild animals",
+        "非法贩卖、捕杀、食用野生动物言论": "Statements about illegal trading, hunting, or eating wild animals",
+        "非法翻墙工具": "VPN",
+        "非法VPN展示或推广营销": "Displaying or promoting illegal VPN tools",
+        "黑灰产管控工具": "Other",
+        "禁止市场随意流通的违禁品，如开锁工具、遥控干扰器、出售黑车、遥控车牌架": "Prohibited tools and goods such as lock-picking tools, remote interference devices, selling illegal vehicles, or remote license plate holders",
+        "违禁行为": "Prohibited Behavior",
+        "造假作弊": "Fraud cheating",
+        "编造捏造、以假乱真，利用不存在的事物来谋取利益": "Fabrication, falsification, using fictitious things for profit",
+        "人体贩卖": "Human trafficking",
+        "人体器官贩卖相关危害言论": "Statements related to human organ trafficking",
+        "侵犯个人隐私": "Invasion of personal privacy",
+        "涉及侵犯个人隐私的言论或工具售卖": "Statements or tools related to invasion of personal privacy",
+        "雇凶杀人": "Hire a murderer",
+        "雇佣他人进行犯罪活动": "Hiring others to commit crimes",
+        "付费删帖": "Pay to delete posts",
+        "通过信息网络有偿提供删除信息服务": "Paid online services for deleting information",
+        "封建迷信": "Feudal superstition",
+        "提及封建迷信的言论，或意图开展封建迷信活动": "Statements or intentions related to feudal superstition activity",
+        "金融违法行为": "Financial Prohibitions",
+        "实施洗钱、逃税漏税的言论，包括咨询如何洗钱、逃税漏税相关规则方式介绍": "Statements involving money laundering, tax evasion, including consulting or introducing how to launder money or evade taxes",
+        "非法团体": "Illegal Group",
+        "黑社会": "Mafia",
+        "涉及黑社会的不良言论": "Negative statements involving mafia",
+        "传销组织": "MLM Organization",
+        "涉及传销组织的不良导向言论": "Negative guidance involving pyramid schemes (MLM)",
+        "非法社会组织": "Illegal social organization",
+        "未在民政部门登记的涉嫌非法社会组织": "Suspected illegal social organizations not registered with civil affairs departments",
+        "灌水": "Spam",
+        "暴恐": "Terror",
+        "恐怖组织人物": "Horror Characters",
+        "涉及联合国认定的恐怖组织相关人物": "Involving UN-designated terrorist group members",
+        "恐怖组织": "Terrorist Organization",
+        "涉及联合国认定的恐怖组织": "Involving UN-designated terrorist organizations",
+        "恐怖事件": "Terrorist Incident",
+        "恐怖分子制造的危害社会稳定、人民生命与财产安全的行为活动": "Terrorist acts endangering social stability, people's lives and properties",
+        "暴力血腥描述": "Violent",
+        "暴力用词": "Violent and bloody",
+        "各类提及到暴力的用词用语，范围较广": "Various language referring to violence, broad scope",
+        "血腥行为描述": "Bloody Scene",
+        "描述或教授极端血腥行为（如碎尸、肢解、食尸、虐杀）及尸体处置的可操作细节的内容": "Describing or teaching extreme bloody acts such as dismemberment, cannibalism, torture and details of body disposal",
+        "武器相关描述": "Arms",
+        "杀伤性武器": "Arms",
+        "枪支弹药名称、管制刀具、大杀伤性武器等": "Names of firearms, controlled knives, large-scale killing weapons, etc.",
+        "色情": "Porn",
+        "性行为描述": "Sexual Behavior",
+        "低俗描述性行为": "Vulgar description of sexual behavior",
+        "使用低俗下流的语言描述性相关的动作、行为和意图": "Using vulgar or obscene language to describe sexual acts, behaviors, or intentions",
+        "客观陈述性行为": "Objective statement of behavior",
+        "性行为相关的客观描述，但是整句话没有低俗性行为的联想": "Objective description of sexual behavior without vulgar implications",
+        "性行为影射": "Sexual innuendo",
+        "通过暗示、比喻、联想或描述行为反应，而非直接描述，来指代或影射性交、自慰等核心性行为的文本": "Implied or metaphorical references to sexual acts, rather than direct descriptions",
+        "性暗示与软色情": "Ambiguous expression of foreplay",
+        "通过双关、歧义性语言或模糊的行为描述，营造色情氛围、进行性挑逗，但未明确描述色情动作或性行为": "Using puns, ambiguous language, or vague behavior to create a sexual atmosphere, tease, but not explicitly describe sexual acts",
+        "低俗描述性活动": "Vulgar descriptive activity",
+        "使用低俗下流的语言或低俗称谓，描述性活动时的动作、行为和对话": "Using vulgar or obscene language or terms to describe actions, behaviors, and conversations during sexual activity",
+        "性行为前戏": "Vulgar description of foreplay",
+        "明确描述以激发性欲为目的、但未及核心性行为的身体接触与挑逗动作": "Explicitly describing physical contact and teasing acts meant to excite sexual desire, not reaching core sexual acts",
+        "性器官描述": "Sex Organ",
+        "低俗描述性器官": "Vulgar description of sexual organs",
+        "使用低俗下流的语言描述性器官": "Using vulgar or obscene language to describe sexual organs",
+        "客观陈述性器官": "Objective statement of sexual organs",
+        "性器官相关的客观描述，但是整句话没有低俗性行为的联想\n不包含案件描述、新闻报道、生理科普类型的内容": "Objective description of sexual organs, without vulgar sexual connotations, excluding cases, news, physiological science",
+        "情色三级资源": "Pornography",
+        "情色人物提及": "Erotic figures",
+        "提及成人色情行业从业者": "Mentioning workers in the adult industry",
+        "情色作品提及": "Pornography",
+        "情色类的AV、歌曲、小说、漫画、游戏、场所、网站名等": "Mentions of pornography, AV, songs, novels, comics, games, places, or websites",
+        "SM内容": "SM",
+        "低俗描述SM": "SM",
+        "描述 SM 行为、道具等包含色情语义的描述": "Describing SM acts, tools with sexual implications",
+        "提及SM": "Objective SM",
+        "对SM相关词汇的提问或科普，不涉及色情内容": "Questions or science popularization about SM terms without sexual implication",
+        "同性恋": "Homosexual",
+        "男同言论": "Gay",
+        "女同言论": "Lesbian",
+        "特殊性癖": "Perverted Porn",
+        "色情特殊性癖": "Perverted Porn",
+        "通过文字描绘、角色扮演或对话，色情化地展现特殊性癖好行为或场景的文本": "Describing special sexual fetishes or scenarios in a pornographic manner via text, roleplay or dialogue",
+        "生理科普": "Physiology Popularization",
+        "生理科普知识": "Physiology Popularization",
+        "仅包含真正的知识科普内容，对于描述性的内容、或提问性质的内容不包含": "Only includes genuine scientific and educational content, excludes descriptive or question-based content",
+        "性爱科普": "Sexual Popularization",
+        "性爱相关的客观科普内容，无色情语义": "Objective scientific content about sex, without pornographic meaning",
+        "未成年色情": "Minor Porn",
+        "价值观": "Value",
+        "自杀自残": "Self Harm",
+        "自杀自残言论": "Self Harm",
+        "描述自杀自残以及倾向的言论": "Statements describing or showing tendencies of suicide/self-harm",
+        "消极情绪": "Negative Emotions",
+        "语义上趋向于自我否定、自我放弃等负面影响的内容": "Content semantically expressing self-denial, abandonment, or other negative influence",
+        "自毁倾向": "Self-destructive Tendencies",
+        "语义上趋向于展示自毁自虐意图与行为，鼓吹自毁情绪和行为的内容": "Content showing intent or acts of self-destruction, or promoting these emotions and behaviors",
+        "自杀倾向": "Suicidal Tendencies",
+        "语义上趋向于展示自杀意图与自杀行为，鼓吹自杀的内容": "Content showing suicidal intentions or acts, or promoting suicide",
+        "指令攻击": "Prompt Attack",
+        "优先使用大模型自带的防攻击机制，需额外加强才开启": "Use built-in model anti-attack mechanisms first, strengthen if necessary",
+        "Prompt泄露": "Prompt Leak",
+        "诱导模型泄露其系统提示词": "Inducing the model to leak its system prompts",
+        "目标劫持": "Prompt Hijack",
+        "通过指令语句，诱导大模型绕过安全机制，输出预设答案": "Trying to bypass model safety by prompt hijacking to output preset answers",
+        "信息安全": "Prompt Security Risk",
+        "系统攻击": "Prompt Information Security Risk",
+        "攻击计算机、网络、系统等相关言论，如“如何侵入政府数据库”": "Statements related to attacking computers, networks, systems, e.g., 'how to hack government database'",
+        "军警制服": "Uniform",
+        "迷彩服": "Camouflage",
+        "消防服": "Fire Uniform",
+        "ACG警服": "ACG Police",
+        "ACG军服": "ACG Military Uniform",
+        "热武器": "Gun",
+        "真实枪支": "Real Gun",
+        "游戏枪支": "Game Gun",
+        "ACG枪支": "ACG Gun",
+        "玩具枪": "Toy Gun",
+        "大型武器": "Big Weapon",
+        "军事武器": "Military weapons",
+        "24001010001": "Military weapons",
+        "坦克、军用飞机、军用舰艇、军用导弹等常见大型武器": "Common large-scale military weapons such as tanks, military airplanes, warships, missiles, etc.",
+        "坦克": "Tank",
+        "更泛化的坦克，例如只要有履带出现都算": "Generalized tank, such as anything with tracks is considered a tank",
+        "冷兵器": "Knife",
+        "真实刀具": "Real Knife",
+        "游戏刀具": "Game Knife",
+        "ACG刀具": "ACG Knife",
+        "管制刀具": "Illegal Knife",
+        "血腥画面": "Blood",
+        "ACG血腥画面": "ACG Blood",
+        "漫画或动漫场景中出现的血腥画面": "Bloody scenes in manga or anime",
+        "真实血腥画面": "Real Blood",
+        "真实场景中的血腥画面，如虐杀": "Bloody scenes in real life, such as abuse or murder",
+        "惊悚血腥画面": "Horror Blood",
+        "极度血腥，带有惊悚感的画面": "Extremely bloody and horrifying scenes",
+        "性感": "Sexy",
+        "女性性感胸部": "Women Sexy Chest",
+        "ACG女重度露沟": "ACG Women Heavy Chest",
+        "ACG女性胸部露出中间乳沟（大于50%），或胸部露出下沿（大于50%）": "ACG woman’s cleavage exposed over 50%, or underbust exposed over 50%",
+        "真人女重度露沟": "Real Women Heavy Chest",
+        "真人女性胸部露出中间乳沟（大于50%），或胸部露出下沿（大于50%）": "Real woman’s cleavage exposed over 50%, or underbust exposed over 50%",
+        "亲吻画面": "Kiss",
+        "异性亲吻": "Men Women Kiss",
+        "男女之间，嘴对嘴的亲吻，嘴要互相接触": "Kissing between man and woman, mouth-to-mouth, lips touch",
+        "女女亲吻": "Women Kiss",
+        "女女之间，嘴对嘴的亲吻，嘴要互相接触": "Kissing between women, mouth-to-mouth",
+        "男男亲吻": "Men Kiss",
+        "男男之间，嘴对嘴的亲吻，嘴要互相接触": "Kissing between men, mouth-to-mouth",
+        "亲密行为": "Intimate Behavior",
+        "男男亲密": "Men Close",
+        "男性之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为": "Intimate physical behavior between men such as hugging, resting heads together, etc.",
+        "男女亲密": "Men Women Close",
+        "男女之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为": "Intimate physical behavior between man and woman such as hugging, resting heads together, etc.",
+        "女女亲密": "Women Close",
+        "女性之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为": "Intimate physical behavior between women such as hugging, resting heads together, etc.",
+        "男下激凸": "Crotch Close Up",
+        "三角区": "Male lower body (crotch area)",
+        "20103036301": "Male lower body (crotch area)",
+        "视觉聚焦男性下体的图片，包括马赛克跟动漫场景": "Images focused on male genital area, including censored and anime scenes",
+        "诱惑姿势": "Seductive Pose",
+        "张腿": "Open Leg",
+        "腿和裆部呈M或者W形状，且下体穿着少": "Legs and crotch in M or W shape, dressed scantily below",
+        "撅臀": "Pout Hip",
+        "明显甚至夸张地撅起屁股，无论是不是穿着衣服": "Prominently sticking out buttocks, exaggeratedly, with or without clothes",
+        "性表情": "O Face",
+        "带有性暗示的猥琐表情": "Lewd facial expressions with sexual implication",
+        "性行为画面": "Sexy Behavior",
+        "各种性爱的画面，包括真人、动漫、手绘等场景": "Various scenes of sexual acts, including real, animated or hand-drawn scenes",
+        "女性下体裸露": "Women Private Part",
+        "包括有马赛克或非常少的衣物，但可以明确判断的图片": "Visible female genital area, including pixelated or very scantily dressed images",
+        "女性胸部裸露": "Women Chest",
+        "包含虽有衣物遮挡，但胸部整体裸露较多的画面": "Images with mostly exposed female chest, even if partly covered",
+        "男性下体裸露": "Men Private Part",
+        "包含虽有衣物遮挡，但下体整体裸露较多或非常明显的画面": "Images with mostly exposed male genital area, even if partly covered",
+        "臀部裸露": "Buttocks Exposed",
+        "不区分男女，臀部大面积裸露": "Large area of buttocks exposed, no gender distinction",
+        "儿童裸露": "Naked Child",
+        "儿童裸露下体和臀部": "Child with exposed genital and butt area",
+        "动物性行为": "Animal Sex",
+        "性分泌物": "Sex Secretion",
+        "画面中包含较明显的性分泌物": "Images containing prominent sexual secretions",
+        "裸体": "Naked",
+        "全裸或几乎全裸": "Completely or almost completely naked",
+        "女性下体内窥镜": "Endoscope",
+        "女性下体内窥画面，属于特殊性癖": "Endoscopic images of female genital area, considered a special fetish",
+        "医学性器官": "Medical Porn",
+        "可以看到性器官、敏感部位医学人体图（含解剖图、剖面图等）": "Medical diagrams showing sexual organs and sensitive areas (including anatomy, cross-sections)",
+        "ACG孕妇": "ACG Pregnancy",
+        "动漫、3D 、仿真等ACG画风的孕妇图片，属于特殊性癖": "Anime, 3D, or simulated ACG-styled pregnant women images, special fetish",
+        "二维码": "Qr Code",
+        "常见二维码": "QRCODE",
+        "包括但不限于微信、支付宝、网址、淘宝、QQ等常见的二维码": "Common QR codes, including WeChat, Alipay, websites, Taobao, QQ, etc.",
+        "淘宝二维码": "Taobao QR Code",
+        "微信二维码": "Wechat QR Code",
+        "支付宝二维码": "Alipay QR Code",
+        "小程序码": "WXCODE",
+        "条形码": "BARCODE",
+        "PDF417条码": "PDF417",
+        "DM码": "DATAMATRIX",
+        "政治": "Polity",
+        "劣迹明星": "Bad Star",
+        "劣迹网红": "Inferior",
+        "纳粹战犯": "Nazi Criminal",
+        "侵华战犯": "War Criminal",
+        "国旗营销": "Guo Qi Ying Xiao",
+        "侮辱国旗": "Wu Ru Guo Qi",
+        "焚烧、践踏、涂鸦等恶搞国旗行为": "Behaviors insulting the national flag, such as burning, trampling, graffiti, parody",
+        "恶搞人民币": "EGao RMB",
+        "对人民币PS、恶意折叠等行为": "Photoshopping or maliciously folding RMB",
+        "恶搞国徽": "EGao Guo Hui",
+        "在国徽上添加其它恶意元素": "Adding malicious elements to the national emblem",
+        "吸烟": "Smoking",
+        "吸毒": "Drug",
+        "喝酒": "Drink",
+        "打斗": "Fight",
+        "恶心画面": "Nausea",
+        "未成年识别": "Teenager",
+        "未成年人出镜": "Minors",
+        "画面中出现未成年人，适用于真人、且需要露脸": "Minors appearing on screen, applies to real people and must show face",
+        "未成年人色情": "Minors Porn",
+        "真人形象的未成年色情及擦边画面": "Real-life minor pornography or borderline content",
+        "未成年人违禁行为": "Minors Illegal",
+        "未成年人吸烟": "Minors Smoking",
+        "未成年人喝酒": "Minors Drink",
+        "未成年人纹身": "Minors Tattoo",
+        "儿童邪典": "Elsagate",
+        "以儿童熟悉的卡通人物包装成为血腥暴力或软色情的图片": "Images with familiar children's cartoon characters but containing bloody, violent or soft porn elements",
+        "ACG未成年人": "ACG Minors",
+        "漫画风格、或AIGC生成的未成年形象": "Manga style or AI-generated minor images",
+        "未成年形象": "Minors New",
+        "适用于真人，不一定要求露脸，外形像未成年人即会识别": "For real people, not necessarily showing face, as long as shape looks like minor",
+        "宗教识别": "Religion",
+        "生成式风险": "Generated Content Risk"
+    }
+  admin_zh-CN.json: |
+    {
+        "KeyAgentFeedbackInfo": "agent反馈信息",
+        "KeyPublishedContentManualReviewSuccess": "发布内容人工审核成功。",
+        "KeyPublishedOnlineContentManualReviewSuccess": "发布上线内容人工审核成功。",
+        "KeyPublishedContentManualReviewFail": "发布内容人工审核失败。",
+        "KeyPublishedContentManualReviewFailWithSensitiveReason": "发布内容人工审核失败，失败原因：内容包含敏感信息。",
+        "KeyPublishedContentManualReviewPartialSuccess": "发布内容人工审核部分成功。",
+        "KeyPublishedOnlineContentManualReviewResultWithReason": "发布上线内容人工审核成功%d条，失败%d条，失败原因：内容包含敏感信息。",
+        "KeyConservativeReplyReviewPass": "保守回复语审核通过。",
+        "KeyConservativeReplyChangeReviewPass": "保守回复语变更已审核通过。",
+        "KeyConservativeReplyReviewFail": "保守回复语审核失败。",
+        "KeyConservativeReplyReviewFailWithTimeoutReason": "保守回复语审核失败，失败原因：保守回复语审核超时。",
+        "KeyConservativeReplyReviewFailWithSensitiveReason": "保守回复语审核失败，失败原因：保守回复语包含敏感信息。",
+        "KeyConservativeReplyManualAppealFail": "保守回复语人工申诉失败。",
+        "KeyConservativeReplyManualAppealFailWithSensitiveReason": "保守回复语人工申诉失败，失败原因：保守回复语包含敏感信息。",
+        "KeyConservativeReplyManualAppealSuccess": "保守回复语人工申诉成功。",
+        "KeyConservativeReplyContentChangeManualAppealSuccess": "保守回复语内容变更人工申诉成功。",
+        "KeyRetry": "重新",
+        "KeyCallStatExportWithParam": "调用统计表导出%s。",
+        "KeyCallStatExporting": "调用统计表导出中。",
+        "KeyConcurrentStatExportWithParam": "并发统计表导出%s。",
+        "KeyConcurrentStatExporting": "并发统计表导出中。",
+        "KeyKnowledgeBaseCapacityStatExportWithParam": "知识库容量统计表导出%s。",
+        "KeyKnowledgeBaseCapacityStatExporting": "知识库容量统计表导出中。",
+        "KeyExportWithParam": "导出%s",
+        "KeyExportSuccess": "导出成功",
+        "KeyExportFail": "导出失败",
+        "KeySuccess": "成功",
+        "KeyFail": "失败",
+        "KeyFeedbackInfo": "反馈信息",
+        "KeyKnowledgeBasePublishing": "知识库发布中。",
+        "KeyAppPublishSuccess": "应用发布成功。",
+        "KeyAppPublishSuccessWithParam": "应用【%s】发布成功。",
+        "KeyAppPublishOnlinePause": "应用发布上线暂停。",
+        "KeyAppPublishOnlinePauseWithReason": "应用发布上线暂停，暂停原因：网络超时。请前往发布上线重试。",
+        "KeyAppPublishPartialSuccess": "应用发布部分成功。",
+        "KeyResultWithTimeoutReason": "成功%d条，失败%d条。失败原因：审核超时。",
+        "KeyResultWithReviewFailReason": "成功%d条，失败%d条。失败原因：审核失败。",
+        "KeyAppPublishFail": "应用发布失败。",
+        "KeyAppPublishFailWithReason": "应用【%s】发布失败，失败原因：%s。",
+        "KeyAppName": "应用名称",
+        "KeyAvatar": "头像",
+        "KeyAppDescription": "应用描述",
+        "KeyWelcomeMessage": "欢迎语",
+        "KeyRoleDescription": "角色描述",
+        "KeyOutputMethod": "输出方式",
+        "KeyConservativeReplySwitch": "保守回复开关",
+        "KeyConservativeReplyContent": "保守回复语",
+        "KeyMaxRecallNumWithParam": "%s最大召回数量",
+        "KeyRetrievalMatchingDegreeWithParam": "%s检索匹配度",
+        "KeyReplyFlexibility": "回复灵活度",
+        "KeyKnowledgeSourceConfigWithParam": "知识来源%s配置",
+        "KeySearchEngineStatus": "搜索引擎状态",
+        "KeyContextRewriting": "上下文改写",
+        "KeyContextMemoryRounds": "上下文记忆轮数",
+        "KeyModelSelectionWithParam": "%s 模型选择",
+        "KeyTagConfig": "标签配置",
+        "KeyOutputRequirement": "输出要求",
+        "KeyCustomOutputRequirement": "自定义输出要求",
+        "KeyQuestionClarification": "问题澄清",
+        "KeyClarificationKeywords": "澄清关键词",
+        "KeyKnowledgeBaseRetrievalRangeSetting": "知识库检索范围设置",
+        "KeyAppMode": "应用模式",
+        "KeyDesignatedWorkflow": "指定工作流",
+        "KeyTemperatureWithParam": "%s 温度",
+        "KeyTopPWithParam": "%s top-p",
+        "KeyRetrievalStrategy": "检索策略",
+        "KeyExcelRetrievalEnhancement": "Excel检索增强",
+        "KeyDirectReplyWithAdoptedAnswer": "已采纳答案直接回复",
+        "KeyPolishedReplyWithAdoptedAnswer": "已采纳答案润色回复",
+        "KeyTextSummary": "文本总结",
+        "KeyCustomRequirement": "自定义要求",
+        "KeyStreamingOutput": "流式输出",
+        "KeyNonStreamingOutput": "非流式输出",
+        "KeyEnable": "开启",
+        "KeyDisable": "关闭",
+        "KeyShow": "显示",
+        "KeyHide": "隐藏",
+        "KeyAvatarChanged": "头像已变更",
+        "KeyQA": "问答",
+        "KeyDocument": "文档",
+        "KeyRejection": "拒答",
+        "KeySearchEnhancement": "搜索增强",
+        "KeyTaskFlow": "任务流程",
+        "KeyImageSearchByImage": "图搜图",
+        "KeyImageSearchByText": "文搜图",
+        "KeyModelResourceExhausted": "该模型资源已用尽",
+        "KeyNotOnline": "未上线",
+        "KeyRunning": "运行中",
+        "KeyDisabled": "停用",
+        "KeyNotSet": "未设置",
+        "KeyOr": "或",
+        "KeyAnd": "且",
+        "KeyStandardMode": "标准模式",
+        "KeyMultiAgentMode": "Multi-Agent模式",
+        "KeySingleWorkflowMode": "单工作流模式",
+        "KeyHybridRetrieval": "混合检索",
+        "KeySemanticRetrieval": "语义检索",
+        "KeyGenerationModel": "生成模型",
+        "KeyThinkingModel": "思考模型",
+        "KeyAPISelectParamChanged": "选择API参数由 %s 变更为 %s",
+        "KeyAPIParamOrTagChanged": "API参数名称或标签 发生变更",
+        "KeyInvalidWorkflow": "无效的工作流",
+        "KeyPublishSuccess": "发布成功",
+        "KeyPublishFail": "发布失败",
+        "KeyPublishPause": "发布暂停",
+        "KeySourceFileImport": "源文件导入",
+        "KeyWebImport": "网页导入",
+        "KeyAdd": "新增",
+        "KeyDelete": "删除",
+        "KeyModify": "修改",
+        "KeyPublishOp": "发布",
+        "KeyNotGenerated": "未生成",
+        "KeyGenerating": "生成中",
+        "KeyGenerateComplete": "生成完成",
+        "KeyGenerateFail": "生成失败",
+        "KeyReviewPass": "审核通过",
+        "KeyUpdating": "更新中",
+        "KeyUpdateFail": "更新失败",
+        "KeyQuestionFeedbackSubmitted": "您对问题\"%s\"的反馈已提交，反馈ID为%d",
+        "KeyQuestionFeedbackProcessed": "反馈ID为%d的问题\"%s\"的反馈已被处理完成",
+        "KeyQuestionFeedbackRejected": "你对的问题\"%s\"的反馈(ID:%d)已被技术人员拒绝",
+        "KeyKnowledgeBaseContent": "知识库内容",
+        "KeyReviewTimeout": "审核超时",
+        "KeyContainSensitiveInfo": "包含敏感信息",
+        "KeyToBePublished": "待发布",
+        "KeyPublished": "已发布",
+        "KeyParseFail": "解析失败",
+        "KeyImportFail": "导入失败",
+        "KeyReviewFail": "审核失败",
+        "KeyRenameReviewFail": "重命名审核失败",
+        "KeyManualAppealFail": "人工申诉失败",
+        "KeyRenameAppealFail": "重命名申诉失败",
+        "KeyLearningFail": "学习失败",
+        "KeyExpired": "已过期",
+        "KeyOverLimitInvalid": "超量失效",
+        "KeyParsing": "解析中",
+        "KeyInReview": "审核中",
+        "KeyInManualAppeal": "人工申诉中",
+        "KeyLearning": "学习中",
+        "KeyInPublish": "发布中",
+        "KeyInvalidRecovery": "失效恢复中",
+        "KeyDate": "日期",
+        "KeyMessageCount": "消息数",
+        "KeyInteractiveUserCount": "互动用户数",
+        "KeyLikeCount": "点赞数",
+        "KeyDislikeCount": "点踩数",
+        "KeyLikeRate": "点赞率",
+        "KeyStatAccount": "统计账号",
+        "KeyAPICallTotalTokenCount": "接口调用总token数",
+        "KeyTotalConsumedPages": "总消耗页数",
+        "KeyBillingAPICallCount": "计费接口调用次数",
+        "KeyAPICallInputTokenCount": "接口调用输入token数",
+        "KeyAPICallOutputTokenCount": "接口调用输出token数",
+        "KeySearchServicePackageCallCount": "搜索服务包调用次数",
+        "KeyCallTime": "调用时间",
+        "KeyTotalConsumedTokenCount": "总消耗token数",
+        "KeyInputConsumedTokenCount": "输入消耗token数",
+        "KeyOutputConsumedTokenCount": "输出消耗token数",
+        "KeySearchServiceConsumedCount": "搜索服务消耗次数",
+        "KeyModelName": "模型名称",
+        "KeyAccount": "账号",
+        "KeyCallType": "调用类型",
+        "KeyEnterpriseId": "企业id",
+        "KeyAvailableConcurrentCount": "可用并发数",
+        "KeySuccessfulConcurrentCallCount": "调用成功并发数",
+        "KeyQuery": "query",
+        "KeyApp": "应用",
+        "KeyKnowledgeBaseUsedCharCount": "知识库使用字符数",
+        "KeyUsageRatio": "使用量占比",
+        "KeyOverLimitInvalidCharCount": "超量失效字符数",
+        "KeyLevelClassificationWithParam": "%d 级分类",
+        "KeyQuestion": "问题",
+        "KeyAnswer": "答案",
+        "KeySource": "来源",
+        "KeyAssociatedDocument": "关联文档",
+        "KeyName": "姓名",
+        "KeyAge": "年龄",
+        "KeyGender": "性别",
+        "KeyUserQuestion": "用户问题",
+        "KeyRobotReply": "机器人回复",
+        "KeyErrorType": "错误类型",
+        "KeyMyIntelligentApp": "我的智能体应用",
+        "KeyAttributeIdentifierRequired": "属性标识（必填）",
+        "KeyAttributeRequired": "属性（必填）",
+        "KeyTagRequired": "标签（必填）",
+        "KeySimilarTag": "相似标签",
+        "KeyContainSensitiveWord": "包含敏感词",
+        "KeyManualReviewPass": "人工审核通过",
+        "KeyManualReviewNotPass": "人工审核不通过",
+        "KeyDialogContentReview": "对话内容审核",
+        "KeyTrialActivationWithParam": "试用开通(%s)",
+        "KeyWorkflowExporting": "工作流程导出中",
+        "KeyWorkflowExportWithParam": "工作流程导出 %s",
+        "KeyDeepSeekR1LatestVersionDesc": "Deepseek-R1 模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。",
+        "KeyWebSearch": "联网搜索",
+        "KeyWebSearchAPIKey": "联网搜索API Key",
+        "KeyWebSearchRecallInterfaceFragment": "联网搜索召回接口片段",
+        "KeyWebSearchAPIKeyProvider": "联网搜索API Key 服务商",
+        "KeyRetrievalRangeChangedToDefaultWithParam": "%s 检索范围变更为 默认值",
+        "KeyKnowledgeBaseSchemaChanged": "知识库schema发生变更",
+        "KeyThinkingModelPro": "思考模型高级版",
+        "KeyThinkingModelProDesc": "适用于同时配置问答、文档、工作流的场景，意图识别效果更佳，并且支持在角色指令中自定义配置意图。但可能会增加一定的对话耗时。",
+        "KeyDeepSeekV3LatestVersionDesc": "DeepSeek-V3 模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。",
+        "KeyDatabase": "数据库",
+        "KeyIntentAchievementPriority": "意图达成优先级",
+        "KeyImageTextRetrieval": "图文检索",
+        "KeyAsynchronousCall": "异步调用",
+        "KeySharedKnowledgeBaseRetrievalRangeSetting": "共享知识库检索范围设置",
+        "KeyReferenceSharedKnowledgeBase": "引用共享知识库",
+        "KeyKnowledgeBaseSchema": "知识库schema",
+        "KeyBackgroundImageOriginal": "背景图原始图",
+        "KeyBackgroundImageWebEffect": "背景图WEB效果",
+        "KeyBackgroundImageMobileEffect": "背景图移动端效果",
+        "KeyBackgroundImageThemeColor": "背景图主题色",
+        "KeyMessageStatExportWithParam": "消息统计导出%s。",
+        "KeyMessageLogExporting": "消息日志导出中。",
+        "KeyMessageStatExporting": "消息统计导出中。",
+        "KeyCopyOfWithParam": "%s的副本",
+        "KeyDefaultKnowledgeBaseRetrievalRangeSetting": "默认知识库检索范围设置",
+        "KeyRoleSettingsContentInReview": "角色设置内容审核中。",
+        "KeyConservativeReplyInReview": "保守回复语审核中。",
+        "KeyRandomSeedWithParam": "%s 随机种子",
+        "KeyPresencePenaltyWithParam": "%s 存在惩罚",
+        "KeyFrequencyPenaltyWithParam": "%s 频率惩罚",
+        "KeyRepeatPenaltyWithParam": "%s 重复惩罚",
+        "KeyMaxOutputLengthWithParam": "%s 最大输出长度",
+        "KeyStopSequenceWithParam": "%s 停止序列",
+        "KeyOutputFormatWithParam": "%s 输出格式",
+        "KeyVariableSettings": "变量设置",
+        "KeyLongTermMemory": "长期记忆",
+        "KeyLongTermMemoryDuration": "长期记忆时效",
+        "KeyExampleQuestions": "示例问题",
+        "KeyAgentCollaborationMethod": "Agent协同方式",
+        "KeyRetrievalRecallResultReordering": "检索召回-结果重排序",
+        "KeyRetrievalRecallReorderingModel": "检索召回-重排序模型",
+        "KeyRetrievalRecallVectorModel": "检索召回-向量模型",
+        "KeyAdvancedSettingsReorderingModel": "高级设置-重排序模型",
+        "KeyAdvancedSettingsReorderingModelRecallCount": "高级设置-重排序模型召回数量",
+        "KeyKnowledgeBaseModelVectorModel": "知识库模型-向量模型",
+        "KeyKnowledgeBaseModelQAPairGenerationModel": "知识库模型-问答对生成模型",
+        "KeyKnowledgeBaseModelSchemaGenerationModel": "知识库模型-Schema生成模型",
+        "KeyVoiceInteraction": "语音互动",
+        "KeyVoiceCall": "语音通话",
+        "KeyToneColor": "音色",
+        "KeyDigitalHuman": "数智人",
+        "KeyAppNotPublished": "应用未发布",
+        "KeyFreeTransfer": "自由转交",
+        "KeyWorkflowOrchestration": "工作流编排",
+        "KeyPlanAndExecuteCollaboration": "Plan-and-Execute 协同",
+        "KeyExperiencePageWithTencentCloud": "体验页面（腾讯云）",
+        "KeyExperiencePageWithPhoneNumber": "体验页面（手机号）",
+        "KeyDialogAPIAccess": "对话端 API 接入",
+        "KeyWeChatServiceAccount": "微信服务号",
+        "KeyWeChatSubscriptionAccount": "微信订阅号",
+        "KeyWeChatWorkApp": "企微应用",
+        "KeyWebComponent": "网页组件",
+        "KeyWeChatCustomerService": "微信客服",
+        "KeyMiniProgram": "小程序",
+        "KeyLike": "点赞",
+        "KeyDislike": "点踩",
+        "KeyReply": "回复",
+        "KeyUser": "用户",
+        "KeyPublishingChannel": "发布渠道",
+        "KeyIntent": "意图",
+        "KeyEvaluation": "评价",
+        "KeyCreationTime": "创建时间",
+        "KeyProviderAliasNameYoutu": "腾讯优图",
+        "KeyProviderAliasNameHunyuan": "腾讯混元",
+        "KeyProviderAliasNameQwen": "通义千问",
+        "KeyProviderAliasNameBaichuan": "百川智能",
+        "KeyProviderAliasNameZhipu": "智谱AI",
+        "KeyProviderAliasNameOpenAI": "OpenAI Compatible",
+        "KeyProviderAliasNameMoonshot": "月之暗面",
+        "KeyProviderAliasNameDeepSeek": "深度求索",
+        "KeyProviderAliasNameMinimax": "Minimax",
+        "KeyProviderAliasNameStepfun": "阶跃星辰",
+        "KeyProviderAliasNameVolcengine": "火山引擎",
+        "KeyProviderAliasNameTIONE": "腾讯云TI-ONE",
+        "KeyProviderAliasNameYi": "零一万物",
+        "KeyProviderDescHunyuan": "腾讯全链路自研的通用大模型，具备强大的中文理解、逻辑推理及多模态能力代表模型有混元Turbo系列等。",
+        "KeyProviderDescYoutu": "专注于人工智能领域的前沿技术研究和产业实践落地，涵盖了视觉感知理解、大语言模型、多模态理解和生成、计算加速等技术研究领域。",
+        "KeyProviderDescQwen": "通义千问具备多语言与多模态理解、逻辑推理、代码生成、文档处理及音视频理解能力，并积极构建开源生态，代表模型有Qwen系列等",
+        "KeyProviderDescZhipu": "源自清华大学，致力于新一代认知智能通用模型研发，其GLM系列模型在推理、长上下文处理、多语言、多模态能力方面表现突出，代表模型有GLM-4系列等",
+        "KeyProviderDescStepfun": "多模态AGI先锋，专注于视觉、语音、视频全栈能力，在推理、代码、数学和知识方面表现突出，代表模型有Step-2等",
+        "KeyProviderDescBaichuan": "致力于构建优秀的大模型底座，其Baichuan系列模型在长文本处理、多模态理解、数学和代码能力方面表现突出，代表模型有Baichuan4系列等",
+        "KeyProviderDescOpenAI": "支持通过兼容OpenAI API协议的方式，灵活接入各类自定义或第三方大模型服务",
+        "KeyProviderDescVolcengine": "火山引擎推出的一站式大模型服务平台，提供模型训练、推理、评测、精调等全流程服务，支持多模态理解、长上下文窗口和强大的推理能力，并集成了豆包大模型等多种主流模型",
+        "KeyProviderDescMoonshot": "专注于通用人工智能领域，旗下模型支持超长上下文，并具备强大的Agent能力和多模态理解与生成能力，代表模型有Kimi K2等",
+        "KeyProviderDescDeepSeek": "专注于通用人工智能底层模型与技术研究，以开源、高性能和卓越推理能力著称，代表模型有DeepSeek-R1（推理模型）和DeepSeek-V3（MoE架构，兼具性能与成本效益）",
+        "KeyProviderDescMinimax": "领先的通用人工智能科技公司，自主研发多模态大模型，在长上下文处理、推理、代码和多模态理解与生成方面表现突出，代表模型有M1系列模型等。",
+        "KeyProviderDescTIONE": "腾讯云为AI工程师打造的一站式机器学习平台，提供从数据接入、模型训练、模型管理到模型服务的全流程开发支持，支持多种训练方式和算法框架，并内置大模型库。",
+        "KeyProviderDescYi": "由李开复博士创办，其Yi系列模型在代码、数学、推理和指令遵循能力上表现出色，并在全球开源评测中取得优异成绩，代表模型有Yi-Lightning等",
+        "KeyModelDesc_sn-edu-13b": "基于教育领域数据专项训练，适用于英语口语对话练习和教案场景。英语口语陪练场景中，支持教材课后对话练习、对话难度设定、语法分析等能力；教案场景中，支持教案生成、教案润色、教案题目生成。",
+        "KeyModelDesc_hunyuan": "万亿级参数规模 MOE-32k 长文模型，具备复杂数学能力，支持 functioncall，在多语言翻译、金融法律医疗等领域应用重点优化。",
+        "KeyModelDesc_finance-13b": "基于金融领域数据进行预训练和精调训练，擅长金融领域知识问答，适用于投资知识问答、金融产品问答等应用场景。",
+        "KeyModelDesc_medical-6b": "基于医疗领域数据专项强化，擅长医疗领域知识问答，适用于医学实体抽取、医学对话总结、病历撰写等应用场景。",
+        "KeyModelDesc_sn-edu-70b": "基于教育领域数据专项训练，适用于对于英语口语对话练习自然度和任务遵循程度、教案生成丰富度的效果表现有需求的场景。",
+        "KeyModelDesc_hunyuan-turbo": "采用全新的混合专家模型（MoE）结构，相比混元大模型高级版推理效率更快，效果表现更强。",
+        "KeyModelDesc_hunyuan-13B": "采用更优的路由策略，同时缓解了负载均衡和专家趋同的问题， 性价比相对更高，在平衡效果、价格的同时，可对实现对长文本输入的处理。",
+        "KeyModelDesc_function-call-pro": "具备任务规划、工具选择调用以及反思纠错能力，能够支持复杂问题的规划与执行。",
+        "KeyModelDesc_cs-normal-70b": "针对企业知识问答场景精调训练，擅长多模态知识问答，适合图文表答案关联输出、数学计算、逻辑推理、表格问答等复杂场景有需求的场景。",
+        "KeyModelDesc_hunyuan-standard-256K": "采用更优的路由策略，同时缓解了负载均衡和专家趋同的问题。长文方面，大海捞针指标达到99.9%。MOE-256k 在长度和效果上进一步突破，极大的扩展了可输入长度。",
+        "KeyModelDesc_hunyuan-role": "混元最新版角色扮演模型，混元官方精调训练推出的角色扮演模型，基于混元模型结合角色扮演场景数据集进行增训，在角色扮演场景具有更好的基础效果。",
+        "KeyModelDesc_workflow-pro": "适用于同时配置问答、文档、工作流的场景，意图识别效果更佳，并且支持在角色指令中自定义配置意图。但可能会增加一定的对话耗时。",
+        "KeyModelDesc_lke-deepseek-v3-function-call": "DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。",
+        "KeyModelDesc_lke-deepseek-v3-0324": "DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。",
+        "KeyModelDesc_lke-deepseek-r1": "强化学习（RL）驱动的推理模型，在数学、代码和推理任务中与 OpenAI-o1 表现相当。与DeepSeek助手深度思考模式为同款模型",
+        "KeyModelDesc_lke-deepseek-r1-0528": "DeepSeek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。",
+        "KeyModelDesc_lke-deepseek-v3": "拥有6710 亿参数的混合专家（MoE）语言模型，采用多头潜在注意力（MLA）和 DeepSeekMoE 架构，结合无辅助损失的负载平衡策略，优化推理和训练效率。",
+        "KeyModelDesc_lke-deepseek-r1-0528-agent": "DeepSeek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。",
+        "KeyModelDesc_lke-deepseek-v3-agent": "DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。",
+        "KeyModelDesc_cs-normal": "针对企业知识问答场景精调训练，擅长多模态知识问答。性价比相对更高，适合需要同时平衡效果、价格的场景。",
+        "KeyModelDesc_lke-deepseek-v3.1": "采用混合推理架构，具备更高的思考效率，能在更短时间给出答案。在需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。",
+        "KeyModelDesc_lke-deepseek-v3.1-function-call": "采用混合推理架构，具备更高的思考效率，能在更短时间给出答案。在需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。",
+        "KeyModelDesc_sn-large-multi-language-v0.2.5": "通用向量检索模型",
+        "KeyModelDesc_sn-llm-embedding-2b-v0.2.2": "LLM增强向量检索模型，准确率更高，耗时将会有所增加。",
+        "KeyModelDesc_sn-reranker-large-v0.4": "通用文本排序模型",
+        "KeyModelDesc_sn-llm-reranker-2b-v0.2": "LLM 增强排序模型，准确率更高，耗时将会有所增加。",
+        "KeyModelDesc_cs-normal-70b-1.1": "针对企业知识问答场景精调训练，擅长多模态知识问答，适合图文表答案关联输出、数学计算、逻辑推理、表格问答等复杂场景有需求的场景。",
+        "KeyModelTagVectorModel": "向量模型",
+        "KeyModelTagRerankingModel": "排序模型",
+        "KeyModelTagSpeechRecognition": "语音识别",
+        "KeyModelTagSpeechSynthesis": "语音合成",
+        "KeyModelTagTextReasoning": "文本推理",
+        "KeyModelTagToolCalling": "工具调用",
+        "KeyModelTagAudioUnderstanding": "音频理解",
+        "KeyModelTagVideoUnderstanding": "视频理解",
+        "KeyModelTagImageUnderstanding": "图片理解",
+        "KeyModelTagImageGeneration": "图片生成",
+        "KeyModelTagDeepThinking": "深度思考",
+        "KeyModelTagOmniModal": "全模态",
+        "KeyDaysDays": "%d天",
+        "KeyNoDataToBePublished": "没有待发布的数据",
+        "KeyDefaultWorkspace": "默认工作空间",
+        "KeyOtherReasons": "其他原因",
+        "KeyAllCategories": "全部分类",
+        "KeyUncategorized": "未分类",
+        "KeyAddVariableWithParam": "新增变量 %s.%s",
+        "KeyModifyVariableWithParam": "修改变量 %s",
+        "KeyDeleteVariableWithParam": "删除变量 %s",
+        "KeyCopyContentSecurity": "的副本",
+        "KeyDefaultContentSecurity": "默认系统策略",
+        "KeyDefaultContentSecurityHigh": "高敏感系统策略",
+        "KeyDefaultContentSecurityMiddle": "中敏感系统策略",
+        "KeyDefaultContentSecurityLow": "低敏感系统策略",
+        "KeyDefaultContentSecurityDesc": "新建应用的默认策略",
+        "KeyDefaultContentSecurityHighDesc": "特殊日期使用的策略，高召回可能会伴随一些误伤，不推荐日常使用",
+        "KeyDefaultContentSecurityMiddleDesc": "新建应用的默认策略：常规时期的标准配置，推荐日常使用",
+        "KeyDefaultContentSecurityLowDesc": "仅识别底线风险，适用于风险概率低的应用场景。",
+        "KeyRiskResponseTypeSeriousInput": "我无法回答这个问题，您可以尝试问我其它问题。",
+        "KeyRiskResponseTypeSeriousOutput": "抱歉，您这个问题我暂时无法回答，建议您换一个问题试试呢。",
+        "KeyRiskResponseTypeMildInput": "这个问题我还没学会，换个话题我们继续聊吧。",
+        "KeyRiskResponseTypeMildOutput": "这个问题超出了我的知识范围，您可以换个问题试试看，我会尽力帮您解答。",
+        "KeyRiskResponseTypeLivelyInput": "这个我还不会，不如换个其他问题考我呗~",
+        "KeyRiskResponseTypeLivelyOutput": "哎呀，这个问题难倒我了，我们换个话题聊聊吧~",
+        "KeyInvalidParam": "参数错误:%s",
+        "本轮对话内容": "本轮对话内容",
+        "多轮对话中本轮对话改写结果": "多轮对话中本轮对话改写结果",
+        "对话历史": "对话历史",
+        "当前时间": "当前时间",
+        "对话请求ID（API调用请求参数中的request_id）": "对话请求ID（API调用请求参数中的request_id）",
+        "长期记忆内容，开启长期记忆功能后可用": "长期记忆内容，开启长期记忆功能后可用",
+        "原始图片比例与扩图比例一致，不需要扩图处理！": "原始图片比例与扩图比例一致，不需要扩图处理！",
+        "智小柔-聊天女声": "智小柔-聊天女声",
+        "千嶂-聊天男声": "千嶂-聊天男声",
+        "智瑜-情感女声": "智瑜-情感女声",
+        "智皓-聊天男声": "智皓-聊天男声",
+        "月华-聊天女声": "月华-聊天女声",
+        "智斌-阅读男声": "智斌-阅读男声",
+        "智宇-阅读男声": "智宇-阅读男声",
+        "飞镜-聊天男声": "飞镜-聊天男声",
+        "浅草-聊天男声": "浅草-聊天男声",
+        "智菊-阅读女声": "智菊-阅读女声",
+        "智兰-资讯女声": "智兰-资讯女声",
+        "WeJames-外语男声": "WeJames-外语男声",
+        "WeWinny-外语女声": "WeWinny-外语女声",
+        "艾朵_职业套装_站姿": "艾朵_职业套装_站姿",
+        "艾铭_深色西装_站姿": "艾铭_深色西装_站姿",
+        "艾可_医生白大褂_站姿": "艾可_医生白大褂_站姿",
+        "艾欣_白衬衫_站姿": "艾欣_白衬衫_站姿",
+        "客服小云最终版": "客服小云最终版",
+        "客服小腾最终版": "客服小腾最终版",
+        "艾米_蓝色西装_站姿": "艾米_蓝色西装_站姿",
+        "艾瑶_深色套装_站姿": "艾瑶_深色套装_站姿",
+        "企业面试官V1": "企业面试官V1",
+        "客服小云": "客服小云",
+        "客服小腾": "客服小腾",
+        "问答回复": "问答回复",
+        "工作流回复": "工作流回复",
+        "文档回复": "文档回复",
+        "大模型回复": "大模型回复",
+        "替换为您的域名": "替换为您的域名",
+        "未分类": "未分类",
+        "标准模式": "标准模式",
+        "单工作流模式": "单工作流模式",
+        "Multi-Agent模式": "Multi-Agent模式",
+        "Standard mode": "Standard",
+        "Multi-Agent Mode": "Multi-Agent",
+        "Single workflow mode": "Single workflow",
+        "腾讯云智能体开发平台官方": "腾讯云智能体开发平台官方",
+        "示例问题": "示例问题",
+        "Normal": "正常",
+        "Polity": "政治",
+        "Ad": "广告",
+        "Abuse": "谩骂",
+        "Illegal": "违法",
+        "Spam": "灌水",
+        "Terror": "暴恐",
+        "Porn": "色情",
+        "29999": "分词专用",
+        "Value": "价值观",
+        "GeneratedContentRisk": "生成式风险",
+        "Copyright": "版权",
+        "Teenager": "未成年识别",
+        "Religion": "宗教识别",
+        "Sexy": "性感",
+        "广告": "广告",
+        "谩骂": "谩骂",
+        "不文明用语": "不文明用语",
+        "口头禅": "口头禅",
+        "非攻击性的不文明用语，如我靠、尼玛": "非攻击性的不文明用语，如我靠、尼玛",
+        "人身攻击": "人身攻击",
+        "重度人身攻击": "重度人身攻击",
+        "直接辱骂攻击他人的用词，如傻逼、婊子": "直接辱骂攻击他人的用词，如傻逼、婊子",
+        "轻度人身攻击": "轻度人身攻击",
+        "辱骂攻击他人的用词，但也可能用于调侃，如傻子、你奶奶个熊": "辱骂攻击他人的用词，但也可能用于调侃，如傻子、你奶奶个熊",
+        "色情粗口": "色情粗口",
+        "色情粗口用语": "色情粗口用语",
+        "含有性行为或者性器官相关粗口词汇": "含有性行为或者性器官相关粗口词汇",
+        "违法": "违法",
+        "毒品": "毒品",
+        "制毒贩毒管控内容": "制毒贩毒管控内容",
+        "涉及制毒贩毒的教程方法、宣扬制度贩毒、营销导流等违法行为": "涉及制毒贩毒的教程方法、宣扬制度贩毒、营销导流等违法行为",
+        "毒品成品管控内容": "毒品成品管控内容",
+        "提及毒品成品并对其宣扬": "提及毒品成品并对其宣扬",
+        "赌博": "赌博",
+        "赌博平台管控内容": "赌博平台管控内容",
+        "涉及赌博平台机构/组织的名称，且进行营销推广导流、询问如何参与等": "涉及赌博平台机构/组织的名称，且进行营销推广导流、询问如何参与等",
+        "合法赌博场所宣传管控": "合法赌博场所宣传管控",
+        "符合当地法律法规的赌博场所，但进行宣扬或营销行为": "符合当地法律法规的赌博场所，但进行宣扬或营销行为",
+        "棋牌游戏": "棋牌游戏",
+        "以赌博为目的的网络联机棋牌游戏": "以赌博为目的的网络联机棋牌游戏",
+        "博彩游戏": "博彩游戏",
+        "包括赌博性质的博彩游戏内容": "包括赌博性质的博彩游戏内容",
+        "赌博行为": "赌博行为",
+        "以营利为目的，聚众赌博或者以赌博为业的行为": "以营利为目的，聚众赌博或者以赌博为业的行为",
+        "赌博器具管控内容": "赌博器具管控内容",
+        "涉及赌博相关器具的营销推广": "涉及赌博相关器具的营销推广",
+        "违禁品": "违禁品",
+        "有害药品": "有害药品",
+        "与医疗、预防和保健目的无关的危害药品": "与医疗、预防和保健目的无关的危害药品",
+        "有害化学品": "有害化学品",
+        "具有毒害、腐蚀等性质，对人体、设施、环境具有危害的剧毒化学品": "具有毒害、腐蚀等性质，对人体、设施、环境具有危害的剧毒化学品",
+        "危爆物品": "危爆物品",
+        "具有爆炸、易燃、放射性等危险性质": "具有爆炸、易燃、放射性等危险性质",
+        "野生动物危害言论": "野生动物危害言论",
+        "非法贩卖、捕杀、食用野生动物言论": "非法贩卖、捕杀、食用野生动物言论",
+        "非法翻墙工具": "非法翻墙工具",
+        "非法VPN展示或推广营销": "非法VPN展示或推广营销",
+        "黑灰产管控工具": "黑灰产管控工具",
+        "禁止市场随意流通的违禁品，如开锁工具、遥控干扰器、出售黑车、遥控车牌架": "禁止市场随意流通的违禁品，如开锁工具、遥控干扰器、出售黑车、遥控车牌架",
+        "违禁行为": "违禁行为",
+        "造假作弊": "造假作弊",
+        "编造捏造、以假乱真，利用不存在的事物来谋取利益": "编造捏造、以假乱真，利用不存在的事物来谋取利益",
+        "人体贩卖": "人体贩卖",
+        "人体器官贩卖相关危害言论": "人体器官贩卖相关危害言论",
+        "侵犯个人隐私": "侵犯个人隐私",
+        "涉及侵犯个人隐私的言论或工具售卖": "涉及侵犯个人隐私的言论或工具售卖",
+        "雇凶杀人": "雇凶杀人",
+        "雇佣他人进行犯罪活动": "雇佣他人进行犯罪活动",
+        "付费删帖": "付费删帖",
+        "通过信息网络有偿提供删除信息服务": "通过信息网络有偿提供删除信息服务",
+        "封建迷信": "封建迷信",
+        "提及封建迷信的言论，或意图开展封建迷信活动": "提及封建迷信的言论，或意图开展封建迷信活动",
+        "金融违法行为": "金融违法行为",
+        "实施洗钱、逃税漏税的言论，包括咨询如何洗钱、逃税漏税相关规则方式介绍": "实施洗钱、逃税漏税的言论，包括咨询如何洗钱、逃税漏税相关规则方式介绍",
+        "非法团体": "非法团体",
+        "黑社会": "黑社会",
+        "涉及黑社会的不良言论": "涉及黑社会的不良言论",
+        "传销组织": "传销组织",
+        "涉及传销组织的不良导向言论": "涉及传销组织的不良导向言论",
+        "非法社会组织": "非法社会组织",
+        "未在民政部门登记的涉嫌非法社会组织": "未在民政部门登记的涉嫌非法社会组织",
+        "灌水": "灌水",
+        "暴恐": "暴恐",
+        "恐怖组织人物": "恐怖组织人物",
+        "涉及联合国认定的恐怖组织相关人物": "涉及联合国认定的恐怖组织相关人物",
+        "恐怖组织": "恐怖组织",
+        "涉及联合国认定的恐怖组织": "涉及联合国认定的恐怖组织",
+        "恐怖事件": "恐怖事件",
+        "恐怖分子制造的危害社会稳定、人民生命与财产安全的行为活动": "恐怖分子制造的危害社会稳定、人民生命与财产安全的行为活动",
+        "暴力血腥描述": "暴力血腥描述",
+        "暴力用词": "暴力用词",
+        "各类提及到暴力的用词用语，范围较广": "各类提及到暴力的用词用语，范围较广",
+        "血腥行为描述": "血腥行为描述",
+        "描述或教授极端血腥行为（如碎尸、肢解、食尸、虐杀）及尸体处置的可操作细节的内容": "描述或教授极端血腥行为（如碎尸、肢解、食尸、虐杀）及尸体处置的可操作细节的内容",
+        "武器相关描述": "武器相关描述",
+        "杀伤性武器": "杀伤性武器",
+        "枪支弹药名称、管制刀具、大杀伤性武器等": "枪支弹药名称、管制刀具、大杀伤性武器等",
+        "色情": "色情",
+        "性行为描述": "性行为描述",
+        "低俗描述性行为": "低俗描述性行为",
+        "使用低俗下流的语言描述性相关的动作、行为和意图": "使用低俗下流的语言描述性相关的动作、行为和意图",
+        "客观陈述性行为": "客观陈述性行为",
+        "性行为相关的客观描述，但是整句话没有低俗性行为的联想": "性行为相关的客观描述，但是整句话没有低俗性行为的联想",
+        "性行为影射": "性行为影射",
+        "通过暗示、比喻、联想或描述行为反应，而非直接描述，来指代或影射性交、自慰等核心性行为的文本": "通过暗示、比喻、联想或描述行为反应，而非直接描述，来指代或影射性交、自慰等核心性行为的文本",
+        "性暗示与软色情": "性暗示与软色情",
+        "通过双关、歧义性语言或模糊的行为描述，营造色情氛围、进行性挑逗，但未明确描述色情动作或性行为": "通过双关、歧义性语言或模糊的行为描述，营造色情氛围、进行性挑逗，但未明确描述色情动作或性行为",
+        "低俗描述性活动": "低俗描述性活动",
+        "使用低俗下流的语言或低俗称谓，描述性活动时的动作、行为和对话": "使用低俗下流的语言或低俗称谓，描述性活动时的动作、行为和对话",
+        "性行为前戏": "性行为前戏",
+        "明确描述以激发性欲为目的、但未及核心性行为的身体接触与挑逗动作": "明确描述以激发性欲为目的、但未及核心性行为的身体接触与挑逗动作",
+        "性器官描述": "性器官描述",
+        "低俗描述性器官": "低俗描述性器官",
+        "使用低俗下流的语言描述性器官": "使用低俗下流的语言描述性器官",
+        "客观陈述性器官": "客观陈述性器官",
+        "性器官相关的客观描述，但是整句话没有低俗性行为的联想\n不包含案件描述、新闻报道、生理科普类型的内容": "性器官相关的客观描述，但是整句话没有低俗性行为的联想\n不包含案件描述、新闻报道、生理科普类型的内容",
+        "情色三级资源": "情色三级资源",
+        "情色人物提及": "情色人物提及",
+        "提及成人色情行业从业者": "提及成人色情行业从业者",
+        "情色作品提及": "情色作品提及",
+        "情色类的AV、歌曲、小说、漫画、游戏、场所、网站名等": "情色类的AV、歌曲、小说、漫画、游戏、场所、网站名等",
+        "SM内容": "SM内容",
+        "低俗描述SM": "低俗描述SM",
+        "描述 SM 行为、道具等包含色情语义的描述": "描述 SM 行为、道具等包含色情语义的描述",
+        "提及SM": "提及SM",
+        "对SM相关词汇的提问或科普，不涉及色情内容": "对SM相关词汇的提问或科普，不涉及色情内容",
+        "同性恋": "同性恋",
+        "男同言论": "男同言论",
+        "女同言论": "女同言论",
+        "特殊性癖": "特殊性癖",
+        "色情特殊性癖": "色情特殊性癖",
+        "通过文字描绘、角色扮演或对话，色情化地展现特殊性癖好行为或场景的文本": "通过文字描绘、角色扮演或对话，色情化地展现特殊性癖好行为或场景的文本",
+        "生理科普": "生理科普",
+        "生理科普知识": "生理科普知识",
+        "仅包含真正的知识科普内容，对于描述性的内容、或提问性质的内容不包含": "仅包含真正的知识科普内容，对于描述性的内容、或提问性质的内容不包含",
+        "性爱科普": "性爱科普",
+        "性爱相关的客观科普内容，无色情语义": "性爱相关的客观科普内容，无色情语义",
+        "未成年色情": "未成年色情",
+        "价值观": "价值观",
+        "自杀自残": "自杀自残",
+        "自杀自残言论": "自杀自残言论",
+        "描述自杀自残以及倾向的言论": "描述自杀自残以及倾向的言论",
+        "消极情绪": "消极情绪",
+        "语义上趋向于自我否定、自我放弃等负面影响的内容": "语义上趋向于自我否定、自我放弃等负面影响的内容",
+        "自毁倾向": "自毁倾向",
+        "语义上趋向于展示自毁自虐意图与行为，鼓吹自毁情绪和行为的内容": "语义上趋向于展示自毁自虐意图与行为，鼓吹自毁情绪和行为的内容",
+        "自杀倾向": "自杀倾向",
+        "语义上趋向于展示自杀意图与自杀行为，鼓吹自杀的内容": "语义上趋向于展示自杀意图与自杀行为，鼓吹自杀的内容",
+        "指令攻击": "指令攻击",
+        "优先使用大模型自带的防攻击机制，需额外加强才开启": "优先使用大模型自带的防攻击机制，需额外加强才开启",
+        "Prompt泄露": "Prompt泄露",
+        "诱导模型泄露其系统提示词": "诱导模型泄露其系统提示词",
+        "目标劫持": "目标劫持",
+        "通过指令语句，诱导大模型绕过安全机制，输出预设答案": "通过指令语句，诱导大模型绕过安全机制，输出预设答案",
+        "信息安全": "信息安全",
+        "系统攻击": "系统攻击",
+        "攻击计算机、网络、系统等相关言论，如“如何侵入政府数据库”": "攻击计算机、网络、系统等相关言论，如“如何侵入政府数据库”",
+        "军警制服": "军警制服",
+        "迷彩服": "迷彩服",
+        "消防服": "消防服",
+        "ACG警服": "ACG警服",
+        "ACG军服": "ACG军服",
+        "热武器": "热武器",
+        "真实枪支": "真实枪支",
+        "游戏枪支": "游戏枪支",
+        "ACG枪支": "ACG枪支",
+        "玩具枪": "玩具枪",
+        "大型武器": "大型武器",
+        "军事武器": "军事武器",
+        "坦克、军用飞机、军用舰艇、军用导弹等常见大型武器": "坦克、军用飞机、军用舰艇、军用导弹等常见大型武器",
+        "坦克": "坦克",
+        "更泛化的坦克，例如只要有履带出现都算": "更泛化的坦克，例如只要有履带出现都算",
+        "冷兵器": "冷兵器",
+        "真实刀具": "真实刀具",
+        "游戏刀具": "游戏刀具",
+        "ACG刀具": "ACG刀具",
+        "管制刀具": "管制刀具",
+        "血腥画面": "血腥画面",
+        "ACG血腥画面": "ACG血腥画面",
+        "漫画或动漫场景中出现的血腥画面": "漫画或动漫场景中出现的血腥画面",
+        "真实血腥画面": "真实血腥画面",
+        "真实场景中的血腥画面，如虐杀": "真实场景中的血腥画面，如虐杀",
+        "惊悚血腥画面": "惊悚血腥画面",
+        "极度血腥，带有惊悚感的画面": "极度血腥，带有惊悚感的画面",
+        "性感": "性感",
+        "女性性感胸部": "女性性感胸部",
+        "ACG女重度露沟": "ACG女重度露沟",
+        "ACG女性胸部露出中间乳沟（大于50%），或胸部露出下沿（大于50%）": "ACG女性胸部露出中间乳沟（大于50%），或胸部露出下沿（大于50%）",
+        "真人女重度露沟": "真人女重度露沟",
+        "真人女性胸部露出中间乳沟（大于50%），或胸部露出下沿（大于50%）": "真人女性胸部露出中间乳沟（大于50%），或胸部露出下沿（大于50%）",
+        "亲吻画面": "亲吻画面",
+        "异性亲吻": "异性亲吻",
+        "男女之间，嘴对嘴的亲吻，嘴要互相接触": "男女之间，嘴对嘴的亲吻，嘴要互相接触",
+        "女女亲吻": "女女亲吻",
+        "女女之间，嘴对嘴的亲吻，嘴要互相接触": "女女之间，嘴对嘴的亲吻，嘴要互相接触",
+        "男男亲吻": "男男亲吻",
+        "男男之间，嘴对嘴的亲吻，嘴要互相接触": "男男之间，嘴对嘴的亲吻，嘴要互相接触",
+        "亲密行为": "亲密行为",
+        "男男亲密": "男男亲密",
+        "男性之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为": "男性之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为",
+        "男女亲密": "男女亲密",
+        "男女之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为": "男女之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为",
+        "女女亲密": "女女亲密",
+        "女性之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为": "女性之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为",
+        "男下激凸": "男下激凸",
+        "三角区": "三角区",
+        "视觉聚焦男性下体的图片，包括马赛克跟动漫场景": "视觉聚焦男性下体的图片，包括马赛克跟动漫场景",
+        "诱惑姿势": "诱惑姿势",
+        "张腿": "张腿",
+        "腿和裆部呈M或者W形状，且下体穿着少": "腿和裆部呈M或者W形状，且下体穿着少",
+        "撅臀": "撅臀",
+        "明显甚至夸张地撅起屁股，无论是不是穿着衣服": "明显甚至夸张地撅起屁股，无论是不是穿着衣服",
+        "性表情": "性表情",
+        "带有性暗示的猥琐表情": "带有性暗示的猥琐表情",
+        "性行为画面": "性行为画面",
+        "各种性爱的画面，包括真人、动漫、手绘等场景": "各种性爱的画面，包括真人、动漫、手绘等场景",
+        "女性下体裸露": "女性下体裸露",
+        "包括有马赛克或非常少的衣物，但可以明确判断的图片": "包括有马赛克或非常少的衣物，但可以明确判断的图片",
+        "女性胸部裸露": "女性胸部裸露",
+        "包含虽有衣物遮挡，但胸部整体裸露较多的画面": "包含虽有衣物遮挡，但胸部整体裸露较多的画面",
+        "男性下体裸露": "男性下体裸露",
+        "包含虽有衣物遮挡，但下体整体裸露较多或非常明显的画面": "包含虽有衣物遮挡，但下体整体裸露较多或非常明显的画面",
+        "臀部裸露": "臀部裸露",
+        "不区分男女，臀部大面积裸露": "不区分男女，臀部大面积裸露",
+        "儿童裸露": "儿童裸露",
+        "儿童裸露下体和臀部": "儿童裸露下体和臀部",
+        "动物性行为": "动物性行为",
+        "性分泌物": "性分泌物",
+        "画面中包含较明显的性分泌物": "画面中包含较明显的性分泌物",
+        "裸体": "裸体",
+        "全裸或几乎全裸": "全裸或几乎全裸",
+        "女性下体内窥镜": "女性下体内窥镜",
+        "女性下体内窥画面，属于特殊性癖": "女性下体内窥画面，属于特殊性癖",
+        "医学性器官": "医学性器官",
+        "可以看到性器官、敏感部位医学人体图（含解剖图、剖面图等）": "可以看到性器官、敏感部位医学人体图（含解剖图、剖面图等）",
+        "ACG孕妇": "ACG孕妇",
+        "动漫、3D 、仿真等ACG画风的孕妇图片，属于特殊性癖": "动漫、3D 、仿真等ACG画风的孕妇图片，属于特殊性癖",
+        "二维码": "二维码",
+        "常见二维码": "常见二维码",
+        "包括但不限于微信、支付宝、网址、淘宝、QQ等常见的二维码": "包括但不限于微信、支付宝、网址、淘宝、QQ等常见的二维码",
+        "淘宝二维码": "淘宝二维码",
+        "微信二维码": "微信二维码",
+        "支付宝二维码": "支付宝二维码",
+        "小程序码": "小程序码",
+        "条形码": "条形码",
+        "PDF417条码": "PDF417条码",
+        "DM码": "DM码",
+        "政治": "政治",
+        "劣迹明星": "劣迹明星",
+        "劣迹网红": "劣迹网红",
+        "纳粹战犯": "纳粹战犯",
+        "侵华战犯": "侵华战犯",
+        "国旗营销": "国旗营销",
+        "侮辱国旗": "侮辱国旗",
+        "焚烧、践踏、涂鸦等恶搞国旗行为": "焚烧、践踏、涂鸦等恶搞国旗行为",
+        "恶搞人民币": "恶搞人民币",
+        "对人民币PS、恶意折叠等行为": "对人民币PS、恶意折叠等行为",
+        "恶搞国徽": "恶搞国徽",
+        "在国徽上添加其它恶意元素": "在国徽上添加其它恶意元素",
+        "吸烟": "吸烟",
+        "吸毒": "吸毒",
+        "喝酒": "喝酒",
+        "打斗": "打斗",
+        "恶心画面": "恶心画面",
+        "未成年识别": "未成年识别",
+        "未成年人出镜": "未成年人出镜",
+        "画面中出现未成年人，适用于真人、且需要露脸": "画面中出现未成年人，适用于真人、且需要露脸",
+        "未成年人色情": "未成年人色情",
+        "真人形象的未成年色情及擦边画面": "真人形象的未成年色情及擦边画面",
+        "未成年人违禁行为": "未成年人违禁行为",
+        "未成年人吸烟": "未成年人吸烟",
+        "未成年人喝酒": "未成年人喝酒",
+        "未成年人纹身": "未成年人纹身",
+        "儿童邪典": "儿童邪典",
+        "以儿童熟悉的卡通人物包装成为血腥暴力或软色情的图片": "以儿童熟悉的卡通人物包装成为血腥暴力或软色情的图片",
+        "ACG未成年人": "ACG未成年人",
+        "漫画风格、或AIGC生成的未成年形象": "漫画风格、或AIGC生成的未成年形象",
+        "未成年形象": "未成年形象",
+        "适用于真人，不一定要求露脸，外形像未成年人即会识别": "适用于真人，不一定要求露脸，外形像未成年人即会识别",
+        "宗教识别": "宗教识别",
+        "生成式风险": "生成式风险"
+    }
+  app_config.yaml: |
+    # robot_default配置
+    robot_default: 
+      # 应用描述最大字符数限制
+      max_desc_size: 150 
+      # 应用头像10M
+      max_avatar_size: 10485760
+      # 背景图10M
+      max_background_image_size: 31457280
+
+      app_default_model:
+        knowledge_qa:
+        - alias_name: youtu-mrc-pro
+          name: cs-normal-70b
+          chat_words_limit: 2000
+          desc: |-
+            针对企业知识问答场景精调训练，擅长多模态知识问答，适合图文表答案关联输出、数学计算、逻辑推理、表格问答等复杂场景有需求的场景。
+          is_default: true
+          icon: {{ include "qbot.hunyuanIconUrl" . }}
+        - alias_name: youtu-mrc-standard
+          name: cs-normal
+          chat_words_limit: 2000
+          desc: |-
+            针对企业知识问答场景精调训练，擅长多模态知识问答。性价比相对更高，适合需要同时平衡效果、价格的场景。
+          is_default: false
+          icon: {{ include "qbot.hunyuanIconUrl" . }}
+        - alias_name: DeepSeek-R1-0528
+          name: lke-deepseek-r1-0528
+          chat_words_limit: 2000
+          desc: |-
+            DeepSeek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。
+          is_default: false
+          icon: {{ include "qbot.dsIconUrl" . }}
+        - alias_name: DeepSeek-V3-0324
+          name: lke-deepseek-v3-0324
+          chat_words_limit: 2000
+          desc: |-
+            DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
+          is_default: false
+          icon: {{ include "qbot.dsIconUrl" . }}
+        - alias_name: 精调知识大模型多功能版
+          name: cs-normal-merge
+          chat_words_limit: 2000
+          desc: |-
+            针对企业智能化场景深度优化的三合一解决方案，集成意图识别、阅读理解、参数提取三大核心能力，适合需要平衡效果、价格的场景。
+          is_default: false
+          icon: {{ include "qbot.hunyuanIconUrl" . }}
+      
+
+  application.yaml: |
+    # storage相关配置
+    storage:
+      {{ if eq .Values.global.components.s3.providerType "minio" }}
+      type: minio
+      minio:
+        secret_id: cspuser
+        secret_key: {{ .Values.global.components.s3.minio.secretKey }}
+        region: ""
+        bucket: qbot
+        sts_endpoint: http://{{ .Values.global.components.s3.minio.host }}
+        end_point: {{ .Values.global.components.s3.minio.host }}
+        use_https: {{ eq .Values.global.scheme "https" }}
+        expire_time: 30m
+      min_io_map:
+        offline:
+          secret_id: cspuser
+          secret_key: {{ .Values.global.components.s3.minio.secretKey }}
+          region: ""
+          bucket: qbot
+          sts_endpoint: http://{{ .Values.global.components.s3.minio.host }}
+          end_point: {{ .Values.global.components.s3.minio.host }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+        realtime:
+          secret_id: cspuser
+          secret_key: {{ .Values.global.components.s3.minio.secretKey }}
+          region: ""
+          bucket: qbot
+          sts_endpoint: http://{{ .Values.global.components.s3.minio.host }}
+          end_point: {{ .Values.global.components.s3.minio.host }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+          credential_time: 10m
+      {{ else if  eq .Values.global.components.s3.providerType "obs" }}
+      type: obs
+      obs:
+        secret_id: {{ .Values.global.components.s3.obs.secretId }}
+        secret_key: {{ .Values.global.components.s3.obs.secretKey }}
+        region: {{ .Values.global.components.s3.obs.region }}
+        bucket: qbot
+        sts_endpoint: "http://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}"
+        end_point: {{ .Values.global.components.s3.obs.host }}
+       use_https: {{ eq .Values.global.scheme "https" }}
+        expire_time: 30m
+      obs_map:
+        offline:
+          secret_id: {{ .Values.global.components.s3.obs.secretId }}
+          secret_key: {{ .Values.global.components.s3.obs.secretKey }}
+          region: {{ .Values.global.components.s3.obs.region }}
+          bucket: qbot
+          sts_endpoint: "http://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}"
+          end_point: {{ .Values.global.components.s3.obs.host }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+        realtime:
+          secret_id: {{ .Values.global.components.s3.obs.secretId }}
+          secret_key: {{ .Values.global.components.s3.obs.secretKey }}
+          region: {{ .Values.global.components.s3.obs.region }}
+          bucket: qbot
+          sts_endpoint: "http://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}"
+          end_point: {{ .Values.global.components.s3.obs.host }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+          credential_time: 10m
+      {{ else }}
+      type: cos
+      cos:
+        secret_id: {{ .Values.global.components.s3.cos.secretId }}
+        secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+        app_id: {{ printf "%.0f" .Values.global.components.s3.cos.appId | quote }}
+        region: {{ .Values.global.components.s3.cos.region }}
+        bucket: {{ .Values.global.components.s3.cos.bucket }}
+        domain: {{ .Values.global.components.s3.cos.domain }}
+        expire_time: 30m
+        credential_time: 10m
+      cos_map:
+        offline:
+          secret_id: {{ .Values.global.components.s3.cos.secretId }}
+          secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+          app_id: {{ printf "%.0f" .Values.global.components.s3.cos.appId | quote }}
+          region: {{ .Values.global.components.s3.cos.region }}
+          bucket: {{ .Values.global.components.s3.cos.bucket }}
+          domain: {{ .Values.global.components.s3.cos.domain }}
+          expire_time: 30m
+          credential_time: 10m
+        realtime:
+          secret_id: {{ .Values.global.components.s3.cos.secretId }}
+          secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+          app_id: {{ printf "%.0f" .Values.global.components.s3.cos.appId | quote }}
+          region: {{ .Values.global.components.s3.cos.region }}
+          bucket: {{ .Values.global.components.s3.cos.bucket }}
+          domain: {{ .Values.global.components.s3.cos.domain }}
+          expire_time: 30m
+          credential_time: 10m
+      {{ end }}
+      file_limit:
+        offline:
+          - type_name: document_200
+            types: [pdf,doc,docx,ppt,mhtml,pptx,wps,ppsx]
+            size: 200
+          - type_name: document_20
+            types: [xlsx,xls,md,txt,csv,html]
+            size: 20
+          - type_name: image
+            types: [jpg,png,jpeg,tiff,bmp,gif]
+            size: 50
+          - type_name: zip
+            types: [zip]
+            size: 5
+          - type_name: video
+            types: [wmv,3gp,avi,f4v,m4v,mp4,mpg,ogv,vob,mov,flv,mkv,rm,rmvb,mpeg,webm]
+            size: 2048
+          - type_name: meida_50
+            types: [mp3,wav,aac,flac]
+            size: 50
+        realtime:
+          - type_name: document
+            types: [doc,docx,ppt,pptx,pdf,txt,xls,xlsx]
+            size: 15
+          - type_name: document_md
+            types: [md]
+            size: 20
+          - type_name: image
+            types: [jpg,png,jpeg,bmp]
+            size: 20
+            security_white_list:
+              700000306554: 2160h
+              700001861322: 2160h
+              700001873366: 720h
+              700001046587: 720h
+
+  country_code.yaml: |
+    country_code:
+      - en_name: "Albania"
+        name: "阿尔巴尼亚"
+        code: "355"
+        is_show: false
+
+      - en_name: "Algeria"
+        name: "阿尔及利亚"
+        code: "213"
+        is_show: false
+
+      - en_name: "Afghanistan"
+        name: "阿富汗"
+        code: "93"
+        is_show: false
+
+      - en_name: "Argentina"
+        name: "阿根廷"
+        code: "54"
+        is_show: false
+
+      - en_name: "United Arab Emirates"
+        name: "阿拉伯联合酋长国"
+        code: "971"
+        is_show: false
+
+      - en_name: "Aruba"
+        name: "阿鲁巴"
+        code: "297"
+        is_show: false
+
+      - en_name: "Oman"
+        name: "阿曼"
+        code: "968"
+        is_show: false
+
+      - en_name: "Azerbaijan"
+        name: "阿塞拜疆"
+        code: "994"
+        is_show: false
+
+      - en_name: "Egypt"
+        name: "埃及"
+        code: "20"
+        is_show: false
+
+      - en_name: "Ethiopia"
+        name: "埃塞俄比亚"
+        code: "251"
+        is_show: false
+
+      - en_name: "Ireland"
+        name: "爱尔兰"
+        code: "353"
+        is_show: false
+
+      - en_name: "Estonia"
+        name: "爱沙尼亚"
+        code: "372"
+        is_show: false
+
+      - en_name: "Andorra"
+        name: "安道尔"
+        code: "376"
+        is_show: false
+
+      - en_name: "Angola"
+        name: "安哥拉"
+        code: "244"
+        is_show: false
+
+      - en_name: "Anguilla"
+        name: "安圭拉"
+        code: "1264"
+        is_show: false
+
+      - en_name: "Antigua and Barbuda"
+        name: "安提瓜和巴布达"
+        code: "1268"
+        is_show: false
+
+      - en_name: "Austria"
+        name: "奥地利"
+        code: "43"
+        is_show: false
+
+      - en_name: "Australia"
+        name: "澳大利亚"
+        code: "61"
+        is_show: false
+
+      - en_name: "Barbados"
+        name: "巴巴多斯"
+        code: "1246"
+        is_show: false
+
+      - en_name: "Papua New Guinea"
+        name: "巴布亚新几内亚"
+        code: "675"
+        is_show: false
+
+      - en_name: "Bahamas"
+        name: "巴哈马"
+        code: "1242"
+        is_show: false
+
+      - en_name: "Pakistan"
+        name: "巴基斯坦"
+        code: "92"
+        is_show: false
+
+      - en_name: "Paraguay"
+        name: "巴拉圭"
+        code: "595"
+        is_show: false
+
+      - en_name: "Palestine"
+        name: "巴勒斯坦"
+        code: "970"
+        is_show: false
+
+      - en_name: "Bahrain"
+        name: "巴林"
+        code: "973"
+        is_show: false
+
+      - en_name: "Panama"
+        name: "巴拿马"
+        code: "507"
+        is_show: false
+      - en_name: "Brazil"
+        name: "巴西"
+        code: "55"
+        is_show: true
+        phone_regexp: ^[1-9]{2}[2-9]{1}\d{3,4}\d{4}$
+      - en_name: "Belarus"
+        name: "白俄罗斯"
+        code: "375"
+        is_show: false
+      - en_name: "Bermuda"
+        name: "百慕大"
+        code: "1441"
+        is_show: false
+
+      - en_name: "Bulgaria"
+        name: "保加利亚"
+        code: "359"
+        is_show: false
+
+      - en_name: "Northern Mariana Islands"
+        name: "北马里亚纳群岛"
+        code: "1670"
+        is_show: false
+
+      - en_name: "Benin"
+        name: "贝宁"
+        code: "229"
+        is_show: false
+
+      - en_name: "Belgium"
+        name: "比利时"
+        code: "32"
+        is_show: false
+
+      - en_name: "Iceland"
+        name: "冰岛"
+        code: "354"
+        is_show: false
+
+      - en_name: "Puerto Rico"
+        name: "波多黎各"
+        code: "1787"
+        is_show: false
+
+      - en_name: "Poland"
+        name: "波兰"
+        code: "48"
+        is_show: false
+
+      - en_name: "Bosnia and Herzegovina"
+        name: "波斯尼亚和黑塞哥维那"
+        code: "387"
+        is_show: false
+
+      - en_name: "Bolivia"
+        name: "玻利维亚"
+        code: "591"
+        is_show: false
+
+      - en_name: "Belize"
+        name: "伯利兹"
+        code: "501"
+        is_show: false
+
+      - en_name: "Botswana"
+        name: "博茨瓦纳"
+        code: "267"
+        is_show: false
+
+      - en_name: "Bhutan"
+        name: "不丹"
+        code: "975"
+        is_show: false
+
+      - en_name: "Burkina Faso"
+        name: "布基纳法索"
+        code: "226"
+        is_show: false
+
+      - en_name: "Burundi"
+        name: "布隆迪"
+        code: "257"
+        is_show: false
+
+      - en_name: "Equatorial Guinea"
+        name: "赤道几内亚"
+        code: "240"
+        is_show: false
+
+      - en_name: "Denmark"
+        name: "丹麦"
+        code: "45"
+        is_show: false
+
+      - en_name: "Germany"
+        name: "德国"
+        code: "49"
+        is_show: false
+
+      - en_name: "East Timor"
+        name: "东帝汶"
+        code: "670"
+        is_show: false
+
+      - en_name: "Togo"
+        name: "多哥"
+        code: "228"
+        is_show: false
+
+      - en_name: "Dominica"
+        name: "多米尼加"
+        code: "1767"
+        is_show: false
+
+      - en_name: "Dominican Republic"
+        name: "多明尼加共和国"
+        code: "1809"
+        is_show: false
+
+      - en_name: "Ecuador"
+        name: "厄瓜多尔"
+        code: "593"
+        is_show: false
+
+      - en_name: "Eritrea"
+        name: "厄立特里亚"
+        code: "291"
+        is_show: false
+
+      - en_name: "France"
+        name: "法国"
+        code: "33"
+        is_show: false
+
+      - en_name: "Faroe Islands"
+        name: "法罗群岛"
+        code: "298"
+        is_show: false
+
+      - en_name: "French Polynesia"
+        name: "法属波利尼西亚"
+        code: "689"
+        is_show: false
+
+      - en_name: "Vatican"
+        name: "梵帝冈"
+        code: "379"
+        is_show: false
+
+      - en_name: "Philippines"
+        name: "菲律宾"
+        code: "63"
+        is_show: false
+
+      - en_name: "Fiji"
+        name: "斐济"
+        code: "679"
+        is_show: false
+
+      - en_name: "Finland"
+        name: "芬兰"
+        code: "358"
+        is_show: false
+
+      - en_name: "Cape Verde"
+        name: "佛得角"
+        code: "238"
+        is_show: false
+
+      - en_name: "Falkland Islands"
+        name: "福克兰群岛"
+        code: "500"
+        is_show: false
+
+      - en_name: "Gambia"
+        name: "冈比亚"
+        code: "220"
+        is_show: false
+
+      - en_name: "Republic of the Congo"
+        name: "刚果民主共和国"
+        code: "242"
+        is_show: false
+
+      - en_name: "Democratic Republic of the Congo"
+        name: "刚果民主共和国"
+        code: "243"
+        is_show: false
+
+      - en_name: "Colombia"
+        name: "哥伦比亚"
+        code: "57"
+        is_show: false
+
+      - en_name: "Costa Rica"
+        name: "哥斯达黎加"
+        code: "506"
+        is_show: false
+
+      - en_name: "Grenada"
+        name: "格林纳达"
+        code: "1473"
+        is_show: false
+
+      - en_name: "Greenland"
+        name: "格陵兰"
+        code: "299"
+        is_show: false
+
+      - en_name: "Georgia"
+        name: "格鲁吉亚"
+        code: "995"
+        is_show: false
+
+      - en_name: "Guam"
+        name: "关岛"
+        code: "1671"
+        is_show: false
+
+      - en_name: "Guyana"
+        name: "圭亚那"
+        code: "592"
+        is_show: false
+
+      - en_name: "Kazakhstan"
+        name: "哈萨克斯坦"
+        code: "7"
+        is_show: false
+
+      - en_name: "Haiti"
+        name: "海地"
+        code: "509"
+        is_show: false
+
+      - en_name: "South Korea"
+        name: "韩国"
+        code: "82"
+        is_show: false
+
+      - en_name: "Netherlands"
+        name: "荷兰"
+        code: "31"
+        is_show: false
+
+      - en_name: "Netherlands Antilles"
+        name: "荷属安的列斯"
+        code: "599"
+        is_show: false
+
+      - en_name: "Montenegro"
+        name: "黑山"
+        code: "382"
+        is_show: false
+
+      - en_name: "Honduras"
+        name: "洪都拉斯"
+        code: "504"
+        is_show: false
+
+      - en_name: "Kiribati"
+        name: "基里巴斯"
+        code: "686"
+        is_show: false
+
+      - en_name: "Djibouti"
+        name: "吉布提"
+        code: "253"
+        is_show: false
+
+      - en_name: "Kyrgyzstan"
+        name: "吉尔吉斯斯坦"
+        code: "996"
+        is_show: false
+
+      - en_name: "Guinea"
+        name: "几内亚"
+        code: "224"
+        is_show: false
+
+      - en_name: "Canada"
+        name: "加拿大"
+        code: "1"
+        is_show: false
+
+      - en_name: "Ghana"
+        name: "加纳"
+        code: "233"
+        is_show: false
+
+      - en_name: "Gabon"
+        name: "加蓬"
+        code: "241"
+        is_show: false
+
+      - en_name: "Cambodia"
+        name: "柬埔寨"
+        code: "855"
+        is_show: false
+
+      - en_name: "Czech Republic"
+        name: "捷克共和国"
+        code: "420"
+        is_show: false
+
+      - en_name: "Zimbabwe"
+        name: "津巴布韦"
+        code: "263"
+        is_show: false
+
+      - en_name: "Cameroon"
+        name: "喀麦隆"
+        code: "237"
+        is_show: false
+
+      - en_name: "Qatar"
+        name: "卡塔尔"
+        code: "974"
+        is_show: false
+
+      - en_name: "Cayman Islands"
+        name: "开曼群岛"
+        code: "1345"
+        is_show: false
+
+      - en_name: "Cocos Islands"
+        name: "科科斯群岛"
+        code: "61"
+        is_show: false
+
+      - en_name: "Comoros"
+        name: "科摩罗"
+        code: "269"
+        is_show: false
+
+      - en_name: "Kuwait"
+        name: "科威特"
+        code: "965"
+        is_show: false
+
+      - en_name: "Croatia"
+        name: "克罗地亚"
+        code: "385"
+        is_show: false
+
+      - en_name: "Kenya"
+        name: "肯尼亚"
+        code: "254"
+        is_show: false
+
+      - en_name: "Cook Islands"
+        name: "库克群岛"
+        code: "682"
+        is_show: false
+
+      - en_name: "Latvia"
+        name: "拉脱维亚"
+        code: "371"
+        is_show: false
+
+      - en_name: "Lesotho"
+        name: "莱索托"
+        code: "266"
+        is_show: false
+
+      - en_name: "Laos"
+        name: "老挝"
+        code: "856"
+        is_show: false
+
+      - en_name: "Lebanon"
+        name: "黎巴嫩"
+        code: "961"
+        is_show: false
+
+      - en_name: "Lithuania"
+        name: "立陶宛"
+        code: "370"
+        is_show: false
+
+      - en_name: "Liberia"
+        name: "利比里亚"
+        code: "231"
+        is_show: false
+
+      - en_name: "Libya"
+        name: "利比亚"
+        code: "218"
+        is_show: false
+
+      - en_name: "Liechtenstein"
+        name: "列支敦士登"
+        code: "423"
+        is_show: false
+
+      - en_name: "Reunion"
+        name: "留尼汪"
+        code: "262"
+        is_show: false
+
+      - en_name: "Luxembourg"
+        name: "卢森堡"
+        code: "352"
+        is_show: false
+
+      - en_name: "Rwanda"
+        name: "卢旺达"
+        code: "250"
+        is_show: false
+
+      - en_name: "Romania"
+        name: "罗马尼亚"
+        code: "40"
+        is_show: false
+
+      - en_name: "Madagascar"
+        name: "马达加斯加"
+        code: "261"
+        is_show: false
+
+      - en_name: "Maldives"
+        name: "马尔代夫"
+        code: "960"
+        is_show: false
+
+      - en_name: "Malta"
+        name: "马耳他"
+        code: "356"
+        is_show: false
+
+      - en_name: "Malawi"
+        name: "马拉维"
+        code: "265"
+        is_show: false
+
+      - en_name: "Malaysia"
+        name: "马来西亚"
+        code: "60"
+        is_show: true
+        phone_regexp: ^1[0-9]{8,9}$
+      - en_name: "Mali"
+        name: "马里"
+        code: "223"
+        is_show: false
+
+      - en_name: "Macedonia"
+        name: "马其顿"
+        code: "389"
+        is_show: false
+
+      - en_name: "Marshall Islands"
+        name: "马绍尔群岛"
+        code: "692"
+        is_show: false
+
+      - en_name: "Mayotte"
+        name: "马约特"
+        code: "262"
+        is_show: false
+
+      - en_name: "Mauritius"
+        name: "毛里求斯"
+        code: "230"
+        is_show: false
+
+      - en_name: "Mauritania"
+        name: "毛里塔尼亚"
+        code: "222"
+        is_show: false
+
+      - en_name: "United States"
+        name: "美国"
+        code: "1"
+        is_show: true
+
+      - en_name: "American Samoa"
+        name: "美属萨摩亚"
+        code: "1684"
+        is_show: false
+
+      - en_name: "U.S. Virgin Islands"
+        name: "美属维尔京群岛"
+        code: "1340"
+        is_show: false
+
+      - en_name: "Mongolia"
+        name: "蒙古"
+        code: "976"
+        is_show: false
+
+      - en_name: "Montserrat"
+        name: "蒙特塞拉特"
+        code: "1664"
+        is_show: false
+
+      - en_name: "Bangladesh"
+        name: "孟加拉国"
+        code: "880"
+        is_show: false
+
+      - en_name: "Peru"
+        name: "秘鲁"
+        code: "51"
+        is_show: false
+
+      - en_name: "Micronesia"
+        name: "密克罗尼西亚"
+        code: "691"
+        is_show: false
+
+      - en_name: "Myanmar"
+        name: "缅甸"
+        code: "95"
+        is_show: false
+
+      - en_name: "Moldova"
+        name: "摩尔多瓦"
+        code: "373"
+        is_show: false
+
+      - en_name: "Morocco"
+        name: "摩洛哥"
+        code: "212"
+        is_show: false
+
+      - en_name: "Monaco"
+        name: "摩纳哥"
+        code: "377"
+        is_show: false
+
+      - en_name: "Mozambique"
+        name: "莫桑比克"
+        code: "258"
+        is_show: false
+
+      - en_name: "Mexico"
+        name: "墨西哥"
+        code: "52"
+        is_show: false
+
+      - en_name: "Namibia"
+        name: "纳米比亚"
+        code: "264"
+        is_show: false
+
+      - en_name: "South Africa"
+        name: "南非"
+        code: "27"
+        is_show: false
+
+      - en_name: "South Sudan"
+        name: "南苏丹"
+        code: "211"
+        is_show: false
+
+      - en_name: "Nauru"
+        name: "瑙鲁"
+        code: "674"
+        is_show: false
+
+      - en_name: "Nicaragua"
+        name: "尼加拉瓜"
+        code: "505"
+        is_show: false
+
+      - en_name: "Nepal"
+        name: "尼泊尔"
+        code: "977"
+        is_show: false
+
+      - en_name: "Niger"
+        name: "尼日尔"
+        code: "227"
+        is_show: false
+
+      - en_name: "Nigeria"
+        name: "尼日利亚"
+        code: "234"
+        is_show: false
+
+      - en_name: "Niue"
+        name: "纽埃"
+        code: "683"
+        is_show: false
+
+      - en_name: "Norway"
+        name: "挪威"
+        code: "47"
+        is_show: false
+
+      - en_name: "Palau"
+        name: "帕劳"
+        code: "680"
+        is_show: false
+
+      - en_name: "Portugal"
+        name: "葡萄牙"
+        code: "351"
+        is_show: false
+
+      - en_name: "Japan"
+        name: "日本"
+        code: "81"
+        is_show: true
+        phone_regexp: ^\d{1,4}\d{1,4}\d{4}$
+      - en_name: "Sweden"
+        name: "瑞典"
+        code: "46"
+        is_show: false
+
+      - en_name: "Switzerland"
+        name: "瑞士"
+        code: "41"
+        is_show: false
+
+      - en_name: "El Salvador"
+        name: "萨尔瓦多"
+        code: "503"
+        is_show: false
+
+      - en_name: "Samoa"
+        name: "萨摩亚"
+        code: "685"
+        is_show: false
+
+      - en_name: "Serbia"
+        name: "塞尔维亚"
+        code: "381"
+        is_show: false
+
+      - en_name: "Sierra Leone"
+        name: "塞拉利昂"
+        code: "232"
+        is_show: false
+
+      - en_name: "Senegal"
+        name: "塞内加尔"
+        code: "221"
+        is_show: false
+
+      - en_name: "Cyprus"
+        name: "塞浦路斯"
+        code: "357"
+        is_show: false
+
+      - en_name: "Seychelles"
+        name: "塞舌尔"
+        code: "248"
+        is_show: false
+
+      - en_name: "Saudi Arabia"
+        name: "沙特阿拉伯"
+        code: "966"
+        is_show: false
+
+      - en_name: "Christmas Island"
+        name: "圣诞岛"
+        code: "61"
+        is_show: false
+
+      - en_name: "Sao Tome and Principe"
+        name: "圣多美和普林西比"
+        code: "239"
+        is_show: false
+
+      - en_name: "Saint Helena"
+        name: "圣赫勒拿"
+        code: "290"
+        is_show: false
+
+      - en_name: "Saint Kitts and Nevis"
+        name: "圣基茨和尼维斯"
+        code: "1869"
+        is_show: false
+
+      - en_name: "Saint Lucia"
+        name: "圣卢西亚"
+        code: "1758"
+        is_show: false
+
+      - en_name: "San Marino"
+        name: "圣马力诺"
+        code: "378"
+        is_show: false
+
+      - en_name: "Saint Pierre and Miquelon"
+        name: "圣皮埃尔和密克隆"
+        code: "508"
+        is_show: false
+
+      - en_name: "Saint Vincent and the Grenadines"
+        name: "圣文森特和格林纳丁斯"
+        code: "1784"
+        is_show: false
+
+      - en_name: "Sri Lanka"
+        name: "斯里兰卡"
+        code: "94"
+        is_show: false
+
+      - en_name: "Slovakia"
+        name: "斯洛伐克"
+        code: "421"
+        is_show: false
+
+      - en_name: "Slovenia"
+        name: "斯洛文尼亚"
+        code: "386"
+        is_show: false
+
+      - en_name: "Svalbard and Jan Mayen"
+        name: "斯瓦尔巴特"
+        code: "47"
+        is_show: false
+
+      - en_name: "Swaziland"
+        name: "斯威士兰"
+        code: "268"
+        is_show: false
+
+      - en_name: "Sudan"
+        name: "苏丹"
+        code: "249"
+        is_show: false
+
+      - en_name: "Suriname"
+        name: "苏里南"
+        code: "597"
+        is_show: false
+
+      - en_name: "Solomon Islands"
+        name: "所罗门群岛"
+        code: "677"
+        is_show: false
+
+      - en_name: "Somalia"
+        name: "索马里"
+        code: "252"
+        is_show: false
+
+      - en_name: "Tajikistan"
+        name: "塔吉克斯坦"
+        code: "992"
+        is_show: false
+
+      - en_name: "Thailand"
+        name: "泰国"
+        code: "66"
+        is_show: false
+        phone_regexp: ^[689]\d{8}$
+      - en_name: "Tanzania"
+        name: "坦桑尼亚"
+        code: "255"
+        is_show: false
+
+      - en_name: "Tonga"
+        name: "汤加"
+        code: "676"
+        is_show: false
+
+      - en_name: "Turks and Caicos Islands"
+        name: "特克斯和凯科斯群岛"
+        code: "1649"
+        is_show: false
+
+      - en_name: "Trinidad and Tobago"
+        name: "特立尼达和多巴哥"
+        code: "1868"
+        is_show: false
+
+      - en_name: "Tunisia"
+        name: "突尼斯"
+        code: "216"
+        is_show: false
+
+      - en_name: "Tuvalu"
+        name: "图瓦卢"
+        code: "688"
+        is_show: false
+
+      - en_name: "Türkiye"
+        name: "土耳其"
+        code: "90"
+        is_show: false
+
+      - en_name: "Turkmenistan"
+        name: "土库曼斯坦"
+        code: "993"
+        is_show: false
+
+      - en_name: "Tokelau"
+        name: "托克劳"
+        code: "690"
+        is_show: false
+
+      - en_name: "Wallis and Futuna"
+        name: "瓦利斯和富图纳群岛"
+        code: "681"
+        is_show: false
+
+      - en_name: "Vanuatu"
+        name: "瓦努阿图"
+        code: "678"
+        is_show: false
+
+      - en_name: "Guatemala"
+        name: "危地马拉"
+        code: "502"
+        is_show: false
+
+      - en_name: "Venezuela"
+        name: "委内瑞拉"
+        code: "58"
+        is_show: false
+
+      - en_name: "Brunei"
+        name: "文莱"
+        code: "673"
+        is_show: false
+
+      - en_name: "Uganda"
+        name: "乌干达"
+        code: "256"
+        is_show: false
+
+      - en_name: "Uruguay"
+        name: "乌拉圭"
+        code: "598"
+        is_show: false
+
+      - en_name: "Uzbekistan"
+        name: "乌兹别克斯坦"
+        code: "998"
+        is_show: false
+
+      - en_name: "Spain"
+        name: "西班牙"
+        code: "34"
+        is_show: false
+
+      - en_name: "Western Sahara"
+        name: "西撒哈拉"
+        code: "212"
+        is_show: false
+
+      - en_name: "Greece"
+        name: "希腊"
+        code: "30"
+        is_show: false
+
+      - en_name: "Singapore"
+        name: "新加坡"
+        code: "65"
+        is_show: true
+        phone_regexp: ^[89]\d{7}$
+      - en_name: "New Caledonia"
+        name: "新喀里多尼亚"
+        code: "687"
+        is_show: false
+
+      - en_name: "New Zealand"
+        name: "新西兰"
+        code: "64"
+        is_show: false
+
+      - en_name: "Hungary"
+        name: "匈牙利"
+        code: "36"
+        is_show: false
+
+      - en_name: "Jamaica"
+        name: "牙买加"
+        code: "1876"
+        is_show: false
+
+      - en_name: "Armenia"
+        name: "亚美尼亚"
+        code: "374"
+        is_show: false
+
+      - en_name: "Yemen"
+        name: "也门"
+        code: "967"
+        is_show: false
+
+      - en_name: "Iraq"
+        name: "伊拉克"
+        code: "964"
+        is_show: false
+
+      - en_name: "Israel"
+        name: "以色列"
+        code: "972"
+        is_show: false
+
+      - en_name: "Italy"
+        name: "意大利"
+        code: "39"
+        is_show: false
+
+      - en_name: "India"
+        name: "印度"
+        code: "91"
+        is_show: false
+
+      - en_name: "Indonesia"
+        name: "印度尼西亚"
+        code: "62"
+        is_show: true
+        phone_regexp: ^(8\d{8,10})$
+      - en_name: "United Kingdom"
+        name: "英国"
+        code: "44"
+        is_show: false
+
+      - en_name: "British Virgin Islands"
+        name: "英属维尔京群岛"
+        code: "1284"
+        is_show: false
+
+      - en_name: "British Indian Ocean Territory"
+        name: "英属印度洋领地"
+        code: "246"
+        is_show: false
+
+      - en_name: "Jordan"
+        name: "约旦"
+        code: "962"
+        is_show: false
+
+      - en_name: "Vietnam"
+        name: "越南"
+        code: "84"
+        is_show: false
+
+      - en_name: "Zambia"
+        name: "赞比亚"
+        code: "260"
+        is_show: false
+
+      - en_name: "Chad"
+        name: "乍得"
+        code: "235"
+        is_show: false
+
+      - en_name: "Gibraltar"
+        name: "直布罗陀"
+        code: "350"
+        is_show: false
+
+      - en_name: "Chile"
+        name: "智利"
+        code: "56"
+        is_show: false
+
+      - en_name: "Hong Kong China"
+        name: "中国香港"
+        code: "852"
+        is_show: true
+        phone_regexp:
+      - en_name: "Macau China"
+        name: "中国澳门"
+        code: "853"
+        is_show: false
+
+      - en_name: "Taiwan China"
+        name: "中国台湾"
+        code: "886"
+        is_show: false
+
+      - en_name: "Central African Republic"
+        name: "中非共和国"
+        code: "236"
+        is_show: false
+
+  error_en-US.json: |
+    {
+    }
+  error_zh-CN.json: |
+    {
+    }
+  knowledge_qa_model.yaml: |
+    #
+
+  parse_model.yaml: |
+    #
+
+  plugin_model.yaml: |
+    #
+
+  thought_model.yaml: |
+    #
+  trpc_go.yaml: |
+    global:                             #全局配置
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+
+    server:                                            #服务端配置
+      app: KEP                                        #业务的应用名
+      server: bot-admin-config-server                             #进程服务名
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - recovery
+        - opentelemetry
+        - validation
+        - accesslog
+        - galileo
+        - i18n-adp
+      stream_filter:
+        - galileo
+      admin:
+        ip: ${POD_IP}  # admin 的 ip，配置网卡 nic 也可以
+        port: 8081   # admin 的 port，必须同时配置这里的 ip port 才会启动 admin
+      service:                                         #业务服务提供的service，可以有多个
+        - name: trpc.KEP.bot-admin-config-server.Admin # service的路由名称，格式：`业务领域.功能模块.项目名.Pb定义的服务名`
+          ip: ${POD_IP}
+          port: 9090 # 服务监听端口
+          network: tcp # 网络监听类型 tcp/udp
+          protocol: trpc # 应用层协议 trpc/restful
+          timeout: 120000 # 请求最长处理时间，单位毫秒
+          filter:
+            - session
+            - permission
+        - name: trpc.KEP.bot-admin-config-server.Login # service的路由名称，格式：`业务领域.功能模块.项目名.Pb定义的服务名`
+          ip: ${POD_IP}
+          port: 9091 # 服务监听端口
+          network: tcp # 网络监听类型 tcp/udp
+          protocol: trpc # 应用层协议 trpc/restful
+          timeout: 3000 # 请求最长处理时间，单位毫秒
+        - name: trpc.KEP.bot-admin-config-server.Api # service的路由名称，格式：`业务领域.功能模块.项目名.Pb定义的服务名`
+          ip: ${POD_IP}
+          port: 9092 # 服务监听端口
+          network: tcp # 网络监听类型 tcp/udp
+          protocol: trpc # 应用层协议 trpc/restful
+          timeout: 20000 # 请求最长处理时间，单位毫秒
+        - name: trpc.KEP.bot-admin-config-server.QASimilarTask #service的路由名称,
+          ip: ${POD_IP}
+          port: 9094 #服务监听端口 可使用占位符 ${port}
+          network: "0 0 6 31 12 *"
+          protocol: timer #应用层协议
+          timeout: 600000 # 请求最长处理时间，单位毫秒
+        - name: trpc.KEP.bot-admin-config-server.UpdateCharSizeTask #service的路由名称,
+          ip: ${POD_IP}
+          port: 9095 #服务监听端口 可使用占位符 ${port}
+          network: "0 15 6 * * *?scheduler=UpdateCharSizeTask&holdTime=5"
+          protocol: timer #应用层协议
+          timeout: 600000 # 请求最长处理时间，单位毫秒
+        - name: trpc.KEP.bot-admin-config-server.AppUsageTask #service的路由名称,
+          ip: ${POD_IP}
+          port: 9096 #服务监听端口 可使用占位符 ${port}
+          network: "* * 13 * * *" #定时器cron表达式: [second minute hour day month weekday] 如 "0 */5 * * * *" 每隔5分钟
+          protocol: timer #应用层协议
+          timeout: 3600000
+        - name: trpc.KEP.bot-admin-config-server.CacheModelPromptLimitTask
+          ip: ${POD_IP}
+          port: 9097
+          network: "0 0 6 * * *?disable=1&startAtOnce=1"
+          protocol: timer
+          timeout: 3600000
+        - name: trpc.KEP.bot-admin-config-server.ClearAppRescourceTask
+          ip: ${POD_IP}
+          port: 9098
+          network: "*/10 * * * * *?disable=1&startAtOnce=0&scheduler=ClearAppRescourceTask&holdTime=5"
+          protocol: timer
+          timeout: 3600000
+        - name: trpc.KEP.bot-admin-config-server.UpdateQpmTpmTask
+          ip: ${POD_IP}
+          port: 9099
+          network: "0 * * * * *?disable=1&startAtOnce=1&scheduler=UpdateQpmTpmTask&holdTime=5"
+          protocol: timer
+          timeout: 3600000
+        - name: trpc.KEP.bot-admin-config-server.ClearRealtimeAppResourceTask
+          ip: ${POD_IP}
+          port: 9100
+          network: "0 10 0 * * *?disable=1&startAtOnce=1&scheduler=ClearRealtimeAppResourceTask&holdTime=5"
+          protocol: timer
+          timeout: 18000000
+        #- name: trpc.kafka.statistics.consumer.service #私有化环境不启动kafka
+
+    plugins:
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: console                           #控制台标准输出 默认
+            level: debug                              #标准输出日志的级别
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+          - writer: file                              #本地文件日志
+            level: debug                               #本地文件滚动日志的级别
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/trpc.log    #本地文件滚动日志存放的路径
+              write_mode: 2
+              max_size: 10                              #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false                          #日志文件是否压缩
+        clues:
+          - writer: console                           #控制台标准输出 默认
+            level: info                              #标准输出日志的级别
+          - writer: file
+            level: info
+            formatter: json
+            writer_config:
+              filename: /app/logs/clues.log
+              write_mode: 2
+              roll_type: time
+              max_age: 7
+              max_backups: 10
+              compress: false
+              time_unit: day
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+        galileo:
+          verbose: error   # 伽利略自身的诊断日志级别，取值范围：debug, info, error, none，日志输出在 ./galileo/galileo.log 中。
+          ocp_addr: "http://127.0.0.1"
+          config: #配置
+            config_server: "http://127.0.0.1"
+            register_server: "http://127.0.0.1"
+            self_monitor:
+              collector:
+                addr: "http://127.0.0.1"
+            metrics_config: # 指标配置
+              enable: false    # 是否启用指标
+            traces_config: # 追踪配置
+              enable: true    # 是否启用追踪，默认 true。如果设置为 false，会中断 trace，让上游的调用链不完整。v0.3.7 以上生效。
+              processor: # 追踪数据处理相关配置
+                sampler: # 采样器配置
+                  fraction: 0   # 采样比例，默认 0。（v0.11.0)
+                  error_fraction: 0
+                  enable_min_sample: true  # 启用每分钟每接口最少 1 个请求采样，默认 true (v0.11.0)。
+                  enable_dyeing: true # 开启染色采样，默认 true。
+                disable_trace_body: true          # 若为 true，则关闭 trace 中对 req 和 rsp 的 body 上报，可以大幅提高上报性能。默认 true。
+                enable_deferred_sample: false     # 开启延迟采样（请求处理完采样），默认 false。0.3.0 以上生效。
+                deferred_sample_error: false      # 开启延迟采样出错采样（请求处理完出现错误采样），默认 false。0.3.0 以上生效。
+                deferred_sample_slow_duration_ms: 1000    # 慢操作阈值（请求耗时超过该值采样），单位 ms，默认 1000。0.3.0 以上生效。
+                disable_parent_sampling: false            # 忽略上游的采样结果，默认 false。v0.3.7 以上生效。
+              exporter:
+                collector:
+                  addr: "127.0.0.1:80"
+            logs_config: # 日志配置
+              enable: false    # 是否启用日志
+              processor: # 日志数据处理相关配置
+                only_trace_log: false  # 是否只上报命中 trace 的 log，默认关闭
+                must_log_traced: false # 是否命中 traced 不管任何级别日志都上报，默认关闭。v0.3.22 以上生效
+                trace_log_mode: 0   # debug 访问日志 (access_log) 打印模式，0,1：单行打印，3：多行打印，2：不打印，默认 0
+                level: debug        # 上报到远程的日志级别，默认 error
+                enable_recovery: true # 是否捕获 panic，默认 true
+            profiles_config:    # profile配置
+              enable: false # 是否启用 profile
+              processor: # profile 数据处理相关配置
+                profile_types: ["cpu", "heap"] # 采集 profile 的类型，支持 cpu、heap、mutex、block、goroutine，默认开启 cpu 和 heap。
+            version: 1        # 版本号，默认 0，此版本号用于控制远程配置和本地配置的优先级，版本号高的优先，一般设置成 1 即可。
+          resource: # resource 资源信息，在 SDK 运行期间不会改变。resource 中的字段一般不需要配置，默认会填充。
+            platform: STKE   # 服务部署的平台，如 PCG-123, STKE, 默认 PCG-123
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+      selector:
+        polaris:
+          enable_servicerouter: true # 注意这里一定要使用 true
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+            - zh-CN
+            - en-US
+          data_provider:
+            type: rainbow
+            prefix: admin
+            error_prefix: error
+            char_scaling_factor:
+              zh: 1
+              en: 3
+    client:
+      filter:
+        - opentelemetry
+        - galileo
+      stream_filter:
+        - galileo
+      service:
+        - name: mysql.qbot.admin
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.qbot.admin.del
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.admin
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local
+        - name: isearch.tdsql.qbot.admin
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot_isearch?timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local
+        - name: mysql.db_llm_robot_task
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot_task?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.db_llm_robot_task_prod
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot_task_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.db_llm_robot_workflow
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_workflow_formal?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: redis.qbot.admin
+          network: tcp
+          protocol: redis
+          target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/4
+          password: "{{ .Values.global.components.redis.password }}"
+          timeout: 800
+        - name: redis.lke.limiter
+          network: tcp
+          protocol: redis
+          target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/4
+          password: "{{ .Values.global.components.redis.password }}"
+          timeout: 800
+        #- name: basic.interface.trpc_to_inner.Cloudcc
+        #  target: polaris://basic.interface.trpc_to_inner.Proxy
+        #  protocol: trpc
+        #  timeout: 5000
+        #  namespace: Test
+        - name: trpc.http.cos.Access
+          network: tcp
+          protocol: http
+          {{ if eq .Values.global.components.s3.providerType "minio" }}
+          target: ip://minio.{{ .Release.Namespace }}.svc.cluster.local:80
+          {{ else if eq .Values.global.components.s3.providerType "obs" }}
+          target: ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}
+          {{ else }}
+          target: dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn
+          {{ end }}
+          timeout: 5000
+        - name: trpc.SmartAssistant.LLMManagerServer.Chat
+          target: ip://llm-manager-server.{{ .Release.Namespace }}.svc.cluster.local:10001
+          protocol: trpc
+          network: tcp
+          timeout: 40000
+        - name: trpc.smartservice.accessmanager.AccessManager
+          target: ip://accessmanagerserver.{{ .Release.Namespace }}.svc.cluster.local:10001
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - callee:  trpc.SmartService.AIConfManagerServer.AIConfManager
+          target: ip://aiconfmanagerserver.{{ .Release.Namespace }}.svc.cluster.local:10002
+          protocol: trpc
+          network: tcp
+          timeout: 3000
+        - name: pdf2docx
+          namespace: Production
+          timeout: 180000
+        - name: trpc.SmartAssistant.FileManagerServer.ManagerObj
+          target: ip://file-manager-server.{{ .Release.Namespace }}.svc.cluster.local:10001
+          protocol: trpc
+          network: tcp
+          timeout: 10000
+        - name: trpc.KEP.bot-task-config-server.task-config
+          target: ip://bottaskconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          callee: trpc.KEP.bot_task_config_server.TaskConfig
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: trpc.SmartService.AIConfManagerServer.AIConfManagerHttp
+          target: ip://aiconfmanagerserver.{{ .Release.Namespace }}.svc.cluster.local:10001
+          protocol: http
+          network: tcp
+          timeout: 10000
+        - name: qbot.qbot.infosec.Infosec
+          target: ip://infosec.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 10000
+        - name: qbot.qbot.short_url.Admin
+          target: ip://short-url.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: trpc.KEP.bot_knowledge_config_server.Api
+          target: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          network: tcp
+          timeout: 30000
+        - name: trpc.KEP.bot_retrieval_server.Retrieval
+          target: ip://botretrievalserver.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 300000
+        - name: trpc.KEP.bot_retrieval_server.DirectIndex
+          target: ip://botretrievalserver.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          network: tcp
+          timeout: 300000
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.plugin_config_server.PluginConfigApi
+          name:  trpc.KEP.plugin-config-server.PluginConfigApi
+          target: ip://pluginconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_admin_config_server.Http
+          name: trpc.KEP.bot-admin-config-server.Http
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:8081
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.agent_config_server.AgentConfigApi
+          name: trpc.KEP.agent-config-server.AgentConfigApi
+          target: ip://agentconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 60000
+        - name: qbot.finance.finance.Finance
+          target: ip://finance.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 10000
+        - name: trpc.VirtualHuman.CRMServer.CustomerAssetService
+          callee: trpc.VirtualHuman.CRMServer.CustomerAssetService
+          env_name: formal
+          timeout: 20000
+        - name: mongo.data.statistics
+          timeout: 30000
+        - callee: trpc.KEP.channel_token_svr.ChannelTokenService
+          name: trpc.KEP.channel_token_svr.ChannelTokenService
+          target: ip://channeltokensvr.{{ .Release.Namespace }}.svc.cluster.local:8000
+          protocol: trpc
+          timeout: 60000
+        - name: trpc.KEP.channel_msg_svr.Api
+          network: tcp
+          protocol: trpc
+          target: ip://channelmsgsvr.{{ .Release.Namespace }}.svc.cluster.local:8002
+          timeout: 5000
+        - name: trpc.SmartAssistant.VectorDBManager.VectorObj
+          callee: trpc.smartassistant.vectordbmanager.VectorObj
+          target: ip://vector-db-manager.{{ .Release.Namespace }}.svc.cluster.local:10001
+          protocol: trpc
+          network: tcp
+          timeout: 30000
+        - name: trpc.adp.ai_gateway.Admin
+          network: tcp
+          protocol: trpc
+          target: ip://ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
+          timeout: 2000
+        - name: trpc.adp.ai-gateway.api
+          network: tcp
+          timeout: 4500000
+          target: ip://ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: http
+        - callee: trpc.KEP.plugin_config_server.PluginConfigApi
+          name:  trpc.KEP.plugin-config-server.PluginConfigApi
+          target: ip://pluginconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_memory_server.MemoryInner
+          network: tcp
+          target: ip://bot-memory-server.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 20000
+
+        - callee: trpc.adp.platform_manager.Admin
+          namespace: Test
+          target: ip://platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 6000
+        - callee: trpc.adp.platform_manager.Login
+          namespace: Test
+          target: ip://platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 6000
+        - callee: trpc.adp.resource_gallery.Admin
+          namespace: Test
+          target: ip://resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.adp.app_config.Admin
+          target: ip://app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Test
+          timeout: 5000
+        - name: trpc.adp.kb-config.Admin
+          target: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Test
+          protocol: trpc
+          callee: trpc.adp.kb_config.Admin
+          timeout: 5000
+        - name: trpc.adp.kb-config.Api
+          target: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: Test
+          protocol: trpc
+          callee: trpc.adp.kb_config.Api
+          timeout: 5000
+
+  white_list.yaml: |
+    account_operation_log:
+      log_cleanup_interval: 8760h
+      white_list_uin:
+      apis:
+        # 应用配置
+        CreateApp: add
+        CreateAppByExperienceApp: add
+        ModifyApp: modify
+        DeleteApp: delete
+        CreateRelease: release
+        # 工作流
+        CreateWorkflow: add
+        CreateWorkflowExample: add
+        CopyWorkflow: add
+        ImportWorkflow: add
+        ImportWorkflowExample: add
+        SaveWorkflow: modify
+        SwitchWorkflowState: modify
+        UpdateWorkflowExample: modify
+        SaveAppDebugMode: modify
+        SaveAppDebugCustomVariables: modify
+        SaveAgentWorkflow: modify
+        DeleteWorkflow: delete
+        DeleteWorkflowExample: delete
+        ExportWorkflow: download
+        # 知识库
+        SaveDoc: add
+        CreateQA: add
+        CreateSharedKnowledge: add
+        AddDbSource: add
+        ModifyDoc: modify
+        CreateDocParsingIntervention: modify
+        ModifyDocSegment: modify
+        RenameDoc: modify
+        BatchModifyDoc: modify
+        ResumeDoc: modify
+        ModifyDocStatus: modify
+        ModifyDocAttrRange: modify
+        RetryDocParse: modify
+        RetryDocAudit: modify
+        ModifyQA: modify
+        VerifyQA: modify
+        ModifyQAAttrRange: modify
+        BatchModifyQaExpire: modify
+        BatchModifyQaDoc: modify
+        ModifyQAStatus: modify
+        ResumeQA: modify
+        UpdateDbSource: modify
+        UpdateDbTableAndColumns: modify
+        UpdateDbTableEnabled: modify
+        DeleteSharedKnowledge: delete
+        DeleteDoc: delete
+        DeleteQA: delete
+        DeleteDbSource: delete
+        DeleteDbTable: delete
+        ExportQAList: download
+        GetDocPreview: preview
+        BatchDownloadDoc: download
+  workflow_model.yaml: |
+    workflow_model:
+      # 大模型标签提取
+      workflow_tag_extract:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 参数提取
+      workflow_parameter_extract:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 参数提取（非COT）
+      workflow_parameter_extract_not_cot:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 逻辑判断
+      workflow_logic_evaluator:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      #逻辑判断（非COT）
+      workflow_logic_evaluator_not_cot:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 参数追问
+      workflow_parameter_probe:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 参数超过最大询问次数，兜底回复
+      workflow_intent:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 选项卡
+      workflow_option_card:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 意图识别
+      workflow_probe_exceeded_answer:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 大模型输出格式为json
+      workflow_llm_output_format_json:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 推荐问
+      workflow_recommend_question:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+
+      # 工作流描述一键优化prompt
+      workflow_desc_prompt:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 工作流参数提取节点提示词一键优化prompt
+      workflow_parameter_prompt:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 工作流大模型节点提示词一键优化prompt
+      workflow_llm_prompt:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 工作流大模型标签提取节点提示词一键优化prompt
+      workflow_tag_prompt:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 工作流意图识别节点意图一键优化prompt
+      workflow_intent_prompt:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1
+      # 工作流一键优化prompt
+      workflow_role_prompt:
+        prompt_words_limit: 5000
+        history_limit: 5
+        history_words_limit: 5000
+        is_enabled: true
+        prompt_version: v1

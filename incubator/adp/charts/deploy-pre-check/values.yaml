@@ -1,0 +1,53 @@
+# Pre-install Check 子 Chart 配置
+
+# 是否启用 pre-install 检查
+enabled: true
+
+# 检查任务配置
+job:
+# Job 镜像配置（使用 slim 镜像，比 alpine 快很多）
+  image:
+    repository: ccr.ccs.tencentyun.com/tke-market/pre-install-check
+    tag: "v1.1"
+    pullPolicy: IfNotPresent
+
+
+  # 资源限制
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+# 资源要求配置
+requirements:
+  minimal:
+    cpu: 28000 #28核
+    memory: 41943040  # 40Gi
+  standard:
+    cpu: 55000 #55核
+    memory: 83886080  # 80Gi
+  recommended:
+    cpu: 125000 #125核
+    memory: 251658240  # 240Gi
+
+# Hook 配置
+hook:
+  # Hook 权重（设置为 5，确保在 Secret（-1）创建后执行）
+  weight: "-10"
+  
+  # 删除策略
+  deletePolicy: "before-hook-creation"
+
+# RBAC 配置（检查 K8s 资源需要权限）
+rbac:
+  create: true
+
+serviceAccount:
+  create: true
+  name: ""
+
+# 镜像拉取凭证配置
+imagePullSecretName: qcloudregistrykey

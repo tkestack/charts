@@ -1,0 +1,14 @@
+tad:
+  type: helm
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+# common-config-map/values.yaml
+
+imagePullSecretName: qcloudregistrykey

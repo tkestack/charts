@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: op
+  name: op
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: tcp-8081
+      port: 8081
+      protocol: TCP
+      targetPort: 8081
+    - name: tcp-8080
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: op
+  type: ClusterIP

@@ -1,0 +1,144 @@
+{{- $helmfileEnvName := .Values.global.helmfileEnvName | default "tke" }}
+{{- $re_nu   := 1}}
+{{- if or (eq $helmfileEnvName "tcs") (eq $helmfileEnvName "tke") }}
+  {{- $re_nu = 2 }}
+{{- end}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ti-ingress-controller-workload
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.cpaas.io/name: ti-ingress-controller.{{ .Release.Namespace }}
+    project.cpaas.io/name: ti-platform
+    service.cpaas.io/name: deployment-ti-ingress-controller-workload
+  annotations:
+    configmap.reloader.stakater.com/reload: "ti-ingress-controller-config"
+spec:
+  minReadySeconds: 5
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.cpaas.io/name: ti-ingress-controller.{{ .Release.Namespace }}
+      project.cpaas.io/name: ti-platform
+      service.cpaas.io/name: deployment-ti-ingress-controller-workload
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations: {}
+      labels:
+        app.cpaas.io/name: ti-ingress-controller.{{ .Release.Namespace }}
+        project.cpaas.io/name: ti-platform
+        service.cpaas.io/name: deployment-ti-ingress-controller-workload
+    spec:
+      dnsPolicy: ClusterFirstWithHostNet
+      dnsConfig:
+        options:
+        - name: timeout
+          value: "2"
+        - name: attempts
+          value: "3"
+        - name: rotate
+        - name: single-request-reopen
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - ti-ingress-controller-workload
+      priorityClassName: system-cluster-critical
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - image: {{(index .Values.tad.images "ti-ingress-controller").url}}
+          imagePullPolicy: IfNotPresent
+          name: ti-ingress-controller
+          #command: ["sh", "-c", "while true; do sleep 100; done"]
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "1"
+              memory: "1Gi"
+          {{- end }}
+          volumeMounts:
+            - mountPath: /ingress-apisix/conf/config.yaml
+              name: ti-ingress-controller-configmap
+              subPath: config.yaml
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: PLATFORM
+              value: {{ .Values.platform }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 9093
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+      volumes:
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - configMap:
+            name: ti-ingress-controller-config
+          name: ti-ingress-controller-configmap
+      terminationGracePeriodSeconds: 30
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccountName: {{ .Release.Name }}-apisix-view-serviceaccount
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - topologyKey: kubernetes.io/hostname
+            labelSelector:
+              matchLabels:
+                app.cpaas.io/name: ti-ingress-controller.{{ .Release.Namespace }}

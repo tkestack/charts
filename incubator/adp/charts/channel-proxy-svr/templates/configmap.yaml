@@ -1,0 +1,104 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-channel-proxy
+  namespace: {{ .Release.Namespace }}
+data:
+  fullchain.pem: |
+    
+    -----BEGIN CERTIFICATE-----
+    
+    -----END CERTIFICATE-----
+  privkey.pem: |
+    -----BEGIN RSA PRIVATE KEY-----
+    
+    -----END RSA PRIVATE KEY-----
+    
+    
+  proxy.conf: |
+    
+    server {
+      listen 8000 ;
+      #   listen 8443 ssl;
+      # test {{(index .Values.tad.images "channel-proxy-svr").url}}
+      listen 8443;
+      server_name _;
+    
+      resolver kube-dns.kube-system.svc.cluster.local ipv6=off valid=10s;
+    
+    #   # SSL证书配置（必须替换为实际证书路径）
+    #   ssl_certificate /etc/nginx/conf.d/fullchain.pem;   # 证书文件（包含公钥和CA链）
+    #   ssl_certificate_key /etc/nginx/conf.d/privkey.pem; # 私钥文件
+    
+    #   # SSL会话优化（提升性能）
+    #   ssl_session_cache shared:SSL:10m;
+    #   ssl_session_timeout 10m;
+    #   ssl_session_tickets off;
+    
+    #   # TLS协议与密码套件优化（平衡安全与兼容性）
+    #   ssl_protocols TLSv1.2 TLSv1.3;  # 禁用旧版不安全的TLS协议
+    #   ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    #   ssl_prefer_server_ciphers off;
+    
+    
+      tcp_nodelay on;
+      client_max_body_size 100m;
+    
+      location ~ ^/online/channel/callback/ {
+          proxy_buffering off;
+          proxy_pass http://channelmsgsvr.customer.svc.cluster.local:8000$uri?$args;
+          proxy_set_header Connection "close";
+          proxy_ignore_client_abort on;
+          proxy_http_version 1.1;
+          proxy_read_timeout 600s;
+          proxy_send_timeout 600s;
+      }
+    
+      location ~ ^/online/wx/ticket/callback {
+          proxy_buffering off;
+          proxy_pass http://channeltokensvr.customer.svc.cluster.local:8001$uri?$args;
+          proxy_set_header Connection "close";
+          proxy_ignore_client_abort on;
+          proxy_http_version 1.1;
+          proxy_read_timeout 600s;
+          proxy_send_timeout 600s;
+      }
+    
+      # location ~ ^/cgi-bin/ { # 请求企微代理
+      #     proxy_pass https://qyapi.weixin.qq.com;
+      #     proxy_http_version 1.1;
+      #     proxy_set_header Connection "close";
+      #     proxy_buffering off;
+      #     proxy_read_timeout 600s;
+      #     proxy_send_timeout 600s;
+      # }
+    
+    
+      access_log /var/log/nginx/http_forward_proxy_8000.access.log;
+      error_log /var/log/nginx/http_forward_proxy_8000.error.log;
+    }
+    server {
+      listen 8001 ;
+      server_name _;
+    
+      resolver 119.29.29.29 182.254.116.116 ipv6=off valid=60s;
+      tcp_nodelay on;
+      client_max_body_size 100m;
+    
+      location / {
+          proxy_buffering off;
+          proxy_pass https://$http_host$uri?$args;
+          proxy_set_header Connection "";
+          proxy_set_header Host $http_host;
+          proxy_ignore_client_abort on;
+          proxy_http_version 1.1;
+    
+          # 将 Host header 的值用作 SNI
+          proxy_ssl_name $http_host;
+          proxy_ssl_server_name on;
+      }
+    
+      access_log /var/log/nginx/http_forward_proxy_8001.access.log;
+      error_log /var/log/nginx/http_forward_proxy_8001.error.log;
+    }
+    

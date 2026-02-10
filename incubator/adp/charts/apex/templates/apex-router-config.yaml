@@ -1,0 +1,31 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: apex-router-config
+  namespace: {{ .Release.Namespace }}
+data:
+  config.yaml: |
+    mode: router
+    name: apex
+    listen_addr: 0.0.0.0:8083
+    env: dev
+    pid: /tmp/apex.pid
+    profile: true
+    debug: true
+    local: true
+    redis:
+      addr: {{ (index .Values.global.components.redis.hosts 0) }}:{{ .Values.global.components.redis.port }}
+      password: "{{ .Values.global.components.redis.password }}"
+    log:
+      writer: file
+      level: info
+      file_name: /data/log/apex/apex.log
+      file_max_age: 7
+    registry:
+      type: dns
+    router:
+      cache_size: 1024
+      channel_key: "apex#client#channel"
+      session_key_prefix: "apex#client#"
+      cache_life_window: 10m
+      cache_clean_window: 30m
