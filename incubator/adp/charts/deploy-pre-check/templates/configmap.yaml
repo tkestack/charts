@@ -8,7 +8,7 @@ metadata:
     {{- include "pre-install-check.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": pre-install
-    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-weight": "-15"
     "helm.sh/hook-delete-policy": {{ .Values.hook.deletePolicy }}
     "meta.helm.sh/release-time": {{ now | date "2006-01-02T15:04:05Z07:00" | quote }}
 data:
