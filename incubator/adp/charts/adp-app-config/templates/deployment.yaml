@@ -1,0 +1,152 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    ti.cloud.tencent.com/resource-quota: unlimited
+    configmap.reloader.stakater.com/reload: "app-config"
+  labels:
+    app: {{ .Values.appName }}
+    app.kubernetes.io/name: {{ .Values.appName }}
+  name: {{ .Values.appName }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+  strategy : {}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - {{ .Values.appName }}
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: GPUName
+                    operator: DoesNotExist
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: product
+                    operator: In
+                    values:
+                      - lke
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: DEPLOYMENT_ENVIRONMENT
+              value: TCS
+            - name: ENV
+              value: tcs
+            - name: SERVER_LOG_LEVEL
+              value: info
+          image: {{(index .Values.tad.images "adp-app-config").url}}
+          imagePullPolicy: Always
+          #command: ["sh","/usr/local/app/start.sh"]
+          #command: ["sleep","inf"]
+          name: {{ .Values.appName }}
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+          {{- end }}
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 9090
+            timeoutSeconds: 2
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 9090
+            timeoutSeconds: 2
+          volumeMounts:
+            - mountPath: /etc/localtime
+              name: localtime
+            - mountPath: /app/logs
+              name: logdata
+              subPathExpr: $(POD_NAME)
+            - mountPath: /app/conf/
+              name: config
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      volumes:
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - hostPath:
+            path: /etc/localtime
+          name: localtime
+        - hostPath:
+            path: /data/ti-platform/log/{{ .Values.appName }}
+            type: DirectoryOrCreate
+          name: logdata
+        - configMap:
+            defaultMode: 420
+            name: {{ .Values.appName }}
+          name: config

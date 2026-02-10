@@ -1,0 +1,166 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: web-parser-server
+  namespace: {{ .Release.Namespace }}
+data:
+  WebParserServer.json: |
+    {
+      "FetchPolicy": ["sleep=4&", "", "use_proxy&"],
+      "WhiteListPolicy": {
+        "baidu.com": [""],
+        "www.inanshan.org.cn": ["sleep=4&", "", "use_proxy&"]
+      },
+      "IPProxyConf": {
+        "Biz": "qidian",
+        "SKey": "788ab551bc3b15eca669dd565a2fbe30",
+        "ModelID": "ProxyService",
+        "Version": "v0.0.1",
+        "Path": "/trpc.ipproxy.downloader.http/GetAutoProxy"
+      },
+      "CosConf": {
+        "Provider": "{{ .Values.global.components.s3.providerType }}",
+        "SecretID": "{{ include "web-parser-server.cos.secretId" . | trim }}",
+        "SecretKey": "{{ include "web-parser-server.cos.secretKey" . | trim }}",
+        "Bucket": "{{ include "web-parser-server.cos.bucket" . | trim }}",
+        "Endpoint": "{{ include "web-parser-server.cos.endpoint" . | trim }}",
+        "Protocol": "{{ include "web-parser-server.cos.protocol" . | trim }}"
+      },
+      "TaskScanInterval": 1,
+      "CheckUinStatus": true,
+      "EnableSaveImg": false,
+      "EnableUseRobot": false,
+      "HostConfMap": {
+        "default" : {
+          "BatchLimit": 5,
+          "GroupLimit": 5,
+          "MainContentThreshold": 0.3,
+          "ContentBytesThreshold": 200,
+          "FailThreshold": 0.5,
+          "BatchFetchSleep": 4,
+          "CSSSelector": ""
+        }
+      },
+      "WhiteCosList": ["{{ .Values.global.clb }}"],
+      "WhiteCosPort": ["30900"]
+    }
+  trpc_go.yaml: |
+    global: #全局配置
+        namespace: Production                        #环境类型，分正式Production和非正式Development两种类型
+        env_name: formal                       #环境名称，非正式环境下多环境的名称
+        admin_port: 18888                              #管理命令服务端口
+        enable_set: N                      #是否启用set
+        full_set_name:                      #set名
+    server:                                            #服务端配置
+      app: SmartAssistant                                 #业务的应用名
+      server: WebParserServer                           #进程服务名
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - recovery                                     #拦截框架创建的业务处理协程panic
+        - prometheus
+        - cle-route-propagator
+      admin:
+        port: 18888                                    # admin 端口
+        read_timeout: 3000                             #ms. 请求被接受到请求信息被完全读取的超时时间设置，防止慢客户端
+        write_timeout: 60000                           #ms. 处理的超时时间
+      service:                                         #业务服务提供的service，可以有多个
+        - name: trpc.SmartAssistant.WebParserServer.ParserObj #service的路由名称，请将ReplaceMe改成自己的service名字，app server占位符不要改
+          network: tcp #网络监听类型  tcp udp
+          protocol: trpc #应用层协议 trpc http
+          timeout: 50000 #请求最长处理时间 单位 毫秒
+          registry: polaris #服务启动时使用的服务注册方式
+          port: 10001
+          filter:
+            - session
+    client:                                            #客户端调用的后端配置
+      filter:                                          #针对所有后端调用函数前后的拦截器列表
+        - prometheus
+        - cle-route-propagator
+      namespace: Production                          #针对所有后端的环境
+      timeout: 300000                                   #针对所有后端的请求最长处理时间
+      service:                                         #针对单个后端的配置，默认都有默认值，可以完全不用配置
+        - name: trpc.wps.mysql.task        # tdsql 数据库
+          namespace: Test
+          target: "dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/web_parsing_engine?timeout=10s&parseTime=true&loc=Local"
+        - name: trpc.wps.redis.lock
+          target: "ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/0"
+          timeout: 3000
+          password: "{{ .Values.global.components.redis.password }}"
+        - name: trpc.http.fetch.sidecar
+          protocol: http
+          network: tcp
+          timeout: 12000
+          target: ip://127.0.0.1:7001
+          namespace: Development
+        - name: trpc.http.fetch.async
+          protocol: http
+          network: tcp
+          timeout: 120000
+          target: ip://127.0.0.1:7001
+          namespace: Development
+        - name: trpc.http.fetch.proxy
+          protocol: http
+          network: tcp
+          timeout: 5000
+          target: ip://127.0.0.1:7001
+          namespace: Production
+        # admin Login
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          name: trpc.KEP.bot-admin-config-server.Login
+          namespace: Production
+          protocol: trpc
+          timeout: 2000
+          disable_servicerouter: true
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+        # admin api
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          name: trpc.KEP.bot-admin-config-server.Api
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+          # disable_servicerouter: true
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+        - callee: trpc.KEP.bot_knowledge_config_server.Admin
+          name: trpc.KEP.bot-knowledge-config-server.Admin
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+          # disable_servicerouter: true
+          target: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9090
+    plugins:                                           #插件配置
+      selector:
+        polaris:
+          protocol: grpc #北极星交互协议支持 http，grpc，trpc
+          enable_servicerouter: true
+          enable_trans_meta: true
+          discovery:
+            refresh_interval: 10000                    #北极星服务发现刷新间隔，123默认10000
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: console                           #控制台标准输出 默认
+            level: info                              #标准输出日志的级别
+            caller_skip: 4
+          - writer: file                              #本地文件日志
+            level: info                               #本地文件滚动日志的级别
+            writer_config:
+              filename: /app/logs/trpc.log    #本地文件滚动日志存放的路径
+              max_size: 100                             #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false                          #日志文件是否压缩
+        cls-log-trace:                                      #默认日志的配置，可支持多输出
+          - writer: file                              #本地文件日志
+            level: info                               #本地文件滚动日志的级别
+            writer_config:
+              filename: /app/log/trace.log                      #本地文件滚动日志存放的路径
+              max_size: 100                             #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false                          #日志文件是否压缩
+      metrics:
+        prometheus:                                   #Start prometheus.
+          path: /metrics                              #Metrics path.
+          rawmode:   false                            #Raw mode, no conversion of special characters for metrics.
+

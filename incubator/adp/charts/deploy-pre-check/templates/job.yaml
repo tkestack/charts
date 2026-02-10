@@ -1,0 +1,100 @@
+{{- if .Values.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "pre-install-check.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "pre-install-check.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-succeeded": continue
+    "helm.sh/hook-failed": stop
+    "helm.sh/hook-weight": {{ .Values.hook.weight | quote }}
+    "helm.sh/hook-delete-policy": {{ .Values.hook.deletePolicy }}
+    "meta.helm.sh/release-time": {{ now | date "2006-01-02T15:04:05Z07:00" | quote }}
+spec:
+  parallelism: 1
+  completions: 1
+  backoffLimit: 0
+  activeDeadlineSeconds: 600
+  template:
+    metadata:
+      name: {{ include "pre-install-check.fullname" . }}
+      labels:
+        {{- include "pre-install-check.selectorLabels" . | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      {{- if .Values.rbac.create }}
+      serviceAccountName: {{ include "pre-install-check.serviceAccountName" . }}
+      {{- end }}
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      volumes:
+      - name: check-script
+        configMap:
+          name: {{ include "pre-install-check.fullname" . }}-script
+          defaultMode: 0755
+      containers:
+      - name: pre-install-check
+        image: "{{ .Values.job.image.repository }}:{{ .Values.job.image.tag }}"
+        imagePullPolicy: {{ .Values.job.image.pullPolicy }}
+        command:
+        - python3
+        - -u
+        - /scripts/check.py
+        volumeMounts:
+        - name: check-script
+          mountPath: /scripts
+        {{- if .Values.job.resources }}
+        resources:
+          {{- toYaml .Values.job.resources | nindent 10 }}
+        {{- end }}
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        - name: NAMESPACE
+          value: {{ .Release.Namespace }}
+        - name: DB_HOST
+          value: {{ .Values.global.components.db.host | quote }}
+        - name: DB_PORT
+          value: {{ .Values.global.components.db.port | quote }}
+        - name: DB_USER
+          value: {{ .Values.global.components.db.user | quote }}
+        - name: DB_PASSWORD
+          value: {{ .Values.global.components.db.password | quote }}
+        - name: ES_HOST
+          value: {{ index .Values.global.components.es.hosts 0 | quote }}
+        - name: ES_PORT
+          value: {{ .Values.global.components.es.port | quote }}
+        - name: ES_USER
+          value: {{ .Values.global.components.es.user | quote }}
+        - name: ES_PASSWORD
+          value: {{ .Values.global.components.es.password | quote }}
+        - name: REDIS_HOST
+          value: {{ index .Values.global.components.redis.hosts 0 | quote }}
+        - name: REDIS_PORT
+          value: {{ .Values.global.components.redis.port | quote }}
+        - name: REDIS_PASSWORD
+          value: {{ .Values.global.components.redis.password | quote }}
+        - name: VDB_ADDR
+          value: {{ index .Values.global.components.vdb 0 "addr" | quote }}
+        - name: VDB_ACCOUNT
+          value: {{ index .Values.global.components.vdb 0 "account" | quote }}
+        - name: VDB_APIKEY
+          value: {{ index .Values.global.components.vdb 0 "apiKey" | quote }}
+        - name: COS_SECRET_ID
+          value: {{ .Values.global.components.s3.cos.secretId | quote }}
+        - name: COS_SECRET_KEY
+          value: {{ .Values.global.components.s3.cos.secretKey | quote }}
+        - name: COS_REGION
+          value: {{ .Values.global.components.s3.cos.region | quote }}
+        - name: COS_BUCKET
+          value: {{ .Values.global.components.s3.cos.bucket | quote }}
+        - name: COS_SUBPATH
+          value: {{ .Values.global.components.s3.cos.subPath | quote }}
+        - name: REQUIRED_CPU
+          value: {{ if eq .Values.global.clusterSize "minimal" }}{{ .Values.requirements.minimal.cpu | quote }}{{ else if eq .Values.global.clusterSize "standard" }}{{ .Values.requirements.standard.cpu | quote }}{{ else if eq .Values.global.clusterSize "recommended" }}{{ .Values.requirements.recommended.cpu | quote }}{{ else }}{{ .Values.requirements.standard.cpu | quote }}{{ end }}
+        - name: REQUIRED_MEMORY
+          value: {{ if eq .Values.global.clusterSize "minimal" }}{{ .Values.requirements.minimal.memory | quote }}{{ else if eq .Values.global.clusterSize "standard" }}{{ .Values.requirements.standard.memory | quote }}{{ else if eq .Values.global.clusterSize "recommended" }}{{ .Values.requirements.recommended.memory | quote }}{{ else }}{{ .Values.requirements.standard.memory | quote }}{{ end }}
+{{- end }}

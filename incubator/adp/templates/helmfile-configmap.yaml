@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: helmfile-config
+  labels:
+    app: helmfile-config
+data:
+  helmfile.yaml: |
+{{ .Files.Get "helmfile.yaml" | indent 4 }}

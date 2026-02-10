@@ -1,0 +1,270 @@
+apiVersion: v1
+data:
+  config-default.yaml: |-
+    apisix:
+      node_listen:
+        - port: 9080
+          enable_http2: false
+        - port: 9081
+          enable_http2: true
+      stream_proxy:
+        tcp:
+          - 9083
+      enable_filemanager: true
+      enable_admin: true
+      enable_admin_cors: true
+      enable_debug: false
+      enable_dev_mode: false
+      enable_reuseport: true
+      enable_ipv6: true
+      config_center: etcd
+      enable_server_tokens: false
+      extra_lua_path: ""
+      extra_lua_cpath: ""
+      proxy_cache:
+        cache_ttl: 10s
+        zones:
+          - name: disk_cache_one
+            memory_size: 50m
+            disk_size: 1G
+            disk_path: "/tmp/disk_cache_one"
+            cache_levels: "1:2"
+
+      allow_admin:
+        - all
+
+      admin_api_mtls:
+        admin_ssl_cert: ""
+        admin_ssl_cert_key: ""
+        admin_ssl_ca_cert: ""
+
+      admin_key:
+        - name: "admin"
+          key: 2bffd108f0a56053e665440292bc529a
+          role: admin
+        - name: "viewer"
+          key: e77b29767da1420a9e7fd33d71c57e5b
+          role: viewer
+
+      delete_uri_tail_slash: false
+      global_rule_skip_internal_api: true
+
+      router:
+        http: 'radixtree_uri'
+        ssl: 'radixtree_sni'
+      dns_resolver_valid: 30
+      resolver_timeout: 100
+      enable_resolv_search_opt: true
+      ssl:
+        enable: false
+        listen:
+          - port: 9443
+            enable_http2: true
+        ssl_protocols: "TLSv1.2 TLSv1.3"
+        ssl_ciphers: "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384"
+        ssl_session_tickets: false              #  disable ssl_session_tickets by default for 'ssl_session_tickets' would make Perfect Forward Secrecy useless.
+        key_encrypt_salt: "edd1c9f0985e76a2"
+
+      enable_control: true
+      disable_sync_configuration_during_start: false
+
+    nginx_config:
+      error_log: "logs/error.log"
+      error_log_level: "warn"
+      worker_processes: 1
+      enable_cpu_affinity: false
+      worker_rlimit_nofile: 20480
+      worker_shutdown_timeout: 240s
+      max_pending_timers: 16384       # increase it if you see "too many pending timers" error
+      max_running_timers: 4096        # increase it if you see "lua_max_running_timers are not enough" error
+
+      event:
+        worker_connections: 10620
+      stream:
+        enable_access_log: false         # enable access log or not, default false
+        access_log: logs/access_stream.log
+        access_log_format: "$remote_addr [$time_local] $protocol $status $bytes_sent $bytes_received $session_time"
+        # create your custom log format by visiting http://nginx.org/en/docs/varindex.html
+        access_log_format_escape: default       # allows setting json or default characters escaping in variables
+        lua_shared_dict:
+          etcd-cluster-health-check-stream: 10m
+          lrucache-lock-stream: 10m
+          plugin-limit-conn-stream: 10m
+
+      #envs:                            # allow to get a list of environment variables
+      #  - TEST_ENV
+
+      main_configuration_snippet: |
+        # Add custom Nginx main configuration to nginx.conf.
+        # The configuration should be well indented!
+      http_configuration_snippet: |
+        # Add custom Nginx http configuration to nginx.conf.
+        # The configuration should be well indented!
+        lua_shared_dict plugin-limit-conn-redis-cluster-slot-lock 1m;
+        lua_shared_dict plugin-limit-conn-redis-sentinel 10m;
+        lua_shared_dict plugin-limit-conn-redis-cluster 10m;
+        lua_shared_dict plugin-limit-conn-redis-master 10m;
+        lua_shared_dict plugin-hpa-conn 10m;
+        lua_shared_dict ti_gateway_instance 1m;
+        lua_shared_dict ti_gateway_redis_nodes 1m;
+        client_body_buffer_size 10m;
+
+        proxy_read_timeout 1800;
+        proxy_connect_timeout 1800;
+        proxy_send_timeout 1800;
+        proxy_ignore_client_abort on;
+        add_header Cache-Control no-cache;
+      http_server_configuration_snippet: |
+        # Add custom Nginx http server configuration to nginx.conf.
+        # The configuration should be well indented!
+        set $ti_uin '';
+        set $ti_secret_id '';
+        set $ti_project_id '';
+        set $ti_business_id '';
+        set $ti_service '';
+        set $ti_application '';
+        set $ti_action '';
+        set $api_version '';
+        set $ti_request_id '';
+        set $client_ip '';
+        set $event_type '';
+        set $ti_failed_redirect_uri $request_uri;
+        error_page 403 {{ .Values.global.scheme }}://{{ .Values.global.clb }}/noauth;
+        error_page 401 {{ .Values.global.scheme }}://{{ .Values.global.clb }}/;
+        error_page 512 {{ .Values.global.scheme }}://{{ .Values.global.clb }}/failed?redirect=$ti_failed_redirect_uri;
+      http_admin_configuration_snippet: |
+        # Add custom Nginx admin server configuration to nginx.conf.
+        # The configuration should be well indented!
+      http_end_configuration_snippet: |
+        # Add custom Nginx http end configuration to nginx.conf.
+        # The configuration should be well indented!
+      stream_configuration_snippet: |
+        # Add custom Nginx stream configuration to nginx.conf.
+        # The configuration should be well indented!
+
+      http:
+        enable_access_log: true
+        access_log: "logs/access.log"
+        access_log_format: >
+          {"remote_addr":"$remote_addr","time_local":"$time_local","http_host":"$http_host","request":"$request",
+          "status": $status,"body_bytes_sent": $body_bytes_sent,"request_time":"$request_time",
+          "http_referrer":"$http_referer","http_user_agent":"$http_user_agent","upstream_addr":"$upstream_addr",
+          "upstream_status":"$upstream_status","upstream_response_time":"$upstream_response_time",
+          "upstream_url":"$upstream_scheme://$upstream_addr$upstream_uri",
+          "uin":"$ti_uin","secret_id":"$ti_secret_id",
+          "ti_project_id": "$ti_project_id","ti_business_id": "$ti_business_id",
+          "api_version":"$api_version","client_ip":"$client_ip","event_type":"$event_type",
+          "service":"$ti_service","action":"$ti_action","ti_application_id":"$ti_application",
+          "request_id":"$ti_request_id"}
+        access_log_format_escape: json
+        keepalive_timeout: 1800s
+        client_header_timeout: 1800s
+        client_body_timeout: 1800s
+        client_max_body_size: 0
+
+        send_timeout: 10s
+        underscores_in_headers: "on"
+        real_ip_header: "X-Real-IP"
+        real_ip_recursive: "off"
+        real_ip_from:
+          - 127.0.0.1
+          - 'unix:'
+        proxy_ssl_server_name: true
+        upstream:
+          keepalive: 320 # Sets the maximum number of idle keepalive connections to upstream servers that are preserved in the cache of each worker process.
+          keepalive_requests: 1000 # Sets the maximum number of requests that can be served through one keepalive connection.
+          keepalive_timeout: 300s # Sets a timeout during which an idle keepalive connection to an upstream server will stay open.
+        charset: utf-8
+        variables_hash_max_size: 2048
+        file_manager:
+          limit_rate: 2m
+
+        lua_shared_dict:
+          internal-status: 10m
+          plugin-limit-req: 10m
+          plugin-limit-count: 10m
+          prometheus-metrics: 50m
+          plugin-limit-conn: 10m
+          upstream-healthcheck: 10m
+          worker-events: 10m
+          lrucache-lock: 10m
+          balancer-ewma: 10m
+          balancer-ewma-locks: 10m
+          balancer-ewma-last-touched-at: 10m
+          plugin-limit-count-redis-cluster-slot-lock: 1m
+          tracing_buffer: 10m
+          plugin-api-breaker: 10m
+          etcd-cluster-health-check: 10m
+          discovery: 1m
+          jwks: 1m
+          introspection: 10m
+          access-tokens: 1m
+          ext-plugin: 1m
+          kubernetes: 1m
+          tars: 1m
+    graphql:
+      max_size: 1048576               # the maximum size limitation of graphql in bytes, default 1MiB
+
+    plugins:
+      - ip-restriction
+      - limit-conn
+      - limit-count
+      - limit-req
+      - request-id
+      - ti-notebook-auth
+      - ti-asr-auth
+      - ti-auth
+      - rewrite-ti
+      - rewrite-infer
+      - rewrite-cos
+      - ti-notebook-rewrite
+      - ti-asr-rewrite
+      #  - skywalking
+      - batch-requests
+      - prometheus
+      - grpc-transcode
+      - response-rewrite
+      - log-rotate
+      - traffic-split
+      - rewrite-infer-grpc
+      - ti-tensorboard-auth
+      - ti-grafana
+      - rewrite-lke-opapi
+      - icr-perm-auth
+      - ti-perm-access
+      - rewrite-lke
+      - ti-perm-auth
+      - public-api
+
+    stream_plugins:
+      - mqtt-proxy
+
+    plugin_attr:
+      log-rotate:
+        interval: 600    # rotate interval (unit: second)
+        max_kept: 1      # max number of log files will be kept
+      #  skywalking:
+      #    service_name: APISIX
+      #    service_instance_name: "APISIX Instance Name"
+      #    endpoint_addr: http://127.0.0.1:12800
+      prometheus:
+        export_uri: /apisix/prometheus/metrics
+        metric_prefix: gateway_
+      server-info:
+        report_interval: 60  # server info report interval (unit: second)
+        report_ttl: 3600     # live time for server info in etcd (unit: second)
+      dubbo-proxy:
+        upstream_multiplex_count: 32
+          
+    check_notebook_access: true
+    notebook_service:
+      endpoint: "http://ti-notebook-server.tione.svc.cluster.local:55596"
+      uri:
+        check_notebook_access: "/Notebook/CheckNotebookAccessPermission"
+      timeout: 3000
+kind: ConfigMap
+metadata:
+  annotations:
+    cpaas.io/display-name: ti-gateway-config
+  name: ti-gateway-config
+  namespace: {{ .Release.Namespace }}

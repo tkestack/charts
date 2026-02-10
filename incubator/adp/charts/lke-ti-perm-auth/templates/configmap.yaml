@@ -1,0 +1,122 @@
+apiVersion: v1
+data:
+  config.yaml: |-
+    AuthConfig:
+        # 禁止自动创建账号， 默认自动创建
+        DisableAutoCreateAccount: "false"
+        # 对接第三方登录使用
+        TiLoginSwitch: "false"
+        TiLogoutSwitch: "false"
+        TiAuthProxyUrl: "http://ti-perm-auth-proxy:80"
+        # 登录态有效期
+        TicketExpirationTime: "24"
+        # 登录页地址
+        LoginUrl: "{{ .Values.global.scheme }}://{{ .Values.global.clb }}/portal/login"
+        # 主账号
+        DefaultMainUin: "100000000"
+        MySQLExecTimeoutSec: "10"
+        VerifyTokenSwitch: "true"
+        LoginExpiration: 60
+        EnableRedisCacheFlag: "true"
+        CacheExpirationTime: 60
+        CacheUpdateTime: 10
+        DisabledUserWithoutLoginAfterDays: 0
+        PassWordExpirationDays: 90
+        DefaultPassword: "Admin@123"
+        WeakPasswordList: {{ .Values.global.weakPasswordList }}     #弱口令集合
+        DeptDepth: 10  #部门层级深度
+        RedisKeyConfig:
+          PlatformLicensePrefix: "TI_PERM_AUTH_PLATFORM_LICENSE"
+          AuthTicketTablePrefix: "TI_PERM_TICKET"
+          UserSecretTablePrefix: "TI_PERM_AUTH_REDIS_USER_SECRET_TABLE"
+          UserTableIdPrefix: "TI_PERM_AUTH_REDIS_USER_ID_TABLE"
+          UserTableNamePrefix: "TI_PERM_AUTH_REDIS_USER_NAME_TABLE"
+          APIPermTablePrefix: "TI_PERM_AUTH_REDIS_API_PERM_TABLE"
+          VerifyCodePrefix: "TI_PERM_AUTH_VERIFY_CODE_TABLE"
+          UserProjectStrategyPrefix: "TI_PERM_AUTH_REDIS_USER_PROJECT_STRATEGYS"
+          UserNickNamePrefix: "TI_PERM_AUTH_REDIS_USER_NICKNAME"
+          LoginTrialNumberPrefix: "TI_PERM_AUTH_REDIS_LOGIN_TRIAL_NUMBER"
+        Service:
+          TiAuthProxy:
+              Url: "http://ti-perm-auth-proxy:80"
+              VerifyLogin: "/auth/verify"
+          AiConfManager:
+              Url: "http://aiconfmanagerserver:10001/cgi/commonapi"
+              AddUsers: "AddUsers"
+              AddMainUsers: "CreateBusinessAdministrator"
+              CreateDept: "CreateDept"
+    RsaConfig:
+      Switch: "true"
+      PrivateKey: ""
+    DB:
+      maxConn: 20
+      maxIdleConn: 10
+      maxLifeTimeSecond: 60
+      timeout: 60
+      readTimeout: 60
+      writeTimeout: 60
+      Host:
+      Port:
+      User:
+      Password:
+      Database:
+      Ext:
+    DBCryptConfig:
+      CryptType: "aes"
+
+  key-trpc_go.yaml: |
+    global:                             #全局配置
+      namespace: Development            #环境类型，分正式production和非正式development两种类型
+      env_name: test                    #环境名称，非正式环境下多环境的名称
+
+    server:                                            #服务端配置
+      app: ti_auth_cust_trpc                                       #业务的应用名
+      server: ti_auth_cust_trpc                             #进程服务名
+      bin_path: /app/                  #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      filter:
+        - logFilter
+        - httpFilter
+      service:                                         #业务服务提供的service，可以有多个
+        - name: trpc.ti_auth_cust_trpc     #service的路由名称
+          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+          port: 8081                #服务监听端口 可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: http               #应用层协议 trpc http
+          timeout: 100000                            #请求最长处理时间 单位 毫秒
+
+
+    client:                                            #客户端调用的后端配置
+      timeout: 10000                                    #针对所有后端的请求最长处理时间
+      namespace: Development                           #针对所有后端的环境
+      filter:                                          #针对所有后端调用函数前后的拦截器列表
+      service:                                         #针对单个后端的配置
+        - name: ti_auth_cust_trpc      #后端服务的service name
+          namespace: Development                   #后端服务的环境
+          network: tcp                             #后端服务的网络类型 tcp udp 配置优先
+          protocol: trpc               #应用层协议 trpc http
+          target: ip://127.0.0.1:8081            #请求服务地址
+          timeout: 1000                            #请求最长处理时间
+
+    plugins:                                          #插件配置
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: console                           #控制台标准输出 默认
+            level: debug                              #标准输出日志的级别
+          - writer: file                              #本地文件日志
+            level: info                               #本地文件滚动日志的级别
+            writer_config:
+              filename: ./log/trpc.log                      #本地文件滚动日志存放的路径
+              max_size: 10                              #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false                          #日志文件是否压缩
+
+
+kind: ConfigMap
+metadata:
+  name: {{.Values.serviceName}}-cm
+  namespace: {{ .Release.Namespace }}
+

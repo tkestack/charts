@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: chat
+  name: chat
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: tcp-9090
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
+    - name: tcp-9091
+      port: 9091
+      protocol: TCP
+      targetPort: 9091
+    - name: tcp-9099
+      port: 9099
+      protocol: TCP
+      targetPort: 9099
+    - name: tcp-8081
+      port: 8081
+      protocol: TCP
+      targetPort: 8081
+    - name: tcp-9190
+      port: 9190
+      protocol: TCP
+      targetPort: 9190
+  selector:
+    app: chat
+  type: ClusterIP

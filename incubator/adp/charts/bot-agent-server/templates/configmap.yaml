@@ -1,0 +1,976 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: bot-agent-server
+  namespace: {{ .Release.Namespace }}
+data:
+  agent_en-US.json: |
+    {
+        "parse_action_output_failed": "Failed to parse ActionOutput JSON",
+        "action_output_error_status": "ActionOutput returned error status code",
+        "action_output_empty_answer": "Answer field is empty in ActionOutput",
+        "return_original_data_on_parse_failed": "Return original data when parsing fails",
+        "need_handoff_to_kb_agent": "Need to handoff to KBAgent",
+        "limit_exceeded_prompt": "Limit exceeded prompt",
+        "task_requirements": "Task requirements",
+        "examples": "Examples",
+        "no_examples_found_use_default": "No examples found, using default example",
+        "kb_agent_retrieval_step": "Retrieval step",
+        "thought": "Thought process",
+        "action": "Action",
+        "action_input": "Action input",
+        "action_output": "Action output",
+        "shennong_model_description": " named Shennong Large Language Model, developed by Tencent, ",
+        "tool_call_failed": "Tool {%s} call failed: %s",
+        "tool_execution_error": "Tool execution error",
+        "tool_parameter_error": "Tool parameter error",
+        "debug_info_event": "Debug info event",
+        "error_event": "Error event",
+        "reference_event": "Reference event",
+        "reply_event": "Reply event",
+        "thought_event": "Thought event",
+        "token_stat_event": "Token statistics event",
+        "tool_type": "Tool type",
+        "data_type": "Data type",
+        "default_string_type": "Default value is string, if not filled, it will be treated as string",
+        "tool_call_failed_empty_content": "Tool {%s} call failed: content is empty",
+        "scientific_calculation_failed": "Scientific calculation execution failed",
+        "interrupt_waiting_local_tool": "Interrupting execution, waiting for local tool execution...",
+        "html_link": "HTML link",
+        "api_param_varid_not_found": "API parameter varid %s not found",
+        "custom_api_param_not_configured": "User has not configured custom API parameter %s",
+        "scientific_calculation_completed": "Scientific calculation completed",
+        "tool_name_executing": "{Tool Name} is executing",
+        "file_name": "File name",
+        "file_summary": "File summary",
+        "tool_unavailable_please_try_others": "Tool {%s} is unavailable, please try other tools",
+        "failed": "Failed",
+        "link": "Link",
+        "example": "Example",
+        "user_question": "User question",
+        "history_record": "History record",
+        "retrieval_step": "Retrieval step",
+        "need_retrieval": "Need to retrieve ",
+        "retrieval_assistant_robot": "Retrieval assistant",
+        "interrupt_running_wait_local_tool": "Interrupting execution, waiting for local tool execution...",
+        "need_organize_info_answer_user": "Need to organize information and answer the user",
+        "思考":"Thought",
+        "工具执行":"Tool Execution",
+        "调用思考模型": "Invoke Thought Model",
+        "调用%s": "Invoke %s",
+        "调用长期记忆": "Invoke Long Term Memory",
+        "代码生成": "Code Generation",
+        "图片生成：": "Image Generation:",
+        "图片生成": "Image Generation",
+        "搜索：": "Searching:",
+        "检索并回复：": "Retrieving and Replying:",
+        "查询：": "Querying:",
+        "计算：": "Calculating:",
+        "解析：": "Parsing:",
+        "回复：": "Replying:",
+        "正浏览网页：": "Browsing Webpage:",
+        "点击元素：": "Clicking Element:",
+        "输入：": "Typing Input:",
+        "向下滑动": "Scrolling Down",
+        "向上滑动": "Scrolling Up",
+        "已完成前动作": "Action Completed",
+        "获取所有选项": "Getting Dropdown Options",
+        "进行选择": "Selecting Dropdown Options",
+        "返回": "Going Back",
+        "等待中": "Waiting",
+        "正在滑动至指定内容": "Scrolling to Text",
+        "正在滑动至指定按钮": "Scrolling to Bottom",
+        "滑动至最上方": "Scrolling to Top",
+        "文件下载": "Downloading File",
+        "执行命令": "Executing Command",
+        "查看进程": "Viewing Processes",
+        "等待进程": "Waiting for Process",
+        "向进程写入数据": "Writing to Process",
+        "终止进程": "Killing Process",
+        "创建目录：": "Creating Directory:",
+        "列举目录": "Listing Directory",
+        "获取目录树": "Fetching Directory Tree",
+        "移动文件": "Moving File",
+        "搜索文件": "Searching File",
+        "获取文件信息": "Getting File Information",
+        "列举允许访问的目录": "Listing Allowed Directories",
+        "读取文件": "Reading File",
+        "读取多个文件": "Reading Multiple Files",
+        "写入文件": "Writing File",
+        "部署文件": "Deploying File",
+        "替换文件内容": "Replacing File Content",
+        "查找文件内容": "Searching File Content",
+        "提取内容": "Extracting Content",
+        "回复": "Reply",
+        "搜索总结": "Search And Summary",
+        "搜索": "Search",
+        "总结": "Summary",
+        "执行任务": "Execute Task",
+        "已成功转交给": "Has been successfully transferred to",
+        "获取变量失败": "Failed to retrieve the variable",
+        "任务要求":"任务要求",
+        "计划": "Plan"
+    }
+  agent_zh-CN.json: |
+    {
+        "parse_action_output_failed": "解析 ActionOutput JSON 失败",
+        "action_output_error_status": "ActionOutput 返回异常状态码",
+        "action_output_empty_answer": "ActionOutput 中的 Answer 字段为空",
+        "return_original_data_on_parse_failed": "解析失败时返回原始数据",
+        "need_handoff_to_kb_agent": "需要转交给KBAgent",
+        "limit_exceeded_prompt": "超限提示Prompt",
+        "task_requirements": "任务要求",
+        "examples": "示例",
+        "no_examples_found_use_default": "no examples found,user default example",
+        "kb_agent_retrieval_step": "检索步骤",
+        "thought": "思考过程",
+        "action": "动作",
+        "action_input": "动作输入",
+        "action_output": "动作输出",
+        "shennong_model_description": " named 神农大语言模型, developed by 腾讯, ",
+        "tool_call_failed": "工具{%s}调用失败: %s",
+        "tool_call_failed_empty_content": "工具{%s}调用失败: content is empty",
+        "scientific_calculation_failed": "科学计算执行失败",
+        "interrupt_waiting_local_tool": "中断运行，等待本地工具执行……",
+        "html_link": "HTML链接",
+        "api_param_varid_not_found": "API参数 varid %s 未找到",
+        "custom_api_param_not_configured": "用户未配置自定义API参数 %s",
+        "tool_execution_error": "工具执行异常",
+        "tool_parameter_error": "工具参数错误",
+        "debug_info_event": "调试信息事件",
+        "error_event": "错误事件",
+        "reference_event": "引用事件",
+        "reply_event": "回复事件",
+        "thought_event": "思考事件",
+        "token_stat_event": "Token统计事件",
+        "tool_type": "工具类型",
+        "data_type": "数据类型",
+        "default_string_type": "默认值是string，如果不填就按string处理",
+        "scientific_calculation_completed": "已完成科学计算",
+        "tool_name_executing": "{工具名称} 正在执行中",
+        "file_name": "文件名",
+        "file_summary": "文件摘要",
+        "tool_unavailable_please_try_others": "工具{%s}不可用, 请尝试使用其他工具",
+        "failed": "失败",
+        "link": "链接",
+        "example": "例",
+        "user_question": "用户问题",
+        "history_record": "历史记录",
+        "retrieval_step": "检索步骤",
+        "need_retrieval": "需要检索",
+        "retrieval_assistant_robot": "检索辅助机器人",
+        "interrupt_running_wait_local_tool": "中断运行，等待本地工具执行……",
+        "need_organize_info_answer_user": "需要整理信息，回答用户",
+        "思考":"思考",
+        "工具执行":"工具执行",
+        "调用思考模型": "调用思考模型",
+        "调用%s": "调用%s",
+        "调用长期记忆": "调用长期记忆",
+        "代码生成": "代码生成",
+        "图片生成：": "图片生成：",
+        "图片生成": "图片生成",
+        "搜索：": "搜索：",
+        "检索并回复：": "检索并回复：",
+        "查询：": "查询：",
+        "计算：": "计算：",
+        "解析：": "解析：",
+        "回复：": "回复：",
+        "正浏览网页：": "正浏览网页：",
+        "点击元素：": "点击元素：",
+        "输入：": "输入：",
+        "向下滑动": "向下滑动",
+        "向上滑动": "向上滑动",
+        "已完成前动作": "已完成前动作",
+        "获取所有选项": "获取所有选项",
+        "进行选择": "进行选择",
+        "返回": "返回",
+        "等待中": "等待中",
+        "正在滑动至指定内容": "正在滑动至指定内容",
+        "正在滑动至指定按钮": "正在滑动至指定按钮",
+        "滑动至最上方": "滑动至最上方",
+        "文件下载": "文件下载",
+        "执行命令": "执行命令",
+        "查看进程": "查看进程",
+        "等待进程": "等待进程",
+        "向进程写入数据": "向进程写入数据",
+        "终止进程": "终止进程",
+        "创建目录：": "创建目录：",
+        "列举目录": "列举目录",
+        "获取目录树": "获取目录树",
+        "移动文件": "移动文件",
+        "搜索文件": "搜索文件",
+        "获取文件信息": "获取文件信息",
+        "列举允许访问的目录": "列举允许访问的目录",
+        "读取文件": "读取文件",
+        "读取多个文件": "读取多个文件",
+        "写入文件": "写入文件",
+        "部署文件": "部署文件",
+        "替换文件内容": "替换文件内容",
+        "查找文件内容": "查找文件内容",
+        "提取内容": "提取内容",
+        "回复": "回复",
+        "搜索总结": "搜索总结",
+        "搜索": "搜索",
+        "总结": "总结",
+        "执行任务": "执行任务",
+        "已成功转交给": "已成功转交给",
+        "获取变量失败": "获取变量失败",
+        "任务要求":"任务要求",
+        "计划": "计划"
+    }
+  error_en-US.json: |
+    {
+        "用户未登录": "User not logged in",
+        "意图不存在": "Intent does not exist",
+        "APPKEY无效，请核实APPKEY来源": "APPKEY is invalid, please verify the source of APPKEY",
+        "Prompt 渲染失败": "Prompt rendering failed",
+        "模型请求超时": "Model request timeout",
+        "Agent暂时不支持图片": "Agent temporarily does not support images",
+        "Agent暂时不支持文件": "Agent temporarily does not support files",
+        "Agent运行异常": "Agent runtime exception",
+        "Agent当前没有可执行的工具": "Agent currently has no executable tools",
+        "Agent工具失败": "Agent tool failed",
+        "请求参数错误，上次聊天没有请求本地工具调用，请不要配置 LocalToolOutputs 参数": "Request parameter error, last chat did not request local tool call, please do not configure LocalToolOutputs parameter",
+        "请求参数错误，LocalToolOutputs 上报的工具名称不存在": "Request parameter error, tool name reported by LocalToolOutputs does not exist",
+        "Redis数据不存在": "Redis data does not exist"
+    }
+  error_zh-CN.json: |
+    {
+        "用户未登录": "用户未登录",
+        "意图不存在": "意图不存在",
+        "APPKEY无效，请核实APPKEY来源": "APPKEY无效，请核实APPKEY来源",
+        "Prompt 渲染失败": "Prompt 渲染失败",
+        "模型请求超时": "模型请求超时",
+        "Agent暂时不支持图片": "Agent暂时不支持图片",
+        "Agent暂时不支持文件": "Agent暂时不支持文件",
+        "Agent运行异常": "Agent运行异常",
+        "Agent当前没有可执行的工具": "Agent当前没有可执行的工具",
+        "Agent工具失败": "Agent工具失败",
+        "请求参数错误，上次聊天没有请求本地工具调用，请不要配置 LocalToolOutputs 参数": "请求参数错误，上次聊天没有请求本地工具调用，请不要配置 LocalToolOutputs 参数",
+        "请求参数错误，LocalToolOutputs 上报的工具名称不存在": "请求参数错误，LocalToolOutputs 上报的工具名称不存在",
+        "Redis数据不存在": "Redis数据不存在"
+    }
+  main.yaml: |
+    is_private: true
+    bot:
+      timeout: 200
+      response_channel_size: 1000
+    thought_icon: {{ include "qbot.thinking_icon" . }}
+    workflow_icon: {{ include "qbot.API_icon" . }}
+    max_iterations: 30
+    thought_round_before: 2
+    thought_round_map:
+      1971130782090409152: 1
+    current_state_sys: you should tackle the system's response now!
+    current_state_user: you should take action to user's query now!
+    main_agent_tools:
+      ask_user: "{\"type\":\"function\",\"function\":{\"name\":\"ask_user\",\"description\":\"Ask user for missing information\",\"parameters\":{\"type\":\"object\",\"properties\":{\"question\":{\"type\":\"string\",\"description\":\"the question or missing information you want to ask the user, DO NOT ask the same question as the user's question\"}},\"required\":[\"question\"]}}}"
+      answer_directly: "{\"type\":\"function\",\"function\":{\"name\":\"answer_directly\",\"description\":\"Answer directly for simple objective, and wait for user's response\",\"parameters\":{\"type\":\"object\",\"properties\":{\"answer\":{\"type\":\"string\",\"description\":\"your complete and detailed and formatted answer to user, not a abstract\"}},\"required\":[\"answer\"]}}}"
+      task_completed: "{\"type\":\"function\",\"function\":{\"name\":\"task_completed\",\"description\":\"The task has been completed and returns the final detailed answer to the user\",\"parameters\":{\"type\":\"object\",\"properties\":{\"final_answer\":{\"type\":\"string\",\"description\":\"your complete and detailed and formatted answer to user, not a abstract\"}},\"required\":[\"final_answer\"]}}}"
+      task_done: "{\"type\":\"function\",\"function\":{\"name\":\"task_done\",\"description\":\"Call this tool when you have completed the task or when the task cannot be completed.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"Whether the task is finished or not. Return False if you cannot finish the task.\"},\"final_response\":{\"type\":\"string\",\"description\":\"Provide a comprehensive final response to user using the same language as the user. If the task is successfully completed, return the full execution result. If the task fails, summarize the reasons for the failure and offer possible solutions if possible.\"}},\"required\":[\"success\",\"final_response\"]}}}"
+    global_timeout: 1800
+    procedure:
+      thinking_model: 调用思考模型
+      tool_call: 调用%s
+    unsafe_domain:
+      - cos.ap-guangzhou.myqcloud.com
+    max_tool_response: 40960
+    agent_model_map:
+      lke-deepseek-r1: lke-deepseek-r1-agent
+      lke-deepseek-r1-0528: lke-deepseek-r1-0528-agent
+    mcp_unsafe_domain:
+      - qbmanusmcp.woa.com
+      - harry-test.testsite.woa.com
+      - aitool.woa.com
+      - tcum.woa.com
+      - 11.149.111.194
+    kb_agent_config:
+      sys_request:
+        - "要聪明、高效，尽量少的在数据库中检索。不要重复历史思考过程中调用，相同的调用总是会返回相同的结果。"
+        - "根据历史动作，确定当前任务处理的进度，然后决定下一步检索什么。"
+        - "如果你认为任务已经完成，并且不需要再次执行任务，则需要调用\"task_completed\"工具。适当提炼思考过程，让最终答案具备可读性。"
+        - "如果你认为任务无法通过检索数据库解决，则需要调用\"task_completed\"工具，告知用户无法完成，并把你的思考过程和结果返回给用户。"
+        - "每次只能调用一个工具，且只能调用一组参数。如果需要使用某个工具，应该仔细阅读说明以确保参数正确。不需要实际调用该工具，只需确定要使用哪个工具。只能使用给定的工具，不要使用不存在的工具。"
+        - "不要使用相同参数调用同一个工具。更改工具参数，直到解决当前问题。"
+        - "每个命令都有成本，因此要聪明而高效。力求以最少的步骤完成任务。"
+        - "与数据库相关的问题，要优先自行生成SQL语句，然后调用SQLExecutor工具得到结果。"
+        - "如果数据库中查询值返回为空值，统计的时候忽略空值。"
+        - "使用SQLExecutor，一次仅能指定一个数据表，执行一条SQL语句。"
+        - "如果SQLExecutor返回为空，请首先检查自己的SQL语句是否正确，不要反复执行相同的SQL语句；尝试用不同的SQL语句访问结果。"
+        - "你的输出需要严格遵守以下格式，不要附加其他信息，仅替换“<>”中的内容:\nThought: <a short thought about what to do next, in Chinese>\nAction: <tool name>\nAction Input: <tool args in JSON format and MUST BE JSON FORMAT>\n"
+      task_completed: "{\"type\":\"function\",\"function\":{\"name\":\"task_completed\",\"description\":\"The task has been completed and returns the final detailed answer to the user\",\"parameters\":{\"type\":\"object\",\"properties\":{\"final_answer\":{\"type\":\"string\",\"description\":\"your complete and detailed and formatted answer to user, not a abstract\"},\"source_file\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"description\":\"relevant source file ids used in the process of answering the question\"}},\"required\":[\"final_answer\",\"source_file\"]}}}"
+      tool_tmpl: "{{`{{- range .}}`}}{{`{{.Idx }}`}}. \"{{`{{ .Name }}`}}\": {{`{{ .Desc }}`}}. Args: {{`{{ .Args }}`}}{{`{{- end }}`}}"
+      default_example: "# 例1\n<用户问题>\n历年来，航空轮胎的起草人有谁呀？\n</用户问题>\n<历史记录>\n无\n</历史记录>\n<检索辅助机器人>\nThought: 需要检索历年来，航空轮胎的起草人有谁。\nAction: KnowledgeRetrievalAnswer\nAction Input: {\"Query\": \"GB 9745-1995的起草人有谁\"}\n</检索辅助机器人>\n\n# 例2\n<用户问题>\n历年来，航空轮胎的起草人有谁呀？\n</用户问题>\n<历史记录>\n检索步骤1: Thought: 需要检索历年来，航空轮胎的起草人有谁。\nAction: KnowledgeRetrievalAnswer\nAction Input: {\"Query\": \"GB 9745-1995的起草人有谁\"}\nAction Output: {\"response\": \"GB 9745-1995的起草人有：盛保信、长庆曾、王慧宁。\", \"source_file\": [\"doc_1\"]}\n</历史记录>\n<检索辅助机器人>\nThought: 需要继续检索其他年份，航空轮胎的起草人\nAction: BoundedKnowledgeQA\nAction Input: {\"Query\": \"GB 9745-2009的起草人有谁呢？\", \"Filters\": [{\"DocId\":\"doc_2\"}]}\n</检索辅助机器人>\n\n# 例3\n<用户问题>\n历年来，航空轮胎的起草人有谁呀？\n</用户问题>\n<历史记录>\n检索步骤1: Thought: 需要检索历年来，航空轮胎的起草人有谁。\nAction: KnowledgeRetrievalAnswer\nAction Input: {\"Query\": \"GB 9745-1995的起草人有谁啊？\"}\nAction Output: {\"response\": \"GB 9745-1995的起草人有：盛保信、长庆曾、王慧宁。\", \"source_file\": [\"doc_1\"]}\n\n检索步骤2: Thought: 需要继续检索其他年份，航空轮胎的起草人\nAction: BoundedKnowledgeQA\nAction Input: {\"Query\": \"GB 9745-2009的起草人有谁呢？\", \"Filters\": [{\"DocId\":\"doc_2\"}]}\nAction Output: {\"response\": \"GB 9745-2009的起草人有：邓海燕、周碧蓉、张虹、齐立平。\", \"source_file\": [\"doc_2\"]}\n</历史记录>\n<检索辅助机器人>\nThought: 需要整理信息，回答用户。\nAction: task_completed\nAction Input: {\"final_answer\":\"- GB 9745-1995的起草人有：盛保信、长庆曾、王慧宁。\\n- GB 9745-2009的起草人有：邓海燕、周碧蓉、张虹、齐立平。\", \"source_file\": [\"doc_1\", \"doc_2\"]}\n</检索辅助机器人>"
+      test_app: [1924359457489808832]
+    qb_config:
+      qb_app_biz_id:
+        - 1914873082374258688
+        - 1922545046282719872
+        - 1922544433457132416
+        - 1922543186834486144
+        - 1922472076864516992
+        - 1922620920856203904
+        - 1932049546240491328
+        - 1950103412554994240
+        - 1951166363785338112
+        - 1956268574380332288
+        - 1958727042800498688
+        - 1959841008646944512
+        - 1914866852092182528
+      qb_model_name: lke-deepseek-v3-agent
+      model_name_map:
+        1932049546240491328: lke-deepseek-v3.1-terminus
+        1950103412554994240: lke-deepseek-v3.1-terminus
+        1951166363785338112: 700001995333-Zhipu/glm-4.5
+        1956268574380332288: 700001995333-OpenAI/EHaHIJMQ
+        1958727042800498688: lke-deepseek-v3.1
+      max_iterations: 30
+      browser_tools:
+        - click_element
+        - click_video_button
+        - download_file
+        - get_dropdown_options
+        - go_back
+        - go_to_url
+        - input_text
+        - scroll_down
+        - scroll_to_bottom
+        - scroll_to_text
+        - scroll_to_top
+        - scroll_up
+        - select_dropdown_option
+        - wait
+        - downloadsearch
+      system_prompt: ""
+    # TODO... 上PE后待替换
+    sandbox_url: http://sandbox-mcp-server.{{ .Release.Namespace }}.svc.cluster.local:8000/lke/sandbox/sse
+    token_usage:
+      model_name_map:
+        function-call-pro: function-call-pro
+        lke-deepseek-r1: lke-deepseek-r1
+        lke-deepseek-r1-agent: lke-deepseek-r1
+        lke-deepseek-r1-0528-agent: lke-deepseek-r1-0528
+        lke-deepseek-v3-function-call: lke-deepseek-v3-0324
+        lke-deepseek-v3-agent: lke-deepseek-v3-0324
+        lke-deepseek-v3.1-function-call: lke-deepseek-v3.1
+        lke-deepseek-v3.1-terminus: lke-deepseek-v3.1
+    limiter:
+      enable: true
+      limit_buffer: 5
+      time_period: 1
+      default_corp_limit: 200
+      report_judge_length: 100
+      space_limiter_account: []
+    workflow:
+      callee: trpc.KEP.bot-workflow-dm-server.workflow-dm-http
+      path: /single_workflow/chat
+
+
+    # 上传服务配置
+    storage:
+      {{ include "qbot.bot_agent_server.s3_storage" . }}
+
+    # PE
+    # 对应的限制
+    executor_agent_limit:
+      public_memory_max_length:
+        lke-deepseek-v3-function-call: 20000
+        lke-deepseek-r1-agent: 40000
+      private_memory_max_length:
+
+    # 内置的工具
+    executor_agent_tools:
+      task_done: "{\"type\":\"function\",\"function\":{\"name\":\"task_done\",\"description\":\"Call this tool when the task has been done by the history tools listed in <history_tool_call>. Note: DO NOT output any other text.\"}}"
+      search_and_analyze: "{\"type\":\"function\",\"function\":{\"name\":\"search_and_analyze\",\"description\":\"Perform a search and analysis on a given query list\",\"parameters\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"List[str], the list of the five strategic sub-queries need to be searched and analyzed.\",\"default\":\"[\\\"sub-query 1\\\", \\\"sub-query 2\\\", \\\"sub-query 3\\\", \\\"sub-query 4\\\", \\\"sub-query 5\\\"]\"}},\"required\":[\"query\"]}}}"
+      search: "{\"type\":\"function\",\"function\":{\"name\":\"search\",\"description\":\"Search web info on a given query\",\"parameters\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"The query need to be searched.\",\"default\":\"strategic query here\"}},\"required\":[\"query\"]}}}"
+      summary: "{\"type\":\"function\",\"function\":{\"name\":\"summary\",\"description\":\"Summary web info on a given search result\",\"parameters\":{\"type\":\"object\",\"properties\":{\"result\":{\"type\":\"string\",\"description\":\"The result need to be summary.\",\"default\":\"strategic result here\"}},\"required\":[\"result\"]}}}"
+      answer_directly: "{\"type\":\"function\",\"function\":{\"name\":\"answer_directly\",\"description\":\"Answer directly for simple objective, and wait for user's response\",\"parameters\":{\"type\":\"object\",\"properties\":{\"answer\":{\"type\":\"string\",\"description\":\"your complete and detailed and formatted answer to user, not a abstract\"}},\"required\":[\"answer\"]}}}"
+      deploy_file: "{\"PluginId\":\"3de4a6c6-e055-4d78-9e09-c4410aee79e4\",\"PluginName\":\"BangBox MCP Server\",\"IconUrl\":\"{{ include "qbot.QQ_brower" . }}\",\"PluginType\":2,\"ToolId\":\"b91c7906-bec5-4b68-9435-c20012103014\",\"ToolName\":\"deploy_file\",\"ToolDesc\":\"This tool uploads all files in the workspace to the COS server. You must invoke it after all tasks are fully executed. Upon successful execution, it returns a list of file paths (e.g., [\\\"sandbox/test/file1.txt\\\", \\\"sandbox/test/file2.jpg\\\"]).\",\"Outputs\":[{\"Name\":\"result\",\"Type\":4,\"SubParams\":[{\"Name\":\"content\",\"Type\":9,\"SubParams\":[{\"Name\":\"type\",\"AnalysisMethod\":\"COVER\"},{\"Name\":\"text\",\"AnalysisMethod\":\"COVER\"},{\"Name\":\"data\",\"AnalysisMethod\":\"COVER\"},{\"Name\":\"mimeType\",\"AnalysisMethod\":\"COVER\"},{\"Name\":\"resource\",\"Type\":4,\"SubParams\":[{\"Name\":\"uri\",\"AnalysisMethod\":\"COVER\"},{\"Name\":\"mimeType\",\"AnalysisMethod\":\"COVER\"},{\"Name\":\"text\",\"AnalysisMethod\":\"COVER\"},{\"Name\":\"blob\",\"AnalysisMethod\":\"COVER\"}],\"AnalysisMethod\":\"COVER\"}],\"AnalysisMethod\":\"COVER\"},{\"Name\":\"isError\",\"Type\":3,\"AnalysisMethod\":\"COVER\"}],\"AnalysisMethod\":\"COVER\"},{\"Name\":\"error\",\"Type\":4,\"SubParams\":[{\"Name\":\"code\",\"Type\":1,\"AnalysisMethod\":\"COVER\"},{\"Name\":\"message\",\"AnalysisMethod\":\"COVER\"}],\"AnalysisMethod\":\"COVER\"}],\"CreateType\":2,\"McpServer\":{\"McpServerUrl\":\"http://sandbox-mcp-server.{{ .Release.Namespace }}.svc.cluster.local:8000/lke/sandbox/sse\"},\"CallingMethod\":\"NON_STREAMING\",\"Plugin\":null,\"IsWorkflow\":false,\"WorkflowID\":\"\",\"WorkflowName\":\"\",\"PDLContent\":\"\",\"APIInfo\":\"\",\"Parameters\":\"\",\"UserAdditionalConstraints\":\"\",\"ToolType\":\"\"}"
+      todo_md: "{\"type\":\"function\",\"function\":{\"name\":\"todo_md\",\"description\":\"Call this tool to show todo.md\"}}"
+
+    # 内置的工具描述
+    executor_agent_tool_desc:
+      search_and_analyze:
+        plugin_name: "搜索总结"
+        plugin_desc: 1
+        tool_name: "WebSearchSummary"
+        tool_icon: {{ include "qbot.QQ_brower" . }}
+        procedure_title: "搜索总结/WebSearchSummary"
+      search:
+        plugin_name: "搜索"
+        plugin_desc: 1
+        tool_name: "WebSearch"
+        tool_icon: {{ include "qbot.QQ_brower" . }}
+        procedure_title: "搜索/WebSearch"
+      summary:
+        plugin_name: "总结"
+        plugin_desc: 1
+        tool_name: "Summary"
+        tool_icon: {{ include "qbot.QQ_brower" . }}
+        procedure_title: "总结/Summary"
+      answer_directly:
+        plugin_name: "回复"
+        plugin_desc: 1
+        tool_name: "Answer"
+        tool_icon: {{ include "qbot.QQ_brower" . }}
+        procedure_title: "回复/Answer"
+      todo_md:
+        plugin_name: "计划"
+        plugin_desc: 1
+        tool_name: "Todo.md"
+        tool_icon: {{ include "qbot.QQ_brower" . }}
+        procedure_title: "计划/Todo.md"
+
+    # 内置的默认模型
+    executor_agent_default_model:
+      use_default_model: false
+      default_model_info:
+        Report Agent:
+          model_name: lke-deepseek-r1-0528-agent
+          top_p: 0.95
+          temperature: 0.6
+          max_tokens: 32000
+        Webpage Generation Agent:
+          model_name: lke-deepseek-r1-0528-agent
+          top_p: 0.95
+          temperature: 0.6
+          max_tokens: 32000
+
+    # 搜索工具配置
+    search_tool_config:
+      api: sougou
+      fetch_url_timeout: 5
+      skip_file_types:
+        - .pdf
+      skip_query_keywords:
+        - filetype=
+        - type=
+        - format=
+        - ext=
+        - extension=
+        - mimetype=
+        - content-type=
+        - contenttype=
+        - file_type=
+        - document_type=
+        - download_type=
+
+      sougou_search_pro:
+        end_point: tms.tencentcloudapi.com
+        secret_id: ""
+        secret_key: ""
+        service: tms
+        version: 2020-12-29
+        action: SearchPro
+        max_concurrency: 30
+        max_cnt: 10
+      google_search_api:
+        url: https://google.serper.dev/search
+        gl: cn
+        hl: zh-cn
+        api_key: ""
+        max_concurrency: 15
+        num: 3
+
+    # 总结工具配置
+    summary_tool_config:
+      max_summary_chars: 32000
+      summary_prompt_template: |-
+        You are an expert information compiler tasked with extracting and preserving all important information from search results. Your goal is to capture and retain as much valuable information as possible without losing key details or insights.
+
+        # RESEARCH CONTEXT
+
+        ## OVERALL TASK (总任务)
+        **{{`{{.query}}`}}**
+
+        ## CURRENT TASK (当前任务) - **THIS IS YOUR PRIMARY FOCUS**
+        **{{`{{.originalQuery}}`}}**
+
+        *Note: Your result should specifically address the Current Task while keeping it aligned with the broader Overall Task context.*
+
+        ## DATE INFORMATION (日期信息)
+        - Current time: {{`{{.current_time}}`}}
+        - Current weekday: {{`{{.current_weekday}}`}}
+
+        Search Results:
+        {{`{{.formattedSearchResults}}`}}
+
+        INFORMATION COMPILATION METHODOLOGY:
+        1. Extract ALL important information, facts, data, and insights from the search results
+        2. Preserve details that might be valuable, even if they seem minor
+        3. Capture different viewpoints, opinions, and perspectives found in sources
+        4. Include specific examples, case studies, and concrete details mentioned
+        5. Retain numerical data, statistics, dates, and specific facts
+        6. Preserve quotes, expert opinions, and authoritative statements
+        7. Include practical tips, methods, and actionable information
+        8. Capture context and background information that adds value
+
+        ** CRITICAL INSTRUCTIONS to ensure ACCURACY **:
+        - For numerical or factual claims, **only** use facts, figures, and quotations that appear **explicitly** in the Search Results.
+        - Before including any quantitative value, **cross‑check** that the number appears verbatim in the source; do **not** extrapolate or round unless the source explicitly provides a range or approximation.
+        - If a required detail is **not** present, explicitly state the limitation and recommend further research rather than attempting to fill gaps with assumptions or invented information.
+
+        Your information compilation should focus on:
+
+        **COMPREHENSIVE INFORMATION EXTRACTION**
+        - Extract and present ALL valuable information found in the search results
+        - Include specific facts, data points, statistics, and numerical information
+        - Capture expert opinions, quotes, and authoritative statements
+        - Preserve examples, case studies, and real-world applications
+        - Include different viewpoints, approaches, and perspectives
+        - Retain background context and explanatory information
+        - Capture practical tips, methods, and actionable advice
+        - Include relevant dates, timelines, and historical context
+        - Preserve technical details and specifications when present
+        - Include comparative information and contrasting viewpoints
+
+        **OUTPUT FORMAT REQUIREMENTS**
+        Your response must follow this exact structure:
+
+        1. **Title Section**: Create a clear title that directly relates to the Current Task: "{{`{{.originalQuery}}`}}"
+
+        2. **Main Content**: All information content must be wrapped in <summerized_content> tags like this:
+          <summerized_content>
+          [All your detailed information goes here]
+          </summerized_content>
+
+        **FORMATTING GUIDELINES**
+        - Minimize the use of markdown syntax (avoid excessive bold, italic, headers)
+        - Use plain text as much as possible
+        - Only use basic formatting when absolutely necessary for clarity
+        - Avoid complex markdown structures like tables, code blocks, or nested lists
+        - Use simple line breaks and basic punctuation for organization
+        - Do not use ## ### #### headers inside the summerized_content tags
+
+        **CONTENT DETAIL REQUIREMENTS**
+        - Describe each point in maximum detail possible
+        - Expand on every important aspect mentioned in the search results
+        - Provide comprehensive explanations rather than brief summaries
+        - Include specific examples, numbers, dates, and contextual information
+        - Elaborate on the implications and significance of each piece of information
+        - Explain the relationships between different pieces of information
+        - Provide detailed background context when available
+        - Break down complex concepts into detailed explanations
+        - Include step-by-step processes when mentioned in sources
+        - Provide thorough descriptions of methods, techniques, and approaches
+
+        **DIRECT RESPONSE REQUIREMENTS**
+        - Provide a comprehensive answer to: "{{`{{.originalQuery}}`}}"
+        - Ensure the response addresses the broader context: "{{`{{.query}}`}}"
+        - Include all relevant information that helps answer these questions
+        - Don't omit details that might be important to the user
+
+        **CITATION REQUIREMENTS**
+        - Provide numbered citations in [brackets] for all factual claims, linking to specific sources
+        - Include a "Sources" section at the end listing all references in numbered format
+
+        Your information compilation should demonstrate:
+        - **Maximum information retention** from all search results
+        - **Comprehensive coverage** without omitting important details
+        - **Strict adherence to provided sources** to ensure factual accuracy
+        - **Information completeness** over structural elegance
+        - **Preservation of nuances** and specific details
+        - **Inclusion of diverse perspectives** found in the sources
+        - **Retention of practical and actionable information**
+        - **Capture of context** that adds value to understanding
+
+        language_settings:
+        - Default working language: **Chinese**
+        - Command output: preserve original language (usually English)
+        - Error messages: provide explanations in Chinese
+
+        Remember: Do NOT invent, extrapolate, or infer information not present in the Search Results. If any aspect of the query cannot be answered based on the available data, explicitly note this in the response. Your primary goal is to preserve and present ALL valuable information found in the search results, ensuring nothing important is lost or overlooked. Prioritize information completeness and accuracy over structural formatting.
+
+    # 工具关键规则
+    tool_critical_rules:
+      file_str_replace: |-
+        1. old_str content must match the associated file section to find EXACTLY:
+          * Match character-for-character including whitespace, indentation, line endings
+          * Include all comments, docstrings, etc.
+        2. old_str/new_str blocks will ONLY replace the first match occurrence.
+          * Including multiple unique old_str/new_str blocks if you need to make multiple changes.
+          * Include *just* enough lines in each old_str section to uniquely match each set of lines that need to change.
+          * When using multiple old_str/new_str blocks, list them in the order they appear in the file.
+        3. Keep old_str/new_str blocks concise:
+          * Break large old_str/new_str blocks into a series of smaller blocks that each change a small portion of the file.
+          * Include just the changing lines, and a few surrounding lines if needed for uniqueness.
+          * Do not include long runs of unchanging lines in old_str/new_str blocks.
+          * Each line must be complete. Never truncate lines mid-way through as this can cause matching failures.
+        4. Special operations:
+          * To move code: Use two old_str/new_str blocks (one to delete from original + one to insert at new location)
+          * To delete code: Use empty new_str section
+    # 特殊处理开关
+    tool_special_process_switch:
+      invalid_html: true
+      invalid_mermaid: true
+
+    plan_timeout_config:
+      plan_execute_timeout: 5100
+      task_execute_timeout: 3600
+      subtask_execute_timeout: 1200
+
+    plan_max_iterations_config:
+      max_plan_iterations: 50
+      max_task_iterations: 50
+      max_subtask_iterations: 20
+
+    restart_plan_config:
+      batch_restart_num: 50
+      batch_get_plan_by_record_ids_num: 1000
+
+    send_plan_event_interval: 200
+    infosec:
+      disable_content_check: true
+
+    context_filter:
+      disable: true
+      disable_app: []
+      compressed_tool_message_length: 1024
+      preserved_message_count: 100
+      older_message_truncated_length: 200
+      older_message_truncate_threshold: 1024
+      tool_message_truncated_length: 512
+      tool_message_truncate_threshold: 1024
+      token_ratio: 1.5
+      history_tool_length_ratio: 0.3
+  placeholder.yaml: |
+
+
+  trpc_go.yaml: |
+    global:                             #全局配置
+      namespace: {{ .Release.Namespace }}            #环境类型，分正式production和非正式development两种类型
+      env_name: testing                    #环境名称，非正式环境下多环境的名称
+      enable_set: ${ENABLE_SET}         #是否启用set
+      full_set_name: ${FULL_SET_NAME}   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+
+    server:                                            #服务端配置
+      app: KEP                                        #业务的应用名
+      server: bot-agent-server                             #进程服务名
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      max_close_wait_time: 240000  # 关闭服务器时的最长等待时间（以毫秒为单位），以便完成所有请求的处理，框架版本 v0.18.3 之后 2000 为默认值。
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - recovery                                       #拦截框架创建的业务处理协程panic
+        - i18n-adp
+        # - prometheus
+        - opentelemetry
+        - cle-route-propagator
+      admin:
+        ip: ${POD_IP}
+        port: 8081
+      service:                                         #业务服务提供的service，可以有多个
+      - name: trpc.KEP.bot-agent-server.chat        #service的路由名称
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+        port: 8000                  #服务监听端口 可使用占位符 ${port}
+        network: tcp                               #网络监听类型  tcp udp
+        protocol: http                 #应用层协议 trpc http
+        timeout: 0                              #请求最长处理时间 单位 毫秒
+        server_async: true                             #开启异步处理
+        idletime: 600000                               # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+      - name: trpc.KEP.bot-agent-server.agent        #service的路由名称
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+        port: 8001                  #服务监听端口 可使用占位符 ${port}
+        network: tcp                               #网络监听类型  tcp udp
+        protocol: trpc                 #应用层协议 trpc http
+        timeout: 0                              #请求最长处理时间 单位 毫秒
+        server_async: true                             #开启异步处理
+        idletime: 600000                               # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+      - name: trpc.KEP.bot-agent-server.GetAgentTools        # 本地定时器
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+        port: 9001                  #服务监听端口 可使用占位符 ${port}
+        network: 0 */2 * * * * ?startAtOnce=1       # 启动立马执行
+        protocol: timer
+      - name: trpc.KEP.bot-agent-server.RestartPlanner        # 本地定时器
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+        port: 9002                  #服务监听端口 可使用占位符 ${port}
+        network: 0 */5 * * * * ?scheduler=distributed       # 启动立马执行
+        protocol: timer
+        timeout: 3600000
+      - name: trpc.KEP.bot-agent-server.CancelTimeoutPlan      # 本地定时器
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+        port: 9003                  #服务监听端口 可使用占位符 ${port}
+        network: 0 */5 * * * * ?scheduler=distributed       # 启动立马执行
+        protocol: timer
+        timeout: 600000
+
+    plugins:                                          #插件配置
+      log:                                            #日志配置
+        default:                                  #默认日志的配置，可支持多输出
+        - writer: console                         #控制台标准输出 默认
+          level: error                            #标准输出日志的级别
+          #caller_skip: 3
+          formatter: json
+          formatter_config:
+            time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+            time_key: time
+            level_key: level
+            name_key: name
+            caller_key: caller
+            message_key: message
+        - writer: file                            #本地文件日志
+          level: error                             #本地文件滚动日志的级别
+          formatter: json
+          formatter_config:
+            time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+            time_key: time
+            level_key: level
+            name_key: name
+            caller_key: caller
+            message_key: message
+            stacktrace_key: stackTrace
+          writer_config:
+            filename: /app/logs/trpc.log  #本地文件滚动日志存放的路径
+            write_mode: 2
+            roll_type: time
+            max_age: 7
+            max_backups: 10
+            compress: false
+            time_unit: day
+        agent:
+          - writer: console                         #控制台标准输出 默认
+            level: info                            #标准输出日志的级别
+            #caller_skip: 3
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+          - writer: file
+            level: info
+            formatter: json
+            writer_config:
+              filename: /app/logs/agent.log
+              write_mode: 2
+              roll_type: size
+              max_size: 500
+              max_age: 7
+              max_backups: 10
+              compress: false
+              time_unit: day
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      config:
+        file:
+          providers:
+          - name: rainbow
+            path: /app/conf/
+          - name: rainbow-comm
+            path: /app/conf/
+      registry: #服务注册配置
+        polaris: #北极星名字注册服务的配置
+          register_self: false
+          heartbeat_interval: 3000                    #名字注册服务心跳上报间隔
+          heartbeat_timeout: 1000                     #名字服务心跳超时
+          service:
+          - name: trpc.KEP.bot-agent-server.chat      #service name 与上面的service配置一一对应
+            namespace: ${NAME_SPACE}                #环境类型，分正式Production和非正式Development两种类型
+            token: 72903a5836fa4266b726fce43d01af29               #服务注册所需要的 token
+      selector: #针对用户自定义的selector的配置
+        polaris: #针对polaris整体api的内部配置
+          protocol: grpc                              #名字服务远程交互协议类型
+          enable_servicerouter: true
+          enable_trans_meta: true
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+          - zh-CN
+          - en-US
+          data_provider:
+            type: rainbow
+            prefix: agent
+            error_prefix: error
+            char_scaling_factor:
+              zh-CN: 1
+              en-US: 3
+
+    client:                                            #客户端调用的后端配置
+      namespace: {{ .Release.Namespace }}                           #针对所有后端的环境
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - cle-route-propagator
+        - opentelemetry
+      service:
+      - name: trpc.tcadp.agent.redis
+        network: tcp
+        protocol: redis
+        target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379
+        password: "{{ .Values.global.components.redis.password }}"
+        timeout: 800
+      - name: redis.lke.limiter
+        network: tcp
+        protocol: redis
+        target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/4
+        password: "{{ .Values.global.components.redis.password }}"
+        timeout: 800
+      - name: trpc.tcadp.agent.mysql
+        target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - name: trpc.tcadp.agent.tdsql
+        target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - callee: trpc.KEP.plugin_config_server.PluginConfigApi
+        name: trpc.KEP.plugin-config-server.PluginConfigApi
+        target: ip://pluginconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+        timeout: 300000
+        # 插件运行时
+      - callee: trpc.KEP.plugin_exec_server.PluginExec
+        name: trpc.KEP.plugin-exec-server.PluginExec
+        target: ip://pluginexecserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+        timeout: 30000000
+        # ScheduleServer
+      - name: trpc.KEP.resource-schedule-server.ScheduleServer
+        target: ip://resource-schedule-server.{{ .Release.Namespace }}.svc.cluster.local:8000
+        protocol: trpc
+        timeout: 200000
+      - callee: trpc.KEP.bot_admin_config_server.Login
+        target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+        protocol: trpc
+        timeout: 200000
+      - callee: trpc.KEP.bot_admin_config_server.Api
+        target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+        protocol: trpc
+        timeout: 200000
+        # agent Config
+      - callee: trpc.KEP.agent_config_server.AgentConfigApi
+        target: ip://agentconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+        protocol: trpc
+        timeout: 60000
+        # 计费服务, @stanwei 提供
+      - name: qbot.finance.finance.Finance
+        target: ip://finance.{{ .Release.Namespace }}.svc.cluster.local:9090
+        network: tcp
+        timeout: 300000
+      - name: qbot.qbot.infosec.Infosec
+        target: ip://infosec.{{ .Release.Namespace }}.svc.cluster.local:9090
+        protocol: trpc
+        network: tcp
+        timeout: 50000
+      - callee: trpc.KEP.bot_knowledge_config_server.Api
+        name: trpc.KEP.bot-knowledge-config-server.Api
+        target: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+        protocol: trpc
+        timeout: 600000
+      - callee: trpc.KEP.bot_memory_server.MemoryInner
+        name: trpc.KEP.bot-memory-server.memoryInner
+        target: ip://bot-memory-server.{{ .Release.Namespace }}.svc.cluster.local:8001
+        protocol: trpc
+        timeout: 60000
+        # 数据上报服务
+      - callee: trpc.KEP.bot_data_statistics_server.Api
+        target: ip://botdatastatisticsserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+        protocol: trpc
+        timeout: 20000
+        # 以下是v3.2.4.0新加的兼容配置
+      - name: trpc.http.cos.Access
+        network: tcp
+        protocol: http
+        {{ if eq .Values.global.components.s3.providerType "minio" }}
+        target: ip://minio.{{ .Release.Namespace }}.svc.cluster.local:80
+        {{ else if eq .Values.global.components.s3.providerType "obs" }}
+        target: ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}
+        {{ else }}
+        target: dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn
+        {{ end }}
+        timeout: 50000
+      - name: trpc.adp.ai-gateway.api
+        network: tcp
+        protocol: http
+        target: ip://ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+        timeout: 1800000
+        # agent Config
+      - callee: trpc.adp.agent_config.AgentConfigApi
+        name: trpc.KEP.agent-config-server.AgentConfigApi
+        target: ip://agentconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+        protocol: trpc
+        timeout: 20000
+        # 插件配置端
+      - callee: trpc.adp.plugin_config.PluginConfigApi
+        name: trpc.adp.plugin_config.PluginConfigApi
+        target: ip://pluginconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+        timeout: 60000
+        # 插件运行时
+      - callee: trpc.adp.plugin_exec.PluginExec
+        name: trpc.adp.plugin_exec.PluginExec
+        target: ip://pluginexecserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+        timeout: 7200000
+        # 长期记忆和变量服务
+      - callee: trpc.adp.app_memory.MemoryInner
+        target: ip://bot-memory-server.{{ .Release.Namespace }}.svc.cluster.local:8001
+        protocol: trpc
+        timeout: 20000
+        # 知识库
+      - callee: trpc.adp.kb_config.Api
+        name: trpc.KEP.bot-knowledge-config-server.Api
+        target: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+        protocol: trpc
+        timeout: 600000
+        # admin Login
+      - callee: trpc.adp.app_admin_proxy.Login
+        target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+        protocol: trpc
+        timeout: 20000
+        # admin API
+      - callee: trpc.adp.app_admin_proxy.Api
+        target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+        protocol: trpc
+        timeout: 60000
+        # 安全审核
+      - callee: trpc.adp.platform_content_moderation.Infosec
+        target: ip://infosec.{{ .Release.Namespace }}.svc.cluster.local:9090
+        network: tcp
+        timeout: 50000
+        # 计费服务
+      - callee: trpc.adp.platform_charger.Api
+        name: qbot.finance.finance.Finance
+        target: ip://finance.{{ .Release.Namespace }}.svc.cluster.local:9090
+        network: tcp
+        timeout: 300000
+        # ScheduleServer
+      - callee: trpc.adp.plugin_pod_schedule.ScheduleServer
+        name: trpc.KEP.resource_schedule_server.ScheduleServer
+        target: ip://resource-schedule-server.{{ .Release.Namespace }}.svc.cluster.local:8000
+        protocol: trpc
+        timeout: 20000
+        # 数据上报服务
+      - callee: trpc.adp.platform_metrology.Api
+        target: ip://botdatastatisticsserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+        protocol: trpc
+        timeout: 60000
+      - callee: trpc.KEP.bot-workflow-dm-server.workflow-dm-http      # DM http服务
+        target: ip://botworkflowdmserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+        network: tcp                    # 后端服务的网络类型 tcp udp 配置优先
+        protocol: http                  # 应用层协议 trpc http
+        timeout: 600000                  # 请求最长处理时间
+        # (0=pb, 1=JCE, 2=json, 3=flat_buffer, 4=bytes_flow)
+        serialization: 2
+      - callee: trpc.KEP.bot_chat_server.chat
+        target: ip://chat.{{ .Release.Namespace }}.svc.cluster.local:9091
+        protocol: trpc
+        timeout: 60000

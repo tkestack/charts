@@ -1,0 +1,729 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-plugin-config-server
+  namespace: {{ .Release.Namespace }}
+data:
+  error_en-US.json: |
+    {
+      "权限不足": "Insufficient permissions",
+      "应用信息不存在": "Application information does not exist",
+      "资源权限不足": "Insufficient resource permissions",
+      "您的服务已到期，请联系架构师续费": "Your service has expired, please contact the architect to renew",
+      "参数异常，请重试": "Parameter error, please try again",
+      "内部错误": "Internal error",
+      "当前用户无权限": "Current user has no permission",
+      "版本号异常，请检查是否为最新版本": "Version number error, please check if it is the latest version",
+      "数据不存在": "Data does not exist",
+      "调用api失败": "API call failed",
+      "图标不合法": "Invalid icon",
+      "头像尺寸不合法": "Invalid avatar size",
+      "MCP server连接失败": "Failed to connect to MCP server",
+      "插件不存在": "Plugin does not exist",
+      "插件名称重复": "Duplicate plugin name",
+      "插件名称已存在": "Plugin name already exists",
+      "工具不存在": "Tool does not exist",
+      "MCP server工具参数异常": "MCP server tool parameter error",
+      "插件类型不合法": "Invalid plugin type",
+      "非白名单插件": "Non-whitelisted plugin",
+      "插件已被禁用": "Plugin has been disabled",
+      "插件不支持腾讯云CAM角色授权": "This plugin does not support Tencent Cloud CAM role authorization",
+      "插件尚未授权": "This plugin has not been authorized",
+      "该插件工具已存在": "This plugin tool already exists",
+      "该插件工具未添加": "This plugin tool has not been added",
+      "发布中，不允许删除": "Cannot delete during release",
+      "发布中，不允许编辑": "Cannot edit during release",
+      "没有可删除的工具": "No tools available for deletion",
+      "应用工具数量超出限制": "Number of application tools exceeds the limit",
+      "缺少必填信息，不允许添加该工具": "Required information is missing, cannot add this tool",
+      "插件已收藏": "Plugin has been favorited",
+      "插件未收藏": "Plugin has not been favorited",
+      "非自有的自定义插件": "Non-owner custom plugin",
+      "非自定义插件": "Non-custom plugin",
+      "任务流程加载失败": "Failed to load task flow",
+      "发布任务加载失败": "Failed to load release task ",
+      "发布任务记录加载失败": "Failed to load release task record",
+      "配置数据查询错误": "Configuration data query error",
+      "配置数据发布错误": "Configuration data release error",
+      "运行数据发布错误": "Runtime data release error",
+      "请求参数错误: %s": "Request parameter error: %s",
+      "MCP server连接失败, url:%s": "MCP server connection failed, URL: %s",
+      "MCP server工具参数异常, 工具:%s": "MCP server tool parameter error, tool: %s",
+      "MCP server工具参数异常, url:%s": "MCP server tool parameter error, URL: %s",
+      "参数异常，请重试，插件名称长度不符合要求": "Parameter error, please try again. Plugin name length does not meet requirements.",
+      "参数异常，请重试，插件描述长度不符合要求": "Parameter error, please try again. Plugin description length does not meet requirements.",
+      "参数异常，请重试，插件图标不符合要求": "Parameter error, please try again. Plugin icon does not meet requirements.",
+      "参数异常，请重试，工具名称长度不符合要求": "Parameter error, please try again. Tool name length does not meet requirements.",
+      "参数异常，请重试，工具描述长度不符合要求": "Parameter error, please try again. Tool description length does not meet requirements.",
+      "参数异常，请重试，工具示例长度不符合要求": "Parameter error, please try again. Tool example length does not meet requirements.",
+      "参数异常，请重试，工具代码长度不符合要求": "Parameter error, please try again. Tool code length does not meet requirements.",
+      "参数异常，请重试，工具url不符合要求": "Parameter error, please try again. Tool URL does not meet requirements.",
+      "参数异常，请重试，工具请求方法不符合要求": "Parameter error, please try again. Tool request method does not meet requirements.",
+      "参数异常，请重试，mcp server url不符合要求": "Parameter error, please try again. MCP server URL does not meet requirements.",
+      "参数异常，请重试，mcp server url长度不符合要求": "Parameter error, please try again. MCP server URL length does not meet requirements.",
+      "参数异常，请重试，header变量名称长度不符合要求": "Parameter error, please try again. Header variable name length does not meet requirements.",
+      "参数异常，请重试，header变量值长度不符合要求": "Parameter error, please try again. Header variable value length does not meet requirements.",
+      "参数异常，请重试，查询数量超过上限": "Parameter error, please try again. Query count exceeds the limit.",
+      "工作流不支持代码插件": "Workflow does not support code plugins.",
+      "参数异常，请重试，基于已发布的应用创建的插件，应用ID不能为空": "Parameter error, please try again. When creating a plug-in based on a published application, the application ID cannot be empty.",
+      "对应发布应用的api参数:%s，存在问题": "The corresponding API parameter for publishing the application: %s, there is a problem",
+      "一个应用只能发布为一个插件": "An application can only be published as one plugin",
+      "%s:需要必填": "%s:Required",
+      "应用未发布": "Application not released"
+    }
+  error_zh-CN.json: |
+    {
+      "权限不足": "权限不足",
+      "应用信息不存在": "应用信息不存在",
+      "资源权限不足": "资源权限不足",
+      "您的服务已到期，请联系架构师续费": "您的服务已到期，请联系架构师续费",
+      "参数异常，请重试": "参数异常，请重试",
+      "内部错误": "内部错误",
+      "当前用户无权限": "当前用户无权限",
+      "版本号异常，请检查是否为最新版本": "版本号异常，请检查是否为最新版本",
+      "数据不存在": "数据不存在",
+      "调用api失败": "调用api失败",
+      "图标不合法": "图标不合法",
+      "头像尺寸不合法": "头像尺寸不合法",
+      "MCP server连接失败": "MCP server连接失败",
+      "插件不存在": "插件不存在",
+      "插件名称重复": "插件名称重复",
+      "插件名称已存在": "插件名称已存在",
+      "工具不存在": "工具不存在",
+      "MCP server工具参数异常": "MCP server工具参数异常",
+      "插件类型不合法": "插件类型不合法",
+      "非白名单插件": "非白名单插件",
+      "插件已被禁用": "插件已被禁用",
+      "插件不支持腾讯云CAM角色授权": "插件不支持腾讯云CAM角色授权",
+      "插件尚未授权": "插件尚未授权",
+      "该插件工具已存在": "该插件工具已存在",
+      "该插件工具未添加": "该插件工具未添加",
+      "发布中，不允许删除": "发布中，不允许删除",
+      "发布中，不允许编辑": "发布中，不允许编辑",
+      "没有可删除的工具": "没有可删除的工具",
+      "应用工具数量超出限制": "应用工具数量超出限制",
+      "缺少必填信息，不允许添加该工具": "缺少必填信息，不允许添加该工具",
+      "插件已收藏": "插件已收藏",
+      "插件未收藏": "插件未收藏",
+      "非自有的自定义插件": "非自有的自定义插件",
+      "非自定义插件": "非自定义插件",
+      "任务流程加载失败": "任务流程加载失败",
+      "发布任务加载失败": "发布任务加载失败",
+      "发布任务记录加载失败": "发布任务记录加载失败",
+      "配置数据查询错误": "配置数据查询错误",
+      "配置数据发布错误": "配置数据发布错误",
+      "运行数据发布错误": "运行数据发布错误",
+      "请求参数错误: %s": "请求参数错误: %s",
+      "MCP server连接失败, url:%s": "MCP server连接失败, url:%s",
+      "MCP server工具参数异常, 工具:%s": "MCP server工具参数异常, 工具:%s",
+      "MCP server工具参数异常, url:%s": "MCP server工具参数异常, url:%s",
+      "参数异常，请重试，插件名称长度不符合要求": "参数异常，请重试，插件名称长度不符合要求",
+      "参数异常，请重试，插件描述长度不符合要求": "参数异常，请重试，插件描述长度不符合要求",
+      "参数异常，请重试，插件图标不符合要求": "参数异常，请重试，插件图标不符合要求",
+      "参数异常，请重试，工具名称长度不符合要求": "参数异常，请重试，工具名称长度不符合要求",
+      "参数异常，请重试，工具描述长度不符合要求": "参数异常，请重试，工具描述长度不符合要求",
+      "参数异常，请重试，工具示例长度不符合要求": "参数异常，请重试，工具示例长度不符合要求",
+      "参数异常，请重试，工具代码长度不符合要求": "参数异常，请重试，工具代码长度不符合要求",
+      "参数异常，请重试，工具url不符合要求": "参数异常，请重试，工具url不符合要求",
+      "参数异常，请重试，工具请求方法不符合要求": "参数异常，请重试，工具请求方法不符合要求",
+      "参数异常，请重试，mcp server url不符合要求": "参数异常，请重试，mcp server url不符合要求",
+      "参数异常，请重试，mcp server url长度不符合要求": "参数异常，请重试，mcp server url长度不符合要求",
+      "参数异常，请重试，header变量名称长度不符合要求": "参数异常，请重试，header变量名称长度不符合要求",
+      "参数异常，请重试，header变量值长度不符合要求": "参数异常，请重试，header变量值长度不符合要求",
+      "参数异常，请重试，查询数量超过上限": "参数异常，请重试，查询数量超过上限",
+      "工作流不支持代码插件": "工作流不支持代码插件",
+      "参数异常，请重试，基于已发布的应用创建的插件，应用ID不能为空": "参数异常，请重试，基于已发布的应用创建的插件，应用ID不能为空",
+      "对应发布应用的api参数:%s，存在问题": "对应发布应用的api参数:%s，存在问题",
+      "一个应用只能发布为一个插件": "一个应用只能发布为一个插件",
+      "%s:需要必填": "%s:需要必填",
+      "应用未发布": "应用未发布"
+    }
+  main.yaml: |
+    # 插件信息是否加密
+    crypto: true
+    official_config:
+      user_name: 智能体开发平台
+      avatar_url: ""
+      uin: "10000000"
+      sub_uin: "10000000"
+      permission_ids: ["adpPluginCenterView"]
+    api_config:
+      timeout: 30
+      white_urls: ["allow_all",]
+      ports: ["allow_all"]
+    tool_ref_limit: 20
+    plugin_check:
+      plugin_name_min_len: 1
+      plugin_name_max_len: 100
+      plugin_desc_min_len: 1
+      plugin_desc_max_len: 500
+      tool_name_min_len: 1
+      tool_name_max_len: 100
+      tool_desc_min_len: 1
+      tool_desc_max_len: 200
+      max_page_size: 200
+      tool_code_min_len: 1
+      tool_code_max_len: 64000
+      tool_example_max_len: 64000
+      default_icon: "{{ include "qbot.default_icon" . }}"
+      max_icon_size: 524288
+      header_name_min_len: 1
+      header_name_max_len: 50
+      header_value_max_len: 5000
+      mcp_url_max_len: 500
+    mcp:
+      # 定时同步间隔，单位：秒，默认为10
+      sync_tick_interval: 300
+      # 定时同步并行处理启动协程的数量，默认为10
+      sync_batch_size: 10
+      # 定时从数据库加载MCP服务器插件见过，单位：小时，默认24
+      load_db_tick_interval: 24
+      # 可用状态的MCP服务器同步间隔，单位：秒，默认为300
+      mcp_sync_interval: 180
+      # 不可用状态的MCP服务器同步间隔，单位：秒，默认为86400(24h)
+      mcp_degrade_sync_interval: 86400
+      # MCP服务器被认定为不可用的重试次数，默认为3
+      mcp_degrade_threshold: 3
+      # 官方内置MCP插件内网域名， 后期这里需要把 scf 或 ?action=xxx的插件域名加这里
+      mcp_proxy_urls: ["{{ .Values.global.scheme }}://{{ .Values.global.clb }}/v1/lke/mcp","{{ .Values.global.scheme }}://{{ .Values.global.clb }}/v1/lke/mcp", "https://devwss.testsite.woa.com/v1/lke/mcp","https://testwss.testsite.woa.com/v1/lke/mcp"]
+          # MCP插件内网域名放通
+      white_urls: ["allow_all", "{{ .Values.global.clb }}","devwss.testsite.woa.com","testwss.testsite.woa.com","prewss.testsite.woa.com","lke.testsite.woa.com","qbmanusmcp.woa.com","aitool.woa.com","qgamedevflow.woa.com","mcp.pubnet.woa.com","market-agent-mcp.testsite.woa.com"]
+      # MCP插件内网端口放通
+      white_ports: ["allow_all", "9090","8081", "80","443","8080","18080"]
+      # mcp插件详情接口是否触发拉取刷新工具信息
+      describe_plugin_refresh: false
+    storage_conf:
+      {{ include "qbot.plugin_config_server.s3_storage" . }}
+    # 应用工具数量限制
+    app_tool_limit: 30
+    # 知识问答插件工具配置
+    knowledge_qa_tool:
+      tool_name: KnowledgeRetrievalAnswer
+      plugin_id: 3ad93aae-587e-4bcc-ae07-ad13bfb1aaca
+      tool_id: 0ca8d482-1e77-462b-bc21-807c8f052f69
+    # 不需要校验权限的接口，如插件中心接口
+    ignore_perm_actions:
+      - ListPlugins
+      - CreatePlugin
+      - ModifyPlugin
+      - DeletePlugin
+      - DescribePlugin
+      - ListTools
+      - CheckTool
+      - ListToolRefs
+      - CreateMCPPlugin
+      - ModifyMCPPlugin
+      - CheckMCPServer
+      - DeleteFavoritePlugin
+      - AddFavoritePlugin
+
+    # 是否为私有化环境部署
+    privacy_env : true
+
+    # 云API配置 用于白名单接口调用
+    cloud_api:
+      secret_id: xxx
+      secret_key: xxx
+      account_host: account.ap-guangzhou.tencentcloudapi.woa.com
+      version: "2018-12-25"
+
+    # 插件白名单配置
+    white_list:
+      enable: true
+      plugin_ids: ["3de4a6c6-e055-4d78-9e09-c4410aee79e4"]
+      key: BangBox_MCP
+      keys: ["BangBox_MCP","Plan_Execute_Agent"]
+
+    run_code:
+      max_result_length: 2000000
+      result_separator: "_______ResultSeparator_______"
+      code_template: |-
+        {{`
+        import time
+        import datetime
+        import json
+        import numpy
+        import pandas
+        import math
+        import cmath
+        import decimal
+        import fractions
+        import random
+        import statistics
+        import re
+        import string
+        import stringprep
+        import collections
+        import numbers
+        import unicodedata
+
+        lke_system_params=json.loads("""{{InputParamObject}}""")
+
+        {{CodeContent}}
+
+        main_result = main(lke_system_params)
+
+        import json
+
+        class SystemJsonEncoder(json.JSONEncoder):
+          def default(self, obj):
+              import numpy as np
+              if isinstance(obj, np.timedelta64):
+                  return str(obj)
+              elif isinstance(obj, np.integer):
+                  return int(obj)
+              elif isinstance(obj, (np.void)):
+                  return None
+              elif isinstance(obj, np.floating):
+                  return float(obj)
+              elif isinstance(obj, np.complexfloating):
+                  return {'real': obj.real, 'imag': obj.imag}
+              elif isinstance(obj, np.bytes_):
+                  return obj.decode('utf-8')
+              elif isinstance(obj, np.str_):
+                  return str(obj)
+              elif isinstance(obj, np.datetime64):
+                  return str(obj)
+              elif isinstance(obj, np.ndarray):
+                  return obj.tolist()
+              elif isinstance(obj, pd.DataFrame):
+                  return obj.to_dict()
+              elif isinstance(obj, pd.Series):
+                  return obj.to_list()
+              return super(SystemJsonEncoder, self).default(obj)
+
+        print("{{ResultSeparator}}")
+        print(json.dumps(main_result, ensure_ascii=False, cls=SystemJsonEncoder))
+        `}}
+
+
+
+    # 插件subuin批量更新大小，默认100
+    plugin_sub_uin_batch: 100
+
+    # 插件历史数据清理配置
+    plugin_history_cleanup:
+      enable: true
+      cron_spec: "0 0 2 * * *"
+      # 数据保留天数
+      retention_days: 30
+      # 每批删除的记录数
+      batch_size: 1000
+
+    cam:
+      # STS服务地址
+      sts_host: "sts.tencentcloudapi.com"
+      region: "ap-guangzhou"
+      # 指定临时访问凭证的有效期，单位秒
+      duration_seconds: 7200
+      # 临时密钥缓存时间，单位秒，<=duration_seconds
+      tmp_key_expire: 7195
+      # 角色扮演GetRoleCredential接口并发调用数
+      role_credential_concurrency: 2
+      # 服务角色对应的密钥配置
+      role_config:
+        ADP_QCSLinkedRoleInSMS:
+          secret_id: ""
+          secret_key: ""
+        ADP_QCSLinkedRoleInHCM:
+          secret_id: ""
+          secret_key: ""
+        ADP_QCSLinkedRoleInSES:
+          secret_id: ""
+          secret_key: ""
+        ADP_QCSLinkedRoleInIMS:
+          secret_id: ""
+          secret_key: ""
+        ADP_QCSLinkedRoleInTMS:
+          secret_id: ""
+          secret_key: ""
+        ADP_QCSLinkedRoleInIAI:
+          secret_id: ""
+          secret_key: ""
+        ADP_QCSLinkedRoleInES:
+          secret_id: ""
+          secret_key: ""
+        ADP_QCSLinkedRoleInAMS:
+          secret_id: ""
+          secret_key: ""
+        ADP_QCSLinkedRoleInVM:
+          secret_id: ""
+          secret_key: ""
+        ADP_QCSLinkedRoleInTTS:
+          secret_id: ""
+          secret_key: ""
+        ADP_QCSLinkedRoleInTMT:
+          secret_id: ""
+          secret_key: ""
+        ADP_QCSLinkedRoleInMRS:
+          secret_id: ""
+          secret_key: ""
+        ADP_QCSLinkedRoleInAIART:
+          secret_id: ""
+          secret_key: ""
+        ADP_QCSLinkedRoleInOCR:
+          secret_id: ""
+          secret_key: ""
+        ADP_QCSLinkedRoleInVCLM:
+          secret_id: ""
+          secret_key: ""
+        ADP_QCSLinkedRoleInASR:
+          secret_id: ""
+          secret_key: ""
+        ADP_QCSLinkedRoleInAI3D:
+          secret_id: ""
+          secret_key: ""
+        ADP_QCSLinkedRoleInFACEID:
+          secret_id: ""
+          secret_key: ""
+
+    # 计费上报相关白名单配置
+    finance:
+      plugins:
+
+    # 工具渲染类型配置
+    tool_render_type:
+      # 渲染数据库类型 用于Text2SQL插件展示数据库表筛选
+      "07236926-7bd0-4ec5-80a5-6ca12237a6e1": 1
+      "14fdd51e-3957-4cf7-be6e-c6574951898c": 1
+      # 知识库问答插件-KnowledgeRetrievalAnswer
+      "0ca8d482-1e77-462b-bc21-807c8f052f69": 2
+      # 知识库问答插件-BoundedKnowledgeQA
+      "080bbce6-b02b-466e-a152-967c1546eb05": 3
+      # 知识库问答插件-Text2SQL
+      "cf5b121f-57d7-47c1-937a-2f9993ec0a63": 4
+
+    # 数据同步任务
+    data_sync_task:
+      release_queue_length: 200
+      release_items_per_batch: 100
+
+    data_retention:
+      physical_delete_cron_spec: "0 0 3 * * *"
+      physical_delete_older_than_minutes: {{ (.Values.global.delete_data).plugin_config_server_retention_minutes | default 86400 }}
+
+
+  placeholder.yaml: |
+
+  trpc_go.yaml: |
+    global:                             #全局配置
+      namespace: ${NAME_SPACE}            #环境类型，分正式production和非正式development两种类型
+      env_name: ${ENV}                    #环境名称，非正式环境下多环境的名称
+      enable_set: ${ENABLE_SET}         #是否启用set
+      full_set_name: ${FULL_SET_NAME}   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+
+    server:                                            #服务端配置
+      app: KEP                                        #业务的应用名
+      server: plugin-config-server                             #进程服务名
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - recovery                                     #拦截框架创建的业务处理协程panic
+        - i18n-adp
+        - opentelemetry                                # 天机阁
+        - galileo
+      stream_filter:
+        - recovery                                     #拦截框架创建的业务处理协程panic
+        - galileo
+      admin:
+        ip: ${POD_IP}
+        port: 8081
+      service:                                         #业务服务提供的service，可以有多个
+        - name: trpc.KEP.plugin-config-server.PluginConfig      #service的路由名称
+          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+          port: 8000                #服务监听端口 可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: trpc               #应用层协议 trpc http
+          timeout: 0                            #请求最长处理时间 单位 毫秒
+          server_async: true                           #开启异步处理
+          idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+          filter:
+            - session
+            - permission
+        - name: trpc.KEP.plugin-config-server.PluginConfigApi      #service的路由名称
+          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+          port: 8001                #服务监听端口 可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: trpc               #应用层协议 trpc http
+          timeout: 0                            #请求最长处理时间 单位 毫秒
+          server_async: true                           #开启异步处理
+          idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+        - name: trpc.KEP.plugin-config-server.PluginConfigHttp      #service的路由名称
+          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+          port: 8002                #服务监听端口 可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: http               #应用层协议 trpc http
+          timeout: 0                            #请求最长处理时间 单位 毫秒
+          server_async: true                           #开启异步处理
+          idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+    client:                                            #客户端调用的后端配置
+      timeout: 60000000                                    #针对所有后端的请求最长处理时间
+      namespace: ${NAME_SPACE}                              #针对所有后端的环境
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - opentelemetry
+        - galileo
+      stream_filter:
+        - galileo
+      service:
+        - name: redis.plugin-config-server
+          target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/13
+          network: tcp
+          password: "{{ .Values.global.components.redis.password }}"
+          timeout: 800
+
+        - name: mysql.db_llm_plugin
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+
+        - name: mysql.db_llm_prod_plugin
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_plugin_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+
+        - name: trpc.KEP.bot_admin_config_server.Api
+          callee: trpc.KEP.bot_admin_config_server.Api
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          network: tcp
+          timeout: 20000
+
+        - name: trpc.KEP.bot-admin-config-server.Login
+          callee: trpc.KEP.bot_admin_config_server.Login
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+
+        - callee: trpc.adp.app_admin_proxy.Api
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 60000
+
+        - callee: trpc.adp.app_admin_proxy.Login
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 60000
+
+        - name: trpc.KEP.bot-task-config-server.task-config
+          target: ip://bottaskconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          callee: trpc.KEP.bot_task_config_server.TaskConfig
+          protocol: trpc
+          network: tcp
+          timeout: 20000
+
+        - callee: trpc.adp.workflow_config.WorkflowConfig
+          target: ip://bottaskconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          protocol: trpc
+          network: tcp
+          timeout: 20000
+
+        - name: trpc.http.cos.Access
+          network: tcp
+          protocol: http
+          {{ if eq .Values.global.components.s3.providerType "minio" }}
+          target: ip://minio.{{ .Release.Namespace }}.svc.cluster.local:80
+          {{ else if eq .Values.global.components.s3.providerType "obs" }}
+          target: ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}
+          {{ else }}
+          target: dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn
+          {{ end }}
+          timeout: 5000
+
+        - callee: trpc.KEP.code_interpreter_dispatcher.CodeExec
+          name: trpc.KEP.code-interpreter-dispatcher
+          target: ip://codeinterpreterdispatcher.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+
+        - callee: trpc.adp.plugin_code_interpret.CodeExec
+          target: ip://codeinterpreterdispatcher.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+
+        - name: trpc.smartservice.accessmanager.AccessManager
+          target: ip://accessmanagerserver.{{ .Release.Namespace }}.svc.cluster.local:10001
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+
+        - callee: trpc.KEP.agent_config_server.AgentConfigApi
+          name: trpc.KEP.agent-config-server.AgentConfigApi
+          target: ip://agentconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+
+        - callee: trpc.adp.agent_config.AgentConfigApi
+          name: trpc.KEP.agent-config-server.AgentConfigApi
+          target: ip://agentconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 60000
+
+        - name: qbot.finance.finance.Finance
+          target: ip://finance.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+        - name:  trpc.SmartService.AIConfManagerServer.AIConfManager
+          target: ip://aiconfmanagerserver.{{ .Release.Namespace }}.svc.cluster.local:10002
+          protocol: http
+          network: tcp
+          timeout: 60000
+        - callee: trpc.KEP.bot_data_statistics_server.Api
+          target: ip://botdatastatisticsserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.platform_metrology.Api
+          target: ip://botdatastatisticsserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          protocol: trpc
+          timeout: 60000
+
+        - callee: trpc.adp.platform_manager.Admin
+          target: ip://platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.app_config.Api
+          target: ip://app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 60000
+
+
+    plugins:                                          #插件配置
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: console                           #控制台标准输出 默认
+            level: error                              #标准输出日志的级别
+            #caller_skip: 3
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+          - writer: file                              #本地文件日志
+            level: info                               #本地文件滚动日志的级别
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/trpc.log    #本地文件滚动日志存放的路径
+              max_size: 100                             #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false                          #日志文件是否压缩
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+        galileo:
+          verbose: error   # 伽利略自身的诊断日志级别，取值范围：debug, info, error, none，日志输出在 ./galileo/galileo.log 中。
+          ocp_addr: "http://127.0.0.1"
+          config: #配置
+            config_server: "http://127.0.0.1"
+            register_server: "http://127.0.0.1"
+            self_monitor:
+              collector:
+                addr: "http://127.0.0.1"
+            metrics_config: # 指标配置
+              enable: false    # 是否启用指标
+            traces_config: # 追踪配置
+              enable: true    # 是否启用追踪，默认 true。如果设置为 false，会中断 trace，让上游的调用链不完整。v0.3.7 以上生效。
+              processor: # 追踪数据处理相关配置
+                sampler: # 采样器配置
+                  fraction: 0   # 采样比例，默认 0。（v0.11.0)
+                  error_fraction: 0
+                  enable_min_sample: true  # 启用每分钟每接口最少 1 个请求采样，默认 true (v0.11.0)。
+                  enable_dyeing: true # 开启染色采样，默认 true。
+                disable_trace_body: true          # 若为 true，则关闭 trace 中对 req 和 rsp 的 body 上报，可以大幅提高上报性能。默认 true。
+                enable_deferred_sample: false     # 开启延迟采样（请求处理完采样），默认 false。0.3.0 以上生效。
+                deferred_sample_error: false      # 开启延迟采样出错采样（请求处理完出现错误采样），默认 false。0.3.0 以上生效。
+                deferred_sample_slow_duration_ms: 1000    # 慢操作阈值（请求耗时超过该值采样），单位 ms，默认 1000。0.3.0 以上生效。
+                disable_parent_sampling: false            # 忽略上游的采样结果，默认 false。v0.3.7 以上生效。
+              exporter:
+                collector:
+                  addr: "127.0.0.1:80"
+            logs_config: # 日志配置
+              enable: false    # 是否启用日志
+              processor: # 日志数据处理相关配置
+                only_trace_log: false  # 是否只上报命中 trace 的 log，默认关闭
+                must_log_traced: false # 是否命中 traced 不管任何级别日志都上报，默认关闭。v0.3.22 以上生效
+                trace_log_mode: 0   # debug 访问日志 (access_log) 打印模式，0,1：单行打印，3：多行打印，2：不打印，默认 0
+                level: debug        # 上报到远程的日志级别，默认 error
+                enable_recovery: true # 是否捕获 panic，默认 true
+            profiles_config:    # profile配置
+              enable: false # 是否启用 profile
+              processor: # profile 数据处理相关配置
+                profile_types: ["cpu", "heap"] # 采集 profile 的类型，支持 cpu、heap、mutex、block、goroutine，默认开启 cpu 和 heap。
+            version: 1        # 版本号，默认 0，此版本号用于控制远程配置和本地配置的优先级，版本号高的优先，一般设置成 1 即可。
+          resource: # resource 资源信息，在 SDK 运行期间不会改变。resource 中的字段一般不需要配置，默认会填充。
+            platform: STKE   # 服务部署的平台，如 PCG-123, STKE, 默认 PCG-123
+
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+            - name: rainbow-comm
+              path: /app/conf/
+      # registry: #服务注册配置
+      #   polaris: #北极星名字注册服务的配置
+      #     register_self: false
+      #     heartbeat_interval: 3000                    #名字注册服务心跳上报间隔
+      #     heartbeat_timeout: 1000                     #名字服务心跳超时
+      #     service:
+      #       - name: trpc.KEP.plugin-config-server.PluginConfig    #service name 与上面的service配置一一对应
+      #         namespace: Development              #环境类型，分正式Production和非正式Development两种类型
+      #         token: 0820570af5014b3db63d06d2d113441e             #服务注册所需要的 token
+      #       - name: trpc.KEP.plugin-config-server.PluginConfig    #service name 与上面的service配置一一对应
+      #         namespace: Test              #环境类型，分正式Production和非正式Development两种类型
+      #         token: 9af66701396942e795ee9041ac09f3ed             #服务注册所需要的 token
+      #       - name: trpc.KEP.plugin-config-server.PluginConfigApi    #service name 与上面的service配置一一对应
+      #         namespace: Test              #环境类型，分正式Production和非正式Development两种类型
+      #         token: 8f7bf74acf114869b8cf9b8315aeab11             #服务注册所需要的 token
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+            - zh-CN
+            - en-US
+          data_provider:
+            type: rainbow
+            prefix: plugin
+            error_prefix: error
+            char_scaling_factor:
+              zh-CN: 1
+              en-US: 3
+      # selector: #针对用户自定义的selector的配置
+      #   polaris: #针对polaris整体api的内部配置
+      #     protocol: grpc                              #名字服务远程交互协议类型

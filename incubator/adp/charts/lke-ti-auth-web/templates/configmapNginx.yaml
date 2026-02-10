@@ -1,0 +1,52 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: ti-web-nginx-config
+  namespace: {{ .Release.Namespace }}
+data:
+  ti.conf: |
+    server {
+      listen      12000;
+      server_name localhost;
+      client_max_body_size 10M;
+
+      location / {
+        alias /web/;
+        try_files $uri $uri/ /index.html last;
+        index  index.html;
+        add_header X-Frame-Options SAMEORIGIN always;
+        add_header Cross-Origin-Embedder-Policy "require-corp";
+        add_header Cross-Origin-Opener-Policy "same-origin";
+        add_header X-XSS-Protection 1;
+        if ($request_filename ~* .*\.(?:htm|html)$)
+        {
+          add_header Cache-Control "private, no-store, no-cache, must-revalidate, proxy-revalidate";
+          add_header X-Frame-Options SAMEORIGIN always;
+          add_header X-XSS-Protection 1;
+        }
+      }
+
+      # # 需要配置 /portal/login 重定向
+      # location /portal/login {
+      #   if ($args ~* ^(.*)$) {
+      #     set $query_params $1;
+      #   }
+          # {{ .Values.global.scheme }} 或http或https
+      #   return 302 {{ .Values.global.scheme }}://$host/portal/#/login?$query_params;
+      # }
+      location /portal/ {
+        alias /web/;
+        try_files $uri $uri/ /index.html last;
+        index  index.html;
+        add_header X-Frame-Options SAMEORIGIN always;
+        add_header Cross-Origin-Embedder-Policy "require-corp";
+        add_header Cross-Origin-Opener-Policy "same-origin";
+        add_header X-XSS-Protection 1;
+        if ($request_filename ~* .*\.(?:htm|html)$)
+        {
+          add_header Cache-Control "private, no-store, no-cache, must-revalidate, proxy-revalidate";
+          add_header X-Frame-Options SAMEORIGIN always;
+          add_header X-XSS-Protection 1;
+        }
+      }
+    }

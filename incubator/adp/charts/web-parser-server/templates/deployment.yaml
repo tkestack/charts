@@ -1,0 +1,252 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    ti.cloud.tencent.com/resource-quota: unlimited
+  labels:
+    app: web-parser-server
+  name: web-parser-server
+  namespace: {{ .Release.Namespace }}
+spec:
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  selector:
+    matchLabels:
+      app: web-parser-server
+  template:
+    metadata:
+      labels:
+        app: web-parser-server
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - web-parser-server
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: GPUName
+                    operator: DoesNotExist
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: product
+                    operator: In
+                    values:
+                      - lke
+      priorityClassName: system-cluster-critical
+      serviceAccountName: web-parser-controllers
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - env:
+            - name: DEPLOYMENT_ENVIRONMENT
+              value: TCS
+            - name: __AppEnname
+              value: WebParserServer
+            - name: __ProjectEnname
+              value: yunxiaoweipingtai
+            - name: __AppGroupEnname
+              value: SmartAssistant
+            - name: DOCKER_ENV
+              value: formal
+            - name: APP
+              value: SmartAssistant
+            - name: SERVER
+              value: WebParserServer
+            - name: APP_NAME
+              value: SmartAssistant
+            - name: SERVER_NAME
+              value: WebParserServer
+            - name: SET_NAME
+              value: ..
+            - name: IS_GRAY
+              value: 'N'
+            - name: NAMESPACE
+              value: Production
+            - name: CONTAINER_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_UID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.uid
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+          image: {{(index .Values.tad.images "web-parser-server").url}}
+          imagePullPolicy: Always
+          # command: ["bash","/usr/local/app/start.sh"]
+          #command: ["bash","-c","while true; do sleep 30; done"]
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - sleep
+                  - '70'
+          livenessProbe:
+            tcpSocket:
+              port: 10001
+            failureThreshold: 5
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            successThreshold: 1
+            timeoutSeconds: 2
+          name: main-container
+          readinessProbe:
+            tcpSocket:
+              port: 10001
+            failureThreshold: 2
+            initialDelaySeconds: 30
+            periodSeconds: 3
+            successThreshold: 1
+            timeoutSeconds: 2
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+          {{- end }}
+          stdin: true
+          tty: true
+          volumeMounts:
+            - mountPath: /app/logs
+              name: applog
+              subPathExpr: $(POD_NAME)
+            - mountPath: /app/conf/trpc_go.yaml
+              name: config
+              subPathExpr: trpc_go.yaml
+            - mountPath: /app/conf/WebParserServer.json
+              name: config
+              subPathExpr: WebParserServer.json
+            - mountPath: /etc/localtime
+              mountPropagation: HostToContainer
+              name: host-time
+        - env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+          image: {{(index .Values.tad.images "web-parser-server-sidecar").url}}
+          imagePullPolicy: Always
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - sleep
+                  - '70'
+          name: sidecar
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+          {{- end }}
+          securityContext:
+            capabilities:
+              add:
+                - SYS_RESOURCE
+                - NET_ADMIN
+                - SYS_ADMIN
+                - IPC_LOCK
+                - SYS_PTRACE
+            privileged: false
+          stdin: true
+          tty: true
+          #volumeMounts:
+          #  - mountPath: /home/myuser/logs/my-crawler
+          #    name: sidecar-log
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 80
+      volumes:
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - name: applog
+          hostPath:
+            path: /data/ti-platform/log/web-parser-server
+            type: DirectoryOrCreate
+        #- name: sidecar-log
+        #  hostPath:
+        #    path: /data/ti-platform/log/web-parser-server/sidecar_log
+        #    type: DirectoryOrCreate
+        - configMap:
+            name: web-parser-server
+          name: config
+        - name: host-time
+          hostPath:
+            path: /etc/localtime

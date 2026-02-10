@@ -1,0 +1,43 @@
+{{- $lb_type := "NodePort"}}
+{{- $lb_ip   := ""}}
+{{- if eq .Values.global.helmfileEnvName "tcs" }}
+  {{- $ingress_svc := (lookup "v1" "Service" "ingress-nginx" "ingress-nginx-controller")}}
+  {{- if $ingress_svc }}
+  {{- $lb_type = $ingress_svc.spec.type |toString }}
+  {{- if eq $lb_type "LoadBalancer" }}
+  {{- $lb_ip = (index $ingress_svc.status.loadBalancer.ingress 0).ip }}
+  {{- end}}
+  {{- end}}
+{{- end}}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: ti-gateway
+    app.cpaas.io/name: ti-gateway
+  name: ti-gateway
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: tcp-9080-9080
+      port: 9080
+      protocol: TCP
+      targetPort: 9080
+    - name: tcp-9443-9443
+      port: 9443
+      protocol: TCP
+      targetPort: 9443
+    - name: grcp-9081-32081
+      port: 10009
+      protocol: TCP
+      targetPort: 9081
+{{- if eq $lb_type "NodePort"}}
+      nodePort: {{.Values.gatewaynodeport}}
+{{- end}}
+  selector:
+    service.cpaas.io/name: deployment-ti-gateway-workload
+  sessionAffinity: None
+  type: {{$lb_type}}
+{{- if eq $lb_type "LoadBalancer" }}
+  loadBalancerIP: {{$lb_ip}}
+{{- end }}

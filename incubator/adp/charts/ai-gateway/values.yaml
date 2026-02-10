@@ -1,0 +1,16 @@
+replicas: 1
+tad:
+  type: helm
+  images:
+    ai-gateway:
+      url: "ccr.ccs.tencentyun.com/tke-market/ai-gateway:53_2512231724_release_v3.3.2_69b0307a_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: algorithm
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+imagePullSecretName: qcloudregistrykey

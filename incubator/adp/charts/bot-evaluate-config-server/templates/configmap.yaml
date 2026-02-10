@@ -1,0 +1,695 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-evaluate-config
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    delete_limit: 300
+    is_private: ${IS_PRIVATE}
+    finance:
+      key_expire: 1800
+      default_qpm: 50
+      default_tpm: 100000
+      ds_default_qpm: 150000
+      ds_default_tpm: 1200000
+    sse_conn_options:
+      conn_url: ${SSE_CONN_URL}
+      client_timeout: 400
+    handle_tasks:
+      - "upload_sample_set"
+      - "delete_sample_set"
+      - "export_sample_set"
+      - "create_evaluation"
+      - "delete_evaluation"
+      - "export_evaluation"
+      - "exec_evaluation"
+      - "migrate_evaluation"
+    #######################
+    # 定时任务
+    # tasks 业务任务配置列表
+    #######################
+    task_prefix: evaluate:task
+    task_fetch_num: 100
+    task_fetch_timeout: 2s
+    task_fetch_period: 2s
+    task_pool_num: 100
+    tasks:
+      upload_sample_set:
+        runners: 5 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 1 # 最大重试次数
+        timeout: 30m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 1
+        batch_size: 0
+        stopped_resume_time: 720h
+      delete_sample_set:
+        runners: 5 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 1 # 最大重试次数
+        timeout: 30m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 1
+        batch_size: 0
+        stopped_resume_time: 720h
+      export_sample_set:
+        runners: 5 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 1 # 最大重试次数
+        timeout: 30m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 1
+        batch_size: 0
+        stopped_resume_time: 720h
+      create_evaluation:
+        runners: 5 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 1 # 最大重试次数
+        timeout: 30m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 1
+        batch_size: 0
+        stopped_resume_time: 720h
+      delete_evaluation:
+        runners: 5 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 1 # 最大重试次数
+        timeout: 30m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 1
+        batch_size: 0
+        stopped_resume_time: 720h
+      export_evaluation:
+        runners: 5 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 1 # 最大重试次数
+        timeout: 30m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 1
+        batch_size: 0
+        stopped_resume_time: 720h
+      exec_evaluation:
+        runners: 3 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 1 # 最大重试次数
+        timeout: 120h # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 1
+        batch_size: 0
+        stopped_resume_time: 720h
+      migrate_evaluation:
+        runners: 1 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 1 # 最大重试次数
+        timeout: 30m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 3
+        batch_size: 0
+        stopped_resume_time: 720h
+    sample_rule:
+      min_row: 1
+      max_row: 10000
+      max_custom_column:
+        max_column: 10
+        max_length: 20
+      max_session_num: 100
+      check_row: 100
+      excel_head:
+        - session_id
+        - request_id
+        - query
+        - custom_variables
+      cell_limit:
+        min_length: 0
+        max_length: 12000
+      export_excel_head:
+        - session_id
+        - request_id
+        - query
+        - custom_variables
+    file_type_size:
+      xlsx: 20971520
+    evaluation_rule:
+      name_limit: 20
+      set_limit: 5
+      compare_limit: 3
+      update_stat_interval: 5000
+      code: ZGVmIG1haW4ocGFyYW1zOiBkaWN0KSAtPiBkaWN0OgogICAgc2Vzc2lvbl9pZCA9IHBhcmFtcy5nZXQoJ3Nlc3Npb25faWQnLCAnJykKICAgIHJlcXVlc3RfaWQgPSBwYXJhbXMuZ2V0KCdyZXF1ZXN0X2lkJywgJycpCiAgICBxdWVyeSA9IHBhcmFtcy5nZXQoJ3F1ZXJ5JywgJycpCiAgICBjdXN0b21fdmFyaWFibGUgPSBwYXJhbXMuZ2V0KCdjdXN0b21fdmFyaWFibGUnLCAnJykKICAgIHJlZmVyZW5jZV9vdXRwdXQgPSBwYXJhbXMuZ2V0KCdyZWZlcmVuY2Vfb3V0cHV0JywgJycpCiAgICBvdXRwdXQgPSBwYXJhbXMuZ2V0KCdvdXRwdXQnLCAnJykKICAgIHRyeToKICAgICAgICBzZXQxLCBzZXQyID0gc2V0KG91dHB1dCksIHNldChyZWZlcmVuY2Vfb3V0cHV0KQogICAgICAgIGludGVyc2VjdGlvbiA9IGxlbihzZXQxICYgc2V0MikKICAgICAgICB1bmlvbiA9IGxlbihzZXQxIHwgc2V0MikKICAgICAgICBqYWNjYXJkX3NpbWlsYXJpdHkgPSBpbnRlcnNlY3Rpb24gLyB1bmlvbiBpZiB1bmlvbiA+IDAgZWxzZSAxLjAKICAgICAgICBpZiBqYWNjYXJkX3NpbWlsYXJpdHkgPiAwLjc6CiAgICAgICAgICAgIGFuc3dlcl9zY29yZSA9IDEKICAgICAgICAgICAgYW5zd2VyX3JlYXNvbiA9ICdUaGUgYW5zd2VyIGlzIGhpZ2hseSBzaW1pbGFyIHRvIHRoZSByZWZlcmVuY2UgYW5zd2VyJwogICAgICAgIGVsc2U6CiAgICAgICAgICAgIGFuc3dlcl9zY29yZSA9IDAKICAgICAgICAgICAgYW5zd2VyX3JlYXNvbiA9ICdUaGUgYW5zd2VyIGlzIG5vdCBzaW1pbGFyIHRvIHRoZSByZWZlcmVuY2UgYW5zd2VyJwogICAgICAgIHJldHVybiB7CiAgICAgICAgICAgICdhbnN3ZXJfc2NvcmUnOiBhbnN3ZXJfc2NvcmUsCiAgICAgICAgICAgICdhbnN3ZXJfcmVhc29uJzogYW5zd2VyX3JlYXNvbgogICAgICAgIH0KICAgIGV4Y2VwdCBFeGNlcHRpb24gYXMgZToKICAgICAgICByZXR1cm4gewogICAgICAgICAgICAnZXJyb3InOiBzdHIoZSksCiAgICAgICAgICAgICdhbnN3ZXJfc2NvcmUnOiAwLAogICAgICAgICAgICAnYW5zd2VyX3JlYXNvbic6ICdjb21wYXJpc29uIGZhaWxlZCcKICAgICAgICB9
+      avg_input_token: 500
+      avg_output_token: 500
+      avg_cost_time: 3000
+    storage:
+      video_domain: ${VIDEO_DOMAIN}
+    {{- include "storage" . | nindent 6 }}
+    run_code:
+      # 代码结果的最大长度
+      MaxResultLength: 1000
+      ResultSeparator: "_______ResultSeparator_______"
+      # 每个App最大的代码运行并发数
+      MaxAppParallel: 5
+      CodeTemplate: |-
+        import time
+        import datetime
+        import json
+        import numpy
+        import pandas
+        import math
+        import cmath
+        import decimal
+        import fractions
+        import random
+        import statistics
+        import re
+        import string
+        import stringprep
+        import collections
+        import numbers
+        import unicodedata
+    
+        lke_system_params=json.loads("""{{`{{InputParamObject}}`}}""")
+    
+        {{`{{CodeContent}}`}}
+    
+        main_result = main(lke_system_params)
+    
+        import json
+    
+        class SystemJsonEncoder(json.JSONEncoder):
+          def default(self, obj):
+              import numpy as np
+              if isinstance(obj, np.timedelta64):
+                  return str(obj)
+              elif isinstance(obj, np.integer):
+                  return int(obj)
+              elif isinstance(obj, (np.void)):
+                  return None
+              elif isinstance(obj, np.floating):
+                  return float(obj)
+              elif isinstance(obj, np.complexfloating):
+                  return {'real': obj.real, 'imag': obj.imag}
+              elif isinstance(obj, np.bytes_):
+                  return obj.decode('utf-8')
+              elif isinstance(obj, np.str_):
+                  return str(obj)
+              elif isinstance(obj, np.datetime64):
+                  return str(obj)
+              elif isinstance(obj, np.ndarray):
+                  return obj.tolist()
+              elif isinstance(obj, pd.DataFrame):
+                  return obj.to_dict()
+              elif isinstance(obj, pd.Series):
+                  return obj.to_list()
+              return super(SystemJsonEncoder, self).default(obj)
+    
+        print("{{`{{ResultSeparator}}`}}")
+        print(json.dumps(main_result, ensure_ascii=False, cls=SystemJsonEncoder))
+  error_en-US.json: |
+    {
+      "ErrSystem": "System error",
+      "ErrAlreadyLocked": "Processing in progress",
+      "ErrParams": "Parameter error",
+      "ErrGetAppInfo": "Failed to get application information",
+      "ErrSameDocUploading": "Same document already uploaded",
+      "ErrInvalidURL": "Invalid URL",
+      "ErrCreateSample": "Failed to create evaluation set",
+      "ErrInvalidFileName": "File name validation failed",
+      "ErrExcelContent": "Excel file content error",
+      "ErrInvalidSampleSetExcel": "Evaluation set file parsing exception",
+      "ErrExcelIsEmpty": "Excel file content is empty",
+      "ErrExcelHead": "Excel file header error",
+      "ErrExcelCustomNum": "Number of custom columns exceeds the maximum limit",
+      "ErrExcelCustom": "Custom column format error",
+      "ErrGetObject": "Failed to get file content",
+      "ErrUploadObject": "Failed to upload error-labeled file",
+      "ErrExcelNumTooFew": "Number of valid corpus entries in the table is less than the minimum; please modify and re-upload",
+      "ErrInvalidRow": "Error parsing Excel row data",
+      "ErrSampleNotExist": "Evaluation set does not exist",
+      "ErrExportSampleSet": "Failed to export evaluation set",
+      "ErrGetSampleSetFail": "Failed to get evaluation set list",
+      "ErrDeleteSetEmpty": "No evaluable sample sets are allowed to be deleted",
+      "ErrUpdateSample": "Failed to update evaluation set data",
+      "ErrAppAndSample": "Application business ID and evaluation set are required",
+      "ErrEvaluationName": "Evaluation task name length error",
+      "ErrEvalNameExist": "Evaluation task name duplicate",
+      "ErrEvalSampleStatus": "No evaluable sets available for import",
+      "ErrEvalJudgePrompt": "Judge model prompt cannot be empty",
+      "ErrEvalJudgeModel": "Judge model configuration cannot be empty",
+      "ErrEvalJudgeModelCfg": "Judge model name and parameters cannot be empty",
+      "ErrEvalRuleEmpty": "Rule scoring configuration cannot be empty",
+      "ErrEvalRuleOperator": "Rule scoring operator error",
+      "ErrEvalRuleCompoundLen": "Rule scoring configuration error: 'compound' only supports one level",
+      "ErrEvalRuleCompound": "Rule scoring 'compound' structure error",
+      "ErrEvalRuleComparison": "Rule scoring expression cannot be empty",
+      "ErrEvalRuleComparisonOperator": "Rule scoring expression operator error",
+      "ErrEvalRuleComparisonRightSource": "Rule scoring expression right-value source error",
+      "ErrEvalRuleComparisonLeft": "Rule scoring expression left-value cannot be empty",
+      "ErrEvalCode": "Code scoring code cannot be empty",
+      "ErrEvalCompareEmpty": "Comparative evaluation configuration cannot be empty",
+      "ErrEvalCompareLimit": "Number of comparative evaluation configurations exceeds the limit",
+      "ErrEvalCompareModel": "Both the model comparison thinking and generation models cannot be empty",
+      "ErrEvalCompareModelCfg": "The names and parameters for both the model comparison thinking and generation models cannot be empty",
+      "ErrEvalComparePrompt": "Comparative prompt for prompt comparison cannot be empty",
+      "ErrEvalCompareSort": "Comparative evaluation configuration sequence number error",
+      "ErrEvalCompareScorePrompt": "Comparative scoring configuration prompt cannot be empty",
+      "ErrEvalCompareScoreModel": "Comparative scoring model configuration cannot be empty",
+      "ErrEvalCompareScoreModelCfg": "Comparative scoring model name and parameters cannot be empty",
+      "ErrSetLimit": "Exceeds the maximum evaluation sample limit",
+      "ErrSetExtends": "Evaluation set custom columns are inconsistent",
+      "ErrGetEvalCount": "Failed to get the total number of evaluation tasks",
+      "ErrGetEvalList": "Failed to get the evaluation task list",
+      "ErrGetEvalSample": "Failed to get the data of the evaluation task's associated set",
+      "ErrGetEvalStat": "Failed to get evaluation task statistics",
+      "ErrGetEvaluation": "Failed to get the evaluation task",
+      "ErrEvaluationEmpty": "Evaluation task does not exist",
+      "ErrGetEvalConfig": "Failed to get evaluation task configuration",
+      "ErrCanStartEvaluation": "The current evaluation task cannot be started",
+      "ErrStartEvaluation": "Failed to start the task",
+      "ErrCanExportEvaluation": "The current evaluation task cannot be exported",
+      "ErrExportEvaluation": "Failed to export the evaluation task",
+      "ErrCanStopEvaluation": "The current evaluation task cannot be paused",
+      "ErrStopEvaluation": "Failed to pause the evaluation task",
+      "ErrDeleteEvaluationEmpty": "No evaluable tasks are allowed to be deleted",
+      "ErrDeleteEvaluation": "Failed to delete the evaluation task",
+      "ErrEvaluationSampleEmpty": "The evaluation task's associated set is empty",
+      "ErrCanGetEvalReport": "The current evaluation task does not allow viewing report details",
+      "ErrStatReport": "Failed to generate the evaluation report",
+      "ErrGetEvalRecord": "Failed to get evaluation task details",
+      "ErrEvalRecordExist": "Evaluation task detail does not exist",
+      "ErrEvalRecordStatus": "This evaluation task detail is not allowed to be labeled",
+      "ErrEvalJudgeRecord": "Failed to manually label the evaluation task detail",
+      "ErrUpdateEvalStat": "Failed to update evaluation task statistics",
+      "ErrJudgeEvalStatus": "The current task is not allowed to be labeled",
+      "ErrExecEvalStatus": "This task is not allowed to be executed",
+      "ErrGetEvalRes": "Failed to get execution results",
+      "ErrReplyEvil": "Query contains sensitive words",
+      "ErrExecPanic": "An exception occurred during task execution",
+      "ErrAppKnowQaCfg": "Application model configuration is empty",
+      "ErrExecRecord": "Failed to evaluate a single query",
+      "ErrJudgeResultLen": "The length of the marked referee result exceeds the limit"
+    }
+  error_zh-CN.json: |
+    {
+      "ErrSystem": "系统错误",
+      "ErrAlreadyLocked": "正在处理中",
+      "ErrParams": "参数错误",
+      "ErrGetAppInfo": "获取应用信息失败",
+      "ErrSameDocUploading": "相同文档已上传",
+      "ErrInvalidURL": "Invalid URL",
+      "ErrCreateSample": "创建评测集合失败",
+      "ErrInvalidFileName": "文件名校验失败",
+      "ErrExcelContent": "Excel 文件内容错误",
+      "ErrInvalidSampleSetExcel": "评测集文件解析异常",
+      "ErrExcelIsEmpty": "Excel 文件内容为空",
+      "ErrExcelHead": "Excel 文件表头错误",
+      "ErrExcelCustomNum": "自定义列超过最大列数",
+      "ErrExcelCustom": "自定义列格式错误",
+      "ErrGetObject": "获取文件内容失败",
+      "ErrUploadObject": "上传错误标注文件失败",
+      "ErrExcelNumTooFew": "表格有效语料条数少于最小条数,请修改后重新上传",
+      "ErrInvalidRow": "解析excel行数据错误",
+      "ErrSampleNotExist": "评测集合不存在",
+      "ErrExportSampleSet": "评测集合导出失败",
+      "ErrGetSampleSetFail": "获取评测集合列表失败",
+      "ErrDeleteSetEmpty": "没有允许删除的样本集合",
+      "ErrUpdateSample": "更新评测集合数据失败",
+      "ErrAppAndSample": "应用业务id和评测集合必传",
+      "ErrEvaluationName": "评测任务名称长度错误",
+      "ErrEvalNameExist": "评测任务名称重复",
+      "ErrEvalSampleStatus": "没有可以导入的评测集合",
+      "ErrEvalJudgePrompt": "裁判模型提示词不能为空",
+      "ErrEvalJudgeModel": "裁判模型配置不能为空",
+      "ErrEvalJudgeModelCfg": "裁判模型名称和参数不能为空",
+      "ErrEvalRuleEmpty": "规则打分配置不能为空",
+      "ErrEvalRuleOperator": "规则打分运算符错误",
+      "ErrEvalRuleCompoundLen": "规则打分配置错误,compound只支持一层",
+      "ErrEvalRuleCompound": "规则打分compound结构错误",
+      "ErrEvalRuleComparison": "规则打分表达式不能为空",
+      "ErrEvalRuleComparisonOperator": "规则打分表达式运算符错误",
+      "ErrEvalRuleComparisonRightSource": "规则打分表达式右值来源错误",
+      "ErrEvalRuleComparisonLeft": "规则打分表达式左值不能为空",
+      "ErrEvalCode": "代码打分代码不能为空",
+      "ErrEvalCompareEmpty": "对比评测配置不能为空",
+      "ErrEvalCompareLimit": "对比评测配置数量超限",
+      "ErrEvalCompareModel": "模型对比思考和生成模型都不能为空",
+      "ErrEvalCompareModelCfg": "模型对比思考和生成模型的名称和参数都不能为空",
+      "ErrEvalComparePrompt": "提示词对比提示词不能为空",
+      "ErrEvalCompareSort": "对比评测配置序号错误",
+      "ErrEvalCompareScorePrompt": "对比打分配置提示词不能为空",
+      "ErrEvalCompareScoreModel": "对比打分模型配置不能为空",
+      "ErrEvalCompareScoreModelCfg": "对比打分模型名称和参数不能为空",
+      "ErrSetLimit": "超过最大评测样本限制",
+      "ErrSetExtends": "评测集合自定义列不一致",
+      "ErrGetEvalCount": "获取评测任务总数失败",
+      "ErrGetEvalList": "获取评测任务列表失败",
+      "ErrGetEvalSample": "获取评测任务关联集合数据失败",
+      "ErrGetEvalStat": "获取评测任务统计数据失败",
+      "ErrGetEvaluation": "获取评测任务失败",
+      "ErrEvaluationEmpty": "评测任务不存在",
+      "ErrGetEvalConfig": "获取评测任务配置失败",
+      "ErrCanStartEvaluation": "当前评测任务不允许启动",
+      "ErrStartEvaluation": "启动任务失败",
+      "ErrCanExportEvaluation": "当前评测任务不允许导出",
+      "ErrExportEvaluation": "导出评测任务失败",
+      "ErrCanStopEvaluation": "当前评测任务不允许暂停",
+      "ErrStopEvaluation": "暂停评测任务失败",
+      "ErrDeleteEvaluationEmpty": "没有允许删除的评测任务",
+      "ErrDeleteEvaluation": "删除评测任务失败",
+      "ErrEvaluationSampleEmpty": "评测任务关联集合为空",
+      "ErrCanGetEvalReport": "当前评测任务不允许查看报告详情",
+      "ErrStatReport": "生成评测报告失败",
+      "ErrGetEvalRecord": "获取评测任务明细失败",
+      "ErrEvalRecordExist": "评测任务明细不存在",
+      "ErrEvalRecordStatus": "该评测任务明细不允许标注",
+      "ErrEvalJudgeRecord": "人工标注评测任务明细失败",
+      "ErrUpdateEvalStat": "更新评测任务统计数据失败",
+      "ErrJudgeEvalStatus": "当前任务不允许标注",
+      "ErrExecEvalStatus": "该任务不允许执行",
+      "ErrGetEvalRes": "获取执行结果失败",
+      "ErrReplyEvil": "问题有敏感词",
+      "ErrExecPanic": "任务执行有异常报错",
+      "ErrAppKnowQaCfg": "应用模型配置为空",
+      "ErrExecRecord": "评测单条query失败",
+      "ErrJudgeResultLen": "标注裁判结果长度超过限制"
+    }
+  evaluate_en-US.json: |
+    {
+      "KeyUploadSampleSetErrMsg": "File data contains errors, please download and review the error-labeled file",
+      "KeyUploadSampleSetErrLinkText": "Download",
+      "KeyUploadSampleSetMaxRow": "File exceeds the maximum row limit, only the first %d compliant corpus entries will be imported",
+      "KeyUploadSampleSetIsCutOff": "Sample data exceeding character limit exists; such data will be automatically truncated",
+      "KeyUploadSampleSetCheckRow": "The processed sample set currently has fewer than %d entries, which may affect the accuracy of application effectiveness evaluation",
+      "KeyUploadSampleSessionID": "session_id is required",
+      "KeyUploadSampleQuery": "query is required",
+      "KeyUploadSampleRequestID": "request_id must be a positive integer",
+      "KeyUploadSampleMaxSessionNum": "Exceeded the maximum number of turns in the same session",
+      "KeyUploadSampleCustomer": "Custom parameters are not in valid JSON format; please fill in according to the API documentation example",
+      "KeyUploadSampleRowRepeat": "Duplicate row, please filter",
+      "BASIC_PROMPT_EN": "{{`你是一个专业裁判模型，需要评估模型答案与参考正确答案的匹配度并给出评分。请按照以下规则操作：\n【评分标准】\n1分：正确-核心内容与参考答案一致，关键数据无偏差，逻辑严谨无漏洞\n0分：错误-无法完全回答问题，和参考答案却别大，内容与问题无关或包含危险/虚假信息\n【输出要求】\n1.仅输出JSON格式：{\"answer_score\":\"评分\",\"answer_reason\":\"评分理由\",\"full_score\":5}\n2.评分理由必须：-具体说明给模型答案的质量缺陷或优点-比对与参考答案的核心差异点（不直接提及参考答案）-不包含主观评价\n3.禁止在理由中使用\"参考答案\"等字眼\n【评估步骤】\n1.分析模型答案的核心事实、关键数据和逻辑结构\n2.对比其与问题要求的匹配度（暗含参考答案基准）\n3.依据评分标准确定最符合的分数\n4.基于差异点撰写客观的评分理由\n【任务执行\n###用户问题：\n{{query}}\n###模型答案：\n{{output}}\n###参考答案（仅裁判可见）：\n{{reference_output}}`}}",
+      "COMPARE_SCORE_PROMPT_2_EN": "{{`你是一个专业裁判模型，需要评估并比较两个模型答案的质量。给定一个回答（Response_1）和一个新回答（Response_2），请严格按照以下流程执行：\n【核心评估维度】\n1.指令遵循度-是否完整响应指令的所有要求\n2.内容准确性-提供的信息是否事实正确、逻辑自洽\n3.完整度-是否覆盖问题核心要素（按指令隐含要求）\n4.专业度-表述是否清晰严谨，无歧义\n5.安全性-是否包含危险/违规内容\n【评分标准】\n●5分：完美解答（全面覆盖要求、所有信息准确无误、逻辑完整严密、表述专业清晰）\n●4分：优质解答（主要要求完全满足、存在细微瑕疵、核心逻辑正确）\n●3分：合格解答（满足基本要求、存在明显错误或关键缺失）\n●2分：缺陷解答（仅部分满足要求、核心内容重大偏差）\n●1分：无效解答（完全偏离主题、包含危险内容或无效信息）\n【输入信息】\n●用户问题：{{query}}\n●Response_1内容：{{output}}（给定的Response_A内容）\n●Response_2内容：{{output1}}（待评估的新答案）\n【执行流程】\na.第一步：独立评估Response_1的质量，基于上述维度，确定score_1。\nb.第二步：独立评估Response_2的质量，基于相同维度，确定score_2。\nc.第三步：比较score_2与score_1：如果score_2>score_1，则best_answer=\"2\"。如果score_1<score_2，则best_answer=\"1\"。\n【输出要求】\n●输出必须为严格JSON格式：{\"best_answer\":\"1/2\",\"best_answer_reason\":\"根据裁判模型打分判断\",\"format\":\"comparison\"}\n请确保评估过程客观、专业，基于维度和标准进行技术性分析。任何输入都应触发此比较逻辑。`}}",
+      "COMPARE_SCORE_PROMPT_3_EN": "{{`你是一个专业裁判模型，需要评估并比较两个模型答案的质量。给定一个回答（Response_1）和两个新回答（Response_2）和（Response_3），请严格按照以下流程执行：\n【核心评估维度】\n1.指令遵循度-是否完整响应指令的所有要求\n2.内容准确性-提供的信息是否事实正确、逻辑自洽\n3.完整度-是否覆盖问题核心要素（按指令隐含要求）\n4.专业度-表述是否清晰严谨，无歧义\n5.安全性-是否包含危险/违规内容\n【评分标准】\n●5分：完美解答（全面覆盖要求、所有信息准确无误、逻辑完整严密、表述专业清晰）\n●4分：优质解答（主要要求完全满足、存在细微瑕疵、核心逻辑正确）\n●3分：合格解答（满足基本要求、存在明显错误或关键缺失）\n●2分：缺陷解答（仅部分满足要求、核心内容重大偏差）\n●1分：无效解答（完全偏离主题、包含危险内容或无效信息）\n【输入信息】\n●用户问题：{{query}}\n●Response_1内容：{{output}}（给定的Response_1内容）\n●Response_2内容：{{output1}}（待评估的新答案）\n●Response_3内容：{{output2}}（待评估的新答案）\n【执行流程】\na.第一步：独立评估Response_1的质量，基于上述维度，确定score_1。\nb.第二步：独立评估Response_2的质量，基于相同维度，确定score_2。\nc.第二步：独立评估Response_3的质量，基于相同维度，确定score_3。\nd.第三步：比较score_1、score_2与score_3：判断出分数最高的答案，并解释比较原因\n【输出要求】\n●输出必须为严格JSON格式：{\"best_answer\":\"1/2/3\",\"best_answer_reason\":\"根据裁判模型打分判断\",\"format\":\"comparison\"}\n请确保评估过程客观、专业，基于维度和标准进行技术性分析。任何输入都应触发此比较逻辑。`}}",
+      "KeySampleCol": "Evaluation Set",
+      "KeyRunningCol": "Running Result",
+      "KeyJudgeCol": "Judge Scoring Result",
+      "KeyCompareCol": "Comparative Scoring Output Result",
+      "KeyManualCol": "Manual Annotation Result",
+      "KeySingleCol": "Single Dialogue Turn Time Consumption",
+      "KeyTokenCol": "Tokens Consumed",
+      "KeyRuleCostCol": "Evaluation Rule Time Consumption",
+      "KeyRuleTokenCol": "Evaluation Rule Tokens Consumed",
+      "KeyCurrModel": "Current Model",
+      "KeyModel1": "Comparison Model 1",
+      "KeyModel2": "Comparison Model 2",
+      "KeyExportSucc": "Export Successful",
+      "KeyExportFail": "Export Failed",
+      "KeyGetSampleSetErr": "Failed to get evaluation set data",
+      "KeySampleSetErr": "Evaluation set data does not comply with template specifications",
+      "KeySampleSetInitErr": "Evaluation set data initialization failed",
+      "KeyCreateSampleSetErr": "Failed to create evaluation set data",
+      "KeyEvaluationInitErr": "Evaluation task data initialization failed",
+      "KeyCreateEvaluationErr": "Failed to create evaluation task detail data",
+      "KeyGetEvaluationErr": "Failed to get evaluation task",
+      "KeyEvaluationNotExec": "This task is not allowed to be executed",
+      "KeyGetEvaluationStatErr": "Failed to get evaluation statistics",
+      "KeyGetEvaluationCfgErr": "Failed to get evaluation task configuration",
+      "KeyGetAppCfgErr": "Failed to get application configuration",
+      "KeyInitModelCfgErr": "Failed to initialize model configuration",
+      "KeyUpdateEvaluationErr": "Failed to update evaluation task status",
+      "KeyEvaluationSampleErr": "Failed to get the evaluation task's bound set",
+      "KeyEvaluationSampleEmpty": "The evaluation task's bound set is empty",
+      "KeyGetEvaluationRecordErr": "Failed to get evaluation task details",
+      "KeyExecEvaluationRecordErr": "Application evaluation failed",
+      "KeyCreateEvalRecordResErr": "Failed to create execution result",
+      "KeyEvaluationRuleCfgEmpty": "Rule configuration is empty",
+      "KeyEvaluationCodeEmpty": "Code is empty",
+      "KeyAnalysisCodeErr": "Failed to parse code result",
+      "KeyBasicCfgEmpty": "Baseline evaluation configuration is empty",
+      "KeyErrNoBalance": "Insufficient balance for the current application model",
+      "KeyErrConcurrenceExceeded": "Exceeded concurrency limit",
+      "KeyNoticeSampleContent": "Review Collection ",
+      "KeyNoticeTaskContent": "Evaluation Task ",
+      "请选择": "Please select"
+    }
+  evaluate_zh-CN.json: |
+    {
+      "KeyUploadSampleSetErrMsg": "文件数据存在错误，请下载并查看错误标注文件",
+      "KeyUploadSampleSetErrLinkText": "下载",
+      "KeyUploadSampleSetMaxRow": "文件超过最大限制条数,仅导入合规的前%d条语料\n",
+      "KeyUploadSampleSetIsCutOff": "存在字符超限制的样本数据,此类数据将自动截断\n",
+      "KeyUploadSampleSetCheckRow": "当前样本集处理后不足%d条,可能影响应用效果的评估准确性\n",
+      "KeyUploadSampleSessionID": "session_id必填",
+      "KeyUploadSampleQuery": "query必填",
+      "KeyUploadSampleRequestID": "request_id必须是正整数",
+      "KeyUploadSampleMaxSessionNum": "同一会话超过最大轮数",
+      "KeyUploadSampleCustomer": "自定义参数不是有效json格式,请按api文档示例填写",
+      "KeyUploadSampleRowRepeat": "重复行,请过滤",
+      "BASIC_PROMPT_CH": "{{`你是一个专业裁判模型，需要评估模型答案与参考正确答案的匹配度并给出评分。请按照以下规则操作：\n【评分标准】\n1分：正确-核心内容与参考答案一致，关键数据无偏差，逻辑严谨无漏洞\n0分：错误-无法完全回答问题，和参考答案却别大，内容与问题无关或包含危险/虚假信息\n【输出要求】\n1.仅输出JSON格式：{\"answer_score\":\"评分\",\"answer_reason\":\"评分理由\",\"full_score\":5}\n2.评分理由必须：-具体说明给模型答案的质量缺陷或优点-比对与参考答案的核心差异点（不直接提及参考答案）-不包含主观评价\n3.禁止在理由中使用\"参考答案\"等字眼\n【评估步骤】\n1.分析模型答案的核心事实、关键数据和逻辑结构\n2.对比其与问题要求的匹配度（暗含参考答案基准）\n3.依据评分标准确定最符合的分数\n4.基于差异点撰写客观的评分理由\n【任务执行\n###用户问题：\n{{query}}\n###模型答案：\n{{output}}\n###参考答案（仅裁判可见）：\n{{reference_output}}`}}",
+      "COMPARE_SCORE_PROMPT_2_CH": "{{`你是一个专业裁判模型，需要评估并比较两个模型答案的质量。给定一个回答（Response_1）和一个新回答（Response_2），请严格按照以下流程执行：\n【核心评估维度】\n1.指令遵循度-是否完整响应指令的所有要求\n2.内容准确性-提供的信息是否事实正确、逻辑自洽\n3.完整度-是否覆盖问题核心要素（按指令隐含要求）\n4.专业度-表述是否清晰严谨，无歧义\n5.安全性-是否包含危险/违规内容\n【评分标准】\n●5分：完美解答（全面覆盖要求、所有信息准确无误、逻辑完整严密、表述专业清晰）\n●4分：优质解答（主要要求完全满足、存在细微瑕疵、核心逻辑正确）\n●3分：合格解答（满足基本要求、存在明显错误或关键缺失）\n●2分：缺陷解答（仅部分满足要求、核心内容重大偏差）\n●1分：无效解答（完全偏离主题、包含危险内容或无效信息）\n【输入信息】\n●用户问题：{{query}}\n●Response_1内容：{{output}}（给定的Response_A内容）\n●Response_2内容：{{output1}}（待评估的新答案）\n【执行流程】\na.第一步：独立评估Response_1的质量，基于上述维度，确定score_1。\nb.第二步：独立评估Response_2的质量，基于相同维度，确定score_2。\nc.第三步：比较score_2与score_1：如果score_2>score_1，则best_answer=\"2\"。如果score_1<score_2，则best_answer=\"1\"。\n【输出要求】\n●输出必须为严格JSON格式：{\"best_answer\":\"1/2\",\"best_answer_reason\":\"根据裁判模型打分判断\",\"format\":\"comparison\"}\n请确保评估过程客观、专业，基于维度和标准进行技术性分析。任何输入都应触发此比较逻辑。`}}",
+      "COMPARE_SCORE_PROMPT_3_CH": "{{`你是一个专业裁判模型，需要评估并比较两个模型答案的质量。给定一个回答（Response_1）和两个新回答（Response_2）和（Response_3），请严格按照以下流程执行：\n【核心评估维度】\n1.指令遵循度-是否完整响应指令的所有要求\n2.内容准确性-提供的信息是否事实正确、逻辑自洽\n3.完整度-是否覆盖问题核心要素（按指令隐含要求）\n4.专业度-表述是否清晰严谨，无歧义\n5.安全性-是否包含危险/违规内容\n【评分标准】\n●5分：完美解答（全面覆盖要求、所有信息准确无误、逻辑完整严密、表述专业清晰）\n●4分：优质解答（主要要求完全满足、存在细微瑕疵、核心逻辑正确）\n●3分：合格解答（满足基本要求、存在明显错误或关键缺失）\n●2分：缺陷解答（仅部分满足要求、核心内容重大偏差）\n●1分：无效解答（完全偏离主题、包含危险内容或无效信息）\n【输入信息】\n●用户问题：{{query}}\n●Response_1内容：{{output}}（给定的Response_1内容）\n●Response_2内容：{{output1}}（待评估的新答案）\n●Response_3内容：{{output2}}（待评估的新答案）\n【执行流程】\na.第一步：独立评估Response_1的质量，基于上述维度，确定score_1。\nb.第二步：独立评估Response_2的质量，基于相同维度，确定score_2。\nc.第二步：独立评估Response_3的质量，基于相同维度，确定score_3。\nd.第三步：比较score_1、score_2与score_3：判断出分数最高的答案，并解释比较原因\n【输出要求】\n●输出必须为严格JSON格式：{\"best_answer\":\"1/2/3\",\"best_answer_reason\":\"根据裁判模型打分判断\",\"format\":\"comparison\"}\n请确保评估过程客观、专业，基于维度和标准进行技术性分析。任何输入都应触发此比较逻辑。`}}",
+      "KeySampleCol": "评测集",
+      "KeyRunningCol": "运行结果",
+      "KeyJudgeCol": "裁判打分结果",
+      "KeyCompareCol": "对比打分输出结果",
+      "KeyManualCol": "人工标注结果",
+      "KeySingleCol": "单轮对话耗时",
+      "KeyTokenCol": "tokens消耗",
+      "KeyRuleCostCol": "评估规则耗时",
+      "KeyRuleTokenCol": "评估规则tokens消耗",
+      "KeyCurrModel": "当前模型",
+      "KeyModel1": "对比模型1",
+      "KeyModel2": "对比模型2",
+      "KeyExportSucc": "导出成功",
+      "KeyExportFail": "导出失败",
+      "KeyGetSampleSetErr": "获取评测集合数据失败",
+      "KeySampleSetErr": "评测集合数据不符合模版规定",
+      "KeySampleSetInitErr": "评测集合数据初始化失败",
+      "KeyCreateSampleSetErr": "评测集合数据创建失败",
+      "KeyEvaluationInitErr": "评测任务数据初始化失败",
+      "KeyCreateEvaluationErr": "创建评测任务明细数据失败",
+      "KeyGetEvaluationErr": "获取评测任务失败",
+      "KeyEvaluationNotExec": "该任务不允许执行",
+      "KeyGetEvaluationStatErr": "获取评测统计数据失败",
+      "KeyGetEvaluationCfgErr": "获取评测任务配置失败",
+      "KeyGetAppCfgErr": "获取应用配置失败",
+      "KeyInitModelCfgErr": "初始化模型配置失败",
+      "KeyUpdateEvaluationErr": "更新评测任务状态失败",
+      "KeyEvaluationSampleErr": "获取评测任务绑定集合失败",
+      "KeyEvaluationSampleEmpty": "评测任务绑定集合为空",
+      "KeyGetEvaluationRecordErr": "获取评测任务明细失败",
+      "KeyExecEvaluationRecordErr": "应用评测失败",
+      "KeyCreateEvalRecordResErr": "创建执行结果失败",
+      "KeyEvaluationRuleCfgEmpty": "规则配置为空",
+      "KeyEvaluationCodeEmpty": "代码为空",
+      "KeyAnalysisCodeErr": "解析代码结果失败",
+      "KeyBasicCfgEmpty": "基准评测配置为空",
+      "KeyErrNoBalance": "当前应用模型余额不足",
+      "KeyErrConcurrenceExceeded": "超出并发数限制",
+      "KeyNoticeSampleContent": "评测集合",
+      "KeyNoticeTaskContent": "评测任务",
+      "请选择": "请选择"
+    }
+  placeholder.yaml: |
+    IS_PRIVATE: true
+    
+    SSE_CONN_URL: https://apex-cmlb-80-0.{{ .Release.Namespace }}.svc.cluster.local:80/v1/qbot/chat/experienceSse
+    
+    VIDEO_DOMAIN: {{ .Values.global.clb }}
+    
+    MYSQL_TCADP_EVALUTION: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+    TDSQL_TCADP_EVALUTION: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+    REDIS_TCADP_EVALUTION: redis://:{{ .Values.global.components.redis.password }}@{{ (index .Values.global.components.redis.hosts 0) }}:6379/2
+    BOT_ADMIN_CONFIG_SERVER_LOGIN: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+    APP_ADMIN_PROXY_API: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+    BOT_ADMIN_CONFIG_SERVER_API: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+    HTTP_COS_ACCESS: dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn
+    CODE_INTERPRETER_DISPATCHER_CODEEXEC: ip://codeinterpreterdispatcher.{{ .Release.Namespace }}.svc.cluster.local:8001
+    AI_GATEWAY_API: ip://ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+    FINANCE_FINANCE: ip://finance.{{ .Release.Namespace }}.svc.cluster.local:9090
+    REDIS_LKE_LIMITER: redis://:{{ .Values.global.components.redis.password }}@{{ (index .Values.global.components.redis.hosts 0) }}:6379/4
+    BASIC_PROMPT_EN: "{{`你是一个专业裁判模型，需要评估模型答案与参考正确答案的匹配度并给出评分。请按照以下规则操作：\n【评分标准】\n1分：正确-核心内容与参考答案一致，关键数据无偏差，逻辑严谨无漏洞\n0分：错误-无法完全回答问题，和参考答案却别大，内容与问题无关或包含危险/虚假信息\n【输出要求】\n1.仅输出JSON格式：{\"answer_score\":\"评分\",\"answer_reason\":\"评分理由\",\"full_score\":5}\n2.评分理由必须：-具体说明给模型答案的质量缺陷或优点-比对与参考答案的核心差异点（不直接提及参考答案）-不包含主观评价\n3.禁止在理由中使用\"参考答案\"等字眼\n【评估步骤】\n1.分析模型答案的核心事实、关键数据和逻辑结构\n2.对比其与问题要求的匹配度（暗含参考答案基准）\n3.依据评分标准确定最符合的分数\n4.基于差异点撰写客观的评分理由\n【任务执行\n###用户问题：\n{{query}}\n###模型答案：\n{{output}}\n###参考答案（仅裁判可见）：\n{{reference_output}}`}}"
+    COMPARE_SCORE_PROMPT_2_EN: "{{`你是一个专业裁判模型，需要评估并比较两个模型答案的质量。给定一个回答（Response_1）和一个新回答（Response_2），请严格按照以下流程执行：\n【核心评估维度】\n1.指令遵循度-是否完整响应指令的所有要求\n2.内容准确性-提供的信息是否事实正确、逻辑自洽\n3.完整度-是否覆盖问题核心要素（按指令隐含要求）\n4.专业度-表述是否清晰严谨，无歧义\n5.安全性-是否包含危险/违规内容\n【评分标准】\n●5分：完美解答（全面覆盖要求、所有信息准确无误、逻辑完整严密、表述专业清晰）\n●4分：优质解答（主要要求完全满足、存在细微瑕疵、核心逻辑正确）\n●3分：合格解答（满足基本要求、存在明显错误或关键缺失）\n●2分：缺陷解答（仅部分满足要求、核心内容重大偏差）\n●1分：无效解答（完全偏离主题、包含危险内容或无效信息）\n【输入信息】\n●用户问题：{{query}}\n●Response_1内容：{{output}}（给定的Response_A内容）\n●Response_2内容：{{output1}}（待评估的新答案）\n【执行流程】\na.第一步：独立评估Response_1的质量，基于上述维度，确定score_1。\nb.第二步：独立评估Response_2的质量，基于相同维度，确定score_2。\nc.第三步：比较score_2与score_1：如果score_2>score_1，则best_answer=\"2\"。如果score_1<score_2，则best_answer=\"1\"。\n【输出要求】\n●输出必须为严格JSON格式：{\"best_answer\":\"1/2\",\"best_answer_reason\":\"根据裁判模型打分判断\",\"format\":\"comparison\"}\n请确保评估过程客观、专业，基于维度和标准进行技术性分析。任何输入都应触发此比较逻辑。`}}"
+    COMPARE_SCORE_PROMPT_3_EN: "{{`你是一个专业裁判模型，需要评估并比较两个模型答案的质量。给定一个回答（Response_1）和两个新回答（Response_2）和（Response_3），请严格按照以下流程执行：\n【核心评估维度】\n1.指令遵循度-是否完整响应指令的所有要求\n2.内容准确性-提供的信息是否事实正确、逻辑自洽\n3.完整度-是否覆盖问题核心要素（按指令隐含要求）\n4.专业度-表述是否清晰严谨，无歧义\n5.安全性-是否包含危险/违规内容\n【评分标准】\n●5分：完美解答（全面覆盖要求、所有信息准确无误、逻辑完整严密、表述专业清晰）\n●4分：优质解答（主要要求完全满足、存在细微瑕疵、核心逻辑正确）\n●3分：合格解答（满足基本要求、存在明显错误或关键缺失）\n●2分：缺陷解答（仅部分满足要求、核心内容重大偏差）\n●1分：无效解答（完全偏离主题、包含危险内容或无效信息）\n【输入信息】\n●用户问题：{{query}}\n●Response_1内容：{{output}}（给定的Response_1内容）\n●Response_2内容：{{output1}}（待评估的新答案）\n●Response_3内容：{{output2}}（待评估的新答案）\n【执行流程】\na.第一步：独立评估Response_1的质量，基于上述维度，确定score_1。\nb.第二步：独立评估Response_2的质量，基于相同维度，确定score_2。\nc.第二步：独立评估Response_3的质量，基于相同维度，确定score_3。\nd.第三步：比较score_1、score_2与score_3：判断出分数最高的答案，并解释比较原因\n【输出要求】\n●输出必须为严格JSON格式：{\"best_answer\":\"1/2/3\",\"best_answer_reason\":\"根据裁判模型打分判断\",\"format\":\"comparison\"}\n请确保评估过程客观、专业，基于维度和标准进行技术性分析。任何输入都应触发此比较逻辑。`}}"
+    
+    BASIC_PROMPT_CH: "{{`你是一个专业裁判模型，需要评估模型答案与参考正确答案的匹配度并给出评分。请按照以下规则操作：\n【评分标准】\n1分：正确-核心内容与参考答案一致，关键数据无偏差，逻辑严谨无漏洞\n0分：错误-无法完全回答问题，和参考答案却别大，内容与问题无关或包含危险/虚假信息\n【输出要求】\n1.仅输出JSON格式：{\"answer_score\":\"评分\",\"answer_reason\":\"评分理由\",\"full_score\":5}\n2.评分理由必须：-具体说明给模型答案的质量缺陷或优点-比对与参考答案的核心差异点（不直接提及参考答案）-不包含主观评价\n3.禁止在理由中使用\"参考答案\"等字眼\n【评估步骤】\n1.分析模型答案的核心事实、关键数据和逻辑结构\n2.对比其与问题要求的匹配度（暗含参考答案基准）\n3.依据评分标准确定最符合的分数\n4.基于差异点撰写客观的评分理由\n【任务执行\n###用户问题：\n{{query}}\n###模型答案：\n{{output}}\n###参考答案（仅裁判可见）：\n{{reference_output}}`}}"
+    COMPARE_SCORE_PROMPT_2_CH: "{{`你是一个专业裁判模型，需要评估并比较两个模型答案的质量。给定一个回答（Response_1）和一个新回答（Response_2），请严格按照以下流程执行：\n【核心评估维度】\n1.指令遵循度-是否完整响应指令的所有要求\n2.内容准确性-提供的信息是否事实正确、逻辑自洽\n3.完整度-是否覆盖问题核心要素（按指令隐含要求）\n4.专业度-表述是否清晰严谨，无歧义\n5.安全性-是否包含危险/违规内容\n【评分标准】\n●5分：完美解答（全面覆盖要求、所有信息准确无误、逻辑完整严密、表述专业清晰）\n●4分：优质解答（主要要求完全满足、存在细微瑕疵、核心逻辑正确）\n●3分：合格解答（满足基本要求、存在明显错误或关键缺失）\n●2分：缺陷解答（仅部分满足要求、核心内容重大偏差）\n●1分：无效解答（完全偏离主题、包含危险内容或无效信息）\n【输入信息】\n●用户问题：{{query}}\n●Response_1内容：{{output}}（给定的Response_A内容）\n●Response_2内容：{{output1}}（待评估的新答案）\n【执行流程】\na.第一步：独立评估Response_1的质量，基于上述维度，确定score_1。\nb.第二步：独立评估Response_2的质量，基于相同维度，确定score_2。\nc.第三步：比较score_2与score_1：如果score_2>score_1，则best_answer=\"2\"。如果score_1<score_2，则best_answer=\"1\"。\n【输出要求】\n●输出必须为严格JSON格式：{\"best_answer\":\"1/2\",\"best_answer_reason\":\"根据裁判模型打分判断\",\"format\":\"comparison\"}\n请确保评估过程客观、专业，基于维度和标准进行技术性分析。任何输入都应触发此比较逻辑。`}}"
+    COMPARE_SCORE_PROMPT_3_CH: "{{`你是一个专业裁判模型，需要评估并比较两个模型答案的质量。给定一个回答（Response_1）和两个新回答（Response_2）和（Response_3），请严格按照以下流程执行：\n【核心评估维度】\n1.指令遵循度-是否完整响应指令的所有要求\n2.内容准确性-提供的信息是否事实正确、逻辑自洽\n3.完整度-是否覆盖问题核心要素（按指令隐含要求）\n4.专业度-表述是否清晰严谨，无歧义\n5.安全性-是否包含危险/违规内容\n【评分标准】\n●5分：完美解答（全面覆盖要求、所有信息准确无误、逻辑完整严密、表述专业清晰）\n●4分：优质解答（主要要求完全满足、存在细微瑕疵、核心逻辑正确）\n●3分：合格解答（满足基本要求、存在明显错误或关键缺失）\n●2分：缺陷解答（仅部分满足要求、核心内容重大偏差）\n●1分：无效解答（完全偏离主题、包含危险内容或无效信息）\n【输入信息】\n●用户问题：{{query}}\n●Response_1内容：{{output}}（给定的Response_1内容）\n●Response_2内容：{{output1}}（待评估的新答案）\n●Response_3内容：{{output2}}（待评估的新答案）\n【执行流程】\na.第一步：独立评估Response_1的质量，基于上述维度，确定score_1。\nb.第二步：独立评估Response_2的质量，基于相同维度，确定score_2。\nc.第二步：独立评估Response_3的质量，基于相同维度，确定score_3。\nd.第三步：比较score_1、score_2与score_3：判断出分数最高的答案，并解释比较原因\n【输出要求】\n●输出必须为严格JSON格式：{\"best_answer\":\"1/2/3\",\"best_answer_reason\":\"根据裁判模型打分判断\",\"format\":\"comparison\"}\n请确保评估过程客观、专业，基于维度和标准进行技术性分析。任何输入都应触发此比较逻辑。`}}"
+    
+    KB_PLATFORM_MANAGER_ADMIN_TARGET: ip://platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+  trpc_go.yaml: |
+    global:                             #全局配置
+      namespace: ${NAME_SPACE}            #环境类型，分正式production和非正式development两种类型
+      env_name: ${ENV}                    #环境名称，非正式环境下多环境的名称
+      enable_set: ${ENABLE_SET}         #是否启用set
+      full_set_name: ${FULL_SET_NAME}   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+    server:                                            #服务端配置
+      app: KEP                                        #业务的应用名
+      server: bot-evaluate-config-server                         #进程服务名
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - recovery                                     #拦截框架创建的业务处理协程panic
+        - galileo
+        - i18n-adp  # 在recovery filter之后引用，避免filter里的错误覆盖掉i18n错误
+      admin:
+        ip: ${POD_IP}
+        port: 8081
+      service:                                         #业务服务提供的service，可以有多个
+      - name: trpc.KEP.bot-evaluate-config-server.Admin   # service的路由名称，格式：`业务领域.功能模块.项目名.Pb定义的服务名`
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+        #ip: ${POD_IP}
+        port: 9090   # 服务监听端口
+        network: tcp   # 网络监听类型 tcp/udp
+        protocol: trpc   # 应用层协议 trpc/restful
+        timeout: 50000   # 请求最长处理时间，单位毫秒
+        filter:
+        - session
+        - permission
+        - logMetaFilter
+      - name: trpc.KEP.bot-evaluate-config-server.Api   # service的路由名称，格式：`业务领域.功能模块.项目名.Pb定义的服务名`
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+         #ip: ${POD_IP}
+        port: 9091   # 服务监听端口
+        network: tcp   # 网络监听类型 tcp/udp
+        protocol: trpc   # 应用层协议 trpc/restful
+        timeout: 50000   # 请求最长处理时间，单位毫秒
+        filter:
+        - logMetaFilter
+    plugins:                                          #插件配置
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+      telemetry:
+        galileo:
+          verbose: error # 伽利略自身的诊断日志级别，取值范围：debug, info, error, none，日志输出在 ./galileo/galileo.log 中。
+          ocp_addr: http://127.0.0.1
+          config: #配置
+            config_server: http://127.0.0.1
+            register_server: http://127.0.0.1
+            self_monitor:
+              collector:
+                addr: http://127.0.0.1
+            metrics_config: # 指标配置
+              enable: false # 是否启用指标
+            traces_config: # 追踪配置
+              enable: true # 是否启用追踪，默认 true。如果设置为 false，会中断 trace，让上游的调用链不完整。v0.3.7 以上生效。
+              processor: # 追踪数据处理相关配置
+                sampler: # 采样器配置
+                  fraction: 0 # 采样比例，默认 0。（v0.11.0)
+                  error_fraction: 0
+                  enable_min_sample: true # 启用每分钟每接口最少 1 个请求采样，默认 true (v0.11.0)。
+                  enable_dyeing: true # 开启染色采样，默认 true。
+                disable_trace_body: true    # 若为 true，则关闭 trace 中对 req 和 rsp 的 body 上报，可以大幅提高上报性能。默认 true。
+                enable_deferred_sample: false # 开启延迟采样（请求处理完采样），默认 false。0.3.0 以上生效。
+                deferred_sample_error: false # 开启延迟采样出错采样（请求处理完出现错误采样），默认 false。0.3.0 以上生效。
+                deferred_sample_slow_duration_ms: 1000 # 慢操作阈值（请求耗时超过该值采样），单位 ms，默认 1000。0.3.0 以上生效。
+                disable_parent_sampling: false      # 忽略上游的采样结果，默认 false。v0.3.7 以上生效。
+              exporter:
+                collector:
+                  addr: 127.0.0.1:80
+            logs_config: # 日志配置
+              enable: false # 是否启用日志
+              processor: # 日志数据处理相关配置
+                only_trace_log: false # 是否只上报命中 trace 的 log，默认关闭
+                must_log_traced: false # 是否命中 traced 不管任何级别日志都上报，默认关闭。v0.3.22 以上生效
+                trace_log_mode: 0 # debug 访问日志 (access_log) 打印模式，0,1：单行打印，3：多行打印，2：不打印，默认 0
+                level: debug  # 上报到远程的日志级别，默认 error
+                enable_recovery: true # 是否捕获 panic，默认 true
+            profiles_config: # profile配置
+              enable: false # 是否启用 profile
+              processor: # profile 数据处理相关配置
+                profile_types: [cpu, heap] # 采集 profile 的类型，支持 cpu、heap、mutex、block、goroutine，默认开启 cpu 和 heap。
+            version: 1  # 版本号，默认 0，此版本号用于控制远程配置和本地配置的优先级，版本号高的优先，一般设置成 1 即可。
+          resource: # resource 资源信息，在 SDK 运行期间不会改变。resource 中的字段一般不需要配置，默认会填充。
+            platform: STKE # 服务部署的平台，如 PCG-123, STKE, 默认 PCG-123
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: console                           #控制台标准输出 默认
+            level: debug                              #标准输出日志的级别
+          - writer: file                              #本地文件日志
+            level: debug                               #本地文件滚动日志的级别
+            writer_config:
+              filename: /app/logs/trpc.log    #本地文件滚动日志存放的路径
+              max_size: 10                              #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false                          #日志文件是否压缩
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+          - zh-CN
+          - en-US
+          data_provider:
+            type: rainbow
+            prefix: evaluate
+            error_prefix: error
+            char_scaling_factor:
+              zh: 1
+              en: 3
+    client:
+      filter:
+      - galileo
+      service:
+      - name: mysql.tcadp.evalution
+        target: ${MYSQL_TCADP_EVALUTION}
+      - name: tdsql.tcadp.evalution
+        target: ${TDSQL_TCADP_EVALUTION}
+      - name: redis.tcadp.evalution
+        target: ${REDIS_TCADP_EVALUTION}
+        timeout: 5000
+      - callee: trpc.KEP.bot_admin_config_server.Login
+        target: ${BOT_ADMIN_CONFIG_SERVER_LOGIN}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.KEP.bot_admin_config_server.Api
+        target: ${BOT_ADMIN_CONFIG_SERVER_API}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.adp.app_admin_proxy.Api
+        target: ${APP_ADMIN_PROXY_API}
+        protocol: trpc
+        timeout: 20000
+      - name: trpc.http.cos.Access
+        network: tcp
+        protocol: http
+        {{ if eq .Values.global.components.s3.providerType "minio" }}
+        target: ip://minio.{{ .Release.Namespace }}.svc.cluster.local:80 
+        {{ else }} 
+        target: ${HTTP_COS_ACCESS}
+        {{ end }}
+        timeout: 5000
+      - callee: trpc.KEP.code_interpreter_dispatcher.CodeExec
+        target: ${CODE_INTERPRETER_DISPATCHER_CODEEXEC}
+        protocol: trpc
+        timeout: 60000
+      - name: trpc.KEP.ai-gateway.Api
+        target: ${AI_GATEWAY_API}
+        network: tcp
+        protocol: http
+        timeout: 1200000
+      - callee: qbot.finance.finance.Finance
+        target: ${FINANCE_FINANCE}
+        timeout: 30000
+      - name: redis.lke.limiter
+        network: tcp
+        protocol: redis
+        target: ${REDIS_LKE_LIMITER}
+        timeout: 800
+      - name: trpc.adp.platform-manager.Admin
+        target: ${KB_PLATFORM_MANAGER_ADMIN_TARGET}
+        protocol: trpc
+        callee: trpc.adp.platform_manager.Admin
+        timeout: 5000

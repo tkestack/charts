@@ -1,0 +1,11 @@
+apiVersion: v2
+name: vector-db-manager
+description: A helm chart for vector-db-manager
+type: application
+
+version: 1.0.0
+
+appVersion: 1.0.0
+maintainers:
+  - name: beandong
+  - name: v_iferen

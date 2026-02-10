@@ -1,0 +1,12 @@
+apiVersion: v2
+name: lke-ti-gateway
+description: A Helm chart for TiGateway
+
+type: application
+version: 3.9.0
+appVersion: 3.9.0
+
+sources:
+  - https://git.woa.com/ti2.0/ti-infrastructure/ti-gateway
+maintainers:
+  - name: cachediao

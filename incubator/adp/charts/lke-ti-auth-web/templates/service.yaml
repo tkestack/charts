@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ti-auth-web
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: ti-auth-web
+spec:
+  ports:
+    - name: http-12000-12000
+      port: 12000
+      protocol: TCP
+      targetPort: 12000
+  selector:
+    app: ti-auth-web

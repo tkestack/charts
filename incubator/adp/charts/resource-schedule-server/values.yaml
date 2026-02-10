@@ -1,0 +1,23 @@
+tad:
+  type: helm
+  images:
+    resource-schedule-server:
+      url: "ccr.ccs.tencentyun.com/tke-market/resource-schedule-server:5_2601080013_master_private_085a145b_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+resourcescheduleserver:
+  resources:
+    limits:
+      cpu: 1
+      memory: 4Gi
+    requests:
+      cpu: 1
+      memory: 1Gi
+imagePullSecretName: qcloudregistrykey

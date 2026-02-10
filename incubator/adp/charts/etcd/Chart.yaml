@@ -1,0 +1,8 @@
+apiVersion: v2
+name: etcd
+version: 1.0.0
+appVersion: 3.5.0
+description: Etcd distributed key-value store for Kubernetes
+
+maintainers:
+  - name: adp-team

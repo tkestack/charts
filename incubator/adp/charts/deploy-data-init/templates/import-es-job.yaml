@@ -1,0 +1,67 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-import-es-job
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-import-es-job
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-succeeded": continue
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 300
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-import-es-job
+        release: {{ .Release.Name }}
+    spec:
+      restartPolicy: OnFailure
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      containers:
+      - name: import-es
+        image: {{ (index .Values.tad.images "cs-data-init").url }}
+        imagePullPolicy: IfNotPresent
+        workingDir: /app
+        command:
+          - "/bin/sh"
+          - "-ecx"
+          - |
+            echo "Starting ES index import..."
+            # Set ES replicas based on environment
+            if [ "{{ .Values.global.helmfile_env_name }}" = "tcs" ]; then
+              ES_REPLICAS=2
+            else
+              ES_REPLICAS=0
+            fi
+            
+            # Choose script based on deploy mode
+            if [ "{{ .Values.global.deployMode | default "standard" }}" = "atomic_rag" ]; then
+              echo "Running atomic_es_write_ahead.py for ES import..."
+              python3 /app/script/atomic_es_write_ahead.py \
+                "{{ .Values.global.components.es.user }}" \
+                "{{ .Values.global.components.es.password }}" \
+                "http://{{ (index .Values.global.components.es.hosts 0) }}:{{ .Values.global.components.es.port }}" \
+                ${ES_REPLICAS}
+            else
+              echo "Running es_write_ahead.py for ES import..."
+              python3 /app/script/es_write_ahead.py \
+                "{{ .Values.global.components.es.user }}" \
+                "{{ .Values.global.components.es.password }}" \
+                "http://{{ (index .Values.global.components.es.hosts 0) }}:{{ .Values.global.components.es.port }}" \
+                ${ES_REPLICAS}
+            fi
+            echo "ES index import completed successfully!"
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1G
+          requests:
+            cpu: "500m"
+            memory: 512M

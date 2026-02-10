@@ -1,0 +1,12 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: ai-gateway-application
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    plugins:
+      - name: react
+        properties:
+          remove_tools: true
+

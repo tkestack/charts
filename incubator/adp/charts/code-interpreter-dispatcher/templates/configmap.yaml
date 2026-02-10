@@ -1,0 +1,362 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-code-interpreter-dispatcher
+  namespace: {{ .Release.Namespace }}
+data:
+  code-interpreter_en-US.json: |
+    {
+      "session id为空": "Session id is empty",
+      "session id正在执行": "Session id is executing",
+      "没有可用的kernel": "No available pod",
+      "Found File, but upload to COS failed.": "Found File, but upload to COS failed.",
+      "Executed code failed, you need use key word 'await' to run a async code.": "Executed code failed, you need use key word 'await' to run a async code."
+    }
+  code-interpreter_zh-CN.json: |
+    {
+      "session id为空": "会话ID为空",
+      "session id正在执行": "会话ID正在执行",
+      "没有可用的kernel": "没有可用的容器",
+      "Found File, but upload to COS failed.": "上传文件失败",
+      "Executed code failed, you need use key word 'await' to run a async code.": "执行代码失败"
+    }
+  error_en-US.json: |
+    {
+      "黑名单操作": "Blacklist Operation",
+      "pod配置不存在": "Pod configuration does not exist",
+      "sse配置不存在": "SSE configuration does not exist",
+      "Kube client init failed": "Kubernetes client initialization failed",
+      "获取token加锁失败，请稍后重试": "Failed to acquire lock for token retrieval, please try again later",
+      "执行用户不合法": "Invalid execution user",
+      "账号Pod达到上限": "Account Pod limit reached"
+    }
+  error_zh-CN.json: |
+    {
+      "黑名单操作": "黑名单操作",
+      "pod配置不存在": "容器配置不存在",
+      "sse配置不存在": "SSE配置不存在",
+      "Kube client init failed": "集群客户端初始化失败",
+      "获取token加锁失败，请稍后重试": "获取token加锁失败，请稍后重试",
+      "执行用户不合法": "执行用户不合法",
+      "账号Pod达到上限": "账号Pod达到上限"
+    }
+  main.yaml: |
+    # main.yaml
+
+    # 默认最大长度
+    max_err_len: 10000
+
+    # 上传配置
+    upload:
+      channel_size: 10 # 上传文件通道大小
+      prefix: code-interpreter/%s/%s # 上传文件前缀
+      image_types: # 图片格式
+        png: 1
+        jpeg: 1
+        jpg: 1
+        bmp: 1
+        tiff: 1
+        gif: 1
+        svg: 1
+
+    # 上传服务配置
+    storage:
+      {{ include "qbot.code_interpreter_dispatcher.s3_storage" . }}
+
+    # redis锁配置
+    redis_lock:
+      wait_time: 60
+      expire_time: 60
+      lock_key: token_lock_key
+      lock_value: apply_token
+
+    # pod节点更新配置
+    pod_config:
+      type: lb
+      namespace: {{ .Release.Namespace }}
+      service_name: kernel
+
+      max_pods: 300     # 最大数量
+      min_pods: 10      # 最小数量
+      upper_thr: 0.8    # 扩容阈值
+      lower_thr: 0.3    # 缩容阈值
+
+    # token管理配置
+    token_config:
+      real_time: false
+      node_expire_time: 300 # token过期时间（单位：s）
+      max_try_count: 120
+      try_wait_time: 500ms
+
+      limit_uin_max_pod: true
+      default_uin_max_pod: 5
+      uin_limit_whitelist:
+        100034812856: 300 # hank
+        100022476908: 30 # ssv 为村项目，ritaye
+        100015724999: 300 # 瑞幸压测
+        3289682752: 100 # 白日梦游戏智能客服
+
+    # 远程配置，目前只存储初始化python代码
+    remote_config:
+      codes:
+        python:
+          init_code: "# customize matplotlib font\nimport matplotlib.pyplot as plt\nplt.style.use('default')\nplt.rcParams['font.sans-serif'] = ['Source Han Sans CN']\nplt.rcParams[\"axes.unicode_minus\"] = False\nfrom pylab import mpl\nmpl.rcParams[\"font.sans-serif\"] = [\"Source Han Sans CN\"]\nmpl.rcParams[\"axes.unicode_minus\"] = False\n\n# customize pandas display options\nimport pandas as pd\npd.set_option(\"display.max_columns\", None)\npd.set_option(\"display.html.table_schema\", False)\npd.set_option(\"display.notebook_repr_html\", False)"
+
+    # sse请求配置
+    sse_option:
+      conn_endpoint: http://%s/execute
+      client_type: http
+      stream: code_execute
+      max_buffer_size: 160000000
+      timeout: 60
+
+    # 黑名单配置
+    black_list:
+      "%pip": 1
+      "!pip": 1
+      "woa.com": 1
+      "subprocess": 1
+      "import ctypes": 1
+      "import socket": 1
+      "threading": 1
+      "multiprocessing": 1
+      "automaxprocs": 1
+      "distro": 1
+      "cfs_sh": 1
+      "__builtins__": 1
+      "__globals__": 1
+      ":8080": 1
+      ":8081": 1
+      ":8091": 1
+      ":80": 1
+      ":53": 1
+      ":443": 1
+      ":7653": 1
+      ":7779": 1
+      ":9988": 1
+      ":9999": 1
+      ":38930": 1
+      ":39398": 1
+      ":49900": 1
+      ":62574": 1
+      ":62586": 1
+      ":62784": 1
+      "curl": 1
+      "popen": 1
+      "system": 1
+      "getstatusoutput": 1
+      "getoutput": 1
+      "wget": 1
+      "RainbowConfig": 1
+      "listdir": 1
+      "scandir": 1
+      "pathlib": 1
+      "walk": 1
+      "shutil": 1
+      "ping": 1
+
+  placeholder.yaml: |
+    # placeholder.yaml
+  trpc_go.yaml: |
+    global:                             #全局配置
+      namespace: ${NAME_SPACE}            #环境类型，分正式production和非正式development两种类型
+      env_name: ${ENV}                     #环境名称，非正式环境下多环境的名称
+      enable_set: ${ENABLE_SET}         #是否启用set
+      full_set_name: ${FULL_SET_NAME}   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+
+    server:                                            #服务端配置
+      app: KEP                                         #业务的应用名
+      server: code-interpreter-dispatcher                       #进程服务名
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/bin/conf/                 #业务配置文件所在路径
+      data_path: /app/bin/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - recovery
+        - i18n-adp
+        - galileo
+        - opentelemetry
+      stream_filter:
+        - recovery                                     #拦截框架创建的业务处理协程panic
+        - galileo
+      admin:
+        ip: ${POD_IP}  # admin 的 ip，配置网卡 nic 也可以
+        port: 8081     # admin 的 port，必须同时配置这里的 ip port 才会启动 admin
+      service:                                          #业务服务提供的service，可以有多个
+        - name: trpc.KEP.code-interpreter-dispatcher.Dispatch      #service的路由名称
+          ip: ${POD_IP}                             #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+          port: 8000                #服务监听端口 可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: http_no_protocol               #应用层协议 trpc http
+          timeout: 60000                            #请求最长处理时间 单位 毫秒
+        - name: trpc.KEP.code-interpreter-dispatcher.CodeExec  #service的路由名称
+          ip: ${POD_IP}                                 #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+          port: 8001                                    #服务监听端口 可使用占位符 ${port}
+          network: tcp                                  #网络监听类型  tcp udp
+          protocol: trpc                                #应用层协议 trpc http
+          timeout: 60000                                #请求最长处理时间 单位 毫秒
+          server_async: true                            #开启异步处理
+          idletime: 6000000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+        - name: trpc.KEP.code-interpreter-dispatcher.syncNodes   # service 的路由名称
+          ip: ${POD_IP}
+          port: 9090                                                      # 服务监听端口 可使用占位符 ${port}
+          network: "* 0/1 * * * ?startAtOnce=1&scheduler=syncNodes"      # 任务调度策略
+          protocol: timer                                                 # 设置服务类型为定时器服务
+          timeout: 10000
+
+    plugins:                                          #插件配置
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: console                           #控制台标准输出 默认
+            level: error                              #标准输出日志的级别
+            #caller_skip: 3
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+          - writer: file                              #本地文件日志
+            level: info                               #本地文件滚动日志的级别
+            writer_config:
+              filename: /app/logs/trpc.log    #本地文件滚动日志存放的路径
+              max_size: 100                             #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+        galileo:
+          verbose: error   # 伽利略自身的诊断日志级别，取值范围：debug, info, error, none，日志输出在 ./galileo/galileo.log 中。
+          ocp_addr: "http://127.0.0.1"
+          config: #配置
+            config_server: "http://127.0.0.1"
+            register_server: "http://127.0.0.1"
+            self_monitor:
+              collector:
+                addr: "http://127.0.0.1"
+            metrics_config: # 指标配置
+              enable: false    # 是否启用指标
+            traces_config: # 追踪配置
+              enable: true    # 是否启用追踪，默认 true。如果设置为 false，会中断 trace，让上游的调用链不完整。v0.3.7 以上生效。
+              processor: # 追踪数据处理相关配置
+                sampler: # 采样器配置
+                  fraction: 0   # 采样比例，默认 0。（v0.11.0)
+                  error_fraction: 0
+                  enable_min_sample: true  # 启用每分钟每接口最少 1 个请求采样，默认 true (v0.11.0)。
+                  enable_dyeing: true # 开启染色采样，默认 true。
+                disable_trace_body: true          # 若为 true，则关闭 trace 中对 req 和 rsp 的 body 上报，可以大幅提高上报性能。默认 true。
+                enable_deferred_sample: false     # 开启延迟采样（请求处理完采样），默认 false。0.3.0 以上生效。
+                deferred_sample_error: false      # 开启延迟采样出错采样（请求处理完出现错误采样），默认 false。0.3.0 以上生效。
+                deferred_sample_slow_duration_ms: 1000    # 慢操作阈值（请求耗时超过该值采样），单位 ms，默认 1000。0.3.0 以上生效。
+                disable_parent_sampling: false            # 忽略上游的采样结果，默认 false。v0.3.7 以上生效。
+              exporter:
+                collector:
+                  addr: "127.0.0.1:80"
+            logs_config: # 日志配置
+              enable: false    # 是否启用日志
+              processor: # 日志数据处理相关配置
+                only_trace_log: false  # 是否只上报命中 trace 的 log，默认关闭
+                must_log_traced: false # 是否命中 traced 不管任何级别日志都上报，默认关闭。v0.3.22 以上生效
+                trace_log_mode: 0   # debug 访问日志 (access_log) 打印模式，0,1：单行打印，3：多行打印，2：不打印，默认 0
+                level: debug        # 上报到远程的日志级别，默认 error
+                enable_recovery: true # 是否捕获 panic，默认 true
+            profiles_config:    # profile配置
+              enable: false # 是否启用 profile
+              processor: # profile 数据处理相关配置
+                profile_types: ["cpu", "heap"] # 采集 profile 的类型，支持 cpu、heap、mutex、block、goroutine，默认开启 cpu 和 heap。
+            version: 1        # 版本号，默认 0，此版本号用于控制远程配置和本地配置的优先级，版本号高的优先，一般设置成 1 即可。
+          resource: # resource 资源信息，在 SDK 运行期间不会改变。resource 中的字段一般不需要配置，默认会填充。
+            platform: STKE   # 服务部署的平台，如 PCG-123, STKE, 默认 PCG-123
+
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+      registry: #服务注册配置
+        # polaris: #北极星名字注册服务的配置
+        #   debug: true
+        #   register_self: false
+        #   heartbeat_interval: 3000                    #名字注册服务心跳上报间隔
+        #   heartbeat_timeout: 1000                     #名字服务心跳超时
+        #   service:
+        #     - name: trpc.KEP.code-interpreter-dispatcher.Dispatch    #service name 与上面的service配置一一对应
+        #       namespace: Development              #环境类型，分正式Production和非正式Development两种类型
+        #       token: dff644cb15634f24a45f6c88c8e64752             #服务注册所需要的 token
+        #     - name: trpc.KEP.code-interpreter-dispatcher.CodeExec    #service name 与上面的service配置一一对应
+        #       namespace: Development              #环境类型，分正式Production和非正式Development两种类型
+        #       token: 3f25652dfb1944fb8b6a81b0657a8c17             #服务注册所需要的 token
+
+      selector: #针对用户自定义的selector的配置
+        polaris: #针对polaris整体api的内部配置
+          protocol: grpc                              #名字服务远程交互协议类型
+
+    client:                                            #客户端调用的后端配置
+      namespace: ${NAME_SPACE}                           #针对所有后端的环境
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - galileo
+        - opentelemetry
+      stream_filter:
+        - galileo
+      service:
+        # redis
+        - name: redis.code-interpreter-dispatcher
+          network: tcp
+          target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/12
+          password: "{{ .Values.global.components.redis.password }}"
+          timeout: 800
+
+        # cos
+        - name: trpc.http.cos.Access
+          namespace: Production
+          network: tcp
+          protocol: http
+          {{ if eq .Values.global.components.s3.providerType "minio" }}
+          target: ip://minio.ti-inf.svc.cluster.local:80
+          {{ else if eq .Values.global.components.s3.providerType "obs" }}
+          target: ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}
+          {{ else }}
+          target: dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn
+          {{ end }}
+          timeout: 5000
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+            - zh-CN
+            - en-US
+          data_provider:
+            type: rainbow
+            prefix: code-interpreter
+            error_prefix: error
+            char_scaling_factor:
+              zh-CN: 1
+              en-US: 3

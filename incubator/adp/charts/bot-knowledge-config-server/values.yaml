@@ -1,0 +1,33 @@
+tad:
+  type: helm
+  images:
+    bot-knowledge-config-server:
+      url: "ccr.ccs.tencentyun.com/tke-market/kb-config:174_2602092125_private_v3.2.4.2_file_parse_atomic_062cfbc7_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+  
+botknowledgeconfigserver:
+  doc_to_index:
+    runners: 5 # 处理协程数，文档并发数，即同时最多处理N个文档
+    batch: 5 # 切片并发数，即每个文档并发处理N个切片
+  doc_release_max_limit: 100 # 文档导入，未发布数量限制,超限不可继续上传文档
+  excel_char_size_limit: 1000000 # excel（xls/xlsx）文档字符数上限
+  qa_extract_model_name: "cs-normal" # 文档生成问答的模型名称
+  similar_question_model_name: "cs-normal" # 生成相似问的模型名称
+  sync_vector_add_batch_size: 30 # 添加离线文档同步vector每批数量
+  sync_vector_deleted_batch_size: 100 # 删除实时文档同步vector每批数量
+  resources:
+    limits:
+      cpu: 2
+      memory: 4Gi
+    requests:
+      cpu: 1
+      memory: 2Gi
+imagePullSecretName: qcloudregistrykey

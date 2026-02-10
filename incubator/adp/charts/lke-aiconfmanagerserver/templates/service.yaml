@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: aiconfmanagerserver
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: aiconfmanagerserver
+spec:
+  ports:
+    - name: http
+      port: 10001
+      protocol: TCP
+      targetPort: 10001
+    - name: trpc
+      port: 10002
+      protocol: TCP
+      targetPort: 10002
+  selector:
+    app: aiconfmanagerserver
+  sessionAffinity: None
+  type: ClusterIP

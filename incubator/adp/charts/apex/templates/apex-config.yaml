@@ -1,0 +1,270 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: apex-config
+  namespace: {{ .Release.Namespace }}
+data:
+  config.yaml: |
+    name: apex
+    listen_addr: 0.0.0.0:80
+    env: online
+    pid: /tmp/apex.pid
+    data_dir: ./data
+    profile: true
+    debug: false
+    local: true
+    redis:
+      addr: {{ if ((.Values.global.components).redis).hosts }}{{ (index .Values.global.components.redis.hosts 0) }}:{{ .Values.global.components.redis.port | default 6379 }}{{ else }}{{ end }}
+      password: "{{ ((.Values.global.components).redis).password | default "" }}"
+    log:
+      writer: file
+      level: info
+      file_name: /data/log/apex/apex.log
+      file_max_age: 7
+    tracing:
+      addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+      tenant: qidian
+      sampler: ratio
+      sampler_ratio: 0.01
+      {{- if ((.Values.global.observability).apm).attributes }}
+      attributes:
+        {{- range $key, $value := .Values.global.observability.apm.attributes }}
+      - key: {{ $key }}
+        value: {{ $value }}
+        {{- end }}
+      {{- end }}
+    registry:
+      type: dns
+    cors:
+      allow_methods:
+        - GET
+        - POST
+        - HEAD
+        - PATCH
+        - PUT
+        - DELETE
+        - OPTIONS
+      allow_headers:
+        - Authorization
+        - Content-Type
+        - X-Requested-With
+        - Accept
+        - Accept-Language
+        - Origin
+        - Cache-Control
+        - Pragma
+        - Expires
+        - Range
+        - DNT
+        - X-XSRF-TOKEN
+        - X-Traceid
+        - X-Gseq
+        - Traceid
+        - Token
+        - X-Language-Category
+        - x-timestamp
+        - yxw-accounttype
+        - yxw-secretid
+        - _env_name_
+        - X-Tenant-Id
+        - X-Appid
+        - X-D2
+        - X-Aid
+        - X-Token
+        - X-Token-Type
+      allow_origins:
+        - https://$#qidian_domain#
+        - https://$#qidian_domain#
+        - https://*.$#cookie_domain#
+        - https://*.$#cookie_domain#
+        - https://*.shou.org.cn  # 开放大学
+      allow_credentials: true
+      exposed_headers:
+        - Content-Length
+        - Content-Range
+      max_age: 3600
+    client:
+      # inner 代理服务
+      - name: trpc_to_inner_service
+        addr: trpc-to-inner.{{ .Release.Namespace }}.svc.cluster.local:80
+        namespace: Test
+
+      # 权限校验服务
+      - name: privilege_service
+        addr: privilege.{{ .Release.Namespace }}.svc.cluster.local:80
+        namespace: Test
+
+      # 企点认证服务
+      - name: qidian_auth_web_service
+        addr: account-web.{{ .Release.Namespace }}.svc.cluster.local:80
+        namespace: Test
+
+      # PTLogin 认证服务
+      - name: ptlogin_auth_service
+        addr: ptlogin-auth.{{ .Release.Namespace }}.svc.cluster.local:80
+        namespace: Production
+        metadata:
+          domain_id: 258
+
+
+    bo_common:
+      meta_server:
+        target: dns:///bo-meta.{{ .Release.Namespace }}.svc.cluster.local:80
+        network: tcp
+        protocol: trpc
+        namespace: Production
+        timeout: 3000
+      bo_servers:
+        marketingRecommendPosition:
+          callee: marketing.recommend.position.MarketingRecommendPosition
+          name: marketing.recommend.position.MarketingRecommendPosition
+          target: dns:///marketing-recommend-manage-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingRecommendStrategy:
+          callee: marketing.recommend.strategy.MarketingRecommendStrategy
+          name: marketing.recommend.strategy.MarketingRecommendStrategy
+          target: dns:///marketing-recommend-manage-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        strategyRelatedEntity:
+          name: marketing.recommend.strategyRelatedEntity
+          target: dns:///marketing-recommend-manage-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingRecommendProductRule:
+          callee: marketing.recommend.productRule.MarketingRecommendProductRule
+          name: marketing.recommend.productRule.MarketingRecommendProductRule
+          target: dns:///marketing-recommend-manage-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingRecommendContentRule:
+          callee: marketing.recommend.contentRule.MarketingRecommendContentRule
+          name: marketing.recommend.contentRule.MarketingRecommendContentRule
+          target: dns:///marketing-recommend-manage-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingRecommendProductManage:
+          callee: marketing.recommend.library.MarketingRecommendProduct
+          name: marketing.recommend.library.MarketingRecommendProduct
+          target: dns:///marketing-recommend-manage-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingRecommendProductExtendTypes:
+          callee: marketing.recommend.library.marketingRecommendProductExtendTypes
+          name: marketing.recommend.library.marketingRecommendProductExtendTypes
+          target: dns:///marketing-recommend-manage-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingRecommendContentExtendTypes:
+          callee: marketing.recommend.library.marketingRecommendContentExtendTypes
+          name: marketing.recommend.library.marketingRecommendContentExtendTypes
+          target: dns:///marketing-recommend-manage-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingRecommendContentManage:
+          callee: marketing.recommend.library.MarketingRecommendContent
+          name: marketing.recommend.library.MarketingRecommendContent
+          target: dns:///marketing-recommend-manage-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingRecommendProductPreview:
+          callee: marketing.recommend.preview.MarketingRecommendProductPreview
+          name: marketing.recommend.preview.MarketingRecommendProductPreview
+          target: dns:///marketing-recommend-manage-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingRecommendContentPreview:
+          callee: marketing.recommend.preview.MarketingRecommendContentPreview
+          name: marketing.recommend.preview.MarketingRecommendContentPreview
+          target: dns:///marketing-recommend-manage-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingLoyaltyPointRecord:
+          target: dns:///rule-engine-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingLoyaltyPointBill:
+          target: dns:///rule-engine-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingLoyaltyShop:
+          name: marketing.loyalty.benefits.bo.trpc
+          target: dns:///benefits-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingLoyaltyCoupon:
+          name: marketing.loyalty.benefits.Benefits
+          callee: marketing.loyalty.benefits.Benefits
+          target: dns:///benefits-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingLoyaltyCouponRecord:
+          name: marketing.loyalty.benefits.bo.trpc
+          callee: marketing.loyalty.benefits.CouponRecord
+          target: dns:///benefits-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingLoyaltyCouponApplicableGoods:
+          name: marketing.loyalty.benefits.Benefits
+          callee: marketing.loyalty.benefits.Benefits
+          target: dns:///benefits-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingLoyaltyGoods:
+          name: marketing.loyalty.benefits.bo.trpc
+          target: dns:///benefits-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingLoyaltyCouponRecordLimit:
+          name: marketing.loyalty.benefits.bo.trpc
+          target: dns:///benefits-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingLoyaltyCouponRecordRetry:
+          name: marketing.loyalty.benefits.bo.trpc
+          target: dns:///benefits-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingLoyaltyCouponUpdateRetry:
+          name: marketing.loyalty.benefits.bo.trpc
+          target: dns:///benefits-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingLoyaltyCouponPackageRecordRetry:
+          name: marketing.loyalty.benefits.bo.trpc
+          target: dns:///benefits-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingLoyaltyCouponPackageApplicableCoupon:
+          name: marketing.loyalty.benefits.Benefits
+          callee: marketing.loyalty.benefits.Benefits
+          target: dns:///benefits-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingLoyaltyCouponPackage:
+          name: marketing.loyalty.benefits.Benefits
+          callee: marketing.loyalty.benefits.CouponPackage
+          target: dns:///benefits-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        marketingLoyaltyCouponPackageRecord:
+          name: marketing.loyalty.benefits.Benefits
+          callee: marketing.loyalty.benefits.CouponPackageRecord
+          target: dns:///benefits-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        customerServiceCommonInterfaceInputParam:
+          name: customer_service.common.interface_management.bo.trpc
+          target: dns:///interface-management-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        customerServiceCommonInterfaceOutputParam:
+          name: customer_service.common.interface_management.bo.trpc
+          target: dns:///interface-management-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        customerServiceCommonInterface:
+          name: customer_service.common.interface_management.bo.trpc
+          target: dns:///interface-management-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        basicCommonCategory:
+          name: basic.common.category.Category
+          target: dns:///category-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        importExport:
+          callee: marketing.basic.common_task.TaskTrpcService
+          name: marketing.basic.common_task.TaskTrpcService
+          target: dns:///common-task.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        basicCorpStaff:
+          name: basic.corp.staff
+          target: dns:///org-bo.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        roUiMetaConfigs:
+          name: basic.bo.meta.bo.trpc
+          target: dns:///bo-meta.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        objectList:
+          name: basic.bo.meta.bo.trpc
+          target: dns:///bo-meta.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+        propertyDefinition:
+          name: basic.bo.meta.bo.trpc
+          target: dns:///bo-meta.{{ .Release.Namespace }}.svc.cluster.local:80
+          namespace: Production
+    bo:
+      mashup_bo: ["marketingRecommendPosition","marketingRecommendStrategy","marketingLoyaltyCouponPackage","marketingLoyaltyCoupon","marketingLoyaltyShop","marketingLoyaltyGoods"]

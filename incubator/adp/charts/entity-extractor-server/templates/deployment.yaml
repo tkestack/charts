@@ -1,0 +1,189 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    ti.cloud.tencent.com/resource-quota: unlimited
+  labels:
+    app: entity-extractor-server
+  name: entity-extractor-server
+  namespace: {{ .Release.Namespace }}
+spec:
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  selector:
+    matchLabels:
+      app: entity-extractor-server
+  template:
+    metadata:
+      labels:
+        app: entity-extractor-server
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - entity-extractor-server
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: GPUName
+                    operator: DoesNotExist
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: product
+                    operator: In
+                    values:
+                      - lke
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - env:
+            - name: DEPLOYMENT_ENVIRONMENT
+              value: TCS
+            - name: __AppEnname
+              value: EntityExtractorServer
+            - name: __ProjectEnname
+              value: yunxiaoweipingtai
+            - name: __AppGroupEnname
+              value: SmartAssistant
+            - name: __Env
+              value: prod
+            - name: __EnvId
+              value: '48003'
+            - name: DOCKER_ENV
+              value: formal
+            - name: APP
+              value: SmartAssistant
+            - name: SERVER
+              value: EntityExtractorServer
+            - name: APP_NAME
+              value: SmartAssistant
+            - name: SERVER_NAME
+              value: EntityExtractorServer
+            - name: SET_NAME
+              value: ..
+            - name: IS_GRAY
+              value: 'N'
+            - name: NAMESPACE
+              value: Production
+            - name: CONTAINER_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_UID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.uid
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+          image: {{(index .Values.tad.images "entity-extractor-server").url}}
+          imagePullPolicy: Always
+          # command: ["bash","/usr/local/app/start.sh"]
+          #command: ["bash","-c","while true; do sleep 60; done"]
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - sleep
+                  - '70'
+          livenessProbe:
+            tcpSocket:
+              port: 10001
+            failureThreshold: 5
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            successThreshold: 1
+            timeoutSeconds: 2
+          name: main-container
+          readinessProbe:
+            tcpSocket:
+              port: 10001
+            failureThreshold: 2
+            initialDelaySeconds: 30
+            periodSeconds: 3
+            successThreshold: 1
+            timeoutSeconds: 2
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "1"
+              memory: "1Gi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+          {{- end }}
+          stdin: true
+          tty: true
+          volumeMounts:
+            - mountPath: /app/logs
+              name: applog
+            - mountPath: /app/conf/trpc_cpp.yaml
+              name: config-trpc
+              subPathExpr: trpc_cpp.yaml
+            - mountPath: /usr/local/trpc/conf/EntityExtractorServer.json
+              name: config
+              subPathExpr: EntityExtractorServer.json
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      volumes:
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - name: config-trpc
+          configMap:
+            name: entity-extractor-server-trpc
+        - name: config
+          configMap:
+            name: entity-extractor-server
+        - name: applog
+          hostPath:
+            path: /data/ti-platform/log/entity-extractor-server
+            type: DirectoryOrCreate

@@ -1,0 +1,44 @@
+{{- if .Values.global }}          # 第一层：判断 global 是否存在
+  {{- if .Values.global.observability }}  # 第二层：判断 observability 是否存在
+    {{- if .Values.global.observability.prometheus }}  # 第三层：判断 prometheus 是否存在
+      {{- if .Values.global.observability.prometheus.enabled }}  # 第四层：判断 prometheus.enabled 是否为 true
+        {{- $podMonitorEnabled := default true (.Values.global.observability.prometheus.podMonitor).enabled }}
+        {{- if $podMonitorEnabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ .Release.Name }}-pods
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  selector:
+    matchLabels:
+      {{- if (.Values.global.observability.prometheus.podMonitor).matchLabels }}
+      {{- toYaml .Values.global.observability.prometheus.podMonitor.matchLabels | nindent 6 }}
+      {{- else }}
+      monitoring: enabled
+      {{- end }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  podMetricsEndpoints:
+    {{- if (.Values.global.observability.prometheus.podMonitor).ports }}
+    {{- range .Values.global.observability.prometheus.podMonitor.ports }}
+    - port: {{ .port | quote }}
+      interval: {{ .interval | default "30s" }}
+      path: {{ .path | default "/metrics" }}
+    {{- end }}
+    {{- else }}
+    - port: "8081"
+      interval: "30s"
+      path: "/metrics"
+    - port: "18888"
+      interval: "30s"
+      path: "/metrics"
+    {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}

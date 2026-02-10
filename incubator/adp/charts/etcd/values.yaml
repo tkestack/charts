@@ -1,0 +1,33 @@
+tad:
+  type: helm
+  namespace: ti-base
+  images:
+    etcd:
+      url: ccr.ccs.tencentyun.com/tke-market/etcd:3.6.4-0
+
+# 镜像拉取 Secret 名称
+imagePullSecretName: qcloudregistrykey
+
+# 副本数
+replicas: 3
+
+# 资源配置
+storage:
+  storageClass: ""
+  size: 15Gi
+
+# 服务端口
+ports:
+  client: 2379
+  peer: 2380
+
+# 外部域名访问配置
+externalAccess:
+  enabled: false
+  host: "ti.etcd.tcs.io"  # 例如: ti.etcd.tcs.io
+
+# 认证配置
+auth:
+  enabled: false
+  user: ""
+  password: ""

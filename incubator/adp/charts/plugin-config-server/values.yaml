@@ -1,0 +1,24 @@
+tad:
+  type: helm
+  images:
+    plugin-config-server:
+      url: "ccr.ccs.tencentyun.com/tke-market/plugin-config-server:67_2512022159_release_private_v3.2.4_02b776d9_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+pluginconfigserver:
+  resources:
+    limits:
+      cpu: 1
+      memory: 4Gi
+    requests:
+      cpu: 1
+      memory: 1Gi
+
+imagePullSecretName: qcloudregistrykey

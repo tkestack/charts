@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dependency-checker-script
+  labels:
+    app: dependency-checker
+data:
+  check-dependencies.sh: |
+{{ .Files.Get "scripts/check-dependencies.sh" | indent 4 }}

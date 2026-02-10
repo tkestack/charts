@@ -1,0 +1,12 @@
+apiVersion: v2
+name: adp-app-config
+appName: app-config
+description: A helm chart
+type: application
+
+version: 1.0.0
+
+appVersion: 1.0.0
+maintainers:
+  - name: randalchen
+  - name: v_iferen

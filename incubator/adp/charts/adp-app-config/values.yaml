@@ -1,0 +1,21 @@
+tad:
+  type: helm
+  images:
+    adp-app-config:
+      url: "ccr.ccs.tencentyun.com/tke-market/app-config:104_2602091900_release_private_v3.2.4.1_d79f962b_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+appName: app-config
+app_config:
+  knowledge_qa_model:
+    intent_recognize_model_name: workflow-pro # 知识库问答意图识别默认兜底模型名称
+    text2sql_model_name: nl2sql-16b # 知识库问答文本转sql默认兜底模型名称，非信创nl2sql-16b，信创 nl2sql
+
+imagePullSecretName: qcloudregistrykey

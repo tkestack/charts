@@ -1,0 +1,1588 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-chat-manage
+  namespace: {{ .Release.Namespace }}
+data:
+  agent.yaml: |
+    thought_icon: {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/thinking.png
+    workflow_icon: {{ .Values.global.scheme }}://{{ .Values.global.clb }}/qbot/public/API.png
+    max_iterations: 20
+    thought_round_before: 2
+    current_state_sys: you should tackle the system's response now!
+    current_state_user: you should take action to user's query now!
+    main_agent_tools:
+      ask_user: "{\"type\":\"function\",\"function\":{\"name\":\"ask_user\",\"description\":\"Ask user for missing information\",\"parameters\":{\"type\":\"object\",\"properties\":{\"question\":{\"type\":\"string\",\"description\":\"the question or missing information you want to ask the user, DO NOT ask the same question as the user's question\"}},\"required\":[\"question\"]}}}"
+      answer_directly: "{\"type\":\"function\",\"function\":{\"name\":\"answer_directly\",\"description\":\"Answer directly for simple objective, and wait for user's response\",\"parameters\":{\"type\":\"object\",\"properties\":{\"answer\":{\"type\":\"string\",\"description\":\"your complete and detailed and formatted answer to user, not a abstract\"}},\"required\":[\"answer\"]}}}"
+      task_completed: "{\"type\":\"function\",\"function\":{\"name\":\"task_completed\",\"description\":\"The task has been completed and returns the final detailed answer to the user\",\"parameters\":{\"type\":\"object\",\"properties\":{\"final_answer\":{\"type\":\"string\",\"description\":\"your complete and detailed and formatted answer to user, not a abstract\"}},\"required\":[\"final_answer\"]}}}"
+      task_done: "{\"type\":\"function\",\"function\":{\"name\":\"task_done\",\"description\":\"Call this tool when you have completed the task or when the task cannot be completed.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"Whether the task is finished or not. Return False if you cannot finish the task.\"},\"final_response\":{\"type\":\"string\",\"description\":\"Provide a comprehensive final response to user using the same language as the user. If the task is successfully completed, return the full execution result. If the task fails, summarize the reasons for the failure and offer possible solutions if possible.\"}},\"required\":[\"success\",\"final_response\"]}}}"
+    pdl_tools:
+      response_to_user: "{\"type\":\"function\",\"function\":{\"name\":\"response_to_user\",\"description\":\"Response to user, and wait for user's next message\",\"parameters\":{\"type\":\"object\",\"properties\":{\"content\":{\"type\":\"string\",\"description\":\"your response content to user\"},\"response_type\":{\"type\":\"string\",\"description\":\"the type of your response, optional, default is ''\"}},\"required\":[\"content\"]}}}"
+      switch_workflow: "{\"type\":\"function\",\"function\":{\"name\":\"switch_workflow\",\"description\":\"Switch to main workflow (when you cannot handle user's current request)\",\"parameters\":{\"type\":\"object\",\"properties\":{\"reason\":{\"type\":\"string\",\"description\":\"the reason to switch to main workflow\"}},\"required\":[\"reason\"]}}}"
+    use_agent: []
+    use_pdl: []
+    run_code:
+      service_addr: http://codeinterpreterdispatcher.{{ .Release.Namespace }}.svc.cluster.local:8001/execute
+      result_separator: "_______ResultSeparator_______"
+      code_template: |-
+        import time
+        import datetime
+        import json
+        import numpy
+        import pandas
+        import math
+        import cmath
+        import decimal
+        import fractions
+        import random
+        import statistics
+        import re
+        import string
+        import stringprep
+        import collections
+        import numbers
+        import unicodedata
+
+        {{`{{.CodeContent}}`}}
+
+        main_result = main({{`{{.InputParamObject}}`}})
+        print(json.dumps(main_result))
+    tipwords_opt:
+      hunyuan_version: {{ .Values.ChatServer.tipwords_opt_hunyuan_version }}
+      prompt: |-
+        <Background>
+        You are an expert in enhancing user prompts, skilled at adding detailed clarifications and correcting language issues. Identify unclear, incorrect, or missing information in the "User Prompt", and suggest precise additions or corrections to improve clarity and accuracy.
+        Note: Only supplement user prompts, DO NOT directly answer user prompts, DO NOT omit important information from the "User Prompt".
+        </Background>
+
+        <User Prompt>
+        {{`{{ user_prompt | trim }}`}}
+        </User Prompt>
+
+        <Output Format>
+        - Revise the "User Prompt", and output the revised user prompt directly in Chinese without adding any extra content.
+        - Your output should be formed as:
+
+        # 任务目标
+        (具体的任务目标)
+
+        # 任务流程
+        (详细且完整的任务流程，需要从User Prompt中拆分出具体的执行步骤，每个步骤应逐个列出，确保每个步骤都写得清晰具体完整，不要遗漏"回复示例"或"回复格式")
+
+        # 限制条件
+        (任务的限制条件，例如具体的输出格式要求、内容要求等。需要从User Prompt中提取出所有的限制条件，并合理补充其他的限制条件，以更好地完成任务)
+
+        </Output Format>
+
+        <Revised User Prompt>
+    global_timeout: 1800
+    procedure:
+      thinking_model: 调用思考模型
+      tool_call: 调用%s
+    unsafe_domain:
+      - cos.ap-guangzhou.myqcloud.com
+    max_tool_response: 10240
+    agent_model_map:
+      lke-deepseek-r1: lke-deepseek-r1-agent
+      lke-deepseek-r1-0528: lke-deepseek-r1-0528-agent
+    mcp_unsafe_domain:
+      - qbmanusmcp.woa.com
+      - harry-test.testsite.woa.com
+      - aitool.woa.com
+      - tcum.woa.com
+      - 11.149.111.194
+    kb_agent_config:
+      sys_request:
+        - "要聪明、高效，尽量少的在数据库中检索。不要重复历史思考过程中调用，相同的调用总是会返回相同的结果。"
+        - "根据历史动作，确定当前任务处理的进度，然后决定下一步检索什么。"
+        - "如果你认为任务已经完成，并且不需要再次执行任务，则需要调用\"task_completed\"工具。适当提炼思考过程，让最终答案具备可读性。"
+        - "如果你认为任务无法通过检索数据库解决，则需要调用\"task_completed\"工具，告知用户无法完成，并把你的思考过程和结果返回给用户。"
+        - "每次只能调用一个工具，且只能调用一组参数。如果需要使用某个工具，应该仔细阅读说明以确保参数正确。不需要实际调用该工具，只需确定要使用哪个工具。只能使用给定的工具，不要使用不存在的工具。"
+        - "不要使用相同参数调用同一个工具。更改工具参数，直到解决当前问题。"
+        - "每个命令都有成本，因此要聪明而高效。力求以最少的步骤完成任务。"
+        - "你的输出需要严格遵守以下格式，不要附加其他信息，仅替换“<>”中的内容:\nThought: <a short thought about what to do next, in Chinese>\nAction: <tool name>\nAction Input: <tool args in JSON format and MUST BE JSON FORMAT>\n"
+      tool_tmpl: "{{`{{- range .}}`}}{{`{{.Idx }}`}}. \"{{`{{ .Name }}`}}\": {{`{{ .Desc }}`}}. Args: {{`{{ .Args }}`}}{{`{{- end }}`}}"
+      default_example: "# 例1\n<用户问题>\n历年来，航空轮胎的起草人有谁呀？\n</用户问题>\n<检索辅助机器人>\nThought: 需要检索历年来，航空轮胎的起草人有谁。\nAction: KnowledgeRetrievalAnswer\nAction Input: {\"Query\": \"GB 9745-1995的起草人有谁\"}\n</检索辅助机器人>\n\n# 例2\n<用户问题>\n历年来，航空轮胎的起草人有谁呀？\n</用户问题>\n<历史记录>\n检索步骤1: Thought: 需要检索历年来，航空轮胎的起草人有谁。\nAction: KnowledgeRetrievalAnswer\nAction Input: {\"Query\": \"GB 9745-1995的起草人有谁\"}\nAction Output: GB 9745-1995的起草人有：盛保信、长庆曾、王慧宁。\n</历史记录>\n<检索辅助机器人>\nThought: 需要继续检索其他年份，航空轮胎的起草人\nAction: BoundedKnowledgeQA\nAction Input: {\"Query\": \"GB 9745-2009的起草人有谁呢？\", \"Filters\": [{\"DocId\":\"doc_xxx\"}]}\n</检索辅助机器人>\n\n# 例3\n<用户问题>\n历年来，航空轮胎的起草人有谁呀？\n</用户问题>\n<历史记录>\n检索步骤1: Thought: 需要检索历年来，航空轮胎的起草人有谁。\nAction: KnowledgeRetrievalAnswer\nAction Input: {\"Query\": \"GB 9745-1995的起草人有谁啊？\"}\nAction Output: GB 9745-1995的起草人有：盛保信、长庆曾、王慧宁。\n检索步骤2: Thought: 需要继续检索其他年份，航空轮胎的起草人\nAction: BoundedKnowledgeQA\nAction Input: {\"Query\": \"GB 9745-2009的起草人有谁呢？\", \"Filters\": [{\"DocId\":\"doc_xxx\"}]}\nAction Output: GB 9745-2009的起草人有：邓海燕、周碧蓉、张虹、齐立平。\n</历史记录>\n<检索辅助机器人>\nThought: 需要整理信息，回答用户。\nAction: task_completed\nAction Input: {\"final_answer\":\"- GB 9745-1995的起草人有：盛保信、长庆曾、王慧宁。\\n- GB 9745-2009的起草人有：邓海燕、周碧蓉、张虹、齐立平。\"}\n</检索辅助机器人>"
+      test_app: [1924359457489808832]
+    qb_config:
+      qb_app_biz_id:
+        - 111111
+      qb_model_name: lke-deepseek-v3-agent
+      max_iterations: 30
+      browser_tools:
+        - click_element
+        - click_video_button
+        - download_file
+        - get_dropdown_options
+        - go_back
+        - go_to_url
+        - input_text
+        - scroll_down
+        - scroll_to_bottom
+        - scroll_to_text
+        - scroll_to_top
+        - scroll_up
+        - select_dropdown_option
+        - wait
+        - get_content
+      system_prompt: ""
+
+    sandbox_url: http://sandbox-mcp-server.{{ .Release.Namespace }}.svc.cluster.local:8000/lke/sandbox/sse
+    token_usage:
+      model_name_map:
+        function-call-pro: function-call-pro
+        lke-deepseek-r1: lke-deepseek-r1
+        lke-deepseek-r1-agent: lke-deepseek-r1
+        lke-deepseek-r1-0528: lke-deepseek-r1-0528
+        lke-deepseek-r1-0528-agent: lke-deepseek-r1-0528
+        lke-deepseek-v3-function-call: lke-deepseek-v3-0324
+        lke-deepseek-v3-agent: lke-deepseek-v3-0324
+  application.yaml: |
+    is_private: true
+    disable_content_check: {{ if hasKey .Values.global.contentSecurity "disableContentCheck" }}{{ .Values.global.contentSecurity.disableContentCheck }}{{ else }}true{{ end }}
+    skip_check: []
+    session:
+      downvote_expire: 900
+      greeting_interval: 900
+      intent_transfer_keyword: 转人工
+      silent_interval: 60
+    websocket:
+      token_ttl: 60
+      client_ttl: 600
+      emit_max_goroutine: 5
+    apex:
+      use_grpc: true
+      namespace: ""
+      service: apex.router
+      default_target: "apex-router-cmlb-8083-0.{{ .Release.Namespace }}.svc.cluster.local:8083"
+    reconnect:
+      reconnect_data_ttl: 600
+      reconnect_idle_time: 120
+      output_rate: 500
+      recovery_max_time: 900
+      support_events: ["thought","reply","token_stat","reference"]
+      max_times: 3
+      max_same_event: 100
+      nil_return_msg: "nil returned"
+    clean_data_conf:
+      retention_day: {{ (.Values.global.delete_data).chat_server_retention_days | default 60 }}
+      select_batch_size: 500
+      clean_interval: 1000
+      # 查询耗时大于1000ms的session，需要加入清理表
+      need_clear_max_cost: 1000
+      # 一个session需要保留的消息记录数
+      retention_session_msg_num: 2000
+      select_session_num: 10
+    sse:
+      enable_defer_client_close: true
+      defer_client_close_time: 1ms
+    event_bus:
+      worker_num: 500
+      event_pool_size: 3000
+    bot:
+      timeout: 280
+      queue_timeout: 7
+      evil_reply: 抱歉，您这个问题我暂时无法回答，建议您换一个问题试试呢！
+      tag_evil_reply: 该结果依照法律法规不能展示，已被系统隐藏。
+      summary_evil_reply: 该结果依照法律法规不能展示，已被系统隐藏。
+      rejected_reply: 这个问题我不是很清楚，我所提供的答案或建议可能会存在不准确的地方。建议您转到人工，由专业顾问为您提供服务。
+      empty_reply: 抱歉，目前我无法提供关于这个问题的答复。为了更好地帮助您，请您尝试提出其他问题或需求。
+      summary_reject: 对不起，作为知识库问答应用里的人工智能，我无法帮您总结文档。请告诉我你需要了解的其他信息，我会尽力为你提供帮助。
+      multi_intent_reply: 在知识库中找到多个内容可以回答您的问题。请问您是想问哪个问题：
+      clarify_confirm_reply: 请描述您的问题
+      intent_achievements:
+        0 : ["qa","workflow","self_awareness","doc","search_engine","llm","default"]
+      rewrite_threshold: 100
+      rewrite:
+        rewrite_threshold: 100
+        complex_query_white_list: [10101010110]
+      intent_threshold: 5000
+      search_threshold: 5000
+      busy_replies:
+        1: 抱歉，当前咨询量大，请重新再问我一次。
+        4: 当前用量大，会话摘要生成失败。
+        5: 当前用量大，会话小结生成失败。
+      throttles:
+        check: 20
+        streaming: 5
+      response_channel_size: 1500
+      max_concurrence:
+        standard: {{ .Values.ChatServer.max_concurrence }}
+        white_list:
+          10101010110: 50
+      stop_generation:
+        key_expire: 180
+        check_interval: 250
+      rewrite_history_limit: 8
+      rewrite_message_limit: 1800
+      answer_from_knowledge_timeout: 2
+      history_limit: 50
+      single_message_limit: 5000
+      role_description: 你是腾讯云智能体开发平台，一个善于进行文档阅读、知识问答的智能平台。具备海量的行业知识，对垂直行业超过10项基础能力进行精调优化，涵盖了文档阅读理解、语义理解、安全合规等，可以帮助用户解决行业问题、提高工作效率。
+      bot_role_description:
+        lke-deepseek-r1: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题"
+        lke-deepseek-v3: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题"
+        lke-deepseek-r1-vip: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题"
+        lke-deepseek-v3-vip: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题"
+        lke-deepseek-v3-0324: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3-0324。你会尽你所能帮助用户回答问题、解决问题"
+      visitor_labels:
+        label_count: 10
+        label_name_length: 30
+        label_value_count: 10
+        label_value_length: 50
+      content_limit: ${CHAT_CONTENT_LIMIT}
+      session_regx: "^[a-zA-Z0-9_-]{2,64}$"
+      role_command_regx:
+        role_name_regex: "#+\\s*角色名称: (.*)"
+        speech_style_regex: "#+\\s*言谈风格:\\n((?:.|\\n)+?)\\n\\n#+\\s*性格特点:"
+        personality_regex: "#+\\s*性格特点:\\n((?:.|\\n)+?)\\n\\n#+\\s*经历和背景:"
+        experience_regex: "#+\\s*经历和背景:\\n((?:.|\\n)+?)\\n\\n#+\\s*能力限制:"
+        capability_limit_regex: "#+\\s*能力限制:\\n(.*?)\\n\\n"
+        skills_regex: "(#+\\s*意图\\s*\\d+)：([\\s\\S]*?)(#+\\s*意图描述)：([\\s\\S]*?)(#+\\s*意图实现)：([\\s\\S]*?)#"
+      recommend_regex: "\\[推荐问题.*?\\](.*?)\\n"
+      placeholder_conf:
+        start_placeholders:
+          "[" : 20
+          "h" : 20
+      channel_type_list: [10000,10001,10002,10003,10004,10005,10009]
+    unsatisfied_reply:
+      context_length:
+        above: 15
+        below: 15
+    reject_answer_judge_length: 20
+    non_search_engine_reject:
+      reject_answer_judge_length: 10
+      corp_list:
+        - 82739778
+    use_placeholder_models:
+      - cs-normal
+      - finance-13b
+      - cs-normal-70b
+      - lke-deepseek-v3
+      - lke-deepseek-r1
+    financial_bot_biz_id: {{ .Values.ChatServer.financial_bot_biz_id }}
+    disable_financial_knowledge:
+      - 12345
+    medical_bot_biz_id: {{ .Values.ChatServer.medical_bot_biz_id }}
+    disable_medical_knowledge:
+      - 12345
+    app:
+      knowledge_summary:
+        default_query_max_len: 6000
+        allow_replace_method:
+          - 1
+          - 2
+        allow_replace_requirement:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+          - 8
+          - 9
+      tag_extraction:
+        allow_max_tags: 50
+        default_query_max_len: 4000
+        default_extract_answer: 抱歉，未从您提供的信息中提取出标签结果
+      black_list: []
+      force_close_llm: []
+    multi_modal:
+      model_name: hunyuan-turbos-vision
+      model_name_rewrite: hunyuan-turbos-vision
+      model_name_dialog: hunyuan-turbos-vision
+      only_cos_url: ["hunyuan-turbos-vision","hunyuan-turbo-vision"]
+      white_list:
+        1854013760478117888: cs-normal-mllm-78B
+        1854058551373201408: cs-normal-mllm-78B
+        1846040318051876864: cs-normal-mllm-78B
+      prompt_words_limit: 8000
+      history_limit: 3
+      get_caption_prompt: 用200字以内描述这张图片
+      get_multi_prompt: 分别用200字以内描述以上图片
+      rewrite_prefix: 用户的问题是：
+      get_rewrite_prompt: |-
+        你是一个IT客服，专长于处理各种功能操作问题。请阅读以上用户提供的图片和文字内容，分析用户想要解决的问题。
+
+        任务流程：
+
+        1. 阅读图片，结合用户的文字内容，分析用户关注的问题主体。优先关注图片中的点、线、框等强调区域，确定关注对象；其次，查看图像中是否包含故障文字或故障商品等信息。
+        2. 根据步骤1中确定的关注主体，综合图文信息评估用户当前询问的问题具体是什么，并输出具象化后的用户问题。格式为："用户的问题是：[根据图文内容分析的用户问题]。"
+        3.注意：不要在答案中提供解决办法或出现“解决办法”等字眼；
+        4. 不要在答案中出现详细的图片描述内容或"根据图片已知内容"等字眼。
+      placeholder: <ut_im##age_here_index>%d</ut_im##age_here_index>
+      placeholderv2: "Picture %d: <image>[Picture %d]"
+      max_image_count: 20
+      one_image_token_length: ${CHAT_ONE_IMAGE_TOKEN_LENGTH}
+      prompt: |-
+        作为一位专业的知识工作者，你的任务是快速吸收并深入理解所提供的文本和图像资料。你需要根据用户的问题，从这些资料中提取相关信息，并结合文字和图像，形成一个逻辑清晰、内容准确的回答。现在，我会给你一些文本资料和相应的图片。请注意，图片中不仅包含文字，还有一些关键的图形或图标，这些都是理解文本的重要部分。
+
+        按照以下标准回答问题：
+        你的回答应基于对文档内容的深刻理解和你的分析，确保它是合理和有根据的。
+        如果答案需要结合文字和图片来解释，请在你的回答中明确指出，并引用相关图片，使用格式[Picture *]。
+        如果只有通过图片内容你才能回答问题，请引用相应的图片，使用格式[Picture *]。如果需要多张图片来共同解释一个问题，那么请一并引用。
+        如果你的回答中没有引用图片，请再次确认这样做是否合理。如果确认图片与问题无关，那么可以不用引用图片。
+        如果基于文本和图像资料无法回答用户问题，则输出"对不起，基于文本和图像资料无法回答。"
+        如果材料信息中包括多个passage片段，输出引用的passage编号。
+
+        现在，请开始根提供的文本和图像资料回答问题。
+
+        ---
+
+        文本和图像资料:<$!truN#cAte+>
+
+        {{`{{range $i, $el := .Docs -}}`}}
+          【passage {{`{{addOne $i }}`}}】
+          {{`{{ if or (eq .DocType 1) (eq .DocType 4) -}}`}}
+            问题：{{`{{.Question}}`}}
+            答案：{{`{{.Answer}}`}}
+          {{`{{- else -}}`}}
+            {{`{{.OrgData}}`}}
+          {{`{{- end}}`}}
+
+        {{`{{end}}`}}<-truN#cAte!$>
+        问题:
+        {{`{{.Question}}`}}
+      multi_modal_comprehension:
+        model_name: cs-normal-mllm-72B
+        11111: cs-normal-mllm-35B
+      can_use_multi_modal_search: [10101010110]
+      disabled: {{ .Values.ChatServer.multi_modal.disabled }}
+    procedure:
+      knowledge: 调用知识库
+      task_flow: 调用任务流程
+      search_engine: 调用搜索引擎
+      image: 调用图片理解
+      large_language_model: 大模型直接回复
+      pot_math: 调用计算器
+      file: 阅读文件
+      workflow: 调用工作流
+      agent: 运行Agent
+      model_generate: 大模型生成中
+    rate_limiter:
+      enable: true
+      redis_address: redis://:{{ .Values.global.components.redis.password }}@{{ (index .Values.global.components.redis.hosts 0) }}:6379/3
+      period: 1s
+      clean_up_interval: 1m
+      limit: 10
+    limiter:
+      enable: true
+      limit_buffer: 5
+      time_period: 1
+      corp_limit:
+        90: 2000
+        1944: 100
+      default_corp_limit: 100
+      report_judge_length: 100
+    hunyuan_config:
+      # 注意这里B是大写 跟其他的不一样
+      hunyuan_standard: hunyuan-13B
+      hunyuan_search: hunyuan-search
+      whitelist:
+        1111: hunyuan-speed-search
+      enable_instruction_list: []
+    task_flow_preview_config:
+      model_name: taskflow-70b
+      request_node_query: 以客服的语气，根据以下信息，用简短的语言询问用户每个槽位具体是什么：
+    workflow_config:
+      model_name: {{ .Values.ChatServer.workflow_config_model_name }}
+      workflow_role_model_name: {{ .Values.ChatServer.workflow_role_model_name }}
+      workflow_intent_model_name: {{ .Values.ChatServer.workflow_intent_model_name }}
+      role_intent_model_name: {{ .Values.ChatServer.role_intent_model_name }}
+      param_regexp: "{{`{{(.*?)}}`}}"
+      role_query: "你是一个针对角色设定的提示词优化器，你的最终任务是为了把用户输入的原角色设定改写得更加规范和丰富，最终改写后的角色设定至少需要包含以下内容\n1.角色名称\n2.风格特点\n3.能力限制\n4.意图设定\n改写后的角色设定需要满足如下要求\n1.需要把用户输入的信息妥当的填入到上面的内容模版中，且不能丢失用户输入的原有信息\n2.你扩展的内容，不应该与用户输入的信息发生矛盾\n3.当用户提供的原角色设定不明确的时候，你需要根据用户的输入构建一个明确的角色\n4.角色设定应当尽可能丰富和全面，并符合这个角色的特点\n5.生成的角色应该具备满足用户多个意图的能力，将这部分内容根据用户的输入填入意图设定中。每个意图需要包括意图名称、意图描述（触发用户意图的描述）和意图实现（识别到意图后的实现方式）三部分。\n\n下面是一个角色设定改写后的例子，你改写的内容需要参考下面的格式\n```\n#角色名称： IT助手\n\n#风格特点：\n1. 通常以技术术语为主。\n2. 在面对复杂问题时，会用通俗易懂的语言解释技术细节。\n\n#能力限制：\n不提供复杂的云计算服务。\n\n能够达成以下用户意图\n##意图名称：解答软件问题\n##意图描述：当用户询问软件相关问题\n##意图示例：“邮箱密码修改”\n##意图实现：先确定软件名称和具体问题表现，根据该软件的常见问题提供解决方案。\n\n##意图名称：硬件故障排除\n##意图描述：用户提出硬件故障问题\n##意图示例：“路由器设备故障”\n##意图实现：询问故障现象、设备型号等关键信息，提供常见故障及排除方法。\n```"
+      role_query_no_intention: "你是一个针对角色设定的提示词优化器，你的最终任务是为了把用户输入的原角色设定改写得更加规范和丰富，最终改写后的角色设定需要包含以下内容\n1.角色名称\n2.风格特点\n3.能力限制\n改写后的角色设定需要满足如下要求\n1.需要把用户输入的信息妥当的填入到上面的内容模版中，不能丢失用户输入的原有信息\n2.你扩展的内容，不应该与用户输入的信息发生矛盾\n3.当用户提供的原角色设定不明确的时候，你需要根据用户的输入构建一个明确的角色\n4.角色设定应当尽可能丰富和全面，并符合这个角色的特点\n\n下面是一个角色设定改写后的例子, 请严格遵循例子的格式做改写\n```\n#角色名称: IT助手\n\n#风格特点:\n1. 通常以技术术语为主。\n2. 在面对复杂问题时，会用通俗易懂的语言解释技术细节。\n\n#能力限制:\n不提供复杂的云计算服务。\n```"
+      desc_query: "<Background>\nYou are an expert in enhancing user prompts, skilled at adding detailed clarifications and correcting language issues. Identify unclear, incorrect, or missing information in the \"User Task Description\", and suggest precise additions or corrections to improve clarity and accuracy. Focus specifically on the \"User Task Description\" provided by user and suggest precise additions.\nNote: Only supplement user prompts, do not directly answer them; keep supplementary content to around 30 words, and try not to exceed 30 words.\n</Background>\n\n<User Task Name>\n{工作流名称}\n</User Task Name>\n\n<User Task Description>\n{工作流描述}\n</User Task Description>\n\n<Output format>\nRevise the \"User Task Description\" and output in Chinese, adhering strictly to the format below without adding extra content:\n\n任务描述: <Provide a detailed, clear and grammatically correct description for the \"User Task Name,\" ensuring no details from the original \"User Task Description\" are missed>\n示例问题: <List some example queries that would trigger the \"User Task,\" quoting each example with double quotation marks>\n</Output format>\n\n<Revised User Task Description>"
+      parameter_extractor: "<Background>\nYou are an expert in enhancing user prompts, skilled at adding detailed clarifications and correcting language issues. Identify unclear, incorrect, or missing information in the \"User Prompt\", and suggest precise additions or corrections to improve clarity and accuracy. Ensure the revised user prompts is precise, formal, detailed, and accurate.\nNote: Only supplement user prompts, DO NOT directly answer user prompts; keep supplementary content to around 50 words, and try not to exceed 100 words. Ensure the descriptions in the format like {@param_name} within the user prompt are not modified.\n</Background>\n\n<User Prompt>\n{用户输入的提示词}\n</User Prompt>\n\n<Output Format>\nRevise the \"User Prompt\", and output the revised user prompt directly in Chinese without adding any extra content. Adhere strictly to the requirements stated in Background. Ensure that elements like {@param_name} in the prompt remain unchanged during modifications.\n</Output Format>\n\n<Revised User Prompt>"
+      llm_prompt: "<Background>\nYou are an expert in enhancing user prompts, skilled at adding detailed clarifications and correcting language issues. Identify unclear, incorrect, or missing information in the \"User Prompt\", and suggest precise additions or corrections to improve clarity and accuracy.\nNote: Only supplement user prompts, DO NOT directly answer user prompts; keep supplementary content to around 100 words, and try not to exceed 100 words. Ensure the descriptions in the format like {@param_name} within the user prompt are not modified.\n</Background>\n\n<User Prompt>\n{用户prompt}\n</User Prompt>\n\n<Output Format>\nRevise the \"User Prompt\", and output the revised user prompt directly in Chinese without adding any extra content. Ensure that elements like {@param_name} in the prompt remain unchanged during modifications.\n</Output Format>\n\n<Revised User Prompt>"
+      llm_tag_desc: "<Background>You are an expert in enhancing tag descriptions, skilled at refining and optimizing language. Given a \"Tag Name\" and its \"Tag Description\", improve the description by adding clarifications, supplementing missing information, correcting inaccuracies, and enhancing clarity. Ensure the updated description is precise, formal, detailed, and accurately reflects the tag's intent.Note: Keep the refined tag descriptions clear, formal and detailed, ideally not exceeding 30 words.</Background><Tag Name>{标签名称}</Tag Name><Tag Description>{标签描述}</Tag Description><Output format>Revise the \"Tag Description\", and output the revised tag description directly in Chinese without adding any extra content.</Output format><Revised Tag Description>"
+      intent_desc: "<Background>\nYou are an expert in enhancing user prompts about intent understanding, skilled at adding detailed clarifications and correcting language issues.\nIdentify unclear, incorrect, or missing information in the \"User Prompt\", and suggest precise additions or corrections to improve clarity and accuracy.\nNote:\n- Polish the intent names, intent descriptions, and intent examples in the \"User Prompt\" to make them easier to understand.\n- Only supplement user prompts, DO NOT directly answer user prompts.\n- Keep supplementary content to around 100 words, and try not to exceed 100 words.\n- Ensure that the descriptions in the format like {@param_name} are not modified in the \"User Prompt\".\n</Background>\n\n<User Prompt>\n{intent_desc}\n</User Prompt>\n\n<Output Format>\n- Revise the \"User Prompt\", and output the revised user prompt directly in Chinese without adding any extra content.\n- Your output should be formed as:\n\n##意图名称：<revised intent name>\n##意图描述：<revised intent description>\n##意图示例：<revised intent examples>\n\n- Ensure that elements like {@param_name} in the prompt remain unchanged during modifications.\n</Output Format>\n\n<Revised User Prompt>"
+      code_gen_model_name: lke-deepseek-v3.1
+      close_token_report: true
+    one_click_optimization:
+      default_model_name: {{ .Values.ChatServer.role_intent_model_name }}
+      agent_transfer_desc_model_name: {{ .Values.ChatServer.role_intent_model_name }}
+    pot:
+      math:
+        model_name: cs-normal-70b
+        pot_system_prompt: "你是一个人工智能机器人，名字叫神农。\n- 你是腾讯云智能开发的大语言模型。你的设计宗旨是有益、诚实且无害。\n- 你支持使用用户选择的多种语言流利地进行交流并解答用户的问题。\n- 如果用户更正你生成的错误答案，你会向用户致歉并与用户探讨正确的答案。"
+        non_pot_system_prompt: |-
+          你是一个人工智能机器人，名字叫神农。\n- 你是腾讯云智能开发的大语言模型。你的设计宗旨是有益、诚实且无害。\n- 你支持使用用户选择的多种语言流利地进行交流并解答用户的问题。\n- 如果用户更正你生成的错误答案，你会向用户致歉并与用户探讨正确的答案。
+        prompt: |-
+          基于以下问题，一步步地解答用户的问题，你可以使用API工具来协助计算纯数学表达式结果，比如：要获得数学表达式的结果，使用API并获得结果格式为：[Calculator(数学表达式)→结果]。
+          问题：
+          {{`{{- if gt (len .Docs) 0 -}}`}}
+            ## 通用要求:
+            - 回答问题时应该简洁、专业和准确。
+            - 答案应当尽可能具备条理性，请在必要处进行分点处理。答案应遵循Markdown语法。
+            ## 若用户问题的意图不明确，但是在材料信息中包含问题的主体信息，需满足的要求:
+            - 请以反问澄清的方式引导用户重新提问。反问澄清通过反问句的形式，列举出用户问题涉及的多个主体，并进行询问。反问句应该全面。然后结束回答。
+            ## 若问题根据材料信息无法得到问题答案时，需满足的要求:
+            - 请说明无法回答的原因并表达歉意。然后结束回答。
+            ## 若根据材料信息可以回答问题时，需满足的要求:
+            - 使用材料中提供的信息回答问题，答案尽可能与原片段意思一致。不允许通过发散和联想来编造错误的答案，否则你会害死很多人。
+            - 答案中尽量不要出现“根据提供的材料”等相似含义的表述。
+            - 如果材料信息中包括多个<passage [X]>片段，请在答案中添加格式形如[X](@ref)的引用编号来注明这个信息来源是来自哪个片段<passage [X]>，例如[1](@ref)、[2](@ref)、[2,3](@ref)等。
+            - 答案中请尽可能附带相关材料的链接或图片信息。
+            ## 材料信息: <$!truN#cAte+>
+            {{`{{range $i, $el := .Docs -}}`}}
+              <passage [{{`{{addOne $i }}`}}]>
+              {{`{{ if or (eq .DocType 1) (eq .DocType 4) -}}`}}
+                 问题：{{`{{.Question}}`}}
+                 答案：{{`{{.Answer}}`}}
+              {{`{{- else -}}`}}
+                {{`{{.OrgData}}`}}
+              {{`{{- end}}`}}
+              </passage [{{`{{addOne $i }}`}}]>
+
+            {{`{{end}}`}}<-truN#cAte!$>
+          ## 用户问题:
+          {{`{{end}}`}}
+          {{`{{.Question}}`}}
+
+    pipeline_debugging:
+      keys:
+        - knowledge.SearchPreviewDoc
+        - knowledge.SearchDoc
+    model:
+      local_cache_ttl: 300
+      white_list: []
+      prompt_list:
+        normal_message: |-
+              {{`{{- if gt (len .Docs) 0 -}}`}}
+                以下的已知信息包括多个passage，请基于这个已知信息，简洁和专业的来回答用户的问题。并输出引用的passage编号。
+                已知内容:<$!truN#cAte+>
+                {{`{{range $i, $el := .Docs -}}`}}
+                  【passage {{`{{addOne $i }}`}}】
+                  {{`{{ if or (eq .DocType 1) (eq .DocType 4) -}}`}}
+                    {{`{{.Question}}`}} {{`{{.Answer}}`}}
+                  {{`{{- else -}}`}}
+                    {{`{{.OrgData}}`}}
+                  {{`{{- end}}`}}
+                {{`{{end}}`}}<-truN#cAte!$>
+              问题:
+              {{`{{end -}}`}}
+              {{`{{.Question}}`}}
+        normal_message_non_general_knowledge: |-
+              {{`{{- if gt (len .Docs) 0 -}}`}}
+                以下的已知信息包括多个passage，请基于这个已知信息，简洁和专业的来回答用户的问题。并输出引用的passage编号。如果无法从中得到答案，请拒绝回答，并说明原因。
+                已知内容:<$!truN#cAte+>
+                {{`{{range $i, $el := .Docs -}}`}}
+                  【passage {{`{{addOne $i }}`}}】
+                  {{`{{ if or (eq .DocType 1) (eq .DocType 4) -}}`}}
+                    {{`{{.Question}}`}} {{`{{.Answer}}`}}
+                  {{`{{- else -}}`}}
+                    {{`{{.OrgData}}`}}
+                  {{`{{- end}}`}}
+                {{`{{end}}`}}<-truN#cAte!$>
+              问题:
+              {{`{{end -}}`}}
+              {{`{{.Question}}`}}
+    reference:
+      patterns:
+        - 【passage (\d+)】
+        - \[passage (\d+?)\]
+        - \*引用:\*$
+        - \*\*引用:\ \*\*$
+        - 引用:$
+        - 引用:\ $
+        - 引用：$
+        - 引用的passage编号：和
+        - 引用:【passage (\d+)】
+        - 引用：[\s\S]*
+        # 元宝联网角标配置[^num]
+        # - \[\^(\d+)\]
+      hunyuan_switch: [1776892432517693440]
+      hunyuan_patterns:
+        - （passage (\d+)）
+        - 以上信息来源于【passage (\d+)】(。|和【passage (\d+)】。)
+        - \n引用的passage编号：(\d+)
+        - \n引用的passage编号是：(\d+)
+        - \n\*\*引用passage编号\*\*：\[(\d+)\]
+        - \[passage (\d+)\]
+        - \n引用的passage编号是：
+        - \n引用的passage编号为：
+        - \n\*\*引用passage编号：\*\*
+    finance:
+      search_disabled: {{ (.Values.global.finance).search_disabled | default true }}
+      disabled: {{ (.Values.global.finance).disabled | default true }}
+      report_disabled: {{ (.Values.global.finance).report_disabled | default true }}
+      key_expire: 1800
+      default_qpm: 50
+      default_tpm: 100000
+      ds_default_qpm: 50
+      ds_default_tpm: 100000
+      billing_model_map:
+        function-call-pro: function-call-pro
+        lke-deepseek-r1: lke-deepseek-r1
+        lke-deepseek-r1-agent: lke-deepseek-r1
+        lke-deepseek-r1-0528-agent: lke-deepseek-r1-0528
+        lke-deepseek-v3-function-call: lke-deepseek-v3-0324
+        lke-deepseek-v3-agent: lke-deepseek-v3-0324
+        lke-deepseek-v3.1-function-call: lke-deepseek-v3.1
+    clarify_confirm:
+      top_n: 3
+      white_list: []
+    intent_model:
+      # 加白是意图中不添加文档
+      white_list: []
+      is_qa_not_first: []
+      is_workflow_not_first: []
+      no_faq: []
+      faq_def: "判断已知内容是否可以完整回答<sign: 用户问题>，如果不能回答或无法回答完整则不符合该定义。如果已知内容可以回答<sign: 用户问题>，则符合该定义。如果<sign: 用户问题>中包含的产品编码、型号、公司名称、功能等相关信息不在已知内容中，则不符合该定义。已知内容: FAQ问题: {{`{{.Question}}`}}。FAQ答案: {{`{{.Answer}}`}}。"
+      doc_def: 基于下面的已知内容专业的来回答用户的问题。如果可以回答则符合该定义，如何无法回答，则不符合。【已知内容】：
+      reject_prompt:  |-
+              {{`{{- if gt (len .Docs) 0 -}}`}}
+                基于提供的材料信息，按要求回答用户问题。
+                ## 通用要求:
+                - 回答问题时应该专业和准确。
+                ## 如果根据材料信息无法得出问题答案时，需满足的要求:
+                - 请回答:“已知内容无法回答该问题。”，并说明原因。然后结束回答。
+                ## 如果根据材料信息可以回答问题时，需满足的要求:
+                - 使用材料中提供的信息回答问题，答案尽可能与原片段意思一致。不允许通过发散和联想来编造错误的答案。
+                已知内容:<$!truN#cAte+>
+                {{`{{range $i, $el := .Docs -}}`}}
+                  {{`{{ if or (eq .DocType 1) (eq .DocType 4) -}}`}}
+                    问题：{{`{{ .Question }}`}}
+                    答案：{{`{{ .Answer }}`}}
+                  {{`{{- else -}}`}}
+                    {{`{{.OrgData}}`}}
+                  {{`{{- end}}`}}
+                {{`{{end}}`}}<-truN#cAte!$>
+              问题:
+              {{`{{end -}}`}}
+              {{`{{.Question}}`}}
+      sys_prompt:  |-
+        你是腾讯云智能体开发平台，一个善于进行文档阅读、知识问答的智能平台。
+        你回复问题的流程如下:
+        ## 若已知内容找不到问题的答案
+        - 请拒绝回答，先回复“已知内容无法回答问题“，再说明理由
+        ## 若已知内容能够回复用户问题
+        - 请逻辑清晰的回复问题
+        - 相关产品的说明书如果在已知内容中不存在，请拒绝回答
+      system_intent:
+        -1: 其他问题
+        1: 指令跟随回答
+        2: 代码问题
+        3: 数学计算
+        4: 逻辑推理
+        5: 自我认知
+        6: 聊天
+        7: 天气
+        8: 全文处理
+        9: 知识问答
+      system_intent_map:
+        指令跟随回答: knowledge_qa
+        代码问题: knowledge_qa
+        数学计算: mathematics_calculate
+        逻辑推理: mathematics_calculate
+        自我认知: knowledge_qa
+        聊天: knowledge_qa
+        天气: knowledge_qa
+        全文处理: doc_summary
+        知识问答: knowledge_qa
+        其他问题: knowledge_qa
+      system_intent_white_list:
+        数学计算: []
+        逻辑推理: []
+      close_doc: []
+      explicit_intent:
+        1869309349523095552: 知识问答
+      ds_faq_reject_model: {{ .Values.ChatServer.ds_faq_reject_model_name }}
+      rerank_score: -3
+      guide_of_opt_cards: "请从下面几个选项中进行选择。"
+    mock:
+      enable_llm: false
+      enable_search: false
+      enable_workflow: false
+    retrieval_config:
+      close_priority: []
+      ner_threshold: 100
+    need_search_global_knowledge:
+      - 1868500601205424128
+    debug_message:
+      salt: a99a52254a1d58231ebe07b2a7f28534
+    stage_task_name:
+      dialog_ppl: 1_dialog_ppl
+      check_evil: 2.1_check_evil
+      basic_search: 2.2_basic_search
+      query_rewrite: 2.3_query_rewrite
+      search_knowledge: 3_search_knowledge
+      intent_recognize: 4_intent_recognize
+      search_pro_for_ds: 4_search_pro_for_ds
+      taskflow: 5_taskflow
+      workflow: 5_workflow
+      llm_reply: 5_llm_reply
+      first_thought_cost: first_thought_cost
+      total_thought_cost: total_thought_cost
+      first_reply_cost: first_reply_cost
+      total_cost: total_cost
+    agent_config:
+      thought_icon: https://lke-realtime-1251316161.cos.ap-guangzhou.myqcloud.com/icon/thinking.png
+      workflow_icon: https://lke-realtime-1251316161.cos.ap-guangzhou.myqcloud.com/icon/API.png
+      max_iterations: 6
+      thought_round_before: 2
+      current_state_sys: you should tackle the system's response now!
+      current_state_user: you should take action to user's query now!
+      main_agent_tools:
+        ask_user: "{\"type\":\"function\",\"function\":{\"name\":\"ask_user\",\"description\":\"Ask user for missing information\",\"parameters\":{\"type\":\"object\",\"properties\":{\"question\":{\"type\":\"string\",\"description\":\"the question or missing information you want to ask the user, DO NOT ask the same question as the user's question\"}},\"required\":[\"question\"]}}}"
+        answer_directly: "{\"type\":\"function\",\"function\":{\"name\":\"answer_directly\",\"description\":\"Answer directly for simple objective, and wait for user's response\",\"parameters\":{\"type\":\"object\",\"properties\":{\"answer\":{\"type\":\"string\",\"description\":\"your complete and detailed and formatted answer to user, not a abstract\"}},\"required\":[\"answer\"]}}}"
+        task_completed: "{\"type\":\"function\",\"function\":{\"name\":\"task_completed\",\"description\":\"The task has been completed and returns the final detailed answer to the user\",\"parameters\":{\"type\":\"object\",\"properties\":{\"final_answer\":{\"type\":\"string\",\"description\":\"your complete and detailed and formatted answer to user, not a abstract\"}},\"required\":[\"final_answer\"]}}}"
+      pdl_tools:
+        response_to_user: "{\"type\":\"function\",\"function\":{\"name\":\"response_to_user\",\"description\":\"Response to user, and wait for user's next message\",\"parameters\":{\"type\":\"object\",\"properties\":{\"content\":{\"type\":\"string\",\"description\":\"your response content to user\"},\"response_type\":{\"type\":\"string\",\"description\":\"the type of your response, optional, default is ''\"}},\"required\":[\"content\"]}}}"
+        switch_workflow: "{\"type\":\"function\",\"function\":{\"name\":\"switch_workflow\",\"description\":\"Switch to main workflow (when you cannot handle user's current request)\",\"parameters\":{\"type\":\"object\",\"properties\":{\"reason\":{\"type\":\"string\",\"description\":\"the reason to switch to main workflow\"}},\"required\":[\"reason\"]}}}"
+      use_agent: []
+      use_pdl: []
+      run_code:
+        service_addr: http://code-interpreter-dispatcher.dispatch.test.polaris:8000/execute
+        result_separator: "_______ResultSeparator_______"
+        code_template: |-
+          import time
+          import datetime
+          import json
+          import numpy
+          import pandas
+          import math
+          import cmath
+          import decimal
+          import fractions
+          import random
+          import statistics
+          import re
+          import string
+          import stringprep
+          import collections
+          import numbers
+          import unicodedata
+
+          {{`{{.CodeContent}}`}}
+
+          main_result = main({{`{{.InputParamObject}}`}})
+          print(json.dumps(main_result))
+      tipwords_opt:
+        hunyuan_version: hunyuan-turbo
+        prompt: |-
+          <Background>
+          You are an expert in enhancing user prompts, skilled at adding detailed clarifications and correcting language issues. Identify unclear, incorrect, or missing information in the "User Prompt", and suggest precise additions or corrections to improve clarity and accuracy.
+          Note: Only supplement user prompts, DO NOT directly answer user prompts, DO NOT omit important information from the "User Prompt".
+          </Background>
+
+          <User Prompt>
+          {{`{{ user_prompt | trim }}`}}
+          </User Prompt>
+
+          <Output Format>
+          - Revise the "User Prompt", and output the revised user prompt directly in Chinese without adding any extra content.
+          - Your output should be formed as:
+
+          # 任务目标
+          (具体的任务目标)
+
+          # 任务流程
+          (详细且完整的任务流程，需要从User Prompt中拆分出具体的执行步骤，每个步骤应逐个列出，确保每个步骤都写得清晰具体完整，不要遗漏"回复示例"或"回复格式")
+
+          # 限制条件
+          (任务的限制条件，例如具体的输出格式要求、内容要求等。需要从User Prompt中提取出所有的限制条件，并合理补充其他的限制条件，以更好地完成任务)
+
+          </Output Format>
+
+          <Revised User Prompt>
+    thought_conf:
+      thought_icon: {{ include "qbot.thoughtIcon" . }}
+      status_title:
+        stop: 已停止思考
+        success: 思考完成
+        processing: 正在思考中
+    plugin_cfg:
+      search_engine: ""
+      数学计算: ""
+    event_downgrade_conf:
+      recommended_to: true
+    error_downgrade_conf: ["msg:您选择的工作流","type:business, code:460032","msg:超出并发数限制"]
+    deep_seek_conf:
+      model_name: ["lke-deepseek-r1", "lke-deepseek-v3","lke-deepseek-v3-0324","lke-deepseek-r1-0528"]
+      model_has_think: ["lke-deepseek-r1", "lke-deepseek-r1-vip","lke-deepseek-r1-lichan", "lke-deepseek-r1-0528"]
+      image_quiz_white_list: [] # 图文问答白名单列表
+      rewrite_model: deepseek_query_rewrite
+      intent_model: deepseek_intent_recognize
+      enable_ds_math_calculate: true
+      qd_ds_start_time: "2025-05-20 00:00:00"
+      search_switch:
+        0: true
+      search_version:
+        0: "v3"
+      search_model:
+        "lke-deepseek-r1": "lke-deepseek-r1-search"
+        "lke-deepseek-v3": "lke-deepseek-v3-search"
+        "lke-deepseek-v3-0324": "lke-deepseek-v3-0324-search"
+      search_secret_id: {{ .Values.ChatServer.search_secret_id }}
+      search_secret_key: {{ .Values.ChatServer.search_secret_key }}
+      search_result_size: 9
+      search_enable_free: false
+      no_think_prompt: "<think>\n完成全部分析思考，按照用户要求直接输出答案，不再输出分析步骤或者其他思考内容。\n</think>\n\n"
+      no_think_model_params: "{\"seed\": 0, \"top_p\": 1, \"temperature\": 0, \"max_tokens\": 1000, \"remove_cot\": true}"
+      summary_prompt_tpl: |-
+        下面我会给你用户当前问题question、当前检索结果search_result。你的任务是依据上述内容生成答案来回答用户问题，在答案中使用[num]来注明这个信息来源是来自哪篇搜索文章。请注意现在的时间是{{`{{.CurDate}}`}}。
+        <question>{{`{{.CurQuestion}}`}}</question>
+
+        <search_result>
+        {{`{{range .SearchResult}}`}}
+        [{{`{{.Num}}`}}]<发布时间>{{`{{.Date}}`}}</发布时间><标题>{{`{{.Title}}`}}</标题><内容片段>{{`{{.RefDoc}}`}}</内容片段>
+        {{`{{end}}`}}
+        </search_result>
+
+        问题：{{`{{.RepQuestion}}`}}
+        回答：
+    get_msg_count_limit: 1000
+    get_msg_default_count: 15
+    rtc:
+      user_sig_ttl: 10800
+      robot_user_suffix: _robot
+      avatar_user_suffix: _avatar
+      enable_task_valid: true
+      room_map:
+        1871083815626342400: 0
+        1922312662203388544: 0
+        1922565581788041856: 0
+        1876233691132067840: 0
+      agent_config:
+        enable: true
+        filter_brackets_content: 1
+      stt_config:
+        enable: true
+        vad_silence_time: 2000
+      limiter:
+        enable: true
+        time_period: 60
+      max_concurrence:
+        standard: 10
+      callback:
+        enable: true
+        enable_debug: true
+        enable_metric_label: true
+        report_metric_map:
+          asr_latency: histogram
+          llm_network_latency: histogram
+          llm_first_token: histogram
+          tts_network_latency: histogram
+          tts_first_frame_latency: histogram
+          llm_first_sentence_generate_cost: histogram
+          tts_discontinuity: sum
+          interruption: sum
+    #trtc:
+      #endpoint: trtc.tencentcloudapi.com
+      #region: ap-guangzhou
+    #llm:
+    #tts:
+    #digital_human:
+    #sts:
+    local_cache:
+      app_cache:
+        switch: false
+        capacity: 10000
+        expiration: 1800
+        update_cache_interval: 100
+
+    doc_clean_config:
+      doc_record_expire_days: 200  # t_msg_doc_record 数据清理时间
+      default_expire_seconds: 86400  # 文档过期时间
+      custom_app_expire_seconds:  # 应用级自定义文档过期时间
+        1111111111: 2592000
+    core_config:
+      data_channel: 10000
+      sse_timeout: 5400000
+      rag: #基于callee去client.yaml文件去找配置，client的配置是路由到元器
+        blacklist: []
+        switch: true
+        whitelist: []
+        callee: trpc.KEP.bot-rag-server.chat
+        path: /rag/chat
+      agent:
+        blacklist: []
+        switch: true
+        whitelist: []
+        callee: trpc.KEP.bot-agent-server.chat
+        path: /agent/chat
+      workflow:
+        blacklist: []
+        switch: true
+        whitelist: []
+        callee: trpc.KEP.bot-workflow-dm-server.workflow-dm-http
+        path: /single_workflow/chat
+    ip_check_list:
+      white:
+        # 700000963993:
+          # - "183.94.105.7"
+          # - "58.19.74.192"
+        # 700002099278:
+          #  - "36.43.198.252"
+
+      black:
+        # 700000963993:
+          # - "183.95.249.233"
+        # 700001046587:
+            # - "36.45.1.83"
+        # 700002099278:
+            # - "36.43.198.252"
+  chat_en-US.json: |
+    {
+      "抱歉，您这个问题我暂时无法回答，建议您换一个问题试试呢！": "Sorry, I can't answer your question for now. I suggest you try another question.",
+      "该结果依照法律法规不能展示，已被系统隐藏。": "This result cannot be displayed in accordance with laws and regulations and has been hidden by the system.",
+      "这个问题我不是很清楚，我所提供的答案或建议可能会存在不准确的地方。建议您转到人工，由专业顾问为您提供服务。": "I'm not sure about this question, the answer or suggestion I provide may be innaccurate. I recommend you switch to a human agent for professional assistance.",
+      "抱歉，目前我无法提供关于这个问题的答复。为了更好地帮助您，请您尝试提出其他问题或需求。": "Sorry, I cannot provide an answer to this question at this time. To better help you, please try to ask other questions or requests.",
+      "对不起，作为知识库问答应用里的人工智能，我无法帮您总结文档。请告诉我你需要了解的其他信息，我会尽力为你提供帮助。": "Sorry, as an AI in a knowledge Q&A app, I can't help you summarize the document. Please tell me what else you need to know and I'll do my best to help you.",
+      "抱歉，当前咨询量大，请重新再问我一次。": "Sorry, the current volume of inquiries is high. Please ask me again.",
+      "当前用量大，会话摘要生成失败。": "High usage, session summary generation failed.",
+      "当前用量大，会话小结生成失败。": "High usage, session summary generation failed.",
+      "你是腾讯云智能体开发平台，一个善于进行文档阅读、知识问答的智能平台。具备海量的行业知识，对垂直行业超过10项基础能力进行精调优化，涵盖了文档阅读理解、语义理解、安全合规等，可以帮助用户解决行业问题、提高工作效率。": "You are the Tencent Cloud Agent Development Platform, an intelligent platform that is skilled at document reading and knowledge Q&A. With a vast amount of industry knowledge, you can fine-tune and optimize more than 10 basic capabilities in vertical industries, covering document reading comprehension, semantic understanding, security compliance, etc., which can help users solve industry problems and improve work efficiency.",
+      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题": "The large language model you chose is the intelligent assistant DeepSeek-R1 developed by China's DeepSeek company. You will do your best to help users answer questions and solve problems.",
+      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题": "The large language model you chose is DeepSeek-V3, an intelligent assistant developed by China's DeepSeek company. You will do your best to help users answer questions and solve problems.",
+      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1-0528。你会尽你所能帮助用户回答问题、解决问题": "The large language model you chose is DeepSeek-R1-0528, an intelligent assistant developed by China's DeepSeek company. You will do your best to help users answer questions and solve problems.",
+      "抱歉，未从您提供的信息中提取出标签结果": "Sorry, no label results were extracted from the information you provided",
+      "调用知识库": "Calling the Knowledge Base",
+      "调用任务流程": "Calling task flow",
+      "调用搜索引擎": "Calling search engine",
+      "调用图片理解": "Calling image understanding",
+      "大模型直接回复": "LLM direct reply",
+      "调用计算器": "Calling calculator",
+      "阅读文件": "Reading file",
+      "调用工作流": "Calling workflow",
+      "运行Agent": "Running Agent",
+      "大模型生成中": "LLM generating",
+      "思考已停止": "Thinking has stopped",
+      "思考已完成": "Thinking is complete",
+      "思考中": "Thinking",
+      "正在思考中": "Thinking",
+      "思考": "Thinking",
+      "描述一下这张图片": "Describe this picture",
+      "描述以上图片的内容": "Describe the content of the above pictures",
+      "以客服的语气，根据以下信息，用简短的语言询问用户每个槽位具体是什么：": "In a customer service tone, ask the user what each slot specificlly refers to based on the following information:",
+
+      "role_name_regex": "#+\\s*Role Name: (.*)",
+      "speech_style_regex": "#+\\s*Language style:\\n((?:.|\\n)+?)\\n\\n#+\\s*Personality and characteristics:",
+      "personality_regex": "#+\\s*Personality and characteristics:\\n((?:.|\\n)+?)\\n\\n#+\\s*Experience and Background:",
+      "experience_regex": "#+\\s*Experience and Background:\\n((?:.|\\n)+?)\\n\\n#+\\s*Capacity Limitations:",
+      "capability_limit_regex": "#+\\s*Capacity Limitations:\\n(.*?)\\n\\n",
+      "skills_regex": "(#+\\s*Intention\\s*\\d+)：([\\s\\S]*?)(#+\\s*Description of intention)：([\\s\\S]*?)(#+\\s*Fulfillment of Intention)：([\\s\\S]*?)#",
+      "recommend_regex": "\\[Recommended Question.*?\\](.*?)\\n",
+
+      "问题:\n%s\n\n答案:\n%s" : "Q:\n%s\n\nA:\n%s",
+      "工具{%s}不存在, 请尝试使用其他工具": "Tool {%s} Not Exist Please Try Other Tools",
+      "工具{%s}不可用, 请尝试使用其他工具": "Tool {%s} Not Available, Please Try Other Tools",
+      "工具{%s}调用失败: %s": "Tool {%s} Call Failed %s",
+      "[链接](%s)": "[Link](%s)",
+      "猜你想问:<br><br>%s": "I think you want to ask: <br><br>%s",
+      "就是%s": "Exactly %s",
+      "【图%d】": "[Image %d]",
+      "，也是%s": ", Also %s",
+      "文档URL%d:%s": "Document URL %d:%s",
+      "【图": "[Image",
+      "《%s》摘要：%s\n\n": "《%s》Summary:%s\n\n",
+      "【图%d】描述：%s\n\n": "[Image %d] Description:%s\n\n",
+      "描述所有的文件和图片": "Describe All Files And Images",
+      "文档问答": "knowledge_qa",
+      "工作流": "workflow",
+      "自定义": "custom",
+      "知识库中未检索到相关结果": "No relevant results were retrieved from the knowledge base"
+    }
+  chat_zh-CN.json: |
+    {
+      "抱歉，您这个问题我暂时无法回答，建议您换一个问题试试呢！": "抱歉，您这个问题我暂时无法回答，建议您换一个问题试试呢！",
+      "该结果依照法律法规不能展示，已被系统隐藏。": "该结果依照法律法规不能展示，已被系统隐藏。",
+      "抱歉，目前我无法提供关于这个问题的答复。为了更好地帮助您，请您尝试提出其他问题或需求。": "抱歉，目前我无法提供关于这个问题的答复。为了更好地帮助您，请您尝试提出其他问题或需求。",
+      "对不起，作为知识库问答应用里的人工智能，我无法帮您总结文档。请告诉我你需要了解的其他信息，我会尽力为你提供帮助。": "对不起，作为知识库问答应用里的人工智能，我无法帮您总结文档。请告诉我你需要了解的其他信息，我会尽力为你提供帮助。",
+      "抱歉，当前咨询量大，请重新再问我一次。": "抱歉，当前咨询量大，请重新再问我一次。",
+      "当前用量大，会话摘要生成失败。": "当前用量大，会话摘要生成失败。",
+      "当前用量大，会话小结生成失败。": "当前用量大，会话小结生成失败。",
+      "你是腾讯云智能体开发平台，一个善于进行文档阅读、知识问答的智能平台。具备海量的行业知识，对垂直行业超过10项基础能力进行精调优化，涵盖了文档阅读理解、语义理解、安全合规等，可以帮助用户解决行业问题、提高工作效率。": "你是腾讯云智能体开发平台，一个善于进行文档阅读、知识问答的智能平台。具备海量的行业知识，对垂直行业超过10项基础能力进行精调优化，涵盖了文档阅读理解、语义理解、安全合规等，可以帮助用户解决行业问题、提高工作效率。",
+      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题": "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题",
+      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题": "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题",
+      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1-0528。你会尽你所能帮助用户回答问题、解决问题": "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1-0528。你会尽你所能帮助用户回答问题、解决问题",
+
+      "抱歉，未从您提供的信息中提取出标签结果": "抱歉，未从您提供的信息中提取出标签结果",
+      "调用知识库": "调用知识库",
+      "调用任务流程": "调用任务流程",
+      "调用搜索引擎": "调用搜索引擎",
+      "调用图片理解": "调用图片理解",
+      "大模型直接回复": "大模型直接回复",
+      "调用计算器": "调用计算器",
+      "阅读文件": "阅读文件",
+      "调用工作流": "调用工作流",
+      "运行Agent": "运行Agent",
+      "大模型生成中": "大模型生成中",
+      "思考已停止": "思考已停止",
+      "思考已完成": "思考已完成",
+      "思考中": "思考中",
+      "正在思考中": "正在思考中",
+      "思考": "思考",
+      "描述一下这张图片": "描述一下这张图片",
+      "描述以上图片的内容": "描述以上图片的内容",
+      "以客服的语气，根据以下信息，用简短的语言询问用户每个槽位具体是什么：": "以客服的语气，根据以下信息，用简短的语言询问用户每个槽位具体是什么：",
+
+
+
+      "role_name_regex": "#+\\s*角色名称: (.*)",
+      "speech_style_regex": "#+\\s*言谈风格:\\n((?:.|\\n)+?)\\n\\n#+\\s*性格特点:",
+      "personality_regex": "#+\\s*性格特点:\\n((?:.|\\n)+?)\\n\\n#+\\s*经历和背景:",
+      "experience_regex": "#+\\s*经历和背景:\\n((?:.|\\n)+?)\\n\\n#+\\s*能力限制:",
+      "capability_limit_regex": "#+\\s*能力限制:\\n(.*?)\\n\\n",
+      "skills_regex": "(#+\\s*意图\\s*\\d+)：([\\s\\S]*?)(#+\\s*意图描述)：([\\s\\S]*?)(#+\\s*意图实现)：([\\s\\S]*?)#",
+      "recommend_regex": "\\[推荐问题.*?\\](.*?)\\n",
+
+      "问题:\n%s\n\n答案:\n%s" : "问题:\n%s\n\n答案:\n%s",
+      "工具{%s}不存在, 请尝试使用其他工具": "工具{%s}不存在，请尝试其他工具",
+      "工具{%s}不可用, 请尝试使用其他工具": "工具{%s}不可用，请尝试其他工具",
+      "工具{%s}调用失败: %s": "工具{%s}调用失败：%s",
+      "[链接](%s)": "[链接](%s)",
+      "猜你想问:<br><br>%s": "猜你想问：<br><br>%s",
+      "就是%s": "就是%s",
+      "【图%d】": "【图%d】",
+      "，也是%s": "，也是%s",
+      "文档URL%d:%s": "文档URL%d：%s",
+      "【图": "【图",
+      "《%s》摘要：%s\n\n": "《%s》摘要：%s\n\n",
+      "【图%d】描述：%s\n\n": "【图%d】描述：%s\n\n",
+      "描述所有的文件和图片": "描述所有文件和图片"
+    }
+  chat_zh.json: |
+    {}
+  error_en-US.json: |
+    {
+      "用户未登录": "User not logged in",
+      "意图不存在": "Intent does not exist",
+      "请求参数错误, 请参阅接入文档.": "Request parameter error, please refer to the access document.",
+      "Token 校验失败": "Token validation failed",
+      "事件处理器不存在": "Event handler does not exist",
+      "坐席用户不存在": "Agent user does not exist",
+      "机器人不存在": "Chatbot does not exist",
+      "会话未被转人工": "Session was not transferred to a human agent",
+      "消息不存在或没有操作权限": "Message does not exist or no operation permission",
+      "会话创建失败": "Session creation failed",
+      "Prompt 渲染失败": "Prompt rendering failed",
+      "访客用户不存在": "Visitor user does not exist",
+      "会话不存在或没有操作权限": "Session does not exist or no operation permission",
+      "超出并发数限制": "Exceeded concurrency limit",
+      "模型请求超时": "Model request timeout",
+      "知识库未发布": "Knowledge base not published",
+      "访客创建失败": "Visitor creation failed",
+      "消息点赞点踩失败": "Message like/dislike failed",
+      "标签不合法": "Invalid tag",
+      "图像识别失败": "Image recognition failed",
+      "机器人停用或者欠费": "Chatbot is disabled or lacks funds",
+      "该应用类型不支持当前请求": "This application type does not support the current request",
+      "当前应用连接数超出请求限制，请稍后再试": "Current application connections exceed the request limit, please try again later",
+      "当前应用模型余额不足": "Insufficient model balance for the current application",
+      "应用不存在或没有操作权限": "Application does not exist or lacks operation permission",
+      "输入内容过长": "Input content is too long",
+      "计算内容过长, 已经停": "Calculation content is too long, stopped",
+      "任务流程节点预览参数异常": "Task flow node preview parameter exception",
+      "搜索资源已用尽，调用失败": "Search resources exhausted, call failed",
+      "该AppID请求存在异常行为，调用失败": "Abnormal behavior detected in this AppID request, call failed",
+      "工作流功能未启用": "Workflow feature not enabled",
+      "工作流运行异常": "Workflow execution error",
+      "您选择的工作流未开启，请开启后再调试": "The selected workflow is not enabled, please enable it before debugging",
+      "您选择的工作流待调试，请先在工作流中对其进行调试": "The selected workflow is pending debugging, please debug it in the workflow first",
+      "您选择的工作流已被删除，请重新选择": "The selected workflow has been deleted, please reselect",
+      "您选择的工作流未发布，请先在工作流中对其进行开启": "The selected workflow is not published, please enable it in the workflow first",
+      "该工作流中引用了其他工作流，其他工作流因‘未启用’或‘待调试’导致不可用，请’启用‘或’调试‘后再进行测试。": "This workflow references other workflows, which are unavailable due to being disabled or are pending debugging. please enable or debug them before testing.",
+      "Agent暂时不支持图片": "Agent does not support images temporarily",
+      "Agent暂时不支持文件": "Agent does not support files temporarily",
+      "Agent运行异常": "Agent execution exception",
+      "Agent当前没有可执行的工具": "Agent currently has no executable tools",
+      "Agent工具失败": "Agent tool failed",
+      "Redis数据不存在": "Redis data does not exist",
+      "请求参数错误, 提示词未填写。": "Request Parameter Error Prompt Not Filled",
+      "请求参数错误, 提示词长度过短，应该大于%d个字符。": "Request Parameter Error Prompt Too Short Should Be More Than %d Characters",
+      "请求参数错误, sessionID错误": "Request Parameter Error Session Id Error",
+      "请求参数错误, AppKey未填写": "Request Parameter Error App Key Not Filled",
+      "API参数 varid(%s) 未找到": "Api Parameter Varid(%s) Not Found",
+      "用户未配置自定义API参数 %s": "User has not confirmed customer API parameter %s",
+      "创建AES加密器失败: %v": "Failed to create AES encryptor",
+      "请求参数错误，上次聊天没有请求本地工具调用，请不要配置 LocalToolOuputs 参数": "Request Parameter Error, Last Chat Did Not Request Local Tool Invocation, Please Do Not Configure LocalToolOutputs Parameter",
+      "请求参数错误，LocalToolOuputs 上报的工具名称不存在": "Request Parameter Error Tool Name Reported In LocalToolOutputs Does Not Exist",
+      "消息记录不合法": "Message Record Invalid",
+      "语音互动功能未开启": "Voice Interaction Feature Not Enabled",
+      "语音通话功能未开启": "Voice Call Feature Not Enabled",
+      "语音通话线路繁忙，请稍后再试": "Voice Call Lines Busy, Please Try Again Later",
+      "语音通话声音未配置": "Voice Call Audio Not Configured",
+      "语音通话形象未配置": "Voice Call Digital Human Not Configured",
+      "语音通话形象未启用": "Voice Call Digital Human Not Enabled",
+      "当前语音通话数超出请求限制，请稍后再试": "Current Voice Calls Exceed Request Limit Please Try Again Later",
+      "语音通话任务不存在": "Voice Call Task Does Not Exist",
+      "您尚未选择工作流，请进行选择": "You have not selected a workflow; please make a selection",
+      "ErrIpForbidden": "The current IP address is not authorized.",
+      "当前IP地址无访问权限。": "The current IP address is not authorized."
+    }
+  error_zh-CN.json: |
+    {
+    "用户未登录": "用户未登录",
+    "意图不存在": "意图不存在",
+    "请求参数错误, 请参阅接入文档.": "请求参数错误, 请参阅接入文档.",
+    "Token 校验失败": "Token 校验失败",
+    "事件处理器不存在": "事件处理器不存在",
+    "坐席用户不存在": "坐席用户不存在",
+    "机器人不存在": "机器人不存在",
+    "会话未被转人工": "会话未被转人工",
+    "消息不存在或没有操作权限": "消息不存在或没有操作权限",
+    "会话创建失败": "会话创建失败",
+    "Prompt 渲染失败":"Prompt 渲染失败",
+    "访客用户不存在": "访客用户不存在",
+    "会话不存在或没有操作权限":  "会话不存在或没有操作权限",
+    "超出并发数限制":       "超出并发数限制",
+    "模型请求超时": "模型请求超时",
+    "知识库未发布": "知识库未发布",
+    "访客创建失败": "访客创建失败",
+    "消息点赞点踩失败": "消息点赞点踩失败",
+    "标签不合法": "标签不合法",
+    "图像识别失败": "图像识别失败",
+    "机器人停用或者欠费": "机器人停用或者欠费",
+    "该应用类型不支持当前请求": "该应用类型不支持当前请求",
+    "当前应用连接数超出请求限制，请稍后再试": "当前应用连接数超出请求限制，请稍后再试",
+    "当前应用模型余额不足": "当前应用模型余额不足",
+    "应用不存在或没有操作权限": "应用不存在或没有操作权限",
+    "输入内容过长": "输入内容过长",
+    "计算内容过长, 已经停": "计算内容过长, 已经停",
+    "任务流程节点预览参数异常": "任务流程节点预览参数异常",
+    "搜索资源已用尽，调用失败": "搜索资源已用尽，调用失败",
+    "该AppID请求存在异常行为，调用失败": "该AppID请求存在异常行为，调用失败",
+    "工作流功能未启用": "工作流功能未启用",
+    "工作流运行异常": "工作流运行异常",
+    "您选择的工作流未开启，请开启后再调试": "您选择的工作流未开启，请开启后再调试",
+    "您选择的工作流待调试，请先在工作流中对其进行调试": "您选择的工作流待调试，请先在工作流中对其进行调试",
+    "您选择的工作流已被删除，请重新选择": "您选择的工作流已被删除，请重新选择",
+    "您选择的工作流未发布，请先在工作流中对其进行开启": "您选择的工作流未发布，请先在工作流中对其进行开启",
+    "该工作流中引用了其他工作流，其他工作流因‘未启用’或‘待调试’导致不可用，请’启用‘或’调试‘后再进行测试。": "该工作流中引用了其他工作流，其他工作流因‘未启用’或‘待调试’导致不可用，请’启用‘或’调试‘后再进行测试。",
+    "Agent暂时不支持图片": "Agent暂时不支持图片",
+    "Agent暂时不支持文件": "Agent暂时不支持文件",
+    "Agent运行异常": "Agent运行异常",
+    "Agent当前没有可执行的工具": "Agent当前没有可执行的工具",
+    "Agent工具失败": "Agent工具失败",
+    "Redis数据不存在": "Redis数据不存在",
+    "请求参数错误, 提示词未填写。": "请求参数错误，提示词未填写",
+    "请求参数错误, 提示词长度过短，应该大于%d个字符。": "请求参数错误，提示词长度过短，应大于%d个字符",
+    "请求参数错误, sessionID错误": "请求参数错误，会话ID错误",
+    "请求参数错误, AppKey未填写": "请求参数错误，应用密钥未填写",
+    "API参数 varid(%s) 未找到": "API参数 varid(%s) 未找到",
+    "用户未配置自定义API参数 %s": "用户未配置自定义API参数 %s",
+    "创建AES加密器失败: %v": "创建AES加密器失败: %v",
+    "请求参数错误，上次聊天没有请求本地工具调用，请不要配置 LocalToolOuputs 参数": "请求参数错误，上次聊天未请求本地工具调用，请勿配置 LocalToolOutputs 参数",
+    "请求参数错误，LocalToolOuputs 上报的工具名称不存在": "请求参数错误，LocalToolOutputs 上报的工具名称不存在",
+    "消息记录不合法": "消息记录不合法",
+    "语音互动功能未开启": "语音互动功能未开启",
+    "语音通话功能未开启": "语音通话功能未开启",
+    "语音通话线路繁忙，请稍后再试": "语音通话线路繁忙，请稍后再试",
+    "语音通话声音未配置": "语音通话声音未配置",
+    "语音通话形象未配置": "语音通话形象未配置",
+    "语音通话形象未启用": "语音通话形象未启用",
+    "当前语音通话数超出请求限制，请稍后再试": "当前语音通话数超出请求限制，请稍后再试",
+    "语音通话任务不存在": "语音通话任务不存在",
+    "ErrIpForbidden": "当前IP地址无访问权限。",
+    "当前IP地址无访问权限。": "当前IP地址无访问权限。"
+    }
+  placeholder.yaml: |
+    CHAT_CONTENT_LIMIT: 192000
+    CHAT_ONE_IMAGE_TOKEN_LENGTH: 1248
+
+    CHAT_MYSQL_USER: {{ .Values.global.components.db.user }}
+    CHAT_MYSQL_PASSWORD: "{{ .Values.global.components.db.password }}"
+    CHAT_MYSQL_HOST: {{ .Values.global.components.db.host }}
+    CHAT_MYSQL_PORT: {{ .Values.global.components.db.port }}
+
+    CHAT_TDSQL_USER: {{ .Values.global.components.db.user }}
+    CHAT_TDSQL_PASSWORD: "{{ .Values.global.components.db.password }}"
+    CHAT_TDSQL_HOST: {{ .Values.global.components.db.host }}
+    CHAT_TDSQL_PORT: {{ .Values.global.components.db.port }}
+
+    CHAT_ADP_PROMPT_MYSQL_USER: {{ .Values.global.components.db.user }}
+    CHAT_ADP_PROMPT_MYSQL_PASSWORD: "{{ .Values.global.components.db.password }}"
+    CHAT_ADP_PROMPT_MYSQL_HOST: {{ .Values.global.components.db.host }}
+    CHAT_ADP_PROMPT_MYSQL_PORT: {{ .Values.global.components.db.port }}
+
+    CHAT_REDIS_HOST: {{ (index .Values.global.components.redis.hosts 0) }}
+    CHAT_REDIS_PORT: 6379
+    CHAT_REDIS_PASSWORD: "{{ .Values.global.components.redis.password }}"
+
+    CHAT_APEX_ROUTER_TARGET: ip://apex-router-cmlb-8083-0.{{ .Release.Namespace }}.svc.cluster.local:8083
+    CHAT_LLM_MANAGER_SERVER_TARGET: ip://llm-manager-server.{{ .Release.Namespace }}.svc.cluster.local:10001
+    CHAT_BOT_DM_SERVER_TARGET: ip://botdmserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+    CHAT_AI_GATEWAY_TARGET: ip://ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+    CHAT_BOT_DATA_STATISTICS_SERVER_TARGET: ip://botdatastatisticsserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+    CHAT_FINANCE_SERVER_TARGET: ip://finance.{{ .Release.Namespace }}.svc.cluster.local:9090
+    CHAT_BOT_KNOWLEDGE_CONFIG_SERVER_TARGET: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+    CHAT_BOT_MEMORY_SERVER_TARGET: ip://bot-memory-server.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    CHAT_BOT_TASK_CONFIG_SERVER_TARGET: ip://bottaskconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+    CHAT_WORKFLOW_CONFIG_SERVER_TARGET: ip://bottaskconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+
+    CHAT_BOT_LLM_SERVER_TARGET: ip://botllmserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+
+    CHAT_ADMIN_CONFIG_LOGIN_TARGET: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+    CHAT_ADMIN_CONFIG_SERVER_TARGET: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+    CHAT_APP_CONFIG_SERVER_TARGET: ip://app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    CHAT_PLATFORM_METROLOGY_TARGET: ip://botdatastatisticsserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+    CHAT_PLATFORM_MANAGER_TARGET: ip://platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9092
+    CHAT_PLATFORM_MANAGER_ADMIN_TARGET: ip://platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    CHAT_WORKFLOW_DM_SERVER_TARGET: ip://botworkflowdmserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+    CHAT_BOT_WORKFLOW_DM_HTTP_SERVER_TARGET: ip://botworkflowdmserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    CHAT_PLUGIN_CONFIG_SERVER_TARGET: ip://pluginconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+    CHAT_PLUGIN_EXEC_SERVER_TARGET: ip://pluginexecserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+    CHAT_INFOSEC_SERVER_TARGET: ip://infosec.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    CHAT_CODE_INTERPRETER_DISPATCHER_TARGET: ip://codeinterpreterdispatcher.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    CHAT_AGENT_CONFIG_SERVER_TARGET: ip://agentconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    CHAT_RESOURCE_SCHEDULE_SERVER_TARGET: ip://resourcescheduleserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+
+    CHAT_BOT_RAG_SERVER_CHAT_TARGET: ip://bot-rag-server.{{ .Release.Namespace }}.svc.cluster.local:8000
+    CHAT_BOT_RAG_SERVER_TARGET: ip://bot-rag-server.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    CHAT_BOT_AGENT_SERVER_CHAT_TARGET: ip://bot-agent-server.{{ .Release.Namespace }}.svc.cluster.local:8000
+    CHAT_BOT_AGENT_SERVER_TARGET: ip://bot-agent-server.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+
+
+  trpc_go.yaml: |
+    global:
+      env_name: test
+      namespace: Test
+      enable_set: ${ENABLE_SET}         #是否启用set
+      full_set_name: ${FULL_SET_NAME}   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+    server:
+      app: qbot.qbot
+      server: chat
+      conf_path: /data/app/conf/
+      admin:
+        ip: ${POD_IP}
+        port: 8081
+      filter:
+      - recovery
+      - accesslog
+      - debuglog
+      - validation
+      - cle-route-propagator
+      - i18n-adp    # 在recovery filter之后引用，避免filter里的错误覆盖掉i18n错误
+      - opentelemetry
+      - galileo
+      stream_filter:
+      - galileo
+      service:
+      - name: qbot.qbot.chat.Chat
+        ip: ${POD_IP}
+        port: 9090
+        network: tcp
+        protocol: trpc
+        timeout: 10000
+      - name: trpc.KEP.bot-chat-server.chat
+        ip: ${POD_IP}
+        port: 9091
+        network: tcp
+        protocol: trpc
+        timeout: 30000
+      - name: qbot.qbot.chat.ChatHttp
+        ip: ${POD_IP}
+        port: 9099                                                         # 服务监听端口 可使用占位符 ${port}
+        network: tcp                                                       # 网络监听类型  tcp udp
+        protocol: http                                                     # 应用层协议 trpc http
+          # timeout: 30000                                                   # 请求最长处理时间 单位 毫秒
+      - name: qbot.qbot.chat.StreamChat
+        ip: ${POD_IP}
+        port: 9190
+        network: tcp
+        protocol: trpc
+        timeout: 30000
+      - name: qbot.chat.chat.DeleteRealtimeDoc        # 分布式定时器
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+        port: 9001                  #服务监听端口 可使用占位符 ${port}
+        network: 0 */1 * * * * ?startAtOnce=0&scheduler=redis&holdTime=5       # 使用redis分布式锁"
+        protocol: timer                 #应用层协议 trpc http
+        timeout: 600000                 # 请求最长处理时间 单位 毫秒
+      - name: qbot.chat.chat.LoadPromptVersionFromDB        # 本地定时器
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+        port: 9002                  #服务监听端口 可使用占位符 ${port}
+        network: 0 */2 * * * * ?startAtOnce=1       # 启动立马执行
+        protocol: timer                 #应用层协议 trpc http
+        timeout: 600000                 # 请求最长处理时间 单位 毫秒
+      - name: qbot.chat.chat.UpdateRobotKeywords        # 分布式定时器
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+        port: 9003                  #服务监听端口 可使用占位符 ${port}
+        network: 0 */1 * * * * ?startAtOnce=0&scheduler=redis&holdTime=5       # 使用redis分布式锁"
+        protocol: timer                 #应用层协议 trpc http
+        timeout: 600000                 # 请求最长处理时间 单位 毫秒
+      - name: qbot.chat.chat.GetRejectAnswer        # 本地定时器
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+        port: 9004                  #服务监听端口 可使用占位符 ${port}
+        network: 0 */2 * * * * ?startAtOnce=1       # 启动立马执行
+        protocol: timer                 #应用层协议 trpc http
+        timeout: 600000                 # 请求最长处理时间 单位 毫秒
+      - name: qbot.chat.chat.ClearMsgRecord        # 分布式定时器，清理消息记录表
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+        port: 9005                  #服务监听端口 可使用占位符 ${port}
+        network: 0 0/5 2 * * *?startAtOnce=0&scheduler=redis&holdTime=5       # 使用redis分布式锁"每天的 2:00 - 2:55 时间段，每隔 3 分钟执行一次
+        protocol: timer                 #应用层协议 trpc http
+        timeout: 1200000                 # 请求最长处理时间 单位 毫秒
+      - name: qbot.chat.chat.GetAgentTools        # 本地定时器
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+        port: 9006                  #服务监听端口 可使用占位符 ${port}
+        network: 0 */2 * * * * ?startAtOnce=1       # 启动立马执行
+        protocol: timer
+      - name: qbot.chat.chat.ClearMsgRecordBySession        # 分布式定时器，清理消息记录表
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+        port: 9007                  #服务监听端口 可使用占位符 ${port}
+        network: 0 */5 * * * * ?startAtOnce=1       # 使用redis分布式锁"每隔 2 分钟执行一次
+        protocol: timer                 #应用层协议 trpc http
+        timeout: 60000                 # 请求最长处理时间 单位 毫秒
+    plugins:
+      telemetry:
+        opentelemetry:
+          addr: {{ (.Values.global.observability.apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if (.Values.global.observability.apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if (.Values.global.observability.apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+        galileo:
+          verbose: error # 伽利略自身的诊断日志级别，取值范围：debug, info, error, none，日志输出在 ./galileo/galileo.log 中。
+          ocp_addr: http://127.0.0.1
+          config: #配置
+            config_server: http://127.0.0.1
+            register_server: http://127.0.0.1
+            self_monitor:
+              collector:
+                addr: http://127.0.0.1
+            metrics_config: # 指标配置
+              enable: false # 是否启用指标
+            traces_config: # 追踪配置
+              enable: true # 是否启用追踪，默认 true。如果设置为 false，会中断 trace，让上游的调用链不完整。v0.3.7 以上生效。
+              processor: # 追踪数据处理相关配置
+                sampler: # 采样器配置
+                  fraction: 0 # 采样比例，默认 0。（v0.11.0)
+                  error_fraction: 0
+                  enable_min_sample: true # 启用每分钟每接口最少 1 个请求采样，默认 true (v0.11.0)。
+                  enable_dyeing: true # 开启染色采样，默认 true。
+                disable_trace_body: true    # 若为 true，则关闭 trace 中对 req 和 rsp 的 body 上报，可以大幅提高上报性能。默认 true。
+                enable_deferred_sample: false # 开启延迟采样（请求处理完采样），默认 false。0.3.0 以上生效。
+                deferred_sample_error: false # 开启延迟采样出错采样（请求处理完出现错误采样），默认 false。0.3.0 以上生效。
+                deferred_sample_slow_duration_ms: 1000 # 慢操作阈值（请求耗时超过该值采样），单位 ms，默认 1000。0.3.0 以上生效。
+                disable_parent_sampling: false      # 忽略上游的采样结果，默认 false。v0.3.7 以上生效。
+              exporter:
+                collector:
+                  addr: 127.0.0.1:80
+            logs_config: # 日志配置
+              enable: false # 是否启用日志
+              processor: # 日志数据处理相关配置
+                only_trace_log: false # 是否只上报命中 trace 的 log，默认关闭
+                must_log_traced: false # 是否命中 traced 不管任何级别日志都上报，默认关闭。v0.3.22 以上生效
+                trace_log_mode: 0 # debug 访问日志 (access_log) 打印模式，0,1：单行打印，3：多行打印，2：不打印，默认 0
+                level: debug  # 上报到远程的日志级别，默认 error
+                enable_recovery: true # 是否捕获 panic，默认 true
+            profiles_config: # profile配置
+              enable: false # 是否启用 profile
+              processor: # profile 数据处理相关配置
+                profile_types: [cpu, heap] # 采集 profile 的类型，支持 cpu、heap、mutex、block、goroutine，默认开启 cpu 和 heap。
+            version: 1  # 版本号，默认 0，此版本号用于控制远程配置和本地配置的优先级，版本号高的优先，一般设置成 1 即可。
+          resource: # resource 资源信息，在 SDK 运行期间不会改变。resource 中的字段一般不需要配置，默认会填充。
+            platform: STKE # 服务部署的平台，如 PCG-123, STKE, 默认 PCG-123
+      config:
+        file:
+          providers:
+          - name: rainbow
+            path: /app/conf/
+          - name: rainbow-comm
+            path: /app/
+      log:
+        default:                                  #默认日志的配置，可支持多输出
+        - writer: console                         #控制台标准输出 默认
+          level: info                            #标准输出日志的级别
+        #caller_skip: 3
+          formatter: json
+          formatter_config:
+            time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+            time_key: time
+            level_key: level
+            name_key: name
+            caller_key: caller
+            message_key: message
+        - writer: file                            #本地文件日志
+          level: info                             #本地文件滚动日志的级别
+          formatter: json
+          formatter_config:
+            time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+            time_key: time
+            level_key: level
+            name_key: name
+            caller_key: caller
+            message_key: message
+            stacktrace_key: stackTrace
+          writer_config:
+            filename: /app/logs/trpc.log  #本地文件滚动日志存放的路径
+            write_mode: 2
+            roll_type: time
+            max_age: 7
+            max_backups: 10
+            compress: false
+            time_unit: day
+      selector:
+        polaris:
+          protocal: grpc
+          discovery:
+            refresh_interval: 10000
+          enable_servicerouter: true
+          enable_trans_meta: true
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+          - zh-CN
+          - en-US
+          data_provider:
+            type: rainbow
+            prefix: chat
+            error_prefix: error
+            char_scaling_factor:
+              zh: 1
+              en: 3
+    client:
+      namespace: Test
+      filter:
+      - opentelemetry
+      - cle-route-propagator
+      - galileo
+      stream_filter:
+      - galileo
+      service:
+      - name: mysql.qbot.qbot
+        target: dsn://${CHAT_MYSQL_USER}:${CHAT_MYSQL_PASSWORD}@tcp(${CHAT_MYSQL_HOST}:${CHAT_MYSQL_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - name: tdsql.qbot.qbot
+        target: dsn://${CHAT_TDSQL_USER}:${CHAT_TDSQL_PASSWORD}@tcp(${CHAT_TDSQL_HOST}:${CHAT_TDSQL_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - name: trpc.mysql.adp.prompt
+        target: dsn://${CHAT_ADP_PROMPT_MYSQL_USER}:${CHAT_ADP_PROMPT_MYSQL_PASSWORD}@tcp(${CHAT_ADP_PROMPT_MYSQL_HOST}:${CHAT_ADP_PROMPT_MYSQL_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - name: redis.qbot.qbot
+        network: tcp
+        protocol: redis
+        target: ip://${CHAT_REDIS_HOST}:${CHAT_REDIS_PORT}
+        password: "${CHAT_REDIS_PASSWORD}"
+        timeout: 2000
+      - name: redis.lke.limiter
+        network: tcp
+        protocol: redis
+        target: ip://${CHAT_REDIS_HOST}:${CHAT_REDIS_PORT}/4
+        password: "${CHAT_REDIS_PASSWORD}"
+        timeout: 800
+      - name: apex.router
+        target: ${CHAT_APEX_ROUTER_TARGET}
+        timeout: 5000
+      # 大模型代理
+      - name: trpc.SmartAssistant.LLMManagerServer.Chat
+        callee: trpc.SmartAssistant.LLMManagerServer.Chat
+        target: ${CHAT_LLM_MANAGER_SERVER_TARGET}
+        protocol: trpc
+        network: tcp
+        timeout: 300000
+      - callee: trpc.KEP.bot_dm_server.BotDm
+        name: trpc.KEP.bot-dm-server.bot-dm
+        target: ${CHAT_BOT_DM_SERVER_TARGET}
+        protocol: trpc
+        network: tcp
+        timeout: 10000
+      - name: trpc.KEP.bot_task_config_server.TaskConfig
+        target: ${CHAT_WORKFLOW_CONFIG_SERVER_TARGET}
+        timeout: 5000
+      - callee: trpc.KEP.bot_knowledge_config_server.Api
+        name: trpc.KEP.bot-knowledge-config-server.Api
+        target: ${CHAT_BOT_KNOWLEDGE_CONFIG_SERVER_TARGET}
+        protocol: trpc
+        timeout: 600000
+      - callee: trpc.KEP.bot_memory_server.MemoryInner
+        target: ${CHAT_BOT_MEMORY_SERVER_TARGET}
+        protocol: trpc
+        timeout: 20000
+      # pipeline 过程记录, 数据库
+      - name: pipeline-flow-detail
+        target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot_history_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      # 数学插件服务
+      - name: qbot.qbot.plugin.Plugin
+        network: tcp
+        timeout: 30000
+      # 计费服务, @stanwei 提供
+      - name: qbot.finance.finance.Finance
+        target: ${CHAT_FINANCE_SERVER_TARGET}
+        network: tcp
+        timeout: 30000
+      - name: redis.qbot.chat.cron
+        target: ip://:{{ .Values.global.components.redis.password }}@{{ (index .Values.global.components.redis.hosts 0) }}:6379
+      # token截断服务
+      - name: trpc.KEP.bot-llm-server.llm
+        callee: trpc.KEP.bot_llm_server.llm
+        target: ${CHAT_BOT_LLM_SERVER_TARGET}
+        network: tcp
+        timeout: 5000
+      - callee: trpc.KEP.bot_admin_config_server.Login
+        target: ${CHAT_ADMIN_CONFIG_LOGIN_TARGET}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.KEP.bot_admin_config_server.Api
+        target: ${CHAT_ADMIN_CONFIG_SERVER_TARGET}
+        protocol: trpc
+        timeout: 20000
+        # Workflow服务
+      - callee: trpc.KEP.bot_workflow_dm_server.WorkflowDm
+        name: trpc.KEP.bot-workflow-dm-server.workflow-dm
+        target: ${CHAT_WORKFLOW_DM_SERVER_TARGET}
+        timeout: 600000
+        # 插件配置端
+      - callee: trpc.KEP.plugin_config_server.PluginConfigApi
+        name: trpc.KEP.plugin-config-server.PluginConfigApi
+        target: ${CHAT_PLUGIN_CONFIG_SERVER_TARGET}
+        timeout: 30000
+      # 插件运行时
+      - callee: trpc.KEP.plugin_exec_server.PluginExec
+        name: trpc.KEP.plugin-exec-server.PluginExec
+        target: ${CHAT_PLUGIN_EXEC_SERVER_TARGET}
+        timeout: 300000
+      - name: qbot.qbot.infosec.Infosec
+        target: ${CHAT_INFOSEC_SERVER_TARGET}
+        network: tcp
+        timeout: 2000
+      # CodeExec
+      - callee: trpc.KEP.code_interpreter_dispatcher.CodeExec
+        name: trpc.KEP.code-interpreter-dispatcher.CodeExec
+        target: ${CHAT_CODE_INTERPRETER_DISPATCHER_TARGET}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.KEP.agent_config_server.AgentConfigApi
+        name: trpc.KEP.agent-config-server.AgentConfigApi
+        target: ${CHAT_AGENT_CONFIG_SERVER_TARGET}
+        protocol: trpc
+        timeout: 60000
+      # ScheduleServer
+      - callee: trpc.KEP.resource_schedule_server.ScheduleServer
+        target: ${CHAT_RESOURCE_SCHEDULE_SERVER_TARGET}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.KEP.bot-rag-server.chat
+        network: tcp                    # 后端服务的网络类型 tcp udp 配置优先
+        protocol: http                  # 应用层协议 trpc http
+        timeout: 600000                  # 请求最长处理时间
+        serialization: 2                # (0=pb, 1=JCE, 2=json, 3=flat_buffer, 4=bytes_flow)
+        target: ${CHAT_BOT_RAG_SERVER_CHAT_TARGET}
+      - callee: trpc.KEP.bot-agent-server.chat       # rag服务
+        network: tcp                    # 后端服务的网络类型 tcp udp 配置优先
+        protocol: http                  # 应用层协议 trpc http
+        timeout: 5400000                  # 请求最长处理时间
+        serialization: 2                # (0=pb, 1=JCE, 2=json, 3=flat_buffer, 4=bytes_flow)
+        target: ${CHAT_BOT_AGENT_SERVER_CHAT_TARGET}
+      - callee: trpc.KEP.bot-workflow-dm-server.workflow-dm-http      # DM http服务
+        network: tcp                    # 后端服务的网络类型 tcp udp 配置优先
+        protocol: http                  # 应用层协议 trpc http
+        timeout: 600000                  # 请求最长处理时间
+        serialization: 2                # (0=pb, 1=JCE, 2=json, 3=flat_buffer, 4=bytes_flow)
+        target: ${CHAT_BOT_WORKFLOW_DM_HTTP_SERVER_TARGET}
+      - callee: trpc.KEP.bot_agent_server.Agent
+        target: ${CHAT_BOT_AGENT_SERVER_TARGET}
+        protocol: trpc
+        timeout: 20000
+      - name: trpc.adp.ai-gateway.api
+        network: tcp
+        protocol: http
+        target: ${CHAT_AI_GATEWAY_TARGET}
+        timeout: 1800000
+      - callee: trpc.KEP.bot_data_statistics_server.Api
+        target: ${CHAT_BOT_DATA_STATISTICS_SERVER_TARGET}
+        protocol: trpc
+        timeout: 20000
+
+      # 下面是协议迁移后新适配的服务
+      - callee: trpc.adp.app_memory.MemoryInner
+        target: ${CHAT_BOT_MEMORY_SERVER_TARGET}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.adp.platform_metrology.Api
+        target: ${CHAT_PLATFORM_METROLOGY_TARGET}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.adp.model_token_count.Tokenizer
+        target: ${CHAT_BOT_LLM_SERVER_TARGET}
+        network: tcp
+        timeout: 5000
+      - callee: trpc.adp.kb_config.Api
+        target: ${CHAT_BOT_KNOWLEDGE_CONFIG_SERVER_TARGET}
+        protocol: trpc
+        timeout: 600000
+      - callee: trpc.adp.app_admin_proxy.Api
+        target: ${CHAT_ADMIN_CONFIG_SERVER_TARGET}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.adp.workflow_config.WorkflowConfig
+        target: ${CHAT_WORKFLOW_CONFIG_SERVER_TARGET}
+        timeout: 5000
+      - callee: trpc.adp.platform_manager.Login
+        target: ${CHAT_PLATFORM_MANAGER_TARGET}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.adp.platform_manager.Admin
+        target: ${CHAT_PLATFORM_MANAGER_ADMIN_TARGET}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.adp.plugin_code_interpret.CodeExec
+        target: ${CHAT_CODE_INTERPRETER_DISPATCHER_TARGET}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.adp.agent_config.AgentConfigApi
+        target: ${CHAT_AGENT_CONFIG_SERVER_TARGET}
+        protocol: trpc
+        timeout: 60000
+      - callee: trpc.adp.plugin_pod_schedule.ScheduleServer
+        target: ${CHAT_RESOURCE_SCHEDULE_SERVER_TARGET}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.adp.agent_exec.Agent
+        target: ${CHAT_BOT_AGENT_SERVER_TARGET}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.adp.app_config.Admin
+        target: ${CHAT_APP_CONFIG_SERVER_TARGET}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.adp.platform_content_moderation.Infosec
+        target: ${CHAT_INFOSEC_SERVER_TARGET}
+        network: tcp
+        timeout: 2000
+      - callee: trpc.adp.rag_exec.Chat
+        target: ${CHAT_BOT_RAG_SERVER_TARGET}
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.adp.workflow_exec.WorkflowExec
+        target: ${CHAT_WORKFLOW_DM_SERVER_TARGET}
+        timeout: 600000
+      - callee: trpc.adp.app_admin_proxy.Login
+        target: ${CHAT_ADMIN_CONFIG_LOGIN_TARGET}
+        protocol: trpc
+        timeout: 20000
+  workflow.yaml: |
+    white_list:
+      unchanged: []
+      skip_query_rewrite: []
+    workflow_prompt:
+      prompt: "<背景>\n你是一位擅长优化用户提示词的专家，精通添加详细说明和纠正语言问题。识别“用户提示词”中不清楚、不正确或缺失的信息，并提出精确的补充或修正，以提高清晰度和准确性。确保修正后的用户提示词精确、正式且详细。\n注意：仅补充用户提示词，不直接回答用户提示词；补充内容控制在50字左右，尽量不超过100字。确保提示词中的关键信息不被修改。\n</背景>\n\n<用户提示词>\n{用户输入的提示词}\n</用户提示词>\n\n<输出格式>\n直接输出润色后的用户提示词，不添加任何额外内容。严格遵守<背景>中规定的要求。\n</输出格式>\n\n润色后的用户提示词："

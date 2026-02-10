@@ -1,0 +1,17 @@
+tad:
+  type: helm
+  global:
+    productType: lke
+    helmfile_env_name: tcs
+  registries:
+    images: registry.tce.com
+    packages: registry.tce.com:1181
+  packages: {}
+  images:
+    cs-data-init:
+      url: ccr.ccs.tencentyun.com/tke-market/cs-data-init:1.0.0-20260210-223910-931c044.rhel.amd64
+
+# ServiceList: "ai-gateway-dbsql,aiconfmanagerserver-dbsql,accessmanagerserver-dbsql,lke-ti-perm-auth-sql,common-config-map-dbsql,agent-config-server-dbsql,plugin-exec-server-dbsql,admin-dbsql,app-config-dbsql,bot-agent-server-dbsql,bot-data-statistics-server-dbsql,bot-evaluate-config-server-dbsql,bot-knowledge-config-server-dbsql,bot-memory-server-dbsql,bot-retrieval-server-dbsql,chat-dbsql,resource-gallery-dbsql,short-url-dbsql,infosec-dbsql,channel-msg-svr-dbsql,platform-manager-dbsql,op-dbsql,bot-workflow-dm-server-dbsql,bot-task-config-server-dbsql,finance-dbsql,vector-db-manager-dbsql,web-parser-server-dbsql"
+
+ServiceList: "db_llm,db_ai_gateway_adp,db_llm_finance,db_llm_plugin,db_llm_plugin_prod,db_llm_robot,db_llm_robot_history_prod,db_llm_robot_isearch,db_llm_robot_task,db_llm_robot_task_prod,db_llm_workflow,db_llm_workflow_formal,db_llm_workflow_formal_prod,db_text2sql_preview,db_text2sql_prod,openplatform_conf_data,openplatform_permission_data,ti_perm_auth,web_parsing_engine"
+imagePullSecretName: qcloudregistrykey

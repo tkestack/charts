@@ -1,0 +1,49 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: platform-manager
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-platform-manager
+    app.kubernetes.io/name: platform-manager
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Release.Name }}-platform-manager-cluster-reader
+  labels:
+    app: {{ .Release.Name }}-platform-manager
+rules:
+  # 允许获取集群信息（用于获取集群 UUID）
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list"]
+  # 允许获取 kube-system 命名空间下的资源（集群 UUID 通常存储在 kube-system）
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["cluster-info"]
+    verbs: ["get"]
+  # 允许获取节点信息（某些情况下集群 UUID 可能从节点获取）
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "list"]
+  # 允许获取 pods 信息（用于部署前置依赖检查）
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Release.Name }}-platform-manager-cluster-reader-binding
+  labels:
+    app: {{ .Release.Name }}-platform-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ .Release.Name }}-platform-manager-cluster-reader
+subjects:
+  - kind: ServiceAccount
+    name: platform-manager
+    namespace: {{ .Release.Namespace }}

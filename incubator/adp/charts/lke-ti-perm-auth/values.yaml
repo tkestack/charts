@@ -1,0 +1,15 @@
+tad:
+  type: helm
+  global:
+    productType: lke
+  namespace: ti-base
+  registries:
+    images: registry.tce.com
+    packages: registry.tce.com:1181
+  images:
+    ti-perm-auth:
+      url: ccr.ccs.tencentyun.com/tke-market/ti-auth-cust-trpc:master_private_e2f193a8_20260127
+env: TEST
+namespace: ti-base
+imagePullSecretName: qcloudregistrykey
+serviceName: ti-perm-auth

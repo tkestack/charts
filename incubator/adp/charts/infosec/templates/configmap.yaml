@@ -1,0 +1,560 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-infosec
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    ssd:
+      auditors:
+        xinan:
+          product_id:
+          secret_id:
+          secret_key:
+        tianyu:
+          product_id:
+          secret_id:
+          secret_key:
+      check_source:
+        admin.robot_name.5:
+          sid: 100434
+          callback: trpc://trpc.KEP.bot_admin_config_server.Api/AuditResultCallback?target=ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: true
+          auto_submit_appeal: false
+        admin.robot_avatar.4:
+          sid: 100435
+          callback: trpc://trpc.KEP.bot_admin_config_server.Api/AuditResultCallback?target=ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: false
+          block_list_enabled: false
+          is_async: true
+          auto_submit_appeal: false
+        admin.robot_greeting.5:
+          sid: 100434
+          callback: trpc://trpc.KEP.bot_admin_config_server.Api/AuditResultCallback?target=ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: true
+          auto_submit_appeal: false
+        admin.release_qa.1:
+          sid: 100434
+          callback: trpc://trpc.KEP.bot_admin_config_server.Api/AuditResultCallback?target=ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: true
+          auto_submit_appeal: false
+        admin.release_qa.4:
+          sid: 100435
+          callback: trpc://trpc.KEP.bot_admin_config_server.Api/AuditResultCallback?target=ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: false
+          block_list_enabled: false
+          is_async: true
+          auto_submit_appeal: false
+        admin.role_description.1:
+          sid: 100434
+          callback: trpc://trpc.KEP.bot_admin_config_server.Api/AuditResultCallback?target=ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: true
+          auto_submit_appeal: false
+        admin.doc.2:
+          sid: 100410
+          callback: trpc://trpc.KEP.bot_admin_config_server.Api/AuditResultCallback?target=ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: xinan
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: true
+          auto_submit_appeal: false
+        admin.bare_answer.1:
+          sid: 100434
+          callback: trpc://trpc.KEP.bot_admin_config_server.Api/AuditResultCallback?target=ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: true
+          auto_submit_appeal: false
+        admin.bare_answer.4:
+          sid: 100435
+          callback: trpc://trpc.KEP.bot_admin_config_server.Api/AuditResultCallback?target=ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: false
+          block_list_enabled: false
+          is_async: true
+          auto_submit_appeal: false
+        admin.background_image.4:
+          sid: 100435
+          callback: trpc://trpc.KEP.bot_admin_config_server.Api/AuditResultCallback?target=ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: false
+          block_list_enabled: false
+          is_async: true
+          auto_submit_appeal: false
+        admin.opening_questions.1:
+          sid: 100434
+          callback: trpc://trpc.KEP.bot_admin_config_server.Api/AuditResultCallback?target=ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: true
+          auto_submit_appeal: false
+        knowledge.robot_name.5:
+          sid: 100430
+          callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: true
+          auto_submit_appeal: false
+        knowledge.robot_avatar.5:
+          sid: 100431
+          callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: true
+          auto_submit_appeal: false
+        knowledge.robot_avatar.4:
+          sid: 100431
+          callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: false
+          block_list_enabled: false
+          is_async: true
+          auto_submit_appeal: false
+        knowledge.robot_greeting.5:
+          sid: 100430
+          callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: true
+          auto_submit_appeal: false
+        knowledge.release_qa.1:
+          sid: 100430
+          callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: true
+          auto_submit_appeal: false
+        knowledge.release_qa.4:
+          sid: 100431
+          callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: false
+          block_list_enabled: false
+          is_async: true
+          auto_submit_appeal: false
+        knowledge.role_description.1:
+          sid: 100430
+          callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: true
+          auto_submit_appeal: false
+        knowledge.doc.2:
+          sid: 100406
+          callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: xinan
+          allow_list_enabled: false
+          block_list_enabled: false
+          is_async: true
+          auto_submit_appeal: false
+        knowledge.bare_answer.1:
+          sid: 100430
+          callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: true
+          auto_submit_appeal: false
+        knowledge.bare_answer.4:
+          sid: 100431
+          callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: false
+          block_list_enabled: false
+          is_async: true
+          auto_submit_appeal: false
+        chat.1:
+          sid: 100436
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: false
+          auto_submit_appeal: true
+        chat.4:
+          sid: 100437
+          auditor: tianyu
+          allow_list_enabled: false
+          block_list_enabled: false
+          is_async: false
+          auto_submit_appeal: false
+        chat.inner.1:
+          sid: 100411
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: false
+          auto_submit_appeal: true
+        voice-assistants.1:
+          sid: 100436
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: false
+          auto_submit_appeal: false
+        voice-assistants.4:
+          sid: 100437
+          auditor: tianyu
+          allow_list_enabled: false
+          block_list_enabled: false
+          is_async: false
+          auto_submit_appeal: false
+        atomic.1:
+          sid: 100436
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: false
+          auto_submit_appeal: true
+        atomic-knowledge.doc.2:
+          sid: 100406
+          callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://atomic-knowledge.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: xinan
+          allow_list_enabled: false
+          block_list_enabled: false
+          is_async: true
+          auto_submit_appeal: false
+        knowledge.qa.1:
+          sid: 100434
+          callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: true
+          auto_submit_appeal: false
+        knowledge.qa.4:
+          sid: 100435
+          callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: false
+          block_list_enabled: false
+          is_async: true
+          auto_submit_appeal: false
+        knowledge.qa.3:
+          sid: 100435
+          callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: false
+          block_list_enabled: false
+          is_async: true
+          auto_submit_appeal: false
+        knowledge.qa.6:
+          sid: 100435
+          callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: false
+          block_list_enabled: false
+          is_async: true
+          auto_submit_appeal: false
+        knowledge.doc_name.1:
+          sid: 100434
+          callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: true
+          auto_submit_appeal: false
+        knowledge.doc_segment.1:
+          sid: 100434
+          callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: true
+          auto_submit_appeal: false
+        knowledge.doc_segment.4:
+          sid: 100435
+          callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          auditor: tianyu
+          allow_list_enabled: false
+          block_list_enabled: false
+          is_async: true
+          auto_submit_appeal: false
+        knowledge.db_name.1:
+          sid: 100434
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: false
+          auto_submit_appeal: true
+        knowledge.db_desc.1:
+          sid: 100434
+          auditor: tianyu
+          allow_list_enabled: true
+          block_list_enabled: true
+          is_async: false
+          auto_submit_appeal: true
+    callback:
+      worker_num: 5
+      retry_limit: 3
+      batch_size: 50
+      channel_size: 200
+      fetch_interval: 2000
+    refresh_data:
+      worker_num: 1
+      retry_limit: 3
+      batch_size: 50
+      channel_size: 200
+      fetch_interval: 30000
+      refresh_data_count: 100000
+    auditor_callback_failed:
+      worker_num: 1
+      retry_limit: 3
+      batch_size: 5
+      channel_size: 200
+      fetch_interval: 120000
+      auditor_callback_failed_count: 10000
+      audit_timeout: 300
+      audit_timeout_tian_yu: 300
+      audit_timeout_xin_an: 900
+    # 开发测试环境为了模拟 审核超时 没有回调的场景，线上无需增加
+    auditor_failed_tmp_list_uin:
+    # 主号: biz_type
+    tianyu_biz_type:
+      569: QD_CM
+      259: QD_CM
+      563: QD_CM
+      1228: QD_CM
+      851: QD_CM
+      1540: QD_CM
+      3232: QD_JT
+      5038: QD_ZF
+      5535: QD_CM
+      298: QD_CM
+    is_direct: true
+    tianyu:
+      type: {{ (.Values.global.contentSecurity).type | default "sdk" }}
+      disable_image_check: {{ if hasKey .Values.global.contentSecurity "disableImageCheck" }}{{ .Values.global.contentSecurity.disableImageCheck }}{{ else }}true{{ end }}
+      http:
+        app_id : {{ (.Values.global.contentSecurity).appId | default "" }}
+        uin: {{ (.Values.global.contentSecurity).uin | default "" }}
+        sub_account_uin: {{ (.Values.global.contentSecurity).subUin | default "" }}
+        tms_url: {{ (.Values.global.contentSecurity).tmsUrl | default "" }}
+        ims_url: {{ (.Values.global.contentSecurity).imsUrl | default "" }}
+        tms_biz_type: {{ (.Values.global.contentSecurity).tmsBizType | default "" }}
+        ims_biz_type: {{ (.Values.global.contentSecurity).imsBizType | default "" }}
+      sdk:
+        secret_id: {{ (.Values.global.contentSecurity).secretId | default "" }}
+        secret_key: {{ (.Values.global.contentSecurity).secretKey | default "" }}
+        biz_type: {{ (.Values.global.contentSecurity).bizType | default "" }}
+        region: {{ (.Values.global.contentSecurity).region | default "" }}
+        channel_id: 17
+        ims_endpoint: {{ if hasKey .Values.global.contentSecurity "imsEndpoint" }}{{ .Values.global.contentSecurity.imsEndpoint }}{{ else }}"ims.internal.tencentcloudapi.com"{{ end }}
+        tms_endpoint: {{ if hasKey .Values.global.contentSecurity "tmsEndpoint" }}{{ .Values.global.contentSecurity.tmsEndpoint }}{{ else }}"tms.internal.tencentcloudapi.com"{{ end }}
+        ams_endpoint: {{ if hasKey .Values.global.contentSecurity "amsEndpoint" }}{{ .Values.global.contentSecurity.amsEndpoint }}{{ else }}"ams.internal.tencentcloudapi.com"{{ end }}
+        vm_endpoint: {{ if hasKey .Values.global.contentSecurity "vmEndpoint" }}{{ .Values.global.contentSecurity.vmEndpoint }}{{ else }}"vm.internal.tencentcloudapi.com"{{ end }}
+        callback_url: {{ if hasKey .Values.global.contentSecurity "callbackUrl" }}{{ .Values.global.contentSecurity.callbackUrl }}{{ else }}""{{ end }}
+      label_result_type:
+        Normal: 100
+        Polity: 20001
+        Porn: 20002
+        Illegal: 20006
+        Abuse: 20007
+        Terror: 24001
+        Ad: 10001
+        Custom: 21000
+      suggestion:
+        Block: 建议屏蔽
+        Review: 建议人工复审
+        Pass: 建议通过
+        image_sdk_err:
+      InvalidParameterValue.EmptyImageContent: 图片内容参数为空。
+      InvalidParameterValue.InvalidImageContent: 图片内容错误。
+      ResourceUnavailable.InvalidImageContent: 图片资源错误。
+      ResourceUnavailable.ImageDownloadError: 图片文件下载失败。
+      RequestLimitExceeded: "超过了每秒频率上限"
+      ClientError.NetworkError: "网络错误"
+    xinan:
+      path: /interface/request/json
+      sid:
+      appid:
+      password:
+    clear_check_task_interval: 72h
+
+  trpc_go.yaml: |
+    server:
+      app: qbot.qbot
+      server: infosec
+      admin:
+        ip: 0.0.0.0
+        port: 8081
+      filter:
+        - recovery
+        - opentelemetry
+        - validation
+        - accesslog
+        - galileo
+      stream_filter:
+        - galileo
+      service:
+        - name: qbot.qbot.infosec.Infosec
+          ip: 0.0.0.0
+          port: 9090
+          network: tcp
+          protocol: trpc
+          timeout: 10000
+        - name: qbot.qbot.infosec.Http
+          ip: 0.0.0.0
+          port: 9091
+          network: tcp
+          protocol: http_no_protocol
+          timeout: 50000
+        - name: qbot.qbot.infosec.GenerateAuditDataDashboardTask
+          ip: 0.0.0.0
+          port: 9101
+          network: "5 10 1 */1 * *"
+          protocol: timer #应用层协议
+          timeout: 60000000
+        - name: qbot.qbot.infosec.ClearCheckDataTask
+          ip: 0.0.0.0
+          port: 9102
+          network: "0 10 0 * * *"
+          protocol: timer #应用层协议
+          timeout: 60000000
+
+
+    plugins:
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "verbose"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+            - key: {{ $key }}
+              value: {{ $value }}
+            {{- end }}
+          {{- end }}
+        galileo:
+          verbose: error   # 伽利略自身的诊断日志级别，取值范围：debug, info, error, none，日志输出在 ./galileo/galileo.log 中。
+          ocp_addr: "http://127.0.0.1"
+          config: #配置
+            config_server: "http://127.0.0.1"
+            register_server: "http://127.0.0.1"
+            self_monitor:
+              collector:
+                addr: "http://127.0.0.1"
+            metrics_config: # 指标配置
+              enable: false    # 是否启用指标
+            traces_config: # 追踪配置
+              enable: true    # 是否启用追踪，默认 true。如果设置为 false，会中断 trace，让上游的调用链不完整。v0.3.7 以上生效。
+              processor: # 追踪数据处理相关配置
+                sampler: # 采样器配置
+                  fraction: 0   # 采样比例，默认 0。（v0.11.0)
+                  error_fraction: 0
+                  enable_min_sample: true  # 启用每分钟每接口最少 1 个请求采样，默认 true (v0.11.0)。
+                  enable_dyeing: true # 开启染色采样，默认 true。
+                disable_trace_body: true          # 若为 true，则关闭 trace 中对 req 和 rsp 的 body 上报，可以大幅提高上报性能。默认 true。
+                enable_deferred_sample: false     # 开启延迟采样（请求处理完采样），默认 false。0.3.0 以上生效。
+                deferred_sample_error: false      # 开启延迟采样出错采样（请求处理完出现错误采样），默认 false。0.3.0 以上生效。
+                deferred_sample_slow_duration_ms: 1000    # 慢操作阈值（请求耗时超过该值采样），单位 ms，默认 1000。0.3.0 以上生效。
+                disable_parent_sampling: false            # 忽略上游的采样结果，默认 false。v0.3.7 以上生效。
+              exporter:
+                collector:
+                  addr: "127.0.0.1:80"
+            logs_config: # 日志配置
+              enable: false    # 是否启用日志
+              processor: # 日志数据处理相关配置
+                only_trace_log: false  # 是否只上报命中 trace 的 log，默认关闭
+                must_log_traced: false # 是否命中 traced 不管任何级别日志都上报，默认关闭。v0.3.22 以上生效
+                trace_log_mode: 0   # debug 访问日志 (access_log) 打印模式，0,1：单行打印，3：多行打印，2：不打印，默认 0
+                level: debug        # 上报到远程的日志级别，默认 error
+                enable_recovery: true # 是否捕获 panic，默认 true
+            profiles_config:    # profile配置
+              enable: false # 是否启用 profile
+              processor: # profile 数据处理相关配置
+                profile_types: ["cpu", "heap"] # 采集 profile 的类型，支持 cpu、heap、mutex、block、goroutine，默认开启 cpu 和 heap。
+            version: 1        # 版本号，默认 0，此版本号用于控制远程配置和本地配置的优先级，版本号高的优先，一般设置成 1 即可。
+          resource: # resource 资源信息，在 SDK 运行期间不会改变。resource 中的字段一般不需要配置，默认会填充。
+            platform: STKE   # 服务部署的平台，如 PCG-123, STKE, 默认 PCG-123
+      log:
+        default:
+          - writer: console
+            level: info
+            #caller_skip: 3
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+          - writer: file
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/trpc.log
+              write_mode: 2
+              roll_type: time
+              max_age: 7
+              max_backups: 10
+              compress: false
+              time_unit: day
+
+    client:
+      filter:
+        - galileo
+      stream_filter:
+        - galileo
+      service:
+        - name: mysql.qbot.qbot
+          # TODO 替换帐号名密码
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.qbot
+          # TODO 替换帐号名密码
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+
+        - name: redis.qbot.infosec
+          network: tcp
+          # TODO 替换service
+          target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/4
+          # TODO 替换密码
+          password: "{{ .Values.global.components.redis.password }}"
+          timeout: 800

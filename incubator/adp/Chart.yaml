@@ -1,0 +1,218 @@
+apiVersion: v2
+name: adp
+description: ADP Platform - TKE Deployment (Umbrella Chart)
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/bd9c98d6-46e2-48ec-a812-7adbbde304b6.jpg
+
+maintainers:
+  - name: ADP Team
+    email: adp@tencent.com
+
+# 所有子 Chart 依赖（自动生成）
+dependencies:
+  - name: ti-common
+    version: "1.0.0"
+    repository: "file://./charts/ti-common"
+    condition: ti-common.enabled
+  - name: etcd
+    version: "1.0.0"
+    repository: "file://./charts/etcd"
+    condition: etcd.enabled
+  - name: adp-app-config
+    version: "1.0.0"
+    repository: "file://./charts/adp-app-config"
+    condition: adp-app-config.enabled
+  - name: agent-config-server
+    version: "1.0.0"
+    repository: "file://./charts/agent-config-server"
+    condition: agent-config-server.enabled
+  - name: ai-gateway
+    version: "1.0.0"
+    repository: "file://./charts/ai-gateway"
+    condition: ai-gateway.enabled
+  - name: apex
+    version: "1.0.0"
+    repository: "file://./charts/apex"
+    condition: apex.enabled
+  - name: bot-agent-server
+    version: "1.0.0"
+    repository: "file://./charts/bot-agent-server"
+    condition: bot-agent-server.enabled
+  - name: bot-data-statistics-server
+    version: "1.0.0"
+    repository: "file://./charts/bot-data-statistics-server"
+    condition: bot-data-statistics-server.enabled
+  - name: bot-evaluate-config-server
+    version: "1.0.0"
+    repository: "file://./charts/bot-evaluate-config-server"
+    condition: bot-evaluate-config-server.enabled
+  - name: bot-knowledge-config-server
+    version: "1.0.0"
+    repository: "file://./charts/bot-knowledge-config-server"
+    condition: bot-knowledge-config-server.enabled
+  - name: bot-llm-server
+    version: "1.0.0"
+    repository: "file://./charts/bot-llm-server"
+    condition: bot-llm-server.enabled
+  - name: bot-memory-server
+    version: "1.0.0"
+    repository: "file://./charts/bot-memory-server"
+    condition: bot-memory-server.enabled
+  - name: bot-rag-server
+    version: "1.0.0"
+    repository: "file://./charts/bot-rag-server"
+    condition: bot-rag-server.enabled
+  - name: bot-retrieval-server
+    version: "1.0.0"
+    repository: "file://./charts/bot-retrieval-server"
+    condition: bot-retrieval-server.enabled
+  - name: bot-task-config-server
+    version: "1.0.0"
+    repository: "file://./charts/bot-task-config-server"
+    condition: bot-task-config-server.enabled
+  - name: bot-workflow-dm-server
+    version: "1.0.0"
+    repository: "file://./charts/bot-workflow-dm-server"
+    condition: bot-workflow-dm-server.enabled
+  - name: channel-msg-svr
+    version: "1.0.0"
+    repository: "file://./charts/channel-msg-svr"
+    condition: channel-msg-svr.enabled
+  - name: channel-proxy-svr
+    version: "1.0.0"
+    repository: "file://./charts/channel-proxy-svr"
+    condition: channel-proxy-svr.enabled
+  - name: channel-token-svr
+    version: "1.0.0"
+    repository: "file://./charts/channel-token-svr"
+    condition: channel-token-svr.enabled
+  - name: chat
+    version: "1.0.0"
+    repository: "file://./charts/chat"
+    condition: chat.enabled
+  - name: code-interpreter-dispatcher
+    version: "1.0.0"
+    repository: "file://./charts/code-interpreter-dispatcher"
+    condition: code-interpreter-dispatcher.enabled
+  - name: common-config-map
+    version: "1.0.0"
+    repository: "file://./charts/common-config-map"
+    condition: common-config-map.enabled
+  - name: crawler
+    version: "2.0.0"
+    repository: "file://./charts/crawler"
+    condition: crawler.enabled
+  - name: deploy-data-init
+    version: "3.2.4"
+    repository: "file://./charts/deploy-data-init"
+    condition: deploy-data-init.enabled
+  - name: deploy-pre-check
+    version: "1.0.0"
+    repository: "file://./charts/deploy-pre-check"
+    condition: deploy-pre-check.enabled
+  - name: entity-extractor-server
+    version: "1.0.0"
+    repository: "file://./charts/entity-extractor-server"
+    condition: entity-extractor-server.enabled
+  - name: entity-extractor-server-sand-box
+    version: "1.0.0"
+    repository: "file://./charts/entity-extractor-server-sand-box"
+    condition: entity-extractor-server-sand-box.enabled
+  - name: file-converter
+    version: "2.0.0"
+    repository: "file://./charts/file-converter"
+    condition: file-converter.enabled
+  - name: finance
+    version: "1.0.0"
+    repository: "file://./charts/finance"
+    condition: finance.enabled
+  - name: infosec
+    version: "1.0.0"
+    repository: "file://./charts/infosec"
+    condition: infosec.enabled
+  - name: kernel
+    version: "1.0.0"
+    repository: "file://./charts/kernel"
+    condition: kernel.enabled
+  - name: lke-accessmanagerserver
+    version: "1.0.0"
+    repository: "file://./charts/lke-accessmanagerserver"
+    condition: lke-accessmanagerserver.enabled
+  - name: lke-admin
+    version: "1.0.0"
+    repository: "file://./charts/lke-admin"
+    condition: lke-admin.enabled
+  - name: lke-aiconfmanagerserver
+    version: "1.0.0"
+    repository: "file://./charts/lke-aiconfmanagerserver"
+    condition: lke-aiconfmanagerserver.enabled
+  - name: lke-ti-auth-web
+    version: "1.0.0"
+    repository: "file://./charts/lke-ti-auth-web"
+    condition: lke-ti-auth-web.enabled
+  - name: lke-ti-gateway
+    version: "3.9.0"
+    repository: "file://./charts/lke-ti-gateway"
+    condition: lke-ti-gateway.enabled
+  - name: lke-ti-ingress-controller
+    version: "3.6.0"
+    repository: "file://./charts/lke-ti-ingress-controller"
+    condition: lke-ti-ingress-controller.enabled
+  - name: lke-ti-perm-auth
+    version: "1.0.0"
+    repository: "file://./charts/lke-ti-perm-auth"
+    condition: lke-ti-perm-auth.enabled
+  - name: llm-manager-server
+    version: "1.0.0"
+    repository: "file://./charts/llm-manager-server"
+    condition: llm-manager-server.enabled
+  - name: op
+    version: "1.0.0"
+    repository: "file://./charts/op"
+    condition: op.enabled
+  - name: platform-manager
+    version: "1.0.0"
+    repository: "file://./charts/platform-manager"
+    condition: platform-manager.enabled
+  - name: plugin-config-server
+    version: "1.0.0"
+    repository: "file://./charts/plugin-config-server"
+    condition: plugin-config-server.enabled
+  - name: plugin-cos-util
+    version: "1.0.0"
+    repository: "file://./charts/plugin-cos-util"
+    condition: plugin-cos-util.enabled
+  - name: plugin-exec-server
+    version: "1.0.0"
+    repository: "file://./charts/plugin-exec-server"
+    condition: plugin-exec-server.enabled
+  - name: pyright
+    version: "2.0.0"
+    repository: "file://./charts/pyright"
+    condition: pyright.enabled
+  - name: resource-gallery
+    version: "1.0.0"
+    repository: "file://./charts/resource-gallery"
+    condition: resource-gallery.enabled
+  - name: resource-schedule-server
+    version: "1.0.0"
+    repository: "file://./charts/resource-schedule-server"
+    condition: resource-schedule-server.enabled
+  - name: short-url
+    version: "1.0.0"
+    repository: "file://./charts/short-url"
+    condition: short-url.enabled
+  - name: vector-db-manager
+    version: "1.0.0"
+    repository: "file://./charts/vector-db-manager"
+    condition: vector-db-manager.enabled
+  - name: web-app
+    version: "2.0.0"
+    repository: "file://./charts/web-app"
+    condition: web-app.enabled
+  - name: web-parser-server
+    version: "1.0.0"
+    repository: "file://./charts/web-parser-server"
+    condition: web-parser-server.enabled

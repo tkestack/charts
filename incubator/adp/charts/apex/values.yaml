@@ -1,0 +1,18 @@
+tad:
+  type: helm
+  images:
+    apex:
+      url: "ccr.ccs.tencentyun.com/tke-market/apex:35_2601261857_master_private_72c1857b_private"
+    apex-router:
+      url: "ccr.ccs.tencentyun.com/tke-market/apex-router:5.8.0"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+
+imagePullSecretName: qcloudregistrykey

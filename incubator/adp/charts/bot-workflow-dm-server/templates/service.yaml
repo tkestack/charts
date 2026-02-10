@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: botworkflowdmserver
+  name: botworkflowdmserver
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: botworkflowdmserver-8000
+      port: 8000
+      protocol: TCP
+      targetPort: 8000
+    - name: botworkflowdmserver-8081
+      port: 8081
+      protocol: TCP
+      targetPort: 8081
+    - name: botworkflowdmserver-8001
+      port: 8001
+      protocol: TCP
+      targetPort: 8001
+    - name: botworkflowdmserver-8002
+      port: 8002
+      protocol: TCP
+      targetPort: 8002
+  selector:
+    app: botworkflowdmserver
+  sessionAffinity: None
+  type: ClusterIP

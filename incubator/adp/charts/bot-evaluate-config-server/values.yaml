@@ -1,0 +1,16 @@
+tad:
+  type: helm
+  images:
+    bot-evaluate-config-server:
+      url: "ccr.ccs.tencentyun.com/tke-market/bot-evaluate-config-server:46_2601201806_master_private_d3092508_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+
+imagePullSecretName: qcloudregistrykey

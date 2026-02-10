@@ -1,0 +1,258 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pluginexecserver
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    ti.cloud.tencent.com/resource-quota: unlimited
+  labels:
+    app: pluginexecserver
+    app.kubernetes.io/name: pluginexecserver
+spec:
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  selector:
+    matchLabels:
+      app: pluginexecserver
+  template:
+    metadata:
+      labels:
+        app: pluginexecserver
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - pluginexecserver
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: GPUName
+                    operator: DoesNotExist
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: product
+                    operator: In
+                    values:
+                      - lke
+      terminationGracePeriodSeconds: 90
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - env:
+            - name: MKL_NUM_THREADS
+              value: "2"
+            - name: LOG_SPACES
+              value: "2097152"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: DEPLOYMENT_ENVIRONMENT
+              value: TCS
+            - name: NAME_SPACE
+              value: default
+            - name: ENV
+              value: tcs
+            - name: SERVER_LOG_LEVEL
+              value: info
+          image: {{(index .Values.tad.images "plugin-exec-server").url}}
+          imagePullPolicy: Always
+          name: pluginexecserver
+          #command: ["sh","-c", "crond start; touch /var/log/log.txt && tail -f /var/log/log.txt"]
+          # command: ["sh","/app/bin/start.sh"]
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            successThreshold: 1
+            tcpSocket:
+              port: 8000
+            timeoutSeconds: 2
+          readinessProbe:
+            failureThreshold: 2
+            initialDelaySeconds: 30
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 8000
+            timeoutSeconds: 2
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "1"
+              memory: "1Gi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+            requests:
+              cpu: "2"
+              memory: "4Gi"
+          {{- end }}
+          volumeMounts:
+            - mountPath: /etc/localtime
+              name: localtime
+            - mountPath: /app/logs
+              name: logdata
+              subPathExpr: $(POD_NAME)
+            - mountPath: /app/conf/trpc_go.yaml
+              name: config
+              subPath: trpc_go.yaml
+            - mountPath: /app/placeholder.yaml
+              name: config
+              subPath: placeholder.yaml
+            - mountPath: /app/main.yaml
+              name: config
+              subPath: main.yaml
+            - mountPath: /app/mcp_server_1.yaml
+              name: config
+              subPath: mcp_server_1.yaml
+            - mountPath: /app/mcp_server_2.yaml
+              name: config
+              subPath: mcp_server_2.yaml
+            - mountPath: /app/plugin-exec_en-US.json
+              name: config
+              subPath: plugin-exec_en-US.json
+            - mountPath: /app/plugin-exec_zh-CN.json
+              name: config
+              subPath: plugin-exec_zh-CN.json
+            - mountPath: /app/error_en-US.json
+              name: config
+              subPath: error_en-US.json
+            - mountPath: /app/error_zh-CN.json
+              name: config
+              subPath: error_zh-CN.json
+            - mountPath: /app/scurl.yaml
+              name: rainbow-comm
+              subPath: scurl.yaml
+        - env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+          image: {{(index .Values.tad.images "plugin-exec-server-sidecar").url}}
+          imagePullPolicy: Always
+          name: markmap-sidecar
+          # command: ["bash","/usr/local/bin/start.sh"]
+          # command: ["bash","-c","while true; do sleep 30; done"]
+          ports:
+            - containerPort: 7001
+              name: sidecar-7001
+              protocol: TCP
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - sleep
+                  - '70'
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "1"
+              memory: "1Gi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+            requests:
+              cpu: "2"
+              memory: "4Gi"
+          {{- end }}
+          securityContext:
+            capabilities:
+              add:
+                - SYS_RESOURCE
+                - NET_ADMIN
+                - SYS_ADMIN
+                - IPC_LOCK
+                - SYS_PTRACE
+            privileged: false
+          stdin: true
+          tty: true
+          #volumeMounts:
+          #  - mountPath: /app/logs
+          #    name: markmap-sidecar-log
+          #  - mountPath: /usr/local/
+          #    name: markmap-public
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      restartPolicy: Always
+      volumes:
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - hostPath:
+            path: /etc/localtime
+          name: localtime
+        - hostPath:
+            path: /data/ti-platform/log/pluginexecserver
+            type: DirectoryOrCreate
+          name: logdata
+        #- hostPath:
+        #    path: /data/ti-platform/log/markmap-sidecar
+        #    type: DirectoryOrCreate
+        #  name: markmap-sidecar-log
+        #- hostPath:
+        #    path: /data/markmap
+        #    type: DirectoryOrCreate
+        #  name: markmap-public
+        - configMap:
+            defaultMode: 420
+            name: {{ .Release.Name }}-plugin-exec-server
+          name: config
+        - configMap:
+            defaultMode: 420
+            name: rainbow-comm
+          name: rainbow-comm

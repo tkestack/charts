@@ -1,0 +1,11 @@
+apiVersion: v1
+name: lke-ti-perm-auth
+version: 1.0.0
+appVersion: 4.0.0
+description: 权限底座的ti-perm-auth
+
+sources:
+  - https://git.woa.com/ti-cust/auth/ti-auth-cust
+maintainers:
+  - name: kkerwinwang
+

@@ -1,0 +1,19 @@
+replicas: 1
+tad:
+  type: helm
+  images:
+    web-parser-server:
+      url: "ccr.ccs.tencentyun.com/tke-market/web-parser-server:29_2512011507_master_private_b100de79_private"
+    web-parser-server-sidecar:
+      url: "ccr.ccs.tencentyun.com/tke-market/webappchatbot:crawl-0dafe48-57"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: algorithm
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+namespace: algorithm
+imagePullSecretName: qcloudregistrykey

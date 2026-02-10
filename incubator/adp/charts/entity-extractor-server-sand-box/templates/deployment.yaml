@@ -1,0 +1,194 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    ti.cloud.tencent.com/resource-quota: unlimited
+  labels:
+    app: entity-extractor-server-sand-box
+  name: entity-extractor-server-sand-box
+  namespace: {{ .Release.Namespace }}
+spec:
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  selector:
+    matchLabels:
+      app: entity-extractor-server-sand-box
+  template:
+    metadata:
+      labels:
+        app: entity-extractor-server-sand-box
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - entity-extractor-server-sand-box
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: GPUName
+                    operator: DoesNotExist
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: product
+                    operator: In
+                    values:
+                      - lke
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - env:
+            - name: DEPLOYMENT_ENVIRONMENT
+              value: TCS
+            - name: __AppEnname
+              value: EntityExtractorServerSandBox
+            - name: __ProjectEnname
+              value: yunxiaoweipingtai
+            - name: __AppGroupEnname
+              value: SmartAssistant
+            - name: __Env
+              value: pre-commonset-sz-common1
+            - name: __EnvId
+              value: '48484'
+            - name: __AppId
+              value: '114543'
+            - name: DOCKER_ENV
+              value: pre
+            - name: APP
+              value: SmartAssistant
+            - name: SERVER
+              value: EntityExtractorServerSandBox
+            - name: APP_NAME
+              value: SmartAssistant
+            - name: SERVER_NAME
+              value: EntityExtractorServerSandBox
+            - name: SET_NAME
+              value: commonset.sz.common1
+            - name: IS_GRAY
+              value: 'N'
+            - name: NAMESPACE
+              value: Development
+            - name: CONTAINER_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_UID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.uid
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+          image: {{ (index .Values.tad.images "entity-extractor-server-sand-box").url }}
+          imagePullPolicy: Always
+          name: main-container
+          # command: ["bash","/usr/local/app/start.sh"]
+          #command: ["bash","-c","while true; do sleep 60; done"]
+          livenessProbe:
+            tcpSocket:
+              port: 10001
+            failureThreshold: 5
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            successThreshold: 1
+            timeoutSeconds: 2
+          readinessProbe:
+            tcpSocket:
+              port: 10001
+            failureThreshold: 2
+            initialDelaySeconds: 30
+            periodSeconds: 3
+            successThreshold: 1
+            timeoutSeconds: 2
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "1"
+              memory: "1Gi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "2"
+              memory: "2Gi"
+            requests:
+              cpu: "2"
+              memory: "2Gi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+            requests:
+              cpu: "2"
+              memory: "4Gi"
+          {{- end }}
+          securityContext:
+            capabilities:
+              add:
+                - SYS_RESOURCE
+                - NET_ADMIN
+                - SYS_ADMIN
+                - IPC_LOCK
+                - SYS_PTRACE
+            privileged: false
+          stdin: true
+          tty: true
+          volumeMounts:
+            - mountPath: /app/logs
+              name: applog
+            - mountPath: /app/conf/trpc_cpp.yaml
+              name: config-trpc
+              subPathExpr: trpc_cpp.yaml
+            - mountPath: /usr/local/trpc/conf/EntityExtractorServerSandBox.json
+              name: config
+              subPathExpr: EntityExtractorServerSandBox.json
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      volumes:
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - name: config-trpc
+          configMap:
+            name: entity-extractor-server-sand-box-trpc
+        - name: config
+          configMap:
+            name: entity-extractor-server-sand-box
+        - name: applog
+          hostPath:
+            path: /data/ti-platform/log/entity-extractor-server-sand-box
+            type: DirectoryOrCreate

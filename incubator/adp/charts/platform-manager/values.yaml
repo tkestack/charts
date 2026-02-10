@@ -1,0 +1,17 @@
+tad:
+  type: helm
+  images:
+    platform-manager:
+      url: "ccr.ccs.tencentyun.com/tke-market/platform-manager:73_2602092209_feature_license_dc767442_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+platform_manager:
+  default_model_name: cs-normal-70b # 平台管理默认模型名称
+imagePullSecretName: qcloudregistrykey

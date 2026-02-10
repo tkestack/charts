@@ -1,0 +1,190 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "plugincosutil.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "plugincosutil.labels" . | nindent 4 }}
+  annotations:
+    ti.cloud.tencent.com/resource-quota: unlimited
+spec:
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "plugincosutil.selectorLabels" . | nindent 6 }}
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        {{- include "plugincosutil.selectorLabels" . | nindent 8 }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - plugin-cos-util
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: GPUName
+                    operator: DoesNotExist
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: product
+                    operator: In
+                    values:
+                      - lke
+      terminationGracePeriodSeconds: 90
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{(index .Values.tad.images "plugin-cos-util").url}}
+          imagePullPolicy: Always
+          env:
+            - name: MKL_NUM_THREADS
+              value: "2"
+            - name: LOG_SPACES
+              value: "2097152"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: DEPLOYMENT_ENVIRONMENT
+              value: TCS
+            - name: ENV
+              value: tcs
+            - name: SERVER_LOG_LEVEL
+              value: info
+            - name: LKE_COS_SECRET_ID
+              value: {{ .Values.plugincosutil.env.LKE_COS_SECRET_ID | quote }}
+            - name: LKE_COS_SECRET_KEY
+              value: {{ .Values.plugincosutil.env.LKE_COS_SECRET_KEY | quote }}
+            - name: LKE_COS_REGION
+              value: {{ .Values.plugincosutil.env.LKE_COS_REGION | quote }}
+            - name: LKE_COS_BUCKET
+              value: {{ .Values.plugincosutil.env.LKE_COS_BUCKET | quote }}
+            - name: LKE_COS_KEY_PREFIX
+              value: {{ .Values.plugincosutil.env.LKE_COS_KEY_PREFIX | quote }}
+            - name: LKE_COS_EXPIRE_TIME
+              value: {{ .Values.plugincosutil.env.LKE_COS_EXPIRE_TIME | quote }}
+            - name: LKE_MINIO_ACCESS_KEY
+              value: {{ .Values.plugincosutil.env.LKE_MINIO_ACCESS_KEY | quote }}
+            - name: LKE_MINIO_SECRET_KEY
+              value: {{ .Values.plugincosutil.env.LKE_MINIO_SECRET_KEY | quote }}
+            - name: LKE_MINIO_ENDPOINT
+              value: {{ .Values.plugincosutil.env.LKE_MINIO_ENDPOINT | quote }}
+            - name: LKE_MINIO_BUCKET
+              value: {{ .Values.plugincosutil.env.LKE_MINIO_BUCKET | quote }}
+            - name: LKE_MINIO_SECURE
+              value: {{ .Values.plugincosutil.env.LKE_MINIO_SECURE | quote }}
+            - name: LKE_MINIO_EXPIRE_TIME
+              value: {{ .Values.plugincosutil.env.LKE_MINIO_EXPIRE_TIME | quote }}
+            - name: LKE_MINIO_KEY_PREFIX
+              value: {{ .Values.plugincosutil.env.LKE_MINIO_KEY_PREFIX | quote }}
+            - name: LKE_MINIO_KEY_PREFIX_DIRECT
+              value: {{ .Values.plugincosutil.env.LKE_MINIO_KEY_PREFIX_DIRECT | quote }}
+            # 其他配置
+            - name: STORAGE_TYPE
+              value: {{ .Values.plugincosutil.env.STORAGE_TYPE | quote }}
+            - name: FILE_MAX_UPLOAD_SIZE
+              value: {{ .Values.plugincosutil.env.FILE_MAX_UPLOAD_SIZE | quote }}
+            - name: LKE_MINIO_EXTERNAL_ENDPOINT
+              value: {{ .Values.clb }}
+
+          ports:
+            - containerPort: 8080
+              name: http
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: http
+            timeoutSeconds: 3
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: http
+            timeoutSeconds: 3
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+          {{- end }}
+          volumeMounts:
+            - mountPath: /etc/localtime
+              name: localtime
+            - name: config-volume
+              mountPath: /data/app/config
+            - name: logs
+              mountPath: /data/app/logs
+              subPathExpr: $(POD_NAME)
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      restartPolicy: Always
+      volumes:
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - hostPath:
+            path: /etc/localtime
+          name: localtime
+        - name: config-volume
+          configMap:
+            name: {{ include "plugincosutil.fullname" . }}
+        - hostPath:
+            path: /data/ti-platform/log/plugin-cos-util
+            type: DirectoryOrCreate
+          name: logs

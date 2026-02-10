@@ -1,0 +1,11 @@
+apiVersion: v2
+name: lke-admin
+description: A helm chart for admin
+type: application
+
+version: 1.0.0
+
+appVersion: 1.0.0
+maintainers:
+  - name: sinutelu
+  - name: v_iferen

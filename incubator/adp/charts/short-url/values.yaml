@@ -1,0 +1,16 @@
+tad:
+  type: helm
+  images:
+    short-url:
+      url: "ccr.ccs.tencentyun.com/tke-market/bot-shorturl-server:56_2601221206_release_private_v3.2.4_269aceb4_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+
+imagePullSecretName: qcloudregistrykey

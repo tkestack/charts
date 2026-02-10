@@ -1,0 +1,11 @@
+apiVersion: v2
+name: bot-task-config-server
+description: A helm chart for bot-task-config-server
+type: application
+
+version: 1.0.0
+
+appVersion: 1.0.0
+maintainers:
+  - name: randalchen
+  - name: v_iferen

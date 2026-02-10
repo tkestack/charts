@@ -1,0 +1,275 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-data-statistics
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    is_private: ${is_private}
+    mongo_database: lke-data-statistics
+    schedule_task_touch_seconds: 10               # 任务运行时多久 touch 一次
+    schedule_task_untouch_tick: 15                # 多少周期没 touch 认为任务超时
+    schedule_task_list_unfinish_task_size: 10     # 每批查找未完成任务的数量 默认为 schedule_task_worker_count * 2
+    schedule_task_worker_count: 5                 # 任务并行数量， 默认为 cpu 核数 *3
+    schedule_task_lookback_seconds: 86400         # 每次定时任务触发时，需要检查过去一段时间内是否有任务遗漏
+    clean_statical_expired_period_days: 366       # 清理统计数据时，清理多久前的数据, 默认 366
+    clean_schedule_task_expired_period_days: 366  # 清理多久前的任务数据 默认 366
+    clean_msg_log_period_days: 210                # 清理多久前的 t_msg_log 数据， 默认 210
+    fetch_msg_record_batch_size: 100              # 每次从 t_msg_record 表中取数据的数量 默认 100
+    fetch_msg_record_workers: 10     		      # 从 t_msg_record 清洗至 t_msg_log 并发数量 默认 10
+    fetch_check_task_batch_size: 10               # 审核任务 ETL 配置 每次从 t_check_task 表中取数据的>数量
+    fetch_check_task_workers: 5                    # 审核任务 ETL 配置 从 t_check_task 表中取数据的并发数量
+    clean_expired_content_recognition_period_days: 366  # 清理审核数据时，清理多久前的数据
+    msg_log_to_kafka: ${msg_log_to_kafka}
+    
+    es_config:
+      name: trpc.elasticsearch.lke.admin
+      #es地址
+      url: "http://{{ (index .Values.global.components.es.hosts 0) }}:{{ .Values.global.components.es.port }}"
+      #用户名
+      user: {{ .Values.global.components.es.user }}
+      #密码
+      password: "{{ .Values.global.components.es.password }}"
+      timeout: 8000
+      log:
+        enabled: true
+        request_enabled: true
+        request_body: true
+      index_name:
+        content_recognition: content_recognition
+        content_recognition_stats: content_recognition_stats
+    
+  placeholder.yaml: |
+    is_private: true
+    elasticsearch_name: trpc.elasticsearch.lke.admin
+    elasticsearch_url: ""
+    elasticsearch_user: ""
+    elasticsearch_password: ""
+    msg_log_to_kafka:
+      - name:  test
+        uin:  700000963993
+        kafka_client: trpc.KEP.msg-log-kafka.700000963993-test
+      - name:  test
+        uin:  700001751666
+        kafka_client: trpc.KEP.msg-log-kafka.700001751666-test
+    mysqlCli: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+    redisCli: redis://:{{ .Values.global.components.redis.password }}@{{ (index .Values.global.components.redis.hosts 0) }}:6379/1
+  trpc_go.yaml: |
+    global:                             #全局配置
+      namespace: Test          #环境类型，分正式production和非正式development两种类型
+      env_name: test                 #环境名称，非正式环境下多环境的名称
+      enable_set: ${ENABLE_SET}         #是否启用set
+      full_set_name: ${FULL_SET_NAME}   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+    
+    server:                                            #服务端配置
+      app: KEP                                        #业务的应用名
+      server: bot-data-statistics-server                             #进程服务名
+      bin_path: /usr/local/trpc/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /usr/local/trpc/conf/                 #业务配置文件所在路径
+      data_path: /usr/local/trpc/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+      - recovery                                       #拦截框架创建的业务处理协程panic
+      - galileo
+      admin:
+        ip: ${POD_IP}
+        port: 8081
+      service:                                         #业务服务提供的service，可以有多个
+      - name: trpc.KEP.bot-data-statistics-server.Api        #service的路由名称
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+        port: 8000                  #服务监听端口 可使用占位符 ${port}
+        network: tcp                               #网络监听类型  tcp udp
+        protocol: trpc                 #应用层协议 trpc http
+        timeout: 50000                              #请求最长处理时间 单位 毫秒
+        server_async: true                             #开启异步处理
+        idletime: 600000                               # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+      - name: trpc.KEP.bot-data-statistics-server.TriggerHistoryTask   #service的路由名称,
+        ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+        port: 9095   #服务监听端口 可使用占位符 ${port}
+        network: 0 * * * * *?holdTime=5     # 该定时器同时在所有机器运行
+        protocol: timer   #应用层协议
+        timeout: 5000   # 异步处理不会超时
+      - name: trpc.KEP.bot-data-statistics-server.TriggerMsgLogCountTask   #service的路由名称,
+        ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+        port: 9096   #服务监听端口 可使用占位符 ${port}
+        network: 5 2-59/5 * * * *?scheduler=statistics&holdTime=240
+        protocol: timer   #应用层协议
+        timeout: 240000
+      - name: trpc.KEP.bot-data-statistics-server.TriggerMsgUserCountTask   #service的路由名称,
+        ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+        port: 9097   #服务监听端口 可使用占位符 ${port}
+        network: 5 2-59/5 * * * *?scheduler=statistics&holdTime=240
+        protocol: timer   #应用层协议
+        timeout: 240000
+      - name: trpc.KEP.bot-data-statistics-server.TriggerMsgFeedbackCountTask   #service的路由名称,
+        ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+        port: 9098   #服务监听端口 可使用占位符 ${port}
+        network: 5 2-59/5 * * * *?scheduler=statistics&holdTime=240
+        protocol: timer   #应用层协议
+        timeout: 240000
+      - name: trpc.KEP.bot-data-statistics-server.TriggerCleanExpiredStaticalData   #service的路由名称,
+        ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+        port: 9099   #服务监听端口 可使用占位符 ${port}
+        network: 0 5 0 * * *?scheduler=statistics&holdTime=3600
+        protocol: timer   #应用层协议
+        timeout: 3600000
+      - name: trpc.KEP.bot-data-statistics-server.TriggerCounterTask   #service的路由名称,
+        ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+        port: 9099   #服务监听端口 可使用占位符 ${port}
+        network: 0 */5 * * * *?scheduler=statistics&holdTime=240
+        protocol: timer   #应用层协议
+        timeout: 3600000
+      - name: trpc.KEP.bot-data-statistics-server.TriggerCleanExpiredContentRecognition   #service的路由名称,
+        ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+        port: 9101   #服务监听端口 可使用占位符 ${port}
+        network: 0 5 0 * * *?scheduler=statistics&holdTime=3600
+        protocol: timer   #应用层协议
+        timeout: 3600000
+      - name: trpc.KEP.bot-data-statistics-server.TriggerPrivateMsgRecordEtl #私有化专用，定时 ETL t_msg_record 至 t_msg_log 及 t_msg_daily_user
+        ip: localhost #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+        port: 9100 #服务监听端口 可使用占位符 ${port}
+        network: "0/10 * * * * *?holdTime=5" # 每 10秒触发一次
+        protocol: timer #应用层协议
+        timeout: 3600000
+      - name: trpc.KEP.bot-data-statistics-server.TriggerCleanExpiredScheduleTask #私有化专用，定时清理 t_schedule_task 表
+        ip: localhost #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+        port: 9101 #服务监听端口 可使用占位符 ${port}
+        network: "0 10 0 * * *?scheduler=statistics&holdTime=10" # 每天跑一次
+        protocol: timer #应用层协议
+        timeout: 10000
+      - name: trpc.KEP.bot-data-statistics-server.TriggerCleanMsgLogTask #私有化专用，定时清理 t_msg_log 及 t_msg_daily_user 表数据
+        ip: localhost #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+        port: 9102 #服务监听端口 可使用占位符 ${port}
+        network: "0 20 0 * * *?scheduler=statistics&holdTime=3600" # 每 10秒解发一次
+        protocol: timer #应用层协议
+        timeout: 3600000
+      - name: trpc.KEP.bot-data-statistics-server.TriggerPrivateCheckTaskEtl # 私有化专用, 定时 ETL t_check_task 至 es
+        ip: localhost
+        port: 9103
+        network: "0/10 * * * * *?holdTime=5" # 每 10秒触发一次
+        protocol: timer #应用层协议
+        timeout: 5000
+    
+    plugins:                                          #插件配置
+      telemetry:
+        galileo:
+          verbose: error # 伽利略自身的诊断日志级别，取值范围：debug, info, error, none，日志输出在 ./galileo/galileo.log 中。
+          ocp_addr: http://127.0.0.1
+          config: #配置
+            config_server: http://127.0.0.1
+            register_server: http://127.0.0.1
+            self_monitor:
+              collector:
+                addr: http://127.0.0.1
+            metrics_config: # 指标配置
+              enable: false # 是否启用指标
+            traces_config: # 追踪配置
+              enable: true # 是否启用追踪，默认 true。如果设置为 false，会中断 trace，让上游的调用链不完整。v0.3.7 以上生效。
+              processor: # 追踪数据处理相关配置
+                sampler: # 采样器配置
+                  fraction: 0 # 采样比例，默认 0。（v0.11.0)
+                  error_fraction: 0
+                  enable_min_sample: true # 启用每分钟每接口最少 1 个请求采样，默认 true (v0.11.0)。
+                  enable_dyeing: true # 开启染色采样，默认 true。
+                disable_trace_body: true    # 若为 true，则关闭 trace 中对 req 和 rsp 的 body 上报，可以大幅提高上报性能。默认 true。
+                enable_deferred_sample: false # 开启延迟采样（请求处理完采样），默认 false。0.3.0 以上生效。
+                deferred_sample_error: false # 开启延迟采样出错采样（请求处理完出现错误采样），默认 false。0.3.0 以上生效。
+                deferred_sample_slow_duration_ms: 1000 # 慢操作阈值（请求耗时超过该值采样），单位 ms，默认 1000。0.3.0 以上生效。
+                disable_parent_sampling: false      # 忽略上游的采样结果，默认 false。v0.3.7 以上生效。
+              exporter:
+                collector:
+                  addr: 127.0.0.1:80
+            logs_config: # 日志配置
+              enable: false # 是否启用日志
+              processor: # 日志数据处理相关配置
+                only_trace_log: false # 是否只上报命中 trace 的 log，默认关闭
+                must_log_traced: false # 是否命中 traced 不管任何级别日志都上报，默认关闭。v0.3.22 以上生效
+                trace_log_mode: 0 # debug 访问日志 (access_log) 打印模式，0,1：单行打印，3：多行打印，2：不打印，默认 0
+                level: debug  # 上报到远程的日志级别，默认 error
+                enable_recovery: true # 是否捕获 panic，默认 true
+            profiles_config: # profile配置
+              enable: false # 是否启用 profile
+              processor: # profile 数据处理相关配置
+                profile_types: [cpu, heap] # 采集 profile 的类型，支持 cpu、heap、mutex、block、goroutine，默认开启 cpu 和 heap。
+            version: 1  # 版本号，默认 0，此版本号用于控制远程配置和本地配置的优先级，版本号高的优先，一般设置成 1 即可。
+          resource: # resource 资源信息，在 SDK 运行期间不会改变。resource 中的字段一般不需要配置，默认会填充。
+            platform: STKE # 服务部署的平台，如 PCG-123, STKE, 默认 PCG-123
+      log:                                            #日志配置
+        default:                                  #默认日志的配置，可支持多输出
+        - writer: console                         #控制台标准输出 默认
+          level: info                            #标准输出日志的级别
+        #caller_skip: 3
+          formatter: json
+          formatter_config:
+            time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+            time_key: time
+            level_key: level
+            name_key: name
+            caller_key: caller
+            message_key: message
+        - writer: file                            #本地文件日志
+          level: info                             #本地文件滚动日志的级别
+          formatter: json
+          formatter_config:
+            time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+            time_key: time
+            level_key: level
+            name_key: name
+            caller_key: caller
+            message_key: message
+            stacktrace_key: stackTrace
+          writer_config:
+            filename: /app/logs/trpc.log  #本地文件滚动日志存放的路径
+            write_mode: 2
+            roll_type: time
+            max_age: 7
+            max_backups: 10
+            compress: false
+            time_unit: day
+        clues:
+        - writer: console                         #控制台标准输出 默认
+          level: info                            #标准输出日志的级别
+        - writer: file
+          level: info
+          formatter: json
+          writer_config:
+            filename: /app/logs/clues.log
+            write_mode: 2
+            roll_type: time
+            max_age: 7
+            max_backups: 10
+            compress: false
+            time_unit: day
+      config:
+        file:
+          providers:
+          - name: rainbow
+            path: /app/conf/
+      registry: #服务注册配置
+        polaris: #北极星名字注册服务的配置
+          register_self: false
+          heartbeat_interval: 3000                    #名字注册服务心跳上报间隔
+          heartbeat_timeout: 1000                     #名字服务心跳超时
+          service:
+          - name: trpc.KEP.bot-data-statistics-server.Api      #service name 与上面的service配置一一对应
+            namespace: Test                #环境类型，分正式Production和非正式Development两种类型
+            token: e145f79eac6b4eeea2e89983691ccd46               #服务注册所需要的 token
+      selector: #针对用户自定义的selector的配置
+        polaris: #针对polaris整体api的内部配置
+          protocol: grpc                              #名字服务远程交互协议类型
+    client:
+      namespace: Test
+      filter:
+      - galileo
+      service:
+      - name: mysql.data.statistics
+        target: ${mysqlCli}
+      - name: tdsql.qbot.qbot
+        target: ${mysqlCli}
+      - name: redis.data.statistics
+        target: ${redisCli}
+        timeout: 8000
+    
+    

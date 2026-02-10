@@ -1,0 +1,147 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-resource-schedule
+  namespace: {{ .Release.Namespace }}
+data:
+  error_en.json: |
+    {
+      "Pod配置不存在": "Pod configuration does not exist",
+      "KubeConfig初始化失败": "Failed to initialize KubeConfig",
+      "Pod资源加锁失败，请稍后重试": "Failed to lock Pod resource, please try again later",
+      "Pod资源暂无可用，请稍后重试": "No available Pod resources, please try again later",
+      "请求参数不合法": "Invalid request parameters",
+      "没有已调度的Pod": "No scheduled Pods",
+      "账号Pod达到上限": "Account Pod limit reached"
+    }
+  error_zh.json: |
+    {
+      "Pod配置不存在": "Pod配置不存在",
+      "KubeConfig初始化失败": "KubeConfig初始化失败",
+      "Pod资源加锁失败，请稍后重试": "Pod资源加锁失败，请稍后重试",
+      "Pod资源暂无可用，请稍后重试": "Pod资源暂无可用，请稍后重试",
+      "请求参数不合法": "请求参数不合法",
+      "没有已调度的Pod": "没有已调度的Pod",
+      "账号Pod达到上限": "账号Pod达到上限"
+    }
+  main.yaml: |
+    # redis锁配置
+    redis_lock:
+      wait_time: 60
+      expire_time: 60
+      lock_key: pod_lock_key
+      lock_value: apply_pod
+    
+    # pod调度配置配置
+    pod_schedule:
+      real_time: false
+      max_try_count: 3
+      try_wait_time: 5ms
+    
+      limit_uin_max_pod: true
+      default_uin_max_pod: 20
+      uin_limit_whitelist:
+        700000576145: 8 # 测试
+    
+    # pod信息配置
+    pod_info:
+      type: lb
+      namespace: {{ .Release.Namespace }}
+      service_name: mcp-sandbox
+    
+      max_pods: 20      # 最大数量
+      min_pods: 10       # 最小数量
+      upper_thr: 0.8    # 扩容阈值
+      lower_thr: 0.3    # 缩容阈值
+    
+      expired_time: 600 # 过期时间（单位：s）
+    
+      server_config:
+        1: # 沙箱MCP
+          port: 8000
+          url_format: "http://%s:%d/runtime_mcp/sse"
+        2: # 沙箱VNC
+          port: 8080
+          url_format: "http://%s:%d/vnc_lite.html"
+        3: # 沙箱CODE
+          port: 9000
+          url_format: "http://%s:%d/execute"
+  placeholder.yaml: |
+    
+  trpc_go.yaml: |
+    global:                             #全局配置
+      namespace: Development            #环境类型，分正式production和非正式development两种类型
+      env_name: dev                    #环境名称，非正式环境下多环境的名称
+      enable_set: ${ENABLE_SET}         #是否启用set
+      full_set_name: ${FULL_SET_NAME}   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}	
+    
+    server:                                            #服务端配置
+      app: KEP                                        #业务的应用名
+      server: resource-schedule-server                             #进程服务名
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - recovery                                     #拦截框架创建的业务处理协程panic
+      admin:
+        ip: ${POD_IP}  # admin 的 ip，配置网卡 nic 也可以
+        port: 8081     # admin 的 port，必须同时配置这里的 ip port 才会启动 admin 
+      service:                                         #业务服务提供的service，可以有多个
+        - name: trpc.KEP.resource-schedule-server.ScheduleServer      #service的路由名称
+          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 8000                #服务监听端口 可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: trpc               #应用层协议 trpc http
+          timeout: 0                            #请求最长处理时间 单位 毫秒
+          server_async: true                           #开启异步处理
+          idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+        - name: trpc.KEP.resource-schedule-server.syncNodes   # service 的路由名称
+          ip: ${POD_IP}
+          port: 9090                                                      # 服务监听端口 可使用占位符 ${port}
+          network: "* 0/1 * * * ?startAtOnce=1&scheduler=syncNodes"      # 任务调度策略
+          protocol: timer                                                 # 设置服务类型为定时器服务
+          timeout: 10000
+    
+    plugins:                                          #插件配置
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: file  # 本地文件日志
+            level: debug  # 标准输出日志的级别，开发提测环境可以用debug，线上建议用info
+            writer_config:  # 本地文件输出具体配置
+              filename: /app/logs/trpc.log  # 本地文件滚动日志存放的路径
+              max_size: 200    # 本地文件滚动日志大小，单位 MB
+              max_backups: 10 # 最大日志文件数
+              max_age: 7      # 最大日志保留天数
+              compress: false # 日志文件是否压缩  
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+      registry: #服务注册配置
+        polaris: #北极星名字注册服务的配置
+      i18n:
+        i18n:
+          default_lang: zh
+          data_provider:
+            type: rainbow
+            prefix: resource-schedule
+            error_prefix: error
+      selector: #针对用户自定义的selector的配置
+        polaris: #针对polaris整体api的内部配置
+          protocol: grpc                              #名字服务远程交互协议类型
+    
+    client:                                            #客户端调用的后端配置
+      namespace: Development                           #针对所有后端的环境
+      # filter:                                          #针对所有service处理函数前后的拦截器列表
+      #   - galileo
+      stream_filter:
+      service:
+        # redis
+        - name: redis.resource-schedule-server
+          network: tcp
+          target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/11
+          password: "{{ .Values.global.components.redis.password }}"
+          timeout: 800

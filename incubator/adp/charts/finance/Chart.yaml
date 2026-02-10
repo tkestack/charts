@@ -1,0 +1,11 @@
+apiVersion: v2
+name: finance
+description: A helm chart for chat
+type: application
+
+version: 1.0.0
+
+appVersion: 1.0.0
+maintainers:
+  - name: stanwei
+  - name: v_iferen

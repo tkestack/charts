@@ -1,0 +1,151 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: botllmserver
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    ti.cloud.tencent.com/resource-quota: unlimited
+  labels:
+    app: botllmserver
+    app.kubernetes.io/name: botllmserver
+spec:
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  selector:
+    matchLabels:
+      app: botllmserver
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: botllmserver
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - botllmserver
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: GPUName
+                    operator: DoesNotExist
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: product
+                    operator: In
+                    values:
+                      - lke
+      terminationGracePeriodSeconds: 90
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - command:
+          - bash
+          - -c
+          - python3 /usr/local/trpc/bin/trpc_main.py -c /usr/local/trpc/conf/trpc.yaml 2>&1
+          env:
+            - name: MKL_NUM_THREADS
+              value: "2"
+            - name: LOG_SPACES
+              value: "2097152"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: DEPLOYMENT_ENVIRONMENT
+              value: TCS
+            - name: NAME_SPACE
+              value: default
+            - name: ENV
+              value: tcs
+            - name: SERVER_LOG_LEVEL
+              value: info
+          image: {{(index .Values.tad.images "bot-llm-server").url}}
+          imagePullPolicy: Always
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "1"
+              memory: "1Gi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+            requests:
+              cpu: "2"
+              memory: "4Gi"
+          {{- end }}
+          name: botllmserver
+          volumeMounts:
+            - mountPath: /etc/localtime
+              name: localtime
+            - mountPath: /usr/local/trpc/log
+              name: logdata
+              subPathExpr: $(POD_NAME)
+            - mountPath: /usr/local/trpc/conf/bot-llm-server
+              name: config-main
+              subPath: bot-llm-server
+            - mountPath: /usr/local/trpc/conf/trpc.yaml
+              name: config-trpc
+              subPath: trpc_python.yaml
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      restartPolicy: Always
+      volumes:
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - hostPath:
+            path: /etc/localtime
+          name: localtime
+        - hostPath:
+            path: /data/ti-platform/log/botllmserver
+            type: DirectoryOrCreate
+          name: logdata
+        - configMap:
+            defaultMode: 420
+            name: botllmserver-main
+          name: config-main
+        - configMap:
+            defaultMode: 420
+            name: botllmserver-trpc
+          name: config-trpc

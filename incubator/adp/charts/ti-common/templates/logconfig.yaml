@@ -1,0 +1,40 @@
+{{- if .Values.global }}          # 第一层：判断 global 是否存在
+  {{- if .Values.global.observability }}  # 第二层：判断 observability 是否存在
+    {{- if .Values.global.observability.cls }}  # 第三层：判断 cls 是否存在
+      {{- if .Values.global.observability.cls.enabled }}  # 第四层：判断 enabled 是否为 true
+apiVersion: cls.cloud.tencent.com/v1
+kind: LogConfig
+metadata:
+  name: {{ .Release.Name }}-container-logs
+  namespace: {{ .Release.Namespace }}
+spec:
+  clsDetail:
+    # CLS 日志集 ID
+    logsetId: {{ .Values.global.observability.cls.logsetId | quote }}
+    # CLS 日志主题 ID
+    topicId: {{ .Values.global.observability.cls.topicId | quote }}
+    # 日志解析格式: json_log, delimiter_log, minimalist_log, multiline_log, fullregex_log
+    logType: {{ .Values.global.observability.cls.logType | default "json_log" }}
+    {{- if eq (.Values.global.observability.cls.logType | default "json_log") "json_log" }}
+    extractRule:
+      # 时间字段提取
+      timeKey: {{ .Values.global.observability.cls.timeKey | default "timestamp" }}
+      timeFormat: {{ .Values.global.observability.cls.timeFormat | default "%Y-%m-%dT%H:%M:%S.%fZ" | quote }}
+    {{- end }}
+  inputDetail:
+    # 采集容器标准输出
+    type: container_stdout
+    containerStdout:
+      # 指定 namespace
+      namespace: {{ .Release.Namespace }}
+      # 采集该 namespace 下所有容器（使用 allContainers: true 可自动追踪新容器）
+      allContainers: true
+      {{- if .Values.global.observability.cls.excludeLabels }}
+      # 排除的 Pod 标签
+      excludeLabels:
+        {{- toYaml .Values.global.observability.cls.excludeLabels | nindent 8 }}
+      {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}

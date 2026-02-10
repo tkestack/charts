@@ -1,0 +1,33 @@
+tad:
+  type: helm
+  images:
+    llm-manager-server:
+      url: "ccr.ccs.tencentyun.com/tke-market/smartassistant.llmmanagerserver:default-b-106-f_2.0.0.443_20250916234413_v2.9.5b2_private_react"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: algorithm
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+hunheyun:
+  hunyuan:
+    enable: false # 是否开启混元混合云，有AKS和API_KEY两种方式
+    secret_id: xxx  # (AKSK和API_KEY二选一) 调用混元的 secret_id
+    secret_key: xxx # (AKSK和API_KEY二选一) 调用混元的 secret_key
+    api_key: xxx # (API_KEY和AKSK二选一) 调用混元的 API_KEY
+  adp:
+    enable: false # 是否开启ADP混合云
+    api_key: xxx # 调用知识引擎原子能力的 openai 协议的 key
+    base_url: https://api.lkeap.cloud.tencent.com/v1 # 调用知识引擎原子能力的地址，一般情况不用改
+
+cos:
+  secret_id: xxx
+  secret_key: xxx
+  app_id: 0
+  region: ap-xxx
+  bucket: xxx  # 不需要带"-app_id"后缀
+  domain: myqcloud.com
+imagePullSecretName: qcloudregistrykey
