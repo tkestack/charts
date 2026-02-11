@@ -177,17 +177,14 @@ cat public.pem | base64 -w 0 > publicKey.txt
 | 配置项 | 必填 | 说明 | 示例值 |
 |--------|------|------|--------|
 | `components.redis.vendor` | ✅ 必填 | 云厂商 | `tencent` |
-| `components.redis.providerType` | ✅ 必填 | 产品类型 | `crs` / `elasticache` / `kvstore` / `redis` |
+| `components.redis.providerType` | ✅ 必填 | 产品类型 | `redis` |
 | `components.redis.cluster` | ✅ 必填 | 集群模式 | `master` |
 | `components.redis.hosts` | ✅ 必填 | Redis 主机地址列表 | `["192.168.6.10"]` |
 | `components.redis.port` | ✅ 必填 | Redis 端口 | `6379` |
 | `components.redis.password` | ✅ 必填 | Redis 密码 | `your-password` |
 
 **providerType 可选值：**
-- tencent: `crs`
-- aws: `elasticache`
-- alibaba: `kvstore`
-- self: `redis`
+- tencent: `redis`
 
 **购买链接：** https://cloud.tencent.com/product/crs
 
@@ -220,7 +217,7 @@ cat public.pem | base64 -w 0 > publicKey.txt
 | 配置项 | 必填 | 说明 | 示例值 |
 |--------|------|------|--------|
 | `components.es.vendor` | ✅ 必填 | 云厂商 | `tencent` |
-| `components.es.providerType` | ✅ 必填 | 产品类型 | `es` / `opensearch` / `elasticsearch` |
+| `components.es.providerType` | ✅ 必填 | 产品类型 | `es` |
 | `components.es.hosts` | ✅ 必填 | ES 主机地址列表 | `["192.168.6.16"]` |
 | `components.es.port` | ✅ 必填 | ES 端口 | `9200` |
 | `components.es.user` | ✅ 必填 | ES 用户名 | `elastic` |
@@ -228,8 +225,6 @@ cat public.pem | base64 -w 0 > publicKey.txt
 
 **providerType 可选值：**
 - tencent: `es`
-- aws: `opensearch`
-- alibaba / self: `elasticsearch`
 
 **购买链接：** https://cloud.tencent.com/product/es
 
@@ -263,17 +258,12 @@ cat public.pem | base64 -w 0 > publicKey.txt
 统一使用 `s3` 配置项，通过 `providerType` 区分不同存储类型。
 
 | 配置项 | 必填 | 说明 | 示例值 |
-|--------|------|------|--------|
+|--------|------|------|-------|
 | `components.s3.vendor` | ✅ 必填 | 云厂商 | `tencent` |
-| `components.s3.providerType` | ✅ 必填 | 产品类型 | `cos` / `s3` / `oss` / `blob` / `gcs` / `minio` |
+| `components.s3.providerType` | ✅ 必填 | 产品类型 | `cos` |
 
 **providerType 可选值：**
 - tencent: `cos`
-- aws: `s3`
-- alibaba: `oss`
-- azure: `blob`
-- gcp: `gcs`
-- self: `minio`
 
 #### COS 专用配置 (providerType=cos 时生效)
 
@@ -332,15 +322,12 @@ kafka是可选中间件，如果需要运维管理中的操作日志查询功能
 | 配置项 | 必填 | 说明 | 示例值 |
 |--------|------|------|--------|
 | `components.kafka.vendor` | ✅ 必填 | 云厂商 | `tencent` |
-| `components.kafka.providerType` | ✅ 必填 | 产品类型 | `kafka` / `ckafka` / `msk` / `kafka` |
+| `components.kafka.providerType` | ✅ 必填 | 产品类型 | `kafka` |
 | `components.kafka.hosts` | ✅ 必填 | Kafka 主机地址列表 | `["10.0.0.5"]` |
 | `components.kafka.port` | ✅ 必填 | Kafka 端口 | `9092` |
 
 **providerType 可选值：**
-- tencent: `kafka` / `ckafka`
-- aws: `msk`
-- alibaba: `kafka`
-- self: `kafka`
+- tencent: `kafka`
 
 **购买链接：** https://console.cloud.tencent.com/ckafka/instance
 
