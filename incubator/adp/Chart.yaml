@@ -1,10 +1,11 @@
 apiVersion: v2
-name: adp
-description: ADP Platform - TKE Deployment (Umbrella Chart)
+name: tencent-cloud-adp
+description: Tencent Cloud Agent Development Platform (Tencent Cloud ADP) with RAG, Workflow and Multi-agent collaboration for TKE
 type: application
 version: 1.0.0
 appVersion: "1.0.0"
 icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/bd9c98d6-46e2-48ec-a812-7adbbde304b6.jpg
+home: https://cloud.tencent.com/product/adp
 
 maintainers:
   - name: ADP Team
