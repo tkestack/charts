@@ -91,7 +91,7 @@ spec:
             - name: ENDPOINT
               value: {{ .Values.env.ENDPOINT | quote }}
             - name: API_REGION
-              value: {{ .Values.env.API_REGION | quote }}
+              value: {{ include "opentelemetry-operator.apiRegion" . | quote }}
             - name: JAVA_INSTR_VERSION
               value: {{ .Values.env.JAVA_INSTR_VERSION | quote }}
             - name: PYTHON_INSTR_VERSION
