@@ -534,13 +534,6 @@ data:
         is_default: false
         source: Experience
         icon: {{ include "qbot.dsIconUrl" . }}
-      - alias_name: 精调知识大模型多功能版
-        name: cs-normal-merge
-        desc: |-
-          针对企业智能化场景深度优化的三合一解决方案，集成意图识别、阅读理解、参数提取三大核心能力，适合需要平衡效果、价格的场景。
-        is_default: false
-        source: Hunyuan
-        icon: {{ include "qbot.hunyuanIconUrl" . }}
       {{ end }}
     app_thought_model_standard:
       - alias_name: youtu-intent-pro
@@ -559,14 +552,6 @@ data:
         is_default: false
         source: Experience
         icon: {{ include "qbot.dsIconUrl" . }}
-        is_free: false
-      - alias_name: 精调知识大模型多功能版
-        name: workflow-pro-merge
-        desc: |-
-          针对企业智能化场景深度优化的三合一解决方案，集成意图识别、阅读理解、参数提取三大核心能力，适合需要平衡效果、价格的场景。
-        is_default: false
-        source: Hunyuan
-        icon: {{ include "qbot.hunyuanIconUrl" . }}
         is_free: false
     app_thought_model_agent:
       - alias_name: youtu-agent

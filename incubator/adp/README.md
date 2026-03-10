@@ -148,6 +148,7 @@ cat public.pem | base64 -w 0 > publicKey.txt
 - 字符集必须设置为 `UTF8MB4`
 - 表名大小写敏感必须设置为**不敏感**（`lower_case_table_names = 1`）
 - 需要提前创建数据库和用户，并授予相应权限
+- **关闭表字段必须有主键的设置**
 
 **规格配置：**
 
@@ -158,7 +159,7 @@ cat public.pem | base64 -w 0 > publicKey.txt
 | 推荐配置 | 8核 | 32GB | 1000GB | 生产环境、大规模 | 3000 |
 
 **配置说明：**
-- 数据库版本：MySQL 8.0 (TDSQL Boundless，推荐)
+- 数据库版本：MySQL 8.0 (TDSQL MySQL)
 - 物理备份方式：物理复制（强同步）
 - 分片数：2 个分片
 - 逻辑分区数：64 个
