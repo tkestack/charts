@@ -76,8 +76,8 @@ data:
       namespace: {{ .Release.Namespace }}
       service_name: kernel
 
-      max_pods: 300     # 最大数量
-      min_pods: 10      # 最小数量
+      max_pods: 50     # 最大数量
+      min_pods: 2      # 最小数量
       upper_thr: 0.8    # 扩容阈值
       lower_thr: 0.3    # 缩容阈值
 
