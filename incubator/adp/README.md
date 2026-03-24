@@ -268,17 +268,17 @@ cat public.pem | base64 -w 0 > publicKey.txt
 
 #### COS 专用配置 (providerType=cos 时生效)
 
-| 配置项 | 必填 | 说明 | 示例值 |
-|--------|------|------|--------|
-| `components.s3.cos.secretId` | ✅ 必填 | 腾讯云 SecretId | `AKIDxxxx` |
-| `components.s3.cos.secretKey` | ✅ 必填 | 腾讯云 SecretKey | `xxxxx` |
-| `components.s3.cos.appId` | ✅ 必填 | 腾讯云 AppId | `1392479074` |
+| 配置项 | 必填   | 说明 | 示例值                   |
+|--------|------|------|-----------------------|
+| `components.s3.cos.secretId` | ✅ 必填 | 腾讯云 SecretId | `AKIDxxxx`            |
+| `components.s3.cos.secretKey` | ✅ 必填 | 腾讯云 SecretKey | `xxxxx`               |
+| `components.s3.cos.appId` | ✅ 必填 | 腾讯云 AppId | `1392479074` 不能加引号    |
 | `components.s3.cos.bucket` | ✅ 必填 | 存储桶名称 | `adp-test-1234567890` |
-| `components.s3.cos.region` | ✅ 必填 | 地域 | `ap-guangzhou` |
-| `components.s3.cos.domain` | ✅ 必填 | COS 域名后缀 | `myqcloud.com` |
-| `components.s3.cos.subPath` | ⚪ 选填 | 子路径 | `adp-test` |
-| `components.s3.cos.expireTime` | ⚪ 选填 | 签名过期时间 | `3600s` |
-| `components.s3.cos.credentialTime` | ⚪ 选填 | 临时凭证有效期 | `3600s` |
+| `components.s3.cos.region` | ✅ 必填 | 地域 | `ap-guangzhou`        |
+| `components.s3.cos.domain` | ✅ 必填 | COS 域名后缀 | `myqcloud.com`        |
+| `components.s3.cos.subPath` | ✅ 必填 | 子路径 | `adp-test`            |
+| `components.s3.cos.expireTime` | ⚪ 选填 | 签名过期时间 | `3600s`               |
+| `components.s3.cos.credentialTime` | ⚪ 选填 | 临时凭证有效期 | `3600s`               |
 
 另外，components.s3.cos.secretId及components.s3.cos.secretKey对应的uin账号，除需要授予cos权限外，还需要授予AI原子能力权限。
 <img src="https://adp-iaas-resource-1392479074.cos.ap-beijing.myqcloud.com/images/%E7%BB%99%E8%B4%A6%E5%8F%B7%E5%88%86%E9%85%8D%E5%8E%9F%E5%AD%90%E8%83%BD%E5%8A%9B%E6%9D%83%E9%99%90.png" width="800">  
