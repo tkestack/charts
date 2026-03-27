@@ -10,16 +10,21 @@ global:
   # CLB 域名（必填）https://console.cloud.tencent.com/clb/instance
   clb: "xx.adp-private.com"
   # CLB ID（必填）
-  clbId: lb-751o5566
+  clbId: lb-751o89m3
   # 协议: http 或 https （必填）
   scheme: http
 
   # RSA 密钥配置（必填）用于前后端加解密登录密码
-  # 生成方法:
+  # macos 生成方法:
   #   1. 生成私钥: openssl genrsa -out private.pem 2048
   #   2. 生成公钥: openssl rsa -in private.pem -pubout -out public.pem
   #   3. Base64编码: cat private.pem | base64 -w 0 > privateKey.txt
   #                  cat public.pem | base64 -w 0 > publicKey.txt
+  # linux 生成方法:
+  #   1. 生成私钥: openssl genrsa -out private.pem 2048
+  #   2. 生成公钥: openssl rsa -in private.pem -pubout -out public.pem
+  #   3. Base64编码: base64 -w 0 private.pem > privateKey.txt
+  #                 base64 -w 0 public.pem > publicKey.txt
   rsa:
     privateKey: "<YOUR_RSA_PRIVATE_KEY_BASE64>"
     publicKey: "<YOUR_RSA_PUBLIC_KEY_BASE64>"
@@ -79,11 +84,11 @@ global:
     s3:
       vendor: tencent
       providerType: cos  # tencent: cos | aws: s3 | alibaba: oss | azure: blob | gcp: gcs | self: minio
-      # COS 专用配置 (providerType=cos 时生效)
+      # COS 专用配置 (providerType=cos 时生效) appId值不可加引号
       cos:
         secretId: "<YOUR_COS_SECRET_ID>"
         secretKey: "<YOUR_COS_SECRET_KEY>"
-        appId: "<YOUR_COS_APP_ID>"
+        appId: <YOUR_COS_APP_ID>
         bucket: "<YOUR_COS_BUCKET>"
         region: "<YOUR_COS_REGION>"
         domain: myqcloud.com
@@ -113,7 +118,7 @@ global:
   observability:
     # CLS 日志收集配置 (可选) https://console.cloud.tencent.com/cls/topic
     cls:
-      enabled: true
+      enabled: false
       logsetId: "<YOUR_CLS_LOGSET_ID>"
       topicId: "<YOUR_CLS_TOPIC_ID>"
 
@@ -137,11 +142,11 @@ global:
     # 类型: sdk（必填）
     type: sdk
     # 是否禁用内容检查（可选，填写 true 或 false）
-    disableContentCheck: false
+    disableContentCheck: true
     # 审核开关（可选，填写 true 或 false）
-    auditSwitch: true
+    auditSwitch: false
     # 是否禁用图片检查（可选，填写 true 或 false）
-    disableImageCheck: false
+    disableImageCheck: true
     # `bizType` （启用审核时 必选）
     bizType: "<YOUR_BIZ_TYPE>"
     # 文本内容安全配置 (可选) https://cloud.tencent.com/document/product/1124/51860
