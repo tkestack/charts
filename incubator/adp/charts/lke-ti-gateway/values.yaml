@@ -8,7 +8,7 @@ tad:
     ti-gateway-filebeat-oss:
       url: ccr.ccs.tencentyun.com/tke-market/ti-gateway-filebeat-oss:7.5.2.3_6_0
     ti-gateway:
-      url: ccr.ccs.tencentyun.com/tke-market/ti-gateway:master_private_2f6e784c_20260126
+      url: ccr.ccs.tencentyun.com/tke-market/ti-gateway:master_private_2f6e784c_20260411
 # 服务本身部署的命名空间
 namespace: ti-base
 

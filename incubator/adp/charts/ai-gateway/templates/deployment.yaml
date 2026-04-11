@@ -86,6 +86,15 @@ spec:
               value: tcs
             - name: SERVER_LOG_LEVEL
               value: info
+            - name: ADP_CHANNEL_ID
+              value: "1"
+            {{- $channelUUID := include "getChannelUUID" . -}}
+            {{- if $channelUUID }}
+            - name: ADP_CHANNEL_UUID
+              value: {{ $channelUUID | quote }}
+            {{- end }}
+            - name: ProductType
+              value: {{ include "getProductType" . | quote }}
           image: {{(index .Values.tad.images "ai-gateway").url}}
           imagePullPolicy: Always
           command: ["/app/bin/ai-gateway", "-conf", "/app/conf/trpc_go.yaml"]
@@ -127,6 +136,9 @@ spec:
             - mountPath: /app/conf/application.yaml
               name: config-application
               subPathExpr: application.yaml
+            - mountPath: /app/conf/model_mappings.json
+              name: config-application
+              subPathExpr: model_mappings.json
       imagePullSecrets:
         - name: {{ .Values.imagePullSecretName }}
       restartPolicy: Always

@@ -2,7 +2,7 @@ tad:
   type: helm
   images:
     bot-knowledge-config-server:
-      url: "ccr.ccs.tencentyun.com/tke-market/kb-config:174_2602092125_private_v3.2.4.2_file_parse_atomic_062cfbc7_private"
+      url: "ccr.ccs.tencentyun.com/tke-market/kb-config:235_2603271751_private_v3.2.4.2_file_parse_atomic_654fa3e3_private"
   instanceStrategy:
     level: region
   labels: {}

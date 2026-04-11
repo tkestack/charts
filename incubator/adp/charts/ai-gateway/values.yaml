@@ -3,7 +3,7 @@ tad:
   type: helm
   images:
     ai-gateway:
-      url: "ccr.ccs.tencentyun.com/tke-market/ai-gateway:53_2512231724_release_v3.3.2_69b0307a_private"
+      url: "ccr.ccs.tencentyun.com/tke-market/ai-gateway:9_2604111144_feature_iaas_v3.4.1.1_d28304f8_private"
   instanceStrategy:
     level: region
   labels: {}

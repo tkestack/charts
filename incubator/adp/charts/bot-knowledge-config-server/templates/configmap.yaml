@@ -1471,8 +1471,6 @@ data:
     finance:
       disabled: true
       report_disabled: {{ (.Values.global.finance).report_disabled | default true }}
-    qa_extract_model_name: {{ .Values.botknowledgeconfigserver.qa_extract_model_name }}
-
 
     elastic_search_config:
       name: trpc.elasticsearch.lke.knowledge

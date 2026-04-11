@@ -139,3 +139,34 @@ TKE 环境返回 1，其他环境返回 2
       mountPath: /helmfile
 {{- end }}
 {{- end -}}
+
+{{/*
+生成 ADP Channel UUID
+TKE 环境格式: ${yyyyMMddHHmmss}-tke-${集群UUID}
+非 TKE 环境返回空字符串
+首次安装时生成，后续 upgrade 时从已有 ConfigMap 中复用旧值，保证值不变
+*/}}
+{{- define "getChannelUUID" -}}
+{{- $isTKE := false -}}
+{{- $nodes := lookup "v1" "Node" "" "" -}}
+{{- if $nodes -}}
+  {{- range $nodes.items -}}
+    {{- range $key, $value := .metadata.labels -}}
+      {{- if contains "tke.cloud.tencent" $key -}}
+        {{- $isTKE = true -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- if $isTKE -}}
+  {{- $existing := lookup "v1" "ConfigMap" .Release.Namespace "adp-channel-uuid" -}}
+  {{- if and $existing $existing.data (index $existing.data "uuid") -}}
+    {{- index $existing.data "uuid" -}}
+  {{- else -}}
+    {{- $ns := lookup "v1" "Namespace" "" "kube-system" -}}
+    {{- if $ns -}}
+      {{- now | date "20060102150405" }}-tke-{{ $ns.metadata.uid -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}

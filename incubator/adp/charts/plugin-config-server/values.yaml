@@ -2,7 +2,7 @@ tad:
   type: helm
   images:
     plugin-config-server:
-      url: "ccr.ccs.tencentyun.com/tke-market/plugin-config-server:67_2512022159_release_private_v3.2.4_02b776d9_private"
+      url: "ccr.ccs.tencentyun.com/tke-market/plugin-config-server:138_2604101008_private_324_plugin_refine_80228d12_private"
   instanceStrategy:
     level: region
   labels: {}
