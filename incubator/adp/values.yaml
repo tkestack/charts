@@ -33,14 +33,12 @@ global:
   # 模型服务配置 (modelServices)
   # ============================
   # 支持以下模型服务类型:
-  # - adp: 腾讯云知识引擎 https://console.cloud.tencent.com/lkeap
-  # - hunyuan: 腾讯混元大模型 https://console.cloud.tencent.com/hunyuan/start
-
   modelServices:
     # 腾讯云知识引擎 ADP（必填）
     adp:
       apiKey: "<YOUR_ADP_API_KEY>"
-
+    hunyuan:
+      apiKey: "<depracted>"
 
   # ============================
   # 基础组件配置 (components)
