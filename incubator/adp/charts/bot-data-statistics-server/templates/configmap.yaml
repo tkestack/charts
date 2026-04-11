@@ -6,6 +6,7 @@ metadata:
 data:
   application.yaml: |
     is_private: ${is_private}
+    is_dedicated_cloud: true
     mongo_database: lke-data-statistics
     schedule_task_touch_seconds: 10               # 任务运行时多久 touch 一次
     schedule_task_untouch_tick: 15                # 多少周期没 touch 认为任务超时
@@ -54,6 +55,10 @@ data:
         kafka_client: trpc.KEP.msg-log-kafka.700001751666-test
     mysqlCli: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
     redisCli: redis://:{{ .Values.global.components.redis.password }}@{{ (index .Values.global.components.redis.hosts 0) }}:6379/1
+    AI_GATEWAY_ADMIN_TARGET: ip://ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
+    PLATFORM_MANAGER_ADMIN_TARGET: ip://platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+    # ATOMIC_GATEWAY_TARGET 测试：dns://gw.test.tvs.qq.com:443，线上：dns://api.adp.cloud.tencent.com:443
+    ATOMIC_GATEWAY_TARGET: dns://api.adp.cloud.tencent.com:443
   trpc_go.yaml: |
     global:                             #全局配置
       namespace: Test          #环境类型，分正式production和非正式development两种类型
@@ -85,6 +90,14 @@ data:
         timeout: 50000                              #请求最长处理时间 单位 毫秒
         server_async: true                             #开启异步处理
         idletime: 600000                               # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+      - name: trpc.KEP.bot-data-statistics-server.Admin
+        ip: ${POD_IP}
+        port: 8001
+        network: tcp
+        protocol: trpc
+        timeout: 50000
+        server_async: true
+        idletime: 600000
       - name: trpc.KEP.bot-data-statistics-server.TriggerHistoryTask   #service的路由名称,
         ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
         port: 9095   #服务监听端口 可使用占位符 ${port}
@@ -271,5 +284,18 @@ data:
       - name: redis.data.statistics
         target: ${redisCli}
         timeout: 8000
-    
-    
+      - name: trpc.adp.platform_manager.Admin
+        namespace: ${NAMESPACE}
+        target: ${PLATFORM_MANAGER_ADMIN_TARGET}
+        timeout: 30000
+      - name: adp.atomic.gateway
+        namespace: Test
+        network: tcp
+        protocol: http
+        target: ${ATOMIC_GATEWAY_TARGET}
+        timeout: 600000
+      - name: trpc.adp.ai_gateway.Admin
+        network: tcp
+        protocol: trpc
+        target: ${AI_GATEWAY_ADMIN_TARGET}
+        timeout: 2000

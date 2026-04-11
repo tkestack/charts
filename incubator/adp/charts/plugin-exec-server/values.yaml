@@ -2,7 +2,7 @@ tad:
   type: helm
   images:
     plugin-exec-server:
-      url: "ccr.ccs.tencentyun.com/tke-market/plugin-exec-server:100_2601301941_release_private_v3.2.4_ai_gateway_956d358e_private"
+      url: "ccr.ccs.tencentyun.com/tke-market/plugin-exec-server:124_2604072259_release_private_v3.2.4_ai_gateway_2a8fe7a8_private"
     plugin-exec-server-sidecar:
       url: "ccr.ccs.tencentyun.com/tke-market/webappchatbot:markmap-96aaeac-24"
   instanceStrategy:

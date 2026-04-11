@@ -11,6 +11,10 @@ spec:
       port: 8000
       protocol: TCP
       targetPort: 8000
+    - name: tcp-8001
+      port: 8001
+      protocol: TCP
+      targetPort: 8001
     - name: tcp-8081
       port: 8081
       protocol: TCP

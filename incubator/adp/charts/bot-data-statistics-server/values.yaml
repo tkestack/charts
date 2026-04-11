@@ -2,7 +2,7 @@ tad:
   type: helm
   images:
     bot-data-statistics-server:
-      url: "ccr.ccs.tencentyun.com/tke-market/bot-data-statistics-server:90_2512291729_release_private_v3.2.4_a6fab400_private"
+      url: "ccr.ccs.tencentyun.com/tke-market/bot-data-statistics-server:9_2604100028_feature_qianlei_3240zhuanyouyun_e092abcd_private"
   instanceStrategy:
     level: region
   labels: {}

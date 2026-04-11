@@ -76,6 +76,15 @@ spec:
               value: TCS
             - name: ENV
               value: tcs
+            - name: ADP_CHANNEL_ID
+              value: "1"
+            {{- $channelUUID := include "getChannelUUID" . -}}
+            {{- if $channelUUID }}
+            - name: ADP_CHANNEL_UUID
+              value: {{ $channelUUID | quote }}
+            {{- end }}
+            - name: ProductType
+              value: {{ include "getProductType" . | quote }}
             - name: SERVER_LOG_LEVEL
               value: info
           image: {{(index .Values.tad.images "resource-gallery").url}}

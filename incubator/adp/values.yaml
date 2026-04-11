@@ -40,9 +40,6 @@ global:
     # 腾讯云知识引擎 ADP（必填）
     adp:
       apiKey: "<YOUR_ADP_API_KEY>"
-    # 腾讯混元大模型（必填）
-    hunyuan:
-      apiKey: "<YOUR_HUNYUAN_API_KEY>"
 
 
   # ============================

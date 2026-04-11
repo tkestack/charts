@@ -404,6 +404,7 @@ data:
 
 
   placeholder.yaml: |
+    AI_GATEWAY_ADMIN_TARGET: ip://ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
 
   trpc_go.yaml: |
     global:                             #全局配置
@@ -591,7 +592,11 @@ data:
           target: ip://app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
           protocol: trpc
           timeout: 60000
-
+        - name: trpc.adp.ai_gateway.Admin
+          network: tcp
+          protocol: trpc
+          target: ${AI_GATEWAY_ADMIN_TARGET}
+          timeout: 2000
 
     plugins:                                          #插件配置
       log:                                            #日志配置

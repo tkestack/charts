@@ -67,17 +67,15 @@
 
 ### 模型服务配置 (modelServices)
 
-所有模型服务配置统一放在 `global.modelServices` 下。
-若未配置apiKey则chat功能将无法正常运行。
+配置放在 `global.modelServices` 下。
+若未在安装时设置，也可后续进入平台后进行设置。
 
 | 配置项 | 必填 | 说明 |
 |--------|------|------|
 | `modelServices.adp.apiKey` | ✅ 必填 | 腾讯云知识引擎 ADP API Key |
-| `modelServices.hunyuan.apiKey` | ✅ 必填 | 腾讯混元大模型 API Key |
 
 **支持的模型服务类型：**
 - `adp`: 腾讯云知识引擎 - https://console.cloud.tencent.com/lkeap 选择使用OpenAI SDK方式创建
-- `hunyuan`: 腾讯混元大模型 - https://console.cloud.tencent.com/hunyuan/start 选择使用OpenAI SDK方式创建
 
 **配置示例：**
 
@@ -86,9 +84,6 @@ global:
   modelServices:
     # 腾讯云知识引擎 ADP（必填）
     adp:
-      apiKey: sk-xxxxxxxx
-    # 腾讯混元大模型（必填）
-    hunyuan:
       apiKey: sk-xxxxxxxx
 ```
 
@@ -103,7 +98,7 @@ global:
 | `rsa.privateKey` | ✅ 必填 | RSA 私钥（Base64 编码）|
 | `rsa.publicKey` | ✅ 必填 | RSA 公钥（Base64 编码）|
 
-**生成方式：**
+**生成方式（macos）：**
 
 ```bash
 # 1. 生成私钥
@@ -116,7 +111,21 @@ openssl rsa -in private.pem -pubout -out public.pem
 cat private.pem | base64 -w 0 > privateKey.txt
 cat public.pem | base64 -w 0 > publicKey.txt
 ```
+**生成方式（linux）：**
 
+```bash
+# 1. 生成私钥
+openssl genrsa -out private.pem 2048
+
+# 2. 从私钥生成对应的公钥
+openssl rsa -in private.pem -pubout -out public.pem
+
+# 3. 将私钥进行Base64编码（不换行）
+base64 -w 0 private.pem > privateKey.txt
+
+# 4. 将公钥进行Base64编码（不换行）
+base64 -w 0 public.pem > publicKey.txt
+```
 ---
 
 ## 基础组件配置 (components)
@@ -159,7 +168,7 @@ cat public.pem | base64 -w 0 > publicKey.txt
 | 推荐配置 | 8核 | 32GB | 1000GB | 生产环境、大规模 | 3000 |
 
 **配置说明：**
-- 数据库版本：MySQL 8.0 (TDSQL MySQL)
+- 数据库版本：MySQL 8.0 (TDSQL MySQL，推荐)
 - 物理备份方式：物理复制（强同步）
 - 分片数：2 个分片
 - 逻辑分区数：64 个
@@ -268,19 +277,19 @@ cat public.pem | base64 -w 0 > publicKey.txt
 
 #### COS 专用配置 (providerType=cos 时生效)
 
-| 配置项 | 必填   | 说明 | 示例值                   |
-|--------|------|------|-----------------------|
+| 配置项 | 必填 | 说明 | 示例值 |
+|--------|------|------|--------|
 | `components.s3.cos.secretId` | ✅ 必填 | 腾讯云 SecretId | `AKIDxxxx`            |
 | `components.s3.cos.secretKey` | ✅ 必填 | 腾讯云 SecretKey | `xxxxx`               |
 | `components.s3.cos.appId` | ✅ 必填 | 腾讯云 AppId | `1392479074` 不能加引号    |
 | `components.s3.cos.bucket` | ✅ 必填 | 存储桶名称 | `adp-test-1234567890` |
-| `components.s3.cos.region` | ✅ 必填 | 地域 | `ap-guangzhou`        |
-| `components.s3.cos.domain` | ✅ 必填 | COS 域名后缀 | `myqcloud.com`        |
-| `components.s3.cos.subPath` | ✅ 必填 | 子路径 | `adp-test`            |
-| `components.s3.cos.expireTime` | ⚪ 选填 | 签名过期时间 | `3600s`               |
-| `components.s3.cos.credentialTime` | ⚪ 选填 | 临时凭证有效期 | `3600s`               |
+| `components.s3.cos.region` | ✅ 必填 | 地域 | `ap-guangzhou` |
+| `components.s3.cos.domain` | ✅ 必填 | COS 域名后缀 | `myqcloud.com` |
+| `components.s3.cos.subPath` | ✅ 必填| 子路径 | `adp-test` |
+| `components.s3.cos.expireTime` | ⚪ 选填 | 签名过期时间 | `3600s` |
+| `components.s3.cos.credentialTime` | ⚪ 选填 | 临时凭证有效期 | `3600s` |
 
-另外，components.s3.cos.secretId及components.s3.cos.secretKey对应的uin账号，除需要授予cos权限外，还需要授予AI原子能力权限。
+另外，components.s3.cos.secretId及components.s3.cos.secretKey对应的uin账号，除需要授予cos权限外，还需要授予文档解析原子能力权限。
 <img src="https://adp-iaas-resource-1392479074.cos.ap-beijing.myqcloud.com/images/%E7%BB%99%E8%B4%A6%E5%8F%B7%E5%88%86%E9%85%8D%E5%8E%9F%E5%AD%90%E8%83%BD%E5%8A%9B%E6%9D%83%E9%99%90.png" width="800">  
 同时需要在 https://console.cloud.tencent.com/lkeap/settings 中设置文档解析能力为后付费  
 <img src="https://adp-iaas-resource-1392479074.cos.ap-beijing.myqcloud.com/images/%E6%96%87%E6%A1%A3%E8%A7%A3%E6%9E%90%E5%92%8C%E6%96%87%E6%A1%A3%E6%8B%86%E5%88%86.png" width="400">
@@ -305,7 +314,7 @@ components:
     cos:
       secretId: AKIDxxxx
       secretKey: xxxxx
-      appId: 1234567890
+      appId: 1234567890  #注意此处不加引号
       bucket: adp-test-1234567890
       region: ap-guangzhou
       domain: myqcloud.com

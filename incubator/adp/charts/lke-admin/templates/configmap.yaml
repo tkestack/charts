@@ -1425,7 +1425,13 @@ data:
             针对企业智能化场景深度优化的三合一解决方案，集成意图识别、阅读理解、参数提取三大核心能力，适合需要平衡效果、价格的场景。
           is_default: false
           icon: {{ include "qbot.hunyuanIconUrl" . }}
-      
+      app_rerank_model:
+        - alias_name: youtu-reranker
+          name: sn-reranker-large-v0.4
+          desc: |
+            通用文本排序模型
+          is_default: true
+          is_free: false
 
   application.yaml: |
     # storage相关配置

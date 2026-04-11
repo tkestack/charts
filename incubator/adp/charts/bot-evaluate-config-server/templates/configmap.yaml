@@ -499,7 +499,7 @@ data:
   placeholder.yaml: |
     IS_PRIVATE: true
     
-    SSE_CONN_URL: https://apex-cmlb-80-0.{{ .Release.Namespace }}.svc.cluster.local:80/v1/qbot/chat/experienceSse
+    SSE_CONN_URL: http://apex-cmlb-80-0.{{ .Release.Namespace }}.svc.cluster.local:80/v1/qbot/chat/experienceSse
     
     VIDEO_DOMAIN: {{ .Values.global.clb }}
     
