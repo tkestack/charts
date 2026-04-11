@@ -168,7 +168,8 @@ base64 -w 0 public.pem > publicKey.txt
 | 推荐配置 | 8核 | 32GB | 1000GB | 生产环境、大规模 | 3000 |
 
 **配置说明：**
-- 数据库版本：MySQL 8.0 (TDSQL MySQL，推荐)
+
+- 数据库版本：MySQL 8.0 (TDSQL MySQL)
 - 物理备份方式：物理复制（强同步）
 - 分片数：2 个分片
 - 逻辑分区数：64 个
@@ -277,8 +278,9 @@ base64 -w 0 public.pem > publicKey.txt
 
 #### COS 专用配置 (providerType=cos 时生效)
 
-| 配置项 | 必填 | 说明 | 示例值 |
-|--------|------|------|--------|
+=======
+| 配置项 | 必填   | 说明 | 示例值                   |
+|--------|------|------|-----------------------|
 | `components.s3.cos.secretId` | ✅ 必填 | 腾讯云 SecretId | `AKIDxxxx`            |
 | `components.s3.cos.secretKey` | ✅ 必填 | 腾讯云 SecretKey | `xxxxx`               |
 | `components.s3.cos.appId` | ✅ 必填 | 腾讯云 AppId | `1392479074` 不能加引号    |

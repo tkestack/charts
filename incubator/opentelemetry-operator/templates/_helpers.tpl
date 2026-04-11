@@ -98,6 +98,29 @@ Create an ordered name of the MutatingWebhookConfiguration
 {{- end -}}
 {{- end }}
 
+{{- define "opentelemetry-operator.apiRegion" -}}
+{{- $apiRegion := .Values.env.API_REGION | default "" -}}
+{{- if eq $apiRegion "" -}}
+{{- $endpoint := .Values.env.ENDPOINT | default "" -}}
+{{- $hostWithPort := regexReplaceAll "^https?://([^/]+).*$" $endpoint "${1}" -}}
+{{- $host := regexReplaceAll ":\\d+$" $hostWithPort "" -}}
+{{- $host = regexReplaceAll "^pl\\." $host "" -}}
+{{- if eq $host "ap-hongkong-qcloud.apm.tencentcs.com" -}}
+{{- $apiRegion = "ap-hongkong" -}}
+{{- else if eq $host "qcloud.apm.tencentcs.com" -}}
+{{- $apiRegion = "ap-singapore" -}}
+{{- else if eq $host "175.27.25.26" -}}
+{{- $apiRegion = "ap-qingyuan" -}}
+{{- else -}}
+{{- $region := regexReplaceAll "^([^.]+)\\.apm\\.tencentcs\\.com$" $host "${1}" -}}
+{{- if and (ne $region "") (ne $region $host) -}}
+{{- $apiRegion = $region -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- $apiRegion -}}
+{{- end -}}
+
 
 {{- define "regionRepositoryMap" -}}
 {{- $region := . -}}
@@ -153,6 +176,12 @@ Modify kubeRBACProxy image repository by region.
 */}}
 {{- define "opentelemetry-operator.proxyImageRepository" -}}
 {{- $parts := regexSplit "/" .Values.kubeRBACProxy.image.repository -1 -}}
+{{- printf "%s/%s" (include "regionRepositoryMap" .Values.env.TKE_REGION) (join "/" (slice $parts 1 (len $parts))) -}}
+{{- end -}}
+
+
+{{- define "opentelemetry-operator.jobImageRepository" -}}
+{{- $parts := regexSplit "/" .Values.waitForManager.image.repository -1 -}}
 {{- printf "%s/%s" (include "regionRepositoryMap" .Values.env.TKE_REGION) (join "/" (slice $parts 1 (len $parts))) -}}
 {{- end -}}
 
