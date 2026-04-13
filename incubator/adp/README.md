@@ -75,6 +75,7 @@
 | `modelServices.adp.apiKey` | ✅ 必填 | 腾讯云知识引擎 ADP API Key |
 
 **支持的模型服务类型：**
+
 - `adp`: 腾讯云知识引擎 - 在公有云控制台中获取（https://adp.cloud.tencent.com/adp?spaceId=default_space#/key-manage?spaceId=default_space）
 
 **配置示例：**
@@ -278,6 +279,7 @@ base64 -w 0 public.pem > publicKey.txt
 
 #### COS 专用配置 (providerType=cos 时生效)
 
+=======
 | 配置项 | 必填   | 说明 | 示例值                   |
 |--------|------|------|-----------------------|
 | `components.s3.cos.secretId` | ✅ 必填 | 腾讯云 SecretId | `AKIDxxxx`            |
@@ -292,6 +294,7 @@ base64 -w 0 public.pem > publicKey.txt
 
 另外，components.s3.cos.secretId及components.s3.cos.secretKey对应的uin账号，除需要授予cos权限外，同时需要在 https://console.cloud.tencent.com/lkeap/settings 中设置文档解析能力为后付费  
 <img src="https://adp-testing-1406902593.cos.ap-beijing.myqcloud.com/prod_files/%E6%96%87%E6%A1%A3%E8%A7%A3%E6%9E%90%E5%90%8E%E4%BB%98%E8%B4%B9.png" width="400">
+
 
 **购买链接：** https://cloud.tencent.com/product/cos 在页面中创建桶，并且创建一个目录给adp使用。
 
