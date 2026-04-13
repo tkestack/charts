@@ -75,7 +75,8 @@
 | `modelServices.adp.apiKey` | ✅ 必填 | 腾讯云知识引擎 ADP API Key |
 
 **支持的模型服务类型：**
-- `adp`: 腾讯云知识引擎 - https://console.cloud.tencent.com/lkeap 选择使用OpenAI SDK方式创建
+
+- `adp`: 腾讯云知识引擎 - 在公有云控制台中获取（https://adp.cloud.tencent.com/adp?spaceId=default_space#/key-manage?spaceId=default_space）
 
 **配置示例：**
 
@@ -84,7 +85,7 @@ global:
   modelServices:
     # 腾讯云知识引擎 ADP（必填）
     adp:
-      apiKey: sk-xxxxxxxx
+      apiKey: xxxxxxxxxx
 ```
 
 ---
@@ -291,10 +292,9 @@ base64 -w 0 public.pem > publicKey.txt
 | `components.s3.cos.expireTime` | ⚪ 选填 | 签名过期时间 | `3600s` |
 | `components.s3.cos.credentialTime` | ⚪ 选填 | 临时凭证有效期 | `3600s` |
 
-另外，components.s3.cos.secretId及components.s3.cos.secretKey对应的uin账号，除需要授予cos权限外，还需要授予文档解析原子能力权限。
-<img src="https://adp-iaas-resource-1392479074.cos.ap-beijing.myqcloud.com/images/%E7%BB%99%E8%B4%A6%E5%8F%B7%E5%88%86%E9%85%8D%E5%8E%9F%E5%AD%90%E8%83%BD%E5%8A%9B%E6%9D%83%E9%99%90.png" width="800">  
-同时需要在 https://console.cloud.tencent.com/lkeap/settings 中设置文档解析能力为后付费  
-<img src="https://adp-iaas-resource-1392479074.cos.ap-beijing.myqcloud.com/images/%E6%96%87%E6%A1%A3%E8%A7%A3%E6%9E%90%E5%92%8C%E6%96%87%E6%A1%A3%E6%8B%86%E5%88%86.png" width="400">
+另外，components.s3.cos.secretId及components.s3.cos.secretKey对应的uin账号，除需要授予cos权限外，同时需要在 https://console.cloud.tencent.com/lkeap/settings 中设置文档解析能力为后付费  
+<img src="https://adp-testing-1406902593.cos.ap-beijing.myqcloud.com/prod_files/%E6%96%87%E6%A1%A3%E8%A7%A3%E6%9E%90%E5%90%8E%E4%BB%98%E8%B4%B9.png" width="400">
+
 
 **购买链接：** https://cloud.tencent.com/product/cos 在页面中创建桶，并且创建一个目录给adp使用。
 
@@ -581,11 +581,11 @@ global:
 **适用场景：** 小规模生产环境、中小型业务
 
 **服务器规格：**
-- **数量：** 4 台
+- **数量：** 5 台
 - **配置：** 16核 CPU + 32GB 内存
 - **用途：** 创建 K8s 集群或在已有集群中预留此规模资源
 
-**预估费用：** ¥4,000 元/月（4 台 × 1,000 元/月，此处为预估价格，实际价格以腾讯云账单为准）
+**预估费用：** ¥5,000 元/月（5 台 × 1,000 元/月，此处为预估价格，实际价格以腾讯云账单为准）
 
 **配置说明：**
 - 建议使用腾讯云标准型实例（如 S5 系列）
@@ -634,17 +634,17 @@ global:
 
 ### 标准配置总费用
 
-| 组件 | 月费用（元） |
-|------|-------------|
-| 服务器（4台 16c32G） | 4,000 |
-| CLB 负载均衡 | 按实际使用 |
-| TDSQL 数据库（标准配置） | 700 |
-| Redis（标准配置） | 70 |
-| Elasticsearch（标准配置） | 1,950 |
-| COS 对象存储 | 按实际使用 |
-| Kafka 消息队列（标准配置） | 1,200 |
-| VDB 向量数据库（标准配置） | 900 |
-| **合计（不含按量计费）** | **约 8,820 元/月** |
+| 组件 | 月费用（元）          |
+|------|-----------------|
+| 服务器（5台 16c32G） | 5,000           |
+| CLB 负载均衡 | 按实际使用           |
+| TDSQL 数据库（标准配置） | 700             |
+| Redis（标准配置） | 70              |
+| Elasticsearch（标准配置） | 1,950           |
+| COS 对象存储 | 按实际使用           |
+| Kafka 消息队列（标准配置） | 1,200           |
+| VDB 向量数据库（标准配置） | 900             |
+| **合计（不含按量计费）** | **约 9,820 元/月** |
 
 ### 推荐配置总费用
 
