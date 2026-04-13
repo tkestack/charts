@@ -2,7 +2,7 @@ tad:
   type: helm
   images:
     platform-manager:
-      url: "ccr.ccs.tencentyun.com/tke-market/platform-manager:73_2602092209_feature_license_dc767442_private"
+      url: "ccr.ccs.tencentyun.com/tke-market/platform-manager:18_2604081614_feature_lighthouse_e8ea501c_private"
   instanceStrategy:
     level: region
   labels: {}

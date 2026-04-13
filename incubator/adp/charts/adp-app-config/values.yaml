@@ -2,7 +2,7 @@ tad:
   type: helm
   images:
     adp-app-config:
-      url: "ccr.ccs.tencentyun.com/tke-market/app-config:154_2603252104_release_private_v3.2.4.1_437696df_private"
+      url: "ccr.ccs.tencentyun.com/tke-market/app-config:158_2603261734_release_private_v3.2.4.1_6889f609_private"
   instanceStrategy:
     level: region
   labels: {}

@@ -2,7 +2,7 @@ tad:
   type: helm
   images:
     apex:
-      url: "ccr.ccs.tencentyun.com/tke-market/apex:35_2601261857_master_private_72c1857b_private"
+      url: "ccr.ccs.tencentyun.com/tke-market/apex:4_2603280059_master_private_247b5729_private"
     apex-router:
       url: "ccr.ccs.tencentyun.com/tke-market/apex-router:5.8.0"
   instanceStrategy:

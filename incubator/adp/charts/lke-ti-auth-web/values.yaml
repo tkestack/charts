@@ -8,7 +8,7 @@ tad:
     packages: registry.tce.com:1181
   images:
     ti-auth-web:
-      url: ccr.ccs.tencentyun.com/tke-market/ti-tiauth-prod-production:release_private-v3.2.4.0_4284df3ea9c427be8b8c5445e8991ad412e5e9f4_292_image
+      url: ccr.ccs.tencentyun.com/tke-market/ti-tiauth-prod-production:release_private-v3.2.4.0_05521e081a7461819516284a504b37aa734ef5e9_318
 
 # 环境变量, DEV | TEST | PROD
 env: TEST

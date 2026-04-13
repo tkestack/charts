@@ -86,6 +86,13 @@ spec:
               value: tcs
             - name: SERVER_LOG_LEVEL
               value: info
+            - name: ADP_CHANNEL_ID
+              value: "1"
+            {{- $channelUUID := include "getChannelUUID" . -}}
+            {{- if $channelUUID }}
+            - name: ADP_CHANNEL_UUID
+              value: {{ $channelUUID | quote }}
+            {{- end }}
           image: {{(index .Values.tad.images "bot-data-statistics-server").url}}
           imagePullPolicy: Always
           #command: ["sh","-c", "crond start; touch /var/log/log.txt && tail -f /var/log/log.txt"]

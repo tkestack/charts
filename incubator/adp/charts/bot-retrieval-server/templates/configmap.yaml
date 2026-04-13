@@ -657,7 +657,7 @@ data:
         # 是否开启分库
         enable_split_db: true
         # 分库的数量
-        split_db_num: 100
+        split_db_num: 5
         # 评测端DB名称
         db_name_preview: db_text2sql_preview
         # 发布端DB名称
