@@ -279,7 +279,6 @@ base64 -w 0 public.pem > publicKey.txt
 
 #### COS 专用配置 (providerType=cos 时生效)
 
-=======
 | 配置项 | 必填   | 说明 | 示例值                   |
 |--------|------|------|-----------------------|
 | `components.s3.cos.secretId` | ✅ 必填 | 腾讯云 SecretId | `AKIDxxxx`            |
