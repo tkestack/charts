@@ -1,0 +1,139 @@
+{{- $helmfileEnvName := .Values.helmfileEnvName | default "tke" }}
+{{- $re_nu   := 1}}
+{{- if or (eq $helmfileEnvName "tcs") (eq $helmfileEnvName "tke") }}
+  {{- $re_nu = 2 }}
+{{- end}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ti-perm-auth-proxy
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    secret.reloader.stakater.com/reload: "ti-secret"
+    configmap.reloader.stakater.com/reload: "ti-perm-auth-proxy-cm"
+  labels:
+    app: ti-perm-auth-proxy
+    k8s-app: ti-perm-auth-proxy
+    app.cpaas.io/name: ti-perm-auth-proxy.{{ .Release.Namespace }}
+    project.cpaas.io/name: {{ .Release.Namespace }}
+  selfLink: /apis/apps/v1/namespaces/{{ .Release.Namespace }}/deployments/ti-perm-auth-proxy
+spec:
+  progressDeadlineSeconds: 600
+  replicas: {{$re_nu}}
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: ti-perm-auth-proxy
+      k8s-app: ti-perm-auth-proxy
+      app.cpaas.io/name: ti-perm-auth-proxy.{{ .Release.Namespace }}
+      project.cpaas.io/name: {{ .Release.Namespace }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 50%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: ti-perm-auth-proxy
+        k8s-app: ti-perm-auth-proxy
+        app.cpaas.io/name: ti-perm-auth-proxy.{{ .Release.Namespace }}
+        project.cpaas.io/name: {{ .Release.Namespace }}
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: node-role.kubernetes.io/master
+                    operator: Exists
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - ti-perm-auth-proxy
+      priorityClassName: system-cluster-critical
+      dnsPolicy: Default
+      dnsConfig:
+        options:
+        - name: timeout
+          value: "2"
+        - name: attempts
+          value: "3"
+        - name: rotate
+        - name: single-request-reopen
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - env:
+          - name: mysql_host
+            valueFrom:
+              secretKeyRef:
+                key: DB_HOST
+                name: ti-secret
+          - name: mysql_port
+            valueFrom:
+              secretKeyRef:
+                key: DB_PORT
+                name: ti-secret
+          - name: mysql_pwd
+            valueFrom:
+              secretKeyRef:
+                key: DB_PASSWORD
+                name: ti-secret
+          - name: mysql_user
+            valueFrom:
+              secretKeyRef:
+                key: DB_USER
+                name: ti-secret
+          - name: mysql_db
+            value: ti_auth_proxy    
+          image: {{(index .Values.tad.images "ti-perm-auth-proxy").url}}
+          imagePullPolicy: IfNotPresent
+          name: ti-perm-auth-proxy
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /usr/local/services/ti-perm-auth-proxy/log
+            name: new-volume
+          - mountPath: /usr/local/services/ti-auth-proxy/conf/config.yml
+            name: ti-perm-auth-proxy-cm
+            subPath: config.yml
+          - mountPath: /usr/local/services/ti-auth-proxy/conf/sso_config.json
+            name: ti-perm-auth-proxy-cm
+            subPath: sso_config.json
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 5
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      {{- include "dependencyChecker.volumes" . | nindent 6 }}
+      - configMap:
+          defaultMode: 420
+          name: ti-perm-auth-proxy-cm
+        name: ti-perm-auth-proxy-cm
+      - hostPath:
+          path: /data/ti-platform/log/ti-perm-auth-proxy
+          type: ""
+        name: new-volume

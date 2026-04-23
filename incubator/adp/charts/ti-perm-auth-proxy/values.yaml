@@ -1,0 +1,12 @@
+tad:
+  type: helm
+  namespace: ti-base
+  registries:
+    images: registry.tce.com
+    packages: registry.tce.com:1181
+  images:
+    ti-perm-auth-proxy:
+      url: ccr.ccs.tencentyun.com/tke-market/ti_auth_proxy:release-perm-auth-config_88aa5d87_20250317_zhiyan145
+env: TEST
+namespace: ti-base
+imagePullSecretName: qcloudregistrykey

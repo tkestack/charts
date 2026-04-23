@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ti-perm-auth-proxy
+  namespace: {{ .Release.Namespace }}
+  labels:
+    k8s-app: ti-perm-auth-proxy
+    app.cpaas.io/name: ti-perm-auth-proxy.{{ .Release.Namespace }}
+    project.cpaas.io/name: {{ .Release.Namespace }}
+  selfLink: /api/v1/namespaces/{{ .Release.Namespace }}/services/ti-perm-auth-proxy
+spec:
+  ports:
+    - name: tcp-80-80
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    k8s-app: ti-perm-auth-proxy
+    app.cpaas.io/name: ti-perm-auth-proxy.{{ .Release.Namespace }}
+    project.cpaas.io/name: {{ .Release.Namespace }}
+  sessionAffinity: None
+  type: ClusterIP

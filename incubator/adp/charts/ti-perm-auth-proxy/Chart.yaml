@@ -1,0 +1,10 @@
+apiVersion: v1
+name: ti-perm-auth-proxy
+version: 3.9.0
+appVersion: 3.9.0
+description: TI auth sso proxy
+
+sources:
+  - https://git.woa.com/ti2.0/ti-auth-group/ti-auth-proxy
+maintainers:
+  - name: brucezylin

@@ -1,0 +1,61 @@
+{{- if .Values.global.sqlHookJob }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-import-sql-job
+  namespace: {{ .Values.tad.namespace}}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 5
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      restartPolicy: Never
+      serviceAccountName: ti-helm-hook-serviceaccount
+      containers:
+      - name: main
+        image: {{.Values.global.sqlHookJob}}
+        imagePullPolicy: Always
+        command:
+        - "/bin/sh"
+        - "-ecx"
+        - |
+          cd script
+          {{- if .Values.tad }}
+          {{- if .Values.tad.packages }}
+          {{- if (index .Values.tad.packages "ti-perm-auth-proxy") }}
+          wget -O ./{{ .Release.Name }}.tgz --no-check-certificate {{(index .Values.tad.packages "ti-perm-auth-proxy").url}}
+          tar -zxf {{ .Release.Name }}.tgz
+          {{- end }}
+          {{- end }}
+          {{- end }}
+          if [ -d "{{ .Release.Name }}/sql" ]; then
+            python3 ti-init-sql.py --log-level=DEBUG -e {{.Values.global.helmfileEnvName}} -r {{ .Release.Name }} {{ .Release.Name }}
+          else
+            echo "{{ .Release.Name }} not contain sql directory"
+          fi
+        env:
+        - name: NAMESPACE
+          value: {{ .Values.tad.namespace}}
+        - name: CHART_NAME
+          value: {{ .Release.Name }}
+        {{- if .Values.global.updatefrom }}
+        - name: updatefrom
+          value: {{ .Values.global.updatefrom }}
+        {{- end }}
+        - name: DB_PROVIDER
+          value: {{ .Values.global.components.db.providerType }}
+        - name: DB_HOST
+          value: {{ .Values.global.components.db.host | quote }}
+        - name: DB_PORT
+          value: {{ .Values.global.components.db.port | quote }}
+        - name: DB_USER
+          value: {{ .Values.global.components.db.user | quote }}
+        - name: DB_PASSWORD
+          value: {{ .Values.global.components.db.password | quote }}
+{{- end }}

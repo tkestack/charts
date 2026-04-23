@@ -1,0 +1,71 @@
+apiVersion: v1
+data:
+  config.yml: |-
+    http_listen_addr: ":80"
+    sso_server_addr: "http://"
+    client_id: ""
+    client_secret: ""
+    ti_auth_addr: "http://ti-perm-auth:8081"
+    ti_auth_http_addr: "http://ti-perm-auth:8081"
+    mysql_timeout: 10
+
+    mysql_config:
+      host: ""
+      port: ""
+      user: ""
+      password: ""
+      database: ""
+  sso_config.json: |-
+    {
+      "Type": "oauth",
+      "Config": {
+        "BaseVariable": {
+          "redirectUri": "{{ .Values.global.scheme }}%3A%2F%2F{{ .Values.global.clb }}%2Fportal%2F%23%2Flogin",
+          "baseUrl": "https://",
+          "grantType": "authorization_code",
+          "clientId": "",
+          "clientSecret": ""
+        },
+        "Flows": [
+          {
+            "Uri": "{{`{{.baseUrl}}`}}oauth2/getToken?client_id={{`{{.clientId}}`}}&client_secret={{`{{.clientSecret}}`}}&grant_type={{`{{.grantType}}`}}&code={{`{{.code}}`}}&redirect_uri={{`{{.redirectUri}}`}}",
+            "Method": "POST",
+            "Body": {
+              "code": "{{`{{.code}}`}}"
+            },
+            "Header": {
+              "Content-Type": "application/json",
+              "User-Agent": "Mozilla/5.0",
+              "Accept":     "*/*"
+            },
+            "OutputVariable": {
+              "token": "access_token"
+            }
+          },
+          {
+            "Uri": "{{`{{.baseUrl}}`}}oauth2/getUserInfo?access_token={{`{{.token}}`}}&client_id={{`{{.clientId}}`}}",
+            "Method": "GET",
+            "Header": {
+              "Content-Type": "application/json",
+              "User-Agent": "Mozilla/5.0",
+              "Accept":     "*/*"
+            },
+            "OutputVariable": {
+              "Account": "loginName",
+              "CreatorAccount": "creatorAccount",
+              "CName": "cname"
+            }
+          }
+        ],
+        "result": {
+          "Account": "{{`{{.Account}}`}}",
+          "CreatorAccount": "{{`{{.CreatorAccount}}`}}",
+          "CName": "{{`{{.CName}}`}}"
+        }
+      }
+    }
+
+kind: ConfigMap
+metadata:
+  name: ti-perm-auth-proxy-cm
+  namespace: {{ .Release.Namespace }}
