@@ -11,7 +11,15 @@ spec:
   backoffLimit: 1
   # ttlSecondsAfterFinished: 300
   template:
-    spec:
+    metadata:
+      annotations:
+        eks.tke.cloud.tencent.com/reserve-sandbox-duration: "30m"
+        eks.tke.cloud.tencent.com/reserve-succeeded-sandbox: "true"
+        eks.tke.cloud.tencent.com/reserve-failed-sandbox: "true"    
+      labels:
+        app: {{ .Release.Name }}-import-sql-job
+        release: {{ .Release.Name }}  
+    spec:     
       imagePullSecrets:
         - name: {{ .Values.imagePullSecretName }}
       restartPolicy: Never

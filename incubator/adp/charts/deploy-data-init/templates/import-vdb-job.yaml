@@ -12,11 +12,16 @@ metadata:
     "helm.sh/hook-weight": "1"
     "helm.sh/hook-succeeded": continue
     "helm.sh/hook-delete-policy": before-hook-creation
+
 spec:
   backoffLimit: 1
   ttlSecondsAfterFinished: 300
   template:
     metadata:
+      annotations:
+        eks.tke.cloud.tencent.com/reserve-sandbox-duration: "30m"
+        eks.tke.cloud.tencent.com/reserve-succeeded-sandbox: "true"
+        eks.tke.cloud.tencent.com/reserve-failed-sandbox: "true"    
       labels:
         app: {{ .Release.Name }}-import-vdb-job
         release: {{ .Release.Name }}

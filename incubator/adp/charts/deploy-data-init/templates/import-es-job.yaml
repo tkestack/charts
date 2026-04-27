@@ -17,6 +17,10 @@ spec:
   ttlSecondsAfterFinished: 300
   template:
     metadata:
+      annotations:
+        eks.tke.cloud.tencent.com/reserve-sandbox-duration: "30m"
+        eks.tke.cloud.tencent.com/reserve-succeeded-sandbox: "true"
+        eks.tke.cloud.tencent.com/reserve-failed-sandbox: "true"    
       labels:
         app: {{ .Release.Name }}-import-es-job
         release: {{ .Release.Name }}

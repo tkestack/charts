@@ -22,6 +22,10 @@ spec:
       name: {{ include "pre-install-check.fullname" . }}
       labels:
         {{- include "pre-install-check.selectorLabels" . | nindent 8 }}
+      annotations:
+        eks.tke.cloud.tencent.com/reserve-sandbox-duration: "30m"
+        eks.tke.cloud.tencent.com/reserve-succeeded-sandbox: "true"
+        eks.tke.cloud.tencent.com/reserve-failed-sandbox: "true"
     spec:
       restartPolicy: Never
       {{- if .Values.rbac.create }}
