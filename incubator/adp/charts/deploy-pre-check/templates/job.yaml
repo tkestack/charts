@@ -1,4 +1,3 @@
-{{- if .Values.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -97,4 +96,5 @@ spec:
           value: {{ if eq .Values.global.clusterSize "minimal" }}{{ .Values.requirements.minimal.cpu | quote }}{{ else if eq .Values.global.clusterSize "standard" }}{{ .Values.requirements.standard.cpu | quote }}{{ else if eq .Values.global.clusterSize "recommended" }}{{ .Values.requirements.recommended.cpu | quote }}{{ else }}{{ .Values.requirements.standard.cpu | quote }}{{ end }}
         - name: REQUIRED_MEMORY
           value: {{ if eq .Values.global.clusterSize "minimal" }}{{ .Values.requirements.minimal.memory | quote }}{{ else if eq .Values.global.clusterSize "standard" }}{{ .Values.requirements.standard.memory | quote }}{{ else if eq .Values.global.clusterSize "recommended" }}{{ .Values.requirements.recommended.memory | quote }}{{ else }}{{ .Values.requirements.standard.memory | quote }}{{ end }}
-{{- end }}
+        - name: CHECK_K8S_RESOURCES
+          value: {{ .Values.global.checkK8sResources | default true | quote }}

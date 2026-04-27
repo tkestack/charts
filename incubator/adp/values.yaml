@@ -7,6 +7,8 @@
 global:
   # 集群类型：包含 [minimal]、[standard] 和 [recommended] 三个配置段
   clusterSize: minimal
+  # 是否校验 K8s 集群剩余资源是否充足（当部署超级节点时需要关闭）
+  checkK8sResources: true
   # CLB 域名（必填）https://console.cloud.tencent.com/clb/instance
   clb: "xx.adp-private.com"
   # CLB ID（必填）

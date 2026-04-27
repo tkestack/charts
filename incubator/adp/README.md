@@ -42,6 +42,7 @@
 | `clb`         | ✅ 必填 | 负载均衡 CLB 域名 | 需要给clb绑定一个自定义域名，例如：`xx-adp.xyz.com`                                                                                                                                                                                   |
 | `clbId`       | ✅ 必填 | CLB 实例 ID   | `lb-h7m35y2x`                                                                                                                                                                                                         |
 | `scheme`      | ✅ 必填 | 协议类型        | `http` 或 `https`                                                                                                                                                                                                      |
+| `checkK8sResources`      | ✅ 必填 | 是否关闭 k8s 资源检查，使用超级节点时需要设置 false        | `true` 或 `false`                                                                                                                                                                                                      |
 
 **购买链接：** https://console.cloud.tencent.com/clb/instance
 
@@ -157,7 +158,7 @@ base64 -w 0 public.pem > publicKey.txt
 - TDSQL-MySQL 5.7+ 或兼容版本
 - 字符集必须设置为 `UTF8MB4`
 - 表名大小写敏感必须设置为**不敏感**（`lower_case_table_names = 1`）
-- 需要提前创建数据库和用户，并授予相应权限
+- 需要提前创建用户，并授予相应权限
 - **关闭表字段必须有主键的设置**
 
 **规格配置：**

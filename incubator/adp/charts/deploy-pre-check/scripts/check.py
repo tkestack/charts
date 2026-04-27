@@ -545,7 +545,14 @@ def main():
     check_redis()
     check_vectordb()
     check_object_storage()
-    check_k8s_resources()
+
+    # K8s 剩余资源检查：由 global.checkK8sResources 控制
+    check_k8s_flag = os.getenv('CHECK_K8S_RESOURCES', 'true').strip().lower()
+    if check_k8s_flag in ('1', 'true', 'yes', 'y', 'on'):
+        check_k8s_resources()
+    else:
+        print_header("检查 Kubernetes 集群资源")
+        print_warning("已通过 global.checkK8sResources=false 跳过 K8s 剩余资源检查")
 
     # 最终结果
     print_header("检查结果汇总")

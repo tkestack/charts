@@ -2,8 +2,8 @@ apiVersion: v2
 name: adp
 description: Tencent Cloud Agent Development Platform (Tencent Cloud ADP) with RAG, Workflow and Multi-agent collaboration for TKE
 type: application
-version: 1.0.1
-appVersion: "1.0.1"
+version: 1.0.2
+appVersion: "1.0.2"
 icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/bd9c98d6-46e2-48ec-a812-7adbbde304b6.jpg
 home: https://cloud.tencent.com/product/adp
 
@@ -205,6 +205,10 @@ dependencies:
     version: "1.0.0"
     repository: "file://./charts/short-url"
     condition: short-url.enabled
+  - name: ti-perm-auth-proxy
+    version: "3.9.0"
+    repository: "file://./charts/ti-perm-auth-proxy"
+    condition: ti-perm-auth-proxy.enabled
   - name: vector-db-manager
     version: "1.0.0"
     repository: "file://./charts/vector-db-manager"

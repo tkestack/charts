@@ -1,7 +1,6 @@
 # Pre-install Check 子 Chart 配置
-
-# 是否启用 pre-install 检查
-enabled: true
+# 注：pre-install Job 始终执行（中间件连通性检查不可关闭）
+#     K8s 剩余资源检查由父 chart 最外层 global.checkK8sResources 控制
 
 # 检查任务配置
 job:
