@@ -85,6 +85,8 @@ spec:
               value: tcs
             - name: SERVER_LOG_LEVEL
               value: info
+            - name: TZ
+              value: Asia/Shanghai
           image: {{(index .Values.tad.images "kernel").url}}
           imagePullPolicy: Always
           livenessProbe:
@@ -130,8 +132,6 @@ spec:
           {{- end }}
           name: kernel
           volumeMounts:
-            - mountPath: /etc/localtime
-              name: localtime
             - mountPath: /usr/local/trpc/log
               name: logdata
               subPathExpr: $(POD_NAME)
@@ -140,10 +140,5 @@ spec:
       restartPolicy: Always
       volumes:
         {{- include "dependencyChecker.volumes" . | nindent 8 }}
-        - hostPath:
-            path: /etc/localtime
-          name: localtime
-        - hostPath:
-            path: /data/ti-platform/log/kernel
-            type: DirectoryOrCreate
+        - emptyDir: {}
           name: logdata

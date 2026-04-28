@@ -2,7 +2,7 @@ tad:
   type: helm
   images:
     resource-schedule-server:
-      url: "ccr.ccs.tencentyun.com/tke-market/resource-schedule-server:5_2601080013_master_private_085a145b_private"
+      url: "ccr.ccs.tencentyun.com/tke-market/resource-schedule-server:2_2604281407_fix_super-node-incluster-from-085a145b_37590dcd_private"
   instanceStrategy:
     level: region
   labels: {}

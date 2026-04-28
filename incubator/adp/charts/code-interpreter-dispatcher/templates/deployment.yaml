@@ -82,6 +82,8 @@ spec:
               value: tcs
             - name: SERVER_LOG_LEVEL
               value: info
+            - name: TZ
+              value: Asia/Shanghai
           image: {{(index .Values.tad.images "code-interpreter-dispatcher").url}}
           imagePullPolicy: Always
           name: codeinterpreterdispatcher
@@ -129,8 +131,6 @@ spec:
               memory: "2Gi"
           {{- end }}
           volumeMounts:
-            - mountPath: /etc/localtime
-              name: localtime
             - mountPath: /app/logs
               name: logdata
               subPathExpr: $(POD_NAME)
@@ -145,22 +145,22 @@ spec:
               name: config
             - mountPath: /app/conf/kube.yaml
               name: config-kube
+              subPath: kube.yaml
       imagePullSecrets:
         - name: {{ .Values.imagePullSecretName }}
       restartPolicy: Always
       volumes:
         {{- include "dependencyChecker.volumes" . | nindent 8 }}
-        - hostPath:
-            path: /etc/localtime
-          name: localtime
-        - hostPath:
-            path: /data/ti-platform/log/codeinterpreterdispatcher
-            type: DirectoryOrCreate
+        - emptyDir: {}
           name: logdata
         - configMap:
             defaultMode: 420
             name: {{ .Release.Name }}-code-interpreter-dispatcher
           name: config
-        - hostPath:
-            path: /root/.kube/config
+        - configMap:
+            defaultMode: 420
+            name: {{ .Release.Name }}-code-interpreter-dispatcher
+            items:
+              - key: kube.yaml
+                path: kube.yaml
           name: config-kube

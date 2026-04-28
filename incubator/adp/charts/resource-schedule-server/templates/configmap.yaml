@@ -68,6 +68,9 @@ data:
           url_format: "http://%s:%d/execute"
   placeholder.yaml: |
     
+  kube.yaml: |
+    # placeholder for in-cluster mode; real kubeconfig is not needed
+    # when using ServiceAccount-based InClusterConfig
   trpc_go.yaml: |
     global:                             #全局配置
       namespace: Development            #环境类型，分正式production和非正式development两种类型
