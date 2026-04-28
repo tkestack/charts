@@ -91,10 +91,10 @@ spec:
           {{- if eq .Values.global.clusterSize "minimal" }}
           resources:
             limits:
-              cpu: "500m"
+              cpu: "1"
               memory: "1Gi"
             requests:
-              cpu: "500m"
+              cpu: "1"
               memory: "1Gi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
