@@ -9,9 +9,9 @@ keywords:
   - p2p
   - kubernetes
   - docker image
-home: https://git.woa.com/tlinux/image-accelerator/p2pagent
+home: https://github.com/tkestack/charts/tree/main/incubator/p2p-agent
 sources:
-  - https://git.woa.com/tlinux/image-accelerator/p2pagent
+  - https://github.com/tkestack/charts/tree/main/incubator/p2p-agent
 maintainers:
   - name: P2P Agent Team
     email: fanjiankong@tencent.com
