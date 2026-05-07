@@ -1,13 +1,17 @@
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: web-parser-server
+  name: {{ .Release.Name }}-web-parser-server
   namespace: {{ .Release.Namespace }}
 data:
   WebParserServer.json: |
     {
       "FetchPolicy": ["sleep=4&", "", "use_proxy&"],
       "WhiteListPolicy": {
+        "baike.baidu.com": ["sleep=4&", "", "use_proxy&"],
+        "mbd.baidu.com": ["", "use_proxy&"],
+        "baijiahao.baidu.com": ["", "use_proxy&"],
+        "gov.cn": ["sleep=6&", "", "use_proxy&"],
         "baidu.com": [""],
         "www.inanshan.org.cn": ["sleep=4&", "", "use_proxy&"]
       },
@@ -19,15 +23,20 @@ data:
         "Path": "/trpc.ipproxy.downloader.http/GetAutoProxy"
       },
       "CosConf": {
-        "Provider": "{{ .Values.global.components.s3.providerType }}",
-        "SecretID": "{{ include "web-parser-server.cos.secretId" . | trim }}",
-        "SecretKey": "{{ include "web-parser-server.cos.secretKey" . | trim }}",
-        "Bucket": "{{ include "web-parser-server.cos.bucket" . | trim }}",
-        "Endpoint": "{{ include "web-parser-server.cos.endpoint" . | trim }}",
-        "Protocol": "{{ include "web-parser-server.cos.protocol" . | trim }}"
+          "Provider": "{{ .Values.global.components.s3.providerType }}",
+          "SecretID": "{{ include "web-parser-server.cos.secretId" . | trim }}",
+          "SecretKey": "{{ include "web-parser-server.cos.secretKey" . | trim }}",
+          "Bucket": "{{ include "web-parser-server.cos.bucket" . | trim }}",
+          "Endpoint": "{{ include "web-parser-server.cos.endpoint" . | trim }}",
+          "Protocol": "{{ include "web-parser-server.cos.protocol" . | trim }}"
       },
+      "WorkerCount": 1,
       "TaskScanInterval": 1,
-      "CheckUinStatus": true,
+      "TaskProcessTimeout": 600000000000,
+      "FetchURLTimeout": 15000000000,
+      "ScheduleJobLimit": 1,
+      "MaxFetchURLNum": 500,
+      "CheckUinStatus": false,
       "EnableSaveImg": false,
       "EnableUseRobot": false,
       "HostConfMap": {
@@ -39,11 +48,143 @@ data:
           "FailThreshold": 0.5,
           "BatchFetchSleep": 4,
           "CSSSelector": ""
+        },
+        "gov.cn" : {
+          "BatchLimit": 5,
+          "GroupLimit": 5,
+          "MainContentThreshold": 0.3,
+          "ContentBytesThreshold": 200,
+          "FailThreshold": 0.5,
+          "BatchFetchSleep": 10,
+          "CSSSelector": ""
+        },
+         "www.inanshan.org.cn" : {
+          "BatchLimit": 5,
+          "GroupLimit": 5,
+          "MainContentThreshold": 0.3,
+          "ContentBytesThreshold": 200,
+          "FailThreshold": 0.5,
+          "BatchFetchSleep": 8,
+          "CSSSelector": "",
+          "Prefetch": true
+        },
+        "tsinghua.edu.cn" : {
+          "BatchLimit": 3,
+          "GroupLimit": 20,
+          "MainContentThreshold": 0.3,
+          "ContentBytesThreshold": 200,
+          "FailThreshold": 0.5,
+          "BatchFetchSleep": 15,
+          "CSSSelector": "button"
+        },
+        "join.qq.com" : {
+          "BatchLimit": 5,
+          "GroupLimit": 5,
+          "MainContentThreshold": 0.3,
+          "ContentBytesThreshold": 200,
+          "FailThreshold": 0.5,
+          "BatchFetchSleep": 10,
+          "CSSSelector": ".post_box"
+        },
+        "nuaa.91job.org.cn":{
+          "BatchLimit": 5,
+          "GroupLimit": 5,
+          "MainContentThreshold": 0.3,
+          "ContentBytesThreshold": 200,
+          "FailThreshold": 0.5,
+          "BatchFetchSleep": 6,
+          "CSSSelector":"#recruitment-announcement-list > div > div > div > div > div > div > div > table > tbody > tr > td > a"
         }
       },
-      "WhiteCosList": ["{{ .Values.global.clb }}"],
-      "WhiteCosPort": ["30900"]
+      "URLWhiteList": {
+        "3009014594":[
+          "lib.tsinghua.edu.cn",
+          "www.tsinghua.edu.cn"
+        ]
+      },
+      "AutoUpdateList": ["1924489468235778112","1788032699535982592","1707741546843766784"],
+      "WhiteCosList": ["{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.{{ .Values.global.components.s3.cos.domain }}"]
     }
+  WebParser_en-US.json: |
+    {
+      "从网页导入(%s)成功": "Import from webpage (%s) successful",
+      "从网页导入(%s)失败,失败原因:抓取任务超时": "Import from web page (%s) failed, reason: Crawling task timeout",
+      "从网页导入(%s)失败,失败原因:任务抓取失败": "Import from webpage (%s) failed, reason: Task crawling failed",
+      "从网页导入(%s)失败,失败原因:用户取消任务": "Import from webpage (%s) failed, reason: User canceled the task",
+      "从网页导入(%s)进行中": "Import from webpage (%s) in progress",
+      "网页抓取任务": "Web crawling task",
+      "%d条导入成功,请在文档列表中查看": "Import (%d) webpage successful",
+      "%d条导入失败": "Import (%d) webpage failed",
+      "%d条导入成功,%d条导入失败": "Import (%d) webpage successful, Import (%d) webpage failed",
+      "入库失败": "DB Failed",
+      "文档异常": "Invalid Doc",
+      "抓取失败": "Crawl Failed",
+      "保存文档失败": "Save Doc Failed",
+      "网页导入网址成功": "Web page URL imported successfully",
+      "从网页导入成功": "Import from webpage successful",
+      "网页导入失败,失败原因:抓取任务超时": "Import from web page failed, reason: Crawling task timeout",
+      "网页导入失败,失败原因:任务抓取失败": "Import from webpage failed, reason: Task crawling failed",
+      "网页导入失败,失败原因:用户取消任务": "Import from webpage failed, reason: User canceled the task",
+      "网页导入进行中": "Import from webpage in progress"
+    }
+  WebParser_zh-CN.json: |
+    {
+      "从网页导入(%s)成功": "从网页导入(%s)成功",
+      "从网页导入(%s)失败,失败原因:抓取任务超时": "从网页导入(%s)失败,失败原因:抓取任务超时",
+      "从网页导入(%s)失败,失败原因:任务抓取失败": "从网页导入(%s)失败,失败原因:任务抓取失败",
+      "从网页导入(%s)失败,失败原因:用户取消任务": "从网页导入(%s)失败,失败原因:用户取消任务",
+      "从网页导入(%s)进行中": "从网页导入(%s)进行中",
+      "网页抓取任务": "网页抓取任务",
+      "入库失败": "入库失败",
+      "文档异常": "文档异常",
+      "抓取失败": "抓取失败",
+      "保存文档失败": "保存文档失败",
+      "%d条导入成功,请在文档列表中查看": "%d条导入成功,请在文档列表中查看",
+      "%d条导入失败": "%d条导入失败",
+      "%d条导入成功,%d条导入失败": "%d条导入成功,%d条导入失败d",
+      "网页导入网址成功": "网页导入网址成功",
+      "从网页导入成功": "从网页导入成功",
+      "网页导入失败,失败原因:抓取任务超时": "网页导入失败,失败原因:抓取任务超时",
+      "网页导入失败,失败原因:任务抓取失败": "网页导入失败,失败原因:任务抓取失败",
+      "网页导入失败,失败原因:用户取消任务": "网页导入失败,失败原因:用户取消任务",
+      "网页导入进行中": "网页导入进行中"
+    }
+  error_en-US.json: |
+    {
+      "从网页导入(%s)成功": "Import from webpage (%s) successful",
+      "从网页导入(%s)失败,失败原因:抓取任务超时": "Import from web page (%s) failed, reason: Crawling task timeout",
+      "从网页导入(%s)失败,失败原因:任务抓取失败": "Import from webpage (%s) failed, reason: Task crawling failed",
+      "从网页导入(%s)失败,失败原因:用户取消任务": "Import from webpage (%s) failed, reason: User canceled the task",
+      "从网页导入(%s)进行中": "Import from webpage (%s) in progress",
+      "网页抓取任务": "Web crawling task",
+      "%d条导入成功,请在文档列表中查看": "Import (%d) webpage successful",
+      "%d条导入失败": "Import (%d) webpage failed",
+      "%d条导入成功,%d条导入失败": "Import (%d) webpage successful, Import (%d) webpage failed",
+      "入库失败": "DB Failed",
+      "文档异常": "Invalid Doc",
+      "抓取失败": "Crawl Failed",
+      "保存文档失败": "Save Doc Failed"
+    }
+  error_zh-CN.json: |
+    {
+      "从网页导入(%s)成功":"从网页导入(%s)成功",
+      "从网页导入(%s)失败,失败原因:抓取任务超时":"从网页导入(%s)失败,失败原因:抓取任务超时",
+      "从网页导入(%s)失败,失败原因:任务抓取失败":"从网页导入(%s)失败,失败原因:任务抓取失败",
+      "从网页导入(%s)失败,失败原因:用户取消任务": "从网页导入(%s)失败,失败原因:用户取消任务",
+      "从网页导入(%s)进行中": "从网页导入(%s)进行中",
+      "网页抓取任务": "网页抓取任务",
+      "入库失败": "入库失败",
+      "文档异常": "文档异常",
+      "抓取失败": "抓取失败",
+      "保存文档失败": "保存文档失败",
+      "%d条导入成功,请在文档列表中查看": "%d条导入成功,请在文档列表中查看",
+      "%d条导入失败": "%d条导入失败",
+      "%d条导入成功,%d条导入失败": "%d条导入成功,%d条导入失败d"
+    }
+  placeholder.yaml: |
+    ADMIN_CONFIG_LOGIN_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+    ADMIN_CONFIG_API_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+
   trpc_go.yaml: |
     global: #全局配置
         namespace: Production                        #环境类型，分正式Production和非正式Development两种类型
@@ -51,6 +192,7 @@ data:
         admin_port: 18888                              #管理命令服务端口
         enable_set: N                      #是否启用set
         full_set_name:                      #set名
+        max_frame_size: 157286400                      #150M
     server:                                            #服务端配置
       app: SmartAssistant                                 #业务的应用名
       server: WebParserServer                           #进程服务名
@@ -83,11 +225,11 @@ data:
       service:                                         #针对单个后端的配置，默认都有默认值，可以完全不用配置
         - name: trpc.wps.mysql.task        # tdsql 数据库
           namespace: Test
-          target: "dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/web_parsing_engine?timeout=10s&parseTime=true&loc=Local"
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/web_parsing_engine?timeout=10s&parseTime=true&loc=Local"
         - name: trpc.wps.redis.lock
-          target: "ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/0"
+          target: "ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/0"
           timeout: 3000
-          password: "{{ .Values.global.components.redis.password }}"
+          password: "${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}"
         - name: trpc.http.fetch.sidecar
           protocol: http
           network: tcp
@@ -106,30 +248,36 @@ data:
           timeout: 5000
           target: ip://127.0.0.1:7001
           namespace: Production
-        # admin Login
         - callee: trpc.KEP.bot_admin_config_server.Login
           name: trpc.KEP.bot-admin-config-server.Login
           namespace: Production
           protocol: trpc
           timeout: 2000
           disable_servicerouter: true
-          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
-        # admin api
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
         - callee: trpc.KEP.bot_admin_config_server.Api
           name: trpc.KEP.bot-admin-config-server.Api
           namespace: Production
           protocol: trpc
           timeout: 20000
-          # disable_servicerouter: true
-          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
         - callee: trpc.KEP.bot_knowledge_config_server.Admin
           name: trpc.KEP.bot-knowledge-config-server.Admin
           namespace: Production
           protocol: trpc
           timeout: 20000
-          # disable_servicerouter: true
-          target: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9090
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9090
     plugins:                                           #插件配置
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+            - name: global
+              group: global # 配置所属组
+              type: kv   # 七彩石数据格式, kv(默认), table
+              timeout: 2000
+              enable_client_provider: true
       selector:
         polaris:
           protocol: grpc #北极星交互协议支持 http，grpc，trpc
@@ -137,6 +285,19 @@ data:
           enable_trans_meta: true
           discovery:
             refresh_interval: 10000                    #北极星服务发现刷新间隔，123默认10000
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+            - zh-CN
+            - en-US 
+          data_provider:
+            type: rainbow
+            prefix: WebParser
+            error_prefix: error
+            char_scaling_factor:
+              zh: 1
+              en: 3
       log:                                            #日志配置
         default:                                      #默认日志的配置，可支持多输出
           - writer: console                           #控制台标准输出 默认
@@ -163,4 +324,3 @@ data:
         prometheus:                                   #Start prometheus.
           path: /metrics                              #Metrics path.
           rawmode:   false                            #Raw mode, no conversion of special characters for metrics.
-

@@ -1,0 +1,10 @@
+apiVersion: v2
+name: lke-ti-perm-auth-proxy
+description: TI auth sso proxy
+type: application
+
+version: 1.0.0
+
+appVersion: 1.0.0
+maintainers:
+  - name: brucezylin

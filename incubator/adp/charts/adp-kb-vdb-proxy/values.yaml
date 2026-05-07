@@ -1,0 +1,4 @@
+images:
+  adp-kb-vdb-proxy:
+    url: ccr.ccs.tencentyun.com/tke-market/vector-db-manager:4_2604132017_feature_v3.4.1.1_panic_fix_534c5c5e_private
+replicas: 1

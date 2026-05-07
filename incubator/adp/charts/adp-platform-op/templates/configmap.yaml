@@ -1,0 +1,1626 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-platform-op
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    andon_auth_tool_config: ${AndonAuthToolConf}
+    default_search_doc_topn: 5
+    max_corp_robot_quota: 2000
+    is_preivew_doc: true
+    gateway_api: ${GatewayApi}
+    no_authorization_api:
+      /opapi/login: true
+      /opapi/vector_doc/search_release: true
+      /opapi/vector_doc/search_preview: true
+      /opapi/msg-record-agent/list: true
+      /opapi/admin/api/filemanager/callback: true
+      /opapi/qa-draw: true
+    session:
+      type: ti-gateway # 会话类型 rio(内部鉴权) password(账号密码鉴权) ti-gateway Ti网关鉴权
+      jwt_secret:
+      session_time: 24h # 会话保持时间
+      account: admin
+      password: 088B2BE8A4432E9861FD1408CF14E853 #safe md5加密
+    audit:
+      type: http
+      https:
+        app_id : {{ .Values.global.contentSecurity.appId }}
+        tms_url: {{ .Values.global.contentSecurity.tmsUrl | default "" }} 
+        ims_url: {{ .Values.global.contentSecurity.imsUrl | default "" }} 
+        biz_type: {{ .Values.global.contentSecurity.bizType }} 
+      infosec_biz_types: 
+        - code: QD_AI_TEXT
+          desc: 通用策略（默认）
+          type: tianyu
+        - code: QD_CM
+          desc: 政企行业策略
+          type: tianyu
+        - code: QD_JT
+          desc: 交通行业策略
+          type: tianyu
+        - code: QD_ZF
+          desc: 政法行业策略
+          type: tianyu
+        - code: QD_YL
+          desc: 医疗行业策略
+          type: tianyu
+        - code: QD_YL-1
+          desc: 医疗行业策略-1
+          type: tianyu
+        - code: QD_JY
+          desc: 教育行业策略
+          type: tianyu
+        - code: QD_DSL
+          desc: 大参林文本策略
+          type: tianyu
+        - code: QD_JYYL
+          desc: 教育医疗行业
+          type: tianyu 
+        - code: QD_test
+          desc: 内部测试
+          type: tianyu
+        - code: QD_TXYU
+          desc: 腾讯音乐文本/图片/视频策略
+          type: tianyu
+        - code: QD_SJD
+          desc: 上海交通大学文本/图片/视频策略
+          type: tianyu
+        - code: QD_DS
+          desc: DeepSeek模型策略
+          type: tianyu
+        - code: QD_DS_API
+          desc: QD_DS_API
+          type: tianyu
+        - code: qd_cbs
+          desc: qd_cbs
+          type: tianyu 
+        - code: QD_RY
+          desc: 荣耀文本/图片/视频策略
+          type: tianyu
+        - code: QD_DS_API_535
+          desc: QD_DS_API_535
+          type: tianyu
+        - code: QD_DS_API_yuanfufao
+          desc: QD_DS_API_yuanfufao
+          type: tianyu
+        - code: QD_DS_API_RTS
+          desc: QD_DS_API_RTS
+          type: tianyu
+        - code: QD_BRM
+          desc: QD_BRM
+          type: tianyu
+        - code: QD_YSZS
+          desc: QD_YSZS
+          type: tianyu
+        - code: QD_AI_IMAGE
+          desc: QD_AI_IMAGE
+          type: tianyu
+        - code: TEXT_IMAGE_test
+          desc: TEXT_IMAGE_test
+          type: tianyu
+        - code: QD_AI_AD
+          desc: QD_AI_AD
+          type: tianyu
+        - code: QD_DS_1
+          desc: DHL定制
+          type: tianyu
+
+    pangu: ${Pangu}
+    taihu:
+      filter_english_name:
+      filter_department: 
+        云智能三工作室: true
+      passid: qbot
+      token: 
+      domain: http://api-idc.sgw.woa.com
+      is_deptmember_url: /ebus/tof4_org/api/v1/Staff/IsDeptMember
+      get_staff_baseinfo_url: /ebus/tof4_org/api/v1/staff/getstaffbaseinfo
+    taihu_staff_base_info:
+      filter_english_name:
+      filter_department: 
+        云智能三工作室: true
+      passid: qbot
+      token: 
+      domain: http://api-idc.sgw.woa.com
+      is_deptmember_url: /ebus/tof4_org/api/v1/Staff/IsDeptMember
+      get_staff_baseinfo_url: /ebus/tof4_org/api/v1/staff/getstaffbaseinfo
+    intent_category:
+      search_engine: 搜索引擎类
+      model_chat: 模型闲聊类
+      self_awareness: 自我认知类
+      knowledge_qa: 知识问答类
+      FAQ: 问答
+      工作流: 工作流
+      自定义: 自定义
+      image_caption: 图片识别
+      image_qa: 图片问答
+      mllm_cognition: 多模态阅读理解
+      default: 意图未命中（兜底）
+      文档问答: 文档问答
+    host: qbot.woa.com
+    is_report_audit_log: false
+
+    s3_config:
+      {{ if eq .Values.global.components.s3.providerType "cos" }}
+      type: cos
+      cos_map:
+        adp_default:
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
+          expire_time: 30m
+        fileparser:
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
+          expire_time: 30m
+        realtime:
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
+          expire_time: 30m
+      {{ else if eq .Values.global.components.s3.providerType "minio" }}
+      type: minio
+      min_io_map:
+        adp_default:
+          secret_id: ${INFRA_MIDDLEWARES_S3_MINIO_ACCESSKEY}
+          secret_key: ${INFRA_MIDDLEWARES_S3_MINIO_SECRETKEY}
+          region: ""
+          bucket: qbot
+          sts_endpoint: http://{{ printf "minio.%s.svc.cluster.local" .Release.Namespace }}
+          end_point: {{ .Values.global.clb }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+        fileparser:
+          secret_id: ${INFRA_MIDDLEWARES_S3_MINIO_ACCESSKEY}
+          secret_key: ${INFRA_MIDDLEWARES_S3_MINIO_SECRETKEY}
+          region: ""
+          bucket: qbot
+          sts_endpoint: http://{{ printf "minio.%s.svc.cluster.local" .Release.Namespace }}
+          end_point: {{ .Values.global.clb }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+        realtime:
+          secret_id: ${INFRA_MIDDLEWARES_S3_MINIO_ACCESSKEY}
+          secret_key: ${INFRA_MIDDLEWARES_S3_MINIO_SECRETKEY}
+          region: ""
+          bucket: qbot
+          sts_endpoint: http://{{ printf "minio.%s.svc.cluster.local" .Release.Namespace }}
+          end_point: {{ .Values.global.clb }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+      {{ else if eq .Values.global.components.s3.providerType "s3" }}
+      type: s3
+      s3_map:
+        adp_default:
+          secret_id: ${INFRA_MIDDLEWARES_S3_AWS_ACCESSKEY}
+          secret_key: ${INFRA_MIDDLEWARES_S3_AWS_SECRETKEY}
+          region: ${INFRA_MIDDLEWARES_S3_AWS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_AWS_BUCKET}
+          endpoint: ${INFRA_MIDDLEWARES_S3_AWS_ENDPOINT}
+          expire_time: 30m
+        fileparser:
+          secret_id: ${INFRA_MIDDLEWARES_S3_AWS_ACCESSKEY}
+          secret_key: ${INFRA_MIDDLEWARES_S3_AWS_SECRETKEY}
+          region: ${INFRA_MIDDLEWARES_S3_AWS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_AWS_BUCKET}
+          endpoint: ${INFRA_MIDDLEWARES_S3_AWS_ENDPOINT}
+          expire_time: 30m
+        realtime:
+          secret_id: ${INFRA_MIDDLEWARES_S3_AWS_ACCESSKEY}
+          secret_key: ${INFRA_MIDDLEWARES_S3_AWS_SECRETKEY}
+          region: ${INFRA_MIDDLEWARES_S3_AWS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_AWS_BUCKET}
+          endpoint: ${INFRA_MIDDLEWARES_S3_AWS_ENDPOINT}
+          expire_time: 30m
+        {{ end }}
+
+    export_fields: [
+      [ "ID","id" ],
+      [ "SessionID", "session_id" ],
+      [ "RecordID", "record_id" ],
+      [ "RecordIDLink", "记录链接" ],
+      [ "RelatedRecordID", "related_record_id" ],
+      [ "FromID", "from_id" ],
+      [ "TraceID", "trace_id" ],
+      [ "Question", "问题" ],
+      [ "Answer", "答案" ],
+      [ "IntentCategory", "意图分类" ],
+      [ "IntentCategoryDesc", "意图分类描述" ],
+      [ "ReplyMethod", "回复类型" ],
+      [ "ReplyMethodDesc", "回复类型描述" ],
+      [ "Label", "标签" ],
+      [ "IsRewrite", "是否改写" ],
+      [ "Reference", "引用来源" ],
+      [ "KnowledgeRaw", "知识信息" ],
+      [ "IsSearchEngine", "是否开启搜索引擎" ],
+      [ "IsDeleted", "是否已删除" ],
+      [ "Createtime", "创建时间" ],
+      [ "Updatetime", "更新时间" ],
+      [ "Type", "消息类型" ],
+      [ "AppBizID", "app_biz_id" ],
+      [ "FromType", "from_type" ],
+      [ "ToID", "to_id" ],
+      [ "ToType", "to_type" ],
+      [ "HasRead", "has_read" ],
+      [ "Score", "score" ],
+      [ "Reason", "reason" ],
+      [ "DirectlyReply", "是否直接作答" ],
+      [ "Intent", "意图" ],
+      [ "StatisticInfoRaw", "模型响应统计数据" ],
+      [ "Prompt", "prompt" ],
+      [ "PromptHistory", "prompt_history" ],
+      [ "PromptRaw", "prompt_raw" ],
+      [ "ResultCode", "result_code" ],
+      [ "ResultType", "result_type" ],
+      [ "RejectPrompt", "reject_prompt" ],
+      [ "RewriteQuestion", "rewrite_question" ],
+      [ "RewritePrompt", "rewrite_prompt" ],
+      ["IntentPrompt","intent_prompt"],
+      ["StageCostResult","阶段耗时"],
+    ]
+
+    no_permission_menus:
+      - url: /
+        redirect: /auth
+        children:
+          - label: 鉴权
+            icon: fa fa-cube
+            url: /auth_private
+            schemaApi: 'get:/op/auth_private.json'
+            rewrite: ''
+            isDefaultPage: true
+            visible: false
+    menus:
+      - url: /
+        redirect: /user
+        children:
+          - label: 鉴权
+            icon: fa fa-cube
+            url: /auth
+            schemaApi: 'get:/op/auth.json'
+            rewrite: ''
+            visible: false
+            order: 99
+          - label: 退出
+            icon: fa fa-cube
+            url: /logout
+            schemaApi: 'get:/op/logout.json'
+            rewrite: /logout
+            visible: true
+            order: 100
+          - label: 用户及企业管理
+            icon: fa fa-cube
+            url: /usercorp
+            redirect: /user
+            visible: true
+            order: 1
+            children:
+              - label: 用户审核管理
+                icon: fa fa-cube
+                url: /user
+                schemaApi: 'get:/op/user.json'
+                rewrite: /user/list
+                visible: true
+                order: 1
+              - label: 企业管理
+                icon: fa fa-cube
+                url: /corp
+                schemaApi: 'get:/op/corp.json'
+                rewrite: /corp/corp_list
+                visible: true
+                order: 2
+              - label: 企业员工管理
+                icon: fa fa-cube
+                url: /corp_staff
+                schemaApi: 'get:/op/corp_staff.json'
+                rewrite: /corp/staff_list
+                visible: true
+                order: 3
+              - label: 企业QPM/TPM配置
+                icon: fa fa-cube
+                url: /corp_qpm_tpm
+                schemaApi: 'get:/op/corp_qpm_tpm.json'
+                rewrite: /corp/corp_qpm_tpm
+                visible: true
+                order: 7
+              - label: 公共安全校验(scurl)白名单
+                icon: fa fa-cube
+                url: /corp_scurl_domain_wl/list
+                schemaApi: 'get:/op/corp_scurl_domain_wl.json'
+                rewrite: /corp_scurl_domain_wl/list
+                visible: true
+                order: 8
+          - label: 知识库问答应用
+            icon: fa fa-cube
+            url: /robotmgr
+            redirect: /robot
+            visible: true
+            order: 2
+            children:
+              - label: 知识库问答应用列表
+                icon: fa fa-cube
+                url: /robot
+                schemaApi: 'get:/op/robot.json'
+                rewrite: /robot/list
+                visible: true
+                order: 1
+              - label: 知识库问答应用详情
+                icon: fa fa-cube
+                url: /robot/operate
+                schemaApi: 'get:/op/robot_operate.json'
+                rewrite: /robot/operate
+                visible: false
+                order: 2
+                children:
+                  - label: 查看解析结果
+                    icon: fa fa-cube
+                    url: /robot/parse_result_intervene
+                    schemaApi: 'get:/op/robot_parse_result_intervene.json'
+                    rewrite: /robot/parse_result_intervene
+                    visible: false
+                    order: 1
+              - label: 全局干预知识库
+                icon: fa fa-cube
+                url: /global_knowledge
+                schemaApi: 'get:/op/global_knowledge.json'
+                rewrite: /global_knowledge/list
+                visible: true
+                order: 3
+              - label: 点赞点踩记录
+                icon: fa fa-cube
+                url: /msg-record-score
+                schemaApi: 'get:/op/msg_score.json'
+                rewrite: /msg-record-score/list
+                visible: true
+                order: 4
+              - label: 机器人可见性
+                icon: fa fa-cube
+                url: /robot_visibility
+                schemaApi: 'get:/op/robot_visibility.json'
+                rewrite: /robot_visibility/list
+                visible: false
+                order: 5
+              - label: 意图识别管理
+                icon: fa fa-cube
+                url: /intent
+                schemaApi: 'get:/op/intent.json'
+                rewrite: /intent/list
+                visible: true
+                order: 6  
+              - label: 全局消息记录
+                icon: fa fa-cube
+                url: /msg_record
+                schemaApi: 'get:/op/global_msg_record.json'
+                rewrite: /msg_record/list
+                visible: true
+                order: 7
+              - label: 应用提槽深度
+                icon: fa fa-cube
+                url: /app/list_by_uin
+                schemaApi: 'get:/op/robot_slot_level.json'
+                rewrite: /app/list_by_uin
+                visible: true
+                order: 8
+          - label: 模型广场
+            icon: fa fa-cube
+            url: /modelhub
+            schemaApi: 'get:/op/modelhub.json'
+            visible: true
+            order: 3
+          - label: 合规相关工具
+            icon: fa fa-cube
+            url: /sensitive
+            redirect: /audit
+            visible: {{ .Values.global.contentSecurity.auditSwitch }}
+            order: 5
+            children:
+              - label: 内容安全校验
+                icon: fa fa-cube
+                url: /audit
+                schemaApi: 'get:/op/audit.json'
+                rewrite: /audit/content
+                visible: false
+                order: 1
+              - label: 人工审核
+                icon: fa fa-cube
+                url: /appeal
+                schemaApi: 'get:/op/appeal.json'
+                rewrite: /appeal/list
+                visible: {{ .Values.global.contentSecurity.auditSwitch }}
+                order: 2
+              - label: 黑白名单管理
+                icon: fa fa-cube
+                url: /keyword
+                schemaApi: 'get:/op/keyword.json'
+                rewrite: /keyword/list
+                visible: false
+                order: 3
+          - label: 操作日志管理
+            icon: fa fa-cube
+            url: /log
+            schemaApi: 'get:/op/operatorlog.json'
+            rewrite: /log/list
+            visible: true
+            order: 6
+          - label: POC管理
+            icon: fa fa-cube
+            url: /poc-project
+            redirect: /poc-project/list
+            visible: true
+            order: 7
+            children:
+              - label: POC工具
+                icon: fa fa-cube
+                url: /poc-project/list
+                schemaApi: 'get:/op/poc.json'
+                rewrite: /poc-project/list
+                visible: false
+                order: 1
+              - label: POC操作详情
+                icon: fa fa-cube
+                url: /poc-project/operate
+                schemaApi: 'get:/op/poc_operate.json'
+                rewrite: /poc-project/operate
+                visible: false
+                order: 2
+              - label: POC跑测任务详情
+                icon: fa fa-cube
+                url: /poc-test-task/detail
+                schemaApi: 'get:/op/poc_task_detail.json'
+                rewrite: /poc-test-task/detail
+                visible: false
+                order: 3
+          - label: 体验中心
+            icon: fa fa-cube
+            url: /exp_app
+            schemaApi: 'get:/op/exp_app.json'
+            visible: true
+            order: 7
+          - label: 模版中心
+            icon: fa fa-cube
+            url: /prompt_template/list
+            schemaApi: 'get:/op/prompt_template.json'
+            visible: true
+            order: 88
+          - label: 插件中心
+            icon: fa fa-cube
+            url: /plugin
+            redirect: /plugin/list
+            visible: true
+            order: 99
+            children:
+              - label: 插件管理
+                icon: fa fa-cube
+                url: /plugin/list
+                schemaApi: 'get:/op/plugin.json'
+                rewrite: /plugin/list
+                visible: true
+                order: 1
+              - label: 自定义插件列表
+                icon: fa fa-cube
+                url: /custom_plugin/list
+                schemaApi: 'get:/op/custom_plugin.json'
+                rewrite: /custom_plugin/list
+                visible: true
+                order: 2
+          - label: widget label管理
+            icon: fa fa-cube
+            url: /widget_label/list
+            schemaApi: 'get:/op/widget_label.json'
+            visible: true
+            order: 90
+          - label: widget管理
+            icon: fa fa-cube
+            url: /widget/list
+            schemaApi: 'get:/op/widget.json'
+            visible: true
+            order: 91
+
+    task_prefix: op:task
+    task_fetch_num: 100
+    task_fetch_timeout: 2s
+    task_fetch_period: 2s
+    tasks:
+      poc:
+        runners: 5 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 3 # 最大重试次数
+        timeout: 600m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 1
+        batch_size: 1
+        stopped_resume_time: 720h
+    sse_conn_options:
+      conn_url: 'https://apex-cmlb-80-0.{{ .Release.Namespace }}.svc.cluster.local:80/v1/qbot/chat/experienceSse'
+      conn_summary_url: 'https://apex-cmlb-80-0.{{ .Release.Namespace }}.svc.cluster.local:80/v1/qbot/chat/summary/sse'
+      conn_knowledge_qa_url: 'https://apex-cmlb-80-0.{{ .Release.Namespace }}.svc.cluster.local:80/v1/qbot/chat/sse'
+      timeout: 60s
+    preview_filter_keys:
+      search_preview: true
+      search_preview_question: true
+      search_rejected_question_preview: true
+    release_filter_keys:
+      search_release: true 
+      search_release_question: true 
+      search_rejected_question_release: true
+    is_enable_app_permissions: false
+    cls:
+      secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+      secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+      topic_id: c8d1f14e-6c1f-49b1-b099-f04bf1aca8dd
+      query_suffix: " AND \"created\" AND \"id\""
+      region: ap-guangzhou
+      end_point: cls.internal.tencentcloudapi.com
+
+    hunyuan_user_log_download:
+      max_hunyuan_user_log_num: 10000
+      page_size: 100
+    robot_default:
+      app_default_model:
+        knowledge_qa:
+            - alias_name: 精调知识大模型标准版
+              name: cs-normal
+              desc:
+            - alias_name: 精调知识大模型高级版
+              name: cs-normal-70b
+              desc:
+              is_default: true
+            - alias_name: 混元大模型标准版
+              name: hunyuan-13B
+              desc:
+            - alias_name: 混元大模型高级版
+              name: hunyuan
+              desc:
+            - alias_name: 金融行业大模型标准版
+              name: finance-13b
+              desc:
+            - alias_name: 医学行业大模型标准版
+              name: medical-6b
+              desc:
+        summary:
+          - alias_name: 精调知识大模型标准版
+            name: cs-normal
+            desc:
+          - alias_name: 精调知识大模型高级版
+            name: cs-normal-70b
+            desc:
+          - alias_name: 混元大模型标准版
+            name: hunyuan-13B
+            desc:
+          - alias_name: 混元大模型高级版
+            name: hunyuan
+            desc:
+          - alias_name: 金融行业大模型标准版
+            name: finance-13b
+            desc:
+          - alias_name: 金融行业大模型高级版
+            name: finance-13b
+            desc:
+        classify:
+          - alias_name: 精调知识大模型标准版
+            name: cs-normal
+            desc:
+          - alias_name: 精调知识大模型高级版
+            name: cs-normal-70b
+            desc:
+          - alias_name: 混元大模型标准版
+            name: hunyuan-13B
+            desc:
+          - alias_name: 混元大模型高级版
+            name: hunyuan
+            desc:
+          - alias_name: 金融行业大模型标准版
+            name: finance-13b
+            desc:
+          - alias_name: 金融行业大模型高级版
+            name: finance-13b
+            desc:
+      filters:
+        search_image_image:
+          doc_type: 6
+          confidence: 0.85
+          top_n: 1
+          index_id: 10
+          is_enable: true
+        search_text_image:
+          doc_type: 7
+          confidence: 0.7
+          top_n: 0
+          index_id: 10
+          is_enable: true
+    default_intents:
+      - 聊天
+      - 模型关系
+      - 模型原理
+      - 模型信息
+      - 模型知识
+      - 音乐
+      - 赛事
+      - 股票
+      - 黄历
+      - 节日和时间
+      - 天气
+      - 星座
+      - 摘要
+      - 转人工
+      - 翻译
+      - 写作
+      - 代码
+      - 表格问题
+      - 角色扮演
+      - 阅读回答
+      - 新闻
+      - 数学计算
+      - 古诗词
+      - 现代诗词
+      - 成语
+      - 地理
+      - 天文
+      - 垃圾分类
+      - 号码归属
+      - 汽车知识
+      - 金融知识
+      - 税务知识
+      - 知识问答
+      - 逻辑推理
+      - 文件查找
+      - 文件
+      - 筛选推荐
+      - 其他
+      - 指令跟随回答
+      - 自我认知
+      - 全文处理
+      - 代码问题
+      - 其他问题
+
+    parse_tool:
+      project:
+        project_name_max_length: 20
+        project_name_regx: "^[a-zA-Z0-9一-龥豈-龎|`~!@#$%^&*\\(\\)\\[\\]\\{\\}；;－'<>\"_+-=<>?,./·！（）——-【】、：，。\t\n“”’‘《》？￥……\\\\]*$"
+        index_name_regx: ^[a-z0-9_]*$
+        index_name_need_regx: ^[a-z]+[a-z0-9_]*$
+        index_name_max_length: 20
+      index_file_types:
+        doc: xlsx|docx|txt|md|pdf|pptx
+        qa: xlsx
+      docstore:
+        addr: "xxxx"
+        new_index_url: /project/new
+        update_index_url: /project/update
+      filemanage_client:
+        target: ip://file-manager-server.adp.svc.cluster.local:10001
+        name: trpc.SmartAssistant.FileManagerServer.ManagerObj
+        protocol: trpc
+        timeout: 2000
+        biz: op_qbot
+        app_key: common
+        split_prefix: input_files/oaqbot/
+        parse_prefix: input_files/oaqbot_parse/
+        split2excel_prefix: input_files/oaqbot/split2excel/
+        ocr_temp_file_path: temp_files/
+        ocr_debug_file_path: debug_files/
+      fileparser_client:
+        name: trpc.SmartAssistant.FileParserServer.ParserObj
+        target: ip://file-parser-server.adp.svc.cluster.local:10001
+        protocol: trpc
+        conv_file_path: debug_files/pdf2image/
+      storage:
+        type: cos
+        cos: 
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ap-guangzhou
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: tencentcos.cn
+          expire_time: 30m
+      rich_content:
+        richContent_max: 100000
+        miniChunk_max: 100000
+        pageContent_max: 100000
+        chunkContent_max: 500
+      llm_client:
+        addr: "https://qbot-v2.llm.test.polaris:8080"
+        index_interface: /index
+        token: de1b2a7baf7850243db71c4abd4e5a39
+    hunyuan_tools:
+      prompt_max_time_range: 345600
+      default_max_time_range: 2678400
+      default_top_p: 1.0
+      default_temperature: 1.0
+      model_list:
+        - alias_name: 高级版本
+          name: hunyuan
+        - alias_name: 标准版
+          name: hunyuan-standard
+        - alias_name: lite版(原标准版)
+          name: hunyuan-13B
+        - alias_name: vision版本
+          name: hunyuan-vision
+        - alias_name: hunyuan-standard-256K
+          name: hunyuan-standard-256K
+    app_type_list:
+      - app_type: knowledge_qa
+        app_type_desc: 知识库问答
+      - app_type: summary
+        app_type_desc: 知识摘要
+      - app_type: classify
+        app_type_desc: 标签提取
+
+    elastic_search_config:
+      index_big_data: doc_big_data_preview
+      index_big_data_prod: doc_big_data_prod
+      name: trpc.elasticsearch.lke.vector_doc
+      url: https://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}
+      user: ${INFRA_MIDDLEWARES_ES_0_USER}
+      password: ${INFRA_MIDDLEWARES_ES_0_PASSWORD}
+      timeout: 1000
+      log:
+        enabled: true
+        request_enabled: true
+        request_body: true
+      index_knowledge_preview: "dev_knowledge_segment_preview"
+      index_knowledge_prod: "dev_knowledge_segment_prod"
+      badCaseEsSearchSize: 20
+    record_regex_patterns:
+      - '"id":\s*(\d+)'
+      - '"ID":\s*(\d+)'
+      - '"DocID":\s*(\d+)'
+      - '"doc_id":\s*(\d+)'
+      - '"SimilarID":\s*(\d+)'
+      - '"similar_id":\s*(\d+)'
+      - '"qa_id":\s*(\d+)'
+      - '"segment_id":\s*(\d+)'
+      - '"related_id":\s*(\d+)'
+    workflow_open_ui: false
+
+    qbot_chat_tool:
+      chat_url:
+        - https://apex-cmlb-80-0.{{ .Release.Namespace }}.svc.cluster.local:80/v1/qbot/chat/experienceSse
+        - https://apex-cmlb-80-0.{{ .Release.Namespace }}.svc.cluster.local:80/v1/qbot/chat/sse
+      chat_image_path: chat_img/
+      salt: a99a52254a1d58231ebe07b2a7f28534
+    nlp_chat_url: http://11.141.203.151:36001/task_effect_score
+
+
+
+    biz_rule_templates:
+      token:
+        - sub_biz_type: DocExtractQA
+          biz_type: 1
+          reject_min: 0
+          reject_max: 30000
+        - sub_biz_type: KnowledgeQA
+          biz_type: 1
+          reject_min: 0
+          reject_max: 30000
+        - sub_biz_type: RoleCommands
+          biz_type: 1
+          reject_min: 0
+          reject_max: 30000
+        - sub_biz_type: TaskFlowPreview
+          biz_type: 1
+          reject_min: 0
+          reject_max: 30000
+        - sub_biz_type: EvaluateTest
+          biz_type: 1
+          reject_min: 0
+          reject_max: 30000
+      conc:
+        - sub_biz_type: Concurrency
+          biz_type: 1
+          reject_min: 0
+          reject_max: 1
+      char:
+        - sub_biz_type: KnowledgeCapacity
+          biz_type: 1
+          reject_min: 0
+          reject_max: 30000
+
+    support_biz_rule_type:
+      - conc
+      - token
+
+    display_stage_cost_key:
+      - name: 1_dialog_ppl
+        alias: 1.端到端耗时
+      - name: 2.1_check_evil
+        alias: 2.1安全审核耗时
+      - name: 2.2_basic_search
+        alias: 2.2基础检索耗时
+      - name: 2.3_query_rewrite
+        alias: 2.3改写+同义词耗时
+      - name: 3_intent_recognize
+        alias: 3.意图识别耗时
+      - name: 4_search_knowledge
+        alias: 4.知识库检索耗时
+      - name: 5_taskflow
+        alias: 5.任务型耗时
+      - name: 5_workflow
+        alias: 5.工作流耗时
+      - name: 5_llm_reply
+        alias: 5.大模型回复耗时
+
+
+    feedback_andon: ${FeedbackAndon}
+
+    clear_history_db_cfg: #清理数据
+      retention_day: 360
+      batch_size: 200
+      delete_duration: 200
+
+    msg_record_tool:
+      galileo_log_uri: https://j.woa.com/service/log/form?moduleId=2362040&platform=STKE&module_name=qbot.qbot.chat&env=%d&granularity=1m&timeRange=%s&logFilters={"include":["%s"],"includeSearchType":3,"sortType":1}
+      galileo_trace_uri: https://j.woa.com/service/trace/form?moduleId=2362040&platform=STKE&module_name=qbot.qbot.chat&env=%d&granularity=1m&timeRange=%s&traceID=%s
+      galileo_trace_log_uri: https://j.woa.com/service/log/form?moduleId=2362040&platform=STKE&module_name=qbot.qbot.chat&env=%d&granularity=1m&timeRange=%s&logFilters={"tags":{"traceId":["%s"]},"includeSearchType":3,"sortType":1}
+      galileo_llm_debug_uri: https://j.woa.com/service/log/form?moduleId=2362040&platform=STKE&module_name=qbot.qbot.chat&env=%d&timeRange=%s&granularity=1m&logFilters={"tags":{"traceId":["%s"]},"include":["DebugActive"],"traceLog":{"need_all_log":true},"sortType":1}
+
+    chat_model: cs-normal
+
+    parse_feedback_uin: ${ParseFeedbackUin}
+
+    default_custom_plugin_uin: {{ .Values.plugin_center_uin }}
+
+    privacy_env: true
+
+    send_sms_config: ${SendSMSConfig}
+    vip_group: 
+      isearch: 
+        - corp_id: 12332223334444213
+          old_app_ids: [1526, 1527]
+    data_migration_config:
+      migrate_tdsql_tables:
+
+    agent_cls_config:
+      result_limit: 1000
+      region: ap-guangzhou
+      loki_logs_time: 90
+
+    data_migration_time_config:
+      tdsql_tables:
+        - table: t_doc_segment
+          effective_time: "2226-02-05 21:52:00"
+    workflow_draw_base_url: https://tde.xiaowei.cloud.tencent.com/workflow?_for_op=dev
+
+    retrieval_config:
+      text2sql_models:
+        - name: nl2sql
+          value: nl2sql
+        - name: nl2sql-16b
+          value: nl2sql-16b
+        - name: nl2sql-32b
+          value: nl2sql-32b
+        - name: deepseek-v3-0324
+          value: deepseek-v3-0324  
+
+    sync_user_info_config:
+      enable: false
+
+
+
+
+    mllm_models:
+      - hunyuan-t1-vision
+      - hunyuan-t1-vision-20250619
+      - hunyuan-turbos-vision
+      - hunyuan-turbos-vision-20250619
+
+
+
+    gift_auditor:
+      miyahma: 1
+      dercyxing: 1
+      sofiali: 1
+      hanshengu: 1
+      reinholdliu: 1
+      v_jiajvxie: 1
+      cainsun: 1
+      hankxu: 1
+      andrekzwu: 1
+      cooperwang: 1
+      philxu: 1
+      caryhuang: 1
+      jesperjin: 1
+      rayrrui: 1
+
+    gateway_public_key: ${GatewayPublicKey}
+
+    use_data_access_permission: false
+    data_access_user_white_list: ${DataAccessUserWhilteList}
+    data_access_api_path:
+      /opapi/corp/corp_list: true
+      /opapi/app/list: true
+      /opapi/msg-record/list: true
+      /opapi/msg-record-score/list: true
+      /opapi/get_msg_record: true
+    workflow: ${Workflow}
+    experience_uin:   {{ .Values.experience_center_uin }}
+    managed_account_ids:
+      - 1888888
+    storage:
+      {{ if eq .Values.global.components.s3.providerType "minio" }}
+      type: minio
+      minio: 
+        secret_id: ${INFRA_MIDDLEWARES_S3_MINIO_ACCESSKEY}
+        secret_key: ${INFRA_MIDDLEWARES_S3_MINIO_SECRETKEY}
+        region: ""
+        bucket: qbot
+        sts_endpoint: http://{{ printf "minio.%s.svc.cluster.local" .Release.Namespace }}
+        end_point: {{ .Values.global.clb }}
+        use_https: {{ eq .Values.global.scheme "https" }}
+        expire_time: 30m
+      {{ else if eq .Values.global.components.s3.providerType "s3" }}
+      type: s3
+      s3:
+        secret_id: ${INFRA_MIDDLEWARES_S3_AWS_ACCESSKEY}
+        secret_key: ${INFRA_MIDDLEWARES_S3_AWS_SECRETKEY}
+        region: ${INFRA_MIDDLEWARES_S3_AWS_REGION}
+        bucket: ${INFRA_MIDDLEWARES_S3_AWS_BUCKET}
+        endpoint: ${INFRA_MIDDLEWARES_S3_AWS_ENDPOINT}
+        expire_time: 30m
+        credential_time: 10m
+      {{ else }}
+      type: cos
+      cos:
+        secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+        secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+        app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+        region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+        bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+        domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
+        expire_time: 30m
+        credential_time: 10m
+      {{ end }}
+    loki_service: loki.ti-inf.svc.cluster.local:3100
+    loki_logs_time: 90
+    loki_result_limit: 1000
+    task_flow_proxy_target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+
+  placeholder.yaml: |
+
+    OP_QBOT_ADMIN_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9090
+    OP_PANGU_TARGET: polaris://trpc.pangu_auth_manage.pangu_service_openapi.controller
+    OP_HUNYUAN_API_TARGET: polaris://qbot.qbot.hunyuan.Api
+    OP_KB_CONIG_API_TARGET: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+    OP_ADMIN_CONIG_API_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+    OP_ADMIN_PROXY_API_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+    OP_RETRIEVAL_DIRECTINDEX_TARGET: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:8002
+    OP_RETRIEVAL_RETRIEVAL_TARGET: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:8001
+    OP_AGENT_CONFIG_API_TARGET: ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    OP_TASK_CONFIG_TARGET: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+    OP_PLUGIN_CONFIG_API_TARGET: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+    OP_INFOSEC_TARGET: ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090
+    OP_RESOURCE_GALLERY_ADMIN_TARGET: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+    OP_WIDGET_CONFIG_TARGET: ip://adp-widget-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    PanguFilter:
+      project_id: 1330 #必填项，填写自己的projectId
+      login_type: 0 
+      disaster_recovery: enable
+      rio_token: 
+      white_list:
+        - msg-record-agent/list
+        - opapi/msg-record-agent/list
+        - opapi/admin/api/filemanager/callback
+        - opapi/plugin/list
+        - /
+        - opapi/andon/verify_uin
+        - opapi/andon_auth_tool
+        - opapi/auth/add_app_id_list
+
+    Pangu:
+      project_id: 1330
+      token: 
+      auth_url: https://pangu.woa.com/#/app/authApplication?projectId=1330
+      auth_manager: andrekzwu
+
+    AndonAuthToolConf:
+      redirect_url : qbot.woa.com
+      andon_app_id: a71pdluho1u
+      andon_app_secret: 
+      andon_env: release
+
+    FeedbackAndon:
+      secret_id: ""
+      secret_key: ""
+      andon_endpoint: "tandon.tencentcloudapi.com"
+      andon_server: "tandon"
+      andon_version: "2023-01-04"
+      service_channel: 37
+      service_scene_l4: 307116
+      priority: "L4"
+      operator_duty: 9544
+      effective_start_time: 20250420
+
+    GatewayApi:
+
+    GatewayPublicKey:
+
+
+
+    NoAuthorizationApi:
+      /login: true
+      /vector_doc/search_release: true
+      /vector_doc/search_preview: true
+      /msg-record-agent/list: true
+      /opapi/msg-record-agent/list: true
+      /opapi/admin/api/filemanager/callback: true
+      /opapi/plugin/list: true
+      /: true
+      /opapi/auth/add_app_id_list: true
+
+    Host: qbot.woa.com
+
+    S3Config:
+      type: cos
+      cos_map:
+        adp_default:
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ap-guangzhou
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: myqcloud.com
+          expire_time: 30m
+        fileparser:
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ap-guangzhou
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: tencentcos.cn
+          expire_time: 180m
+        realtime:
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ap-guangzhou
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: myqcloud.com
+          expire_time: 30m
+          credential_time: 10m
+
+    ElasticSearchConfig:
+      index_big_data: doc_big_data_preview
+      index_big_data_prod: doc_big_data_prod
+      name: trpc.elasticsearch.lke.vector_doc
+      url: http://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}
+      user: ${INFRA_MIDDLEWARES_ES_0_USER}
+      password: ${INFRA_MIDDLEWARES_ES_0_PASSWORD}
+      timeout: 1000
+      log:
+        enabled: true
+        request_enabled: true
+        request_body: true
+      index_knowledge_preview: "knowledge_segment_preview"
+      index_knowledge_prod: "knowledge_segment_prod" 
+      badCaseEsSearchSize: 20
+
+
+    SSEConnOptions:
+      conn_tag_url: 'https://wss.lke.cloud.tencent.com/v1/qbot/chat/tag/sse'
+      conn_summary_url: 'https://wss.lke.cloud.tencent.com/v1/qbot/chat/summary/sse'
+      conn_knowledge_qa_url: 'https://wss.lke.cloud.tencent.com/v1/qbot/chat/sse'
+      timeout: 1200s
+
+
+    QbotChatTool:
+      chat_url: 
+        - https://wss.lke.cloud.tencent.com/v1/qbot/chat/experienceSse
+        - https://wss.lke.cloud.tencent.com/v1/qbot/chat/sse
+      chat_image_path: chat_img/
+      salt: a99a52254a1d58231ebe07b2a7f28534
+
+    ParseTool:
+      project:
+          project_name_max_length: 20
+          project_name_regx: "^[a-zA-Z0-9一-龥豈-龎|`~!@#$%^&*\\(\\)\\[\\]\\{\\}；;－'<>\"_+-=<>?,./·！（）——-【】、：，。\t\n“”’‘《》？￥……\\\\]*$"
+          index_name_regx: ^[a-z0-9_]*$
+          index_name_need_regx: ^[a-z]+[a-z0-9_]*$
+          index_name_max_length: 20
+      index_file_types:
+          doc: xlsx|docx|txt|md|pdf|pptx
+          qa: xlsx
+      docstore:
+        addr: http://v2.qbot.docstore.production.polaris
+        new_index_url: /project/new
+        update_index_url: /project/update
+      filemanage_client:
+        target: polaris://trpc.SmartAssistant.FileManagerServer.ManagerObj
+        name: trpc.SmartAssistant.FileManagerServer.ManagerObj
+        protocol: trpc
+        timeout: 2000
+        namespace: Production
+        env_name: formal
+        set_name: llm.cs.1
+        biz: op_qbot
+        app_key: common
+        split_prefix: input_files/oaqbot/
+        parse_prefix: input_files/oaqbot_parse/
+        split2excel_prefix: input_files/oaqbot/split2excel/
+        ocr_temp_file_path: temp_files/
+        ocr_debug_file_path: debug_files/
+      fileparser_client:
+        target: polaris://trpc.SmartAssistant.FileParserServer.ParserObj
+        name: trpc.SmartAssistant.FileParserServer.ParserObj
+        protocol: trpc
+        namespace: Development
+        env_name: pre
+        set_name: commonset.sz.common1
+        conv_file_path: debug_files/pdf2image/
+      storage:
+        type: cos
+        cos: 
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ap-guangzhou
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: tencentcos.cn
+          expire_time: 180m
+      rich_content:
+        richContent_max: 100000
+        miniChunk_max: 100000
+        pageContent_max: 100000
+        chunkContent_max: 500
+
+    ParseFeedbackUin: "100037909035"
+
+    SendSMSConfig:
+      enable: false
+      start_time: 08:00:00
+      end_time: 21:59:59
+      http_send_config:
+        url: http://message.tencentyun.com:50011
+      http_query_config:
+        url: http://message.tencentyun.com:50011
+        polling_period: 1
+
+    VIPGroup: 
+      isearch: 
+        - corp_id: 22383
+          old_app_ids: [27226, 35989]
+        - corp_id: 115109
+          old_app_ids: [112769,128278,128714,221261]
+
+    Workflow:
+      url_base: "https://adp.cloud.tencent.com/workflow/snapshot"
+      for_op: "formal"
+      tde_id: ""
+      namespace: "Production"
+      lane: ""
+      allow_api_list:
+        bot_task_config_server.task_config:
+          - GetTaskFlowDetail
+          - GetSlotList
+          - GetEntryList
+          - ListHistoryTaskFlow
+          - ListTaskFlow
+          - ListCategory
+          - GetExampleList
+          - DescribeWorkflowRun
+          - DescribeNodeRun
+          - GetEnableCustomAsk
+          - GetWorkflowGuideViewed
+        bot_admin_config_server.admin:
+          - GetVarList
+          - DescribeLoginUserInfo
+          - GetSystemVarList
+        bot_workflow_dm_server:
+          - DescribeNodeBatchRun
+      api_service:
+        bot_task_config_server.task_config:
+          service_name: "trpc.KEP.bot-task-config-server.task-config"
+          rpc_name: "trpc.KEP.bot_task_config_server.TaskConfig"
+        bot_admin_config_server.admin:
+          service_name: "trpc.KEP.bot-admin-config-server.Admin"
+          rpc_name: "trpc.KEP.bot_admin_config_server.Admin"
+        bot_workflow_dm_server:
+          service_name: "trpc.KEP.bot-workflow-dm-server.workflow-dm"
+          rpc_name: "trpc.adp.workflow_exec.WorkflowExec"
+
+    DataMigrationTimeConfig:
+      tdsql_tables:
+      - table: t_doc_segment
+        effective_time: "2026-02-05 21:52:00"
+
+    WorkflowOpenUI: false
+    SyncUserInfoConfig: 
+      enable: true
+      cam_endpoint: cam.tencentcloudapi.com
+      cam_default_pwd: 
+      cam_default_police_id: 1
+      cam_default_group_id: 387177
+      taihu_hr_pass_id: lke_adp
+      taihu_hr_pass_token: 
+      taihu_hr_endpoint: http://api.sgw.woa.com
+      wx_notify_url: https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=091b344a-afae-4412-847d-eb86d7e6a9f1
+      hr_dept_info:
+        adp_youtu:
+            dept_id: 20503
+            dept_name: ADP_优图实验室
+            dept_cam_group_id: 387446
+            dept_no_need_create:  ["v_ijidong","markshe"]
+            dept_no_need_notify:  []
+            cam_secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+            cam_sekret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+        adp_yunchanpin3:
+            dept_id: 41073
+            dept_name: ADP_云产品三部
+            dept_cam_group_id: 387445
+            dept_no_need_create: [ "markshe" ]
+            dept_no_need_notify:  [ "hackerchen","kunnhe","v_qwtou","v_iyybyao","kerwinzqli","raycchen" ]
+            cam_secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+            cam_sekret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+        adp_yunchan3_studio:
+            dept_id: 47047
+            dept_name: ADP_云产三工作室
+            dept_cam_group_id: 387447
+            dept_no_need_create: [ "markshe" ]
+            dept_no_need_notify:  [ "raycchen","kerwinzqli","corinagao","kunnhe" ]
+            cam_secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+            cam_sekret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+        qd:
+            dept_id: 19332
+            dept_name: 企点
+            dept_cam_group_id: 392758
+            dept_no_need_create: [ "" ]
+            dept_no_need_notify:  [ "skyhuang","simonwu","albertjiang","harleyliu","younghyang","troyfan","企点" ]
+            cam_secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+            cam_sekret_key: 
+        adp-marketing:
+          dept_id: 35074
+          dept_name: adp-marketing
+          dept_cam_group_id: 397074
+          dept_no_need_create: [ "nikayang" ]
+          dept_no_need_notify:  [ "" ]
+          cam_secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          cam_sekret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+
+    UseDataAccessPermission: true
+    DataAccessUserWhilteList: qianleipei;caryhuang;downeytu;gaussguan;halelv;hanlynnke;harryhlli;huiruli;kinvohe;pennnggao;rodneyxiong;dickeeli;jimtjin;jokeryyu;leoxxxu;levonli;melomeng;mobisysfeng;nicholaswei;stariswang;yilezzhang;sinutelu;andrekzwu;philxu;cooperwang;brucezylin;harryjhuang;reinholdliu;michaelhe;ericjwang;hhanshe;pengweidou;jacehuang;harlingzhao;ethangguo;wemysschen;lenochen;lokli;xshwu;jianxinli;hanwnhan;mikeljiang;zhihuiguan;jawnrwen;hankxu;choasliu;ericjlshen;jarischen;tilin;jarvielong;janehli;sandracchen;dercyxing;jouislu;alvinlliu;daisyliao;fredshao;johnezhou;perryqiu;yongchaocui;sundyyao;bobbyxiong;bonnliu;sodonguo;ritaye;jarvisjli;tristanli
+
+    TTARGET_ACCESSMANAGER_SERVER: ip://adp-access-manager.{{ .Release.Namespace }}.svc.cluster.local:10001
+
+    TARGET_KB_CONFIG_API: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+
+    TARGET_ADMIN_HTTP: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+
+    TARGET_APP_ADMIN_PROXY_API: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+
+    TARGET_KB_RETRIEVAL_DIRECTINDEX: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091
+
+    TARGET_KB_RETRIEVA_RETRIEVAL: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    TARGET_AGENT_CONFIG : ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+
+    TARGET_AGENT_CONFIG_API: ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    TARGET_WORKFLOW_CONFIG_API: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    TARGET_PLUGIN_CONFIG_API: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    TARGET_INFOSECS: ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    TARGET_RESOURCE_GALLERY_ADMIN: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    TARGET_WIDGET_CONFIG: ip://adp-widget-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    TARGET_FINANCE: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    TARGET_AI_GATEWAY: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    APP_CONFIG_ADMIN_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    PLATFORM_CHARGER_FINANCE_TARGET: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    AI_GATEWAY_API_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+  trpc_go.yaml: |
+    global:                             #全局配置
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+    server:
+      app: adp
+      server: platform-op
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      filter:
+        - recovery
+      service:
+        - name: trpc.adp.bot-op-server.Op
+          ip: ${POD_IP}
+          port: 8080
+          network: tcp
+          protocol: http_no_protocol
+          timeout: 60000
+        - name: trpc.adp.bot-op-server.CheckFeedback
+          ip: ${POD_IP}
+          port: 8081
+          network: "0 */10 * * * *"
+          protocol: timer
+        - name: trpc.adp.bot-op-server.CheckFeedbackClassify
+          ip: ${POD_IP}
+          port: 8082
+          network: "*/3 * * * * *"
+          protocol: timer
+          timeout: 300000
+        - name: trpc.adp.bot-op-server.CreateFeedBackAndonTicket
+          ip: ${POD_IP}
+          port: 8083
+          network: "0 */2 * * * *?scheduler=CreateFeedBackAndonTicket&holdTime=5"
+          protocol: timer
+          timeout: 300000
+        - name: trpc.adp.bot-op-server.CheckFeedbackAndonStatus
+          ip: ${POD_IP}
+          port: 8084
+          network: "0 */2 * * * *?scheduler=CheckFeedbackAndonStatus&holdTime=5"
+          protocol: timer
+          timeout: 300000
+        - name: trpc.adp.bot-op-server.ClearHistoryDBPipelineDetail
+          ip: ${POD_IP}
+          port: 8085
+          network: "0 0 */10 * * *?scheduler=ClearHistoryDBPipelineDetail&holdTime=10"
+          protocol: timer
+          timeout: 300000
+        - name: trpc.adp.bot-op-server.SendNightMessage
+          ip: ${POD_IP}
+          port: 8086
+          network: "0 0 8 * * *?scheduler=SendNightMessage&holdTime=5"
+          protocol: timer
+          timeout: 3000000
+        - name: trpc.adp.bot-op-server.SyncInnerUserInfo
+          ip: ${POD_IP}
+          port: 8087
+          network: "0 0 10 * * *?scheduler=SyncInnerUserInfo&holdTime=5"
+          protocol: timer
+          timeout: 3000000
+    plugins:
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+            - name: global
+              appid: ${RAINBOW_APP_ID}  # appid
+              group: global # 配置所属组
+              type: kv   # 七彩石数据格式, kv(默认), table
+              env_name: ${RAINBOW_ENV_NAME}
+              timeout: 2000
+              enable_client_provider: true
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      log:
+        default:
+          - writer: console
+            level: debug
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+          - writer: file
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/trpc.log
+              write_mode: 2
+              roll_type: time
+              max_age: 7
+              max_backups: 10
+              compress: false
+              time_unit: day
+    client:
+      filter:
+      service:
+        - name: mysql.db_llm_plugin
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.db_llm_plugin.readonly
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.qbot
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.qbot.readonly
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: isearch.tdsql.qbot.qbot
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot_isearch?timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local
+        - name: mysql.qbot.qbot
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.qbot.qbot.readonly
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.db_llm_robot_task.readonly
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot_task?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.db_llm_robot_workflow.readonly
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_workflow_formal?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.db_llm_robot_workflow
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_workflow_formal?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.db_llm_robot_task
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot_task?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.db_llm_robot_history
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot_history_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.qbot.parsetool
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot_history_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.adp.ai-gateway
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_ai_gateway_adp?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: redis.qbot.qbot
+          network: tcp
+          protocol: redis
+          target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379
+          password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
+          timeout: 800
+        - name: redis.qbot.admin
+          network: tcp
+          protocol: redis
+          target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/2
+          password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
+          timeout: 800
+        - name: qbot.qbot.admin.Admin
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 2000
+        - name: trpc.SmartAssistant.LLMManagerServer.Chat
+          target: ${PLUGIN_LLM_MANAGER_SERVER_TARGET}
+          protocol: trpc
+          network: tcp
+          timeout: 300000
+        - callee: trpc.pangu_auth_manage.pangu_service_openapi.Controller
+          target: polaris://trpc.pangu_auth_manage.pangu_service_openapi.controller
+          protocol: http
+          timeout: 3000
+          namespace: Production
+          disable_servicerouter: true
+        - name: trpc.http.cos.Access
+          network: tcp
+          protocol: http
+          target: dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn
+          timeout: 5000
+        - name: kafka.qbot.qbot
+          target: kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=internal_system_audit_log
+          timeout: 5000
+        - name: qbot.qbot.hunyuan.Api
+          target: polaris://qbot.qbot.hunyuan.Api
+          protocol: trpc
+          timeout: 60000
+          namespace: Production
+        - callee: trpc.smartservice.accessmanager.AccessManager
+          target: ip://adp-access-manager.{{ .Release.Namespace }}.svc.cluster.local:10001
+          name: trpc.SmartService.AccessManagerServer.AccessManager
+          timeout: 3000
+        - callee: trpc.adp.kb_config.Api
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          network: tcp 
+          timeout: 20000
+        - callee: trpc.KEP.bot_dm_server.BotDm
+          name: trpc.KEP.bot-dm-server.bot-dm
+          namespace: ${POD_NAMESPACE}
+          protocol: trpc
+          timeout: 6000
+        - callee: trpc.KEP.bot_admin_config_server.Http
+          name: trpc.KEP.bot-admin-config-server.Http
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          namespace: Test
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_admin_proxy.Api
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.KEP.bot_retrieval_server.DirectIndex
+          callee: trpc.adp.kb_retrieval.DirectIndex
+          target: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          network: tcp
+          timeout: 20000
+        - name: trpc.KEP.bot_retrieval_server.Retrieval
+          callee: trpc.adp.kb_retrieval.Retrieval
+          target: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 20000
+        - callee: trpc.adp.agent_config.AgentConfig
+          name:  trpc.KEP.agent-config-server.AgentConfig
+          target: ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+        - callee: trpc.adp.agent_config.AgentConfigApi
+          name:  trpc.KEP.agent-config-server.AgentConfigApi
+          target: ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+        - name: trpc.KEP.bot-task-config-server.task-config
+          callee: trpc.KEP.bot_task_config_server.TaskConfig
+          namespace: ${POD_NAMESPACE}
+          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+          timeout: 3000
+        - callee: trpc.adp.workflow_config.WorkflowConfigApi
+          name: trpc.adp.workflow_config.WorkflowConfigApi
+          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          network: tcp
+          timeout: 20000
+        - callee: trpc.adp.plugin_config.PluginConfigApi
+          name:  trpc.KEP.plugin-config-server.PluginConfigApi
+          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+        - callee: trpc.adp.platform_content_moderation.Infosec
+          name: qbot.qbot.infosec.Infosec
+          target: ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 10000
+        - callee: trpc.adp.resource_gallery.Admin
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.widget_config.WidgetConfigInner
+          target: ip://adp-widget-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 3000
+        - callee : trpc.adp.app_config.Admin
+          namespace: ${POD_NAMESPACE}
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_charger.Finance
+          namespace: Production
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          network: tcp
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.adp.ai-gateway.api
+          network: tcp
+          protocol: http
+          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 1800000
