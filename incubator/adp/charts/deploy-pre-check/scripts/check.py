@@ -46,9 +46,17 @@ def print_info(text: str):
     """打印信息"""
     print(f"{Colors.BLUE}ℹ {text}{Colors.NC}")
 
+def _is_enabled(env_key: str) -> bool:
+    """检查环境变量开关是否启用，默认 true"""
+    return os.getenv(env_key, 'true').lower() in ('true', '1', 'yes')
+
 def check_mysql() -> bool:
     """检查 MySQL 连接"""
     print_header("检查 MySQL 连接")
+    if not _is_enabled('ENABLE_MYSQL'):
+        print_warning("MySQL 检查已禁用，跳过")
+        return True
+
     host = os.getenv('DB_HOST', '')
     if not host:
         print_warning("未配置 MySQL，跳过检查")
@@ -81,6 +89,28 @@ def check_mysql() -> bool:
             version = cursor.fetchone()[0]
             print_info(f"MySQL 版本: {version}")
 
+        # 针对 mysql 部署模式，修改 sql_mode 去掉 NO_ZERO_DATE 和 NO_ZERO_IN_DATE
+        db_provider_type = os.getenv('DB_PROVIDER_TYPE', '')
+        if db_provider_type == 'mysql':
+            try:
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT @@GLOBAL.sql_mode")
+                    current_sql_mode = cursor.fetchone()[0]
+                    print_info(f"当前 sql_mode: {current_sql_mode}")
+
+                    modes = [m.strip() for m in current_sql_mode.split(',') if m.strip()]
+                    remove_modes = {'NO_ZERO_DATE', 'NO_ZERO_IN_DATE'}
+                    new_modes = [m for m in modes if m not in remove_modes]
+                    new_sql_mode = ','.join(new_modes)
+
+                    if new_sql_mode != current_sql_mode:
+                        cursor.execute(f"SET GLOBAL sql_mode = %s", (new_sql_mode,))
+                        print_success(f"已修改 sql_mode: {new_sql_mode}")
+                    else:
+                        print_info("sql_mode 无需修改")
+            except Exception as e:
+                print_warning(f"修改 sql_mode 失败（不阻塞流程）: {e}")
+
         connection.close()
         return True
 
@@ -91,6 +121,9 @@ def check_mysql() -> bool:
 def check_elasticsearch() -> bool:
     """检查 Elasticsearch 连接"""
     print_header("检查 Elasticsearch 连接")
+    if not _is_enabled('ENABLE_ES'):
+        print_warning("Elasticsearch 检查已禁用，跳过")
+        return True
 
     host = os.getenv('ES_HOST', '')
     if not host:
@@ -130,6 +163,9 @@ def check_elasticsearch() -> bool:
 def check_redis() -> bool:
     """检查 Redis 连接"""
     print_header("检查 Redis 连接")
+    if not _is_enabled('ENABLE_REDIS'):
+        print_warning("Redis 检查已禁用，跳过")
+        return True
 
     host = os.getenv('REDIS_HOST', '')
     if not host:
@@ -173,6 +209,9 @@ def check_redis() -> bool:
 def check_vectordb() -> bool:
     """检查腾讯云 VectorDB 连接"""
     print_header("检查腾讯云 VectorDB 连接")
+    if not _is_enabled('ENABLE_VDB'):
+        print_warning("VectorDB 检查已禁用，跳过")
+        return True
 
     vdb_addr = os.getenv('VDB_ADDR', '')
     if not vdb_addr:
@@ -281,7 +320,10 @@ def check_vectordb() -> bool:
 def check_object_storage() -> bool:
     """检查对象存储连接"""
     print_header("检查对象存储连接")
-    
+    if not _is_enabled('ENABLE_COS'):
+        print_warning("对象存储检查已禁用，跳过")
+        return True
+
     cos_secret_id = os.getenv('COS_SECRET_ID', '')
     cos_secret_key = os.getenv('COS_SECRET_KEY', '')
     cos_region = os.getenv('COS_REGION', '')
@@ -380,6 +422,9 @@ def check_object_storage() -> bool:
 def check_k8s_resources() -> bool:
     """检查 Kubernetes 集群资源"""
     print_header("检查 Kubernetes 集群资源")
+    if not _is_enabled('ENABLE_K8S'):
+        print_warning("K8s 资源检查已禁用，跳过")
+        return True
 
     required_cpu_millicores = int(float(os.getenv('REQUIRED_CPU', '0')))
     required_memory_ki = int(float(os.getenv('REQUIRED_MEMORY', '0')))

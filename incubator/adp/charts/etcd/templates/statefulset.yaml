@@ -6,15 +6,20 @@ metadata:
   labels:
     app: etcd
     app.kubernetes.io/name: etcd
+    {{- if .Values.global.customLabels }}
+    {{- range $key, $value := .Values.global.customLabels }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
+  {{- if .Values.global.customAnnotations }}
+  annotations:
+    {{- range $key, $value := .Values.global.customAnnotations }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+  {{- end }}
 spec:
   serviceName: etcd-headless
-  {{- if eq .Values.global.clusterSize "minimal" }}
-  replicas: 3
-  {{- else if eq .Values.global.clusterSize "standard" }}
-  replicas: 3
-  {{- else }}
-  replicas: 3
-  {{- end }}
+  replicas: {{ .Values.replicas | default 3 }}
   selector:
     matchLabels:
       app: etcd
@@ -22,14 +27,21 @@ spec:
     metadata:
       labels:
         app: etcd
-    spec:
-      {{- if .Values.imagePullSecretName }}
-      imagePullSecrets:
-        - name: {{ .Values.imagePullSecretName }}
+        {{- if .Values.global.customLabels }}
+        {{- range $key, $value := .Values.global.customLabels }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+        {{- end }}
+      {{- if .Values.global.customAnnotations }}
+      annotations:
+        {{- range $key, $value := .Values.global.customAnnotations }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
       {{- end }}
+    spec:
       containers:
         - name: etcd
-          image: {{ (index .Values.tad.images "etcd").url }}
+          image: {{ (index .Values.images "etcd").url }}
           imagePullPolicy: IfNotPresent
           command:
             - etcd
@@ -59,45 +71,33 @@ spec:
               value: http://$(ETCD_NAME).etcd-headless.{{ .Release.Namespace }}.svc.cluster.local:2380
             - name: ETCD_INITIAL_CLUSTER
               value: "etcd-0=http://etcd-0.etcd-headless.{{ .Release.Namespace }}.svc.cluster.local:2380,etcd-1=http://etcd-1.etcd-headless.{{ .Release.Namespace }}.svc.cluster.local:2380,etcd-2=http://etcd-2.etcd-headless.{{ .Release.Namespace }}.svc.cluster.local:2380"
-          {{- if eq .Values.global.clusterSize "minimal" }}
+            - name: ETCD_QUOTA_BACKEND_BYTES
+              value: "{{ printf "%d" (int64 (.Values.quotaBackendBytes | default 4294967296)) }}"
+            - name: ETCD_AUTO_COMPACTION_MODE
+              value: "{{ .Values.autoCompaction.mode | default "periodic" }}"
+            - name: ETCD_AUTO_COMPACTION_RETENTION
+              value: "{{ .Values.autoCompaction.retention | default "1h" }}"
           resources:
-            limits:
-              cpu: "500m"
-              memory: "512Mi"
             requests:
-              cpu: "500m"
-              memory: "512Mi"
-          {{- else if eq .Values.global.clusterSize "standard" }}
-          resources:
+              cpu: {{ .Values.resources.cpu | default "2000m" }}
+              memory: {{ .Values.resources.memory | default "4Gi" }}
             limits:
-              cpu: "500m"
-              memory: "1Gi"
-            requests:
-              cpu: "500m"
-              memory: "1Gi"
-          {{- else }}
-          resources:
-            limits:
-              cpu: "1"
-              memory: "2Gi"
-            requests:
-              cpu: "1"
-              memory: "2Gi"
-          {{- end }}
+              cpu: {{ .Values.resources.cpu | default "2000m" }}
+              memory: {{ .Values.resources.memory | default "4Gi" }}
           volumeMounts:
             - name: etcd-data
               mountPath: /var/lib/etcd
           livenessProbe:
             tcpSocket:
               port: 2379
-            initialDelaySeconds: 30
+            initialDelaySeconds: 60
             periodSeconds: 15
             timeoutSeconds: 10
             failureThreshold: 3
           readinessProbe:
             tcpSocket:
               port: 2379
-            initialDelaySeconds: 30
+            initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3

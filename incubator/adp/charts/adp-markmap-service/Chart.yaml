@@ -1,0 +1,10 @@
+apiVersion: v2
+name: adp-markmap-service
+description: A Helm chart for adp-markmap-service (widget render sidecar)
+type: application
+
+version: 2.0.0
+
+appVersion: 2.0.0
+maintainers:
+  - name: tilin

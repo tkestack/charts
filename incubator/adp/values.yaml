@@ -7,40 +7,27 @@
 global:
   # 集群类型：包含 [minimal]、[standard] 和 [recommended] 三个配置段
   clusterSize: minimal
+  # CLB 域名（必填）https://console.cloud.tencent.com/clb/instance
   # 是否校验 K8s 集群剩余资源是否充足（当部署超级节点时需要关闭）
   checkK8sResources: true
-  # CLB 域名（必填）https://console.cloud.tencent.com/clb/instance
   clb: "xx.adp-private.com"
   # CLB ID（必填）
   clbId: lb-751o89m3
   # 协议: http 或 https （必填）
   scheme: http
+  # CLB HTTPS 证书 ID（scheme 为 https 时必填）https://console.cloud.tencent.com/ssl
+  clbCertId: "<YOUR_CLB_CERT_ID>"
+  secapi_enable: false
 
   # RSA 密钥配置（必填）用于前后端加解密登录密码
-  # macos 生成方法:
+  # 生成方法:
   #   1. 生成私钥: openssl genrsa -out private.pem 2048
   #   2. 生成公钥: openssl rsa -in private.pem -pubout -out public.pem
   #   3. Base64编码: cat private.pem | base64 -w 0 > privateKey.txt
   #                  cat public.pem | base64 -w 0 > publicKey.txt
-  # linux 生成方法:
-  #   1. 生成私钥: openssl genrsa -out private.pem 2048
-  #   2. 生成公钥: openssl rsa -in private.pem -pubout -out public.pem
-  #   3. Base64编码: base64 -w 0 private.pem > privateKey.txt
-  #                 base64 -w 0 public.pem > publicKey.txt
   rsa:
     privateKey: "<YOUR_RSA_PRIVATE_KEY_BASE64>"
     publicKey: "<YOUR_RSA_PUBLIC_KEY_BASE64>"
-
-  # ============================
-  # 模型服务配置 (modelServices)
-  # ============================
-  # 支持以下模型服务类型:
-  modelServices:
-    # 腾讯云知识引擎 ADP（必填）
-    adp:
-      apiKey: "<YOUR_ADP_API_KEY>"
-    hunyuan:
-      apiKey: "<depracted>"
 
   # ============================
   # 基础组件配置 (components)
@@ -50,6 +37,7 @@ global:
   components:
     # 数据库配置 (必填) https://cloud.tencent.com/product/tdsql
     db:
+      enabled: true  # 设为 false 可跳过该组件的部署前置检查
       vendor: tencent
       providerType: tdsql  # tencent: tdsql/cynosdb | aws: aurora/rds | alibaba: polardb | self: mysql/mariadb
       host: "192.168.0.1"
@@ -59,6 +47,7 @@ global:
 
     # Redis 缓存配置 (必填) https://cloud.tencent.com/product/crs
     redis:
+      enabled: true  # 设为 false 可跳过该组件的部署前置检查
       vendor: tencent
       providerType: crs  # tencent: crs | aws: elasticache | alibaba: kvstore | self: redis
       cluster: master
@@ -69,6 +58,7 @@ global:
 
     # Elasticsearch 配置 (必填) https://cloud.tencent.com/product/es
     es:
+      enabled: true  # 设为 false 可跳过该组件的部署前置检查
       vendor: tencent
       providerType: es  # tencent: es | aws: opensearch | alibaba: elasticsearch | self: elasticsearch
       hosts:
@@ -79,35 +69,57 @@ global:
 
     # 对象存储配置 (必填) https://cloud.tencent.com/product/cos
     s3:
+      enabled: true  # 设为 false 可跳过该组件的部署前置检查
       vendor: tencent
       providerType: cos  # tencent: cos | aws: s3 | alibaba: oss | azure: blob | gcp: gcs | self: minio
-      # COS 专用配置 (providerType=cos 时生效) appId值不可加引号
+      # COS 专用配置 (providerType=cos 时生效)
       cos:
         secretId: "<YOUR_COS_SECRET_ID>"
         secretKey: "<YOUR_COS_SECRET_KEY>"
-        appId: <YOUR_COS_APP_ID>
+        appId: "<YOUR_COS_APP_ID>"
         bucket: "<YOUR_COS_BUCKET>"
         region: "<YOUR_COS_REGION>"
         domain: myqcloud.com
         subPath: "public"
         expireTime: 3600s
         credentialTime: 3600s
+      minio:
+        secretId: "<YOUR_MINIO_SECRET_ID>"
+        secretKey: "<YOUR_MINIO_SECRET_KEY>"
+        bucket: "<YOUR_MINIO_BUCKET>"
+        host: "<YOUR_MINIO_HOST>"
+        subPath: "public"
+        expireTime: 3600s
+        credentialTime: 3600s
+      s3:
+        secretId: "<YOUR_S3_SECRET_ID>"
+        secretKey: "<YOUR_S3_SECRET_KEY>"
+        bucket: "<YOUR_S3_BUCKET>"
+        region: "<YOUR_S3_REGION>"
+        subPath: "public"
+        expireTime: 3600s
+        credentialTime: 3600s
+
 
     # 消息队列CKafka版 https://console.cloud.tencent.com/ckafka/instance
     kafka:
+      enabled: true  # 设为 false 可跳过该组件的部署前置检查
       vendor: tencent
       providerType: kafka
       hosts:
         - 192.168.0.1
       port: 9092
 
-    # 向量数据库配置 (必填，数组格式支持多实例) https://cloud.tencent.com/product/vdb
-    vdb:
-      - vendor: tencent
-        providerType: vdb  # tencent: vdb | self: milvus
-        addr: http://192.168.0.1
-        account: root
-        apiKey: "<YOUR_VDB_API_KEY>"
+    # clickhouse
+    clickhouse:
+      enabled: true  # 设为 false 可跳过该组件的部署前置检查
+      vendor: tencent
+      providerType: clickhouse  # tencent: clickhouse |
+      hosts:
+        - 192.168.0.1
+      port: 9000
+      user: "<YOUR_CLICKHOUSE_USER>"
+      password: "<YOUR_CLICKHOUSE_PASSWORD>"
 
   # ============================
   # 可观测性配置 (observability)
@@ -143,7 +155,7 @@ global:
     # 审核开关（可选，填写 true 或 false）
     auditSwitch: false
     # 是否禁用图片检查（可选，填写 true 或 false）
-    disableImageCheck: true
+    disableImageCheck: false
     # `bizType` （启用审核时 必选）
     bizType: "<YOUR_BIZ_TYPE>"
     # 文本内容安全配置 (可选) https://cloud.tencent.com/document/product/1124/51860
@@ -154,3 +166,103 @@ global:
     secretId: "<YOUR_SECRET_ID>"
     secretKey: "<YOUR_SECRET_KEY>"
     callbackUrl: "<YOUR_CALLBACK_URL>"
+
+  # ============================================================
+  # 微信第三方平台信息
+  # ============================================================
+  # 申请微信开放平台账号后，第三方平台信息详情中可获取以下配置
+  wechat:
+    componentAppId: "<YOUR_WECHAT_THIRD_PLATFORM_APPID>"
+    componentAppSecret: "<YOUR_WECHAT_THIRD_PLATFORM_SECRET>"
+    componentToken: "<YOUR_WECHAT_THIRD_PLATFORM_TOKEN>"
+    componentAesKey: "<YOUR_WECHAT_THIRD_PLATFORM_AES_KEY>"
+
+  # ============================
+  # 业务配置 (从 tad.global 迁移)
+  # ============================
+  finance:
+    disabled: true
+    search_disabled: true
+    report_disabled: false
+
+  deploy_mode: "standard"
+  free_preview: false
+  productType: "adp"
+  weakPasswordList: []
+
+  admin:
+    qpm: 100
+    tpm: 100000
+
+  delete_data:
+    chat_server_retention_days: 30
+    retrieval_server_retention_days: 30
+    plugin_config_server_retention_minutes: 1440
+
+  retrieval_config:
+    vector_recall_enable: true
+
+  ChatServer:
+    max_concurrence: 10
+    role_intent_model_name: ""
+    tipwords_opt_hunyuan_version: ""
+    widget_optimize_model_name: ""
+    workflow_config_model_name: ""
+    workflow_intent_model_name: ""
+    workflow_role_model_name: ""
+    multi_modal:
+      disabled: false
+
+  RagServer:
+    ds_faq_reject_model_name: ""
+    search_secret_id: ""
+    search_secret_key: ""
+    workflow_config_model_name: ""
+
+  channelmsgsvr:
+    component_app_id: ""
+
+  ti_license:
+    appId: ""
+    secretKey: ""
+
+  easygraph:
+    credentials:
+      username: ""
+      password: ""
+
+  # ============================
+  # objectstorage 兼容层（旧版引用兼容）
+  # ============================
+  objectstorage:
+    provider: "cos"
+    minio:
+      host: "minio.adp.svc.cluster.local"
+      port: 80
+    obs:
+      host: ""
+      port: 443
+    cos:
+      host: ""
+      port: 443
+    csp:
+      host: ""
+      port: 443
+    s3:
+      accessKey: ""
+      secretKey: ""
+      region: ""
+
+  # 自定义 annotations，部署时会注入到所有服务的 Deployment/StatefulSet/Job 中
+  # 不需要时留空或注释掉具体条目即可
+  # 示例:
+  #   Icp-notify.cloud.infra/sync-to-cmdb: "true"
+  #   Icp-notify.cloud.infra/app-name-key: nonstandardAppName
+  customAnnotations: {}
+
+  # 自定义 labels，部署时会注入到所有服务的 Deployment/StatefulSet/Job 中
+  # 不需要时留空或注释掉具体条目即可
+  # 示例:
+  #   nonstandardAppName: "txadp"
+  #   envType: "PROD"
+  customLabels: {}

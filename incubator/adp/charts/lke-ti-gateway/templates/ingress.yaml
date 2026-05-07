@@ -300,29 +300,57 @@ spec:
         pathType: ImplementationSpecific
       - backend:
           service:
-            name: pluginexecserver
+            name: adp-plugin-exec
             port:
               number: 8001
         path: /mcp
         pathType: ImplementationSpecific
       - backend:
           service:
-            name: chat
+            name: adp-chat-manage
             port:
               number: 9099
         path: /adp/v2/chat
         pathType: ImplementationSpecific
       - backend:
           service:
-            name: infosec
+            name: ti-perm-auth-proxy
             port:
-              number: 9091
-        path: /formal/qbot/infosec/tianyuCallback
+              number: 80
+        path: /logout
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-perm-auth-proxy
+            port:
+              number: 80
+        path: /saml/acs
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-perm-auth-proxy
+            port:
+              number: 80
+        path: /saml/metadata
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: adp-plugin-config
+            port:
+              number: 8002
+        path: /api/plugin/oauth/callback
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ti-gateway
+            port:
+              number: 9080
+        path: /op
         pathType: ImplementationSpecific
   {{- if eq $.Values.global.scheme "https" }}
   tls:
   - hosts:
       - {{ $.Values.global.clb }}
-    secretName: {{ $.Values.global.clb }}-secret
+    secretName: clb-cert-secret
   {{- end }}
 {{- end }}

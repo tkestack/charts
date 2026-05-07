@@ -1,24 +1,26 @@
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: ti-auth-web-config
+  name: {{ .Release.Name }}-ti-auth-web-config
   namespace: {{ .Release.Namespace }}
 data:
   config.js: |
     window.TIWEB_CONFIG = {
       TabTitle: '腾讯云智能',
       // 如果需要配置header logo, 配置路径'/portal/config/platform-title-logo.png'，同时修改platform-title-logo.png文件
-      HeaderTitle: '/portal/config/platform-title-logo.png',
+      HeaderTitle: '',
+      Iaas: true,
+      isIntl: true,
       //浏览器title icon
       Favicon: '/portal/config/favicon.ico',
         // 登陆页面
-    {{- if or (eq .Values.global.productType "lke") (eq .Values.global.productType "lke&ti") }}
+    {{- if or (eq (.Values.global.productType | default "adp") "lke") (eq (.Values.global.productType | default "adp") "lke&ti") }}
         LoginPage: {
             Title: '智能体开发平台',
             SubTitle: '   ',
-            Icon: '/portal/config/login-icon-logo.png',
+            Icon: '',
         },
-    {{- else if eq .Values.global.productType "ivh" }}
+    {{- else if eq (.Values.global.productType | default "adp") "ivh" }}
         LoginPage: {
             Title: '腾讯云智能',
             SubTitle: '数智人平台',
@@ -28,7 +30,7 @@ data:
         LoginPage: {
             Title: '智能体开发平台',
             SubTitle: '   ',
-            Icon: '/portal/config/login-icon-logo.png',
+            Icon: '',
         },
     {{- end}}
       // 主页参数
@@ -40,8 +42,6 @@ data:
         QRCodeLogo: '/portal/config/ti-web-qrcode-image.png',
         HideQRCode: false,
       },
-      Iaas: true,
-      HideLicense: true,
       TiExtraParamOne: '',
       TiExtraParamTwo: '',
       // 退出登录后是否使禁用页面surl
@@ -50,9 +50,9 @@ data:
       LoginSurlPath: '',
       LoginSuccessPath: '{{ .Values.global.scheme }}://{{ .Values.global.clb }}/portal/#/',
       LogoutSuccessPath: '{{ .Values.global.scheme }}://{{ .Values.global.clb }}/portal/#/login',
-      SSOLoginPage: {{ .Values.SSOLoginPage }},
-      ssoTokenKey: '{{ .Values.ssoTokenKey }}',
-      ssoLogoutUrl: '{{ .Values.ssoLogoutUrl }}',
+      SSOLoginPage: false,
+      ssoTokenKey: '',
+      ssoLogoutUrl: '',
       Password: {{ (.Values.global).weakPasswordList | default list | toJson }},
       // 是否展示License页面
       HideLicense: true,

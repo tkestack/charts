@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: adp-markmap-service
+  name: adp-markmap-service
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: markmap-sidecar-7001
+      port: 7001
+      protocol: TCP
+      targetPort: 7001
+  selector:
+    app: adp-markmap-service
+  sessionAffinity: None
+  type: ClusterIP

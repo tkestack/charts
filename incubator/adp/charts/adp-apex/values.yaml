@@ -1,0 +1,11 @@
+images:
+  adp-apex:
+    url: ccr.ccs.tencentyun.com/tke-market/apex:4_2603280059_master_private_247b5729_private
+  apex-router:
+    url: ccr.ccs.tencentyun.com/tke-market/apex-router:5.8.0
+apex:
+  database:
+    type: mysql
+    dsn: ''
+    polling_interval: 5s
+replicas: 1
