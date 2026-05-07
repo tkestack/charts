@@ -1,7 +1,3 @@
-{{- $re_nu   := 1}}
-{{- if eq (.Values.global.helmfile_env_name | default "tke") "tcs" }}
-  {{- $re_nu = 2 }}
-{{- end}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -12,12 +8,22 @@ metadata:
     app.cpaas.io/name: ti-gateway.{{ .Release.Namespace }}
     project.cpaas.io/name: ti-platform
     service.cpaas.io/name: deployment-ti-gateway-workload
+    {{- if .Values.global.customLabels }}
+    {{- range $key, $value := .Values.global.customLabels }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
   annotations:
-    configmap.reloader.stakater.com/reload: "ti-gateway-config,ti-gateway-init-route-crd,ti-gateway-upstream-platform"
+    configmap.reloader.stakater.com/reload: "ti-gateway-config"
+    {{- if .Values.global.customAnnotations }}
+    {{- range $key, $value := .Values.global.customAnnotations }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
 spec:
   progressDeadlineSeconds: 600
   {{- if eq .Values.global.clusterSize "minimal" }}
-  replicas: 1
+  replicas: 2
   {{- else if eq .Values.global.clusterSize "standard" }}
   replicas: 2
   {{- else }}
@@ -42,9 +48,18 @@ spec:
         app.cpaas.io/name: ti-gateway.{{ .Release.Namespace }}
         project.cpaas.io/name: ti-platform
         service.cpaas.io/name: deployment-ti-gateway-workload
+        {{- if .Values.global.customLabels }}
+        {{- range $key, $value := .Values.global.customLabels }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+        {{- end }}
+      {{- if .Values.global.customAnnotations }}
+      annotations:
+        {{- range $key, $value := .Values.global.customAnnotations }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+      {{- end }}
     spec:
-      imagePullSecrets:
-        - name: {{ $.Values.imagePullSecretName }}
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -91,7 +106,7 @@ spec:
             - name: AUTH_NS
               value: {{ .Release.Namespace }}
             - name: ENABLE_NOAUTH_S
-              value: "true"
+              value: {{ .Values.global.free_preview | quote }}
             - name: INIT_DATA
               value: "true"
             - name: WEB_RESOURCE_SUFFIX
@@ -116,7 +131,7 @@ spec:
               value: "1"
             - name: LIMIT_DELTA
               value: "1.2"
-          image: {{(index .Values.tad.images "ti-gateway").url}}
+          image: {{(index .Values.images "ti-gateway").url}}
           imagePullPolicy: Always
           name: ti-gateway
           #command: ["sh", "-c", "while true; do sleep 100; done"]
@@ -126,24 +141,24 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "500m"
-              memory: "1Gi"
+              cpu: "200m"
+              memory: "256Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
             limits:
               cpu: "500m"
               memory: "2Gi"
             requests:
-              cpu: "500m"
-              memory: "2Gi"
+              cpu: "200m"
+              memory: "256Mi"
           {{- else }}
           resources:
             limits:
               cpu: "1"
               memory: "1Gi"
             requests:
-              cpu: "1"
-              memory: "1Gi"
+              cpu: "200m"
+              memory: "256Mi"
           {{- end }}
           readinessProbe:
             httpGet:
@@ -152,7 +167,7 @@ spec:
               httpHeaders:
                 - name: X-API-KEY
                   value: 2bffd108f0a56053e665440292bc529a
-            initialDelaySeconds: 30
+            initialDelaySeconds: 20
             periodSeconds: 10
             timeoutSeconds: 1
             successThreshold: 1
@@ -164,7 +179,7 @@ spec:
               httpHeaders:
                 - name: X-API-KEY
                   value: 2bffd108f0a56053e665440292bc529a
-            initialDelaySeconds: 30
+            initialDelaySeconds: 20
             periodSeconds: 10
             timeoutSeconds: 1
             successThreshold: 1
@@ -176,13 +191,34 @@ spec:
               name: ti-gateway-config
               subPath: config-default.yaml
             - mountPath: /usr/local/apisix/utils/init-route-crd.sh
-              name: ti-gateway-init-route-crd
+              name: ti-gateway-route-crd
               subPath: init-route-crd.sh
+            - mountPath: /usr/local/apisix/utils/register_crd_tool/register_const_third_platform.py
+              name: ti-gateway-route-crd
+              subPath: register_const_third_platform.py
+            - mountPath: /usr/local/apisix/utils/register_crd_tool/upstream_route.py
+              name: ti-gateway-route-crd
+              subPath: upstream_route.py
+            - mountPath: /usr/local/apisix/utils/register_crd_tool/register_from_xls.py
+              name: ti-gateway-route-crd
+              subPath: register_from_xls.py
             - mountPath: /usr/local/apisix/utils/csv_file_third_platform/upstream_platform.csv
-              name: ti-gateway-upstream-platform
+              name: ti-gateway-route-crd
               subPath: upstream_platform.csv
+            - mountPath: /usr/local/apisix/utils/csv_file_third_platform/ti-apex.csv
+              name: ti-gateway-route-crd
+              subPath: ti-apex.csv
+            - mountPath: /usr/local/apisix/utils/csv_file_third_platform/ti-ivh.csv
+              name: ti-gateway-route-crd
+              subPath: ti-ivh.csv
+            - mountPath: /usr/local/apisix/utils/csv_file_third_platform/ti-perm-auth.csv
+              name: ti-gateway-route-crd
+              subPath: ti-perm-auth.csv
             - mountPath: /usr/local/apisix/logs/
               name: ti-gateway-log
+            - mountPath: /app/conf/infrastructure.yaml
+              name: infrastructure
+              subPath: infrastructure.yaml
         - env:
             - name: TZ
               value: Asia/Shanghai
@@ -196,7 +232,7 @@ spec:
               value: "error"
             - name: KEEP_LOG_FILE
               value: "3"
-          image: {{(index .Values.tad.images "ti-gateway-filebeat-oss").url}}
+          image: {{(index .Values.images "ti-gateway-filebeat-oss").url}}
           imagePullPolicy: Always
           name: ti-gateway-filebeat
           {{- if eq .Values.global.clusterSize "minimal" }}
@@ -205,24 +241,24 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "500m"
-              memory: "1Gi"
+              cpu: "200m"
+              memory: "256Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
             limits:
               cpu: "500m"
               memory: "2Gi"
             requests:
-              cpu: "500m"
-              memory: "2Gi"
+              cpu: "200m"
+              memory: "256Mi"
           {{- else }}
           resources:
             limits:
               cpu: "1"
               memory: "1Gi"
             requests:
-              cpu: "1"
-              memory: "1Gi"
+              cpu: "200m"
+              memory: "256Mi"
           {{- end }}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
@@ -252,13 +288,13 @@ spec:
           name: ti-gateway-config
         - configMap:
             defaultMode: 493
-            name: ti-gateway-init-route-crd
-          name: ti-gateway-init-route-crd
-        - configMap:
-            defaultMode: 420
-            name: ti-gateway-upstream-platform
-          name: ti-gateway-upstream-platform
+            name: ti-gateway-route-crd
+          name: ti-gateway-route-crd
         - emptyDir: {}
           name: ti-gateway-log
         - emptyDir: {}
           name: ti-gateway-filebeat-data
+        - configMap:
+            defaultMode: 420
+            name: infrastructure
+          name: infrastructure

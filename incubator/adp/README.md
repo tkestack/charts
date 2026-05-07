@@ -42,6 +42,7 @@
 | `clb`         | ✅ 必填 | 负载均衡 CLB 域名 | 需要给clb绑定一个自定义域名，例如：`xx-adp.xyz.com`                                                                                                                                                                                   |
 | `clbId`       | ✅ 必填 | CLB 实例 ID   | `lb-h7m35y2x`                                                                                                                                                                                                         |
 | `scheme`      | ✅ 必填 | 协议类型        | `http` 或 `https`                                                                                                                                                                                                      |
+| `clbCertId`   | 条件必填 | CLB HTTPS 证书 ID（scheme 为 https 时必填） | `abcdef123456`                                                                                                                                                                                                         |
 | `checkK8sResources`      | ✅ 必填 | 是否关闭 k8s 资源检查，使用超级节点时需要设置 false        | `true` 或 `false`                                                                                                                                                                                                      |
 
 **购买链接：** https://console.cloud.tencent.com/clb/instance
@@ -63,31 +64,6 @@
 - 支持跨可用区部署，提高可用性
 
 > **注意**：CLB 价格与实例费用、带宽费用相关，具体价格请参考腾讯云官网计费说明。
-
----
-
-### 模型服务配置 (modelServices)
-
-配置放在 `global.modelServices` 下。
-若未在安装时设置，也可后续进入平台后进行设置。
-
-| 配置项 | 必填 | 说明 |
-|--------|------|------|
-| `modelServices.adp.apiKey` | ✅ 必填 | 腾讯云知识引擎 ADP API Key |
-
-**支持的模型服务类型：**
-
-- `adp`: 腾讯云知识引擎 - 在公有云控制台中获取（https://adp.cloud.tencent.com/adp?spaceId=default_space#/key-manage?spaceId=default_space）
-
-**配置示例：**
-
-```yaml
-global:
-  modelServices:
-    # 腾讯云知识引擎 ADP（必填）
-    adp:
-      apiKey: xxxxxxxxxx
-```
 
 ---
 
@@ -190,19 +166,19 @@ base64 -w 0 public.pem > publicKey.txt
 | 配置项 | 必填 | 说明 | 示例值 |
 |--------|------|------|--------|
 | `components.redis.vendor` | ✅ 必填 | 云厂商 | `tencent` |
-| `components.redis.providerType` | ✅ 必填 | 产品类型 | `redis` |
+| `components.redis.providerType` | ✅ 必填 | 产品类型 | `crs` |
 | `components.redis.cluster` | ✅ 必填 | 集群模式 | `master` |
 | `components.redis.hosts` | ✅ 必填 | Redis 主机地址列表 | `["192.168.6.10"]` |
 | `components.redis.port` | ✅ 必填 | Redis 端口 | `6379` |
 | `components.redis.password` | ✅ 必填 | Redis 密码 | `your-password` |
 
 **providerType 可选值：**
-- tencent: `redis`
+- tencent: `crs`
 
 **购买链接：** https://cloud.tencent.com/product/crs
 
 **要求：**
-- Redis 5.0+ 版本
+- Redis 7.0+ 版本
 - 支持单机版或集群版
 
 **规格配置：**
@@ -215,7 +191,7 @@ base64 -w 0 public.pem > publicKey.txt
 
 **配置说明：**
 - 产品版本：Redis 版（推荐）
-- 兼容版本：Redis 7.0
+- 兼容版本：Redis 7.0+
 - 架构版本：标准架构（1 主 1 副本）
 - 性能规格：标准性能版
 - 部署区域：建议与 TKE 集群相同地域（如：北京五区）
@@ -292,7 +268,8 @@ base64 -w 0 public.pem > publicKey.txt
 | `components.s3.cos.expireTime` | ⚪ 选填 | 签名过期时间 | `3600s` |
 | `components.s3.cos.credentialTime` | ⚪ 选填 | 临时凭证有效期 | `3600s` |
 
-另外，components.s3.cos.secretId及components.s3.cos.secretKey对应的uin账号，除需要授予cos权限外，同时需要在 https://console.cloud.tencent.com/lkeap/settings 中设置文档解析能力为后付费  
+另外，components.s3.cos.secretId及components.s3.cos.secretKey对应的uin账号，
+需要授予cos权限、知识引擎原子能力权限（**QcloudLKEAPFullAccess**），另外，同时需要在 https://console.cloud.tencent.com/lkeap/settings 中设置文档解析、文档拆分能力为后付费  
 <img src="https://adp-testing-1406902593.cos.ap-beijing.myqcloud.com/prod_files/%E6%96%87%E6%A1%A3%E8%A7%A3%E6%9E%90%E5%90%8E%E4%BB%98%E8%B4%B9.png" width="400">
 
 
@@ -383,6 +360,59 @@ components:
     hosts:
       - 10.0.0.5
     port: 9092
+```
+
+---
+
+### ClickHouse 配置
+
+| 配置项 | 必填 | 说明 | 示例值 |
+|--------|------|------|--------|
+| `components.clickhouse.vendor` | ✅ 必填 | 云厂商 | `tencent` |
+| `components.clickhouse.providerType` | ✅ 必填 | 产品类型 | `clickhouse` |
+| `components.clickhouse.hosts` | ✅ 必填 | ClickHouse 主机地址列表 | `["192.168.0.1"]` |
+| `components.clickhouse.port` | ✅ 必填 | ClickHouse 端口 | `9000` |
+| `components.clickhouse.user` | ✅ 必填 | ClickHouse 用户名 | `default` |
+| `components.clickhouse.password` | ✅ 必填 | ClickHouse 密码 | `your-password` |
+
+**providerType 可选值：**
+- tencent: `clickhouse`
+
+**购买链接：** https://cloud.tencent.com/product/clickhouse
+
+**要求：**
+- ClickHouse 21.x 或 22.x 版本
+- 建议至少 3 节点集群
+
+**规格配置：**
+
+| 配置类型 | 节点数 | CPU/节点 | 内存/节点 | 存储/节点 | 适用场景 | 月费用（元/月） |
+|----------|--------|----------|-----------|-----------|----------|----------------|
+| 通用 | 2 | 4核 | 16GB | 200GB | 统计分析 | 4500 |
+
+**配置说明：**
+- 产品版本：ClickHouse 标准版（推荐）
+- 兼容版本：22.x（支持多个版本可选）
+- 节点类型：标准型
+- 存储类型：云硬盘
+- 部署方式：单可用区部署（2 节点）
+- 部署区域：建议与 TKE 集群相同地域
+- 支持磁盘自动扩容
+
+> **价格说明**：以上价格基于 1 个月购买周期预估，实际价格可能因地域、优惠活动等因素有所差异。长期使用建议购买更长周期以获取折扣。
+
+**配置示例：**
+
+```yaml
+components:
+  clickhouse:
+    vendor: tencent
+    providerType: clickhouse
+    hosts:
+      - 192.168.0.1
+    port: 9000
+    user: default
+    password: your-password
 ```
 
 ---
@@ -526,8 +556,7 @@ global:
 - [ ] `global.clb` - CLB 域名
 - [ ] `global.clbId` - CLB 实例 ID
 - [ ] `global.scheme` - 协议类型
-- [ ] `global.modelServices.adp.apiKey` - ADP API Key
-- [ ] `global.modelServices.hunyuan.apiKey` - 混元 API Key
+- [ ] `global.clbCertId` - CLB HTTPS 证书 ID（scheme 为 https 时必填）
 - [ ] `global.rsa.privateKey` - RSA 私钥
 - [ ] `global.rsa.publicKey` - RSA 公钥
 - [ ] `global.components.db.*` - 数据库配置
@@ -535,6 +564,7 @@ global:
 - [ ] `global.components.es.*` - Elasticsearch 配置
 - [ ] `global.components.s3.*` - 对象存储配置
 - [ ] `global.components.kafka.*` - Kafka 消息队列配置
+- [ ] `global.components.clickhouse.*` - ClickHouse 配置
 - [ ] `global.components.vdb` - 向量数据库配置
 
 ### 云产品购买清单
@@ -547,118 +577,54 @@ global:
 | Redis | 缓存服务 | https://cloud.tencent.com/product/crs |
 | COS 对象存储 | 文件存储 | https://cloud.tencent.com/product/cos |
 | CKafka 消息队列 | 审计日志消息队列 | https://console.cloud.tencent.com/ckafka/instance |
-| VDB 向量数据库 | 向量检索 | https://cloud.tencent.com/product/vdb |
+| ClickHouse | 数据分析 | https://console.cloud.tencent.com/tchousec/instance |
 | CLS 日志服务 | 日志收集（可选） | https://console.cloud.tencent.com/cls/topic |
 | Prometheus | 监控（可选） | https://console.cloud.tencent.com/tke2/prometheus2 |
 | APM 应用性能监控 | 链路追踪（可选） | https://console.cloud.tencent.com/monitor/apm/system/list |
-| 混元大模型 | AI 能力 | https://console.cloud.tencent.com/hunyuan/start |
 | ADP 平台 | 知识引擎 | https://console.cloud.tencent.com/lkeap |
 
 ## 服务器推荐配置
 
 为满足高可用需求，部署腾讯云 ADP 需要准备 Kubernetes 集群，以下提供了三种场景的服务器推荐配置供参考：
 
-### 最小配置
-
-**适用场景：** 开发测试、PoC 验证
-
-**服务器规格：**
-- **数量：** 2 台
-- **配置：** 16核 CPU + 32GB 内存
-- **用途：** 创建 K8s 集群或在已有集群中预留此规模资源
-
-**预估费用：** ¥2,000 元/月（2 台 × 1,000 元/月，此处为预估价格，实际价格以腾讯云账单为准）
-
-**配置说明：**
-- 建议使用腾讯云标准型实例（如 S5 系列）
-- 系统盘：100GB 高性能云硬盘
-- 数据盘：根据实际需求配置（建议 500GB+）
-- 网络：VPC 私有网络，建议配置 5Mbps+ 公网带宽
-- 操作系统：Ubuntu 20.04 LTS 或 CentOS 7.9
-
-### 标准配置
-
-**适用场景：** 小规模生产环境、中小型业务
-
-**服务器规格：**
-- **数量：** 5 台
-- **配置：** 16核 CPU + 32GB 内存
-- **用途：** 创建 K8s 集群或在已有集群中预留此规模资源
-
-**预估费用：** ¥5,000 元/月（5 台 × 1,000 元/月，此处为预估价格，实际价格以腾讯云账单为准）
-
-**配置说明：**
-- 建议使用腾讯云标准型实例（如 S5 系列）
-- 系统盘：100GB 高性能云硬盘
-- 数据盘：根据实际需求配置（建议 500GB+）
-- 网络：VPC 私有网络，建议配置 5Mbps+ 公网带宽
-- 操作系统：Ubuntu 20.04 LTS 或 CentOS 7.9
-
-### 推荐配置
-
-**适用场景：** 生产环境、中大规模部署
-
-**服务器规格：**
-- **数量：** 8 台
-- **配置：** 16核 CPU + 32GB 内存
-- **用途：** 创建 K8s 集群或在已有集群中预留此规模资源
-
-**预估费用：** ¥8,000 元/月（8 台 × 1,000 元/月，此处为预估价格，实际价格以腾讯云账单为准）
-
-**配置说明：**
-- 建议使用腾讯云标准型实例（如 S5 系列）
-- 系统盘：100GB 高性能云硬盘
-- 数据盘：根据实际需求配置（建议 1TB+）
-- 网络：VPC 私有网络，建议配置 10Mbps+ 公网带宽
-- 操作系统：Ubuntu 20.04 LTS 或 CentOS 7.9
-
-> **价格说明：** 以上价格为预估价格，实际费用以实际发生价格为准。价格可能因地域、购买时长、优惠活动等因素有所差异。
-
-**购买链接：** https://console.cloud.tencent.com/cvm/instance
-
-## 总费用预估
-
 ### 最小配置总费用
 
 | 组件 | 月费用（元） |
 |------|-------------|
-| 服务器（2台 16c32G） | 2,000 |
+| 服务器（3台 16c32G） | 3,000 |
 | CLB 负载均衡 | 按实际使用 |
 | TDSQL 数据库（最小配置） | 330 |
 | Redis（最小配置） | 35 |
 | Elasticsearch（最小配置） | 650 |
 | COS 对象存储 | 按实际使用 |
 | Kafka 消息队列（最小配置） | 600 |
-| VDB 向量数据库（最小配置） | 450 |
-| **合计（不含按量计费）** | **约 4,065 元/月** |
+| ClickHouse （通用配置） | 4500 |
 
 ### 标准配置总费用
 
 | 组件 | 月费用（元）          |
 |------|-----------------|
-| 服务器（5台 16c32G） | 5,000           |
+| 服务器（6台 16c32G） | 6,000           |
 | CLB 负载均衡 | 按实际使用           |
 | TDSQL 数据库（标准配置） | 700             |
 | Redis（标准配置） | 70              |
 | Elasticsearch（标准配置） | 1,950           |
 | COS 对象存储 | 按实际使用           |
 | Kafka 消息队列（标准配置） | 1,200           |
-| VDB 向量数据库（标准配置） | 900             |
-| **合计（不含按量计费）** | **约 9,820 元/月** |
+| ClickHouse （通用配置） | 4500 |
 
 ### 推荐配置总费用
 
 | 组件 | 月费用（元） |
 |------|-------------|
-| 服务器（8台 16c32G） | 8,000 |
+| 服务器（10台 16c32G） | 10,000 |
 | CLB 负载均衡 | 按实际使用 |
 | TDSQL 数据库（推荐配置） | 3,000 |
 | Redis（推荐配置） | 140 |
 | Elasticsearch（推荐配置） | 3,300 |
 | COS 对象存储 | 按实际使用 |
 | Kafka 消息队列（推荐配置） | 2,400 |
-| VDB 向量数据库（推荐配置） | 1,800 |
-| **合计（不含按量计费）** | **约 18,640 元/月** |
+| ClickHouse （通用配置） | 4500 |
 
 > **重要说明：**
 > 1. 以上所有价格均为预估价格，实际费用以腾讯云账单价格为准

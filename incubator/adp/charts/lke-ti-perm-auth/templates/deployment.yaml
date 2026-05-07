@@ -1,13 +1,13 @@
-{{- $helmfileEnvName := .Values.global.helmfileEnvName | default "tke" }}
-{{- $re_nu   := 1}}
-{{- if or (eq $helmfileEnvName "tcs") (eq $helmfileEnvName "tke") }}
-  {{- $re_nu = 2 }}
-{{- end}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
     configmap.reloader.stakater.com/reload: "{{.Values.serviceName}}-cm"
+    {{- if .Values.global.customAnnotations }}
+    {{- range $key, $value := .Values.global.customAnnotations }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
   name: {{.Values.serviceName}}
   namespace: {{ .Release.Namespace }}
   labels:
@@ -15,6 +15,11 @@ metadata:
     k8s-app: {{.Values.serviceName}}
     app.cpaas.io/name: {{.Values.serviceName}}.{{ .Release.Namespace }}
     project.cpaas.io/name: {{ .Release.Namespace }}
+    {{- if .Values.global.customLabels }}
+    {{- range $key, $value := .Values.global.customLabels }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
   selfLink: /apis/apps/v1/namespaces/{{ .Release.Namespace }}/deployments/{{.Values.serviceName}}
 spec:
   progressDeadlineSeconds: 600
@@ -44,6 +49,17 @@ spec:
         k8s-app: {{.Values.serviceName}}
         app.cpaas.io/name: {{.Values.serviceName}}.{{ .Release.Namespace }}
         project.cpaas.io/name: {{ .Release.Namespace }}
+        {{- if .Values.global.customLabels }}
+        {{- range $key, $value := .Values.global.customLabels }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+        {{- end }}
+      {{- if .Values.global.customAnnotations }}
+      annotations:
+        {{- range $key, $value := .Values.global.customAnnotations }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+      {{- end }}
     spec:
       priorityClassName: system-cluster-critical
       dnsConfig:
@@ -118,7 +134,7 @@ spec:
               secretKeyRef:
                 key: RSA_PRIVATE_KEY
                 name: ti-auth-secret
-          image: {{(index .Values.tad.images "ti-perm-auth").url}}
+          image: {{(index .Values.images "ti-perm-auth").url}}
           #command: ["sh", "-c", "while true; do sleep 100; done"]
           imagePullPolicy: IfNotPresent
           name: tiauth
@@ -128,30 +144,30 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "500m"
-              memory: "1Gi"
+              cpu: "200m"
+              memory: "256Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
             limits:
               cpu: "1"
               memory: "1Gi"
             requests:
-              cpu: "1"
-              memory: "1Gi"
+              cpu: "200m"
+              memory: "256Mi"
           {{- else }}
           resources:
             limits:
               cpu: "1"
               memory: "2Gi"
             requests:
-              cpu: "1"
-              memory: "2Gi"
+              cpu: "200m"
+              memory: "256Mi"
           {{- end }}
           readinessProbe:
             httpGet:
               path: /health
               port: 8081
-            initialDelaySeconds: 30
+            initialDelaySeconds: 10
             periodSeconds: 5
             timeoutSeconds: 1
             successThreshold: 1
@@ -167,24 +183,29 @@ spec:
           - mountPath: /app/conf/trpc_go.yaml
             name: {{.Values.serviceName}}-cm
             subPath: trpc_go.yaml
+          - mountPath: /app/conf/infrastructure.yaml
+            name: infrastructure
+            subPath: infrastructure.yaml
       dnsPolicy: ClusterFirst
-      imagePullSecrets:
-        - name: {{ $.Values.imagePullSecretName }}
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
       volumes:
-      {{- include "dependencyChecker.volumes" . | nindent 6 }}
-      - name: {{.Values.serviceName}}-cm
-        configMap:
-          name: {{.Values.serviceName}}-cm
-          items:
-            - key: key-trpc_go.yaml
-              path: trpc_go.yaml
-            - key: config.yaml
-              path: config.yaml
-      - hostPath:
-          path: /data/ti-platform/log/{{.Values.serviceName}}
-          type: ""
-        name: new-volume
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - configMap:
+            defaultMode: 420
+            name: infrastructure
+          name: infrastructure
+        - name: {{.Values.serviceName}}-cm
+          configMap:
+            name: {{.Values.serviceName}}-cm
+            items:
+              - key: trpc_go.yaml
+                path: trpc_go.yaml
+              - key: config.yaml
+                path: config.yaml
+        - hostPath:
+            path: /data/ti-platform/log/{{.Values.serviceName}}
+            type: ""
+          name: new-volume

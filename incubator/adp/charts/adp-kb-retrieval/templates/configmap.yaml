@@ -1,0 +1,866 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-kb-retrieval
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    zeus_prefix: ${VDB_PREFIX}
+    task_prefix: retrieval:task
+    lock_prefix: retrieval:lock
+    max_overlays: 2
+    min_overlays: 2
+    es_batch_size: 100
+    insert_nodes_chunk: 100
+    get_nodes_chunk: 200
+    get_ids_chunk_size: 50000
+    delete_chunk_size: 100
+    # embedding调用的并发数
+    embedding_batch_size: ${EMBEDDING_BATCH_SIZE}
+    # 图片embedding调用的并发数
+    image_embedding_batch_size: ${IMAGE_EMBEDDING_BATCH_SIZE}
+    # 批量添加向量的数量
+    batch_add_vector_size: 100
+    # 批量删除向量的数量
+    batch_delete_vector_size: 1000
+    enable_image_cos_url: true
+    enable_replace_invalid_labels: false
+    search_preview_concurrency_limit: 5
+    search_release_concurrency_limit: 5
+    error_rewrite:
+      mode: whitelist
+      codes: [1-999,10000-11000]
+      msg: "系统繁忙，请稍后重试"
+      overwrite:
+        # 1: "系统繁忙，请稍后重试"
+    # 每批次任务拉取个数
+    task_fetch_num: 20
+    task_fetch_timeout: 2s
+    task_fetch_period: 3s
+    tasks:
+      publish:
+        runners: 3 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 30 # 最大重试次数
+        timeout: 30m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 5
+        batch_size: 100
+        stopped_resume_time: 720h
+      publish_done_notify:
+        runners: 3 # 处理协程数, 无法动态调整
+        retry_wait_time: 30s # 重试等待时间
+        max_retry: 30 # 最大重试次数
+        timeout: 10s # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 3s # 启动延迟
+        batch: 1
+        batch_size: 0
+        stopped_resume_time: 720h
+      combine_overlay:
+        runners: 3 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 3 # 最大重试次数
+        timeout: 10m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 3s # 启动延迟
+        batch: 1
+        batch_size: 0
+        stopped_resume_time: 720h
+      delete_detached_overlay:
+        runners: 3 # 处理协程数, 无法动态调整
+        retry_wait_time: 30s # 重试等待时间
+        max_retry: 120 # 最大重试次数
+        timeout: 10m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 3s # 启动延迟
+        batch: 1
+        batch_size: 0
+        stopped_resume_time: 720h
+      rebuild_index:
+        runners: 1 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 10 # 最大重试次数
+        timeout: 10m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 1
+        batch_size: 0
+        stopped_resume_time: 720h
+      prod_embedding_upgrade:
+        runners: 2 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 30 # 最大重试次数
+        timeout: 240m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 5
+        batch_size: 100
+        stopped_resume_time: 720h
+      prod_embedding_upgrade_v2:
+        runners: 2 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 30 # 最大重试次数
+        timeout: 60m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 5
+        batch_size: 100
+        stopped_resume_time: 720h
+      publish_incremental:
+        runners: 3 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 30 # 最大重试次数
+        timeout: 10h # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 10
+        batch_size: 0
+        stopped_resume_time: 720h
+      add_label:
+        runners: 1 # 处理协程数，无法动态调整
+        retry_wait_time: 1m #重试等待时间
+        max_retry: 10 #最大重试次数
+        timeout: 24h #超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s #启动延迟
+        batch:  1
+        batch_size: 0
+        stopped_resume_time: 720h
+      delete_app_data:
+        runners: 1 # 处理协程数，无法动态调整
+        retry_wait_time: 10m #重试等待时间
+        max_retry: 5 #最大重试次数
+        timeout: 4h #超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s #启动延迟
+        batch:  1
+        batch_size: 0
+        stopped_resume_time: 720h
+      zeus2vdb:
+        runners: 2 # 处理协程数, 无法动态调整
+        retry_wait_time: 1m # 重试等待时间
+        max_retry: 3 # 最大重试次数
+        timeout: 30m # 超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s # 启动延迟
+        batch: 1
+        batch_size: 100
+        stopped_resume_time: 720h
+      update_qa_id:
+        runners: 1 # 处理协程数，无法动态调整
+        retry_wait_time: 2m #重试等待时间
+        max_retry: 1 #最大重试次数
+        timeout: 12h #超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s #启动延迟
+        batch:  1
+        batch_size: 10
+        stopped_resume_time: 720h
+    embedding:
+      default_image_model: sn-multimodal-embedding-V0.2-visual
+      default_text_search_image: sn-multimodal-embedding-V0.2-text
+      offline_model_mapping:
+        sn-llm-embedding-2b-v0.2.2: Youtu/youtu-offline-embedding-llm
+        sn-large-multi-language-v0.2.5: Youtu/youtu-offline-embedding
+        sn-multimodal-embedding-V0.2-visual: Youtu/youtu-offline-clip-image-0.5b
+        Youtu/youtu-embedding-llm: Youtu/youtu-offline-embedding-llm
+        Youtu/youtu-embedding: Youtu/youtu-offline-embedding
+        Youtu/youtu-clip-image-0.5b: Youtu/youtu-offline-clip-image-0.5b
+      self_model_old_new_mapping:
+        Youtu/youtu-embedding: sn-large-multi-language-v0.2.5
+        Youtu/youtu-embedding-llm: sn-llm-embedding-2b-v0.2.2
+      versions: ${EMBEDDING_VERSION_CONFIG}
+
+    # ES配置( 不使用 trpc-go/goes 的插件)
+    elastic_search_config:
+      index_big_data: doc_big_data_preview
+      index_big_data_prod: doc_big_data_prod
+      name: trpc.elasticsearch.lke.vector_doc
+      url: http://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}
+      user: ${INFRA_MIDDLEWARES_ES_0_USER}
+      password: ${INFRA_MIDDLEWARES_ES_0_PASSWORD}
+      timeout: 20000
+      log:
+        enabled: true
+        request_enabled: true
+        request_body: true
+      index_knowledge_preview: "knowledge_segment_preview"
+      index_knowledge_prod: "knowledge_segment_prod"
+      es_version: 7
+      enable_big_data_hard_delete: true
+      custom_es_salt: ${PASSWORD_SALT}
+
+    es_index_name_config:
+      knowledge:
+        - sub_type: ""
+          preview: ${KNOWLEDGE_SEGMENT_PREVIEW}
+          prod: ${KNOWLEDGE_SEGMENT_PROD}
+      big_data:
+        - sub_type: ""
+          preview: ${BIG_DATA_PREVIEW}
+          prod: ${BIG_DATA_PROD}
+      realtime_knowledge:
+        - sub_type: ""
+          preview: ${REALTIME_KNOWLEDGE_PREVIEW}
+      realtime_big_data:
+        - sub_type: ""
+          preview: ${REALTIME_BIG_DATA_PREVIEW}
+      text2sql_es1:
+        - sub_type: ""
+          preview: ${TEXT2SQL_META_PREVIEW}
+          prod: ${TEXT2SQL_META_PROD}
+      text2sql_es2:
+        - sub_type: "1_20"
+          preview: ${TEXT2SQL_CONTENT_1_20_PREVIEW}
+          prod: ${TEXT2SQL_CONTENT_1_20_PROD}
+        - sub_type: "21_50"
+          preview: ${TEXT2SQL_CONTENT_21_50_PREVIEW}
+          prod: ${TEXT2SQL_CONTENT_21_50_PROD}
+        - sub_type: "51_100"
+          preview: ${TEXT2SQL_CONTENT_51_100_PREVIEW}
+          prod: ${TEXT2SQL_CONTENT_51_100_PROD}
+        - sub_type: "101_900"
+          preview: ${TEXT2SQL_CONTENT_101_900_PREVIEW}
+          prod: ${TEXT2SQL_CONTENT_101_900_PROD}
+
+
+    text2sql_es2_sub_type:
+      - min: 1
+        max: 20
+        sub_type: "1_20"
+      - min: 21
+        max: 50
+        sub_type: "21_50"
+      - min: 51
+        max: 100
+        sub_type: "51_100"
+      - min: 101
+        max: 900
+        sub_type: "101_900"
+
+    retrieval_config:
+      doc_vec_recall_num: 20
+      qa_vec_recall_num: 20
+      es_recall_num: 20
+      es_rerank_min_num: 7
+      rerank_threshold: -6.0
+      rrf_vec_weight: 2
+      rrf_es_weight: 2
+      rrf_rerank_weight: 3
+      rrf_reciprocal_const: 1
+      sub_question_num: 3
+      retrieve_image_timeout: 10s
+      retrieve_vector_timeout: 10s
+      retrieve_es_timeout: 10s
+      retrieve_text2sql_timeout: 14500ms
+      blocked_label_values:
+        - '"'
+
+    graph_rag_config:
+      triple_recall_top_n: 30
+      triple_recall_confidence: 0.2
+      expand_max_triples: 30
+      rerank_top_n: 30
+      rrf_graph_weight: 2
+      result_prompt_version: v1
+    easy_graph_config:
+      name: ${EASYGRAPH_NAME}
+      url: ${EASYGRAPH_URL}
+      user: ${EASYGRAPH_USER}
+      password: ${EASYGRAPH_PASSWORD}
+      connection_timeout: 10
+      maximum_concurrent_connections: 100
+
+    attribute_label:
+      general_vector_attr_key: general_vector
+      full_label_value: default
+      not_exist_label_value: not_exist
+
+    param_limit_config:
+      page_content_len_limit: 3000
+      add_knowledge_batch_size: 100
+      delete_knowledge_batch_size: 100
+      query_len_limit: 4000
+      es_input_trunk_size: 1000
+
+    text_2_sql_config:
+      enabled: true
+      exec_timeout_s: 5
+      es_1_recall_num: 5
+      es_2_recall_num: 100
+      use_default_length: false
+      default_length: 3200
+      max_length: 20000
+      input_max_len_cap: 30000
+      text_2_sql_llm_biz: cs
+      dsl_tool: cadence
+      multi_example: false
+      db_source_salt: ${PASSWORD_SALT}
+      db_source_sql_formatted: false
+      excel_query_db_first: true
+      text_2_sql_model_config:
+        default_model_params: |-
+          {"top_p": 1, "temperature": 0, "presence_penalty": 1}
+      prompt_cell_max_length: 20
+      replace_numeric: false
+      date_time_format_configs:
+        - date_time_format: "2006-1-2"
+          trans_format: "2006-01-02"
+          date_time_type: "day"
+        - date_time_format: "2006-1"
+          trans_format: "2006-01"
+          date_time_type: "month"
+        - date_time_format: "2006"
+          trans_format: "2006"
+          date_time_type: "year"
+        - date_time_format: "2006-1-2 15:04:05"
+          trans_format: "2006-01-02T15:04:05"
+          date_time_type: "second"
+        - date_time_format: "2006-1-2 15:04"
+          trans_format: "2006-01-02T15:04"
+          date_time_type: "minute"
+        - date_time_format: "2006-1-2 15"
+          trans_format: "2006-01-02T15"
+          date_time_type: "hour"
+      field_name_len_limit: 63
+      sql_db_config:
+        enable_split_db: true
+        split_db_num: 5
+        db_name_preview: ${DB_NAME_PREVIEW}
+        db_name_prod: ${DB_NAME_PROD}
+      vector_recall_enable: ${TEXT2SQL_VECTOR_RECALL_ENABLE}
+      vector_recall_top_n: 50
+      vector_retain_table_count: 5
+      vector_retain_seg_cont: 2
+      vector_recall_confidence: 0.3
+      es_weight: 3
+      vector_weight: 2
+      rrf_const: 2
+      rrf_top_n: 5
+
+    publish_param_config:
+      batch_add_nodes_size: 100
+      embedding_batch_size: {{ .Values.vector_doc.publish.embedding_batch_size }}
+      image_embedding_batch_size: {{ .Values.vector_doc.publish.image_embedding_batch_size }}
+      batch_add_vector_size: {{ .Values.vector_doc.publish.batch_add_vector_size }}
+      kv_node_batch_size: 100
+      notify_batch_size: 10
+      retry_times: 2
+      delete_batch_size: 100
+
+    zeus_to_vdb_config:
+      batch_add_nodes_size: 100
+      embedding_batch_size: 20
+      image_embedding_batch_size: 20
+      batch_add_vector_size: 100
+      retry_times: 2
+
+    filter:
+      - doc_type: 6
+        confidence: 0.85
+        top_n: 1
+        is_enable: false
+      - doc_type: 7
+        confidence: 0.7
+        top_n: 1
+        is_enable: false
+
+    clear_app_data_config:
+      db_batch_del_size: 1000
+      es_per_second_del_size: 5000
+      mysql_db_table_name:
+        - t_text2sql_meta_mapping_prod
+        - t_text2sql_meta_mapping_preview
+        - t_version_overlay
+      tdsql_db_table_name:
+        - t_knowledge_vector
+        - t_retrieval_node_info
+        - t_image_vector
+
+    cron_clean_data_config:
+      enable_cron_clean: true # 是否开启定时删除
+      debug_time_minutes_not_use: 0
+      expired_time_day: {{ .Values.global.delete_data.retrieval_server_retention_days }}  # 多长时间之前的数据认为是可以过期删除的
+      delete_batch_size: 100 # 每次执行sql批量删除的数量
+      times_in_one_round: 50 # 每一轮执行执行多少次删除
+      delete_interval_ms: 10 # 每次执行删除延时的毫秒
+      exec_sql_warning_ms: 4000 # 执行删除语句的时候超过这个值会打ERROR日志，用于告警
+
+    data_migration_config:
+      tdsql_tables:
+        - table_name: t_doc_segment
+          effect_time: "2026-02-05 21:55:00"
+        - table_name: t_doc_segment_image
+          effect_time: "2026-02-05 21:55:00"
+      migrate_tdsql_tables:
+        - t_image_vector
+
+
+    enable_get_last_qa_version: true
+    disable_use_vdb: false
+
+    query_log:
+      num: 200 # 满200条保存一次
+      time: 1s # 每隔1秒保存一次
+      timeout: 3s # 超时时间
+      write_all_to_log: false
+      includes:
+        "/qbot.qbot.vector_doc.VectorDoc/Search": true
+        "/qbot.qbot.vector_doc.VectorDoc/MatchRefer": true
+        "/qbot.qbot.vector_doc.DirectIndex/SearchVector": true
+        "/qbot.qbot.vector_doc.DirectIndex/AddVector": true
+        "/trpc.smartassistant.vectordbmanager.VectorObj/Embedding": false
+    disable_image_embedding: true # 禁用多模态embedding，包括文搜图、图片入库和图搜图
+
+    # 平台 ES 实例配置
+    platform_es_instances:
+      es-0:
+        url: http://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}
+        user: ${INFRA_MIDDLEWARES_ES_0_USER}
+        password: ${INFRA_MIDDLEWARES_ES_0_PASSWORD}
+        es_version: 8                   # 可选，当前只支持 8
+        timeout: 10000                  # 可选，超时时间
+        log:
+          enabled: true                # 可选，是否开启 ES 客户端日志
+          request_enabled: true        # 可选，是否打印请求日志
+          request_body: true           # 可选，是否打印请求体
+
+  error_en-US.json: |
+    {
+        "ErrCreateGroup": "create group failed",
+        "ErrAddVectors": "add vectors failed",
+        "ErrEmbeddingNotExists": "embedding not exists",
+        "ErrVersionNotExists": "version not exists",
+        "ErrEmptyOverlay": "empty overlay",
+        "ErrNoOverlayAccessor": "no accessor for overlay",
+        "ErrOverlayNotExists": "overlay not exists",
+        "ErrUpdateVectors": "update vectors failed",
+        "ErrDeleteVectors": "delete vectors failed",
+        "ErrGetVector": "get vectors failed",
+        "ErrLockFail": "lock fail",
+        "ErrUnlockFail": "unlock fail",
+        "ErrNoVersionOverlayAccessor": "no accessor for version overlay",
+        "ErrUnknownDocType": "unknown doc type",
+        "ErrGetEmbeddingEmpty": "get embedding empty",
+        "ErrGetEmbedding": "get embedding fail",
+        "ErrGetRerank": "get rerank fail",
+        "ErrNotEnabledWebContent": "not enabled web content",
+        "ErrInvalidURL": "invalid URL",
+        "ErrFetchFail": "fetch fail",
+        "ErrFetchTooBig": "fetch too big",
+        "ErrSearchVector": "search vector fail",
+        "ErrVectorQueryTask": "vector query task fail",
+        "ErrDeleteGroup": "delete group fail",
+        "ErrVectorCreateTask": "vector create task fail",
+        "ErrVectorFinishTask": "vector finish task fail",
+        "ErrUnknownVectorLabelExprOp": "unknown vector label expr op",
+        "ErrVectorLabelExprParamNum": "vector label expr param num error",
+        "ErrUnknownVectorLabelExprType": "unknown vector label expr type",
+        "ErrSogouEmptyAttribute": "empty attribute",
+        "ErrSogouEmptyGuJia": "empty guJia group",
+        "ErrInternalError": "Internal error. Please try again later.",
+        "ErrParam": "error parament",
+        "ErrUpdateLabelEsFail": "Failed to update es labels",
+        "ErrSQLGenerateFailedNoDataInDB": "No data in table. Insert data, refresh table, and retry.",
+        "ErrSQLGenerateFailed": "SQL generation failed. Modify your query and retry."
+    }
+  error_zh-CN.json: |
+    {
+        "ErrCreateGroup": "create group failed",
+        "ErrAddVectors": "add vectors failed",
+        "ErrEmbeddingNotExists": "embedding not exists",
+        "ErrVersionNotExists": "version not exists",
+        "ErrEmptyOverlay": "empty overlay",
+        "ErrNoOverlayAccessor": "no accessor for overlay",
+        "ErrOverlayNotExists": "overlay not exists",
+        "ErrUpdateVectors": "update vectors failed",
+        "ErrDeleteVectors": "delete vectors failed",
+        "ErrGetVector": "get vectors failed",
+        "ErrLockFail": "lock fail",
+        "ErrUnlockFail": "unlock fail",
+        "ErrNoVersionOverlayAccessor": "no accessor for version overlay",
+        "ErrUnknownDocType": "unknown doc type",
+        "ErrGetEmbeddingEmpty": "get embedding empty",
+        "ErrGetEmbedding": "get embedding fail",
+        "ErrGetRerank": "get rerank fail",
+        "ErrNotEnabledWebContent": "not enabled web content",
+        "ErrInvalidURL": "invalid URL",
+        "ErrFetchFail": "fetch fail",
+        "ErrFetchTooBig": "fetch too big",
+        "ErrSearchVector": "search vector fail",
+        "ErrVectorQueryTask": "vector query task fail",
+        "ErrDeleteGroup": "delete group fail",
+        "ErrVectorCreateTask": "vector create task fail",
+        "ErrVectorFinishTask": "vector finish task fail",
+        "ErrUnknownVectorLabelExprOp": "unknown vector label expr op",
+        "ErrVectorLabelExprParamNum": "vector label expr param num error",
+        "ErrUnknownVectorLabelExprType": "unknown vector label expr type",
+        "ErrSogouEmptyAttribute": "empty attribute",
+        "ErrSogouEmptyGuJia": "empty guJia group",
+        "ErrInternalError": "内部错误。请稍后重试",
+        "ErrParam": "参数错误！",
+        "ErrUpdateLabelEsFail": "Failed to update es labels",
+        "ErrSQLGenerateFailedNoDataInDB": "No SQL, 数据表中无数据，请写入数据后停用、启用数据表，然后发布后重试",
+        "ErrSQLGenerateFailed": "No SQL, SQL 生成失败，请修改提问后重试"
+    }
+
+  placeholder.yaml: |
+    VDB_MANAGER_TARGET: ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001
+    PLUGIN_LLM_MANAGER_SERVER_TARGET: ip://adp-llm.{{ .Release.Namespace }}.svc.cluster.local:8000
+
+    # ---------- application.yaml start -----------
+    VDB_PREFIX: __qd:qbot
+    EMBEDDING_BATCH_SIZE: 20
+    IMAGE_EMBEDDING_BATCH_SIZE: 10
+
+    # 禁用多模态embedding，包括文搜图、图片入库和图搜图，私有化设置为true disable_image_embedding
+    DISABLE_IMAGE_EMBEDDING: false
+
+    EMBEDDING_VERSION_CONFIG:
+        7:
+          doc:
+            model_name: sn-large-multi-language-v0.2.5
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+            prefix: "问题:"
+          qa:
+            model_name: sn-large-multi-language-v0.2.5
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+            prefix: "问题:"
+            content_prefix: "问题:"
+          reject_qa:
+            model_name: sn-large-multi-language-v0.2.5
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+            prefix: "问题:"
+            content_prefix: "问题:"
+          image:
+            model_name: sn-multimodal-embedding-V0.2-visual
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+          text_search_image:
+            model_name: sn-multimodal-embedding-V0.2-text
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+        8:
+          doc:
+            model_name: sn-llm-embedding-2b-v0.2.2
+            max_len: 10000
+            dimension: 2304
+            max_retry: 1
+            q_instruction: "<s><|user|>\nRepresent the query:\n<|embed|>\n"
+            d_instruction: "<s><|user|>\nRepresent the passage:\n<|embed|>\n"
+          qa:
+            model_name: sn-llm-embedding-2b-v0.2.2
+            max_len: 10000
+            dimension: 2304
+            max_retry: 1
+            q_instruction: "<s><|user|>\nRepresent the query:\n<|embed|>\n"
+            d_instruction: "<s><|user|>\nRepresent the passage:\n<|embed|>\n"
+          reject_qa:
+            model_name: sn-llm-embedding-2b-v0.2.2
+            max_len: 10000
+            dimension: 2304
+            max_retry: 1
+            q_instruction: "<s><|user|>\nRepresent the query:\n<|embed|>\n"
+            d_instruction: "<s><|user|>\nRepresent the passage:\n<|embed|>\n"
+          image:
+            model_name: sn-multimodal-embedding-V0.2-visual
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+            retry_wait_ms: 300
+          text_search_image:
+            model_name: sn-multimodal-embedding-V0.2-text
+            max_len: 10000
+            dimension: 1024
+            max_retry: 1
+    #没有引用，清理敏感内容
+    ELASTIC_SEARCH_URL: 
+    ELASTIC_SEARCH_USER: 
+    ELASTIC_SEARCH_PASSWORD: 
+
+    PASSWORD_SALT: 8NbMXhMPVAdZBYIwwl10tZ7BwxyMKdVTAieH4iNR8jE=    #safe
+
+    KNOWLEDGE_SEGMENT_PREVIEW: knowledge_segment_preview
+    KNOWLEDGE_SEGMENT_PROD: knowledge_segment_prod
+    BIG_DATA_PREVIEW: doc_big_data_preview
+    BIG_DATA_PROD: doc_big_data_prod
+    REALTIME_KNOWLEDGE_PREVIEW: realtime_knowledge_segment
+    REALTIME_BIG_DATA_PREVIEW: realtime_big_data
+    TEXT2SQL_META_PREVIEW: text2sql_meta_preview
+    TEXT2SQL_META_PROD: text2sql_meta_prod
+    TEXT2SQL_CONTENT_1_20_PREVIEW: text2sql_content_1_20_preview
+    TEXT2SQL_CONTENT_1_20_PROD: text2sql_content_1_20_prod
+    TEXT2SQL_CONTENT_21_50_PREVIEW: text2sql_content_21_50_preview
+    TEXT2SQL_CONTENT_21_50_PROD: text2sql_content_21_50_prod
+    TEXT2SQL_CONTENT_51_100_PREVIEW: text2sql_content_51_100_preview
+    TEXT2SQL_CONTENT_51_100_PROD: text2sql_content_51_100_prod
+    TEXT2SQL_CONTENT_101_900_PREVIEW: text2sql_content_101_900_preview
+    TEXT2SQL_CONTENT_101_900_PROD: text2sql_content_101_900_prod
+
+    # easygraph配置项
+    EASYGRAPH_NAME: formal
+    EASYGRAPH_URL: "ws://30.44.134.72:8182/gremlin"
+    EASYGRAPH_USER: "{{ .Values.global.easygraph.credentials.username }}"
+    EASYGRAPH_PASSWORD: "{{ .Values.global.easygraph.credentials.password }}"
+
+    DB_NAME_PREVIEW: db_text2sql_preview
+    DB_NAME_PROD: db_text2sql_prod
+
+    TEXT2SQL_VECTOR_RECALL_ENABLE: {{ .Values.global.retrieval_config.vector_recall_enable }}
+
+    INTERNAL_DB_HOST_WHITE_LIST:
+      "100036585679":
+        - "9.140.52.213:3306"
+    BOT_ADMIN_CONFIG_SERVER_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+
+    ADP_AI_GATEWAY_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    APP_CONFIG_ADMIN_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    RESOURCE_GALLERY_ADMIN_TARGET: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+  retrieval_en-US.json: |
+    {
+      "DocNamePrefix": "File name: ",
+      "DocSegmentPrefix": "Passage: ",
+      "NoDataInDB": "No SQL. The data table contains no data. Please write data to it, then disable and re-enable the data table, and retry after publishing.",
+      "SQLGenerateFailed": "No SQL. SQL generation failed. Please modify your query and try again."
+    }
+
+  retrieval_zh-CN.json: |
+    {
+      "DocNamePrefix": "文档名：",
+      "DocSegmentPrefix": "文档片段：",
+      "NoDataInDB": "No SQL, 数据表中无数据，请写入数据后停用、启用数据表，然后发布后重试",
+      "SQLGenerateFailed": "No SQL, SQL 生成失败，请修改提问后重试"
+    }
+
+  trpc_go.yaml: |
+    global:
+      env_name: test
+      namespace: Development
+    server:                                            #服务端配置
+      app: adp                                        #业务的应用名
+      server: kb-retrieval                             #进程服务名
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      admin:
+        ip: ${POD_IP}
+        port: 8081
+        write_timeout: 600000 # ms. 处理的超时时间
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - validation
+        - recovery
+        - i18n-adp
+        - debuglog
+        - querylog
+        - errorrewrite
+        - cle-route-propagator
+        - opentelemetry
+      service:
+        - name: trpc.KEP.bot-retrieval-server.retrieval
+          ip: ${POD_IP}
+          port: 8000
+          network: tcp
+          protocol: trpc
+          timeout: 20000   # 请求最长处理时间，单位毫秒
+        - name: trpc.KEP.bot-retrieval-server.Retrieval
+          ip: ${POD_IP}
+          port: 9090
+          network: tcp
+          protocol: trpc
+          timeout: 20000   # 请求最长处理时间，单位毫秒
+        - name: trpc.KEP.bot-retrieval-server.DirectIndex
+          ip: ${POD_IP}
+          port: 9091
+          network: tcp
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.KEP.bot-retrieval-server.CronCleanData   #service的路由名称,
+          ip: ${POD_IP}   # 私有云使用eth0
+          port: 9900   #服务监听端口
+          network: "0 */10 0-6,20-23 * * *"   # 每10分钟执行一次
+          protocol: timer   #应用层协议
+          timeout: 480000   # 请求最长处理时间，单位毫秒
+    plugins:                                          #插件配置
+      error:
+        rewrite:
+      tracing:
+        querylog:
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+            - name: global
+              appid: ${RAINBOW_APP_ID}  # appid
+              group: global # 配置所属组
+              type: kv   # 七彩石数据格式, kv(默认), table
+              env_name: ${RAINBOW_ENV_NAME}
+              timeout: 2000
+              enable_client_provider: true
+
+      log:
+        default:                                  #默认日志的配置，可支持多输出
+          - writer: console                         #控制台标准输出 默认
+            level: info                            #标准输出日志的级别
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+          - writer: file                            #本地文件日志
+            level: info                             #本地文件滚动日志的级别
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/trpc.log  #本地文件滚动日志存放的路径
+              write_mode: 2
+              roll_type: time
+              max_age: 7
+              max_backups: 10
+              compress: false
+              time_unit: day
+        clues:
+          - writer: console                         #控制台标准输出 默认
+            level: info                            #标准输出日志的级别
+          - writer: file
+            level: info
+            formatter: json
+            writer_config:
+              filename: /app/logs/clues.log
+              write_mode: 2
+              roll_type: time
+              max_age: 7
+              max_backups: 10
+              compress: false
+              time_unit: day
+
+      i18n:
+        i18n-adp:                    # [可选]: i18n配置，如未设置，不进行任何翻译
+          default_lang: zh-CN    # [可选]: 如未设置，默认为en-US; 如需使用简体中文，需要显式设置为zh-CN
+          supported_languages:   # [可选]: 系统支持的语言列表
+            - zh-CN
+            - en-US
+          data_provider:         # [可选]: 多语言数据提供者，如不配置，不进行翻译
+            type: rainbow        # [可选]: 多语言数据提供者类型，当前只支持rainbow
+            prefix: retrieval         # [可选]: 完整key为{prefix}_{lang}.json。多语言文件key的前缀，与语言后缀拼成完整的key，如 chat_zh-CN.json
+            error_prefix: error  # [可选]: 错误码文件前缀，完整可以为{error_prefix}_{lang}.json, 如 error_zh-CN.json
+            char_scaling_factor:
+              zh: 1
+              en: 3
+    client:
+      namespace: Test
+      filter:
+        - opentelemetry
+        - cle-route-propagator
+      service:
+        - name: mysql.db_llm_robot
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.db_text2sql
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.db_llm_robot
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.qbot.admin.delete
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: isearch.tdsql.db_llm_robot
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.graph
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_graph?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: redis.qbot.qbot
+          target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/1
+          password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
+          timeout: 3000
+        - name: trpc.SmartAssistant.VectorDBManager.VectorObj
+          callee: trpc.smartassistant.vectordbmanager.VectorObj
+          target: ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001
+          protocol: trpc
+          network: tcp
+          timeout: 30000
+          method:
+            DeleteGroup:
+              timeout: 10000
+            Embedding:
+              timeout: 5000
+            AddVector:
+              timeout: 5000
+            CreateGroup:
+              timeout: 10000
+            DeleteCollection:
+              timeout: 10000
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          namespace: Test
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - name: pipeline-flow-detail
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot_history?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: trpc.SmartAssistant.LLMManagerServer.Chat
+          target: ip://adp-llm.{{ .Release.Namespace }}.svc.cluster.local:8000
+          service_name: trpc.SmartAssistant.LLMManagerServer.Chat
+          timeout: 15000
+        - name: trpc.adp.ai-gateway.api
+          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: http
+          network: tcp
+          timeout: 14000
+        - name: trpc.adp.app_config.Admin
+          namespace: Test
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 30000
+        - callee: trpc.adp.resource_gallery.Admin
+          name: trpc.adp.resource_gallery.Admin
+          namespace: Test
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 30000
+
+  whitelist.yaml: |
+    internal_db_white_list:
+
+    internal_db_host_white_list: ${INTERNAL_DB_HOST_WHITE_LIST}

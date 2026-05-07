@@ -1,0 +1,1576 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-platform-metrology
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    is_private: ${is_private}
+    is_dedicated_cloud: ${is_dedicated_cloud}
+    mongo_database: lke-data-statistics
+    schedule_task_touch_seconds: 10               # 任务运行时多久 touch 一次
+    schedule_task_untouch_tick: 15                # 多少周期没 touch 认为任务超时
+    schedule_task_list_unfinish_task_size: 10     # 每批查找未完成任务的数量 默认为 schedule_task_worker_count * 2
+    schedule_task_worker_count: 5                 # 任务并行数量， 默认为 cpu 核数 *3
+    schedule_task_lookback_seconds: 86400         # 每次定时任务触发时，需要检查过去一段时间内是否有任务遗漏
+    clean_statical_expired_period_days: 366       # 清理统计数据时，清理多久前的数据, 默认 366
+    clean_schedule_task_expired_period_days: 366  # 清理多久前的任务数据 默认 366
+    clean_alarm_history_expired_period_days: 180  # 清理告警历史数据时 默认 30
+    clean_msg_log_period_days: 210                # 清理多久前的 t_msg_log 数据， 默认 210
+    fetch_msg_record_batch_size: 100              # 每次从 t_msg_record 表中取数据的数量 默认 100
+    fetch_msg_record_workers: 10                  # 从 t_msg_record 清洗至 t_msg_log 并发数量 默认 10
+
+    msg_log_to_kafka: ${MSG_LOG_TO_KAFKA}
+
+    es_config:
+      name: trpc.elasticsearch.lke.admin
+      url: "http://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}"
+      user: ${INFRA_MIDDLEWARES_ES_0_USER}
+      password: ${INFRA_MIDDLEWARES_ES_0_PASSWORD}
+      timeout: 8000
+      log:
+        enabled: true
+        request_enabled: true
+        request_body: true
+      index_name:
+        content_recognition: content_recognition
+        content_recognition_stats: content_recognition_stats
+
+    record_trace:
+      index_name: chat_procedure_trace
+      item_limit: 1000
+      max_depth: 3
+      flush_interval: 1
+      es_config:
+        name: trpc.elasticsearch.adp.chat_trace
+        url: http://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}
+        user: ${INFRA_MIDDLEWARES_ES_0_USER}
+        password: ${INFRA_MIDDLEWARES_ES_0_PASSWORD}
+        timeout: 8000
+        enable_compatibility_mode: false
+
+
+    storage:
+      {{- if eq .Values.global.components.s3.providerType "minio" }}
+      type: minio
+      min_io_map:
+        offline:
+          secret_id: ${INFRA_MIDDLEWARES_S3_MINIO_ACCESSKEY}
+          secret_key: ${INFRA_MIDDLEWARES_S3_MINIO_SECRETKEY}
+          region: ""
+          bucket: ${INFRA_MIDDLEWARES_S3_MINIO_BUCKET}
+          sts_endpoint: http://{{ printf "minio.%s.svc.cluster.local" .Release.Namespace }}
+          end_point: {{ printf "minio.%s.svc.cluster.local" .Release.Namespace }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+          credential_time: 10m
+        realtime:
+          secret_id: ${INFRA_MIDDLEWARES_S3_MINIO_ACCESSKEY}
+          secret_key: ${INFRA_MIDDLEWARES_S3_MINIO_SECRETKEY}
+          region: ""
+          bucket: ${INFRA_MIDDLEWARES_S3_MINIO_BUCKET}
+          sts_endpoint: http://{{ printf "minio.%s.svc.cluster.local" .Release.Namespace }}
+          end_point: {{ printf "minio.%s.svc.cluster.local" .Release.Namespace }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+          credential_time: 10m
+      {{- else if eq .Values.global.components.s3.providerType "s3" }}
+      type: s3
+      s3_map:
+        offline:
+          secret_id: ${INFRA_MIDDLEWARES_S3_AWS_ACCESSKEY}
+          secret_key: ${INFRA_MIDDLEWARES_S3_AWS_SECRETKEY}
+          region: ${INFRA_MIDDLEWARES_S3_AWS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_AWS_BUCKET}
+          endpoint: ${INFRA_MIDDLEWARES_S3_AWS_ENDPOINT}
+          expire_time: 30m
+          credential_time: 10m
+        realtime:
+          secret_id: ${INFRA_MIDDLEWARES_S3_AWS_ACCESSKEY}
+          secret_key: ${INFRA_MIDDLEWARES_S3_AWS_SECRETKEY}
+          region: ${INFRA_MIDDLEWARES_S3_AWS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_AWS_BUCKET}
+          endpoint: ${INFRA_MIDDLEWARES_S3_AWS_ENDPOINT}
+          expire_time: 30m
+          credential_time: 10m
+      {{- else }}
+      type: cos
+      cos_map:
+        offline:
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
+          expire_time: 30m
+          credential_time: 10m
+        realtime:
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
+          expire_time: 30m
+          credential_time: 10m
+      {{- end }}
+      file_limit:
+        offline:
+          - type_name: document_200
+            types: [pdf,doc,docx,ppt,mhtml,pptx,wps,ppsx,key,pages]
+            size: 200
+          - type_name: document_20
+            types: [xlsx,xls,md,txt,csv,html,json,log,xml,xmind,numbers]
+            size: 20
+          - type_name: image
+            types: [jpg,png,jpeg,tiff,bmp,gif]
+            size: 50
+          - type_name: zip
+            types: [zip]
+            size: 5
+          - type_name: video
+            types: [wmv,3gp,avi,f4v,m4v,mp4,mpg,ogv,vob,mov,flv,mkv,rm,rmvb,mpeg,webm]
+            size: 2048
+          - type_name: meida_50
+            types: [mp3,wav,aac,flac]
+            size: 50
+        realtime:
+          - type_name: document
+            types: [doc,docx,ppt,pptx,pdf,txt,xls,xlsx,md] 
+            size: 20 
+          - type_name: document_md
+            types: [md,csv,json] 
+            size: 20
+          - type_name: image
+            types: [jpg,png,jpeg,bmp,webp]
+            size: 20
+          - type: video
+            types: [mp4,mkv,avi,mov,wmv]
+            size: 100
+          - type: media
+            types: [mp3,wav,pcm,m4a,arm,aac,flac]
+            size: 100
+          - type_name: zip
+            types: [zip]
+            size: 100
+            security_white_list:
+              700000306554: 2160h
+              700001861322: 2160h
+              700001617213: 2160h
+              700001873366: 720h
+              700001046587: 720h
+              700001667238: 720h
+    task:
+      task_prefix: platformMetrology:task
+      task_fetch_num: 400
+      task_fetch_timeout: 2s
+      task_fetch_period: 2s
+      tasks:
+        export:
+          runners: 2 #处理协程数，无法动态调整
+          retry_wait_time: 1m #重试等待时间
+          max_retry: 10 #最大重试次数
+          timeout: 10m #超时时间
+          fail_timeout: 3s # 失败回调超时
+          delay: 0s #启动延迟
+          batch:  3
+          batch_size: 0
+          stopped_resume_time: 720h
+    max_export_count: 100000
+
+    alarm:
+      cron_scheduler:
+        enabled: true
+        cron_expr: "0 */10 * * * *"  
+        lock_hold_time: 30s         # 锁持有时间30秒
+      max_name_length: 50
+      max_expression_count: 10
+      max_alarm_history_id: 10000
+      wecom_url_reg: "qyapi.weixin.qq.com"
+      feishu_url_reg: "open.feishu.cn"
+      dingtalk_url_reg: "oapi.dingtalk.com"
+      alarm_strategy_handle:
+        worker_count: 100
+        queue_size: 1000
+      sink:
+        tencent_sms: 1
+        tencent_email: 1
+        wecom: 1
+        ding_talk: 1
+        feishu: 1
+        webhook: 1
+
+
+    tencent_cloud_config:
+      sts_endpoint: ${TC_STS_ENDPOINT}
+      sts_region: ${TC_STS_REGION}
+      sms:
+        secret_id: ${TC_SMS_SECRET_ID}
+        secret_key: ${TC_SMS_SECRET_KEY}
+        service_role: ${TC_SMS_SERVICE_ROLE}
+        credential_duration: 30m
+        endpoint: ${TC_SMS_ENDPOINT}
+        region: ${TC_SMS_REGION}
+        uin_map: ${TC_SMS_UIN_MAP}
+
+      ses:
+        secret_id: ${TC_SES_SECRET_ID}
+        secret_key: ${TC_SES_SECRET_KEY}
+        service_role: ${TC_SES_SERVICE_ROLE}
+        credential_duration: 30m
+        endpoint: ${TC_SES_ENDPOINT}
+        region: ${TC_SES_REGION}
+        uin_map: ${TC_SES_UIN_MAP}
+
+    data_migration_config:
+      tdsql_tables:
+        - table_name: t_visitor
+          effect_time: "2026-02-05 20:58:00"
+    fetch_check_task_batch_size: 10               # 审核任务 ETL 配置 每次从 t_check_task 表中取数据的>数量
+    fetch_check_task_workers: 5                    # 审核任务 ETL 配置 从 t_check_task 表中取数据的并发数量
+    clean_expired_content_recognition_period_days: 366  # 清理审核数据时，清理多久前的数据
+
+  bot-data-statistics-server_en-US.json: |
+    {
+      "KeyExportWithParam": "Export %s",
+      "KeyExporting": "Exporting",
+      "KeySuccess": "Success",
+      "KeyFail": "Failed",
+      "KeyExportSuccess": "Export Success",
+      "KeyExportFail": "Export Failed",
+      "KeyExportModelUsageWithParam": "Model Usage Export %s",
+      "KeyExportPlatformUsageWithParam": "Platform Usage Export %s",
+      "KeyExportUsageDetailsWithParam": "Usage Details Export %s",
+      "KeyExportModelConcurrencyWithParam": "Model Concurrency Export %s",
+      "KeyExportDedicatedConcurrencyWithParam": "Dedicated Concurrency Export %s",
+      "KeyExportKnowledgeBaseCapacityWithParam": "Knowledge Base Capacity Export %s",
+      "KeyExportAppCallStatisticsWithParam": "App Call Statistics Export %s",
+      "KeyExportAppUserStatisticsWithParam": "App User Statistics Export %s",
+      "KeyExportBizDetailsWithParam": "Business Dashboard Data Export %s",
+      "KeyExportAppDashboardWithParam": "App Dashboard Data Export %s",
+      "KeyExportKnowledgeBaseMaintenanceWithParam": "Knowledge Base Maintenance Export %s",
+      "KeySpaceDeleted": "Space Deleted",
+      "KeyAppDeleted": "App Deleted",
+      "KeyKnowledgeDeleted": "Knowledge Base Deleted",
+      "KeyToolDeleted": "Tool Deleted",
+      "KeyPluginDeleted": "Plugin Deleted",
+      "KeyFileNameCorpModelUsage": "Corp-Resource-ModelUsage",
+      "KeyFileNameSpaceModelUsage": "Platform-Resource-ModelUsage",
+      "KeyFileNameCorpModelConcurrency": "Corp-Resource-ModelConcurrency",
+      "KeyFileNameSpaceModelConcurrency": "Platform-Resource-ModelConcurrency",
+      "KeyFileNameCorpDedicatedConcurrency": "Corp-Resource-DedicatedConcurrency",
+      "KeyFileNameSpaceDedicatedConcurrency": "Platform-Resource-DedicatedConcurrency",
+      "KeyFileNameCorpPlatformUsage": "Corp-Resource-PlatformUsage",
+      "KeyFileNameSpacePlatformUsage": "Space-Resource-PlatformUsage",
+      "KeyFileNameCorpUsageDetails": "Corp-Resource-UsageDetails",
+      "KeyFileNameSpaceUsageDetails": "Space-Resource-UsageDetails",
+      "KeyFileNameCorpKBCapacity": "Corp-Resource-KnowledgeBaseCapacity",
+      "KeyFileNameSpaceKBCapacity": "Platform-Resource-KnowledgeBaseCapacity",
+      "KeyFileNameAppCallStatistics": "App Call Statistics",
+      "KeyFileNameCorpAppCallStatistics": "Corp-Business-AppCallStatistics",
+      "KeyFileNameSpaceAppCallStatistics": "Platform-Business-AppCallStatistics",
+      "KeyFileNameAppUserStatistics": "App User Statistics",
+      "KeyFileNameCorpBizDetails": "Corp-Business-Dashboard",
+      "KeyFileNameSpaceBizDetails": "Platform-Business-Dashboard",
+      "KeyFileNameKnowledgeBaseMaintenance": "Business-App-KnowledgeBaseMaintenance",
+      "KeyFileNameCorpPluginUsage": "Corp-Resource-PluginUsage",
+      "KeyFileNameSpacePluginUsage": "Platform-Resource-PluginUsage",
+      "KeyFileNameCorpResourceConsume": "Corp-Resource-ResourceConsume",
+      "KeyFileNameSpaceResourceConsume": "Platform-Resource-ResourceConsume",
+      "KeySheetResourceOverview": "Overview",
+      "KeySheetModelCallGraph": "Call Count Chart",
+      "KeySheetModelTokenGraph": "Token Consumption Chart",
+      "KeySheetModelPageCountGraph": "Page Count Chart",
+      "KeySheetTopTokenByModel": "Top Token - By Model",
+      "KeySheetTopTokenByApp": "Top Token - By App",
+      "KeySheetTopTokenByKnowledge": "Top Token - By Knowledge",
+      "KeySheetTopTokenBySpace": "Top Token - By Space",
+      "KeySheetModelUsageDetails": "Usage Details",
+      "KeySheetModelCallDetails": "Call Details",
+      "KeySheetConcurrencyOverview": "Concurrency Overview",
+      "KeySheetQPMTPMGraph": "QPM_TPM Chart",
+      "KeySheetConcurrencyOverLimit": "TPM_QPM Over Limit Call Details",
+      "KeySheetDedicatedOverview": "Dedicated Overview",
+      "KeySheetDedicatedGraph": "Call Concurrency Trend",
+      "KeySheetDedicatedOverLimit": "Call Over Available Concurrency Details",
+      "KeySheetPlatformOverview": "Resource Board-Platform Usage-Overview",
+      "KeySheetPlatformUsageDetailData": "Resource Board-Platform Usage-Detail Data",
+      "KeySheetLongTermMemoryGraph": "Long-Term Memory Storage Count Chart",
+      "KeySheetSecurityAuditGraph": "Security Audit Call Count Chart",
+      "KeySheetWebSearchGraph": "Web Search Count Chart",
+      "KeySheetLongTermMemoryDetails": "Long-Term Memory Storage Details",
+      "KeySheetSecurityAuditDetails": "Security Audit Call Details",
+      "KeySheetWebSearchDetails": "Web Search Count Details",
+      "KeySheetUsageDetails": "Usage Details",
+      "KeySheetKBCapacityOverview": "Resource Overview",
+      "KeySheetKBOverUsageGraph": "Over Usage Trend",
+      "KeySheetKBUsageProportionByKB": "Knowledge Base Usage Proportion",
+      "KeySheetKBUsageProportionBySpace": "Space Usage Proportion",
+      "KeySheetKBCapacityDetailByKB": "Knowledge Base Capacity Details",
+      "KeySheetKBCapacityDetailBySpace": "Space Capacity Details",
+      "KeySheetKBMainOverview": "Knowledge Base Summary Overview",
+      "KeySheetKBContentOverview": "Knowledge Base Content Overview",
+      "KeySheetKBDocScopeDistribution": "Document Scope Distribution",
+      "KeySheetKBQaScopeDistribution": "QA Scope Distribution",
+      "KeySheetKBDbScopeDistribution": "Database table Scope Distribution",
+      "KeyMetricReferKnowledgeBaseCount": "Referenced Knowledge Base Count",
+      "KeyMetricDocCount": "Document Count",
+      "KeyMetricDocPendingDiffCount": "Pending Diff Count",
+      "KeyMetricQaCount": "QA Count",
+      "KeyMetricQaPendingVerificationCount": "Pending Verification QA Count",
+      "KeyMetricQaPendingConflictCount": "Pending Conflict QA Count",
+      "KeyMetricDatabaseCount": "Database Count",
+      "KeyMetricTableCount": "Table Count",
+      "KeyColumnEnableScope": "Enable Scope",
+      "KeyColumnCount": "Count",
+      "KeySheetPluginUsageTrend": "Plugin Usage Trend",
+      "KeySheetPluginUsageDetails": "Plugin Usage Details",
+      "KeySheetPluginCallDetails": "Plugin Call Details",
+      "KeySheetResourceConsumeDetails": "Resource Consumption Details",
+      "KeyColumnMetric": "Metric",
+      "KeyColumnCurrentValue": "Current Value",
+      "KeyColumnMomPercent": "MoM (%)",
+      "KeyColumnTime": "Time",
+      "KeyColumnRank": "Rank",
+      "KeyColumnName": "Name",
+      "KeyColumnLimitValue": "Limit Value",
+      "KeyColumnValue": "Value",
+      "KeyMetricTotalCalls": "Model Call Count",
+      "KeyMetricTotalTokens": "Model Token Consumption",
+      "KeyMetricTotalInputTokens": "Model Input Tokens",
+      "KeyMetricTotalOutputTokens": "Model Output Tokens",
+      "KeyMetricAvgTotalTokens": "Avg Tokens Per Call",
+      "KeyMetricAvgInputTokens": "Avg Input Tokens Per Call",
+      "KeyMetricAvgOutputTokens": "Avg Output Tokens Per Call",
+      "KeyMetricPageCount": "Model Page Consumption",
+      "KeyMetricTotalUsage": "Total Usage (Byte)",
+      "KeyMetricPackageTotalCapacity": "Package Total Capacity (GB)",
+      "KeyMetricPackageUsedCapacity": "Package Used Capacity (Byte)",
+      "KeyMetricOverUsage": "Over Usage (Byte)",
+      "KeyMetricOverExpiredCapacity": "Over Expired Capacity (Byte)",
+      "KeyColumnCallCount": "Model Call Count",
+      "KeyColumnInputTokens": "Model Input Tokens",
+      "KeyColumnOutputTokens": "Model Output Tokens",
+      "KeyColumnTotalTokens": "Model Token Consumption",
+      "KeyColumnAvgInputTokens": "Avg Input Tokens Per Call",
+      "KeyColumnAvgOutputTokens": "Avg Output Tokens Per Call",
+      "KeyColumnAvgTotalTokens": "Avg Tokens Per Call",
+      "KeyColumnConsumeTokens": "Model Token Consumption",
+      "KeyColumnSpaceID": "Space ID",
+      "KeyColumnSpaceName": "Space Name",
+      "KeyColumnAppID": "App ID",
+      "KeyColumnAppName": "App Name",
+      "KeyColumnKnowledgeID": "Knowledge ID",
+      "KeyColumnKnowledgeName": "Knowledge Name",
+      "KeyColumnModelName": "Model Name",
+      "KeyColumnCallType": "Call Type",
+      "KeyColumnUsedCapacity": "Used Capacity (Byte)",
+      "KeyColumnUsedPercentage": "Usage Percentage (%)",
+      "KeyColumnPercentage": "Percentage (%)",
+      "KeyColumnIsDefaultKnowledge": "Is Default Knowledge",
+      "KeyColumnActiveUsers": "Active Users",
+      "KeyColumnNewUsers": "New Users",
+      "KeyColumnReturningUsers": "Returning Users",
+      "KeyColumnTotalRatings": "Total Ratings",
+      "KeyColumnLikeCount": "User Rating Like Count",
+      "KeyColumnDislikeCount": "User Rating Dislike Count",
+      "KeyMetricMaxQPM": "Peak QPM",
+      "KeyMetricMaxTPM": "Peak TPM",
+      "KeyMetricOverLimit": "TPM/QPM Over Limit Count",
+      "KeyColumnQPM": "Call QPM",
+      "KeyColumnQPMLimit": "Call QPM Limit",
+      "KeyColumnTPM": "Call TPM",
+      "KeyColumnTPMLimit": "Call TPM Limit",
+      "KeyColumnOverLimitType": "Over Limit Type",
+      "KeyColumnQuery": "Query",
+      "KeyOverLimitTypeConcurrency": "Over Concurrency",
+      "KeyOverLimitTypeQPMTPM": "Over QPM/TPM",
+      "KeyMetricConcurrencyLimit": "Call Concurrency Limit",
+      "KeyMetricSuccessConcurrency": "Success Call Concurrency Peak",
+      "KeyMetricConcurrencyOverLimit": "Concurrency Over Limit Count",
+      "KeyColumnConcurrency": "Concurrency",
+      "KeyColumnConcurrencyLimit": "Concurrency Limit",
+      "KeyMetricLongTermMemoryItems": "Long-Term Memory Items",
+      "KeyMetricSecurityAuditCalls": "Security Audit Calls",
+      "KeyMetricWebSearchCalls": "Web Search Calls",
+      "KeyColumnLongTermMemoryItems": "Long-Term Memory Items",
+      "KeyColumnSecurityAuditCalls": "Security Audit Calls",
+      "KeyColumnWebSearchCalls": "Web Search Calls",
+      "KeyColumnPluginTotalTokens": "Plugin Total Tokens",
+      "KeyColumnPluginCallCount": "Plugin Call Count",
+      "KeyColumnPluginPageCount": "Plugin Page Count",
+      "KeyColumnPluginInputTokens": "Plugin Input Tokens",
+      "KeyColumnPluginOutputTokens": "Plugin Output Tokens",
+      "KeyColumnPluginConsumeCount": "Plugin Consume Count",
+      "KeyColumnPluginConsumePage": "Plugin Consume Pages",
+      "KeyColumnPluginConsumeSheet": "Plugin consumption sheet",
+      "KeyColumnPluginConsumeSecond": "Plugin consumption second",
+      "KeyColumnPluginConsumeCharacter": "Plugin consumption character",
+      "KeyColumnPluginName": "Plugin Name",
+      "KeyColumnToolName": "Tool Name",
+      "KeyColumnConsumeType": "Charge Type",
+      "KeyColumnConsumeTarget": "Charge Target",
+      "KeyColumnConsumeScene": "Charge Scene",
+      "KeyColumnPackageName": "Package Name",
+      "KeyColumnUsage": "Usage",
+      "KeyColumnConsumePu": "Consumed Resources(PU)",
+      "KeyColumnAppOrKBName": "App Name/Knowledge Base Name",
+      "KeySuffixByApp": "(By App)",
+      "KeySuffixBySpace": "(By Space)",
+      "KeyColumnModelTotalTokens": "Model Total Tokens",
+      "KeyColumnModelInputTokens": "Model Input Tokens",
+      "KeyColumnModelOutputTokens": "Model Output Tokens",
+      "KeyColumnModelUsage": "Model Usage (tokens)",
+      "KeyColumnPluginUsage": "Plugin Usage",
+      "KeyColumnPlatformUsage": "Platform Usage",
+      "KeyConsumeTypeModel": "Model Usage",
+      "KeyConsumeTypePlugin": "Plugin Usage",
+      "KeyConsumeTypeKnowledgeExcess": "Knowledge Base Excess",
+      "KeyConsumeTypePlatform": "Platform Usage",
+      "KeyMetricAgentThinkingRounds": "Average Thinking Rounds per Conversation",
+      "KeyMetricAgentTransferTimes": "Average Agent Transfers per Conversation",
+      "KeyMetricAppCallTotalCalls": "App Call Count",
+      "KeyMetricAppCallSuccessRate": "App Call Success Rate",
+      "KeyMetricAppAvgTotalTokenCost": "Average Total Token Time (ms)",
+      "KeyMetricAppAvgFirstTokenCost": "Average First Token Time (ms)",
+      "KeyMetricKnowledgeBaseCallCount": "Knowledge Base Call Count",
+      "KeyMetricWorkflowCallCount": "Workflow Call Count",
+      "KeyMetricPluginCallCount": "Custom Plugin Call Count",
+      "KeyMetricAvgPluginCallCount": "Avg Plugin Calls Per Dialogue",
+      "KeyReplyMethodUnknown": "Unknown",
+      "KeyReplyMethodReject": "Rejected Reply",
+      "KeyReplyMethodQADirect": "Direct Q&A Reply",
+      "KeyReplyMethodAuditFailed": "Moderation Failure",
+      "KeyReplyMethodKnowledgePolish": "Knowledge Polished Reply",
+      "KeyReplyMethodWorkflow": "Workflow Reply",
+      "KeyReplyMethodRealtimeDoc": "Realtime Document Reply",
+      "KeyReplyMethodImageUnderstand": "Image Understanding Reply",
+      "KeyReplyMethodSearchEngine": "Search Engine Reply",
+      "KeyReplyMethodLLMDirect": "Direct LLM Reply",
+      "KeyReplyMethodFallback": "Fallback Reply",
+      "KeySuffixTimes": " Times",
+      "KeyColumnAvgLatency": "Avg Latency (ms)",
+      "KeyColumnP50Latency": "P50 Latency (ms)",
+      "KeyColumnP75Latency": "P75 Latency (ms)",
+      "KeyColumnP90Latency": "P90 Latency (ms)",
+      "KeyColumnP95Latency": "P95 Latency (ms)",
+      "KeyColumnP99Latency": "P99 Latency (ms)",
+      "KeySheetAppCallOverview": "Call Statistics-Overview",
+      "KeySheetAppReplyTypeDistrib": "App Reply Type Distribution",
+      "KeySheetAppReplyTypeTrend": "App Reply Type Trend",
+      "KeySheetComponentCallTrend": "Component Call Trend",
+      "KeySheetAppCallTrend": "Application Call Trend",
+      "KeySheetPerformanceTrend": "Performance Trend",
+      "KeySheetTotalTokenLatencyTrend": "Total Token Latency Trend",
+      "KeySheetFirstTokenLatencyTrend": "First Token Latency Trend",
+      "KeySheetAgentDialogueTrend": "Agent Dialogue Trend",
+      "KeySheetUserOverview": "User Statistics Overview",
+      "KeySheetUserTrend": "User Trend",
+      "KeySheetRatingTrend": "Rating Trend",
+      "KeySheetBizOverview": "Business Dashboard-Overview",
+      "KeySheetTopCallBySpace": "Top App Calls-By Space",
+      "KeySheetTopCallByApp": "Top App Calls-By App",
+      "KeySheetUserTrendBiz": "App User Trend",
+      "KeySheetSpaceDetails": "Space Dimension Details",
+      "KeySheetAppDetails": "App Dimension Details",
+      "KeySheetCustomPluginDetails": "Custom Plugin Details",
+      "KeySheetPerformanceAnalysisDetails": "Performance Analysis Details",
+      "KeyRowOverallAverage": "Overall Average",
+      "KeyYes": "Yes",
+      "KeyNo": "No",
+      "KeyMetricTotalSpaceCount": "Total Space Count",
+      "KeyMetricEffectiveSpaceCount": "Effective Space Count",
+      "KeyMetricCorpUserCount": "Corporation User Count",
+      "KeyMetricTotalAppCount": "Total App Count",
+      "KeyMetricActiveAppCount": "Active App Count",
+      "KeyMetricAppCallCount": "App Call Count",
+      "KeyMetricCallSuccessCount": "Call Success Count",
+      "KeyMetricCallSuccessRate": "Call Success Rate",
+      "KeyMetricCallFailedCount": "Call Failed Count",
+      "KeyMetricCallFailedRate": "Call Failed Rate",
+      "KeyMetricActiveUserCount": "Active User Count",
+      "KeyMetricNewUserCount": "New User Count",
+      "KeyMetricNewUserRate": "New User Rate",
+      "KeyMetricReturningUserCount": "Returning User Count",
+      "KeyMetricReturningUserRate": "Returning User Rate",
+      "KeyMetricAvgUserDialogueRounds": "Avg User Dialogue Rounds",
+      "KeyMetricKnowledgeBaseCount": "Knowledge Base Count",
+      "KeyMetricWorkflowCount": "Workflow Count",
+      "KeyMetricCustomPluginCount": "Custom Plugin Count",
+      "KeyMetricCustomPluginCallCount": "Custom Plugin Call Count",
+      "KeyMetricAvgTotalTokenLatency": "Avg Total Token Latency (ms)",
+      "KeyMetricAvgFirstTokenLatency": "Avg First Token Latency (ms)",
+      "KeyColumnCallCountBiz": "Call Count",
+      "KeyColumnSuccessCount": "Success Count",
+      "KeyColumnFailCount": "Fail Count",
+      "KeyColumnKnowledgeBaseCallCount": "Knowledge Base Call Count",
+      "KeyColumnWorkflowCallCount": "Workflow Call Count",
+      "KeyColumnActiveUserCount": "Active User Count",
+      "KeyColumnNewUserCount": "New User Count",
+      "KeyColumnReturningUserCount": "Returning User Count",
+      "KeyColumnAvgLatencyMs": "Avg Latency (ms)",
+      "KeyColumnP95LatencyMs": "P95 Latency (ms)",
+      "KeyColumnP99LatencyMs": "P99 Latency (ms)",
+      "KeyColumnTotalAppCount": "Total App Count",
+      "KeyColumnActiveAppCount": "Active App Count",
+      "KeyColumnAppMode": "App Mode",
+      "KeyColumnAppCallSuccessRate": "Call Success Rate (%)",
+      "KeyColumnCustomPluginCallCount": "Custom Plugin Call Count",
+      "KeyColumnAvgTotalTokenLatencyMs": "Avg Total Token Latency (ms)",
+      "KeyColumnAvgFirstTokenLatencyMs": "Avg First Token Latency (ms)",
+      "KeyColumnPluginCallSuccessRate": "Call Success Rate (%)",
+      "KeyAlarmTime": "Alarm Time",
+      "KeyLevel": "Alarm Level",
+      "KeyAlarmContentKey": "Alarm Content",
+      "KeyAlarmContent": "Tencent Cloud Intelligent Agent Development Platform Alert: %s, Triggering %s level alert, Alert Metric: %s.",
+      "KeyAlarmLevelInfo": "Info",
+      "KeyAlarmLevelWarn": "Warning",
+      "KeyAlarmLevelError": "Critical",
+      "KeyAlarmTitle": "Tencent Cloud Intelligent Agent Platform Alert",
+      "KeyAlarmStrategyName": "Alarm Strategy Name",
+      "KeyAlarmTypeAppQPMMsg": "App [%s] QPM Alert:",
+      "KeyAlarmTypeAppSuccessCallRateMsg": "App [%s] Success Call Rate Alert:",
+      "KeyExportAlarmHistory": "Alarm History Export %s",
+      "KeyAlarmTypeTokenUsagePerDayMsg": "LLM [%s] Tokens Consumption Alert:",
+      "KeyAlarmTypeTPMMsg": "LLM [%s] TPM Alert:",
+      "KeyAlarmTypeKbRemainCapacityMsg": "Remain capacity of knowledge Alert:",
+      "KeyTokenUsagePerDayUnitKey": "tokens",
+      "KeyAppQPMUnitKey": "requests/Min",
+      "KeyAppSuccessCallRateUnitKey": "%",
+      "KeyKbRemainCapacityUnitKey": "B",
+      "KeyTPMUnitKey": "tokens/Min",
+      "KeyOpenClawDeleted": "ClawPro Deleted",
+      "KeyMetricOpenClawCalls": "ClawPro Calls",
+      "KeyColumnOpenClawCalls": "ClawPro Calls",
+      "KeySheetOpenClawCalls": "ClawPro Calls Graph",
+      "KeySheetOpenClawDetails": "ClawPro Calls Detail",
+      "KeyColumnOpenClawId": "ClawPro ID",
+      "KeyColumnOpenClawName": "ClawPro Name",
+      "KeyColumnOpenClaw": "ClawPro",
+      "KeyColumnPluginConsumeNumber": "Plugin consumption Number",
+      "KeyExportPluginUsageWithParam": "Plugin Usage Export %s",
+      "KeyExportResourceConsumeWithParam": "Resource Consumption Export %s",
+      "KeyReplyMethodDocument": "Document-based Reply",
+      "KeyReplyMethodQAPolish": "Polished Q&A Reply",
+      "对话API-prompt改写": "DialogApiPromptRewrite",
+      "对话API-大模型生成": "DialogApiModelGen",
+      "对话API-大模型思考": "DialogApiModelThink",
+      "对话API-知识库问答调用": "DialogApiKbQaCall",
+      "对话API-工作流节点": "DialogApiWorkflowNode",
+      "对话API-插件调用": "DialogApiPluginCall",
+      "对话API-Excel检索增强": "DialogApiExcelRetrieval",
+      "对话测试-prompt改写": "DialogTestPromptRewrite",
+      "对话测试-大模型生成": "DialogTestModelGen",
+      "对话测试-大模型思考": "DialogTestModelThink",
+      "对话测试-知识库问答调用": "DialogTestKbQaCall",
+      "对话测试-工作流节点": "DialogTestWorkflowNode",
+      "对话测试-插件调用": "DialogTestPluginCall",
+      "对话测试-Excel检索增强": "DialogTestExcelRetrieval",
+      "应用评测-prompt改写": "AppEvalPromptRewrite",
+      "应用评测-大模型生成": "AppEvalModelGen",
+      "应用评测-大模型思考": "AppEvalModelThink",
+      "应用评测-知识库问答调用": "DialogEvalKbQaCall",
+      "应用评测-工作流节点": "AppEvalWorkflowNode",
+      "应用评测-插件调用": "AppEvalPluginCall",
+      "应用评测-Excel检索增强": "AppEvalExcelRetrieval",
+      "渠道/体验用户端-prompt改写": "ChannelExpPromptRewrite",
+      "渠道/体验用户端-大模型生成": "ChannelExpModelGen",
+      "渠道/体验用户端-大模型思考": "ChannelExpModelThink",
+      "渠道/体验用户端-知识库问答调用": "ChannelExpKbQaCall",
+      "渠道/体验用户端-工作流": "ChannelExpWorkflowNode",
+      "渠道/体验用户端-插件调用": "ChannelExpPluginCall",
+      "渠道/体验用户端-Excel检索增强": "ChannelExpExcelRetrieval",
+      "长期记忆": "LongTermMemory",
+      "知识检索API": "KnowledgeRetrievalApi",
+      "对话记录-智能分类": "ConvSmartClassify",
+      "实时文档解析": "RealTimeDocParse",
+      "安全审核": "SecurityAuditing",
+      "生成Widget": "Widget",
+      "网页解析问答": "WebPagePluginParsingQA",
+      "文档解析问答": "DocParsePluginParsingQA",
+      "AI搜索": "AiSearchPluginTimes",
+      "图片理解": "ImagePluginUnderstandQA",
+      "图片测验": "ImagePluginQuizQA",
+      "文档解析": "DocParsePluginParsePage",
+      "视频剪辑": "MediaPluginVideoCut",
+      "视频封面生成": "MediaPluginCover",
+      "视频场景分析": "MediaPluginSceneAnalysis",
+      "视频音频抽取": "MediaPluginExtractAudio",
+      "视频图片抽取": "MediaPluginImageExtract",
+      "视频大图抽取": "MediaPluginLargeExtractImage",
+      "图像旗帜标志检测": "MediaImagePluginFlagDetectTimes",
+      "图像标签识别": "MediaImagePluginTagTimes",
+      "图像TV台标检测": "MediaImagePluginTvLogoTimes",
+      "视频编解码处理": "VideoCodecPluginDuration",
+      "综艺分段剪辑处理": "VarietySegcutPluginDuration",
+      "BangBox MCP服务": "BangBoxMcpServerPluginDuration",
+      "语音识别处理": "AsrRecognitionPluginDuration",
+      "句子级语音识别处理": "SentenceRecognitionPluginDuration",
+      "文本转语音": "TextToVoicePluginCharCount",
+      "医疗搜索调用": "MedicalSearchPluginTimes",
+      "文本审核调用": "TextModerationPluginTimes",
+      "多文档内容抽取调用": "ExtractDocMultiPluginTimes",
+      "事实核查调用": "FactcheckTimesPluginTimes",
+      "PDF转Word": "PdfToWordPluginTimes",
+      "查询PDF转Word": "QueryPdfToWordPluginTimes",
+      "PDF转Excel调用次数": "PdfToExcelPluginTimes",
+      "查询PDF转Excel 任务调用": "QueryPdfToExcelPluginTimes",
+      "Word转PDF调用次数": "WordToPdfPluginTimes",
+      "查询Word转PDF任务调用": "QueryWordToPdfPluginTimes",
+      "Excel转PDF调用": "ExcelToPdfPluginTimes",
+      "查询Excel转PDF任务": "QueryExcelToPdfPluginTimes",
+      "图片转Word调用": "ImageToWordPluginTimes",
+      "图片转Excel调用": "ImageToExcelPluginTimes",
+      "PDF文档翻译调用": "PdfTranslationPluginTimes",
+      "查询PDF文档翻译任务": "QPdfTranslationPluginTimes",
+      "Word文档翻译调用": "WordTranslationPluginTimes",
+      "查询 Word 文档翻译任务调用": "QWordTranslationPluginTimes",
+      "医学检查报告解读调用": "MedicalReportInterpretationPluginTimes",
+      "AI药品咨询调用": "AiMedicineInquiryPluginTimes",
+      "AI药盒拍照识别调用": "AiMedicinePhotoDrugBoxPluginTimes",
+      "药品说明书查询": "DrugManualQueryPluginTimes",
+      "AI症状自查调用": "AiSymptomSelfCheckPluginTimes",
+      "文生图任务提交": "SubmitTextToImageJobPluginCount",
+      "文生图任务查询": "QueryTextToImageJobPluginCount",
+      "工作流异步调用": "Workflow asynchronous invocation",
+      "知识库Schema生成": "Knowledge base Schema generation",
+      "对话调用-API调用": "Dialog invocation - API call",
+      "对话调用-分享用户端对话": "Conversation called - shared client conversation",
+      "对话调用-对话测试": "Conversation call - Conversation test",
+      "文档生成问答": "Document generation Q&A",
+      "应用评测": "Application evaluation",
+      "角色指令一键优化": "One-click role command optimization",
+      "任务流程话术预览": "Task flow script preview",
+      "相似问生成": "Similar question generation",
+      "KeyColumnAppInvokeStatus": "Application call status",
+      "KeySheetAppInvokeDetails": "Application call details",
+      "KeyFormatPluginUsage": "%.0f tokens,\n%.0f calls,\n%.0f pages",
+      "KeyFormatPlatformUsageV2": "%.0f tokens,\n%.0f calls，\n%.0f pages, \n%.0f sheets, \n%.0f seconds, \n%.0f characters, \n%.0f numbers",
+      "KeyFormatPluginUsageEmpty": "0 tokens,\n0 calls,\n0 pages",
+      "KeyFormatPlatformUsage": "Long-Term Memory %.0f items,\nSecurity Audit %.0f calls,\nWeb Search %.0f calls",
+      "KeyFormatPlatformUsageEmpty": "Long-Term Memory 0 items,\nSecurity Audit 0 calls,\nWeb Search 0 calls",
+      "KeyOtherKnowledgeBase": "Other Knowledge Bases",
+      "KeyOtherSpace": "Other Spaces"
+    }
+
+  bot-data-statistics-server_zh-CN.json: |
+    {
+      "KeyExportWithParam": "导出%s",
+      "KeyExporting": "导出中",
+      "KeySuccess": "成功",
+      "KeyFail": "失败",
+      "KeyExportSuccess": "导出成功",
+      "KeyExportFail": "导出失败",
+      "KeyExportModelUsageWithParam": "模型用量导出%s",
+      "KeyExportPlatformUsageWithParam": "平台用量导出%s",
+      "KeyExportUsageDetailsWithParam": "用量总计导出%s",
+      "KeyExportModelConcurrencyWithParam": "模型并发导出%s",
+      "KeyExportDedicatedConcurrencyWithParam": "专属并发导出%s",
+      "KeyExportKnowledgeBaseCapacityWithParam": "知识库容量导出%s",
+      "KeyExportAppCallStatisticsWithParam": "应用调用统计导出%s",
+      "KeyExportAppUserStatisticsWithParam": "应用用户统计导出%s",
+      "KeyExportBizDetailsWithParam": "业务看板数据导出%s",
+      "KeyExportAppDashboardWithParam": "应用看板数据导出%s",
+      "KeyExportKnowledgeBaseMaintenanceWithParam": "知识库维护导出%s",
+      "KeySpaceDeleted": "空间已删除",
+      "KeyAppDeleted": "应用已删除",
+      "KeyKnowledgeDeleted": "知识库已删除",
+      "KeyToolDeleted": "工具已删除",
+      "KeyPluginDeleted": "插件已删除",
+      "KeyFileNameCorpModelUsage": "企业管理-资源看板-模型用量统计",
+      "KeyFileNameSpaceModelUsage": "平台管理-资源看板-模型用量统计",
+      "KeyFileNameCorpModelConcurrency": "企业管理-资源看板-模型并发统计",
+      "KeyFileNameSpaceModelConcurrency": "平台管理-资源看板-模型并发统计",
+      "KeyFileNameCorpDedicatedConcurrency": "企业管理-资源看板-专属并发统计",
+      "KeyFileNameSpaceDedicatedConcurrency": "平台管理-资源看板-专属并发统计",
+      "KeyFileNameCorpPlatformUsage": "企业管理-资源看板-平台用量统计",
+      "KeyFileNameSpacePlatformUsage": "平台管理-资源看板-平台用量统计",
+      "KeyFileNameCorpUsageDetails": "企业管理-资源看板-用量总计",
+      "KeyFileNameSpaceUsageDetails": "平台管理-资源看板-用量总计",
+      "KeyFileNameCorpKBCapacity": "企业管理-资源看板-知识库容量统计-知识库使用情况",
+      "KeyFileNameSpaceKBCapacity": "平台管理-资源看板-知识库容量统计-知识库使用情况",
+      "KeyFileNameAppCallStatistics": "应用调用统计",
+      "KeyFileNameCorpAppCallStatistics": "企业管理-业务看板-应用调用统计",
+      "KeyFileNameSpaceAppCallStatistics": "平台管理-业务看板-应用调用统计",
+      "KeyFileNameAppUserStatistics": "应用用户统计",
+      "KeyFileNameCorpBizDetails": "企业管理-业务看板",
+      "KeyFileNameSpaceBizDetails": "平台管理-业务看板",
+      "KeyFileNameKnowledgeBaseMaintenance": "业务看板-应用视图-知识库维护统计",
+      "KeyFileNameCorpPluginUsage": "企业管理-资源看板-插件用量统计",
+      "KeyFileNameSpacePluginUsage": "平台管理-资源看板-插件用量统计",
+      "KeyFileNameCorpResourceConsume": "企业管理-资源看板-资源消耗明细",
+      "KeyFileNameSpaceResourceConsume": "平台管理-资源看板-资源消耗明细",
+      "KeySheetResourceOverview": "资源看板-总览",
+      "KeySheetModelCallGraph": "模型调用次数折线图",
+      "KeySheetModelTokenGraph": "模型消耗token折线图",
+      "KeySheetModelPageCountGraph": "模型消耗页数折线图",
+      "KeySheetTopTokenByModel": "消耗token Top-按模型",
+      "KeySheetTopTokenByApp": "消耗token Top-按应用",
+      "KeySheetTopTokenByKnowledge": "消耗token Top-按知识库",
+      "KeySheetTopTokenBySpace": "消耗token Top-按空间",
+      "KeySheetModelUsageDetails": "模型用量明细",
+      "KeySheetModelCallDetails": "模型调用明细",
+      "KeySheetConcurrencyOverview": "并发统计总览",
+      "KeySheetQPMTPMGraph": "QPM_TPM折线图数据",
+      "KeySheetConcurrencyOverLimit": "TPM_QPM超限调用明细",
+      "KeySheetDedicatedOverview": "专属并发统计总览",
+      "KeySheetDedicatedGraph": "调用并发趋势",
+      "KeySheetDedicatedOverLimit": "调用超可用并发明细",
+      "KeySheetPlatformOverview": "资源看板-平台用量-概览",
+      "KeySheetPlatformUsageDetailData": "资源看板-平台用量-明细数据",
+      "KeySheetLongTermMemoryGraph": "长期记忆存储条数折线图",
+      "KeySheetSecurityAuditGraph": "安全审核调用次数折线图",
+      "KeySheetWebSearchGraph": "联网搜索次数折线图",
+      "KeySheetLongTermMemoryDetails": "长期记忆存储明细",
+      "KeySheetSecurityAuditDetails": "安全审核调用明细",
+      "KeySheetWebSearchDetails": "联网搜索次数明细",
+      "KeySheetUsageDetails": "用量总计",
+      "KeySheetKBCapacityOverview": "资源总览",
+      "KeySheetKBOverUsageGraph": "超额使用量趋势",
+      "KeySheetKBUsageProportionByKB": "知识库用量占比",
+      "KeySheetKBUsageProportionBySpace": "空间用量占比",
+      "KeySheetKBCapacityDetailByKB": "知识库容量明细",
+      "KeySheetKBCapacityDetailBySpace": "空间容量明细",
+      "KeySheetKBMainOverview": "知识库概要统计总览",
+      "KeySheetKBContentOverview": "知识库内容统计总览",
+      "KeySheetKBDocScopeDistribution": "文档生效范围分布",
+      "KeySheetKBQaScopeDistribution": "问答生效范围分布",
+      "KeySheetKBDbScopeDistribution": "数据表生效范围分布",
+      "KeyMetricReferKnowledgeBaseCount": "引用知识库数",
+      "KeyMetricDocCount": "文档数",
+      "KeyMetricDocPendingDiffCount": "待处理对比数",
+      "KeyMetricQaCount": "问答数",
+      "KeyMetricQaPendingVerificationCount": "待校验问答数",
+      "KeyMetricQaPendingConflictCount": "待处理冲突问答数",
+      "KeyMetricDatabaseCount": "数据库数",
+      "KeyMetricTableCount": "数据表数",
+      "KeyColumnEnableScope": "生效范围",
+      "KeyColumnCount": "数量",
+      "KeySheetPluginUsageTrend": "插件使用趋势",
+      "KeySheetPluginUsageDetails": "插件用量明细",
+      "KeySheetPluginCallDetails": "插件调用明细",
+      "KeySheetResourceConsumeDetails": "资源消耗明细",
+      "KeyColumnMetric": "指标",
+      "KeyColumnCurrentValue": "当前值",
+      "KeyColumnMomPercent": "环比(%)",
+      "KeyColumnTime": "时间",
+      "KeyColumnRank": "排名",
+      "KeyColumnName": "名称",
+      "KeyColumnLimitValue": "限制值",
+      "KeyColumnValue": "数值",
+      "KeyMetricTotalCalls": "模型调用次数",
+      "KeyMetricTotalTokens": "模型消耗Tokens数",
+      "KeyMetricTotalInputTokens": "模型输入Tokens数",
+      "KeyMetricTotalOutputTokens": "模型输出Tokens数",
+      "KeyMetricAvgTotalTokens": "单次调用消耗Tokens平均数",
+      "KeyMetricAvgInputTokens": "单次调用输入Tokens平均数",
+      "KeyMetricAvgOutputTokens": "单次调用输出Tokens平均数",
+      "KeyMetricPageCount": "模型消耗页数",
+      "KeyMetricTotalUsage": "总使用量(Byte)",
+      "KeyMetricPackageTotalCapacity": "套餐包容量(GB)",
+      "KeyMetricPackageUsedCapacity": "已使用套餐包容量(Byte)",
+      "KeyMetricOverUsage": "超额使用量(Byte)",
+      "KeyMetricOverExpiredCapacity": "超量失效容量(Byte)",
+      "KeyColumnCallCount": "模型调用次数",
+      "KeyColumnInputTokens": "模型输入Tokens数",
+      "KeyColumnOutputTokens": "模型输出Tokens数",
+      "KeyColumnTotalTokens": "模型消耗Tokens数",
+      "KeyColumnAvgInputTokens": "单次调用输入Tokens平均数",
+      "KeyColumnAvgOutputTokens": "单次调用输出Tokens平均数",
+      "KeyColumnAvgTotalTokens": "单次调用消耗Tokens平均数",
+      "KeyColumnConsumeTokens": "模型消耗Tokens数",
+      "KeyColumnSpaceID": "空间ID",
+      "KeyColumnSpaceName": "空间名称",
+      "KeyColumnAppID": "应用ID",
+      "KeyColumnAppName": "应用名称",
+      "KeyColumnKnowledgeID": "知识库ID",
+      "KeyColumnKnowledgeName": "知识库名称",
+      "KeyColumnModelName": "模型名称",
+      "KeyColumnCallType": "调用类型",
+      "KeyColumnUsedCapacity": "已使用容量(Byte)",
+      "KeyColumnUsedPercentage": "使用占比(%)",
+      "KeyColumnPercentage": "占比(%)",
+      "KeyColumnIsDefaultKnowledge": "是否默认知识库",
+      "KeyColumnActiveUsers": "活跃用户数",
+      "KeyColumnNewUsers": "新用户数",
+      "KeyColumnReturningUsers": "老用户数",
+      "KeyColumnTotalRatings": "用户评价数",
+      "KeyColumnLikeCount": "用户评价点赞数",
+      "KeyColumnDislikeCount": "用户评价点踩数",
+      "KeyMetricMaxQPM": "调用QPM峰值",
+      "KeyMetricMaxTPM": "调用TPM峰值",
+      "KeyMetricOverLimit": "TPM/QPM超限调用次数",
+      "KeyColumnQPM": "调用QPM",
+      "KeyColumnQPMLimit": "调用QPM上限",
+      "KeyColumnTPM": "调用TPM",
+      "KeyColumnTPMLimit": "调用TPM上限",
+      "KeyColumnOverLimitType": "超限类型",
+      "KeyColumnQuery": "Query",
+      "KeyOverLimitTypeConcurrency": "超并发",
+      "KeyOverLimitTypeQPMTPM": "超QPM/TPM",
+      "KeyMetricConcurrencyLimit": "调用并发上限",
+      "KeyMetricSuccessConcurrency": "成功调用并发峰值",
+      "KeyMetricConcurrencyOverLimit": "并发超限调用次数",
+      "KeyColumnConcurrency": "并发数",
+      "KeyColumnConcurrencyLimit": "并发限制",
+      "KeyMetricLongTermMemoryItems": "长期记忆存储条数",
+      "KeyMetricSecurityAuditCalls": "安全审核调用次数",
+      "KeyMetricWebSearchCalls": "联网搜索次数",
+      "KeyColumnLongTermMemoryItems": "长期记忆存储条数",
+      "KeyColumnSecurityAuditCalls": "安全审核调用次数",
+      "KeyColumnWebSearchCalls": "联网搜索次数",
+      "KeyColumnPluginTotalTokens": "插件总Token",
+      "KeyColumnPluginCallCount": "插件调用次数",
+      "KeyColumnPluginPageCount": "插件页面数",
+      "KeyColumnPluginInputTokens": "插件输入token数",
+      "KeyColumnPluginOutputTokens": "插件输出token数",
+      "KeyColumnPluginConsumeCount": "插件消耗次数",
+      "KeyColumnPluginConsumePage": "插件消耗页数",
+      "KeyColumnPluginConsumeSheet": "插件消耗张数",
+      "KeyColumnPluginConsumeSecond": "插件消耗秒数",
+      "KeyColumnPluginConsumeCharacter": "插件消耗字符数",
+      "KeyColumnPluginName": "插件名称",
+      "KeyColumnToolName": "工具名称",
+      "KeyColumnConsumeType": "收费类型",
+      "KeyColumnConsumeTarget": "收费对象",
+      "KeyColumnConsumeScene": "收费场景",
+      "KeyColumnPackageName": "资源包名称",
+      "KeyColumnUsage": "使用量",
+      "KeyColumnConsumePu": "消耗资源数(PU)",
+      "KeyColumnAppOrKBName": "应用名称/知识库名称",
+      "KeySuffixByApp": "(按应用)",
+      "KeySuffixBySpace": "(按空间)",
+      "KeyColumnModelTotalTokens": "模型总Token",
+      "KeyColumnModelInputTokens": "模型输入Token",
+      "KeyColumnModelOutputTokens": "模型输出Token",
+      "KeyColumnModelUsage": "模型用量(tokens)",
+      "KeyColumnPluginUsage": "插件用量",
+      "KeyColumnPlatformUsage": "平台用量",
+      "KeyConsumeTypeModel": "模型用量",
+      "KeyConsumeTypePlugin": "插件用量",
+      "KeyConsumeTypeKnowledgeExcess": "知识库超量",
+      "KeyConsumeTypePlatform": "平台用量",
+      "KeyMetricAgentThinkingRounds": "单次对话思考轮数平均值",
+      "KeyMetricAgentTransferTimes": "单次对话Agent转交次数平均值",
+      "KeyMetricAppCallTotalCalls": "应用调用次数",
+      "KeyMetricAppCallSuccessRate": "应用调用成功率",
+      "KeyMetricAppAvgTotalTokenCost": "总tokens平均耗时(ms)",
+      "KeyMetricAppAvgFirstTokenCost": "首tokens平均耗时(ms)",
+      "KeyMetricKnowledgeBaseCallCount": "知识库调用次数",
+      "KeyMetricWorkflowCallCount": "工作流调用次数",
+      "KeyMetricPluginCallCount": "自定义插件调用次数",
+      "KeyMetricAvgPluginCallCount": "单次对话调用插件平均值",
+      "KeyReplyMethodUnknown": "未知",
+      "KeyReplyMethodReject": "拒答问题回复",
+      "KeyReplyMethodQADirect": "问答直接回复",
+      "KeyReplyMethodAuditFailed": "审核失败回复",
+      "KeyReplyMethodKnowledgePolish": "知识润色回复",
+      "KeyReplyMethodWorkflow": "工作流回复",
+      "KeyReplyMethodRealtimeDoc": "实时文档回复",
+      "KeyReplyMethodImageUnderstand": "图片理解回复",
+      "KeyReplyMethodSearchEngine": "搜索引擎回复",
+      "KeyReplyMethodLLMDirect": "大模型直接回复",
+      "KeyReplyMethodFallback": "兜底回复",
+      "KeySuffixTimes": "次数",
+      "KeyColumnAvgLatency": "平均耗时(ms)",
+      "KeyColumnP50Latency": "P50耗时(ms)",
+      "KeyColumnP75Latency": "P75耗时(ms)",
+      "KeyColumnP90Latency": "P90耗时(ms)",
+      "KeyColumnP95Latency": "P95耗时(ms)",
+      "KeyColumnP99Latency": "P99耗时(ms)",
+      "KeySheetAppCallOverview": "调用统计-总览",
+      "KeySheetAppReplyTypeDistrib": "应用回复类型分布",
+      "KeySheetAppReplyTypeTrend": "应用回复类型趋势",
+      "KeySheetComponentCallTrend": "组件调用趋势",
+      "KeySheetAppCallTrend": "应用调用趋势",
+      "KeySheetPerformanceTrend": "性能趋势",
+      "KeySheetTotalTokenLatencyTrend": "总tokens耗时趋势",
+      "KeySheetFirstTokenLatencyTrend": "首tokens耗时趋势",
+      "KeySheetAgentDialogueTrend": "Agent对话趋势",
+      "KeySheetUserOverview": "用户统计总览",
+      "KeySheetUserTrend": "用户趋势",
+      "KeySheetRatingTrend": "评分趋势",
+      "KeySheetBizOverview": "业务看板-总览",
+      "KeySheetTopCallBySpace": "应用调用次数Top-按空间",
+      "KeySheetTopCallByApp": "应用调用次数Top-按应用",
+      "KeySheetUserTrendBiz": "应用端用户趋势",
+      "KeySheetSpaceDetails": "空间维度明细数据",
+      "KeySheetAppDetails": "应用维度明细数据",
+      "KeySheetCustomPluginDetails": "自定义插件维度明细数据",
+      "KeySheetPerformanceAnalysisDetails": "性能分析数据",
+      "KeyRowOverallAverage": "整体平均值",
+      "KeyYes": "是",
+      "KeyNo": "否",
+      "KeyMetricTotalSpaceCount": "空间总数",
+      "KeyMetricEffectiveSpaceCount": "已创建应用的空间数",
+      "KeyMetricCorpUserCount": "企业历史登录用户数",
+      "KeyMetricTotalAppCount": "应用总数",
+      "KeyMetricActiveAppCount": "活跃应用数",
+      "KeyMetricAppCallCount": "应用调用次数",
+      "KeyMetricCallSuccessCount": "调用成功次数",
+      "KeyMetricCallSuccessRate": "调用成功占比",
+      "KeyMetricCallFailedCount": "调用失败次数",
+      "KeyMetricCallFailedRate": "调用失败占比",
+      "KeyMetricActiveUserCount": "活跃用户数",
+      "KeyMetricNewUserCount": "新用户数",
+      "KeyMetricNewUserRate": "新用户占比",
+      "KeyMetricReturningUserCount": "老用户数",
+      "KeyMetricReturningUserRate": "老用户占比",
+      "KeyMetricAvgUserDialogueRounds": "人均应用调用次数",
+      "KeyMetricKnowledgeBaseCount": "知识库数量",
+      "KeyMetricWorkflowCount": "工作流数量",
+      "KeyMetricCustomPluginCount": "自定义插件数量",
+      "KeyMetricCustomPluginCallCount": "自定义插件调用次数",
+      "KeyMetricAvgTotalTokenLatency": "平均总token耗时(ms)",
+      "KeyMetricAvgFirstTokenLatency": "平均首token耗时(ms)",
+      "KeyColumnCallCountBiz": "调用次数",
+      "KeyColumnSuccessCount": "成功次数",
+      "KeyColumnFailCount": "失败次数",
+      "KeyColumnKnowledgeBaseCallCount": "知识库调用次数",
+      "KeyColumnWorkflowCallCount": "工作流调用次数",
+      "KeyColumnActiveUserCount": "活跃用户数",
+      "KeyColumnNewUserCount": "新用户数",
+      "KeyColumnReturningUserCount": "老用户数",
+      "KeyColumnAvgLatencyMs": "平均耗时(ms)",
+      "KeyColumnP95LatencyMs": "P95耗时(ms)",
+      "KeyColumnP99LatencyMs": "P99耗时(ms)",
+      "KeyColumnTotalAppCount": "应用总数",
+      "KeyColumnActiveAppCount": "活跃应用数",
+      "KeyColumnAppMode": "应用模式",
+      "KeyColumnAppCallSuccessRate": "调用成功率(%)",
+      "KeyColumnCustomPluginCallCount": "自定义插件调用次数",
+      "KeyColumnAvgTotalTokenLatencyMs": "平均总token耗时(ms)",
+      "KeyColumnAvgFirstTokenLatencyMs": "平均首token耗时(ms)",
+      "KeyColumnPluginCallSuccessRate": "调用成功率(%)",
+      "KeyAlarmTime": "发生时间",
+      "KeyLevel": "告警级别",
+      "KeyAlarmContentKey": "告警内容",
+      "KeyAlarmContent": "腾讯云智能体开发平台告警:%s，触发%s等级告警，告警指标:%s。",
+      "KeyAlarmLevelInfo": "一般",
+      "KeyAlarmLevelWarn": "严重",
+      "KeyAlarmLevelError": "致命",
+      "KeyAlarmTitle": "腾讯云智能体平台告警",
+      "KeyAlarmStrategyName": "告警策略名称",
+      "KeyAlarmTypeAppQPMMsg": "应用 [%s] QPM告警:",
+      "KeyAlarmTypeAppSuccessCallRateMsg": "应用 [%s] 调用成功率告警:",
+      "KeyExportAlarmHistory": "告警历史导出%s",
+      "KeyAlarmTypeTokenUsagePerDayMsg": "大模型 [%s] Tokens消耗数超量告警:",
+      "KeyAlarmTypeTPMMsg": "大模型 [%s] TPM告警:",
+      "KeyAlarmTypeKbRemainCapacityMsg": "知识库剩余容量告警:",
+      "KeyTokenUsagePerDayUnitKey": "tokens",
+      "KeyAppQPMUnitKey": "次/分",
+      "KeyAppSuccessCallRateUnitKey": "%",
+      "KeyKbRemainCapacityUnitKey": "B",
+      "KeyTPMUnitKey": "tokens/分",
+      "KeyOpenClawDeleted": "ClawPro已删除",
+      "KeyMetricOpenClawCalls": "ClawPro 服务次数",
+      "KeyColumnOpenClawCalls": "ClawPro 服务次数",
+      "KeySheetOpenClawCalls": "ClawPro 服务次数（趋势）",
+      "KeySheetOpenClawDetails": "ClawPro 服务明细",
+      "KeyColumnOpenClawId": "ClawPro ID",
+      "KeyColumnOpenClawName": "ClawPro Name",
+      "KeyColumnOpenClaw": "ClawPro",
+      "KeyExportPluginUsageWithParam": "插件用量导出%s",
+      "KeyExportResourceConsumeWithParam": "资源消耗导出%s",
+      "KeyReplyMethodDocument": "文档回复次数",
+      "KeyReplyMethodQAPolish": "问答润色回复次数",
+      "应用评测-大模型生成": "应用评测-大模型生成",
+      "应用评测-知识库问答调用": "应用评测-知识库问答调用",
+      "应用评测-大模型思考": "应用评测-大模型思考",
+      "KeyColumnAppInvokeStatus": "应用调用状态",
+      "KeySheetAppInvokeDetails": "应用调用明细",
+      "KeyFormatPluginUsage": "%.0f tokens，\n%.0f 次，\n%.0f 页",
+      "KeyFormatPlatformUsageV2": "%.0f tokens，\n%.0f 次，\n%.0f 页, \n%.0f 张, \n%.0f 秒, \n%.0f 字符, \n%.0f 个",
+      "KeyFormatPluginUsageEmpty": "0 tokens，\n0 次，\n0 页",
+      "KeyFormatPlatformUsage": "长期记忆存储 %.0f条，\n安全审核调用 %.0f次，\n联网搜索 %.0f次",
+      "KeyFormatPlatformUsageEmpty": "长期记忆存储 0条，\n安全审核调用 0次，\n联网搜索 0次",
+      "KeyOtherKnowledgeBase": "其他知识库",
+      "KeyOtherSpace": "其他空间"
+    }
+  errors_en-US.json: |
+    {
+      "ErrParams": "Invalid parameters",
+      "ErrIndexNotAcknowledged": "Index not acknowledged",
+      "ErrInvalidUin": "Invalid UIN",
+      "ErrTimeRangeExceeded": "Time range cannot exceed 31 days",
+      "ErrInvalidTimeRange": "Start time cannot be later than end time",
+      "ErrQueryFailed": "Query failed",
+      "ErrSystem": "System error",
+      "ErrStorageUploadFailed": "File upload failed",
+      "ErrGenerateURLFailed": "Failed to generate download URL",
+      "ErrStorageFileLimit": "File type not supported",
+      "ErrAppBizIdsExceedLimit": "AppBizIds length exceeds limit",
+      "ErrUnexpectedResultType": "Unexpected query result type",
+      "ErrUnsupportedDimension": "Unsupported dimension",
+      "ErrExportOverviewSheet": "Failed to export overview sheet",
+      "ErrExportCallGraphSheet": "Failed to export call graph sheet",
+      "ErrExportTokenGraphSheet": "Failed to export token graph sheet",
+      "ErrExportPageCountGraphSheet": "Failed to export page count graph sheet",
+      "ErrExportTopTokenSheet": "Failed to export top token sheet",
+      "ErrExportUsageDetailsSheet": "Failed to export usage details sheet",
+      "ErrWriteExcel": "Failed to write Excel",
+      "ErrQueryOverviewData": "Failed to query overview data",
+      "ErrQueryCallGraph": "Failed to query call graph",
+      "ErrQueryTokenGraph": "Failed to query token graph",
+      "ErrQueryPageCountGraph": "Failed to query page count graph",
+      "ErrQueryUsageBySpace": "Failed to query usage by space",
+      "ErrQueryUsageByApp": "Failed to query usage by app",
+      "ErrQueryCurrentPeriod": "Failed to query current period",
+      "ErrQueryPreviousPeriod": "Failed to query previous period",
+      "ErrQueryTotalTokens": "Failed to query total tokens",
+      "ErrExportConcurrencyOverviewSheet": "Failed to export concurrency overview sheet",
+      "ErrExportConcurrencyGraphSheet": "Failed to export concurrency graph sheet",
+      "ErrExportOverLimitDetailsSheet": "Failed to export over-limit details sheet",
+      "ErrQueryConcurrencyGraph": "Failed to query concurrency graph",
+      "ErrListOverLimitRecords": "Failed to list over-limit records",
+      "ErrExportDedicatedOverviewSheet": "Failed to export dedicated concurrency overview sheet",
+      "ErrExportDedicatedGraphSheet": "Failed to export dedicated concurrency graph sheet",
+      "ErrExportDedicatedOverLimitSheet": "Failed to export dedicated concurrency over-limit sheet",
+      "ErrQueryDedicatedConcurrencyGraph": "Failed to query dedicated concurrency graph",
+      "ErrTimeRangeRequired": "Start time and end time are required",
+      "ErrMarshalExportParams": "Failed to marshal export parameters",
+      "ErrCreateExportTask": "Failed to create export task",
+      "ErrInvalidStartTimeFormat": "Invalid start time format",
+      "ErrInvalidEndTimeFormat": "Invalid end time format",
+      "ErrEndTimeBeforeStartTime": "End time must be later than start time",
+      "ErrExpireTimeEmpty": "Effective time is empty",
+      "ErrExpireTime": "Effective time format is incorrect",
+      "ErrExpireTimeRange": "Effective start time cannot be later than end time",
+      "ErrAlarmItem": "Trigger condition cannot be empty",
+      "ErrAlarmItemCount": "Number of trigger conditions exceeds the limit",
+      "ErrAlarmItemRight": "Right value of trigger condition cannot be empty",
+      "ErrAlarmItemRange": "Trigger condition range cannot be empty",
+      "ErrAlarmItemOp": "Trigger condition operator cannot be empty",
+      "ErrAlarmNameLength": "Alarm name length is incorrect",
+      "ErrAlarmNameExist": "Alarm name already exists",
+      "ErrAlarmStrategyEmpty": "Alarm strategy is empty",
+      "ErrContextInvalid"      :"Context Invalid",
+      "ErrAssumeServiceRoleFailed" :"Assume Service Role Failed",
+      "ErrServiceRoleUnavailable" :  "Service Role Unavailable",
+      "ErrAlarmHistortIDLength": "The alarm history ID array exceeds the limit",
+      "ErrFailedOperationNotEnterpriseCertification":"Enterprise-verified accounts cannot use signature and template-related APIs. You can change your real-name authentication method to enterprise verification; the change will take effect in approximately one hour.",
+      "ErrInvalidAlarmURL": "Invalid alert URL",
+      "ErrInvalidWecomURL": "Invalid WeCom URL address", 
+      "ErrInvalidFeishuURL": "Invalid Feishu URL address",
+      "ErrInvalidDingtalkURL": "Invalid DingTalk URL address",
+      "ErrInvalidAlarmItemRange": "Invalid alert threshold range",
+      "ErrInvalidAlarmItemRight": "Invalid alert condition value",
+      "ErrInvalidAlarmTriggerCount": "Invalid alert frequency, must be greater than 0",
+      "ErrInvalidAppBizID": "Invalid application",
+      "应用评测-大模型生成": "Application Evaluation - Large Model Generation",
+      "应用评测-知识库问答调用": "Application Evaluation - Knowledge Base Question Answering Invocation",
+      "应用评测-大模型思考": "Application Evaluation - Big Model Thinking"
+    }
+
+  errors_zh-CN.json: |
+    {
+      "ErrParams": "参数错误",
+      "ErrIndexNotAcknowledged": "索引未确认",
+      "ErrInvalidUin": "无效的UIN",
+      "ErrTimeRangeExceeded": "时间范围不能超过31天",
+      "ErrInvalidTimeRange": "开始时间不能晚于结束时间",
+      "ErrQueryFailed": "查询失败",
+      "ErrSystem": "系统错误",
+      "ErrStorageUploadFailed": "文件上传失败",
+      "ErrGenerateURLFailed": "生成下载链接失败",
+      "ErrStorageFileLimit": "文件类型不支持",
+      "ErrAppBizIdsExceedLimit": "AppBizIds长度超过限制",
+      "ErrUnexpectedResultType": "查询结果类型不符合预期",
+      "ErrUnsupportedDimension": "不支持的维度",
+      "ErrExportOverviewSheet": "导出概览sheet失败",
+      "ErrExportCallGraphSheet": "导出调用图sheet失败",
+      "ErrExportTokenGraphSheet": "导出token图sheet失败",
+      "ErrExportPageCountGraphSheet": "导出页数图sheet失败",
+      "ErrExportTopTokenSheet": "导出top token sheet失败",
+      "ErrExportUsageDetailsSheet": "导出用量明细sheet失败",
+      "ErrWriteExcel": "写入Excel失败",
+      "ErrQueryOverviewData": "查询概览数据失败",
+      "ErrQueryCallGraph": "查询调用图失败",
+      "ErrQueryTokenGraph": "查询token图失败",
+      "ErrQueryPageCountGraph": "查询页数图失败",
+      "ErrQueryUsageBySpace": "按空间查询用量失败",
+      "ErrQueryUsageByApp": "按应用查询用量失败",
+      "ErrQueryCurrentPeriod": "查询当前周期失败",
+      "ErrQueryPreviousPeriod": "查询上一周期失败",
+      "ErrQueryTotalTokens": "查询总token失败",
+      "ErrExportConcurrencyOverviewSheet": "导出并发统计总览sheet失败",
+      "ErrExportConcurrencyGraphSheet": "导出并发统计图sheet失败",
+      "ErrExportOverLimitDetailsSheet": "导出超限明细sheet失败",
+      "ErrQueryConcurrencyGraph": "查询并发统计图失败",
+      "ErrListOverLimitRecords": "查询超限记录失败",
+      "ErrExportDedicatedOverviewSheet": "导出专属并发总览sheet失败",
+      "ErrExportDedicatedGraphSheet": "导出专属并发图sheet失败",
+      "ErrExportDedicatedOverLimitSheet": "导出专属并发超限明细sheet失败",
+      "ErrQueryDedicatedConcurrencyGraph": "查询专属并发图失败",
+      "ErrTimeRangeRequired": "开始时间和结束时间必填",
+      "ErrMarshalExportParams": "序列化导出参数失败",
+      "ErrCreateExportTask": "创建导出任务失败",
+      "ErrInvalidStartTimeFormat": "开始时间格式无效",
+      "ErrInvalidEndTimeFormat": "结束时间格式无效",
+      "ErrEndTimeBeforeStartTime": "结束时间必须晚于开始时间",
+      "ErrExpireTimeEmpty": "生效时间为空",
+      "ErrExpireTime": "生效时间格式错误",
+      "ErrExpireTimeRange": "生效开始时间不能小于结束时间",
+      "ErrAlarmItem": "触发条件不能为空",
+      "ErrAlarmItemCount": "触发条件数量超限",
+      "ErrAlarmItemRight": "触发条件右值不能为空",
+      "ErrAlarmItemRange": "触发条件区间范围不能为空",
+      "ErrAlarmItemOp": "触发条件操作符不能为空",
+      "ErrAlarmNameLength": "告警名称长度错误",
+      "ErrAlarmNameExist": "告警名称已存在",
+      "ErrAlarmStrategyEmpty": "告警策略为空",
+      "ErrContextInvalid"     : "context 无效" ,
+      "ErrAssumeServiceRoleFailed" : "扮演服务角色失败",
+      "ErrServiceRoleUnavailable" :  "角色不可用",
+      "ErrAlarmHistortIDLength": "告警历史id数组超限",
+      "ErrFailedOperationNotEnterpriseCertification":"非企业认证无法使用签名及模板相关接口，您可以 变更实名认证模式，变更为企业认证用户后，约1小时左右生效。",
+      "ErrInvalidAlarmURL": "无效的告警地址",
+      "ErrInvalidWecomURL": "无效的企业微信URL地址",
+      "ErrInvalidFeishuURL": "无效的飞书URL地址",
+      "ErrInvalidDingtalkURL": "无效的钉钉URL地址",
+      "ErrInvalidAlarmItemRange": "无效的告警区间范围",
+      "ErrInvalidAlarmItemRight": "无效的告警条件取值",
+      "ErrInvalidAlarmTriggerCount": "无效的告警频次，需大于0",
+      "ErrInvalidAppBizID": "无效的应用",
+      "应用评测-大模型生成": "应用评测-大模型生成",
+      "应用评测-知识库问答调用": "应用评测-知识库问答调用",
+      "应用评测-大模型思考": "应用评测-大模型思考"
+
+    }
+
+  placeholder.yaml: |
+
+    NAMESPACE: Production
+    ENV_NAME: formal
+
+    REDIS_PORT: 6379
+    REDIS_DB: 5
+
+    MONGO_USER: lke-data-statistics
+    MONGO_PASSWORD:
+    MONGO_HOST:
+    MONGO_PORT: 27017
+
+    #没有引用，清理敏感内容
+    MSG_RECORD_ES_HOST: 
+    MSG_RECORD_ES_PORT: 9200
+    MSG_RECORD_ES_PWD: 
+
+
+    ADMIN_CONFIG_LOGIN_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+    ADMIN_CONFIG_API_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+    APP_CONFIG_API_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
+    APP_CONFIG_ADMIN_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+    PLATFORM_MANAGER_ADMIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+    PLATFORM_MANAGER_API_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
+    PLATFORM_MANAGER_LOGIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+    KB_CONFIG_API_TARGET: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+
+    RESOURCE_GALLERY_ADMIN_TARGET: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+    PLATFORM_CHARGER_FINANCE_TARGET: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+    PLATFORM_CHARGER_API_TARGET: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9091
+
+    PLUGIN_CONFIG_TARGET: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    # --- trpc.adp.ai_gateway.Admin ---
+    AI_GATEWAY_ADMIN_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
+    ATOMIC_GATEWAY_TARGET: dns://api.adp.cloud.tencent.com:443
+
+
+    KAFKA_MSG_LOG_TOPIC: msg_record_binlog
+    KAFKA_MSG_LOG_GROUP: bot-data-statistics-msg-log
+    KAFKA_USER_STAT_TOPIC: msg_record_binlog
+    KAFKA_USER_STAT_GROUP: bot-data-statistics-msg-user
+
+    KAFKA_CHECK_TASK_TOPIC: t_check_task-formal
+    KAFKA_CHECK_TASK_GROUP: bot-data-statistics-check-task
+
+    KAFKA_PLATFORM_METROLOY_TOPIC: platform_metrology_report
+    KAFKA_PLATFORM_METROLOY_GROUP: bot-data-statistics-report
+
+    MSG_LOG_TO_KAFKA_SERVER1: trpc.KEP.msg-log-kafka.toyota
+
+    MSG_LOG_TO_KAFKA_SERVER2: trpc.KEP.msg-log-kafka.joezhuang
+
+    MSG_LOG_TO_KAFKA:
+    - name: toyota
+      uin: 100037631824
+      kafka_client: trpc.KEP.msg-log-kafka.toyota
+    - name: joezhuang-test
+      uin: 64385328
+      kafka_client: trpc.KEP.msg-log-kafka.joezhuang
+
+
+    TC_STS_ENDPOINT: sts.tencentcloudapi.com
+    TC_STS_REGION: ap-guangzhou
+    TC_SMS_SECRET_ID: ""
+    TC_SMS_SECRET_KEY: ""
+    TC_SMS_SERVICE_ROLE: ADP_QCSLinkedRoleInSMSSendMessages
+    TC_SMS_ENDPOINT: sms.tencentcloudapi.com
+    TC_SMS_REGION: ap-guangzhou
+    TC_SMS_UIN_MAP:
+      100034032793: 2252646423
+      100038737751: 2252646423
+
+    TC_SES_SECRET_ID: ""
+    TC_SES_SECRET_KEY: ""
+    TC_SES_SERVICE_ROLE: ADP_QCSLinkedRoleInSESSendMessage
+    TC_SES_ENDPOINT: ses.tencentcloudapi.com
+    TC_SES_REGION: ap-guangzhou
+    TC_SES_UIN_MAP:
+      100034032793: 2414531260
+      100038737751: 2414531260
+
+    is_private: true
+    is_dedicated_cloud: true
+    elasticsearch_name: trpc.elasticsearch.lke.admin
+
+    msg_log_to_kafka:
+      - name:  test
+        uin:  700000963993
+        kafka_client: trpc.KEP.msg-log-kafka.700000963993-test
+      - name:  test
+        uin:  700001751666
+        kafka_client: trpc.KEP.msg-log-kafka.700001751666-test
+
+
+  trpc_go.yaml: |
+    global:                             #全局配置
+      namespace: Test          #环境类型，分正式production和非正式development两种类型
+      env_name: test                 #环境名称，非正式环境下多环境的名称
+      enable_set: false         #是否启用set
+      full_set_name: adp   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+
+    server:                                            #服务端配置
+      app: KEP                                        #业务的应用名
+      server: bot-data-statistics-server                             #进程服务名
+      bin_path: /usr/local/trpc/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /usr/local/trpc/conf/                 #业务配置文件所在路径
+      data_path: /usr/local/trpc/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - recovery                                       #拦截框架创建的业务处理协程panic
+        - i18n-adp
+      admin:
+        ip: ${POD_IP}
+        port: 8081
+      service:                                         #业务服务提供的service，可以有多个
+        - name: trpc.KEP.bot-data-statistics-server.Api        #service的路由名称
+          ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 8000                  #服务监听端口 可使用占位符 ${port}
+          network: tcp                               #网络监听类型  tcp udp
+          protocol: trpc                 #应用层协议 trpc http
+          timeout: 50000                              #请求最长处理时间 单位 毫秒
+          server_async: true                             #开启异步处理
+          idletime: 600000                               # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+        - name: trpc.KEP.bot-data-statistics-server.Admin        #service的路由名称
+          ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 8001                  #服务监听端口 可使用占位符 ${port}
+          network: tcp                               #网络监听类型  tcp udp
+          protocol: trpc                 #应用层协议 trpc http
+          timeout: 0                              #请求最长处理时间 单位 毫秒
+          server_async: true                             #开启异步处理
+          idletime: 600000                               # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+          filter:
+            - session
+            - permission
+        - name: trpc.kafka.consumer.service.msg_log
+          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=msg_record_binlog&group=bot-data-statistics-msg-log&batch=20&batchFlush=2000
+          protocol: kafka
+        - name: trpc.kafka.consumer.service.user_stat
+          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=msg_record_binlog&group=bot-data-statistics-msg-user&batch=20&batchFlush=2000
+          protocol: kafka
+        - name: trpc.kafka.consumer.service.check_task
+          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=t_check_task-formal&group=bot-data-statistics-check-task&batch=50&batchFlush=2000
+          protocol: kafka
+        - name: trpc.KEP.bot-data-statistics-server.TriggerHistoryTask   #service的路由名称,
+          ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+          port: 9095   #服务监听端口 可使用占位符 ${port}
+          network: 0 * * * * *?holdTime=5     # 该定时器同时在所有机器运行
+          protocol: timer   #应用层协议
+          timeout: 5000   # 异步处理不会超时
+        - name: trpc.KEP.bot-data-statistics-server.TriggerMsgLogCountTask   #service的路由名称,
+          ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+          port: 9096   #服务监听端口 可使用占位符 ${port}
+          network: 5 2-59/5 * * * *?scheduler=statistics&holdTime=240
+          protocol: timer   #应用层协议
+          timeout: 240000
+        - name: trpc.KEP.bot-data-statistics-server.TriggerMsgUserCountTask   #service的路由名称,
+          ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+          port: 9097   #服务监听端口 可使用占位符 ${port}
+          network: 5 2-59/5 * * * *?scheduler=statistics&holdTime=240
+          protocol: timer   #应用层协议
+          timeout: 240000
+        - name: trpc.KEP.bot-data-statistics-server.TriggerMsgFeedbackCountTask   #service的路由名称,
+          ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+          port: 9098   #服务监听端口 可使用占位符 ${port}
+          network: 5 2-59/5 * * * *?scheduler=statistics&holdTime=240
+          protocol: timer   #应用层协议
+          timeout: 240000
+        - name: trpc.KEP.bot-data-statistics-server.TriggerCleanExpiredStaticalData   #service的路由名称,
+          ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+          port: 9099   #服务监听端口 可使用占位符 ${port}
+          network: 0 5 0 * * *?scheduler=statistics&holdTime=3600
+          protocol: timer   #应用层协议
+          timeout: 3600000
+        - name: trpc.KEP.bot-data-statistics-server.TriggerCounterTask   #service的路由名称,
+          ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+          port: 9105   #服务监听端口 可使用占位符 ${port}
+          network: 0 */5 * * * *?scheduler=statistics&holdTime=240
+          protocol: timer   #应用层协议
+          timeout: 3600000
+        - name: trpc.KEP.bot-data-statistics-server.TriggerCleanExpiredContentRecognition   #service的路由名称,
+          ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+          port: 9101   #服务监听端口 可使用占位符 ${port}
+          network: 0 5 0 * * *?scheduler=statistics&holdTime=3600
+          protocol: timer   #应用层协议
+          timeout: 3600000
+        - name: trpc.KEP.bot-data-statistics-server.TriggerCleanExpiredAlarmHistory #service的路由名称,
+          ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+          port: 9103 #服务监听端口 可使用占位符 ${port}
+          network: 0 */30 * * * *?scheduler=statistics&holdTime=120
+          protocol: timer #应用层协议
+          timeout: 3600000
+        - name: trpc.KEP.bot-data-statistics-server.TriggerPrivateMsgRecordEtl #私有化专用，定时 ETL t_msg_record 至 t_msg_log 及 t_msg_daily_user
+          ip: localhost #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+          port: 9100 #服务监听端口 可使用占位符 ${port}
+          network: "0/10 * * * * *?holdTime=5" # 每 10秒触发一次
+          protocol: timer #应用层协议
+          timeout: 3600000
+        - name: trpc.KEP.bot-data-statistics-server.TriggerCleanExpiredScheduleTask #私有化专用，定时清理 t_schedule_task 表
+          ip: localhost #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+          port: 9101 #服务监听端口 可使用占位符 ${port}
+          network: "0 10 0 * * *?scheduler=statistics&holdTime=10" # 每天跑一次
+          protocol: timer #应用层协议
+          timeout: 10000
+        - name: trpc.KEP.bot-data-statistics-server.TriggerCleanMsgLogTask #私有化专用，定时清理 t_msg_log 及 t_msg_daily_user 表数据
+          ip: localhost #网卡 ipport配置二选一，主要用于分布式定时器的互斥
+          port: 9102 #服务监听端口 可使用占位符 ${port}
+          network: "0 20 0 * * *?scheduler=statistics&holdTime=3600" # 每 10秒解发一次
+          protocol: timer #应用层协议
+          timeout: 3600000
+        - name: trpc.KEP.bot-data-statistics-server.TriggerPrivateCheckTaskEtl # 私有化专用, 定时 ETL t_check_task 至 es
+          ip: localhost
+          port: 9103
+          network: "0/10 * * * * *?holdTime=5" # 每 10秒触发一次
+          protocol: timer #应用层协议
+          timeout: 5000
+        - name: trpc.kafka.consumer.platform_metrology.report
+          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=platform_metrology_report&group=bot-data-statistics-report&batch=100&batchFlush=2000
+          protocol: kafka
+    plugins:                                          #插件配置
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      log:                                            #日志配置
+        default:                                  #默认日志的配置，可支持多输出
+          - writer: console                         #控制台标准输出 默认
+            level: info                            #标准输出日志的级别
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+          - writer: file                            #本地文件日志
+            level: info                             #本地文件滚动日志的级别
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/trpc.log  #本地文件滚动日志存放的路径
+              write_mode: 2
+              roll_type: time
+              max_age: 7
+              max_backups: 10
+              compress: false
+              time_unit: day
+        clues:
+          - writer: console                         #控制台标准输出 默认
+            level: info                            #标准输出日志的级别
+          - writer: file
+            level: info
+            formatter: json
+            writer_config:
+              filename: /app/logs/clues.log
+              write_mode: 2
+              roll_type: time
+              max_age: 7
+              max_backups: 10
+              compress: false
+              time_unit: day
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+            - zh-CN
+            - en-US
+          data_provider:
+            type: rainbow
+            prefix: bot-data-statistics-server
+            error_prefix: errors
+            char_scaling_factor:
+              zh: 1
+              en: 3
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+            - name: global
+              appid: ${RAINBOW_APP_ID}  # appid
+              group: global # 配置所属组
+              type: kv   # 七彩石数据格式, kv(默认), table
+              env_name: ${RAINBOW_ENV_NAME}
+              timeout: 2000
+              enable_client_provider: true
+      registry: #服务注册配置
+        polaris: #北极星名字注册服务的配置
+          register_self: false
+          heartbeat_interval: 3000                    #名字注册服务心跳上报间隔
+          heartbeat_timeout: 1000                     #名字服务心跳超时
+          service:
+            - name: trpc.KEP.bot-data-statistics-server.Api      #service name 与上面的service配置一一对应
+              namespace: Test                #环境类型，分正式Production和非正式Development两种类型
+              token: e145f79eac6b4eeea2e89983691ccd46               #服务注册所需要的 token
+      selector: #针对用户自定义的selector的配置
+        polaris: #针对polaris整体api的内部配置
+          protocol: grpc                              #名字服务远程交互协议类型
+    client:
+      namespace: Test
+      filter:
+        - opentelemetry
+      service:
+        - name: mysql.data.statistics
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.qbot
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: redis.data.statistics
+          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/5
+          timeout: 8000
+        - name: mongo.data.statistics
+          target: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/lke-data-statistics?authSource=admin
+          timeout: 30000
+        - name: trpc.KEP.msg-log-kafka.toyota
+          target: kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=tcadp_log2cls_toyota
+        - name: trpc.KEP.msg-log-kafka.joezhuang
+          target: kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=msg-log-joezhuang
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          namespace: Production
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          namespace: Production
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.adp.app_config.Api
+          namespace: Production
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
+          timeout: 30000
+        - name: trpc.adp.app_config.Admin
+          namespace: Production
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 5000
+        - name: trpc.adp.platform_manager.Admin
+          namespace: Production
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 30000
+        - name: trpc.adp.platform_manager.Api
+          namespace: Production
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
+          timeout: 30000
+        - callee: trpc.adp.platform_manager.Login
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          namespace: Production
+          protocol: trpc
+          timeout: 5000
+        - callee: trpc.adp.resource_gallery.Admin
+          namespace: Production
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_charger.Finance
+          namespace: Production
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          network: tcp
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_charger.Api
+          namespace: Production
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9091
+          network: tcp
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.kb_config.Api
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: Production
+          network: tcp
+          protocol: trpc
+          timeout: 60000
+
+        - name: trpc.kafka.producer.platform_metrology.finance_pay
+          target: kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=pack_pay&compression=none&partitioner=random&requiredAcks=-1
+
+        - name: trpc.kafka.producer.platform_metrology.report
+          target: kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=platform_metrology_report
+        - name: trpc.http.cos.Access
+          network: tcp
+          protocol: http
+          target: dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn
+          timeout: 5000
+        - callee: trpc.adp.plugin_config.PluginConfigApi
+          name: trpc.adp.plugin_config.PluginConfigApi
+          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: Production
+        - name: trpc.clickhouse.adp
+          target: clickhouse://${INFRA_MIDDLEWARES_CLICKHOUSE_0_HOSTS}:${INFRA_MIDDLEWARES_CLICKHOUSE_0_PORT}?username=${INFRA_MIDDLEWARES_CLICKHOUSE_0_USER}&password=${INFRA_MIDDLEWARES_CLICKHOUSE_0_PASSWORD}&database=db_adp
+          timeout: 3000
+
+        - name: elastic.data.statistics
+          namespace: Production
+          target: "ip://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}"
+          password: ${INFRA_MIDDLEWARES_ES_0_PASSWORD}
+          protocol: http
+          timeout: 3000
+        - name: adp.atomic.gateway
+          network: tcp
+          protocol: http
+          target: dns://api.adp.cloud.tencent.com:443
+          timeout: 600000
+        - name: trpc.adp.ai_gateway.Admin
+          network: tcp
+          protocol: trpc
+          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
+          timeout: 2000

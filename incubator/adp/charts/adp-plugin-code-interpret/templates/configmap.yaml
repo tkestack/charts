@@ -1,0 +1,327 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-plugin-code-interpret
+  namespace: {{ .Release.Namespace }}
+data:
+  code-interpreter_en-US.json: |
+    {
+      "session id为空": "Session id is empty",
+      "session id正在执行": "Session id is executing",
+      "没有可用的kernel": "No available pod",
+      "Found File, but upload to COS failed.": "Found File, but upload to COS failed.",
+      "Executed code failed, you need use key word 'await' to run a async code.": "Executed code failed, you need use key word 'await' to run a async code."
+    }
+
+  code-interpreter_zh-CN.json: |
+    {
+      "session id为空": "会话ID为空",
+      "session id正在执行": "会话ID正在执行",
+      "没有可用的kernel": "没有可用的容器",
+      "Found File, but upload to COS failed.": "上传文件失败",
+      "Executed code failed, you need use key word 'await' to run a async code.": "执行代码失败"
+    }
+
+  error_en-US.json: |
+    {
+      "黑名单操作": "Blacklist Operation",
+      "pod配置不存在": "Pod configuration does not exist",
+      "sse配置不存在": "SSE configuration does not exist",
+      "Kube client init failed": "Kubernetes client initialization failed",
+      "获取token加锁失败，请稍后重试": "Failed to acquire lock for token retrieval, please try again later",
+      "执行用户不合法": "Invalid execution user",
+      "账号Pod达到上限": "Account Pod limit reached"
+    }
+
+  error_zh-CN.json: |
+    {
+      "黑名单操作": "黑名单操作",
+      "pod配置不存在": "容器配置不存在",
+      "sse配置不存在": "SSE配置不存在",
+      "Kube client init failed": "集群客户端初始化失败",
+      "获取token加锁失败，请稍后重试": "获取token加锁失败，请稍后重试",
+      "执行用户不合法": "执行用户不合法",
+      "账号Pod达到上限": "账号Pod达到上限"
+    }
+
+  kube.yaml: |
+    # kube.yaml
+    # 变更后需要重启服务才能生效
+
+    apiVersion: v1
+    clusters:
+    - cluster:
+        certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN5RENDQWJDZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRJME1USXlOVEUyTWpjek1sb1hEVE0wTVRJeU16RTJNamN6TWxvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTS9QCk9LUzQxM28xV1B0WDI5c04weXlIUHFmUVE3VjJoZXBzbHdHTzU1ZmkyQlVFVEdmeGR3WmpkbDBJVnQ2SWE4SzAKRnpBZWN4OVRycXZSdUFVL21GWElNR1BUcGx6dXBtcEZ4Ynl4K2pxYkY1Y2hpL3hVRzFNV3VvR212cnY4QjJSaApLNkZ3RHJMaE51d0lsTnJkbENLTmlCQnZ2elRXM3lvcHowYU5zanNyOCtleUF2ZFFVUXQzbmEyV212YzZHRUY0CmFyNVk4KzAydzc1dmtEek5WNloySXhId2paRG5MY3NRdzc5NjZLenBod25QUTlGZnB1Z1lMWGxoT2kxS3ZsM0MKbTI5L2o1SEp0a0txVHQycU9Vd2owN3hXVUppVVZCbWF3eUlXL3ZPWjFSbkkxZmx6VkFiZjVMMDBkVzFXRlBPTApNcVlySHNiNmJMT0syOVJMdHdNQ0F3RUFBYU1qTUNFd0RnWURWUjBQQVFIL0JBUURBZ0tVTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFBRkpOb3F4M21DemVkKytIRXh4aEVkaWRpVEIKazFnUVpuSG14OEc1ZmR6ME1OcmY3YXdlVG1UY2l0cFo0ZEFMNkNKejBMUHZtZFdUQnpTSFIrdzZPVkVTVnpMNApGZGhLZFVuYXlseEZ6SEdIN0JFNVNtTzcyVGJDTjZhSkpDM093N2lnUU4vMkdyQlA4ZFFyUHo0R25ZTEd3TzRpCi9STHM3aDJLMzFZbDRHSnZ5RWR0dllXZmkvN1BsbUFVdWtUQ0UzaWNQaXVLKzVKcmhWVFUrMmEycElaaWJ0aW0KdGhqa1FOcEZkL0VKME9LWGs2Q2VpVTh0KzMxcVFPYXN1WTFEV1hnSndSZFUvbjJkYlFlQ2tLVXhyRlduSk9jagpuVUtjMEwzcVVRRDVjVGx1ZUhOL09YZEdGWEhPQytYZTlyWnJkbGt6WTRZa21FT1dkNkZrNXFaV3hGND0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+        server: https://11.149.96.131
+      name: cls-oc4zlebg
+    contexts:
+    - context:
+        cluster: cls-oc4zlebg
+        user: "100030593772"
+      name: cls-oc4zlebg-100030593772-context-default
+    current-context: cls-oc4zlebg-100030593772-context-default
+    kind: Config
+    preferences: {}
+    users:
+    - name: "100030593772"
+      user:
+        client-certificate-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURERENDQWZTZ0F3SUJBZ0lJVHdETlNGcWNkak13RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRFeU1qVXhOak13TURaYUZ3MDBOREV5TWpVeE5qTXdNRFphTURZeApFakFRQmdOVkJBb1RDWFJyWlRwMWMyVnljekVnTUI0R0ExVUVBeE1YTVRBd01ETXdOVGt6TnpjeUxURTNNelV4Ck5EUXlNRFl3Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLQW9JQkFRQ3dUeGduVlk3ejU3UG8KVGZHK25qWGxGek4vMXV5ZmtxZDJsVW04VTVhc3hpb1ZKYXdzVjJRMDZNWEs4ZDBJMXlBTVRjU3JxTEkvdjBDVwo5dm5uR0REOStVUG90bXFZc0FNaENYZ3ZiSnZRNWVTVEpESXlLd1F4MmE5Nk1NK1k2bStNcDI3Y3BPSkFWb2NhCksvZ3VNaVNMcnMraC9GZHZLRmlEMnFBbkpoS0N6YTcxWVlaWnV2a2pKeDBYL2NQZmMvZVNWWlRGM1l3ZWJvVzQKS08rU0p0TWtsT2RYQkNJVldjek9vem1lVERqcWRIYXl1YzFKMGszUm5WMjlSeHJrZ2FOVk9mR3FGQnM4cmJpQwpDYlhxUFV1R21zWWRqVkJIL3JhUDl4Q1k1dHJrSVBPSHhjMllrVjViZ01HZkxpWEttdjhpOXROR1ZIV3RYcG8yCmFWZnpJVFUvQWdNQkFBR2pQekE5TUE0R0ExVWREd0VCL3dRRUF3SUNoREFkQmdOVkhTVUVGakFVQmdnckJnRUYKQlFjREFnWUlLd1lCQlFVSEF3RXdEQVlEVlIwVEFRSC9CQUl3QURBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQQp6cWs5c21JUFdJLy9iKytkMDdQT2FmeFlZQnNoVFZhSGV2emgzdno4MHdKaXlmV2dxM0tvQ3FacEhURlI4aTQyCnpiVXQxRWovOVQ1Z21taGJBVTBiSS9HQkwzVTFVUFkxQVJGT0RQbWxMM3FnWmlyeXZ3YTA5UGV1blNxdlJtZmsKQTlETEwvWlc0c0c2VjlLRGRzNmVLRDNaVEJUVWo3K2lCTXducE9IOWM3SFVJMXNJazNQNGl0Z0Zla2NNV2xYOApYRDk4c3Y4UnBQNXVicnZPcVd4SmM2OFFKTlp2RGxOYUgweFZiSW5ZbkFUQTVXNzBUWXVTTGtHUUdIb1FPazBtCkp3eDN1UzNqQzZ6dklSZ0RPSjl5b1ZqeDhieVRuNGEwaEFjenRvMytLNnNRYTNtcmZHMFlPaVpLc3lQZGJNUGMKbUk3Y1l1TlN0Ym5kT3Byenp3dUppdz09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+        client-key-data: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb3dJQkFBS0NBUUVBc0U4WUoxV084K2V6NkUzeHZwNDE1UmN6Zjlic241S25kcFZKdkZPV3JNWXFGU1dzCkxGZGtOT2pGeXZIZENOY2dERTNFcTZpeVA3OUFsdmI1NXhndy9mbEQ2TFpxbUxBRElRbDRMMnliME9Ya2t5UXkKTWlzRU1kbXZlakRQbU9wdmpLZHUzS1RpUUZhSEdpdjRMaklraTY3UG9meFhieWhZZzlxZ0p5WVNnczJ1OVdHRwpXYnI1SXljZEYvM0QzM1Aza2xXVXhkMk1IbTZGdUNqdmtpYlRKSlRuVndRaUZWbk16cU01bmt3NDZuUjJzcm5OClNkSk4wWjFkdlVjYTVJR2pWVG54cWhRYlBLMjRnZ20xNmoxTGhwckdIWTFRUi82MmovY1FtT2JhNUNEemg4WE4KbUpGZVc0REJueTRseXByL0l2YlRSbFIxclY2YU5tbFg4eUUxUHdJREFRQUJBb0lCQUNWUTZFelMrQW01bmNOcQpVK05EZXlhOHpXS2VhOEN1ZXBGSHNhNlJobytVOWEwNkp3SFBrVjc5Y1hldHoxbWlwcDdVQ3U5R0trd0J2N3IwCkZScUxiVHNqK2ZLVVFXV0Z3M1BIbkU5MVRsbGRmdzZCbDdvMGpwTzZma0IvZWtEa1JhM2dkajl2Q3BBUmdGRFMKdzVtTGRWNjNKaTBqeXFHMVNWN0c5Q1MxRXkvcDNOSHNuV0Q1UTEyZDFDcDdaVG1vbmpLWVo4YUg1TnJGK0xvSgptbVBDZmRpWU5MaXppT084dUhESDEyWXRjVyszR1EydmRKWmVvOXNNQXA0NytkSmtJTDI5WnZwQ2MxVzVteU8yCnVZeEduV0pLLzZsZUxmRUFVNTdVeWJlTWc1YnBYODNRRy9WTWFSWWJ2b1FWV2grZVQ4em9IVXVONmdEalAvT3AKbTV0SE1Ka0NnWUVBMWN6dGtWdUduUHBvUklKTGt2Q3o3TE9uUkpEV05pUHlYY1VZVE5KU0hsemg3MWM3TnRRegpiUnlaekdzRkFlVE1NVm5YeitwZFBKN0RwVVB2eC9KYlJ4UDFQbEcwYjlVYjllbmlWRCtDcEZaUzhlQmFwbVhrCkpXak1zaTBaaWwzMVlhdzV6SDFTZHdTK2tXaEY0OWlZcllDc2hxNi92TEltdWNOd3doN1BtQ01DZ1lFQTB4dkUKREtrdmRvUW5RUnpNNXV5SjBuSlZtNmZQcW9mTjFRSlNZc0dwQXB0QnN5a3RLT2tES0N2Vzl4VkE2UUd5cW03MwpCamRuY1ZKekFJQ2FDbU8xaWExVEFrNGtMUFg1cG5HQ2pGWXVJeG96VHB6TlBsSFVmMWNiSnJKbzFyb0RYQ0VnCmNzU2JocTByN2FxSS9DN2VQNkt5cFBibXNWemM4cmpRMkZQZTBqVUNnWUFYcGZndEdOT1Y3M2l6QXpwNndWY1YKZW5Xbzl1Qkswc1VQTENyWTdIYWExeWxDZ1FLU3VQd0xPSnVtYWJ2L0RxQ3JZTVduUU1RWlhYSkVpSFF3U0pWaQpFa29SSDVaMnZEckFnNk0rTUZ3eDh6NXZkS0p5UDFqeDdscWQ1ckVwaGVVTGJiSmk5UVczRm5aQnZTZmw0T0phClpwNHVzNHVQd3FEWDhVODZtWS9hd3dLQmdRQ25pUDk3Tk1Fd0F3ek1CYmt2QWtVV09CcHNYeTdWSE5WaTJHYmQKYk9kZDVDeXRyRjNrZTVjL3lCcmZGNFRkNWJVT3dPVlZqNTZPTm1xQjJZMWw5VjlhbGF5c3hhcTc2N0ZtUCtyawp5SGZ3NzVnTUtUQlE1c3dIQ3UvSE5Bc3piWWZCRTZFV3M2VGhxb2lVSXFSM3poSWUybFYveVZtbkpCVk1veE5LCnVyUzRpUUtCZ0dKRGVVQ1g0emd0MEVDVjBlUjBEQmRQUGhWNEU4MGFISGxsd3BkQVgzd1YrYitESUhvYmFubHYKcXZSZ0hLYXVidjV1WnhvZ1F1WGx4VDFaNFlBNmd3dVlHRkQvbmNLdUwvOXhLMWlMZGJ0YVdBVEV3ZjJIN1J3Ygo3dmZKZGplc2tyQjBMd3B2VmFOc0dQRThxRkVsd2JMb0MvQnVzNERURVZMK2lJOWtMZThiCi0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
+  main.yaml: |
+
+    max_err_len: 10000
+
+    upload: ${UPLOAD}
+
+    storage:
+      {{ include "qbot.s3_storage" . }}
+
+    redis_lock:
+      wait_time: 60
+      expire_time: 60
+      lock_key: token_lock_key
+      lock_value: apply_token
+
+    pod_config: ${POD_CONFIG}
+
+    token_config: ${TOKEN_CONFIG}
+
+    remote_config:
+      codes:
+        python: 
+          init_code: "# customize matplotlib font\nimport matplotlib.pyplot as plt\nplt.style.use('default')\nplt.rcParams['font.sans-serif'] = ['Source Han Sans CN']\nplt.rcParams[\"axes.unicode_minus\"] = False\nfrom pylab import mpl\nmpl.rcParams[\"font.sans-serif\"] = [\"Source Han Sans CN\"]\nmpl.rcParams[\"axes.unicode_minus\"] = False\n\n# customize pandas display options\nimport pandas as pd\npd.set_option(\"display.max_columns\", None)\npd.set_option(\"display.html.table_schema\", False)\npd.set_option(\"display.notebook_repr_html\", False)"
+
+    sse_option:
+      conn_endpoint: http://%s/execute
+      client_type: http
+      stream: code_execute
+      max_buffer_size: 160000000
+      timeout: 60
+
+    black_list:
+      "%pip": 1
+      "!pip": 1
+      "woa.com": 1
+      "subprocess": 1
+      "import ctypes": 1
+      "import socket": 1
+      "threading": 1
+      "multiprocessing": 1
+      "automaxprocs": 1
+      "distro": 1
+      "cfs_sh": 1
+      "__builtins__": 1
+      "__globals__": 1
+      ":8080": 1
+      ":8081": 1
+      ":8091": 1
+      ":80": 1
+      ":53": 1
+      ":443": 1
+      ":7653": 1
+      ":7779": 1
+      ":9988": 1
+      ":9999": 1
+      ":38930": 1
+      ":39398": 1
+      ":49900": 1
+      ":62574": 1
+      ":62586": 1
+      ":62784": 1
+      "curl": 1
+      "popen": 1
+      "system": 1
+      "getstatusoutput": 1
+      "getoutput": 1
+      "wget": 1
+      "RainbowConfig": 1
+      "listdir": 1
+      "scandir": 1
+      "pathlib": 1
+      "walk": 1
+      "shutil": 1
+      "ping": 1
+
+
+  placeholder.yaml: |
+
+    UPLOAD:
+      channel_size: 10 # 上传文件通道大小
+      prefix: code-interpreter/%s/%s # 上传文件前缀
+      image_types: # 图片格式
+        png: 1
+        jpeg: 1
+        jpg: 1
+        bmp: 1
+        tiff: 1
+        gif: 1
+        svg: 1
+
+
+    POD_CONFIG:
+      type: lb
+      namespace: {{ .Release.Namespace }}
+      service_name: adp-plugin-code-kernel
+
+      max_pods: 300     # 最大数量
+      min_pods: 10      # 最小数量
+      upper_thr: 0.8    # 扩容阈值
+      lower_thr: 0.3    # 缩容阈值
+
+    TOKEN_CONFIG:
+      real_time: false
+      node_expire_time: 300 # token过期时间（单位：s）
+      max_try_count: 120
+      try_wait_time: 500ms
+
+      limit_uin_max_pod: true
+      default_uin_max_pod: 5
+      uin_limit_whitelist:
+        100034812856: 300 # hank
+        100022476908: 30 # ssv 为村项目，ritaye
+        3289682752: 100 # 白日梦游戏智能客服
+        100041742779: 20 # 浏览器视频 - 测试
+        100044249647: 50 # 浏览器视频 - 正式
+        100044597907: 100 # ieg 算法大赛
+        100034032793: 100 # 云智能部门主账号
+        100044785308: 100 # 企点部门主账号
+        100036958148: 40 # 丰中 @congkunzhu
+
+
+
+  trpc_go.yaml: |
+    global:                             #全局配置
+      namespace: ${POD_NAMESPACE}            #环境类型，分正式production和非正式development两种类型
+      env_name: formal                     #环境名称，非正式环境下多环境的名称
+      enable_set: false         #是否启用set
+      full_set_name: adp   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+
+    server:                                            #服务端配置
+      app: adp                                         #业务的应用名
+      server: plugin-code-interpret                 #进程服务名
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/bin/conf/                 #业务配置文件所在路径
+      data_path: /app/bin/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - recovery
+        - i18n-adp
+        - opentelemetry
+      stream_filter:
+        - recovery                                     #拦截框架创建的业务处理协程panic
+      admin:
+        ip: ${POD_IP}  # admin 的 ip，配置网卡 nic 也可以
+        port: 8081     # admin 的 port，必须同时配置这里的 ip port 才会启动 admin 
+      service:                                          #业务服务提供的service，可以有多个
+        - name: trpc.KEP.code-interpreter-dispatcher.Dispatch      #service的路由名称
+          ip: ${POD_IP}                             #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 8000                #服务监听端口 可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: http_no_protocol               #应用层协议 trpc http
+          timeout: 60000                            #请求最长处理时间 单位 毫秒
+        - name: trpc.KEP.code-interpreter-dispatcher.CodeExec  #service的路由名称
+          ip: ${POD_IP}                                 #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 8001                                    #服务监听端口 可使用占位符 ${port}
+          network: tcp                                  #网络监听类型  tcp udp
+          protocol: trpc                                #应用层协议 trpc http
+          timeout: 60000                                #请求最长处理时间 单位 毫秒
+          server_async: true                            #开启异步处理
+          idletime: 6000000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+        - name: trpc.KEP.code-interpreter-dispatcher.syncNodes   # service 的路由名称
+          ip: ${POD_IP}
+          port: 9090                                                      # 服务监听端口 可使用占位符 ${port}
+          network: "* 0/1 * * * ?startAtOnce=1&scheduler=syncNodes"      # 任务调度策略
+          protocol: timer                                                 # 设置服务类型为定时器服务
+          timeout: 10000
+
+    plugins:                                          #插件配置
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: console                           #控制台标准输出 默认
+            level: error                              #标准输出日志的级别
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+          - writer: file                              #本地文件日志
+            level: info                               #本地文件滚动日志的级别
+            writer_config:
+              filename: /app/logs/trpc.log    #本地文件滚动日志存放的路径
+              max_size: 100                             #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false    
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/ 
+            - name: global
+              appid: ${RAINBOW_APP_ID}  # appid
+              group: global # 配置所属组
+              type: kv   # 七彩石数据格式, kv(默认), table
+              env_name: ${RAINBOW_ENV_NAME}
+              timeout: 2000
+              enable_client_provider: true
+      registry: #服务注册配置
+
+      selector: #针对用户自定义的selector的配置
+        polaris: #针对polaris整体api的内部配置
+          protocol: grpc                              #名字服务远程交互协议类型
+
+    client:                                            #客户端调用的后端配置
+      namespace: ${POD_NAMESPACE}                           #针对所有后端的环境
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - opentelemetry
+      service:
+        - name: redis.code-interpreter-dispatcher
+          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/1
+          timeout: 800
+
+        - name: trpc.http.cos.Access
+          network: tcp
+          protocol: http
+          target: dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn
+          timeout: 50000
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+            - zh-CN
+            - en-US
+          data_provider:
+            type: rainbow
+            prefix: code-interpreter
+            error_prefix: error
+            char_scaling_factor:
+              zh-CN: 1
+              en-US: 3

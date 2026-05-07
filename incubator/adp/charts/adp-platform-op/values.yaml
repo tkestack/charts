@@ -1,0 +1,5 @@
+images:
+  adp-platform-op:
+    url: ccr.ccs.tencentyun.com/tke-market/bot-op-server:2_2603291450_stable_v3.4.1.1_da2cba8c_private
+plugin_center_uin: ''
+replicas: 1

@@ -1,6 +1,6 @@
 {{- $lb_type := "NodePort"}}
 {{- $lb_ip   := ""}}
-{{- if eq .Values.global.helmfileEnvName "tcs" }}
+{{- if eq .Values.global.helmfile_env_name "tcs" }}
   {{- $ingress_svc := (lookup "v1" "Service" "ingress-nginx" "ingress-nginx-controller")}}
   {{- if $ingress_svc }}
   {{- $lb_type = $ingress_svc.spec.type |toString }}

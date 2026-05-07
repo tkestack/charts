@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: adp-apex
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: adp-apex
+    app.kubernetes.io/name: adp-apex
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+    protocol: TCP
+  selector:
+    app: adp-apex
+    module: adp-apex

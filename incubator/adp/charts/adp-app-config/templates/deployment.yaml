@@ -3,10 +3,20 @@ kind: Deployment
 metadata:
   annotations:
     ti.cloud.tencent.com/resource-quota: unlimited
-    configmap.reloader.stakater.com/reload: "app-config"
+    configmap.reloader.stakater.com/reload: "adp-app-config"
+    {{- if .Values.global.customAnnotations }}
+    {{- range $key, $value := .Values.global.customAnnotations }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
   labels:
     app: {{ .Values.appName }}
     app.kubernetes.io/name: {{ .Values.appName }}
+    {{- if .Values.global.customLabels }}
+    {{- range $key, $value := .Values.global.customLabels }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
   name: {{ .Values.appName }}
   namespace: {{ .Release.Namespace }}
 spec:
@@ -25,6 +35,17 @@ spec:
     metadata:
       labels:
         app: {{ .Values.appName }}
+        {{- if .Values.global.customLabels }}
+        {{- range $key, $value := .Values.global.customLabels }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+        {{- end }}
+      {{- if .Values.global.customAnnotations }}
+      annotations:
+        {{- range $key, $value := .Values.global.customAnnotations }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+      {{- end }}
     spec:
       affinity:
         podAntiAffinity:
@@ -74,12 +95,12 @@ spec:
                 fieldRef:
                   fieldPath: status.podIP
             - name: DEPLOYMENT_ENVIRONMENT
-              value: TCS
+              value: TKE
             - name: ENV
               value: tcs
             - name: SERVER_LOG_LEVEL
               value: info
-          image: {{(index .Values.tad.images "adp-app-config").url}}
+          image: {{(index .Values.images "adp-app-config").url}}
           imagePullPolicy: Always
           #command: ["sh","/usr/local/app/start.sh"]
           #command: ["sleep","inf"]
@@ -88,30 +109,30 @@ spec:
           resources:
             limits:
               cpu: "500m"
-              memory: "1Gi"
+              memory: "2Gi"
             requests:
-              cpu: "500m"
-              memory: "1Gi"
+              cpu: "200m"
+              memory: "256Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
             limits:
               cpu: "1"
               memory: "2Gi"
             requests:
-              cpu: "1"
-              memory: "2Gi"
+              cpu: "200m"
+              memory: "256Mi"
           {{- else }}
           resources:
             limits:
               cpu: "1"
               memory: "2Gi"
             requests:
-              cpu: "1"
-              memory: "2Gi"
+              cpu: "200m"
+              memory: "256Mi"
           {{- end }}
           livenessProbe:
             failureThreshold: 3
-            initialDelaySeconds: 30
+            initialDelaySeconds: 10
             periodSeconds: 3
             successThreshold: 1
             tcpSocket:
@@ -119,7 +140,7 @@ spec:
             timeoutSeconds: 2
           readinessProbe:
             failureThreshold: 3
-            initialDelaySeconds: 30
+            initialDelaySeconds: 10
             periodSeconds: 3
             successThreshold: 1
             tcpSocket:
@@ -131,10 +152,48 @@ spec:
             - mountPath: /app/logs
               name: logdata
               subPathExpr: $(POD_NAME)
-            - mountPath: /app/conf/
+            - mountPath: /app/conf/trpc_go.yaml
               name: config
-      imagePullSecrets:
-        - name: {{ .Values.imagePullSecretName }}
+              subPath: trpc_go.yaml
+            - mountPath: /app/conf/application.yaml
+              name: config
+              subPath: application.yaml
+            - mountPath: /app/conf/placeholder.yaml
+              name: config
+              subPath: placeholder.yaml
+            - mountPath: /app/conf/knowledge_qa_model.yaml
+              name: config
+              subPath: knowledge_qa_model.yaml
+            - mountPath: /app/conf/thought_model.yaml
+              name: config
+              subPath: thought_model.yaml
+            - mountPath: /app/conf/workflow_model.yaml
+              name: config
+              subPath: workflow_model.yaml
+            - mountPath: /app/conf/plugin_model.yaml
+              name: config
+              subPath: plugin_model.yaml
+            - mountPath: /app/conf/parse_model.yaml
+              name: config
+              subPath: parse_model.yaml
+            - mountPath: /app/conf/white_list.yaml
+              name: config
+              subPath: white_list.yaml
+            - mountPath: /app/conf/app-config_en-US.json
+              name: config
+              subPath: app-config_en-US.json
+            - mountPath: /app/conf/app-config_zh-CN.json
+              name: config
+              subPath: app-config_zh-CN.json
+            - mountPath: /app/conf/errors_en-US.json
+              name: config
+              subPath: errors_en-US.json
+            - mountPath: /app/conf/errors_zh-CN.json
+              name: config
+              subPath: errors_zh-CN.json
+            - mountPath: /app/conf/infrastructure.yaml
+              name: infrastructure
+              subPath: infrastructure.yaml
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       volumes:
@@ -148,5 +207,10 @@ spec:
           name: logdata
         - configMap:
             defaultMode: 420
-            name: {{ .Values.appName }}
+            name: {{ .Release.Name }}-app-config
           name: config
+
+        - configMap:
+            defaultMode: 420
+            name: infrastructure
+          name: infrastructure

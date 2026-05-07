@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: adp-platform-content-moderation
+  name: adp-platform-content-moderation
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: tcp-8081
+      port: 8081
+      protocol: TCP
+      targetPort: 8081
+    - name: tcp-9090
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
+    - name: tcp-9091
+      port: 9091
+      protocol: TCP
+      targetPort: 9091
+  selector:
+    app: adp-platform-content-moderation
+  type: ClusterIP

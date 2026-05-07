@@ -7,6 +7,15 @@ metadata:
     {{- include "adp.labels" . | nindent 4 }}
 rules:
   - apiGroups: [""]
-    resources: ["pods"]
+    resources: ["pods", "endpoints"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["replicasets", "deployments", "statefulsets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments/scale", "statefulsets/scale"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+  - apiGroups: ["autoscaling"]
+    resources: ["horizontalpodautoscalers"]
     verbs: ["get", "list", "watch"]
 {{- end }}
