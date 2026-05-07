@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: accessmanagerserver
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: accessmanagerserver
+spec:
+  ports:
+    - name: trpc
+      port: 10001
+      protocol: TCP
+      targetPort: 10001
+  selector:
+    app: accessmanagerserver
+  sessionAffinity: None
+  type: ClusterIP

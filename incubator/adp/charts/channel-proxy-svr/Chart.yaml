@@ -1,0 +1,8 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: A helm chart for channel-proxy-svr
+name: channel-proxy-svr
+type: application
+version: 1.0.0
+maintainers:
+  - name: sinutelu

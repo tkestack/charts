@@ -1,0 +1,20 @@
+tad:
+  type: helm
+  images:
+    bot-rag-server:
+      url: "ccr.ccs.tencentyun.com/tke-market/rag-exec:60_2601122017_master_private_49ca8e76_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+RagServer:
+  search_secret_id: ""
+  search_secret_key: ""
+  ds_faq_reject_model_name: cs-normal-70b # 知识库问答拒绝模型名称
+  workflow_config_model_name: workflow-pro # 工作流配置模型名称
+imagePullSecretName: qcloudregistrykey

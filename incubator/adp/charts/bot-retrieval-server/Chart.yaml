@@ -1,0 +1,11 @@
+apiVersion: v2
+name: bot-retrieval-server
+description: A helm chart for bot-retrieval-server
+type: application
+
+version: 1.0.0
+
+appVersion: 1.0.0
+maintainers:
+  - name: sinutelu
+  - name: v_iferen

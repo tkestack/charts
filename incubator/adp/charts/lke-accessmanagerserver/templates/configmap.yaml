@@ -1,0 +1,237 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: accessmanagerserver
+  namespace: {{ .Release.Namespace }}
+data:
+  key-AccessManagerServer: |
+    {
+      "DB": {
+        "PermissionDB": {
+          "Charset": "utf8mb4",
+          "DataBase": "openplatform_permission_data",
+          "MaxConn": 100,
+          "MaxIdle": 10,
+          "ConnTimeout": 5000,
+          "RTimeout": 2000,
+          "WTimeout": 0,
+          "ConnLifeTime": 2000,
+          "ParseTime": true,
+          "Local": "Local"
+        }
+      },
+      "OpenPlatformConfDataConf": {
+        "TblNameProduct": "openplatform_conf_data.dop_product_info",
+        "TblNameSubscribedProduct": "openplatform_conf_data.dop_product_subscription"
+      },
+      "CasbinConf": {
+        "CasbinModel": {
+          "RequestDefinition": "sub, dom, obj, act",
+          "PolicyDefinition": "sub, dom, obj, act",
+          "RoleDefinition": "g = _, _, _",
+          "PolicyEffect": "some(where (p.eft == allow))",
+          "Matchers": "(r.sub == p.sub || g(r.sub, p.sub, r.dom)) && r.dom == p.dom && regexMatch(r.obj, p.obj) && custMatcher(r.act, p.act)"
+        },
+        "ResourceCasbinModel": {
+          "RequestDefinition": "sub, dom, res_t, act, res",
+          "PolicyDefinition": "sub, dom, res_t, act, res",
+          "RoleDefinition": "g = _, _, _",
+          "PolicyEffect": "some(where (p.eft == allow))",
+          "Matchers": "(r.sub == p.sub || g(r.sub, p.sub, r.dom)) && r.res_t == p.res_t && regexMatch(r.res, p.res) && custMatcher(r.act, p.act)"
+        }
+      },
+      "RuleLoadCycleTime": "@every 5s",
+      "CommonLoadCycleTime": "@every 5s",
+      "CommonDelCycleTime": "0 * * * *",
+      "PermissionConf": {
+        "DBName": "openplatform_permission_data",
+        "TblNamePermissionInfo": "openplatform_permission_data.permission_info",
+        "TblNameRoleInfo": "openplatform_permission_data.role_info",
+        "TblNameRolePermission": "openplatform_permission_data.role_permission",
+        "TblNameRoleResource": "openplatform_permission_data.role_resource",
+        "TblNameProductPermission": "openplatform_permission_data.product_permission",
+        "TblNameCasbinRule": "openplatform_permission_data.casbin_rule",
+        "TblNameResourcePermissionInfo": "openplatform_permission_data.resource_permission_info",
+        "TblNameResourceCasbinRule": "openplatform_permission_data.resource_casbin_rule",
+        "TblNameSubjectPermission": "openplatform_permission_data.subject_permission",
+        "TblNameSubjectResourcePermission": "openplatform_permission_data.subject_resource_permission",
+        "TblNameUinRole": "openplatform_permission_data.uin_role",
+        "DefaultAdminRoleName": "主账号管理员角色",
+        "BotLimitPermissionIDs": [
+          "BotLimit",
+          "IABotLimit",
+          "IQIBotLimit"
+        ],
+        "LKESpaceAdminActionMap": {
+          "lke-space-admin-role": ["CreateSpace", "DeleteSpace", "ModifySpace", "ListSpace"]
+        },
+        "BotFieldsPermissionIDs": [
+          "BotManagement.BotFields",
+          "IQIBotManagement.BotFields",
+          "IABotManagement.BotFields"
+        ]
+      },
+      "InnerAdminAccount": "100000000000",
+      "AuthServerConf": {
+        "Url": "http://ti-perm-auth.{{ .Release.Namespace }}:8081"
+      },
+      "LkePermissionResourceTypeMap": {
+            "Custom": {
+                "app": "adpAppCustom",
+                "knowledge": "adpKnowledgeBaseCustom",
+                "plugin": "adpPluginCenterCustom",
+                "prompt_template": "adpPromptTemplateCustom"
+             },
+            "Edit": {
+              "app": "adpAppEdit",
+              "knowledge": "adpKnowledgeBaseEdit",
+              "plugin": "adpPluginCenterEdit",
+              "prompt_template": "adpPromptTemplateEdit"
+            },
+            "View": {
+                 "app": "adpAppView",
+                 "knowledge": "adpKnowledgeBaseView",
+                 "plugin": "adpPluginCenterView",
+                 "prompt_template": "adpPromptTemplateView"
+              },
+            "Authorize": {
+                  "app": "adpAppAuthorize",
+                  "knowledge": "adpKnowledgeBaseAuthorize",
+                  "plugin": "adpPluginCenterAuthorize",
+                  "prompt_template": "adpPromptTemplateAuthorize"
+             },
+            "NoPermission":{
+                "app": "adpAppNoPermission",
+                "knowledge": "adpKnowledgeBaseNoPermission",
+                "plugin": "adpPluginCenterNoPermission",
+                "prompt_template": "adpPromptTemplateNoPermission"
+            }
+       },
+      "PermissionResourceMap": {
+        "BotLimit": "BotLimit",
+        "IABotLimit": "BotLimit",
+        "IQIBotLimit": "BotLimit",
+        "IVHBotLimit": "BotLimit",
+        "BotManagement.BotFields": "AppKey",
+        "IABotManagement.BotFields": "AppKey",
+        "IQIBotManagement.BotFields": "AppKey",
+        "IVHBotManagement.BotFields": "AppKey",
+        "TCCIBotManagement.BotFields": "AppKey",
+        "BotManagement.BotFields.All": "AppKey",
+        "BotManagement.BotFields.Assignment": "AppKey",
+        "IVHResource.TextDriverRealman2D.ResourceChose": "RT_TextDriverRealman2DResourceChose",
+        "IVHResource.TextDriverRealman2D.Concurrent": "RT_TextDriverRealman2DConcurrent",
+        "IVHResource.TextDriverRealman2D.PeriodOfValidity": "RT_TextDriverRealman2DPeriodOfValidity",
+        "IVHResource.TextDriverCartoon2D.ResourceChose": "RT_TextDriverCartoon2DResourceChose",
+        "IVHResource.TextDriverCartoon2D.Concurrent": "RT_TextDriverCartoon2DConcurrent",
+        "IVHResource.TextDriverCartoon2D.PeriodOfValidity": "RT_TextDriverCartoon2DPeriodOfValidity",
+        "IVHResource.TextDriverRealistic3D.ResourceChose": "RT_TextDriverRealistic3DResourceChose",
+        "IVHResource.TextDriverRealistic3D.Concurrent": "RT_TextDriverRealistic3DConcurrent",
+        "IVHResource.TextDriverRealistic3D.PeriodOfValidity": "RT_TextDriverRealistic3DPeriodOfValidity",
+        "IVHResource.VoiceDriverRealman2D.ResourceChose": "RT_VoiceDriverRealman2DResourceChose",
+        "IVHResource.VoiceDriverRealman2D.Concurrent": "RT_VoiceDriverRealman2DConcurrent",
+        "IVHResource.VoiceDriverRealman2D.PeriodOfValidity": "RT_VoiceDriverRealman2DPeriodOfValidity",
+        "IVHResource.VoiceDriverRealistic3D.ResourceChose": "RT_VoiceDriverRealistic3DResourceChose",
+        "IVHResource.VoiceDriverRealistic3D.Concurrent": "RT_VoiceDriverRealistic3DConcurrent",
+        "IVHResource.VoiceDriverRealistic3D.PeriodOfValidity": "RT_VoiceDriverRealistic3DPeriodOfValidity",
+        "TCCIIndustryPackage":"IndustryPackage",
+        "ICRIVHResource.TextDriverRealman2D.ResourceChose": "RT_TextDriverRealman2DResourceChose",
+        "ICRIVHResource.TextDriverRealman2D.Concurrent": "RT_TextDriverRealman2DConcurrent",
+        "ICRIVHResource.TextDriverRealman2D.PeriodOfValidity": "RT_TextDriverRealman2DPeriodOfValidity"
+      },
+      "CacheConfig": {
+          "RedisExpTimeInSecond": 604800,
+          "RedisRefreshTimeWaitInSecond": 60,
+          "LRUCapacity": 100000,
+          "ExpTimeInSecond": 604800,
+          "ClearDelayTimeInSecond": 60,
+          "LoadBatchSize": 100,
+          "LoadConnNum": 10
+      },
+      "RescCacheConfig": {
+          "RedisExpTimeInSecond": 604800,
+          "RedisRefreshTimeWaitInSecond": 60,
+          "LRUCapacity": 100000,
+          "ExpTimeInSecond": 604800,
+          "ClearDelayTimeInSecond": 60,
+          "LoadBatchSize": 100,
+          "LoadConnNum": 10
+      }
+    }
+  key-trpc_go.yaml: |
+    global: #全局配置
+      namespace: default                        #环境类型，分正式Production和非正式Development两种类型
+      env_name: tcs                        #环境名称，非正式环境下多环境的名称
+      container_name: ${POD_NAME}                    #容器名称
+      local_ip: ${POD_IP}                            #本地IP，容器内为容器ip，物理机或虚拟机为本机ip
+      admin_port: 18888                              #管理命令服务端口
+      enable_set: ${ENABLE_SET}                      #是否启用set
+      full_set_name: ${SET_NAME}                     #set名
+    server:                                            #服务端配置
+      app: ${APP_NAME}                                 #业务的应用名
+      server: ${SERVER_NAME}                           #进程服务名
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - simpledebuglog
+        - recovery                                     #拦截框架创建的业务处理协程panic
+        - opentelemetry
+      admin:
+        ip: ${POD_IP}                                  # 必须填外部可访问的ip, 不能填127.0.0.1
+        port: 18888                                    # admin 端口
+        read_timeout: 3000                             #ms. 请求被接受到请求信息被完全读取的超时时间设置，防止慢客户端
+        write_timeout: 60000                           #ms. 处理的超时时间
+      service:                                         #业务服务提供的service，可以有多个
+        - name: trpc.${APP_NAME}.${SERVER_NAME}.AccessManager #把ReplaceMe换成自己服务pb里的service名
+          network: tcp                                 #网络监听类型  tcp udp
+          protocol: trpc                               #应用层协议 trpc http
+          timeout: 3000                                #请求最长处理时间 单位 毫秒
+          ip: ${POD_IP}                                #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 10001                                  #服务监听端口
+    client:                                            #客户端调用的后端配置
+      namespace: default                          #针对所有后端的环境
+      timeout: 3000                                    #针对所有后端的请求最长处理时间
+      service:                                         #针对单个后端的配置，默认都有默认值，可以完全不用配置
+        - callee: trpc.VirtualHuman.virtualmanconfig.virtualmanInstance
+          name:  trpc.VirtualHuman.access.AccessService
+          target: dns://accessmanagerserver.{{ .Release.Namespace }}:10001
+      filter:
+        - opentelemetry
+    plugins:                                           #插件配置
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: file                              #本地文件日志
+            level: debug #本地文件滚动日志的级别
+            caller_skip: 2                            #用于定位日志的调用处
+            writer_config:
+              filename: /app/log/trpc.log                 #本地文件滚动日志存放的路径
+              max_size: 100                             #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false                          #日志文件是否压缩
+          - writer: console                             #本地文件日志
+            level: error                                #本地文件滚动日志的级别
+      telemetry:
+        opentelemetry:  # 或者tpstelemetry
+          addr: {{ .Values.global.observability.apm.otlp}}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if .Values.global.observability.apm.registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if .Values.global.observability.apm.attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}

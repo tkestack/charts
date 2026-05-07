@@ -1,32 +1,33 @@
-images:
-  etcd:
-    url: ccr.ccs.tencentyun.com/tke-market/etcd:3.6.4-0
+tad:
+  type: helm
+  namespace: ti-base
+  images:
+    etcd:
+      url: ccr.ccs.tencentyun.com/tke-market/etcd:3.6.4-0
+
+# 镜像拉取 Secret 名称
 imagePullSecretName: qcloudregistrykey
+
+# 副本数
 replicas: 3
-resources:
-  cpu: 4000m
-  memory: 8Gi
+
+# 资源配置
 storage:
-  storageClass: ''
+  storageClass: ""
   size: 15Gi
+
+# 服务端口
 ports:
   client: 2379
   peer: 2380
+
+# 外部域名访问配置
 externalAccess:
   enabled: false
-  host: ti.etcd.tcs.io
+  host: "ti.etcd.tcs.io"  # 例如: ti.etcd.tcs.io
+
+# 认证配置
 auth:
   enabled: false
-  user: ''
-  password: ''
-# etcd 后端存储配额（字节），超过后触发 NOSPACE 告警进入只读模式
-# 默认 2GB 太小，设为 4GB（需小于 memory limit）
-quotaBackendBytes: 4294967296
-# 自动压缩模式: periodic（按时间）或 revision（按版本号）
-autoCompaction:
-  mode: periodic
-  retention: "1h"
-# 定期碎片整理 CronJob
-defrag:
-  enabled: true
-  schedule: "0 3 * * *"
+  user: ""
+  password: ""

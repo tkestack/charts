@@ -1,0 +1,372 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aiconfmanagerserver
+  namespace: {{ .Release.Namespace }}
+data:
+  key-AIConfManagerServer: |
+      {
+        "DB": {
+          "OpenPlatformDB": {
+            "Charset": "utf8mb4",
+            "DataBase": "openplatform_conf_data",
+            "MaxConn": 100,
+            "MaxIdle": 10,
+            "ConnTimeout": 5000,
+            "RTimeout": 5000,
+            "WTimeout": 0,
+            "ConnLifeTime": 5000,
+            "ParseTime": true,
+            "Local": "Local"
+          },
+          "ChatDBName": "dobby_chitchat",
+          "OpenPlatformDBName": "openplatform_prod",
+          "SandboxOpenPlatformDBName": "openplatform"
+        },
+        "SuperUinNameCycleTime":"@every 60s",
+        "AIHomeConf": {
+          "TblNameProduct": "dop_product_info",
+          "TblNameSubscribedProduct": "dop_product_subscription",
+          "TblNameProductCategory": "dop_product_category"
+        },
+        "AppKeyConf": {
+          "DBName": "openplatform_conf_data",
+          "TblPlatformCode": "platform_code_config",
+          "TblAppSecretInfo": "app_secret_info",
+          "CryptSm4Key":"d9ea81e4800fab23"
+        },
+        "OpenPlatformConfDataConf": {
+          "TblBusinessAccount": "openplatform_conf_data.business_account_info",
+          "TblProductSubscription": "openplatform_conf_data.dop_product_subscription",
+          "TblProductInfo": "openplatform_conf_data.dop_product_info"
+        },
+        "PermissionConf": {
+          "DBName": "openplatform_permission_data",
+          "UserManagerPermissionType": "ihava",
+          "UserManagerPermissionName": "UserManagement",
+          "UserManagerPermissionIDs": [
+            "UserManagement",
+            "UserManagement.UserManagement",
+            "UserManagement.RoleManagement"
+          ],
+          "PermissionResourceMap": {
+            "adpAppCustom": "app",
+            "adpKnowledgeBaseCustom": "knowledge",
+            "adpPluginCenterCustom": "plugin",
+            "adpPromptTemplateCustom": "prompt_template"
+          },
+          "LkePermissionResourceTypeMap": {
+            "Custom": {
+                "app": "adpAppCustom",
+                "knowledge": "adpKnowledgeBaseCustom",
+                "plugin": "adpPluginCenterCustom",
+                "prompt_template": "adpPromptTemplateCustom"
+             },
+            "Edit": {
+              "app": "adpAppEdit",
+              "knowledge": "adpKnowledgeBaseEdit",
+              "plugin": "adpPluginCenterEdit",
+              "prompt_template": "adpPromptTemplateEdit"
+            },
+            "View": {
+                 "app": "adpAppView",
+                 "knowledge": "adpKnowledgeBaseView",
+                 "plugin": "adpPluginCenterView",
+                 "prompt_template": "adpPromptTemplateView"
+              },
+            "Authorize": {
+                  "app": "adpAppAuthorize",
+                  "knowledge": "adpKnowledgeBaseAuthorize",
+                  "plugin": "adpPluginCenterAuthorize",
+                  "prompt_template": "adpPromptTemplateAuthorize"
+             },
+            "NoPermission":{
+                "app": "adpAppNoPermission",
+                "knowledge": "adpKnowledgeBaseNoPermission",
+                "plugin": "adpPluginCenterNoPermission",
+                "prompt_template": "adpPromptTemplateNoPermission"
+            }
+          },
+           "LkeResourceNameMap": {
+                "app": "应用开发",
+                "knowledge": "知识库",
+                "plugin": "插件广场",
+                "prompt_template": "提示词模板"
+           },
+           "LkeAuthorizeActionMap": {
+                "app": "AdpAppAuthorizeAction",
+                "knowledge": "AdpKnowledgeBaseAuthorizeAction",
+                "plugin": "AdpPluginCenterAuthorizeAction",
+                "prompt_template": "AdpPromptTemplateAuthorizeAction"
+            },
+          "TblNamePermissionInfo": "openplatform_permission_data.permission_info",
+          "TblNameResourcePermissionInfo": "openplatform_permission_data.resource_permission_info",
+          "TblNameRoleInfo": "openplatform_permission_data.role_info",
+          "TblNameRolePermission": "openplatform_permission_data.role_permission",
+          "TblNameRoleResource": "openplatform_permission_data.role_resource",
+          "TblNameSubjectPermission" : "openplatform_permission_data.subject_permission",
+          "TblNameSubjectResourcePermission": "openplatform_permission_data.subject_resource_permission",
+          "TblNameProductPermission": "openplatform_permission_data.product_permission",
+          "TblNameCasbinRule": "openplatform_permission_data.casbin_rule",
+          "TblNameResourceCasbinRule": "openplatform_permission_data.resource_casbin_rule",
+          "TblNameUinRole": "openplatform_permission_data.uin_role",
+          "TblNamePresetRoleSchema": "openplatform_permission_data.preset_role_schema",
+          "TblNamePermissionResourceService":"openplatform_permission_data.permission_resource_service",
+          "TblNameEnterpriseSetting": "enterprise_settings",
+          "TblNameOperateRecord": "openplatform_permission_data.super_admin_operate_record",
+          "NecessaryPermissions": {
+            "lke": [
+              "lkeApp.basic"
+            ]
+          },
+          "NecessaryResourcePermissions":["lke"],
+          "RoleNecessaryPermissions":{
+            "lke": [
+              "lkeApp.basic"            ]
+          },
+          "NonSuperAdminBlacklist": [
+            "lkeApp.basic"
+          ],
+          "SuperAdminBlacklist": [
+            "lkeApp.listApp",
+            "lkeApp.basic",
+            "lkeShareKG.listShareKG"
+          ],
+          "NeedSpecialHandlePermission": {
+            "lke": [
+              "lkeSummary",
+              "lkeSummary.config",
+              "lkeSummary.config.basic",
+              "lkeSummary.config.chat",
+              "lkeSummary.config.model",
+              "lkeSummary.config.model.version",
+              "lkeSummary.config.output",
+              "lkeSummary.config.output.method",
+              "lkeSummary.config.output.requirement",
+              "lkeSummary.release",
+              "lkeSummary.release.call",
+              "lkeSummary.release.call.reception",
+              "lkeSummary.release.call.secret",
+              "lkeSummary.release.do",
+              "lkeClassify",
+              "lkeClassify.config",
+              "lkeClassify.config.basic",
+              "lkeClassify.config.chat",
+              "lkeClassify.config.model",
+              "lkeClassify.config.model.version",
+              "lkeClassify.config.tag",
+              "lkeClassify.release",
+              "lkeClassify.release.call",
+              "lkeClassify.release.call.reception",
+              "lkeClassify.release.call.secret",
+              "lkeClassify.release.do"
+            ]
+          },
+          "LkeSpecialPlatformPermissionsIDs": [
+             "adpSpace",
+             "adpSpace.DeleteSpace",
+             "adpSpace.ModifySpace",
+             "lkeSystem.UserPermission",
+             "lkeSystem.UserPermission.Allocation",
+             "lkeSystem.UserPermission.DeptManager",
+             "lkeSystem.UserPermission.RoleManager",
+             "lkeSystem.UserPermission.UserManager"
+          ]
+        },
+        "TblNameProduct": "dop_product_info",
+        "TblNameSubscribedProduct": "dop_product_subscription",
+        "TblNameProductCategory": "dop_product_category",
+        "AccountConf": {
+          "AccountHost": "http://ocloud-tcenter-platform-account.subway.gz.fsphere.cn"
+        },
+        "TiAuthAccountConf": {
+          "AccountHost": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/DescribeSelfInfo",
+          "DescribeUsers": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/DescribeUsers",
+          "DescribeMainUserNames": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/DescribeMainUserNames",
+          "CreateUser": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/CreateUser",
+          "DeleteUsers": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/DeleteUsers",
+          "ModifyUserInfo": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/ModifyUser",
+          "DescribeSubAccountsByMainUser": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/DescribeSubAccountsByMainUser",
+          "DisableUser": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/DisableUser",
+          "EnableUser": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/EnableUser",
+          "DescribeUser": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/DescribeUser",
+          "DescribeUserDepts": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/DescribeUserDepts",
+          "DescribeDepts": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/DescribeDepts",
+          "DescribeDeptDetails": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/DescribeDeptDetails",
+          "DescribeParentDeptChainIDs": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/DescribeParentDeptChainIDs",
+          "AddUserToDept": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/AddUserToDept",
+          "RemoveUserFromDept": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/RemoveUserFromDept",
+          "CreateDept": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/CreateDept",
+          "DeleteDept": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/DeleteDept",
+          "DeleteSpaceData": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/DeleteSpaceData",
+          "DescribeChildDeptIDs": "http://ti-perm-auth.{{ .Release.Namespace }}:8081/DescribeChildDeptIDs"
+        },
+        "SuperAdminUins": [
+          "superadmin",
+          "100000000000"
+        ],
+        "InnerAdminAccount": "",
+        "NotCheckUins": [],
+        "RoleConf": {
+          "BusinessRoleName": "管理员",
+          "BusinessRoleDescription": "空间管理员角色",
+          "RoleIDSalt": "superadmin"
+        },
+        "UserManagePermissionIDs": [
+          "UserManagement",
+          "UserManagement.RoleManagement",
+          "UserManagement.UserManagement"
+        ],
+        "OwnerUinMustPermissions": [
+          "lkeApp.listApp",
+          "lkeShareKG.listShareKG"
+        ],
+        "ProductTypeMap": {
+          "icr": "robot",
+          "tqi": "quality",
+          "asst": "sales"
+        },
+        "BotFieldsPermissionIDList": [
+        ],
+        "CustomResourceProxyConfig": {
+          "lke": {
+            "ProtoService": "trpc.KEP.bot_admin_config_server.Api",
+            "ServiceName": "trpc.KEP.bot_admin_config_server.Api",
+            "Function": "GetCustomResource",
+            "Target": "ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092",
+            "Timeout": 1500
+          }
+        },
+        "ActivateProductProxyConfig": {
+          "lke": {
+            "ProtoService": "trpc.KEP.bot_admin_config_server.Api",
+            "ServiceName": "trpc.KEP.bot_admin_config_server.Api",
+            "Function": "ActivateProduct",
+            "Target":"ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092",
+            "Timeout": 1500
+          }
+        },
+        "UpdateProductProxyConfig": {
+          "lke": {
+            "ProtoService": "trpc.KEP.bot_admin_config_server.Api",
+            "ServiceName": "trpc.KEP.bot_admin_config_server.Api",
+            "Function": "UpdateUserNickName",
+            "Target":"ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092",
+            "Timeout": 1500
+          }
+        },
+        "AccessManagerProxy":{
+          "ProtoService": "trpc.SmartService.AccessManagerServer.AccessManager",
+          "ServiceName": "trpc.SmartService.AccessManagerServer.AccessManager",
+          "Function": "VerifyPermission",
+          "Target": "ip://accessmanagerserver.{{ .Release.Namespace }}:10001",
+          "Timeout": 1500
+        },
+        "CustomAccountPrefix": "100000000000",
+        "EnableToCustomCategory": true,
+        "EnableAutoCreateRole": true,
+        "PermissionActionWhitelist": [
+           "GetUsers",
+           "DescribeLoginUserInfo",
+           "DescribeCorpRoleList",
+           "AttachCorpUserRole",
+           "ModifyUserInfo",
+           "DelUsers",
+           "AddUsers",
+           "EnableUser",
+           "DisableUser",
+           "CheckAccountIsExist",
+           "DescribeSubscribedProducts",
+           "DescribePromotionalProducts"
+        ],
+        "FilterUserProductPermissionList": ["adpSpace", "lkeSystem", "lkeOP"]
+      }
+  key-trpc_go.yaml: |
+    global: #全局配置
+      namespace: default
+      env_name: tcs                        #环境名称，非正式环境下多环境的名称
+      container_name: ${POD_NAME}                    #容器名称
+      local_ip: ${POD_IP}                            #本地IP，容器内为容器ip，物理机或虚拟机为本机ip
+      admin_port: 18888                              #管理命令服务端口
+      enable_set: ${ENABLE_SET}                      #是否启用set
+      full_set_name: ${SET_NAME}                     #set名
+    server:                                            #服务端配置
+      app: ${APP_NAME}                                 #业务的应用名
+      server: ${SERVER_NAME}                           #进程服务名
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - simpledebuglog
+        - recovery                                     #拦截框架创建的业务处理协程panic
+        - tpstelemetry
+      admin:
+        ip: ${POD_IP}                                  # 必须填外部可访问的ip, 不能填127.0.0.1
+        port: 18888                                    # admin 端口
+        read_timeout: 3000                             #ms. 请求被接受到请求信息被完全读取的超时时间设置，防止慢客户端
+        write_timeout: 60000                           #ms. 处理的超时时间
+      service:                                         #业务服务提供的service，可以有多个
+        - name: trpc.${APP_NAME}.${SERVER_NAME}.AIConfManagerHttp #把ReplaceMe换成自己服务pb里的service名
+          network: tcp                                 #网络监听类型  tcp udp
+          protocol: http                               #应用层协议 trpc http
+          timeout: 5000                                #请求最长处理时间 单位 毫秒
+          ip: ${POD_IP}                                #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 10001                                  #服务监听端口
+        - name: trpc.${APP_NAME}.${SERVER_NAME}.AIConfManager #把ReplaceMe换成自己服务pb里的service名
+          network: tcp                                 #网络监听类型  tcp udp
+          protocol: trpc                               #应用层协议 trpc http
+          timeout: 5000                                #请求最长处理时间 单位 毫秒
+          ip: ${POD_IP}                                #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 10002                                  #服务监听端口
+    client:                                            #客户端调用的后端配置
+      namespace: default
+      filter:
+        - tpstelemetry
+      timeout: 5000                                    #针对所有后端的请求最长处理时间
+      service:                                         #针对单个后端的配置，默认都有默认值，可以完全不用配置
+        - callee: trpc.VirtualHuman.virtualmanconfig.virtualmanInstance
+          name:  trpc.VirtualHuman.access.AccessService
+          env_name: tcs
+        - name: trpc.KEP.bot_admin_config_server.Api
+          callee: trpc.KEP.bot_admin_config_server.Api
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+    plugins:                                           #插件配置
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: file                              #本地文件日志
+            level: debug                               #本地文件滚动日志的级别
+            caller_skip: 2                            #用于定位日志的调用处
+            writer_config:
+              filename: /app/log/trpc.log                 #本地文件滚动日志存放的路径
+              max_size: 100                             #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false                          #日志文件是否压缩
+          - writer: console                             #本地文件日志
+            level: error                                #本地文件滚动日志的级别
+      telemetry:
+        tpstelemetry:  # 或者tpstelemetry
+          addr: {{ .Values.global.observability.apm.otlp}}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if .Values.global.observability.apm.registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if .Values.global.observability.apm.attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}

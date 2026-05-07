@@ -1,0 +1,20 @@
+tad:
+  type: helm
+  namespace: customer
+  registries:
+    images: registry.tce.com
+    packages: registry.tce.com:1181
+  images:
+    lke-admin:
+      url: "ccr.ccs.tencentyun.com/tke-market/bot-admin-config-server:342_2602091906_release_private_v3.2.4.1_9a48a003_private"
+admin:
+  doc_to_qa:
+    runners: 2                  # 处理协程数，无法动态调整
+  no_default_model: false # true: 不带预制模型, false：带预制模型
+  tpm: 10000000
+  qpm: 1000
+  knowledge_qa_model:
+    intent_recognize_model_name: workflow-pro # 知识库问答意图识别默认兜底模型名称
+experience_center_uin: "999999999"
+  
+imagePullSecretName: qcloudregistrykey

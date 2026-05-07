@@ -1,0 +1,11 @@
+apiVersion: v1
+name: lke-accessmanagerserver
+version: 1.0.0
+appVersion: 4.0.0
+description: AccessManagerServer
+
+sources:
+  - https://git.woa.com/sppd_ai_tsk/TSK
+maintainers:
+  - name: mardon
+

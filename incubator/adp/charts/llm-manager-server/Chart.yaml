@@ -1,0 +1,11 @@
+apiVersion: v2
+name: llm-manager-server
+description: A helm chart for llm-manager-server
+type: application
+
+version: 1.0.0
+
+appVersion: 1.0.0
+maintainers:
+  - name: beandong
+  - name: v_iferen

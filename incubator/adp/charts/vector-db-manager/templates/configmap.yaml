@@ -1,0 +1,289 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-vector-db-manager
+  namespace: {{ .Release.Namespace }}
+data:
+  placeholder.yaml: |
+    IS_PRIVATE: true
+
+    VDM_DB_COMMON: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm?timeout=3s&parseTime=true
+    VDM_DB_CS: dsn://{{ (index .Values.global.components.redis.hosts 0) }}:{{ .Values.global.components.redis.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm?timeout=3s&parseTime=true
+    VDM_DB_ISEARCH: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm?timeout=3s&parseTime=true
+
+    VDM_REDIS_ENDPOINT: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379
+    VDM_REDIS_PASSWORD: "{{ .Values.global.components.redis.password }}"
+  trpc_go.yaml: |
+
+    global: #全局配置
+      namespace: ${NAMESPACE}                        #环境类型，分正式Production和非正式Development两种类型
+      env_name: ${DOCKER_ENV}                        #环境名称，非正式环境下多环境的名称
+      container_name: ${POD_NAME}                    #容器名称
+      local_ip: ${POD_IP}                            #本地IP，容器内为容器ip，物理机或虚拟机为本机ip
+      admin_port: 18888                              #管理命令服务端口
+      enable_set: ${ENABLE_SET}                      #是否启用set
+      full_set_name: ${SET_NAME}                     #set名
+    server:                                          #服务端配置
+      app: ${APP_NAME}                               #业务的应用名
+      server: ${SERVER_NAME}                         #进程服务名
+      bin_path: /app/bin/                            #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                          #业务配置文件所在路径
+      data_path: /app/data/                          #业务数据文件所在路径
+      filter:                                        #针对所有service处理函数前后的拦截器列表
+        - recovery                                   #拦截框架创建的业务处理协程panic
+        - galileo
+        - opentelemetry
+      admin:
+        ip: ${POD_IP}                                  # 必须填外部可访问的ip, 不能填127.0.0.1
+        port: 18888                                    # admin 端口
+        read_timeout: 3000                             #ms. 请求被接受到请求信息被完全读取的超时时间设置，防止慢客户端
+        write_timeout: 60000                           #ms. 处理的超时时间
+      service:                                         #业务服务提供的service，可以有多个
+        - name: trpc.SmartAssistant.VectorDBManager.VectorObj #service的路由名称，请将ReplaceMe改成自己的service名字，app server占位符不要改
+          network: tcp #网络监听类型  tcp udp
+          protocol: trpc #应用层协议 trpc http
+          timeout: 300000 #请求最长处理时间 单位 毫秒
+          disable_request_timeout: true
+          registry: polaris #服务启动时使用的服务注册方式
+          ip: ${POD_IP} #容器内ip
+          port: 10001
+        - name: trpc.SmartAssistant.VectorDBManager.http #service的路由名称，请将ReplaceMe改成自己的service名字，app server占位符不要改
+          network: tcp #网络监听类型  tcp udp
+          protocol: http #应用层协议 trpc http
+          timeout: 300000 #请求最长处理时间 单位 毫秒
+          registry: polaris #服务启动时使用的服务注册方式
+          ip: ${POD_IP} #容器内ip
+          port: 10002
+        - name: trpc.SmartAssistant.VectorDBManager.Restful #service的路由名称，请将ReplaceMe改成自己的service名字，app server占位符不要改
+          network: tcp #网络监听类型  tcp udp
+          protocol: restful #应用层协议 trpc http
+          timeout: 25000 #请求最长处理时间 单位 毫秒 （腾讯 vdb 创建 collection 需要 6.5s，耗时设为 10s，避免超时）
+          registry: polaris #服务启动时使用的服务注册方式
+          ip: ${POD_IP} #容器内ip
+          port: 10003
+    client:                                            #客户端调用的后端配置
+      filter:                                          #针对所有后端调用函数前后的拦截器列表
+        - galileo
+        - opentelemetry
+      namespace: ${NAMESPACE}                          #针对所有后端的环境
+      timeout: 10000                                   #针对所有后端的请求最长处理时间
+      service:
+        - callee: trpc.smartassistant.embeddingserver.EmbeddingObj
+          name: trpc.SmartAssistant.EmbeddingServer.EmbeddingObj
+          protocol: trpc
+          network: tcp
+          timeout: 5000
+          # disable_servicerouter: true
+          env_name: test
+        - callee: trpc.smartassistant.rerankserver.ReRankObj
+          name: trpc.SmartAssistant.ReRankServer.ReRankObj
+          protocol: trpc
+          network: tcp
+          timeout: 3000
+          # disable_servicerouter: true
+          env_name: test
+          target: ip://re-rank-server-online.{{ .Release.Namespace }}.svc.cluster.local:10001
+        - name: trpc.mysql.vdm.common
+          # namespace: Development
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm?timeout=3s&parseTime=true
+        - name: trpc.mysql.vdm.assistant
+          # namespace: Production
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm?timeout=3s&parseTime=true
+        - name: trpc.mysql.vdm.analytics
+          # namespace: Production
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm?timeout=3s&parseTime=true
+        - name: trpc.mysql.vdm.tqi
+          # namespace: Production
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm?timeout=3s&parseTime=true
+        - name: trpc.mysql.vdm.qbot
+          # namespace: Production
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm?timeout=3s&parseTime=true
+        - name: trpc.hades.vdm.common
+          protocol: http
+          network: tcp
+          timeout: 300000
+          namespace: Development
+          target: ip://hades-proxy.hades:9094
+        - name: trpc.redis.vdm.task
+          namespace: Development
+          target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379
+          password: "{{ .Values.global.components.redis.password }}"
+          timeout: 800                                 #当前这个请求最长处理时间
+    plugins:                                           #插件配置
+      limiter:
+        polaris: # 不可省略
+          timeout: 1s # 可省略，省略时，使用默认值 1s
+          max_retries: 2 # 可省略，省略时，默认不重试
+      selector:
+        polaris:
+          protocol: grpc #北极星交互协议支持 http，grpc，trpc
+          discovery:
+            refresh_interval: 10000                    #北极星服务发现刷新间隔，123默认10000
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: console                           #本地文件日志
+            level: info                               #本地文件滚动日志的级别
+          - writer: file                              #本地文件日志
+            level: info                               #本地文件滚动日志的级别
+            caller_skip: 4
+            writer_config:
+              filename: /app/log/trpc.log               #本地文件滚动日志存放的路径
+              max_size: 100                             #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false                          #日志文件是否压缩
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+        galileo:
+          verbose: error   # 伽利略自身的诊断日志级别，取值范围：debug, info, error, none，日志输出在 ./galileo/galileo.log 中。
+          ocp_addr: "http://127.0.0.1"
+          config: #配置
+            config_server: "http://127.0.0.1"
+            register_server: "http://127.0.0.1"
+            self_monitor:
+              collector:
+                addr: "http://127.0.0.1"
+            metrics_config: # 指标配置
+              enable: false    # 是否启用指标
+            traces_config: # 追踪配置
+              enable: true    # 是否启用追踪，默认 true。如果设置为 false，会中断 trace，让上游的调用链不完整。v0.3.7 以上生效。
+              processor: # 追踪数据处理相关配置
+                sampler: # 采样器配置
+                  fraction: 0   # 采样比例，默认 0。（v0.11.0)
+                  error_fraction: 0
+                  enable_min_sample: true  # 启用每分钟每接口最少 1 个请求采样，默认 true (v0.11.0)。
+                  enable_dyeing: true # 开启染色采样，默认 true。
+                disable_trace_body: true          # 若为 true，则关闭 trace 中对 req 和 rsp 的 body 上报，可以大幅提高上报性能。默认 true。
+                enable_deferred_sample: false     # 开启延迟采样（请求处理完采样），默认 false。0.3.0 以上生效。
+                deferred_sample_error: false      # 开启延迟采样出错采样（请求处理完出现错误采样），默认 false。0.3.0 以上生效。
+                deferred_sample_slow_duration_ms: 1000    # 慢操作阈值（请求耗时超过该值采样），单位 ms，默认 1000。0.3.0 以上生效。
+                disable_parent_sampling: false            # 忽略上游的采样结果，默认 false。v0.3.7 以上生效。
+              exporter:
+                collector:
+                  addr: "127.0.0.1:80"
+            logs_config: # 日志配置
+              enable: false    # 是否启用日志
+              processor: # 日志数据处理相关配置
+                only_trace_log: false  # 是否只上报命中 trace 的 log，默认关闭
+                must_log_traced: false # 是否命中 traced 不管任何级别日志都上报，默认关闭。v0.3.22 以上生效
+                trace_log_mode: 0   # debug 访问日志 (access_log) 打印模式，0,1：单行打印，3：多行打印，2：不打印，默认 0
+                level: debug        # 上报到远程的日志级别，默认 error
+                enable_recovery: true # 是否捕获 panic，默认 true
+            profiles_config:    # profile配置
+              enable: false # 是否启用 profile
+              processor: # profile 数据处理相关配置
+                profile_types: ["cpu", "heap"] # 采集 profile 的类型，支持 cpu、heap、mutex、block、goroutine，默认开启 cpu 和 heap。
+            version: 1        # 版本号，默认 0，此版本号用于控制远程配置和本地配置的优先级，版本号高的优先，一般设置成 1 即可。
+          resource: # resource 资源信息，在 SDK 运行期间不会改变。resource 中的字段一般不需要配置，默认会填充。
+            platform: STKE   # 服务部署的平台，如 PCG-123, STKE, 默认 PCG-123
+  vector-db-manager.json: |
+    {
+      "Application": {
+        "MaxReRankPairs":712,
+        "Callback": {
+          "TaskInterval": 10000,
+          "TaskTimeout": 30000,
+          "TaskNums": 3,
+          "TaskExpireTime": 86400000,
+          "BizSecret": {
+            "cs": "dfe144c8a732a2bfb5ae0bd5df71a275"
+          }
+        },
+        "BizConf": {
+          "test": {
+            "NeedCheckSecret": false,
+            "Secret": "ddd"
+          },
+          "analytics": {
+            "NeedCheckSecret": true,
+            "Secret": "d2b72091d7e52be4c8d8425e8acd9772"
+          },
+          "assistant": {
+            "NeedCheckSecret": false,
+            "Secret": "fc698c061b36a735b607d139608c21cf"
+          },
+          "cs": {
+            "NeedCheckSecret": false,
+            "Secret": "e1168c1b14e31acd512ddd566bbe4390"
+          },
+          "qbot": {
+            "NeedCheckSecret": false,
+            "Secret": "d7504c00cdb46ff4e8eeb8f51fc756da"
+          },
+          "tqi": {
+            "NeedCheckSecret": true,
+            "Secret": "1e2c28494bcd5b50a3d8b6ecb8e78125"
+          },
+          "isearch": {
+            "LargeCapacity": true
+          }
+        },
+        "TCVDBConfig": {
+          "Enabled": true,
+          "EnableBackgroundDelete": true,
+          "TaskBatchCount": 5,
+          "DeleteMaxRetryTimes": 5,
+          "PreCreateInterval": 30,
+          "UpdateInfoInterval": 30,
+          "TaskProcessInterval": 10,
+          "TaskProcessTimeout": 120,
+          "PreCreateCount": 20,
+          "CreateReplicaNum": 2,
+          "CreateShardNum": 1,
+          "CreateLargeShardNum": 100,
+          "CreateM": 24,
+          "CreateEfConstruction": 500,
+          "SearchEf": 500,
+          "ScalarFileds": {
+            "IntentID": true,
+            "general_vector": true,
+            "entityID": true,
+            "entryName": true,
+            "CorpusID": true,
+            "CorpusValue": true
+          }
+        },
+        "ReRankBatchSize": 8,
+        "ReRankBatchMap":{
+          "sn-llm-reranker-2b-v0.2.2-ima":5,
+          "sn-llm-reranker-2b-v0.2.2-fp8":5
+        },
+        "MaxReRankParisMap":{
+              "sn-llm-reranker-2b-v0.2.2-ima":720,
+              "sn-llm-reranker-2b-v0.2.2-fp8":720
+        },
+        "HnswSmallFlowOpen": false,
+        "ReloadGroupTime": 60,
+        "DebugOption": {
+          "Enable": true,
+          "Filters": []
+        },
+        "DelayCreationStrategy": {
+          "Default": false,
+          "Progressive": true,
+          "WhiteRule":[
+          ]
+        }
+      }
+    }

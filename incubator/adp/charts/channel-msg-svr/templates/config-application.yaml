@@ -1,0 +1,44 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: channelmsgsvr-application
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    sync_time_out: 60
+    sync_stream_time_out: 5
+    channel_type_map:
+      wechat: 10000
+      wecom: 10002
+      wxkf: 10004
+      wecomrobot: 10009
+    component_app_id: {{ (.Values.global.channelmsgsvr).component_app_id | default "" }}  #微信后台的应用appid   公有云用的自己的，这里需要填用户的
+    wx_authorize_callback_host: {{ (.Values.global.channelmsgsvr).wx_authorize_callback_host | default "" }}  #需要填写用户自己申请的域名  需要能反代回到msg服务
+    wx_authorize_callback: {{ (.Values.global.channelmsgsvr).wx_authorize_callback | default "" }}
+    sse_chat_path: /v1/qbot/chat/sse
+    redirect_url: {{ .Values.global.scheme }}://{{ .Values.global.clb }}/lke#/app/knowledge/release/channel?appid=%s&appType=knowledge_qa
+    get_wx_auth_code_max_limit : 3
+    streaming_throttle: 250
+    env: lke
+    not_support_msg: 暂不支持的消息类型
+    storage_type: {{ .Values.global.components.s3.providerType }}
+    {{- if eq .Values.global.components.s3.providerType "minio" }}
+    minio:
+      secret_id: {{ (.Values.global.components.s3.minio).secretId | default "" }}
+      secret_key: {{ (.Values.global.components.s3.minio).secretKey | default "" }}
+      region: ""
+      bucket: qbot
+      sts_endpoint: http://{{ (.Values.global.components.s3.minio).host | default "minio:9000" }}
+      end_point: {{ (.Values.global.components.s3.minio).host | default "minio:9000" }}
+      use_https: {{ eq .Values.global.scheme "https" }}
+      url_expire_time: "168h"  # 7天 = 7 * 24小时
+      file_expire_time: "4320h" # 180天 = 180 * 24小时
+    {{- end }}
+    cos_secret_id: {{ (.Values.global.components.s3.cos).secretId | default "" }}
+    cos_secret_key: {{ (.Values.global.components.s3.cos).secretKey | default "" }}
+    cos_app_id: {{ (.Values.global.components.s3.cos).appId | default 0 | printf "%.0f" | quote }}
+    cos_region: {{ (.Values.global.components.s3.cos).region | default "" }}
+    cos_bucket: {{ (.Values.global.components.s3.cos).bucket | default "" }}
+    domain: {{ (.Values.global.components.s3.cos).domain | default "myqcloud.com" }}
+    url_expire_time: "168h"  # 7天 = 7 * 24小时
+    file_expire_time: "4320h" # 180天 = 180 * 24小时

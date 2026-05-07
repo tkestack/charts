@@ -1,5 +1,6 @@
 apiVersion: v2
 name: adp-app-config
+appName: app-config
 description: A helm chart
 type: application
 

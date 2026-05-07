@@ -1,0 +1,566 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-finance
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    ######################
+    # 云服务接口调用配置
+    #
+    ######################
+    api_conf:
+      max_resp_length: 10000
+      api_list:
+        qcloud.Hour.create: false
+        qcloud.access.sendMeasure: true
+        billing.DescribeMeasureResources: true
+        qcloud.qn.describePostPayWhiteListUin: true
+        qcloud.account.getAppIdByLoginUin: false
+        qcloud.qn.addPostPayWhiteListUin: false
+        qcloud.qn.deletePostPayWhiteListUin: false
+    
+    ######################
+    # 缓存配置
+    #
+    # version:版本号
+    # enable:是否启用缓存
+    # expire:缓存过期时间
+    # flush_interval:缓存刷新时间
+    # timeout:执行时间
+    ######################
+    cache_config:
+      product:
+        version: 202504281947
+        enable: true
+        expire: -1s
+        flush_interval: 30s
+        timeout: 60s
+      product_goods:
+        version: 202505131712
+        enable: false
+        expire: -1s
+        flush_interval: 5s
+        timeout: 60s
+      biz_rule:
+        version: 202505081724
+        enable: true
+        expire: -1s
+        flush_interval: 30s
+        timeout: 60s
+    
+    #########################
+    # 自定义模型的前缀
+    #########################
+    third_custom_model_prefix:
+      - OpenAI
+      - TI
+      - Azure
+    
+    ######################
+    # 调用统计产品筛选项信息
+    #
+    ######################
+    products:
+      model_name:
+        - name: cs-normal-70b
+          alias: 精调知识大模型高级版
+          sub_biz_type: KnowledgeQA
+        - name: cs-normal
+          alias: 精调知识大模型标准版
+          sub_biz_type: KnowledgeQA
+        - name: medical-6b
+          alias: 医学行业大模型标准版
+          sub_biz_type: KnowledgeQA
+        - name: finance-13b
+          alias: 金融行业大模型标准版
+          sub_biz_type: KnowledgeQA
+        - name: hunyuan
+          alias: 混元大模型标准版
+          sub_biz_type: KnowledgeQA
+        - name: hunyuan-13B
+          alias: 混元大模型高级版
+          sub_biz_type: KnowledgeQA
+        - name: hunyuan-standard-256K
+          alias: 混元大模型长文本版
+          sub_biz_type: KnowledgeQA
+      atomic:
+        - name: lke-text-embedding-v1
+          alias: Embedding
+          sub_biz_type: Embedding
+        - name: lke-query-rewrite-base
+          alias: 多轮改写
+          sub_biz_type: Rewrite
+        - name: doc-parse
+          alias: 文档解析
+          sub_biz_type:
+      call_type:
+        - name: AllCallType
+          alias: 全部调用类型
+        - name: KnowledgeQA
+          alias: 对话调用-API调用
+        - name: KnowledgeQADialogTest
+          alias: 对话调用-对话测试
+        - name: KnowledgeQAUser
+          alias: 对话调用-分享用户端对话
+        - name: DocExtractQA
+          alias: 文档生成问答
+        - name: EvaluateTest
+          alias: 应用评测
+        - name: RoleCommands
+          alias: 角色指令一键优化
+        - name: TaskFlowPreview
+          alias: 任务流程话术预览
+        - name: DocExtractSimilarQA
+          alias: 相似问生成
+        - name: AsyncWorkFlow
+          alias: 工作流异步调用
+        - name: SchemaExtract
+          alias: 知识库Schema生成
+      doc_parse:
+        - name: docParseSync
+          alias: 同步接口
+        - name: docParseASync
+          alias: 异步接口
+        - name: docParseRealTime
+          alias: 准实时接口
+      shard_knowledge_call_type:
+        - name: DocExtractQA
+          alias: 文档生成问答
+        - name: DocExtractSimilarQA
+          alias: 相似问生成
+    
+    ######################
+    # 文档解析子场景映射
+    #
+    ######################
+    doc_parse_sub_scene:
+      ReconstructDocument: docParseSync
+      ReconstructDocumentAsyncQps: docParseASync
+      ReconstructDocumentRtimeQps: docParseRealTime
+      SplitDocument: docSplitAsync
+    
+    ######################
+    # 文档解析子业务映射
+    #
+    ######################
+    doc_parse_sub_biz_type:
+      docParseSync: ReconstructDocument
+      docParseASync: ReconstructDocumentAsyncQps
+      docParseRealTime: ReconstructDocumentRtimeQps
+      docSplitAsync: SplitDocument
+    
+    #####最大超并发query长度
+    max_over_Concurrency_query_size: 15000
+    
+    ##########################
+    #插件类型映射
+    plugin_token_sub_scene_map:
+      WebPagePlugin_ParsingQA-input:
+        webPageParsingInput
+      WebPagePlugin_ParsingQA-output:
+        webPageParsingOutput
+    plugin_api_call_scene_map:
+      WebPagePlugin_ParsingQA: 11
+    plugin_token_scene_map:
+      WebPagePlugin_ParsingQA: 12
+    
+    ######################
+    # 独享并发产品配置
+    #
+    ######################
+    exclusive_concurrency_products:
+      - product_code: p_tcllmke
+        sub_product_code: sp_tcllmke_exclusive
+  error_en-US.json: |
+    {
+      "接口不存在": "Interface does not exist",
+      "产品定义不存在": "Product definition does not exist",
+      "资源不存在或没有操作权限": "Resource does not exist or operation permission denied",
+      "资源无效": "Invalid resource",
+      "资源规格不匹配": "Resource specification mismatch",
+      "资源到期时间不匹配": "Resource expiration time mismatch",
+      "资源已被隔离": "Resource has been isolated",
+      "流程不存在": "Flow does not exist",
+      "重复提交的请求": "Duplicate request submission",
+      "事件处理器不存在": "Event handler does not exist",
+      "商品码不匹配": "Product code mismatch",
+      "未找到业务产品规则配置": "Business product rule configuration not found",
+      "参数错误": "Parameter error",
+      "计费项数量不正确": "Incorrect number of billing items",
+      "商品码不存在": "Product code does not exist",
+      "节点执行锁定失败": "Node execution lock failed",
+      "产品配置不存在": "Product configuration does not exist",
+      "不是后付费资源": "Not a postpaid resource",
+      "账户不存在": "Account does not exist",
+      "flow不存在": "Flow does not exist",
+      "流程节点不存在": "Process node does not exist",
+      "用量超限": "Usage exceeded limit",
+      "用量数据不存在": "Usage data does not exist",
+      "生成交易单号失败": "Failed to generate transaction number",
+      "操作过于频繁": "Operation too frequent",
+      "赠品不存在": "Free product does not exist",
+      "不允许后付费推量产品": "Postpaid push products not allowed",
+      "系统集成商不支持自动下发体验资源": "System integrator does not support automatic trial resource distribution",
+      "没有可用的自动下发体验资源": "No available automatic trial resources",
+      "修改次数已达上限 一小时内限一次 一月内限五次": "Modification limit reached (1 time/hour, 5 times/month)",
+      "账户已欠费或余额不足": "Account overdue or has an insufficient balance",
+      "不存在该订单信息": "Order information does not exist",
+      "通知Ocr失败": "Failed to notify OCR",
+      "Ocr未到生效时间": "OCR not yet effective",
+      "权限不足": "Insufficient permissions",
+      "企业或应用信息获取有误": "Enterprise or application information retrieval error",
+      "业务规则已存在": "Business rule already exists",
+      "未接入的集成商": "Unauthorized integrator",
+      "内部服务异常": "Internal service exception",
+      "修改后付费开关异常": "Abnormal postpaid switch modification",
+      "修改次数已达上限 一小时内限一次": "Modification limit reached (once per hour)"
+    }
+  error_zh-CN.json: |
+    {}
+  finance_en-US.json: |
+    {
+      "APILog 保存失败，apiLog：%+v, err: %+v": "Failed to save APILog, apiLog: %+v, err: %+v",
+      "消息事件id与请求包不一致": "Message event ID does not match request package",
+      "保存 ApiLog 失败, apiLog: %+v, err: %+v": "Failed to save ApiLog, apiLog: %+v, err: %+v",
+      "事件id与请求包不一致": "Event ID does not match request package",
+      "不支持的产品类型": "Unsupported product type",
+      "不支持的操作": "Unsupported operation",
+      "其他应用": "Other applications",
+      "未使用": "Unused",
+      "可用": "Available",
+      "不可用": "Unavailable",
+      "全部调用类型": "All call types",
+      "对话调用-API调用": "Dialog invocation - API call",
+      "对话调用-分享用户端对话": "Conversation called - shared client conversation",
+      "对话调用-对话测试": "Conversation call - Conversation test",
+      "文档生成问答": "Document generation Q&A",
+      "应用评测": "Application evaluation",
+      "角色指令一键优化": "One-click role command optimization",
+      "任务流程话术预览": "Task flow script preview",
+      "相似问生成": "Similar question generation",
+      "关闭": "Closed",
+      "开启": "Open",
+      "未生效": "Inactive",
+      "已生效": "Active",
+      "开通中": "Activating",
+      "未开通": "Not activated",
+      "未启用": "Disabled",
+      "购买": "Purchase",
+      "赠送": "Free gift",
+      "启用中": "Activating",
+      "包年包月": "Annual/monthly subscription",
+      "资源包": "Resource package",
+      "按量计费（计费计量）": "Pay-as-you-go (metered billing)",
+      "初始化": "Initialization",
+      "正常": "Normal",
+      "隔离": "Isolated",
+      "销毁": "Destroyed",
+      "冻结/封禁": "Frozen/Banned",
+      "手动续费（未设置）": "Manual renewal (not configured)",
+      "自动续费": "Auto-renewal",
+      "不自动续费（用户设置）": "No auto-renewal (user configured)",
+      "同步接口": "Synchronous interface",
+      "异步接口": "Asynchronous interface",
+      "准实时接口": "Near-real-time interface",
+      "未知计费项: %s": "Unknown billing item: %s",
+      "赠送体验资源": "Free trial resources",
+      "下单配置不存在": "Order configuration does not exist",
+      "大模型知识引擎_对话原子能力DeepSeek-V3_后付费": "LLM Knowledge Engine_Dialog Basic API DeepSeek-V3_Postpaid",
+      "大模型知识引擎_对话原子能力DeepSeek-R1_后付费": "LLM Knowledge Engine_Dialog Basic API DeepSeek-R1_Postpaid",
+      "原子能力_token体验资源_50万token": "Basic API_Experience Token Package_500K Tokens",
+      "原子能力_token体验资源": "Basic API_Experience Token Package",
+      "对话原子能力_DeepSeek-R1_并发_专属版_月结": "Basic API_DeepSeek-R1_Exclusive Concurrency_Monthly",
+      "对话原子能力_DeepSeek-R1_并发_专属版_年结": "Basic API_DeepSeek-R1_Exclusive Concurrency_Annual",
+      "对话原子能力_DeepSeek-V3_并发_专属版_月结": "Basic API_DeepSeek-V3_Exclusive Concurrency_Monthly",
+      "对话原子能力_DeepSeek-V3_并发_专属版_年结": "Basic API_DeepSeek-V3_Exclusive Concurrency_Annual",
+      "专属版": "Exclusive",
+      "共享版": "Shared",
+      "并发": "Concurrency",
+      "工作流异步调用": "Workflow asynchronous invocation",
+      "知识库Schema生成": "Knowledge base Schema generation",
+      "混元大模型高级版_并发增购_共享版_年结": "HunYuan Large Model Advanced Edition_Concurrency Additional Purchase_Shared Edition_Annual Payment",
+      "腾讯云智能体开发平台_知识库扩容包_月结": "Tencent Cloud Intelligent Agent Development Platform_Knowledge Base Expansion Package_Monthly Payment",
+      "教育行业大模型高级版_并发增购_共享版_月结": "Education Industry Large Model Advanced Edition_Concurrency Additional Purchase_Shared Edition_Monthly Payment",
+      "教育行业大模型高级版_并发增购_共享版_年结": "Education Industry Large Model Advanced Edition_Concurrency Additional Purchase_Shared Edition_Annual Payment",
+      "教育行业大模型高级版_并发_专属版_月结": "Education Industry Large Model Advanced Edition_Concurrency_Dedicated Edition_Monthly Payment",
+      "教育行业大模型高级版_并发_专属版_年结": "Education Industry Large Model Advanced Edition_Concurrency_Dedicated Edition_Annual Payment",
+      "教育行业大模型高级版_问答消息_token资源包": "Education Industry Large Model Advanced Edition_Q&A Message_Token Resource Package",
+      "应用服务_教育行业大模型高级版_token后付费": "Application Service_Education Industry Large Model Advanced Edition_Token Postpaid",
+      "混元Turbo_共享并发_按月_预付费": "HunYuan Turbo_Shared Concurrency_Monthly_Prepayment",
+      "混元Turbo_共享并发_按年_预付费": "HunYuan Turbo_Shared Concurrency_Annual_Prepayment",
+      "应用服务_混元大模型Turbo版_token后付费": "Application Service_HunYuan Large Model Turbo Edition_Token Postpaid",
+      "混元大模型Turbo版_问答消息_token资源包": "HunYuan Large Model Turbo Edition_Q&A Message_Token Resource Package",
+      "混元大模型标准版-256K_并发增购_共享版_月结": "HunYuan Large Model Standard Edition-256K_Concurrency Additional Purchase_Shared Edition_Monthly Payment",
+      "混元大模型标准版-256K_并发增购_共享版_年结": "HunYuan Large Model Standard Edition-256K_Concurrency Additional Purchase_Shared Edition_Annual Payment",
+      "混元角色扮演大模型_并发增购_共享版_月结": "HunYuan Role-playing Large Model_Concurrency Additional Purchase_Shared Edition_Monthly Payment",
+      "混元角色扮演大模型_并发增购_共享版_年结": "HunYuan Role-playing Large Model_Concurrency Additional Purchase_Shared Edition_Annual Payment",
+      "腾讯云智能体开发平台_高级版全家桶_精调高级版模型": "Tencent Cloud Intelligent Agent Development Platform_Advanced Edition Full Suite_Fine-tuned Advanced Model",
+      "腾讯云智能体开发平台_高级版全家桶_混元高级版模型": "Tencent Cloud Intelligent Agent Development Platform_Advanced Edition Full Suite_HunYuan Advanced Model",
+      "腾讯云智能体开发平台_标准版全家桶_混元标准版模型": "Tencent Cloud Intelligent Agent Development Platform_Standard Edition Full Suite_HunYuan Standard Model",
+      "腾讯云智能体开发平台_标准版全家桶_精调标准版模型": "Tencent Cloud Intelligent Agent Development Platform_Standard Edition Full Suite_Fine-tuned Standard Model",
+      "腾讯云智能体开发平台_Turbo版全家桶_混元Turbo版模型": "Tencent Cloud Intelligent Agent Development Platform_Turbo Edition Full Suite_HunYuan Turbo Model",
+      "应用服务_DeepSeeK-R1_token后付费": "Application Service_DeepSeeK-R1_Token Postpaid",
+      "应用服务_DeepSeeK-V3_token后付费": "Application Service_DeepSeeK-V3_Token Postpaid",
+      "腾讯云智能体开发平台_DeepSeek-R1_并发_专属版_月结": "Tencent Cloud Agent Development Platform_DeepSeek-R1_Exclusive Concurrency_Monthly",
+      "腾讯云智能体开发平台_DeepSeek-R1_并发_专属版_年结": "Tencent Cloud Agent Development Platform_DeepSeek-R1_Exclusive Concurrency_Annual",
+      "腾讯云智能体开发平台_DeepSeek-V3_并发_专属版_月结": "Tencent Cloud Agent Development Platform_DeepSeek-V3_Exclusive Concurrency_Monthly",
+      "腾讯云智能体开发平台_DeepSeek-V3_并发_专属版_年结": "Tencent Cloud Agent Development Platform_DeepSeek-V3_Exclusive Concurrency_Annual",
+      "知识引擎_混元大模型角色扮演版_问答消息_token资源包": "Knowledge Engine_HunYuan Large Model Role-playing Edition_Q&A Message_Token Resource Package",
+      "知识引擎_混元大模型标准版256k_问答消息_token资源包": "Knowledge Engine_HunYuan Large Model Standard Edition 256k_Q&A Message_Token Resource Package",
+      "知识引擎_混元大模型标准版_问答消息_token资源包": "Knowledge Engine_HunYuan Large Model Standard Edition_Q&A Message_Token Resource Package",
+      "知识引擎_混元大模型高级版_问答消息_token资源包": "Knowledge Engine_HunYuan Large Model Advanced Edition_Q&A Message_Token Resource Package",
+      "自定义模型_问答消息_token资源包": "Custom Model_Q&A Message_Token Resource Package",
+      "应用服务_自定义模型_token后付费": "Application Service_Custom Model_Token Postpaid",
+      "腾讯云智能体开发平台_DeepSeeK-V3_问答消息_token资源包": "Tencent Cloud Intelligent Agent Development Platform_DeepSeeK-V3_Q&A Message_Token Resource Package",
+      "应用服务_插件后付费": "Application Service_Plugin Postpaid",
+      "腾讯云智能体开发平台_DeepSeek-V3-0324_专属并发_月结": "Tencent Cloud Intelligent Agent Development Platform_DeepSeek-V3-0324_Exclusive Concurrency_Monthly",
+      "腾讯云智能体开发平台_DeepSeeK-R1_token资源包": "Tencent Cloud Intelligent Agent Development Platform_DeepSeeK-R1_Token Resource Package",
+      "腾讯云智能体开发平台_独享并发mock": "Tencent Cloud Intelligent Agent Development Platform_Dedicated Concurrency Mock",
+      "腾讯云智能体开发平台_共享并发mock": "Tencent Cloud Intelligent Agent Development Platform_Shared Concurrency Mock",
+      "腾讯云智能体开发平台_应用服务_token体验资源": "Tencent Cloud Intelligent Agent Development Platform_Application Service_Token Trial Resource",
+      "腾讯云智能体开发平台_应用服务_token体验资源_后付费": "Tencent Cloud Intelligent Agent Development Platform_Application Service_Token Trial Resource_Postpaid",
+      "腾讯云智能体开发平台_搜索引擎_体验资源_后付费": "Tencent Cloud Intelligent Agent Development Platform_Search Engine_Trial Resource_Postpaid",
+      "应用服务_DeepSeek_token体验资源_100万token_后付费": "Application Service_DeepSeek_Token Trial Resource_1,000,000 Tokens_Postpaid",
+      "腾讯云智能体开发平台_应用服务_DeepSeek_token体验资源_后付费": "Tencent Cloud Intelligent Agent Development Platform_Application Service_DeepSeek_Token Trial Resource_Postpaid",
+      "【应用服务_DeepSeek_token体验资源】--300Wtoken_后付费": "[Application Service_DeepSeek_Token Trial Resource] -- 3,000,000 Tokens_Postpaid",
+      "应用服务_精调知识大模型标准版_token体验资源": "Application Service_Fine-tuned Knowledge Large Model Standard Edition_Token Trial Resource",
+      "应用服务_混元大模型Turbo版_token体验资源": "Application Service_HunYuan Large Model Turbo Edition_Token Trial Resource",
+      "腾讯云智能体开发平台_并发增购_专属版_年结": "Tencent Cloud Intelligent Agent Development Platform_Concurrency Additional Purchase_Dedicated Edition_Annual Payment",
+      "腾讯云智能体开发平台_并发增购_共享版": "Tencent Cloud Intelligent Agent Development Platform_Concurrency Additional Purchase_Shared Edition",
+      "腾讯云智能体开发平台_搜索服务包": "Tencent Cloud Intelligent Agent Development Platform_Search Service Package",
+      "腾讯云智能体开发平台_知识库扩容包": "Tencent Cloud Intelligent Agent Development Platform_Knowledge Base Expansion Package",
+      "腾讯云智能体开发平台_并发_专属版_月结": "Tencent Cloud Intelligent Agent Development Platform_Concurrency_Dedicated Edition_Monthly Payment",
+      "腾讯云智能体开发平台_并发增购_共享版_月结": "Tencent Cloud Intelligent Agent Development Platform_Concurrency Additional Purchase_Shared Edition_Monthly Payment",
+      "精调知识大模型标准版_问答消息_token资源包": "Fine-tuned Knowledge Large Model Standard Edition_Q&A Message_Token Resource Package",
+      "精调知识大模型高级版_问答消息_token资源包": "Fine-tuned Knowledge Large Model Advanced Edition_Q&A Message_Token Resource Package",
+      "医学行业大模型标准版_问答消息_token资源包": "Medical Industry Large Model Standard Edition_Q&A Message_Token Resource Package",
+      "金融行业大模型标准版_问答消息_token资源包": "Financial Industry Large Model Standard Edition_Q&A Message_Token Resource Package",
+      "应用服务_精调知识大模型标准版_token后付费": "Application Service_Fine-tuned Knowledge Large Model Standard Edition_Token Postpaid",
+      "应用服务_精调知识大模型高级版_token后付费": "Application Service_Fine-tuned Knowledge Large Model Advanced Edition_Token Postpaid",
+      "应用服务_医学行业大模型标准版_token后付费": "Application Service_Medical Industry Large Model Standard Edition_Token Postpaid",
+      "应用服务_金融行业大模型标准版_token后付费": "Application Service_Financial Industry Large Model Standard Edition_Token Postpaid",
+      "应用服务_教育行业大模型标准版_token后付费": "Application Service_Education Industry Large Model Standard Edition_Token Postpaid",
+      "应用服务_混元大模型标准版_token后付费": "Application Service_Hunyuan Large Model Standard Edition_Token Postpaid",
+      "应用服务_混元大模型长文本版_token后付费": "Application Service_Hunyuan Large Model Long-text Edition_Token Postpaid",
+      "应用服务_混元大模型高级版_token后付费": "Application Service_Hunyuan Large Model Advanced Edition_Token Postpaid",
+      "应用服务_搜索服务后付费": "Application Service_Search Service Postpaid",
+      "精调知识大模型高级版_并发增购_共享版_月结": "Fine-tuned Knowledge Large Model Advanced Edition_Concurrency Additional Purchase_Shared Edition_Monthly Payment",
+      "精调知识大模型高级版_并发增购_共享版_年结": "Fine-tuned Knowledge Large Model Advanced Edition_Concurrency Additional Purchase_Shared Edition_Annual Payment",
+      "金融行业大模型标准版_并发增购_共享版_月结": "Financial Industry Large Model Standard Edition_Concurrency Additional Purchase_Shared Edition_Monthly Payment",
+      "金融行业大模型标准版_并发增购_共享版_年结": "Financial Industry Large Model Standard Edition_Concurrency Additional Purchase_Shared Edition_Annual Payment",
+      "医疗行业大模型标准版_并发增购_共享版_月结": "Medical Industry Large Model Standard Edition_Concurrency Additional Purchase_Shared Edition_Monthly Payment",
+      "医疗行业大模型标准版_并发增购_共享版_年结": "Medical Industry Large Model Standard Edition_Concurrency Additional Purchase_Shared Edition_Annual Payment",
+      "教育行业大模型标准版_并发增购_共享版_月结": "Education Industry Large Model Standard Edition_Concurrency Additional Purchase_Shared Edition_Monthly Payment",
+      "教育行业大模型标准版_并发增购_共享版_年结": "Education Industry Large Model Standard Edition_Concurrency Additional Purchase_Shared Edition_Annual Payment",
+      "精调知识大模型高级版_并发_专属版_月结": "Fine-tuned Knowledge Large Model Advanced Edition_Concurrency_Dedicated Edition_Monthly Payment",
+      "精调知识大模型高级版_并发_专属版_年结": "Fine-tuned Knowledge Large Model Advanced Edition_Concurrency_Dedicated Edition_Annual Payment",
+      "金融行业大模型标准版_并发_专属版_月结": "Financial Industry Large Model Standard Edition_Concurrency_Dedicated Edition_Monthly Payment",
+      "金融行业大模型标准版_并发_专属版_年结": "Financial Industry Large Model Standard Edition_Concurrency_Dedicated Edition_Annual Payment",
+      "医疗行业大模型标准版_并发_专属版_月结": "Medical Industry Large Model Standard Edition_Concurrency_Dedicated Edition_Monthly Payment",
+      "医疗行业大模型标准版_并发_专属版_年结": "Medical Industry Large Model Standard Edition_Concurrency_Dedicated Edition_Annual Payment",
+      "教育行业大模型标准版_并发_专属版_月结": "Education Industry Large Model Standard Edition_Concurrency_Dedicated Edition_Monthly Payment",
+      "教育行业大模型标准版_并发_专属版_年结": "Education Industry Large Model Standard Edition_Concurrency_Dedicated Edition_Annual Payment",
+      "教育行业大模型标准版_问答消息_token资源包": "Education Industry Large Model Standard Edition_Q&A Message_Token Resource Package",
+      "应用服务_混元大模型角色扮演版_token后付费": "Application Service_Hunyuan Large Model Role-playing Edition_Token Postpaid",
+      "混元大模型标准版_并发增购_共享版_月结": "Hunyuan Large Model Standard Edition_Concurrency Additional Purchase_Shared Edition_Monthly Payment",
+      "混元大模型标准版_并发增购_共享版_年结": "Hunyuan Large Model Standard Edition_Concurrency Additional Purchase_Shared Edition_Annual Payment",
+      "混元大模型高级版_并发增购_共享版_月结": "Hunyuan Large Model Advanced Edition_Concurrency Additional Purchase_Shared Edition_Monthly Payment",
+      "知识库扩容体验包_300万字符": "Knowledge Base Expansion Trial Pack_3 Million Characters",
+      "应用服务_token体验资源_50万token": "Application Service_token Trial Resource_500,000 tokens",
+      "搜索服务体验包_5000次": "Search Service Trial Pack_5,000 times",
+      "Embedding体验资源_50万token": "Embedding Trial Resource_500,000 tokens",
+      "多轮改写体验资源_50万token": "Multi-turn Rewriting Trial Resource_500,000 tokens",
+      "Rerank体验资源_50万token": "Rerank Trial Resource_500,000 tokens",
+      "RAG套件_知识库容量体验资源100万字符": "RAG Suite_Knowledge Base Capacity Trial Resource_1 Million Characters",
+      "RAG套件_知识库检索体验资源500次": "RAG Suite_Knowledge Base Search Trial Resource_500 times",
+      "文档解析_体验资源500页": "Document Parsing_Trial Resource_500 pages",
+      "原子能力_token体验资源_100万token": "Atomic Capability_token Trial Resource_1 Million tokens",
+      "应用服务_DeepSeek_token体验资源_50万token": "Application Service_DeepSeek_token Trial Resource_500,000 tokens",
+      "应用服务_DeepSeek_token体验资源_100万token": "Application Service_DeepSeek_token Trial Resource_1 Million tokens",
+      "原子能力_Deepseek联网搜索体验资源5000次": "Atomic Capability_DeepSeek Online Search Trial Resource_5,000 times",
+      "腾讯云智能体开发平台_应用服务_DeepSeek_token体验资源": "Tencent Cloud Intelligent Agent Development Platform_Application Service_DeepSeek_token Trial Resource",
+      "【应用服务_DeepSeek_token体验资源】--300Wtoken": "[Application Service_DeepSeek_token Trial Resource]--3 Million tokens",
+      "知识库扩容体验包_1000万字符": "Knowledge Base Expansion Trial Pack_10 Million Characters",
+      "应用服务_token体验资源_5000万token": "Application Service_token Trial Resource_50 Million tokens",
+      "搜索服务体验包_10万次": "Search Service Trial Pack_100,000 times",
+      "Embedding体验资源_1000万token": "Embedding Trial Resource_10 Million tokens",
+      "多轮改写体验资源_1000万token": "Multi-turn Rewriting Trial Resource_10 Million tokens",
+      "应用服务_精调知识大模型标准版_1000万tokens": "Application Service_Fine-tuned Knowledge Large Model Standard Edition_10 Million tokens",
+      "应用服务_精调知识大模型标准版_5000万tokens": "Application Service_Fine-tuned Knowledge Large Model Standard Edition_50 Million tokens",
+      "应用服务_精调知识大模型标准版_1亿tokens": "Application Service_Fine-tuned Knowledge Large Model Standard Edition_100 Million tokens",
+      "应用服务_混元大模型Turbo版_1000万tokens": "Application Service_Hunyuan Large Model Turbo Edition_10 Million tokens",
+      "应用服务_混元大模型Turbo版_5000万tokens": "Application Service_Hunyuan Large Model Turbo Edition_50 Million tokens",
+      "应用服务_混元大模型Turbo版_1亿tokens": "Application Service_Hunyuan Large Model Turbo Edition_100 Million tokens",
+      "自定义模型_问答消息_token后付费": "Application Service_Custom Model_token Postpaid",
+      "混元大模型长文本版10亿tokens": "Hunyuan Large Model Long-text Edition 1 Billion tokens",
+      "混元大模型长文本版1000万tokens": "Hunyuan Large Model Long-text Edition 10 Million tokens",
+      "混元大模型高级版10亿tokens": "Hunyuan Large Model Advanced Edition 1 Billion tokens",
+      "混元大模型高级版1000万tokens": "Hunyuan Large Model Advanced Edition 10 Million tokens",
+      "混元大模型角色扮演版1000万tokens": "Hunyuan Large Model Role-playing Edition 10 Million tokens",
+      "混元大模型Turbo版10亿tokens": "Hunyuan Large Model Turbo Edition 1 Billion tokens",
+      "混元大模型Turbo版1000万tokens": "Hunyuan Large Model Turbo Edition 10 Million tokens",
+      "精调知识大模型标准版1000万tokens": "Fine-tuned Knowledge Large Model Standard Edition 10 Million tokens",
+      "精调知识大模型标准版10亿tokens": "Fine-tuned Knowledge Large Model Standard Edition 1 Billion tokens",
+      "精调知识大模型标准版5亿tokens": "Fine-tuned Knowledge Large Model Standard Edition 500 Million tokens",
+      "精调知识大模型标准版1亿tokens": "Fine-tuned Knowledge Large Model Standard Edition 100 Million tokens",
+      "精调知识大模型标准版5000万tokens": "Fine-tuned Knowledge Large Model Standard Edition 50 Million tokens",
+      "混元大模型标准版10亿tokens": "Hunyuan Large Model Standard Edition 1 Billion tokens",
+      "混元大模型标准版1000万tokens": "Hunyuan Large Model Standard Edition 10 Million tokens times",
+      "搜索服务包10万次": "Search Service Package 100,000 times",
+      "搜索服务包50万次": "Search Service Package 500,000 times",
+      "搜索服务包100万次": "Search Service Package 1 Million times",
+      "搜索服务包500万次": "Search Service Package 5 Million times",
+      "搜索服务包1000万次": "Search Service Package 10 Million times",
+      "Deepseek-V3 1亿tokens": "Deepseek-V3 100 Million tokens",
+      "Deepseek-R1 1亿tokens": "Deepseek-R1 100 Million tokens",
+      "次数": " times"
+    }
+  finance_zh-CN.json: |
+    {}
+  trpc_go.yaml: |
+    server:
+      app: qbot.finance
+      server: finance
+      admin:
+        ip: 0.0.0.0
+        port: 8081
+      filter:
+        - recovery
+        #- opentelemetry
+        - validation
+        - accesslog
+        - prometheus
+        - i18n-adp
+      service:
+        - name: qbot.finance.finance.Finance
+          ip: 0.0.0.0
+          port: 9090
+          network: tcp
+          protocol: trpc
+          timeout: 30000
+        - name: qbot.finance.finance.Api # service的路由名称，格式：`业务领域.功能模块.项目名.Pb定义的服务名`
+          ip: 0.0.0.0
+          port: 9091
+          network: tcp
+          protocol: trpc
+          timeout: 10000
+          filter:
+            - session
+            - permission
+    
+    plugins:
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+            - zh-CN
+            - en-US 
+          data_provider:
+            type: rainbow
+            prefix: finance
+            error_prefix: error
+            char_scaling_factor:
+              zh: 1
+              en: 3
+    
+      #telemetry:
+      #  opentelemetry:
+      log:
+        default:
+          - writer: console
+            level: info
+            caller_skip: 3
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+          - writer: file
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/trpc.log
+              write_mode: 2
+              roll_type: time
+              max_age: 7
+              max_backups: 10
+              compress: false
+              time_unit: day
+      # 私有化配置（使用helm-charts配置Prometheus主动拉取的方式， 指标serve在admin端口）：
+      metrics:                                        #Reference metrics.
+        prometheus:                                   #Start prometheus.
+          path: /metrics                              #Metrics path.
+          rawmode:   false                            #Raw mode, no conversion of special characters for metrics.
+    
+    client:
+      filter:
+        - opentelemetry
+        - prometheus
+      service:
+        - name: mysql.finance.finance
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_finance?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.finance.finance.slave
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_finance?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: redis.finance.finance
+          network: tcp
+          target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/10
+          password: "{{ .Values.global.components.redis.password }}"
+          timeout: 800
+        - name: cloud.trade.gateway.http
+          network: tcp
+          protocol: http
+          target: ip://127.0.0.1
+          namespace: Production
+          timeout: 5000
+        - name: qcloud.measure.http
+          network: tcp
+          protocol: http
+          target: ip://127.0.0.1
+          namespace: Production
+        - name: trpc.SmartAssistant.ResourceManager.ManagerObj
+          namespace: Production
+          env_name: formal
+          timeout: 3000
+        - name: trpc.measure.tpapi.common.http
+          network: tcp
+          protocol: http
+          target: ip://127.0.0.1
+          namespace: Production
+        - name: qcloud.account.http
+          network: tcp
+          protocol: http
+          target: ip://127.0.0.1
+        - name: trpc.KEP.bot-knowledge-config-server.Api
+          callee: trpc.KEP.bot_knowledge_config_server.Api
+          target: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 3000 
+        - name: trpc.KEP.bot-admin-config-server.Api
+          callee: trpc.KEP.bot_admin_config_server.Api
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.KEP.bot-admin-config-server.Login
+          callee: trpc.KEP.bot_admin_config_server.Login
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+    

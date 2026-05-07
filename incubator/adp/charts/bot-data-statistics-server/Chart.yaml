@@ -1,0 +1,11 @@
+apiVersion: v2
+name: bot-data-statistics-server
+description: A helm chart for bot-data-statistics-server
+type: application
+
+version: 1.0.0
+
+appVersion: 1.0.0
+maintainers:
+  - name: randalchen
+  - name: v_iferen

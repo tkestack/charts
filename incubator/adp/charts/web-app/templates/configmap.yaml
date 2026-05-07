@@ -1,0 +1,165 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-web-app
+  namespace: {{ .Release.Namespace }}
+data:
+  config.js: |
+    window.TIWEB_CONFIG = {
+      domain: '{{ .Values.global.scheme }}://{{ .Values.global.clb }}/',
+      // 如果需要配置header logo, 配置路径'/portal/config/platform-title-logo.png'，同时修改platform-title-logo.png文件
+      HeaderTitle: '/portal/config/platform-title-logo.png',
+      // 登陆页面
+      LoginPage: {
+        Title: '云小微客服机器人',
+        SubTitle: '智能客服机器人',
+      },
+      // 主页参数
+      HomePage: {
+        Title: '腾讯云小微',
+        SubTitle: '腾讯云小微，通过自主研发的全栈 AI技术与各垂直行业领域相结合，从对话智能到情感智能，聚焦体验、效率与转化，支持企业服务和营销实现数智化转型升级。',
+      },
+      Iaas: true,
+      HideBillingUsageDetails: true,
+      multiModal: {{ ((.Values.global.ChatServer).multi_modal).disabled | default false }},
+      RsaPublicKey: '{{  .Values.global.rsa.publicKey }}',
+      chatFileUpload: false,
+      minioPort: 30900,
+      enableASRTTS: false,
+      ASRUrl: 'wss://{{ .Values.global.clb }}:7777/asr',
+      TTSUrl: 'wss://{{ .Values.global.clb }}:7777/tts',
+      {{ if eq .Values.global.components.s3.providerType "cos" }}
+      objectStorageType: '{{ .Values.global.components.s3.providerType }}',
+      {{ else if eq .Values.global.components.s3.providerType "obs" }}
+      objectStorageType: '{{ .Values.global.components.s3.providerType }}',
+      {{ else }}
+      objectStorageType: 'minio',
+      {{ end }}
+      Favicon: '/portal/config/favicon.ico',
+      MaxDocLen: 100,
+      objectStorageAddr: 'https://obs.cn-east-3.myhuaweicloud.com',
+      {{- if or ( eq .Values.global.deploy_mode "all_in_one" ) ( eq .Values.global.deploy_mode "all_in_one_with_workflow" ) }}
+      IsGenerateFromDoc: false
+      {{- else }}
+      IsGenerateFromDoc: true
+      {{- end }}
+    };
+  nginx.conf: |
+    # 用户名sppd
+    user root root;
+    #设置值和CPU核心数一致
+    worker_processes 2;
+    #日志位置和日志级别
+    error_log /web/logs/nginx_error.log crit;
+    # pid /usr/local/webserver/nginx/nginx.pid;
+    worker_rlimit_nofile 65535;
+    events
+    {
+      use epoll;
+      worker_connections 65535;
+    }
+    http {
+      include mime.types;
+      default_type application/octet-stream;
+      log_format main  '$remote_addr - $remote_user [$time_local] "$request" '
+          '$status $body_bytes_sent "$http_referer" '
+          '"$http_user_agent" $http_x_forwarded_for';
+
+      server_names_hash_bucket_size 128;
+      client_header_buffer_size 32k;
+      large_client_header_buffers 4 32k;
+      client_max_body_size 8m;
+
+      sendfile on;
+      tcp_nopush on;
+      keepalive_timeout 60;
+      tcp_nodelay on;
+      fastcgi_connect_timeout 300;
+      fastcgi_send_timeout 300;
+      fastcgi_read_timeout 300;
+      fastcgi_buffer_size 64k;
+      fastcgi_buffers 4 64k;
+      fastcgi_busy_buffers_size 128k;
+      fastcgi_temp_file_write_size 128k;
+      # 开启gzip
+      gzip on;
+      gzip_comp_level 2; # 2级压缩 节省cpu
+      gzip_min_length 1k; # 文件小于1K完全没必要压缩
+      gzip_buffers 4 16k; # 压缩内存空间大小
+      gzip_http_version 1.0;
+      gzip_proxied any; # ? 对反向代理的内容进进行压缩
+      gzip_vary on; # 启用应答头"Vary: Accept-Encoding(表示在传送数据时，给客户端说明我使用了gzip压缩)"
+      gzip_disable "MSIE [1-6]\.";
+      gzip_types # 要被压缩的content-type
+        application/javascript
+        application/x-javascript
+        text/javascript
+        text/css
+        text/xml
+        application/xhtml+xml
+        application/xml
+        application/atom+xml
+        application/rdf+xml
+        application/rss+xml
+        application/geo+json
+        application/json
+        application/ld+json
+        application/manifest+json
+        application/x-web-app-manifest+json
+        image/svg+xml
+        text/x-cross-domain-policy;
+
+      server {
+          listen 30002;
+          access_log on;
+          server_name localhost;
+          index index.html index.htm index.php;
+          root /web/html;
+          resolver kube-dns.kube-system.svc.cluster.local valid=10s;
+
+          # Health check endpoint
+          location = / {
+            access_log off;
+            return 200 'ok';
+            add_header Content-Type text/plain;
+          }
+
+          location /adp {
+            alias /web/html/manage/;
+          }
+          location /preview/ {
+            alias /web/html/manage/preview/;
+          }
+          location /qbot/ {
+            alias /web/html/qbot/;
+          }
+          location /webim/ {
+            alias /web/html/qbot/;
+          }
+          location /workflow/ {
+            alias /web/html/workflow/;
+          }
+          location /workflow/preview {
+            alias /web/html/workflow/;
+          }
+          location /workflow/pdl {
+            alias /web/html/workflow/;
+          }
+          location /workflow/asyncTask {
+            alias /web/html/workflow/;
+          }
+          location /s/ {
+            set $short_url_upstream http://short-url.{{ .Release.Namespace }}.svc.cluster.local:8080;
+            rewrite ^/s/(.*)$ /$1 break;
+            proxy_pass $short_url_upstream;
+          }
+          location /op/ {
+            set $op_upstream http://op.{{ .Release.Namespace }}.svc.cluster.local:8080;
+            proxy_pass $op_upstream;
+          }
+          location /opapi/ {
+            set $opapi_upstream http://op.{{ .Release.Namespace }}.svc.cluster.local:8080;
+            proxy_pass $opapi_upstream;
+          }
+        }
+    }

@@ -1,0 +1,198 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    ti.cloud.tencent.com/resource-quota: unlimited
+  labels:
+    app: vector-db-manager
+  name: vector-db-manager
+  namespace: {{ .Release.Namespace }}
+spec:
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  selector:
+    matchLabels:
+      app: vector-db-manager
+  template:
+    metadata:
+      labels:
+        app: vector-db-manager
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - vector-db-manager
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: GPUName
+                    operator: DoesNotExist
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: product
+                    operator: In
+                    values:
+                      - lke
+      serviceAccountName: vector-db-manager-controllers
+      priorityClassName: system-cluster-critical
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - env:
+            - name: DEPLOYMENT_ENVIRONMENT
+              value: TCS
+            - name: __AppEnname
+              value: VectorDBManager
+            - name: __ProjectEnname
+              value: yunxiaoweipingtai
+            - name: __AppGroupEnname
+              value: SmartAssistant
+            - name: __Env
+              value: test-env
+            - name: __EnvId
+              value: '48486'
+            - name: __Region
+              value: ap-guangzhou
+            - name: __PolarisNamespace
+              value: Development
+            - name: __DefaultAppMark
+              value: 9209_84121_VectorDBManager
+            - name: DOCKER_ENV
+              value: formal
+            - name: APP
+              value: SmartAssistant
+            - name: SERVER
+              value: VectorDBManager
+            - name: APP_NAME
+              value: SmartAssistant
+            - name: SERVER_NAME
+              value: vector-db-manager
+            - name: SET_NAME
+              value: ..
+            - name: IS_GRAY
+              value: 'N'
+            - name: NAMESPACE
+              value: Development
+            - name: CONTAINER_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_UID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.uid
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+          image: {{(index .Values.tad.images "vector-db-manager").url}}
+          imagePullPolicy: Always
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - sleep
+                  - '70'
+          name: main-container
+          #command: ["bash","/usr/local/app/start.sh"]
+          #command: ["bash","-c","while true; do sleep 1; done"]
+          readinessProbe:
+            failureThreshold: 2
+            initialDelaySeconds: 30
+            periodSeconds: 3
+            successThreshold: 1
+            timeoutSeconds: 5
+            tcpSocket:
+              port: 10001
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "1"
+              memory: "1Gi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+            requests:
+              cpu: "2"
+              memory: "4Gi"
+          {{- end }}
+          stdin: true
+          tty: true
+          volumeMounts:
+            - mountPath: /etc/localtime
+              mountPropagation: HostToContainer
+              name: host-time
+            - mountPath: /app/log
+              name: applog
+              subPathExpr: $(POD_NAME)
+            - mountPath: /app/conf/
+              name: config
+            - mountPath: /usr/local/trpc/configmap/vector-db-manager.json
+              name: config
+              subPath: vector-db-manager.json
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 80
+      volumes:
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - name: applog
+          hostPath:
+            path: /data/ti-platform/log/vector-db-manager
+            type: DirectoryOrCreate
+        - name: config-trpc
+          configMap:
+            name: vector-db-manager-trpc
+        - name: config
+          configMap:
+            name: {{ .Release.Name }}-vector-db-manager
+        - name: host-time
+          hostPath:
+            path: /etc/localtime

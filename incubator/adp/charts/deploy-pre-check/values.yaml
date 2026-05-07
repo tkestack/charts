@@ -1,15 +1,17 @@
 # Pre-install Check 子 Chart 配置
-enabled: true
 
-# 镜像配置
-images:
-  pre-install-check:
-    url: ccr.ccs.tencentyun.com/tke-market/pre-install-check:v1.1
+# 是否启用 pre-install 检查
+enabled: true
 
 # 检查任务配置
 job:
+# Job 镜像配置（使用 slim 镜像，比 alpine 快很多）
   image:
+    repository: ccr.ccs.tencentyun.com/tke-market/pre-install-check
+    tag: "v1.1"
     pullPolicy: IfNotPresent
+
+
   # 资源限制
   resources:
     limits:

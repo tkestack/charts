@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: code-interpreter-dispatcher-controllers
+  namespace: {{ .Release.Namespace }}
+
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: code-interpreter-dispatcher-controllers
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments", "deployments/scale", "replicasets"]
+    verbs: ["get", "list", "watch", "update", "patch", "delete"]
+
+  - apiGroups: [""]
+    resources: ["endpoints", "pods"]
+    verbs: ["get", "list", "watch"]
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: code-interpreter-dispatcher-controllers-role
+subjects:
+  - kind: ServiceAccount
+    name: code-interpreter-dispatcher-controllers
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: code-interpreter-dispatcher-controllers
+  apiGroup: rbac.authorization.k8s.io

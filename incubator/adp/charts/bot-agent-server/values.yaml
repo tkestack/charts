@@ -1,0 +1,15 @@
+tad:
+  type: helm
+  images:
+    bot-agent-server:
+      url: "ccr.ccs.tencentyun.com/tke-market/bot-agent-server:66_2601072349_release_private_v3.2.4_d66206b5_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+imagePullSecretName: qcloudregistrykey

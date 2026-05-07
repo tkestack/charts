@@ -1,4 +1,17 @@
-images:
-  entity-extractor-server:
-    url: ccr.ccs.tencentyun.com/tke-market/smartassistant.entityextractorserver:default-b-20-f_2.0.0.59_20260503181436_Tag_EntityExtractorServer_20250708_01_iaas
 replicas: 1
+tad:
+  type: helm
+  images:
+    entity-extractor-server:
+      url: "ccr.ccs.tencentyun.com/tke-market/smartassistant.entityextractorserver:2026010901_Tag_EntityExtractorServer_20250708_01"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: algorithm
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+
+imagePullSecretName: qcloudregistrykey

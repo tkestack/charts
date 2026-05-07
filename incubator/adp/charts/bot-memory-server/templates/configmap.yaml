@@ -1,0 +1,309 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-memory
+  namespace: {{ .Release.Namespace }}
+data:
+  error_en-US.json: |
+    {
+        "用户未登录": "User not logged in",
+        "意图不存在": "Intent does not exist"
+    }
+  error_zh-CN.json: |
+    {
+        "用户未登录": "用户未登录",
+        "意图不存在": "意图不存在"
+    }
+  main.yaml: |
+    memory_prompt: |
+      你是一个用户画像总结助手，需要从用户输入中总结出用户画像。
+      用户画像包括以下信息:
+      (1) 用户个人信息，如姓名、年龄、性别、爱好、性格特征等；
+      (2) 用户已经发生的一些关键事件。
+
+      用户画像不包含以下内容：
+      (1) 时效性较强的内容："北京明天下雨吗？"、"今天股市收盘指数是多少？"、"湖人队比分是多少？"
+      (2) 闲聊内容："今天路上好堵啊"、"帮我讲个笑话吧"
+      (3) 未发生的事务："帮我查一下后天飞上海的机票"、"帮我预定下午3点的会议室"、"后天小张约我去爬山，你推荐我准备哪些装备？"
+
+      示例1:
+      用户输入: 你好呀，我叫Owen
+      对应的模型输出: {"是否包含用户画像": "是", "用户画像": "名字叫Owen"}
+
+      示例2:
+      用户输入: 每天都跑步。此外，我喜欢玩水，我从小就会游泳
+      对应的模型输出: {"是否包含用户画像": "是", "用户画像": "喜欢跑步和游泳"}
+
+      示例3:
+      用户输入: 明天的天气怎么样
+      对应的模型输出: {"是否包含用户画像": "否", "用户画像": ""}
+
+      示例4:
+      用户输入: 我家冰箱已经空了
+      对应的模型输出: {"是否包含用户画像": "否", "用户画像": ""}
+
+      现在开始你的任务。判断<用户输入>是否包含用户画像。如果包含的话，将用户画像总结为一句话。用户画像应该简洁，只包含用户个人信息和已经发生关键事事件。如果提取到的用户画像和<已收集到的用户画像>内容重复，不要再次提取。
+
+      <已收集到的用户画像>
+      {历史用户画像}
+      </已收集到的用户画像>
+
+      <用户输入>
+      用户输入: %s
+      </用户输入>
+
+      用以下JSON格式输出:
+      {
+      "是否包含用户画像": "是 或者 否",
+      "用户画像": "用一句话总结用户画像。如果<用户输入>中不包含用户画像，则置空"
+      }
+
+      - 只有用户个人信息和已经发生的关键事件，是可以记录的，其他信息都不可以总结为用户画像
+      - <用户输入>是疑问句，没有明确表达个人画像，不要提取用户画像
+      - 提取到的用户画像和<已收集到的用户画像>内容重复，不要再次提取
+
+    llm:
+      model_name: "{{ .Values.botmemoryserver.memory_model_name }}"
+    memory_content_max_length: 140
+    infosec:
+      disable_content_check: {{ if hasKey .Values.global.contentSecurity "disableContentCheck" }}{{ .Values.global.contentSecurity.disableContentCheck }}{{ else }}true{{ end }}
+
+    # 长期记忆最大数量限制（每个用户最多保留的记忆条数）
+    long_term_memory_max_count: 50
+    app_var_expire_time: 168
+  memory_en-US.json: |
+    {}
+  memory_zh-CN.json: |
+    {}
+  placeholder.yaml: |
+    {}
+
+  trpc_go.yaml: |
+    global:                             #全局配置
+      namespace: Test            #环境类型，分正式production和非正式development两种类型
+      env_name: testing                    #环境名称，非正式环境下多环境的名称
+      enable_set: ${ENABLE_SET}         #是否启用set
+      full_set_name: ${FULL_SET_NAME}   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+
+    server:                                            #服务端配置
+      app: KEP                                        #业务的应用名
+      server: bot-memory-server                             #进程服务名
+      bin_path: /usr/local/trpc/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /usr/local/trpc/conf/                 #业务配置文件所在路径
+      data_path: /usr/local/trpc/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+      - recovery                                       #拦截框架创建的业务处理协程panic
+      - galileo
+      - opentelemetry
+      - i18n-adp                                            # 用来翻译错误信息
+      - debuglog
+      stream_filter:
+      - galileo
+      admin:
+        ip: ${POD_IP}
+        port: 8081
+      service:                                         #业务服务提供的service，可以有多个
+      - name: trpc.KEP.bot-memory-server.memory        #service的路由名称
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+        port: 8000                  #服务监听端口 可使用占位符 ${port}
+        network: tcp                               #网络监听类型  tcp udp
+        protocol: trpc                 #应用层协议 trpc http
+        timeout: 0                              #请求最长处理时间 单位 毫秒
+        server_async: true                             #开启异步处理
+        idletime: 600000                               # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+      - name: trpc.KEP.bot-memory-server.memoryInner        #service的路由名称
+        ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+        port: 8001                  #服务监听端口 可使用占位符 ${port}
+        network: tcp                               #网络监听类型  tcp udp
+        protocol: trpc                 #应用层协议 trpc http
+        timeout: 0                              #请求最长处理时间 单位 毫秒
+        server_async: true                             #开启异步处理
+        idletime: 600000                               # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+
+    plugins:                                          #插件配置
+      log:                                            #日志配置
+        default:                                  #默认日志的配置，可支持多输出
+        - writer: console                         #控制台标准输出 默认
+          level: info                            #标准输出日志的级别
+        #caller_skip: 3
+          formatter: json
+          formatter_config:
+            time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+            time_key: time
+            level_key: level
+            name_key: name
+            caller_key: caller
+            message_key: message
+        - writer: file                            #本地文件日志
+          level: info                             #本地文件滚动日志的级别
+          formatter: json
+          formatter_config:
+            time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+            time_key: time
+            level_key: level
+            name_key: name
+            caller_key: caller
+            message_key: message
+            stacktrace_key: stackTrace
+          writer_config:
+            filename: /app/logs/trpc.log  #本地文件滚动日志存放的路径
+            write_mode: 2
+            roll_type: time
+            max_age: 7
+            max_backups: 10
+            compress: false
+            time_unit: day
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+        galileo:
+          verbose: error # 伽利略自身的诊断日志级别，取值范围：debug, info, error, none，日志输出在 ./galileo/galileo.log 中。
+          ocp_addr: http://127.0.0.1
+          config: #配置
+            config_server: http://127.0.0.1
+            register_server: http://127.0.0.1
+            self_monitor:
+              collector:
+                addr: http://127.0.0.1
+            metrics_config: # 指标配置
+              enable: false # 是否启用指标
+            traces_config: # 追踪配置
+              enable: true # 是否启用追踪，默认 true。如果设置为 false，会中断 trace，让上游的调用链不完整。v0.3.7 以上生效。
+              processor: # 追踪数据处理相关配置
+                sampler: # 采样器配置
+                  fraction: 0 # 采样比例，默认 0。（v0.11.0)
+                  error_fraction: 0
+                  enable_min_sample: true # 启用每分钟每接口最少 1 个请求采样，默认 true (v0.11.0)。
+                  enable_dyeing: true # 开启染色采样，默认 true。
+                disable_trace_body: true    # 若为 true，则关闭 trace 中对 req 和 rsp 的 body 上报，可以大幅提高上报性能。默认 true。
+                enable_deferred_sample: false # 开启延迟采样（请求处理完采样），默认 false。0.3.0 以上生效。
+                deferred_sample_error: false # 开启延迟采样出错采样（请求处理完出现错误采样），默认 false。0.3.0 以上生效。
+                deferred_sample_slow_duration_ms: 1000 # 慢操作阈值（请求耗时超过该值采样），单位 ms，默认 1000。0.3.0 以上生效。
+                disable_parent_sampling: false      # 忽略上游的采样结果，默认 false。v0.3.7 以上生效。
+              exporter:
+                collector:
+                  addr: 127.0.0.1:80
+            logs_config: # 日志配置
+              enable: false # 是否启用日志
+              processor: # 日志数据处理相关配置
+                only_trace_log: false # 是否只上报命中 trace 的 log，默认关闭
+                must_log_traced: false # 是否命中 traced 不管任何级别日志都上报，默认关闭。v0.3.22 以上生效
+                trace_log_mode: 0 # debug 访问日志 (access_log) 打印模式，0,1：单行打印，3：多行打印，2：不打印，默认 0
+                level: debug  # 上报到远程的日志级别，默认 error
+                enable_recovery: true # 是否捕获 panic，默认 true
+            profiles_config: # profile配置
+              enable: false # 是否启用 profile
+              processor: # profile 数据处理相关配置
+                profile_types: [cpu, heap] # 采集 profile 的类型，支持 cpu、heap、mutex、block、goroutine，默认开启 cpu 和 heap。
+            version: 1  # 版本号，默认 0，此版本号用于控制远程配置和本地配置的优先级，版本号高的优先，一般设置成 1 即可。
+          resource: # resource 资源信息，在 SDK 运行期间不会改变。resource 中的字段一般不需要配置，默认会填充。
+            platform: STKE # 服务部署的平台，如 PCG-123, STKE, 默认 PCG-123
+      config:
+        file:
+          providers:
+          - name: rainbow
+            path: /app/conf/
+      registry: #服务注册配置
+        polaris: #北极星名字注册服务的配置
+          register_self: false
+          heartbeat_interval: 3000                    #名字注册服务心跳上报间隔
+          heartbeat_timeout: 1000                     #名字服务心跳超时
+          service:
+          - name: trpc.KEP.bot-memory-server.memory      #service name 与上面的service配置一一对应
+            namespace: Test                #环境类型，分正式Production和非正式Development两种类型
+            token: a1bdcaa6ea7a413c80717b1e6390968e               #服务注册所需要的 token
+          - name: trpc.KEP.bot-memory-server.memory      #service name 与上面的service配置一一对应
+            namespace: Test                #环境类型，分正式Production和非正式Development两种类型
+            token: bdb9916ead27444a8098ca77adff113c               #服务注册所需要的 token
+      selector: #针对用户自定义的selector的配置
+        polaris: #针对polaris整体api的内部配置
+          protocol: grpc                              #名字服务远程交互协议类型
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+          - zh-CN
+          - en-US
+          data_provider:
+            type: rainbow
+            prefix: memory
+            error_prefix: error
+            char_scaling_factor:
+              zh-CN: 1
+              en-US: 3
+    client:                                            #客户端调用的后端配置
+      namespace: Test                           #针对所有后端的环境
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+      - galileo
+      - opentelemetry
+      - cle-route-propagator
+      - debuglog
+      stream_filter:
+      - galileo
+      service:
+      - name: trpc.tcadp.memory.redis
+        network: tcp
+        target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/3
+        password: "{{ .Values.global.components.redis.password }}"
+        timeout: 800
+      - name: trpc.tcadp.memory.tdsql
+        target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      - callee: trpc.KEP.bot_admin_config_server.Login
+        target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+        protocol: trpc
+        timeout: 20000
+      - callee: trpc.KEP.bot_admin_config_server.Api
+        target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+        protocol: trpc
+        timeout: 20000
+      - name: trpc.adp.ai-gateway.api
+        network: tcp
+        protocol: http
+        target: ip://ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+        timeout: 1800000
+      - name: qbot.qbot.infosec.Infosec
+        target: ip://infosec.{{ .Release.Namespace }}.svc.cluster.local:9090
+        network: tcp
+        timeout: 1000
+        # V3.2.4.0新加
+        # admin Login
+      - callee: trpc.adp.app_admin_proxy.Login
+        target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+        protocol: trpc
+        timeout: 20000
+        # admin API
+      - callee: trpc.adp.app_admin_proxy.Api
+        target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+        protocol: trpc
+        timeout: 20000
+        # 安全审核
+      - callee: trpc.adp.platform_content_moderation.Infosec
+        namespace: Test
+        target: ip://infosec.{{ .Release.Namespace }}.svc.cluster.local:9090
+        network: tcp
+        timeout: 500
+

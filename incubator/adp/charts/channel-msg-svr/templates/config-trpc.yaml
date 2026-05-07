@@ -1,0 +1,221 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: channelmsgsvr-trpc
+  namespace: {{ .Release.Namespace }}
+data:
+  trpc_go.yaml: |
+    global:                             #全局配置
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}	
+
+    server:
+      app: KEP
+      server: channel-msg-svr
+      bin_path: /usr/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /usr/conf/                 #业务配置文件所在路径
+      data_path: /usr/data/                 #业务数据文件所在路径
+      admin:
+        ip: 0.0.0.0
+        port: 8081
+        write_timeout: 6000000 # ms. 处理的超时时间
+      filter:
+        - prometheus
+        - recovery
+        - galileo
+      service:
+        - name: trpc.KEP.channel-msg-svr.HTTP      #service的路由名称
+          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+          port: 8000                #服务监听端口 可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: http_no_protocol               #应用层协议 trpc http
+          timeout: 50000                            #请求最长处理时间 单位 毫秒
+          server_async: true                           #开启异步处理
+          idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+        - name: trpc.KEP.channel-msg-svr.trpc    #service的路由名称
+          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+          port: 8001                #服务监听端口 可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: trpc               #应用层协议 trpc http
+          timeout: 50000                            #请求最长处理时间 单位 毫秒
+          server_async: true                           #开启异步处理
+          idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+          filter:
+            - session
+        - name: trpc.KEP.trpc.KEP.channel-msg-svr.Api    #service的路由名称
+          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+          port: 8002                #服务监听端口 可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: trpc               #应用层协议 trpc http
+          timeout: 50000                           #请求最长处理时间 单位 毫秒
+          server_async: true                           #开启异步处理
+          idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+    plugins:
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: ./
+
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          #- writer: galileo       # 伽利略远程日志
+          #  level: debug
+          - writer: console                           #控制台标准输出 默认
+            level: info                              #标准输出日志的级别
+            #caller_skip: 3
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+          - writer: file                              #本地文件日志
+            level: info                               #本地文件滚动日志的级别
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/trpc.log    #本地文件滚动日志存放的路径
+              write_mode: 2
+              roll_type: time
+              max_age: 7
+              max_backups: 10
+              compress: false
+              time_unit: day
+        clues:
+          #- writer: galileo       # 伽利略远程日志
+          #  level: info
+          - writer: console                           #控制台标准输出 默认
+            level: info                              #标准输出日志的级别
+          - writer: file
+            level: info
+            formatter: json
+            writer_config:
+              filename: /app/logs/clues.log
+              write_mode: 2
+              roll_type: time
+              max_age: 7
+              max_backups: 10
+              compress: false
+              time_unit: day
+      metrics: #Reference metrics
+        prometheus: #Start prometheus.
+          path: /metrics                              #Metrics path，在使用admin端口情况下，会与天机阁冲突，导致茹素起不来
+          rawmode:   false                            #Raw mode, no conversion of special characters for metrics.
+          #enablepush: true                            #Enable push mode, not enabled by default.
+      telemetry:
+        galileo:
+          verbose: error   # 伽利略自身的诊断日志级别，取值范围：debug, info, error, none，日志输出在 ./galileo/galileo.log 中。
+          ocp_addr: "http://127.0.0.1"
+          config: #配置
+            config_server: "http://127.0.0.1"
+            register_server: "http://127.0.0.1"
+            self_monitor:
+              collector:
+                addr: "http://127.0.0.1"
+            metrics_config: # 指标配置
+              enable: false    # 是否启用指标
+            traces_config: # 追踪配置
+              enable: true    # 是否启用追踪，默认 true。如果设置为 false，会中断 trace，让上游的调用链不完整。v0.3.7 以上生效。
+              processor: # 追踪数据处理相关配置
+                sampler: # 采样器配置
+                  fraction: 0   # 采样比例，默认 0。（v0.11.0)
+                  error_fraction: 0
+                  enable_min_sample: true  # 启用每分钟每接口最少 1 个请求采样，默认 true (v0.11.0)。
+                  enable_dyeing: true # 开启染色采样，默认 true。
+                disable_trace_body: true          # 若为 true，则关闭 trace 中对 req 和 rsp 的 body 上报，可以大幅提高上报性能。默认 true。
+                enable_deferred_sample: false     # 开启延迟采样（请求处理完采样），默认 false。0.3.0 以上生效。
+                deferred_sample_error: false      # 开启延迟采样出错采样（请求处理完出现错误采样），默认 false。0.3.0 以上生效。
+                deferred_sample_slow_duration_ms: 1000    # 慢操作阈值（请求耗时超过该值采样），单位 ms，默认 1000。0.3.0 以上生效。
+                disable_parent_sampling: false            # 忽略上游的采样结果，默认 false。v0.3.7 以上生效。
+              exporter:
+                collector:
+                  addr: "127.0.0.1:80"
+            logs_config: # 日志配置
+              enable: false    # 是否启用日志
+              processor: # 日志数据处理相关配置
+                only_trace_log: false  # 是否只上报命中 trace 的 log，默认关闭
+                must_log_traced: false # 是否命中 traced 不管任何级别日志都上报，默认关闭。v0.3.22 以上生效
+                trace_log_mode: 0   # debug 访问日志 (access_log) 打印模式，0,1：单行打印，3：多行打印，2：不打印，默认 0
+                level: debug        # 上报到远程的日志级别，默认 error
+                enable_recovery: true # 是否捕获 panic，默认 true
+            profiles_config:    # profile配置
+              enable: false # 是否启用 profile
+              processor: # profile 数据处理相关配置
+                profile_types: ["cpu", "heap"] # 采集 profile 的类型，支持 cpu、heap、mutex、block、goroutine，默认开启 cpu 和 heap。
+            version: 1        # 版本号，默认 0，此版本号用于控制远程配置和本地配置的优先级，版本号高的优先，一般设置成 1 即可。
+          resource: # resource 资源信息，在 SDK 运行期间不会改变。resource 中的字段一般不需要配置，默认会填充。
+            platform: STKE   # 服务部署的平台，如 PCG-123, STKE, 默认 PCG-123
+
+    client:
+      filter:
+        #- opentelemetry
+        - prometheus
+        - galileo
+      stream_filter:
+        - galileo
+      service:
+        - name: mysql.qbot.admin
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.tcadp.channel
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: redis.qbot.admin
+          network: tcp
+          target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/1
+          password: "{{ .Values.global.components.redis.password }}"
+          timeout: 800
+        - name: wx.nginx   #---------nginx出口-------------
+          target: ip://channelproxysvr.{{ .Release.Namespace }}.svc.cluster.local:8001
+          network: tcp
+          protocol: http
+          timeout: 20000
+        - name: trpc.KEP.channel_token_svr.ChannelTokenService
+          network: tcp
+          protocol: trpc
+          target: ip://channeltokensvr.{{ .Release.Namespace }}.svc.cluster.local:8000
+          timeout: 2000
+        - name: trpc.KEP.channel_resource_convert_svr.ResourceManagerService
+          network: tcp
+          protocol: trpc
+          target: ip://channelresourceconvertsvr.{{ .Release.Namespace }}.svc.cluster.local:8000
+          timeout: 5000 
+        - name: trpc.KEP.bot_admin_config_server.Admin
+          network: tcp
+          protocol: trpc
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 5000 
+        - callee: trpc.ai.client
+          name: trpc.ai.client
+          network: tcp
+          protocol: http
+          target: dns://{{ .Values.global.clb }}:80
+          timeout: 600000
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.KEP.bot_task_config_server.TaskConfig
+          target: ip://bottaskconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          timeout: 5000 
+        - callee: trpc.KEP.bot_knowledge_config_server.Api
+          name: trpc.KEP.bot-knowledge-config-server.Api
+          target: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 5000
+

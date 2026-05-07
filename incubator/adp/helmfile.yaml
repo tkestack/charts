@@ -50,8 +50,8 @@ releases:
   #####################  ti-base  #######################
 
   # 3. lke-accessmanagerserver - 访问管理服务
-  - name: lke-access-managerserver
-    chart: ./charts/lke-access-managerserver
+  - name: lke-accessmanagerserver
+    chart: ./charts/lke-accessmanagerserver
     namespace: default
     installed: {{ env "LKE_ACCESSMANAGERSERVER_ENABLED" | default "true" }}
     wait: true
@@ -60,8 +60,8 @@ releases:
       - etcd
 
   # 5. lke-aiconfmanagerserver - AI配置管理服务
-  - name: lke-aiconf-manager
-    chart: ./charts/lke-aiconf-manager
+  - name: lke-aiconfmanagerserver
+    chart: ./charts/lke-aiconfmanagerserver
     namespace: default
     installed: {{ env "LKE_AICONFMANAGERSERVER_ENABLED" | default "true" }}
     wait: true
@@ -111,8 +111,8 @@ releases:
 
   #####################  业务后台服务  #######################
   # 0. lke-admin
-  - name: lke-bot-admin-config-server
-    chart: ./charts/lke-bot-admin-config-server
+  - name: lke-admin
+    chart: ./charts/lke-admin
     namespace: default
     installed: { { env "ADMIN_ENABLED" | default "true" } }
     wait: true
@@ -128,17 +128,17 @@ releases:
     wait: true
     timeout: 600
     needs:
-      - etcd
+      - admin
 
-  # 2. agent-exec
-  - name: adp-agent-exec
-    chart: ./charts/adp-agent-exec
+  # 2. agent-config-server
+  - name: agent-config-server
+    chart: ./charts/agent-config-server
     namespace: default
     installed: { { env "CHAT_ENABLED" | default "true" } }
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
   # 3. apex
   - name: apex
@@ -148,441 +148,391 @@ releases:
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-#  # 3. atomic-api
-#  - name: atomic-api
-#    chart: ./charts/atomic-api
-#    namespace: default
-#    installed: { { env "CHAT_ENABLED" | default "true" } }
-#    wait: true
-#    timeout: 600
-#    needs:
-#      - app-config
-#
-#  # 4. atomic
-#  - name: atomic
-#    chart: ./charts/atomic
-#    namespace: default
-#    installed: {{ env "ATOMIC_ENABLED" | default "true" }}
-#    wait: true
-#    timeout: 600
-#    needs:
-#      - app-config
+  # 3. atomic-api
+  - name: atomic-api
+    chart: ./charts/atomic-api
+    namespace: default
+    installed: { { env "CHAT_ENABLED" | default "true" } }
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
 
-  # 5. adp-chat-manage
-  - name: adp-chat-manage
-    chart: ./charts/adp-chat-manage
+  # 4. atomic
+  - name: atomic
+    chart: ./charts/atomic
+    namespace: default
+    installed: {{ env "ATOMIC_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 5. bot-agent-server
+  - name: bot-agent-server
+    chart: ./charts/bot-agent-server
     namespace: default
     installed: {{ env "BOT_AGENT_SERVER_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-  # 6. adp-platform-metrology
-  - name: adp-platform-metrology
-    chart: ./charts/adp-platform-metrology
+  # 6. bot-data-statistics-server
+  - name: bot-data-statistics-server
+    chart: ./charts/bot-data-statistics-server
     namespace: default
     installed: {{ env "BOT_DATA_STATISTICS_SERVER_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-  # 7. adp-agent-config
-  - name: adp-agent-config
-    chart: ./charts/adp-agent-config
+  # 7. bot-dm-server
+  - name: bot-dm-server
+    chart: ./charts/bot-dm-server
     namespace: default
-    installed: {{ env "ADP_AGENT_CONFIG_ENABLED" | default "true" }}
+    installed: {{ env "BOT_DM_SERVER_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-  # 8. adp-ai-gateway
-  - name: adp-ai-gateway
-    chart: ./charts/adp-ai-gateway
+  # 8. bot-evaluate-config-server
+  - name: bot-evaluate-config-server
+    chart: ./charts/bot-evaluate-config-server
     namespace: default
-    installed: {{ env "ADP_AI_GATEWAY_ENABLED" | default "true" }}
+    installed: {{ env "BOT_EVALUATE_CONFIG_SERVER_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-  # 9. adp-app-channel-msg
-  - name: adp-app-channel-msg
-    chart: ./charts/adp-app-channel-msg
+  # 9. bot-knowledge-config-server
+  - name: bot-knowledge-config-server
+    chart: ./charts/bot-knowledge-config-server
     namespace: default
-    installed: {{ env "ADP_APP_CHANNEL_MSG_ENABLED" | default "true" }}
+    installed: {{ env "BOT_KNOWLEDGE_CONFIG_SERVER_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-  # 10. adp-app-channel-proxy-svr
-  - name: adp-app-channel-proxy-svr
-    chart: ./charts/adp-app-channel-proxy-svr
+  # 10. bot-llm-server
+  - name: bot-llm-server
+    chart: ./charts/bot-llm-server
     namespace: default
-    installed: {{ env "ADP_APP_CHANNEL_PROXY_SVR_ENABLED" | default "true" }}
+    installed: {{ env "BOT_LLM_SERVER_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-  # 11. adp-app-channel-token
-  - name: adp-app-channel-token
-    chart: ./charts/adp-app-channel-token
+  # 11. bot-memory-server
+  - name: bot-memory-server
+    chart: ./charts/bot-memory-server
     namespace: default
-    installed: {{ env "ADP_APP_CHANNEL_TOKEN_ENABLED" | default "true" }}
+    installed: {{ env "BOT_MEMORY_SERVER_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-  # 12. adp-app-evaluate
-  - name: adp-app-evaluate
-    chart: ./charts/adp-app-evaluate
+  # 12. bot-rag-server
+  - name: bot-rag-server
+    chart: ./charts/bot-rag-server
     namespace: default
-    installed: {{ env "ADP_APP_EVALUATE_ENABLED" | default "true" }}
+    installed: {{ env "BOT_RAG_SERVER_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-  # 13. adp-app-memory
-  - name: adp-app-memory
-    chart: ./charts/adp-app-memory
+  # 13. bot-retrieval-server
+  - name: bot-retrieval-server
+    chart: ./charts/bot-retrieval-server
     namespace: default
-    installed: {{ env "ADP_APP_MEMORY_ENABLED" | default "true" }}
+    installed: {{ env "BOT_RETRIEVAL_SERVER_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-  # 14. adp-app-shorturl
-  - name: adp-app-shorturl
-    chart: ./charts/adp-app-shorturl
+  # 14. bot-task-config-server
+  - name: bot-task-config-server
+    chart: ./charts/bot-task-config-server
     namespace: default
-    installed: {{ env "ADP_APP_SHORTURL_ENABLED" | default "true" }}
+    installed: {{ env "BOT_TASK_CONFIG_SERVER_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-  # 15. adp-crawler
-  - name: adp-crawler
-    chart: ./charts/adp-crawler
+  # 15. bot-workflow-dm-server
+  - name: bot-workflow-dm-server
+    chart: ./charts/bot-workflow-dm-server
     namespace: default
-    installed: {{ env "ADP_CRAWLER_ENABLED" | default "true" }}
+    installed: {{ env "BOT_WORKFLOW_DM_SERVER_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-  # 16. adp-file-converter
-  - name: adp-file-converter
-    chart: ./charts/adp-file-converter
+  # 16. channel-msg-svr
+  - name: channel-msg-svr
+    chart: ./charts/channel-msg-svr
     namespace: default
-    installed: {{ env "ADP_FILE_CONVERTER_ENABLED" | default "true" }}
+    installed: {{ env "CHANNEL_MSG_SVR_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-  # 17. adp-kb-config
-  - name: adp-kb-config
-    chart: ./charts/adp-kb-config
+  # 17. channel-proxy-svr
+  - name: channel-proxy-svr
+    chart: ./charts/channel-proxy-svr
     namespace: default
-    installed: {{ env "ADP_KB_CONFIG_ENABLED" | default "true" }}
+    installed: {{ env "CHANNEL_PROXY_SVR_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-  # 18. adp-kb-retrieval
-  - name: adp-kb-retrieval
-    chart: ./charts/adp-kb-retrieval
+  # 18. channel-token-svr
+  - name: channel-token-svr
+    chart: ./charts/channel-token-svr
     namespace: default
-    installed: {{ env "ADP_KB_RETRIEVAL_ENABLED" | default "true" }}
+    installed: {{ env "CHANNEL_TOKEN_SVR_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-kb-config
+      - app-config
 
-  # 19. adp-kb-vdb-proxy
-  - name: adp-kb-vdb-proxy
-    chart: ./charts/adp-kb-vdb-proxy
+  # 19. chat
+  - name: chat
+    chart: ./charts/chat
     namespace: default
-    installed: {{ env "ADP_KB_VDB_PROXY_ENABLED" | default "true" }}
+    installed: {{ env "CHAT_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-  # 20. adp-model-token-count
-  - name: adp-model-token-count
-    chart: ./charts/adp-model-token-count
+  # 20. code-interpreter-dispatcher
+  - name: code-interpreter-dispatcher
+    chart: ./charts/code-interpreter-dispatcher
     namespace: default
-    installed: {{ env "ADP_MODEL_TOKEN_COUNT_ENABLED" | default "true" }}
+    installed: {{ env "CODE_INTERPRETER_DISPATCHER_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-  # 21. adp-platform-charger
-  - name: adp-platform-charger
-    chart: ./charts/adp-platform-charger
-    namespace: default
-    installed: {{ env "ADP_PLATFORM_CHARGER_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
-  # 22. adp-platform-content-moderation
-  - name: adp-platform-content-moderation
-    chart: ./charts/adp-platform-content-moderation
-    namespace: default
-    installed: {{ env "ADP_PLATFORM_CONTENT_MODERATION_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
-  # 23. adp-platform-manager
-  - name: adp-platform-manager
-    chart: ./charts/adp-platform-manager
-    namespace: default
-    installed: {{ env "ADP_PLATFORM_MANAGER_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
-  # 24. adp-platform-op
-  - name: adp-platform-op
-    chart: ./charts/adp-platform-op
-    namespace: default
-    installed: {{ env "ADP_PLATFORM_OP_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
-  # 25. adp-plugin-code-interpret
-  - name: adp-plugin-code-interpret
-    chart: ./charts/adp-plugin-code-interpret
-    namespace: default
-    installed: {{ env "ADP_PLUGIN_CODE_INTERPRET_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
-  # 26. adp-plugin-code-kernel
-  - name: adp-plugin-code-kernel
-    chart: ./charts/adp-plugin-code-kernel
-    namespace: default
-    installed: {{ env "ADP_PLUGIN_CODE_KERNEL_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
-  # 27. adp-plugin-config
-  - name: adp-plugin-config
-    chart: ./charts/adp-plugin-config
-    namespace: default
-    installed: {{ env "ADP_PLUGIN_CONFIG_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
-  # 28. adp-plugin-cos-util
-  - name: adp-plugin-cos-util
-    chart: ./charts/adp-plugin-cos-util
-    namespace: default
-    installed: {{ env "ADP_PLUGIN_COS_UTIL_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
-  # 29. adp-plugin-exec
-  - name: adp-plugin-exec
-    chart: ./charts/adp-plugin-exec
-    namespace: default
-    installed: {{ env "ADP_PLUGIN_EXEC_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
-  # 30. adp-plugin-pod-schedule
-  - name: adp-plugin-pod-schedule
-    chart: ./charts/adp-plugin-pod-schedule
-    namespace: default
-    installed: {{ env "ADP_PLUGIN_POD_SCHEDULE_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
-  # 31. adp-pyright
-  - name: adp-pyright
-    chart: ./charts/adp-pyright
-    namespace: default
-    installed: {{ env "ADP_PYRIGHT_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
-  # 32. adp-rag-exec
-  - name: adp-rag-exec
-    chart: ./charts/adp-rag-exec
-    namespace: default
-    installed: {{ env "ADP_RAG_EXEC_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
-  # 33. adp-resource-gallery
-  - name: adp-resource-gallery
-    chart: ./charts/adp-resource-gallery
-    namespace: default
-    installed: {{ env "ADP_RESOURCE_GALLERY_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
-  # 34. adp-web-app
-  - name: adp-web-app
-    chart: ./charts/adp-web-app
-    namespace: default
-    installed: {{ env "ADP_WEB_APP_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
-  # 35. adp-workflow-config
-  - name: adp-workflow-config
-    chart: ./charts/adp-workflow-config
-    namespace: default
-    installed: {{ env "ADP_WORKFLOW_CONFIG_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
-  # 36. adp-workflow-exec
-  - name: adp-workflow-exec
-    chart: ./charts/adp-workflow-exec
-    namespace: default
-    installed: {{ env "ADP_WORKFLOW_EXEC_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-workflow-config
-
-  # 37. entity-extractor-server
-  - name: entity-extractor-server
-    chart: ./charts/entity-extractor-server
-    namespace: default
-    installed: {{ env "ENTITY_EXTRACTOR_SERVER_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
-  # 38. entity-extractor-server-sand-box
-  - name: entity-extractor-server-sand-box
-    chart: ./charts/entity-extractor-server-sand-box
-    namespace: default
-    installed: {{ env "ENTITY_EXTRACTOR_SERVER_SAND_BOX_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
-  # 39. web-parser-server
-  - name: web-parser-server
-    chart: ./charts/web-parser-server
-    namespace: default
-    installed: {{ env "WEB_PARSER_SERVER_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
-  # 40. common-config-map
+  # 21. common-config-map
   - name: common-config-map
     chart: ./charts/common-config-map
     namespace: default
     installed: {{ env "COMMON_CONFIG_MAP_ENABLED" | default "true" }}
     wait: true
     timeout: 600
+    needs:
+      - app-config
 
-  # 41. deploy-data-init
-  - name: deploy-data-init
-    chart: ./charts/deploy-data-init
+  # 22. ai-gateway
+  - name: ai-gateway
+    chart: ./charts/ai-gateway
     namespace: default
-    installed: {{ env "DEPLOY_DATA_INIT_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-
-  # 42. deploy-pre-check
-  - name: deploy-pre-check
-    chart: ./charts/deploy-pre-check
-    namespace: default
-    installed: {{ env "DEPLOY_PRE_CHECK_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-
-  # 43. adp-markmap-service
-  - name: adp-markmap-service
-    chart: ./charts/adp-markmap-service
-    namespace: default
-    installed: {{ env "ADP_MARKMAP_SERVICE_ENABLED" | default "true" }}
+    installed: {{ env "AI_GATEWAY_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-  # 44. adp-widget-config
-  - name: adp-widget-config
-    chart: ./charts/adp-widget-config
+  # 23. ai-gateway-dbsql
+  - name: ai-gateway-dbsql
+    chart: ./charts/ai-gateway-dbsql
     namespace: default
-    installed: {{ env "WEB_WIDGET_CONFIG_ENABLED" | default "true" }}
+    installed: {{ env "AI_GATEWAY_DBSQL_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-  # 45. adp-platform-authenticator
-  - name: adp-platform-authenticator
-    chart: ./charts/adp-platform-authenticator
+  # 24. llm-manager-server
+  - name: llm-manager-server
+    chart: ./charts/llm-manager-server
     namespace: default
-    installed: {{ env "ADP_PLATFORM_AUTHENTICATOR_ENABLED" | default "true" }}
+    installed: {{ env "LLM_MANAGER_SERVER_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
 
-  # 46. adp-platform-permission-config
-  - name: adp-platform-permission-config
-    chart: ./charts/adp-platform-permission-config
+  # 25. finance-bill
+  - name: finance-bill
+    chart: ./charts/finance-bill
     namespace: default
-    installed: {{ env "ADP_PLATFORM_PERMISSION_CONFIG_ENABLED" | default "true" }}
+    installed: {{ env "FINANCE_BILL_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
-      - adp-app-config
+      - app-config
+
+  # 26. finance-stat
+  - name: finance-stat
+    chart: ./charts/finance-stat
+    namespace: default
+    installed: {{ env "FINANCE_STAT_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 27. finance
+  - name: finance
+    chart: ./charts/finance
+    namespace: default
+    installed: {{ env "FINANCE_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 28. infosec
+  - name: infosec
+    chart: ./charts/infosec
+    namespace: default
+    installed: {{ env "INFOSEC_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 29. kernel
+  - name: kernel
+    chart: ./charts/kernel
+    namespace: default
+    installed: {{ env "KERNEL_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 30. op
+  - name: op
+    chart: ./charts/op
+    namespace: default
+    installed: {{ env "OP_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 31. platform-manager
+  - name: platform-manager
+    chart: ./charts/platform-manager
+    namespace: default
+    installed: {{ env "PLATFORM_MANAGER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 32. plugin-config-server
+  - name: plugin-config-server
+    chart: ./charts/plugin-config-server
+    namespace: default
+    installed: {{ env "PLUGIN_CONFIG_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 33. plugin-exec-server
+  - name: plugin-exec-server
+    chart: ./charts/plugin-exec-server
+    namespace: default
+    installed: {{ env "PLUGIN_EXEC_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 34. resource-gallery
+  - name: resource-gallery
+    chart: ./charts/resource-gallery
+    namespace: default
+    installed: {{ env "RESOURCE_GALLERY_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 35. resource-schedule-server
+  - name: resource-schedule-server
+    chart: ./charts/resource-schedule-server
+    namespace: default
+    installed: {{ env "RESOURCE_SCHEDULE_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 36. sandbox-mcp-server
+  - name: sandbox-mcp-server
+    chart: ./charts/sandbox-mcp-server
+    namespace: default
+    installed: {{ env "SANDBOX_MCP_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 37. sandbox-proxy-server
+  - name: sandbox-proxy-server
+    chart: ./charts/sandbox-proxy-server
+    namespace: default
+    installed: {{ env "SANDBOX_PROXY_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 38. short-url
+  - name: short-url
+    chart: ./charts/short-url
+    namespace: default
+    installed: {{ env "SHORT_URL_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+  # 39. vector-db-manager
+  - name: vector-db-manager
+    chart: ./charts/vector-db-manager
+    namespace: default
+    installed: {{ env "VECTOR_DB_MANAGER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
+
+  #####################  前端服务  #######################
+
+
+  - name: web-app
+    chart: ./charts/web-app
+    namespace: default
+    installed: { { env "WEB_APP_ENABLED" | default "true" } }
+    wait: true
+    timeout: 600
+    needs:
+      - app-config
+
 
 #############################################################################
 # 模板配置（可选）

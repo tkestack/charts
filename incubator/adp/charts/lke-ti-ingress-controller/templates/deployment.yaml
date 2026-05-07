@@ -1,3 +1,8 @@
+{{- $helmfileEnvName := .Values.global.helmfileEnvName | default "tke" }}
+{{- $re_nu   := 1}}
+{{- if or (eq $helmfileEnvName "tcs") (eq $helmfileEnvName "tke") }}
+  {{- $re_nu = 2 }}
+{{- end}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -7,18 +12,8 @@ metadata:
     app.cpaas.io/name: ti-ingress-controller.{{ .Release.Namespace }}
     project.cpaas.io/name: ti-platform
     service.cpaas.io/name: deployment-ti-ingress-controller-workload
-    {{- if .Values.global.customLabels }}
-    {{- range $key, $value := .Values.global.customLabels }}
-    {{ $key }}: {{ $value | toString | quote }}
-    {{- end }}
-    {{- end }}
   annotations:
     configmap.reloader.stakater.com/reload: "ti-ingress-controller-config"
-    {{- if .Values.global.customAnnotations }}
-    {{- range $key, $value := .Values.global.customAnnotations }}
-    {{ $key }}: {{ $value | toString | quote }}
-    {{- end }}
-    {{- end }}
 spec:
   minReadySeconds: 5
   {{- if eq .Values.global.clusterSize "minimal" }}
@@ -46,17 +41,6 @@ spec:
         app.cpaas.io/name: ti-ingress-controller.{{ .Release.Namespace }}
         project.cpaas.io/name: ti-platform
         service.cpaas.io/name: deployment-ti-ingress-controller-workload
-        {{- if .Values.global.customLabels }}
-        {{- range $key, $value := .Values.global.customLabels }}
-        {{ $key }}: {{ $value | toString | quote }}
-        {{- end }}
-        {{- end }}
-      {{- if .Values.global.customAnnotations }}
-      annotations:
-        {{- range $key, $value := .Values.global.customAnnotations }}
-        {{ $key }}: {{ $value | toString | quote }}
-        {{- end }}
-      {{- end }}
     spec:
       dnsPolicy: ClusterFirstWithHostNet
       dnsConfig:
@@ -67,6 +51,8 @@ spec:
           value: "3"
         - name: rotate
         - name: single-request-reopen
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -86,7 +72,7 @@ spec:
       initContainers:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       containers:
-        - image: {{(index .Values.images "ti-ingress-controller").url}}
+        - image: {{(index .Values.tad.images "ti-ingress-controller").url}}
           imagePullPolicy: IfNotPresent
           name: ti-ingress-controller
           #command: ["sh", "-c", "while true; do sleep 100; done"]
@@ -96,32 +82,29 @@ spec:
               cpu: "500m"
               memory: "512Mi"
             requests:
-              cpu: "200m"
-              memory: "256Mi"
+              cpu: "500m"
+              memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
             limits:
               cpu: "500m"
               memory: "512Mi"
             requests:
-              cpu: "200m"
-              memory: "256Mi"
+              cpu: "500m"
+              memory: "512Mi"
           {{- else }}
           resources:
             limits:
               cpu: "1"
               memory: "1Gi"
             requests:
-              cpu: "200m"
-              memory: "256Mi"
+              cpu: "1"
+              memory: "1Gi"
           {{- end }}
           volumeMounts:
             - mountPath: /ingress-apisix/conf/config.yaml
               name: ti-ingress-controller-configmap
               subPath: config.yaml
-            - mountPath: /app/conf/infrastructure.yaml
-              name: infrastructure
-              subPath: infrastructure.yaml
           env:
             - name: POD_NAMESPACE
               valueFrom:
@@ -137,7 +120,7 @@ spec:
             httpGet:
               path: /health
               port: 9093
-            initialDelaySeconds: 5
+            initialDelaySeconds: 30
             periodSeconds: 5
             timeoutSeconds: 1
             successThreshold: 1
@@ -147,10 +130,6 @@ spec:
         - configMap:
             name: ti-ingress-controller-config
           name: ti-ingress-controller-configmap
-        - configMap:
-            defaultMode: 420
-            name: infrastructure
-          name: infrastructure
       terminationGracePeriodSeconds: 30
       restartPolicy: Always
       schedulerName: default-scheduler

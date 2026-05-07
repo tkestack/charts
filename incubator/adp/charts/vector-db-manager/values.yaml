@@ -1,0 +1,16 @@
+tad:
+  type: helm
+  images:
+    vector-db-manager:
+      url: "ccr.ccs.tencentyun.com/tke-market/vector-db-manager:44_2601231602_release_private_v3.2.4_iaas_b1db8ff8_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: algorithm
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+
+imagePullSecretName: qcloudregistrykey

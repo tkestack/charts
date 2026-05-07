@@ -41,3 +41,5 @@
 #         path: "/metrics"
 #         matchLabels:
 #           monitoring: enabled
+
+imagePullSecretName: qcloudregistrykey

@@ -1,0 +1,420 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-short-url
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    storage:
+      scheme:
+        minio: 1
+        realtime: 1
+        obs: 1
+        cos: 1
+      {{ if eq .Values.global.components.s3.providerType "obs" }}
+      type: obs
+      obs:
+        secret_id: {{ .Values.global.components.s3.obs.secretId }}
+        secret_key: {{ .Values.global.components.s3.obs.secretKey }}
+        region: {{ .Values.global.components.s3.obs.region }}
+        bucket: qbot
+        sts_endpoint: "http://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}"
+        end_point: {{ .Values.global.components.s3.obs.host }}
+        use_https: {{ eq .Values.global.scheme "https" }}
+        expire_time: 30m
+      obs_list:
+        obs:
+          secret_id: {{ .Values.global.components.s3.obs.secretId }}
+          secret_key: {{ .Values.global.components.s3.obs.secretKey }}
+          region: {{ .Values.global.components.s3.obs.region }}
+          bucket: qbot
+          sts_endpoint: "http://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}"
+          end_point: {{ .Values.global.components.s3.obs.host }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+        realtime:
+          secret_id: {{ .Values.global.components.s3.obs.secretId }}
+          secret_key: {{ .Values.global.components.s3.obs.secretKey }}
+          region: {{ .Values.global.components.s3.obs.region }}
+          bucket: qbot
+          sts_endpoint: "http://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}"
+          end_point: {{ .Values.global.components.s3.obs.host }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+      {{ else if eq .Values.global.components.s3.providerType "cos" }}
+      type: cos
+      cos:
+        secret_id: {{ .Values.global.components.s3.cos.secretId }}
+        secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+        region: {{ .Values.global.components.s3.cos.region }}
+        app_id: {{ printf "%.0f" .Values.global.components.s3.cos.appId | quote }}
+        bucket: {{ .Values.global.components.s3.cos.bucket }}
+        domain: {{ .Values.global.components.s3.cos.domain }}
+        expire_time: {{ .Values.global.components.s3.cos.expireTime | default "30m" }}
+        credential_time: {{ .Values.global.components.s3.cos.credentialTime | default "30m" }}
+      cos_list:
+        cos:
+          secret_id: {{ .Values.global.components.s3.cos.secretId }}
+          secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+          region: {{ .Values.global.components.s3.cos.region }}
+          app_id: {{ printf "%.0f" .Values.global.components.s3.cos.appId | quote }}
+          bucket: {{ .Values.global.components.s3.cos.bucket }}
+          domain: {{ .Values.global.components.s3.cos.domain }}
+          expire_time: {{ .Values.global.components.s3.cos.expireTime | default "30m" }}
+          credential_time: {{ .Values.global.components.s3.cos.credentialTime | default "30m" }}
+        realtime:
+          secret_id: {{ .Values.global.components.s3.cos.secretId }}
+          secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+          region: {{ .Values.global.components.s3.cos.region }}
+          app_id: {{ printf "%.0f" .Values.global.components.s3.cos.appId | quote }}
+          bucket: {{ .Values.global.components.s3.cos.bucket }}
+          domain: {{ .Values.global.components.s3.cos.domain }}
+          expire_time: {{ .Values.global.components.s3.cos.expireTime | default "30m" }}
+          credential_time: {{ .Values.global.components.s3.cos.credentialTime | default "30m" }}
+      {{ else }}
+      type: minio
+      minio:
+        secret_id: {{ .Values.global.components.s3.minio.secretId }}
+        secret_key: {{ .Values.global.components.s3.minio.secretKey }}
+        region: ""
+        bucket: qbot
+        sts_endpoint: http://{{ .Values.global.components.s3.minio.host }}
+        end_point: {{ .Values.global.clb }}
+        use_https: {{ eq .Values.global.scheme "https" }}
+        expire_time: 30m
+      minio_list:
+        minio:
+          secret_id: {{ .Values.global.components.s3.minio.secretId }}
+          secret_key: {{ .Values.global.components.s3.minio.secretKey }}
+          region: ""
+          bucket: qbot
+          sts_endpoint: http://{{ .Values.global.components.s3.minio.host }}
+          end_point: {{ .Values.global.clb }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+        realtime:
+          secret_id: {{ .Values.global.components.s3.minio.secretId }}
+          secret_key: {{ .Values.global.components.s3.minio.secretKey }}
+          region: ""
+          bucket: qbot
+          sts_endpoint: http://{{ .Values.global.components.s3.minio.host }}
+          end_point: {{ .Values.global.clb }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+      {{ end }}
+
+    s3_config:
+      scheme:
+        minio: 1
+        realtime: 1
+        obs: 1
+        adp_default: 1
+        cos: 1
+      {{ if eq .Values.global.components.s3.providerType "obs" }}
+      type: obs
+      obs:
+        secret_id: {{ .Values.global.components.s3.obs.secretId }}
+        secret_key: {{ .Values.global.components.s3.obs.secretKey }}
+        region: {{ .Values.global.components.s3.obs.region }}
+        bucket: qbot
+        sts_endpoint: "http://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}"
+        end_point: {{ .Values.global.components.s3.obs.host }}
+        use_https: {{ eq .Values.global.scheme "https" }}
+        expire_time: 30m
+      obs_map:
+        obs:
+          secret_id: {{ .Values.global.components.s3.obs.secretId }}
+          secret_key: {{ .Values.global.components.s3.obs.secretKey }}
+          region: {{ .Values.global.components.s3.obs.region }}
+          bucket: qbot
+          sts_endpoint: "http://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}"
+          end_point: {{ .Values.global.components.s3.obs.host }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+        adp_default:
+          secret_id: {{ .Values.global.components.s3.obs.secretId }}
+          secret_key: {{ .Values.global.components.s3.obs.secretKey }}
+          region: {{ .Values.global.components.s3.obs.region }}
+          bucket: qbot
+          sts_endpoint: "http://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}"
+          end_point: {{ .Values.global.components.s3.obs.host }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+        realtime:
+          secret_id: {{ .Values.global.components.s3.obs.secretId }}
+          secret_key: {{ .Values.global.components.s3.obs.secretKey }}
+          region: {{ .Values.global.components.s3.obs.region }}
+          bucket: qbot
+          sts_endpoint: "http://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}"
+          end_point: {{ .Values.global.components.s3.obs.host }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+      {{ else if eq .Values.global.components.s3.providerType "cos" }}
+      type: cos
+      cos:
+        secret_id: {{ .Values.global.components.s3.cos.secretId }}
+        secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+        region: {{ .Values.global.components.s3.cos.region }}
+        app_id: {{ printf "%.0f" .Values.global.components.s3.cos.appId | quote }}
+        bucket: {{ .Values.global.components.s3.cos.bucket }}
+        domain: {{ .Values.global.components.s3.cos.domain }}
+        expire_time: {{ .Values.global.components.s3.cos.expireTime | default "30m" }}
+        credential_time: {{ .Values.global.components.s3.cos.credentialTime | default "30m" }}
+      cos_map:
+        cos:
+          secret_id: {{ .Values.global.components.s3.cos.secretId }}
+          secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+          region: {{ .Values.global.components.s3.cos.region }}
+          app_id: {{ printf "%.0f" .Values.global.components.s3.cos.appId | quote }}
+          bucket: {{ .Values.global.components.s3.cos.bucket }}
+          domain: {{ .Values.global.components.s3.cos.domain }}
+          expire_time: {{ .Values.global.components.s3.cos.expireTime | default "30m" }}
+          credential_time: {{ .Values.global.components.s3.cos.credentialTime | default "30m" }}
+        adp_default:
+          secret_id: {{ .Values.global.components.s3.cos.secretId }}
+          secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+          region: {{ .Values.global.components.s3.cos.region }}
+          app_id: {{ printf "%.0f" .Values.global.components.s3.cos.appId | quote }}
+          bucket: {{ .Values.global.components.s3.cos.bucket }}
+          domain: {{ .Values.global.components.s3.cos.domain }}
+          expire_time: {{ .Values.global.components.s3.cos.expireTime | default "30m" }}
+          credential_time: {{ .Values.global.components.s3.cos.credentialTime | default "30m" }}
+        realtime:
+          secret_id: {{ .Values.global.components.s3.cos.secretId }}
+          secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+          region: {{ .Values.global.components.s3.cos.region }}
+          app_id: {{ printf "%.0f" .Values.global.components.s3.cos.appId | quote }}
+          bucket: {{ .Values.global.components.s3.cos.bucket }}
+          domain: {{ .Values.global.components.s3.cos.domain }}
+          expire_time: {{ .Values.global.components.s3.cos.expireTime | default "30m" }}
+          credential_time: {{ .Values.global.components.s3.cos.credentialTime | default "30m" }}
+      {{ else }}
+      type: minio
+      minio:
+        secret_id: {{ .Values.global.components.s3.minio.secretId }}
+        secret_key: {{ .Values.global.components.s3.minio.secretKey }}
+        region: ""
+        bucket: qbot
+        sts_endpoint: http://{{ .Values.global.components.s3.minio.host }}
+        end_point: {{ .Values.global.clb }}
+        use_https: {{ eq .Values.global.scheme "https" }}
+        expire_time: 30m
+      min_io_map:
+        adp_default:
+          secret_id: {{ .Values.global.components.s3.minio.secretId }}
+          secret_key: {{ .Values.global.components.s3.minio.secretKey }}
+          region: ""
+          bucket: qbot
+          sts_endpoint: http://{{ .Values.global.components.s3.minio.host }}
+          end_point: {{ .Values.global.clb }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+        minio:
+          secret_id: {{ .Values.global.components.s3.minio.secretId }}
+          secret_key: {{ .Values.global.components.s3.minio.secretKey }}
+          region: ""
+          bucket: qbot
+          sts_endpoint: http://{{ .Values.global.components.s3.minio.host }}
+          end_point: {{ .Values.global.clb }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+        realtime:
+          secret_id: {{ .Values.global.components.s3.minio.secretId }}
+          secret_key: {{ .Values.global.components.s3.minio.secretKey }}
+          region: ""
+          bucket: qbot
+          sts_endpoint: http://{{ .Values.global.components.s3.minio.host }}
+          end_point: {{ .Values.global.clb }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+      {{ end }}
+
+  placeholder.yaml: |
+
+  trpc_go.yaml: |
+    server:
+      app: qbot.qbot
+      server: short_url
+      admin:
+        ip: 0.0.0.0
+        port: 8081
+      filter:
+        - validation
+        - opentelemetry
+        - recovery
+        - simpledebuglog
+        - galileo
+      stream_filter:
+        - galileo
+      service:
+        - name: qbot.qbot.short_url.ShortUrl
+          ip: 0.0.0.0
+          port: 8080
+          network: tcp
+          protocol: restful
+          timeout: 1000
+        - name: qbot.qbot.short_url.Admin
+          ip: 0.0.0.0
+          port: 9090
+          network: tcp
+          protocol: trpc
+          timeout: 3000
+
+    plugins:
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "verbose"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+        galileo:
+          verbose: error   # 伽利略自身的诊断日志级别，取值范围：debug, info, error, none，日志输出在 ./galileo/galileo.log 中。
+          ocp_addr: "http://127.0.0.1"
+          config: #配置
+            config_server: "http://127.0.0.1"
+            register_server: "http://127.0.0.1"
+            self_monitor:
+              collector:
+                addr: "http://127.0.0.1"
+            metrics_config: # 指标配置
+              enable: false    # 是否启用指标
+            traces_config: # 追踪配置
+              enable: true    # 是否启用追踪，默认 true。如果设置为 false，会中断 trace，让上游的调用链不完整。v0.3.7 以上生效。
+              processor: # 追踪数据处理相关配置
+                sampler: # 采样器配置
+                  fraction: 0   # 采样比例，默认 0。（v0.11.0)
+                  error_fraction: 0
+                  enable_min_sample: true  # 启用每分钟每接口最少 1 个请求采样，默认 true (v0.11.0)。
+                  enable_dyeing: true # 开启染色采样，默认 true。
+                disable_trace_body: true          # 若为 true，则关闭 trace 中对 req 和 rsp 的 body 上报，可以大幅提高上报性能。默认 true。
+                enable_deferred_sample: false     # 开启延迟采样（请求处理完采样），默认 false。0.3.0 以上生效。
+                deferred_sample_error: false      # 开启延迟采样出错采样（请求处理完出现错误采样），默认 false。0.3.0 以上生效。
+                deferred_sample_slow_duration_ms: 1000    # 慢操作阈值（请求耗时超过该值采样），单位 ms，默认 1000。0.3.0 以上生效。
+                disable_parent_sampling: false            # 忽略上游的采样结果，默认 false。v0.3.7 以上生效。
+              exporter:
+                collector:
+                  addr: "127.0.0.1:80"
+            logs_config: # 日志配置
+              enable: false    # 是否启用日志
+              processor: # 日志数据处理相关配置
+                only_trace_log: false  # 是否只上报命中 trace 的 log，默认关闭
+                must_log_traced: false # 是否命中 traced 不管任何级别日志都上报，默认关闭。v0.3.22 以上生效
+                trace_log_mode: 0   # debug 访问日志 (access_log) 打印模式，0,1：单行打印，3：多行打印，2：不打印，默认 0
+                level: debug        # 上报到远程的日志级别，默认 error
+                enable_recovery: true # 是否捕获 panic，默认 true
+            profiles_config:    # profile配置
+              enable: false # 是否启用 profile
+              processor: # profile 数据处理相关配置
+                profile_types: ["cpu", "heap"] # 采集 profile 的类型，支持 cpu、heap、mutex、block、goroutine，默认开启 cpu 和 heap。
+            version: 1        # 版本号，默认 0，此版本号用于控制远程配置和本地配置的优先级，版本号高的优先，一般设置成 1 即可。
+          resource: # resource 资源信息，在 SDK 运行期间不会改变。resource 中的字段一般不需要配置，默认会填充。
+            platform: STKE   # 服务部署的平台，如 PCG-123, STKE, 默认 PCG-123
+      log:
+        default:
+          - writer: console
+            level: info
+            #caller_skip: 3
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+          - writer: file
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/trpc.log
+              write_mode: 2
+              roll_type: time
+              max_age: 7
+              max_backups: 10
+              compress: false
+              time_unit: day
+
+    client:
+      namespace: Production
+      filter:
+        - galileo
+      stream_filter:
+        - galileo
+      service:
+        - name: mysql.qbot.short_url.db
+          # TODO 替换service
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+          timeout: 800
+        - name: redis.qbot.short_url
+          network: tcp
+          # TODO 替换service
+          target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/7
+          # TODO 替换密码
+          password: "{{ .Values.global.components.redis.password }}"
+          timeout: 800
+        - name: qbot.qbot.admin.Login
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: qbot.qbot.admin.Api
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: qbot.qbot.admin.Admin
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: qbot.qbot.chat.Chat
+          target: ip://chat.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: qbot.qbot.short_url.Admin
+          target: ip://short-url.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: qbot.qbot.vector_doc.VectorDoc
+          target: ip://botretrievalserver.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: qbot.qbot.vector_doc.DirectIndex
+          target: ip://botretrievalserver.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          network: tcp
+          timeout: 4000

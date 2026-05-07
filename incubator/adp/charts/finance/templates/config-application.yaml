@@ -1,0 +1,160 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: finance-application
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    ######################
+    # 云服务接口调用配置
+    #
+    ######################
+    api_conf:
+      max_resp_length: 10000
+      api_list:
+        qcloud.Hour.create: false
+        qcloud.access.sendMeasure: true
+        billing.DescribeMeasureResources: true
+        qcloud.qn.describePostPayWhiteListUin: true
+        qcloud.account.getAppIdByLoginUin: false
+        qcloud.qn.addPostPayWhiteListUin: false
+        qcloud.qn.deletePostPayWhiteListUin: false
+
+    ######################
+    # 缓存配置
+    #
+    # version:版本号
+    # enable:是否启用缓存
+    # expire:缓存过期时间
+    # flush_interval:缓存刷新时间
+    # timeout:执行时间
+    ######################
+    cache_config:
+      product:
+        version: 202504281947
+        enable: true
+        expire: -1s
+        flush_interval: 30s
+        timeout: 60s
+      product_goods:
+        version: 202505131712
+        enable: false
+        expire: -1s
+        flush_interval: 5s
+        timeout: 60s
+      biz_rule:
+        version: 202505081724
+        enable: true
+        expire: -1s
+        flush_interval: 30s
+        timeout: 60s
+
+    #########################
+    # 自定义模型的前缀
+    #########################
+    third_custom_model_prefix:
+      - OpenAI
+      - TI
+      - Azure
+
+    ######################
+    # 调用统计产品筛选项信息
+    #
+    ######################
+    products:
+      model_name:
+        - name: cs-normal-70b
+          alias: 精调知识大模型高级版
+          sub_biz_type: KnowledgeQA
+        - name: cs-normal
+          alias: 精调知识大模型标准版
+          sub_biz_type: KnowledgeQA
+        - name: medical-6b
+          alias: 医学行业大模型标准版
+          sub_biz_type: KnowledgeQA
+        - name: finance-13b
+          alias: 金融行业大模型标准版
+          sub_biz_type: KnowledgeQA
+        - name: hunyuan
+          alias: 混元大模型标准版
+          sub_biz_type: KnowledgeQA
+        - name: hunyuan-13B
+          alias: 混元大模型高级版
+          sub_biz_type: KnowledgeQA
+        - name: hunyuan-standard-256K
+          alias: 混元大模型长文本版
+          sub_biz_type: KnowledgeQA
+      atomic:
+        - name: lke-text-embedding-v1
+          alias: Embedding
+          sub_biz_type: Embedding
+        - name: lke-query-rewrite-base
+          alias: 多轮改写
+          sub_biz_type: Rewrite
+        - name: doc-parse
+          alias: 文档解析
+          sub_biz_type:
+      call_type:
+        - name: AllCallType
+          alias: 全部调用类型
+        - name: KnowledgeQA
+          alias: 对话调用-API调用
+        - name: KnowledgeQADialogTest
+          alias: 对话调用-对话测试
+        - name: KnowledgeQAUser
+          alias: 对话调用-分享用户端对话
+        - name: DocExtractQA
+          alias: 文档生成问答
+        - name: EvaluateTest
+          alias: 应用评测
+        - name: RoleCommands
+          alias: 角色指令一键优化
+        - name: TaskFlowPreview
+          alias: 任务流程话术预览
+        - name: DocExtractSimilarQA
+          alias: 相似问生成
+        - name: AsyncWorkFlow
+          alias: 工作流异步调用
+      doc_parse:
+        - name: docParseSync
+          alias: 同步接口
+        - name: docParseASync
+          alias: 异步接口
+        - name: docParseRealTime
+          alias: 准实时接口
+      shard_knowledge_call_type:
+        - name: DocExtractQA
+          alias: 文档生成问答
+        - name: DocExtractSimilarQA
+          alias: 相似问生成
+
+    ######################
+    # 文档解析子场景映射
+    #
+    ######################
+    doc_parse_sub_scene:
+      ReconstructDocument: docParseSync
+      ReconstructDocumentAsyncQps: docParseASync
+      ReconstructDocumentRtimeQps: docParseRealTime
+      SplitDocument: docSplitAsync
+
+    ######################
+    # 文档解析子业务映射
+    #
+    ######################
+    doc_parse_sub_biz_type:
+      docParseSync: ReconstructDocument
+      docParseASync: ReconstructDocumentAsyncQps
+      docParseRealTime: ReconstructDocumentRtimeQps
+      docSplitAsync: SplitDocument
+
+    #####最大超并发query长度
+    max_over_Concurrency_query_size: 15000
+
+    ######################
+    # 独享并发产品配置
+    #
+    ######################
+    exclusive_concurrency_products:
+      - product_code: p_tcllmke
+        sub_product_code: sp_tcllmke_exclusive

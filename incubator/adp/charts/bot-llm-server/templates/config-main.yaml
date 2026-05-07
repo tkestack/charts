@@ -1,0 +1,8 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: botllmserver-main
+  namespace: {{ .Release.Namespace }}
+data:
+  bot-llm-server: |
+    tokenizer_path: /data/model/formal/sn70b_16k_cs_ge_v1.1.0_240606/

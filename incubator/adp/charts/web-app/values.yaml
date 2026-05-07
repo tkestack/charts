@@ -1,0 +1,16 @@
+tad:
+  type: helm
+  images:
+    web-app:
+      url: "ccr.ccs.tencentyun.com/tke-market/webappchatbot:412_2604101013_release_private_v3.2.4.1_iaas-a35d0fc6c-fc47173c0-028368303"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+namespace: customer
+imagePullSecretName: qcloudregistrykey

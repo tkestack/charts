@@ -1,0 +1,30 @@
+tad:
+  type: helm
+  images:
+    chat:
+      url: "ccr.ccs.tencentyun.com/tke-market/chat-manage:78_2601272106_release_private_v3.2.4_iaas_aa6acbdb_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+ChatServer:
+  financial_bot_biz_id: "" # 金融行业知识包appid
+  medical_bot_biz_id: "" # 医疗行业知识包appid
+  multi_modal:
+    disabled: false  # 是否开启多模态，在chat服务和webapp服务用到了
+  max_concurrence: 5  # chat服务允许的最大并发数，主账号维度
+  search_secret_id: ""
+  search_secret_key: ""
+  no_think: false  # 一体机项目，true：deepseek模型意图识别不带思维链；false：其他都是false
+  workflow_role_model_name: cs-normal-70b
+  workflow_intent_model_name: cs-normal-70b
+  role_intent_model_name: cs-normal-70b
+  tipwords_opt_hunyuan_version: cs-normal-70b
+  ds_faq_reject_model_name: cs-normal-70b # 知识库问答拒绝模型名称
+  workflow_config_model_name: workflow-pro # 工作流配置模型名称
+imagePullSecretName: qcloudregistrykey

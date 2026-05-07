@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-import-vdb-job
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-import-vdb-job
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-succeeded": continue
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 300
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-import-vdb-job
+        release: {{ .Release.Name }}
+    spec:
+      restartPolicy: OnFailure
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      containers:
+      - name: import-static
+        image: {{ (index .Values.tad.images "cs-data-init").url }}
+        imagePullPolicy: Always
+        command:
+        - /bin/sh
+        - -c
+        - python3 /app/script/create_vdb_databases.py --database db-vdb-0 db-vdb-1 db-vdb-2 db-vdb-3 db-vdb-4
+        env:
+        - name: VDB_ADDR
+          value: {{ (index .Values.global.components.vdb 0).addr }}
+        - name: VDB_ACCOUNT
+          value: {{ (index .Values.global.components.vdb 0).account }}
+        - name: VDB_APIKEY
+          value: {{ (index .Values.global.components.vdb 0).apiKey }}
+        - name: DB_PROVIDER
+          value: {{ $.Values.global.components.db.provider }}
+        - name: DB_HOST
+          value: {{ $.Values.global.components.db.host }}
+        - name: DB_PORT
+          value: {{ $.Values.global.components.db.port | quote }}
+        - name: DB_USER
+          value: {{ $.Values.global.components.db.user }}
+        - name: DB_PASSWORD
+          value: {{ $.Values.global.components.db.password }}

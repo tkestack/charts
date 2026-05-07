@@ -1,0 +1,15 @@
+tad:
+  type: helm
+  images:
+    resource-gallery:
+      url: "ccr.ccs.tencentyun.com/tke-market/resource-gallery:12_2604101336_master_private_iaas_v3.2.4_lh_bf53b19b_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+imagePullSecretName: qcloudregistrykey

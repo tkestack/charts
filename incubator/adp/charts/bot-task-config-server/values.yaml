@@ -1,0 +1,28 @@
+tad:
+  type: helm
+  images:
+    bot-task-config-server:
+      url: "ccr.ccs.tencentyun.com/tke-market/bot-task-config-server:88_2512022150_release_private_v3.2.4_9ed2cf9b_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+bottaskconfigserver:
+  resources:
+    limits:
+      cpu: 1
+      memory: 4Gi
+    requests:
+      cpu: 1
+      memory: 1Gi
+
+# 单个服务配置
+v2_1: # v2.1 升级 v2.4 相关的配置项
+  sync_data_switch: false # 刷数据的开关
+
+imagePullSecretName: qcloudregistrykey

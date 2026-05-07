@@ -1,0 +1,424 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dc-tc-conf
+  namespace: {{ .Release.Namespace }}
+data:
+  version.txt: |
+    repo=qidian_conf.git
+    branch=master
+    version=d223efe-dev
+    build_time=Mon Aug 28 23:40:08 CST 2023
+    build_machine=9.134.188.110
+    JOB_ID=523528
+    JOB_VERSION=...2814
+  dc.conf: |-
+    dc_hook_conf = (
+        {
+            dc_id = "dc02031"
+            log_to = 1
+            field_order = "report_time:1|envid:1|setid:1|cmd_name:0|cmd_id:1|ret:1|time_cost:1|svr_name:0|svr_port:1|req_ip:0|req_port:1|net:0|req_size:1|rsp_size:1|pkg_count:1|gseq:1|kfuin:1|kfext:1|callid:0|cphone:0|platform:1|comm_ver:0|svr_ver:0|in_queue_ms:1|real_pkg_count:1"
+        },
+        {
+            dc_id = "dc02067"
+            log_to = 1
+            field_order = "report_time:1|net_ret:1|time_cost:1|net:0|req_size:1|rsp_size:1|pkg_count:1:|to_ip:0|to_port:1|call_type:0|from_svr:0|from_cmd_name:0|from_cmd_id:1|to_svr:0|to_cmd_name:0|to_cmd_id:1|ret:1|envid:1|setid:1|gseq:1|kfuin:1|kfext:1|callid:0|cphone:0|platform:1|retry_cnt:1|real_pkg_count:1"
+        },
+        {
+            dc_id = "dc04447"
+            log_to = 1
+            field_order = "report_time:1|ret:1|net_ret:1|time_cost:1|net:0|req_size:1|rsp_size:1|pkg_count:1|to_ip:0|to_port:1|from_cmd_name:0|from_cmd_id:1|from_svr:0|to_cmd_name:0|to_cmd_id:1|to_svr:0|call_type:0|retry_cnt:1|env_id:1|set__id:1"
+        },
+        {
+            dc_id = "dc04368"
+            log_to = 1
+            field_order = "ret:1|report_time:1|cmd_id:1|cmd_name:0|time_cost:1|svr_name:0|svr_port:1|svr_ip:0|req_ip:0|req_port:1|net:0|req_size:1|rsp_size:1|pkg_count:1|comm_ver:0|svr_ver:0|in_queue_ms:1|env_id:1|set_id:1"
+        },
+        {
+            # hippo consumer report
+            dc_id = "dc02157"
+            log_to = 1
+            field_order = "report_time:1|produce_time:1|pkg_count:1|producer_svr_name:0|producer_ip:0|consumer_svr_name:0|consumer_cmd_name:0|topic:0|hippo_group:0|hippo_master:0|consume_delay:1|consume_delay_ms:1|envid:1|setid:1|block_time:1|virtual_queue_variance:1"
+        },
+        {
+            dc_id = "dc02308"
+            log_to = 2
+            to_topic_hdfs = "cc_billing_svr"
+            to_master_hdfs = ""
+            comsumer_groups_hdfs = {
+                test_svr1 = "xxxxxxxxxxxxx",
+                test_svr2 = "xxxxxxxxxxxxx"
+            }
+            field_order = "env|set|process_status|cost|kfuin|callid|call_service|corp_phone_number|start_time|end_time|duration|debug_info|caller|callee|agentid|kfext|agentname|direction|rate|in_white_list"
+        },
+        {
+            dc_id = "dc04094"
+            log_to = 2
+            to_topic_hdfs = "im_conv_and_msg_detail_report"
+            to_master_hdfs = ""
+            field_order = "corp_uin|user_uin|qq_uin|from_uin|to_uin|conv_uniq_id|msg_seq|msg_type|msg_time|message_source|conv_type|conv_dir|op_type|op_time|op_status|env|raw_conv_uniq_id|dep_id|dept_name|is_new_customer|wpa_id|wpa_name|prov_name|city_name|cuin|visit_id|click_id|conv_comment|conv_label|conv_sub_label|conv_wait_time|conv_summary|conv_device|pub_id|recep_group_id|recep_group_name|conv_level|conv_source|user_name|qq_name|setid|satisfy_type|conv_star"
+        },
+        {
+            dc_id = "dc05415"
+            log_to = 2
+            to_topic_hdfs = "im_robot_conv_satisfaction_report"
+            to_master_hdfs = ""
+            field_order = "conv_uniq_id|corp_uin|user_uin|conv_type|qq_uin|visit_id|open_id|app_id|score|comment|event_type|event_time|env|set_id"
+        },
+        {
+            dc_id = "dc04395"
+            log_to = 2
+            to_topic_hdfs = "im_robot_conv_detail_report"
+            to_master_hdfs = ""
+            field_order = "corp_uin|robot_id|wx_appid|wx_openid|visit_id|cqq_uin|conv_uniq_id|conv_type|conv_dir|event_type|event_time|switch_artfl|env_id|set_id|robot_company"
+        },
+        {
+            dc_id = "dc04394"
+            log_to = 2
+            to_topic_hdfs = "im_robot_msg_detail_report"
+            to_master_hdfs = ""
+            field_order = "corp_uin|robot_id|wx_appid|wx_openid|visit_id|cqq_uin|conv_uniq_id|conv_type|msg_dir|msg_time|msg_seq|query_id|reply_type|msg_type|msg_subtype|env_id|set_id|robot_company"
+        },
+        {
+            dc_id = "dc04764"
+            log_to = 2
+            to_topic_hdfs = "im_robot_msg_unsatisfaction_report"
+            to_master_hdfs = ""
+            field_order = "corp_uin|robot_company|robot_id|wx_appid|wx_openid|visit_id|cqq_uin|conv_uniq_id|conv_type|msg_seq|eval_result|query_id|query_desc|query_time|reply_type|match_query_id|match_query_desc|match_reply|up_time|down_time|op_type|op_status|env_id|set_id"
+        },
+        {
+            dc_id = "dc04227"
+            log_to = 2
+            to_topic_hdfs = "im_msg_monitor_push_detail_report"
+            to_master_hdfs = ""
+            field_order = "corp_uin|user_uin|conv_uniq_id|event_type|event_time|source_type|subscribers_count|subscribers|send_uin|recv_uin|msg_seq|env|status|notice_id|recv_time|push_time|time_cost"
+        },
+        {
+            dc_id = "dc04264"
+            log_to = 2
+            to_topic_hdfs = "im_msg_monitor_push_delay_report"
+            to_master_hdfs = ""
+            field_order = "conv_uniq_id|corp_uin|user_uin|conv_type|begin_time|end_time|notice_time|earliest_msg_time|request_time|delay_time|msg_count|user_client_ip|env|set_id"
+        },
+        {
+            dc_id = "dc02168"
+            log_to = 1
+            field_order = "seqid:1|env:0|server_name:0|server_cmd:0|type:0|vendor:0|protocal:0|remote_ip:0|server_ip:0|ret_code:1|response_time:1|response_code:1|remote_port:1|envid:1|remote_cmd:0|remote_name:0|kfuin:1|setid:1"
+        },
+        {
+            dc_id = "dc02195"
+            log_to = 1
+            field_order = "seqid:1|env:0|server_name:0|server_cmd:0|type:0|vendor:0|protocal:0|remote_ip:0|server_ip:0|ret_code:1|response_time:1|response_code:1|remote_port:1|envid:1|remote_cmd:0|remote_name:0|kfuin:1|setid:1"
+        },
+        {
+            dc_id = "dc03648"
+            log_to = 1
+            field_order = "seqid:1|env:0|server_name:0|server_cmd:0|type:0|vendor:0|protocal:0|remote_ip:0|server_ip:0|ret_code:1|response_time:1|response_code:1|remote_port:1|envid:1|remote_cmd:0|remote_name:0|kfuin:1|setid:1"
+        },
+        {
+            dc_id = "dc03613"
+            log_to = 1
+            field_order = "seqid:1|env:0|server_name:0|server_cmd:0|type:0|vendor:0|protocal:0|remote_ip:0|server_ip:0|ret_code:1|response_time:1|response_code:1|remote_port:1|envid:1|remote_cmd:0|remote_name:0|kfuin:1|setid:1"
+        },
+        {
+            dc_id = "dc04869"
+            log_to = 1
+            field_order = "seqid:1|kfuin:1|kfext:1|envid:1|env:0|server_name:0|server_cmd:0|type:0|protocal:0|server_ip:0|remote_ip:0|remote_port:1|remote_cmd:0|remote_name:0|ret_code:1|response_time:1|response_code:1"
+        },
+        {
+            dc_id = "dc02640"
+            log_to = 1
+            field_order = "seqid:1|env:0|server_name:0|server_cmd:0|type:0|vendor:0|protocal:0|remote_ip:0|server_ip:0|ret_code:1|response_time:1|response_code:1|remote_port:1|envid:1|remote_cmd:0|remote_name:0|kfuin:1|kfext:1"
+        },
+        {
+            dc_id = "dc01528"
+            log_to = 1
+            field_order = "logtime:1|sequence:1|loglevel:1|logsource:1|modulename:0|submodulename:0|clientversion:1|webuseragent:0|uin:1|peeruin:1|corpuin:1|cmd:0|subcmd:1|sourceip:0|serverip:0|errorid:1|logstr:0|body_subcmd:1"
+        },
+        {
+            dc_id = "dc01776"
+            log_to = 1
+            field_order = "reporttime:0|clientip:0|processname:0|corpuin:1|timestamp:1"
+        },
+        {
+            dc_id = "dc04138"
+            log_to = 1
+            field_order = "req:1|rsp:1|rsp_fail:1|intf_2_worker:1|udl_req_fail:1|rsp_pkg_size:1|channel_wait:1|intf_req:1|intf_rsp:1|intf_rsp_fail:1|cost_time:1|sql_exec:1|mysql_time:1|channel_time:1|result:1|real_table_name:0|virtual_table_name:0|dst_ip:0|sql_type:0|client_ip:0|udl_component:0|uds_name:0|app_id:1|env:0|sql_str:0"
+        },
+        {
+            dc_id = "dc04622"
+            log_to = 2
+            to_topic_hdfs = "cc_wpa_report"
+            to_master_hdfs = ""
+            field_order = "timestamp|corpuin|device_type|is_new|wpa_id|wpa_subtype|url|url_title|source_type|source_detail|phonecall|valid_phonecall|phonenum|phonecall_time|env"
+        },
+        {
+            dc_id = "dc03913"
+            log_to = 1
+            to_topic_hdfs = "cc_cdr_statistic_durid"
+            to_master_hdfs = ""
+            field_order = ""
+        },
+        {
+            dc_id = "dc04947"
+            log_to = 1
+            to_topic_hdfs = "cc_cdr_statistic_es"
+            to_master_hdfs = ""
+            field_order = ""
+        },
+        {
+            dc_id = "dc03860"
+            log_to = 1
+            to_topic_hdfs = "cc_new_realtime_report_agent"
+            to_master_hdfs = ""
+            field_order = ""
+        },
+        {
+            dc_id = "dc03861"
+            log_to = 1
+            to_topic_hdfs = "cc_new_realtime_report_skillgroup"
+            to_master_hdfs = ""
+            field_order = ""
+        },
+        {
+            dc_id = "dc03869"
+            log_to = 1
+            to_topic_hdfs = "cc_new_realtime_report_agentstatus"
+            to_master_hdfs = ""
+            field_order = ""
+        },
+        {
+            dc_id = "dc03489"
+            log_to = 2
+            to_topic_hdfs = "dc_cc_page_visitor_flow_report"
+            to_master_hdfs = ""
+            field_order = "kfuin|sessionid|visitid|action_type|device|time|url|referer|source_type|source_detail|search_engine|utm_source|utm_campaign|utm_term|pid|clickid|urltitle|wpa_id|wpa_type|wpa_subtype|env|qq|appid|ip|utm_ad|utm_content|utm_type|utm_medium"
+        },
+        {
+            dc_id = "dc02101"
+            log_to = 1
+            field_order = "report_time:1|env:0|svr_name:0|svr_type:0|topic:0|count:1|event:0|ret:1|cost:1|pkg_size:1|table_pattern:0|partition_deprecated:1|delay:1|fail_count:1|version:0|group:0"
+        }
+    )
+  td_bank.conf: "tdbank_hook_conf = (\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"WxMinProgramReport\"\n        log_to = 2\n        topic\
+    \ = \"cc_page_wxminprogram_report\"\n        master_addr = \"\"\
+    \n        comsumer_groups = {\n            test_svr1 = \"xxx\",\n        \
+    \    test_svr2 = \"xxx\"\n        }\n    },\n    {\n        business_id =\
+    \ \"b_sng_hrtx_qidian_data_report_ed\"\n        table_id = \"QdConvDetailData\"\
+    \n        log_to = 2\n        topic = \"im_conv_detail_report\"\n        master_addr\
+    \ = \"\"\n        comsumer_groups =\
+    \ {\n            spark_svr1 = \"recp_analysis_click_recep\"\n        }\n \
+    \   },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\n\
+    \        table_id = \"qd_conv_satisfy_info\"\n        log_to = 2\n       \
+    \ topic = \"im_conv_satisfaction_report\"\n        master_addr = \"\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"RobotConvSatisfyReport\"\n        log_to = 2\n    \
+    \    topic = \"im_robot_conv_satisfaction_report\"\n        master_addr =\
+    \ \"\"\n    },\n    {\n        business_id\
+    \ = \"b_sng_hrtx_qidian_data_report_ed\"\n        table_id = \"QdConvRobotDetailData\"\
+    \n        log_to = 2\n        topic = \"im_robot_conv_detail_report\"\n  \
+    \      master_addr = \"\"\n    },\n\
+    \    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\n     \
+    \   table_id = \"QdConvSubject\"\n        log_to = 2\n        topic = \"uc_sesson_label\"\
+    \n        master_addr = \"\"\n    },\n\
+    \    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\n     \
+    \   table_id = \"QdLoginDataReport\"\n        log_to = 2\n        topic =\
+    \ \"im_qidian_login_data_report\"\n        master_addr = \"\"\
+    \n    },\n    \n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"QidianPetrelWebIMReport\"\n        log_to = 2\n   \
+    \     topic = \"qd_petrel_webim_report\"\n        master_addr = \"\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"QidianPetrelRPCReport\"\n        log_to = 2\n     \
+    \   topic = \"qd_petrel_rpc_report\"\n        master_addr = \"\"\
+    \n    },\n    \n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"agentonwork\"\n        log_to = 1\n        log_format = 2\n        field_order\
+    \ = \"platform:1|env:0|statuscode:1|msg:0\"\n    },\n    {\n        business_id\
+    \ = \"b_teg_rt_index\"\n        table_id = \"angentready\"\n        log_to\
+    \ = 1\n        log_format = 2\n        field_order = \"platform:1|env:0\"\n\
+    \    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"agentoffwork\"\n        log_to = 1\n        log_format = 2\n       \
+    \ field_order = \"platform:1|env:0|statuscode:1|msg:0\"\n    },\n    {\n \
+    \       business_id = \"b_teg_rt_index\"\n        table_id = \"queryagentstatus\"\
+    \n        log_to = 1\n        log_format = 2\n        field_order = \"platform:1|env:0\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"callbackinvite\"\n        log_to = 1\n        log_format = 2\n     \
+    \   field_order = \"platform:1|env:0\"\n    },\n    {\n        business_id\
+    \ = \"b_teg_rt_index\"\n        table_id = \"callbackcancel\"\n        log_to\
+    \ = 1\n        log_format = 2\n        field_order = \"platform:1|env:0\"\n\
+    \    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"createqueue\"\n        log_to = 1\n        log_format = 2\n        field_order\
+    \ = \"platform:1|env:0\"\n    },\n    {\n        business_id = \"b_teg_rt_index\"\
+    \n        table_id = \"deletequeue\"\n        log_to = 1\n        log_format\
+    \ = 2\n        field_order = \"platform:1|env:0\"\n    },\n    {\n       \
+    \ business_id = \"b_teg_rt_index\"\n        table_id = \"queryqueueinfo\"\n\
+    \        log_to = 1\n        log_format = 2\n        field_order = \"platform:1|env:0\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"mediafileupload\"\n        log_to = 1\n        log_format = 2\n    \
+    \    field_order = \"platform:1|env:0\"\n    },\n    {\n        business_id\
+    \ = \"b_teg_rt_index\"\n        table_id = \"mediafilestatus\"\n        log_to\
+    \ = 1\n        log_format = 2\n        field_order = \"platform:1|env:0\"\n\
+    \    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"mediafiledelete\"\n        log_to = 1\n        log_format = 2\n    \
+    \    field_order = \"platform:1|env:0\"\n    },\n    {\n        business_id\
+    \ = \"b_teg_rt_index\"\n        table_id = \"createsubaccount\"\n        log_to\
+    \ = 1\n        log_format = 2\n        field_order = \"platform:1|env:0\"\n\
+    \    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"querysubaccount\"\n        log_to = 1\n        log_format = 2\n    \
+    \    field_order = \"platform:1|env:0\"\n    },\n    {\n        business_id\
+    \ = \"b_teg_rt_index\"\n        table_id = \"closesubaccount\"\n        log_to\
+    \ = 1\n        log_format = 2\n        field_order = \"platform:1|env:0\"\n\
+    \    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"agentmakecall\"\n        log_to = 1\n        log_format = 2\n      \
+    \  field_order = \"platform:1|env:0|statuscode:1|msg:0\"\n    },\n    {\n\
+    \        business_id = \"b_teg_rt_index\"\n        table_id = \"ivrdial\"\n\
+    \        log_to = 1\n        log_format = 2\n        field_order = \"platform:1|env:0\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"getthirddatarequest\"\n        log_to = 1\n        log_format = 2\n\
+    \        field_order = \"platform:1|apiurl:0\"\n    },\n    {\n        business_id\
+    \ = \"b_teg_rt_index\"\n        table_id = \"cop_call_back_monitor\"\n   \
+    \     log_to = 1\n        log_format = 2\n        field_order = \"cb_url:0|env:0|status_code:1|ret_code:1\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"cop_rest_api_monitor\"\n        log_to = 1\n        log_format = 2\n\
+    \        field_order = \"api_name:0|http_status:1|host:0|ret_code:1|req_time:1|req_time_level:1\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"cop_trans_server_monitor\"\n        log_to = 1\n        log_format =\
+    \ 2\n        field_order = \"platform:1|env:0|statuscode:1|msg:0|protocol:0|source_ip:0\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"qdc_callouts_mix_srv\"\n        log_to = 1\n        log_format = 2\n\
+    \        field_order = \"env:0|servce_ip:0|action:0|clientip:0|session_id:0\"\
+    \n    },\n    \n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"webim_b2c_analysis\"\n        log_to = 1\n        log_format = 2\n \
+    \       field_order = \"\"\n    },\n    {\n        business_id = \"b_teg_rt_index\"\
+    \n        table_id = \"c2b_call_wpa_protocol\"\n        log_to = 1\n     \
+    \   log_format = 2\n        field_order = \"\"\n    },\n    {\n        business_id\
+    \ = \"b_teg_rt_index\"\n        table_id = \"petrel_iplookup_report\"\n  \
+    \      log_to = 1\n        log_format = 2\n        field_order = \"\"\n  \
+    \  },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id =\
+    \ \"qd_webim_vlist\"\n        log_to = 1\n        log_format = 2\n       \
+    \ field_order = \"\"\n    },\n    {\n        business_id = \"b_teg_rt_index\"\
+    \n        table_id = \"petrel_rpc_report\"\n        log_to = 1\n        log_format\
+    \ = 2\n        field_order = \"\"\n    },\n    {\n        business_id = \"\
+    b_teg_rt_index\"\n        table_id = \"sensitive_words_service_sc_ol\"\n \
+    \       log_to = 1\n        log_format = 2\n        field_order = \"\"\n \
+    \   },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"wpa_cqq_authorization_ol\"\n        log_to = 1\n        log_format =\
+    \ 2\n        field_order = \"\"\n    },\n    {\n        business_id = \"b_teg_rt_index\"\
+    \n        table_id = \"api_http_push_monitor\"\n        log_to = 1\n     \
+    \   log_format = 2\n        field_order = \"sysID:1|intfID:1|kfuin:1|msg_type:1|cnt:1|r:1|s_cnt:1|f_cnt:1|req_ip:0|elapse:0|reconciliation:1|timestamp:1|logtime:0\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"api_inner_request_analysis\"\n        log_to = 1\n        log_format\
+    \ = 2\n        field_order = \"intfID:1|cnt:1|succ_cnt:1|fail_cnt:1|url:0|kfuin:1|errtype:1|appName:0|sysID:1|timestamp:1|logtime:0\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"api_jssdk_ticket\"\n        log_to = 1\n        log_format = 2\n   \
+    \     field_order = \"sysID:1|intfID:1|cnt:1|succ:1|fail:1|r:1|kfuin:1|appid:1|sid:1|calltime:0|timestamp:1|logtime:0\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"jssdk_verify\"\n        log_to = 1\n        log_format = 2\n       \
+    \ field_order = \"sysID:1|intfID:1|cnt:1|succ:1|fail:1|r:1|appid:1|sid:1|calltime:0|timestamp:1|logtime:0\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"look_up_kfuin_svr\"\n        log_to = 1\n        log_format = 2\n  \
+    \      field_order = \"\"\n    },\n\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"QdAccountManageReport\"\n        log_to = 1\n     \
+    \   log_format = 1\n        field_order = \"time:1|uin:1|extuin:1|optype:1|result:1\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"QidianHelpCenterDataReport\"\n        log_to = 1\n\
+    \        log_format = 1\n        field_order = \"kfuin:1|kfext:1|id:1|timestamp:1\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"QidianKfuinGuideView\"\n        log_to = 1\n      \
+    \  log_format = 1\n        field_order = \"kfuin:1|kfext:1|isClicked:1|time:1\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"QidianKfuinAutoAccView\"\n        log_to = 1\n    \
+    \    log_format = 1\n        field_order = \"kfuin:1|kfext:1|time:1|from:1\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"QdWebPagesReport\"\n        log_to = 1\n        log_format\
+    \ = 1\n        field_order = \"opUin:1|kfUin:1|errCode:1|reportTime:1|opType:1|envType:0|kfExt:1|httpReferer:0|pageId:1|stayTime:1|pageUrl:0|userAgent:0|clientIp:0\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"QdWebFansReport\"\n        log_to = 1\n        log_format\
+    \ = 1\n        field_order = \"opUin:1|kfUin:1|errCode:1|reportTime:1|opType:1|envType:0|kfExt:1|httpReferer:0|pageId:1|stayTime:1|pageUrl:0|userAgent:0|clientIp:0\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"QdWebQfReport\"\n        log_to = 1\n        log_format\
+    \ = 1\n        field_order = \"opUin:1|kfUin:1|errCode:1|reportTime:1|opType:1|envType:0|kfExt:1|httpReferer:0|pageId:1|stayTime:1|pageUrl:0|userAgent:0|clientIp:0\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"QdWebDataReport\"\n        log_to = 1\n        log_format\
+    \ = 1\n        field_order = \"opUin:1|kfUin:1|errCode:1|reportTime:1|opType:1|envType:0|kfExt:1|httpReferer:0|pageId:1|stayTime:1|pageUrl:0|userAgent:0|clientIp:0\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"QdWebWelcomeReplyReport\"\n        log_to = 1\n   \
+    \     log_format = 1\n        field_order = \"opUin:1|kfUin:1|errCode:1|reportTime:1|opType:1|envType:0|kfExt:1|httpReferer:0|pageId:1|stayTime:1|pageUrl:0|userAgent:0|clientIp:0\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"QdWebKeywordReplyReport\"\n        log_to = 1\n   \
+    \     log_format = 1\n        field_order = \"opUin:1|kfUin:1|errCode:1|reportTime:1|opType:1|envType:0|kfExt:1|httpReferer:0|pageId:1|stayTime:1|pageUrl:0|userAgent:0|clientIp:0\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"QdWebMsgReplyReport\"\n        log_to = 1\n       \
+    \ log_format = 1\n        field_order = \"opUin:1|kfUin:1|errCode:1|reportTime:1|opType:1|envType:0|kfExt:1|httpReferer:0|pageId:1|stayTime:1|pageUrl:0|userAgent:0|clientIp:0\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"QdWebMediaReport\"\n        log_to = 1\n        log_format\
+    \ = 1\n        field_order = \"opUin:1|kfUin:1|errCode:1|reportTime:1|opType:1|envType:0|kfExt:1|httpReferer:0|pageId:1|stayTime:1|pageUrl:0|userAgent:0|clientIp:0\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"QdWebMenuReport\"\n        log_to = 1\n        log_format\
+    \ = 1\n        field_order = \"opUin:1|kfUin:1|errCode:1|reportTime:1|opType:1|envType:0|kfExt:1|httpReferer:0|pageId:1|stayTime:1|pageUrl:0|userAgent:0|clientIp:0\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"QdWebMpAccountReport\"\n        log_to = 1\n      \
+    \  log_format = 1\n        field_order = \"opUin:1|kfUin:1|errCode:1|reportTime:1|opType:1|envType:0|kfExt:1|httpReferer:0|pageId:1|stayTime:1|pageUrl:0|userAgent:0|clientIp:0\"\
+    \n    },\n    \n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"get_imgtxt_temp_url\"\n        log_to = 1\n        log_format = 2\n\
+    \        field_order = \"intfID:1|fail:1|success:1|pv:1|type:1\"\n    },\n\
+    \    {\n        business_id = \"b_teg_rt_index\"\n        table_id = \"qd_login\"\
+    \n        log_to = 1\n        log_format = 2\n        field_order = \"kfuin:1|srctp:1|pv:1|intfID:1\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"qd_corpinfo_verify_analysis\"\n        log_to = 1\n        log_format\
+    \ = 2\n        field_order = \"intfID:1|type:1|kfuin:1|cnt:1|cnt:1|succ_cnt:1|delay:1|succ_delay:1|fail_delay:1\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"console_svr\"\n        log_to = 1\n        log_format = 2\n        field_order\
+    \ = \"kfuin:1|kfext:1|seqid:1|remote_cmd:0|remote_name:0|server_cmd:0|protocal:0|remote_ip:0|remote_port:1|ret_code:1|response_code:1|response_time:1|server_name:0|server_ip:0|env:0|setid:1|envid:1|totalcount:1|failcount:1|sysID:1|intfID:1|timestamp:0|logtime:0\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"node_interface\"\n        log_to = 1\n        log_format = 2\n     \
+    \   field_order = \"totalaccount:1|failcount:1|time:1|dest:0|destport:1|local:0|locolport:1|module:0|controller:0|env:0|sysID:1|intfID:1|timestamp:0|logtime:0\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"ckv_request_analysis\"\n        log_to = 1\n        log_format = 2\n\
+    \        field_order = \"intfID:1|cnt:1|errCode:1|succ_cnt:1|succ_delay:1|delay:1|cmd:0|appName:0\"\
+    \n    },\n    \n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"api_Intermediate_service_report\"\n        log_to = 1\n        log_format\
+    \ = 2\n        field_order = \"req_cnt:1|succ_req_cnt:1|failed_req_cnt:1|elapse:0|controller:0|action:0|errcode:1|errmsg:0|kfuin:1|kfext:1|traceId:0|clientIP:0|elapse:0\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"api_back_request\"\n        log_to = 1\n        log_format = 2\n   \
+    \     field_order = \"succ_cnt:1|fail_cnt:1|delay:0|client_name:0|dst_name:0|trace_id:0|span_id:0|cmd_id:1|clientip:0|dst_ip:0|env:0|delay:0\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"api_oidb_protocol_report\"\n        log_to = 1\n        log_format =\
+    \ 2\n        field_order = \"req_cnt:1|succ_req_cnt:1|failed_req_cnt:1|protocol:0|errcode:1|errmsg:0|kfuin:1|elapse:0|traceId:0\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"api_db_report\"\n        log_to = 1\n        log_format = 2\n      \
+    \  field_order = \"req_cnt:1|succ_req_cnt:1|failed_req_cnt:1|elapse:0|errcode:1|errmsg:0|tablename:0|clientip:0|toip:0|toport:1\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"api_report\"\n        log_to = 1\n        log_format = 2\n        field_order\
+    \ = \"cnt:1|succ_cnt:1|fail_cnt:1|elapse:0|uri:0|kuin:1|appID:1|errCode:1|srcip:0|access:0|direction:0|fromKuin:0|fromuin:0|touin:0|msgtype:0|traceId:0|apitype0\"\
+    \n    },\n    {\n        business_id = \"b_teg_rt_index\"\n        table_id\
+    \ = \"client_use_cs_report\"\n        log_to = 1\n        log_format = 2\n\
+    \        field_order = \"req_cnt:1|succ_req_cnt:1|failed_req_cnt:1|elapse:0|cmd:1|kfuin:1|errtype:1\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"qd_wpa_click_svr_detail\"\n        log_to = 2\n   \
+    \     topic = \"wpa_click_svr_detail\"\n        master_addr = \"\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"QdCustActionReport\"\n        log_to = 2\n        topic\
+    \ = \"QdCustActionReport\"\n        master_addr = \"\"\
+    \n        comsumer_groups = {\n            spark_svr1 = \"recp_analysis_pv_click\"\
+    ,\n            spark_svr2 = \"recp_analysis_click_recep\",\n            spark_svr3\
+    \ = \"funnel_analysis\"\n        }\n    },\n    {\n        business_id = \"\
+    b_sng_hrtx_qidian_data_report_ed\"\n        table_id = \"QdLighttalkCdrDataFlowReport\"\
+    \n        log_to = 2\n        topic = \"QdLighttalkCdrDataFlowReport\"\n \
+    \       master_addr = \"\"\n    },\n\
+    \    {\n        business_id = \"b_teg_rt_index\"\n        table_id = \"qf_webim\"\
+    \n        log_to = 2\n        topic = \"qd_petrel_webim_report\"\n       \
+    \ master_addr = \"\"\n    },\n    {\n\
+    \        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\n        table_id\
+    \ = \"EventModelReport\"\n        log_to = 2\n        topic = \"EventModelReport\"\
+    \n        master_addr = \"\"\n    },\n\
+    \    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\n     \
+    \   table_id = \"UserMergeEventReport\"\n        log_to = 2\n        topic\
+    \ = \"UserMergeEventReport\"\n        master_addr = \"\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"ImWaitPoolDetailReport\"\n        log_to = 2\n    \
+    \    topic = \"ImWaitPoolDetailReport\"\n        master_addr = \"\"\
+    \n    },\n    {\n        business_id = \"b_sng_hrtx_qidian_data_report_ed\"\
+    \n        table_id = \"RobotHighFrequencyMsgReport\"\n        log_to = 2\n\
+    \        topic = \"RobotHighFrequencyMsgReport\"\n        master_addr = \"\
+    \"\n    }\n)\n"

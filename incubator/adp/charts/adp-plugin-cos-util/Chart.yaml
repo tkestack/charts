@@ -1,6 +1,0 @@
-apiVersion: v2
-name: adp-plugin-cos-util
-description: A Helm chart for adp-plugin-cos-util
-type: application
-version: 1.0.0
-appVersion: 1.0.0

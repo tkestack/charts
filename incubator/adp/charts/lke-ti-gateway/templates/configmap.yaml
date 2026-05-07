@@ -1,12 +1,6 @@
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  annotations:
-    cpaas.io/display-name: ti-gateway-config
-  name: ti-gateway-config
-  namespace: {{ .Release.Namespace }}
 data:
-  config-default.yaml: |
+  config-default.yaml: |-
     apisix:
       node_listen:
         - port: 9080
@@ -168,7 +162,7 @@ data:
         client_body_timeout: 1800s
         client_max_body_size: 0
 
-        send_timeout: 300s
+        send_timeout: 10s
         underscores_in_headers: "on"
         real_ip_header: "X-Real-IP"
         real_ip_recursive: "off"
@@ -261,10 +255,16 @@ data:
         report_ttl: 3600     # live time for server info in etcd (unit: second)
       dubbo-proxy:
         upstream_multiplex_count: 32
-
+          
     check_notebook_access: true
     notebook_service:
       endpoint: "http://ti-notebook-server.tione.svc.cluster.local:55596"
       uri:
         check_notebook_access: "/Notebook/CheckNotebookAccessPermission"
       timeout: 3000
+kind: ConfigMap
+metadata:
+  annotations:
+    cpaas.io/display-name: ti-gateway-config
+  name: ti-gateway-config
+  namespace: {{ .Release.Namespace }}

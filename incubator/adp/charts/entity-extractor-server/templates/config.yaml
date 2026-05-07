@@ -1,0 +1,21 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: entity-extractor-server
+  namespace: {{ .Release.Namespace }}
+data:
+  EntityExtractorServer.json: |
+    {
+        "config":{
+            "oldtask":{
+                "is_load": true
+            },
+            "newtask":{
+                "is_load": false
+            },
+            "synonyms":{
+                "table_name": "t_synonyms_prod",
+                "is_load": true
+            }
+        }
+    }

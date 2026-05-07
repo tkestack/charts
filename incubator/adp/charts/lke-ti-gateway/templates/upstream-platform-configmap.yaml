@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ti-gateway-upstream-platform
+  namespace: {{ .Release.Namespace }}
+data:
+  upstream_platform.csv: |
+    接口人,Service,私有化环境访问地址,upstream（网关填写）,预订route（网关填写）,route-id（网关填写）,scheme（网关填写）,,,,,,,,,,,,,,,,
+    kkerwinwang,ti-perm-auth,ti-perm-auth.{{ .Release.Namespace }}.svc.cluster.local:8081,10001,,,,,,,,,,,,,,,,,,,
+    hankkhan,aiconfmanagerserver,aiconfmanagerserver.{{ .Release.Namespace }}.svc.cluster.local:10001,10004,/cgi/capi*,10104,,,,,,,,,,,,,,,,,
+    andrekzwu,webappchatbot-service,webappchatbot-service.{{ .Release.Namespace }}.svc.cluster.local:30002,10005,/opapi/*,10105,,,,,,,,,,,,,,,,,
+    simonsheng,apex-cmlb-80-0,apex-cmlb-80-0.{{ .Release.Namespace }}.svc.cluster.local,10006,,,,,,,,,,,,,,,,,,,
+    randalchen,webappchatbot-service,webappchatbot-service.{{ .Release.Namespace }}.svc.cluster.local:30002,10007,/lke/*,10107,,,,,,,,,,,,,,,,,
+    randalchen,webappchatbot-service,webappchatbot-service.{{ .Release.Namespace }}.svc.cluster.local:30002,10008,/webim/*,10108,,,,,,,,,,,,,,,,,
+    tilin,webappchatbot-service,webappchatbot-service.{{ .Release.Namespace }}.svc.cluster.local:30002,10012,/s/*,10112,,,,,,,,,,,,,,,,,
+    fannyan,ti-license,ti-license.{{ .Release.Namespace }}.svc.cluster.local:8081,10013,,,,,,,,,,,,,,,,,,,
+    tilin,apex-cmlb-80-0,apex-cmlb-80-0.{{ .Release.Namespace }}.svc.cluster.local,10014,/v1/qbot/chat/*,10114,,,,,,,,,,,,,,,,,
+    tilin,apex-cmlb-80-0,apex-cmlb-80-0.{{ .Release.Namespace }}.svc.cluster.local,10015,/v1/*,10115,,,,,,,,,,,,,,,,,
+    tilin,op,op.{{ .Release.Namespace }}.svc.cluster.local:8080,10016,/op/*,10116,,,,,,,,,,,,,,,,,
+    tilin,webappchatbot-service,webappchatbot-service.{{ .Release.Namespace }}.svc.cluster.local:30002,10017,/filepreview/*,10117,,,,,,,,,,,,,,,,,
+    tilin,fileconverter-service,fileconverter-service.{{ .Release.Namespace }}.svc.cluster.local:30007,10018,/renderfilestatic/*,10118,,,,,,,,,,,,,,,,,
+    tilin,fileconverter-service,fileconverter-service.{{ .Release.Namespace }}.svc.cluster.local:30007,10019,/renderfile/*,10119,,,,,,,,,,,,,,,,,
+    fannyan,ti-auth-web,ti-auth-web.{{ .Release.Namespace }}.svc.cluster.local:12000,10020,/portal/*,10120,,,,,,,,,,,,,,,,,
+    tilin,pyright-service,pyright-service.{{ .Release.Namespace }}.svc.cluster.local:30008,10036,/lsp/*,10136,,,,,,,,,,,,,,,,,
+    tilin,webappchatbot-service,webappchatbot-service.{{ .Release.Namespace }}.svc.cluster.local:30002,10037,/workflow/*,10137,,,,,,,,,,,,,,,,,
+    anfang,webappchatbot-service,webappchatbot-service.{{ .Release.Namespace }}.svc.cluster.local:30002,10038,/adp/*,10138,,,,,,,,,,,,,,,,,
+    dick,minio,minio.{{ .Release.Namespace }}.svc.cluster.local,10039,/qbot/*,10139,,,,,,,,,,,,,,,,,
+    bruce,tpstelemetry-grafana,tpstelemetry-grafana.{{ .Release.Namespace }}.svc.cluster.local,10040,/grafana/*,10140,,,,,,,,,,,,,,,,,
+    nicholaswei,apex-cmlb-80-0,apex-cmlb-80-0.{{ .Release.Namespace }}.svc.cluster.local,10041,/adp/v2/chat/conn/*,10141,,,,,,,,,,,,,,,,,

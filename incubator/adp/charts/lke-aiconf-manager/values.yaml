@@ -1,4 +1,0 @@
-images:
-  adp-aiconf-manager:
-    url: ccr.ccs.tencentyun.com/tke-market/aiconfmanagerserver:master_private-40b6a8-20260128
-replicas: 1

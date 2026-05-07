@@ -3,19 +3,8 @@ kind: Deployment
 metadata:
   annotations:
     ti.cloud.tencent.com/resource-quota: unlimited
-    configmap.reloader.stakater.com/reload: {{ .Release.Name }}-entity-extractor-server-sand-box
-    {{- if .Values.global.customAnnotations }}
-    {{- range $key, $value := .Values.global.customAnnotations }}
-    {{ $key }}: {{ $value | toString | quote }}
-    {{- end }}
-    {{- end }}
   labels:
     app: entity-extractor-server-sand-box
-    {{- if .Values.global.customLabels }}
-    {{- range $key, $value := .Values.global.customLabels }}
-    {{ $key }}: {{ $value | toString | quote }}
-    {{- end }}
-    {{- end }}
   name: entity-extractor-server-sand-box
   namespace: {{ .Release.Namespace }}
 spec:
@@ -33,17 +22,6 @@ spec:
     metadata:
       labels:
         app: entity-extractor-server-sand-box
-        {{- if .Values.global.customLabels }}
-        {{- range $key, $value := .Values.global.customLabels }}
-        {{ $key }}: {{ $value | toString | quote }}
-        {{- end }}
-        {{- end }}
-      {{- if .Values.global.customAnnotations }}
-      annotations:
-        {{- range $key, $value := .Values.global.customAnnotations }}
-        {{ $key }}: {{ $value | toString | quote }}
-        {{- end }}
-      {{- end }}
     spec:
       affinity:
         podAntiAffinity:
@@ -79,7 +57,7 @@ spec:
       containers:
         - env:
             - name: DEPLOYMENT_ENVIRONMENT
-              value: TKE
+              value: TCS
             - name: __AppEnname
               value: EntityExtractorServerSandBox
             - name: __ProjectEnname
@@ -134,15 +112,16 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.name
-          image: {{ (index .Values.images "entity-extractor-server-sand-box").url }}
+          image: {{ (index .Values.tad.images "entity-extractor-server-sand-box").url }}
           imagePullPolicy: Always
           name: main-container
-          command: ["bash", "-c", "envsubst '${POD_IP} ${POD_NAMESPACE} ${POD_NAME}' < /app/conf/trpc_cpp.yaml > /usr/local/trpc/bin/trpc_cpp.yaml && exec /usr/local/trpc/bin/EntityExtractorServerSandBox --config=/usr/local/trpc/bin/trpc_cpp.yaml"]
+          # command: ["bash","/usr/local/app/start.sh"]
+          #command: ["bash","-c","while true; do sleep 60; done"]
           livenessProbe:
             tcpSocket:
               port: 10001
             failureThreshold: 5
-            initialDelaySeconds: 20
+            initialDelaySeconds: 30
             periodSeconds: 60
             successThreshold: 1
             timeoutSeconds: 2
@@ -150,7 +129,7 @@ spec:
             tcpSocket:
               port: 10001
             failureThreshold: 2
-            initialDelaySeconds: 50
+            initialDelaySeconds: 30
             periodSeconds: 3
             successThreshold: 1
             timeoutSeconds: 2
@@ -160,24 +139,24 @@ spec:
               cpu: "1"
               memory: "1Gi"
             requests:
-              cpu: "200m"
-              memory: "256Mi"
+              cpu: "1"
+              memory: "1Gi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
             limits:
               cpu: "2"
               memory: "2Gi"
             requests:
-              cpu: "200m"
-              memory: "256Mi"
+              cpu: "2"
+              memory: "2Gi"
           {{- else }}
           resources:
             limits:
               cpu: "2"
               memory: "4Gi"
             requests:
-              cpu: "200m"
-              memory: "256Mi"
+              cpu: "2"
+              memory: "4Gi"
           {{- end }}
           securityContext:
             capabilities:
@@ -191,28 +170,25 @@ spec:
           stdin: true
           tty: true
           volumeMounts:
-            - mountPath: /usr/local/trpc/log
+            - mountPath: /app/logs
               name: applog
             - mountPath: /app/conf/trpc_cpp.yaml
-              name: config
+              name: config-trpc
               subPathExpr: trpc_cpp.yaml
             - mountPath: /usr/local/trpc/conf/EntityExtractorServerSandBox.json
               name: config
               subPathExpr: EntityExtractorServerSandBox.json
-            - mountPath: /app/conf/infrastructure.yaml
-              name: infrastructure
-              subPath: infrastructure.yaml
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
       volumes:
         {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - name: config-trpc
+          configMap:
+            name: entity-extractor-server-sand-box-trpc
         - name: config
           configMap:
-            name: {{ .Release.Name }}-entity-extractor-server-sand-box
+            name: entity-extractor-server-sand-box
         - name: applog
           hostPath:
             path: /data/ti-platform/log/entity-extractor-server-sand-box
             type: DirectoryOrCreate
-
-        - configMap:
-            defaultMode: 420
-            name: infrastructure
-          name: infrastructure

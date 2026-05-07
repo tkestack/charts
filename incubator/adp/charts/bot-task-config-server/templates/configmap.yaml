@@ -1,0 +1,2891 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-task-config
+  namespace: {{ .Release.Namespace }}
+data:
+  error_en-US.json: |
+    {
+      "__comment_1__": "=============错误码==============================",
+      "用户未登录": "User not logged in",
+      "当前用户无访问权限，请联系管理员添加": "The current user does not have access permission, please contact the administrator for authorization",
+      "机器人不存在": "Application does not exist",
+      "向量库不存在": "Vector database does not exist",
+      "向量库升级中，请稍后再试": "Vector database is being upgraded, please try again later",
+      "应用信息不存在": "Application information does not exist",
+      "Excel 文件内容为空": "Excel file content is empty",
+      "Excel 文件表头错误": "Excel file header error",
+      "参数异常，请重试": "Parameter error, please try again",
+      "文件名校验失败": "File name validation failed",
+      "Excel 文件内容错误": "Excel file content error",
+      "解析异常": "Parsing exception",
+      "资源权限不足": "Insufficient resource permissions",
+      "您的服务已到期，请联系架构师续费": "Your service has expired, please contact the architect to renew",
+      "Excel内容为空,请检查内容是否填在正确的位置了!": "Excel content is empty, please check if the content is filled in the correct position!",
+      "服务条款未接受，请查看并同意服务条款": "Terms of service not accepted, please review and agree to the terms",
+      "系统错误": "System error",
+      "任务流程不存在": "Taskflow does not exist",
+      "创建任务流程导出任务失败": "Failed to create Taskflow export task",
+      "任务流程导入的文件不存在": "Imported Taskflow file does not exist",
+      "任务流程导入的文件数据不完整": "Imported Taskflow file data is incomplete",
+      "任务画布JSON参数错误": "Taskflow canvas JSON parameter error",
+      "任务流程名已经存在": "Taskflow name already exists",
+      "任务流程导入状态异常": "Taskflow import status exception",
+      "任务流程节点预览参数异常": "Taskflow node preview parameter exception",
+      "任务流程发布状态中，不允许修改": "Taskflow is being released, modification is not allowed",
+      "任务流程导出数量超过限制": "Taskflow export quantity exceeds the limit",
+      "任务流程复制中": "Taskflow is being copied",
+      "任务流程数量超过限制": "Taskflow quantity exceeds the limit",
+      "任务流程发布状态中，不允许删除": "Taskflow is being released, deletion is not allowed",
+      "预览结果包含敏感词": "Preview result contains sensitive words",
+      "分类不存在": "Category does not exist",
+      "分类数量超过限制": "Category quantity exceeds the limit",
+      "问答对分类层级超过限制": "Q&A category hierarchy exceeds the limit",
+      "错误的父级分类 ID": "Invalid parent category ID",
+      "问答对分类名称重复": "Q&A category name is duplicated",
+      "错误的分类 ID": "Invalid category ID",
+      "语料不存在": "Corpus does not exist",
+      "保存语料失败": "Failed to save Corpus",
+      "该应用下示例问法已经存在": "Example query already exists under thsi application",
+      "示例问法不存在": "Example query does not exist",
+      "意图与应用绑定关系不对": "Intent and application binding relationship is incorrect",
+      "意图描述超过限定长度": "Intent description exceeds the limit",
+      "工作流名称已经存在": "Workflow name already exists",
+      "工作流画布JSON参数错误": "Workflow canvas JSON parse error",
+      "工作流画布JSON参数错误：%s": "Workflow canvas JSON parse error: %s",
+      "工作流数量超过限制": "Workflow quantity exceeds the limit",
+      "工作流被引用中，不允许删除": "Workflow is being referenced, deletion is not allowed",
+      "工作流不存在": "Workflow does not exist",
+      "创建工作流程导出工作失败": "Failed to create Workflow export task",
+      "工作流程导入的文件不存在": "Imported Workflow file does not exist",
+      "工作流程导入的文件数据不完整": "Imported Workflow file data is incomplete",
+      "工作流程导入状态异常": "Workflow import status exception",
+      "工作流程节点预览参数异常": "Workflow node preview parameter exception",
+      "工作流程发布状态中，不允许修改": "Workflow is being released, modification is not allowed",
+      "工作流程导出数量超过限制": "Workflow export quantity exceeds the limit",
+      "工作流程复制中": "Workflow is being copied",
+      "工作流程发布状态中，不允许删除": "Workflow is being released, deletion is not allowed",
+      "预览结果包含敏感词": "Preview result contains sensitive words",
+      "不支持调试的节点类型": "Node type does not support debugging",
+      "未找到节点": "Node not found",
+      "节点信息缺失": "Node information is missing",
+      "不能引用已经引用其他工作流的工作流": "Cannot reference a Workflow that already references another Workflow",
+      "工作流不能引用自己": "Workflow cannot reference itself",
+      "工作流与应用绑定关系不对": "Workflow and application binding relationship is incorrect",
+      "工作流反馈不存在": "Workflow feedback does not exist",
+      "当前工作流可能被其他人编辑，请刷新查看": "The current Workflow may be edited by others, please reload to review",
+      "画布内节点名称有重复": "Duplicate node names in the canvas",
+      "工作流名称已经发布过，不允许重名": "Workflow name has already been released, duplicate names are not allowed",
+      "工作流模版引用的工作流名称与当前工作流名称相同": "The Workflow template references the same name as as the current Workflow",
+      "工作节点不存在": "Workflow node does not exist",
+      "工作流运行实例不存在": "Workflow run instance does not exist ",
+      "该工作流中包含不支持异步调用的节点，请调整后再选择": "This Workflow contains nodes that do not support asynchronous calls, please adjust and try again",
+      "该工作流已被修改，请发布成功后再试": "This Workflow has been modified, please try again after successful publishing",
+      "应用未满足开启异步调用条件": "Application does not meet the conditions for enabling asynchronous calls",
+      "该工作流中配置的模型余额不足，请充值或调整模型后再试": "The model balance configured in this Workflow is insufficient, please recharge or adjust the model and try again",
+      "工作流程PDL格式错误": "Workflow PDL format error",
+      "工作流程API格式错误": "Workflow API format error",
+      "工作流程不支持转换PDL": "Workflow does not support PDL conversion",
+      "工作流程正在转换中": "Workflow is being converted",
+      "工作流程正在转换中，不允许编辑": "Workflow is being converted, editing is not allowed",
+      "工作流程发布状态中，不允许转换": "Workflow is being released, conversion is not allowed",
+      "工作流程发布状态中，不允许编辑": "Workflow is being released, editing is not allowed",
+      "上一次工作流程转换耗时超时过长，请重试": "The last Workflow conversion took too long, please try again",
+      "工作流程转换状态异常": "Workflow conversion status exception",
+      "工作流PDL版本不存在": "Workflow PDL version does not exist",
+      "权限不足": "Insufficient permissions",
+      "Agent非工作流编排模式不支持工作流修改": "Agent not in workflow orchestration mode does not support Workflow modification",
+      "任务流程加载失败": "Taskflow loading failed",
+      "发布任务加载失败": "Failed to load release task",
+      "发布任务记录加载失败": "Failed to load release task record",
+      "配置数据查询错误": "Configuration data query error",
+      "配置数据发布错误": "Configuration data release error",
+      "运行数据发布错误": "Runtime data release error",
+      "获取分享应用信息错误": "Failed to get shared application information",
+      "实体名称重复": "Entity name is duplicated",
+      "实体不存在": "Entity does not exist",
+      "词条名称重复": "Duplicate entry name",
+      "词条名为空": "Entry name is empty",
+      "词条名与同义词重复": "Entry name is duplicated with synonym",
+      "当前应用模型余额不足": "Current application model balance is insufficient",
+      "上报用量失败": "Failed to report usage",
+      "参数名称重复": "Parameter name is duplicated",
+      "参数ID不存在": "Parameter ID does not exist",
+      "工作流发布状态中，不允许修改": "Workflow is being released, modification is not allowed",
+      "参数ID相同，不需要拷贝": "Parameter ID is the same, no need to copy",
+      "工作流程PDL格式错误:%s": "Workflow PDL format error: %s",
+      "工作流程API格式错误:%s": "Workflow API format error: %s",
+      "工作流程不支持转换PDL:%s": "Workflow does not support PDL conversion: %s",
+      "词条调用中，不可删除": "Entry is being used, cannot be deleted",
+      "词槽调用中，不可删除": "Slot is being used, cannot be deleted",
+      "请求参数错误: %s": "Request parameter error: %s",
+      "变量在该应用下不存在": "Variable does not exist under this application",
+      "分类标题少于%d个字符，请重新填写": "Category title is less than %d characters, please re-enter",
+      "分类标题超过%d个字符，请重新填写": "Category title exceeds %d characters, please re-enter",
+      "该任务流程下示例问法总数不能超过%d个": "The total number of example queries under this taskflow ",
+      "词条名超过%d个字符，请重新填写": "Entry name exceeds %d characters, please re-enter",
+      "词条同义词数量超过%d,请重新填写": "Entry synonym count exceeds %d, please re-enter",
+      "重复同义词: %s": "Duplicate synonym: %s",
+      "词条同义词名称超过%d个字符,请重新填写": "Synonym entry name exceeds %d chracters, please re-enter",
+      "词条数量超过%d个": "Entry count exceeds %d",
+      "实体名称超过%d个字符，请重新填写": "Entity name exceeds %d characters, please re-enter",
+      "实体描述超过%d个字符，请重新填写": "Entity description exceeds %d characters, please re-enter",
+      "实体示例数量超过%d个，请重新填写": "Entity example count exceeds %d, please re-enter",
+      "实体示例超过%d个字符，请重新填写": "Entity example exceeds %d characters, please re-enter",
+      "流转规则组合条件为%s的用户输入值长度不超过%d个字符，请重新填写": "The user input value length for transfer rule combination condition %s should not exceed %d characters, please re-enter",
+      "任务流程名大于%d个字符，请重新填写": "Taskflow name exceeds %d characters, please re-enter",
+      "任务流程名小于%d个字符，请重新填写": "Taskflow name is less than %d characters, please re-enter",
+      "变量名超过%d个字符，请重新填写": "Variable name exceeds %d characters, please re-enter",
+      "变量描述超过%d个字符，请重新填写": "Variable description exceeds %d characters, please re-enter",
+      "变量默认值超过%d个字符，请重新填写": "Variable default value exceeds %d characters, please re-enter",
+      "变量默认值文件名称超过%d个字符，请重新填写": "Variable default value file name exceeds %d characters, please re-enter",
+      "写入的变量名不符合 %s 命名规则": "The variable name does not comply with %s naming rule",
+      "写入的变量名 %s 在该应用下重复": "The variable name %s already exists under this application",
+      "新建变量的数量超过 %d": "The number of new variables exceeds %d",
+      "变量类型错误": "Variable type error",
+      "示例问法超过%d个字符，请重新填写": "Example query exceeds %d characters, please re-enter",
+      "该工作流下示例问法总数不能超过%d个": "The total number of example queries in this worflow cannot exceed %d",
+      "参数名称应该在 1~%d个字符，请重新填写": "Parameter name should be between 1 and %d characters, please re-enter",
+      "参数描述应该在 1~%d个字符，请重新填写": "Parameter description should be between 1 and %d characters, please re-enter",
+      "固定话术询问应该在1~%d个字符，请重新填写": "Fixed prompt should be between 1 and %d characters, please re-enter",
+      "参数类型不合法，请重新填写": "Parameter type is invalid, please re-enter",
+      "正确示例名称应该在 1~%d个字符，请重新填写": "Correct example name should be between 1 and %d characters, please re-enter",
+      "正确示例重复: %s": "Duplicate correct example: %s",
+      "正确示例同义词个数最大为: %d个": "The maximum number of correct example synonyms is %d",
+      "错误示例名称应该在 1~%d个字符，请重新填写": "Incorrect example name should be between 1 and %d characters, please re-enter",
+      "错误示例重复: %s": "Duplicate incorrect example: %s",
+      "错误示例个数最大为: %d个": "The maximum number of incorrect examples is %d",
+      "正确示例与错误示例重复: %s": "Correct and incorrect examples are duplicated: %s",
+      "节点名称 %s 不应大于%d个字符，请重新填写": "Node name %s should not exceed %d characters, please re-enter",
+      "同一个节点下最多允许参数个数为: %d": "The maximum number of parameters allowed under the same node is %d",
+      "工作流名称大于%d个字符，请重新填写": "Workflow name exceeds %d characters, please re-enter",
+      "工作流名称小于%d个字符，请重新填写": "Workflow name is less than %d characters, please re-enter",
+      "请先配置节点": "Please configure the node first",
+      "节点总数不能超过%d(现在是%d)": "The total number of nodes cannot exceed %d (currently %d)",
+      "存在环%s": "Cycle exists: %s",
+      "NodeID不应为空": "NodeID should not be empty",
+      "节点名称不应为空": "Node name should not be empty",
+      "NodeID不应包含#": "NodeID should not contain #",
+      "开始节点应该为一个，现在是%d个": "There should be one start node, currently %d",
+      "结束节点应该为一个，现在是%d个": "There should be one end node, currently %d",
+      "%s节点的下游节点ID非法(%s)": "The downstream node ID of node %s is invalid (%s)",
+      "空的excel文件": "Empty Excel file",
+      "表格条数少于%d条，请修改后重新上传": "The number of table rows is less than %d, please modify and re-upload",
+      "表格条数超过%d条，请修改后重新上传": "The number of table rows exceeds %d, please modify and re-upload",
+      "%s": "%s",
+      "老任务流程已下线": "Taskflow has been decommissioned, please use Workflow instead",
+      "该工作流下示例问法已经存在": "Example query already exists under this workflow",
+      "无效的密文模块类型": "Invalid ciphertext module type"
+    }
+  error_zh-CN.json: |
+    {
+      "__comment_1__": "=============错误码==============================",
+      "用户未登录": "用户未登录",
+      "当前用户无访问权限，请联系管理员添加": "当前用户无访问权限，请联系管理员添加",
+      "机器人不存在": "机器人不存在",
+      "向量库不存在": "向量库不存在",
+      "向量库升级中，请稍后再试": "向量库升级中，请稍后再试",
+      "应用信息不存在": "应用信息不存在",
+      "Excel 文件内容为空": "Excel 文件内容为空",
+      "Excel 文件表头错误": "Excel 文件表头错误",
+      "参数异常，请重试": "参数异常，请重试",
+      "文件名校验失败": "文件名校验失败",
+      "Excel 文件内容错误": "Excel 文件内容错误",
+      "解析异常": "解析异常",
+      "资源权限不足": "资源权限不足",
+      "您的服务已到期，请联系架构师续费": "您的服务已到期，请联系架构师续费",
+      "Excel内容为空,请检查内容是否填在正确的位置了!": "Excel内容为空,请检查内容是否填在正确的位置了!",
+      "服务条款未接受，请查看并同意服务条款": "服务条款未接受，请查看并同意服务条款",
+      "系统错误": "系统错误",
+      "任务流程不存在": "任务流程不存在",
+      "创建任务流程导出任务失败": "创建任务流程导出任务失败",
+      "任务流程导入的文件不存在": "任务流程导入的文件不存在",
+      "任务流程导入的文件数据不完整": "任务流程导入的文件数据不完整",
+      "任务画布JSON参数错误": "任务画布JSON参数错误",
+      "任务流程名已经存在": "任务流程名已经存在",
+      "任务流程导入状态异常": "任务流程导入状态异常",
+      "任务流程节点预览参数异常": "任务流程节点预览参数异常",
+      "任务流程发布状态中，不允许修改": "任务流程发布状态中，不允许修改",
+      "任务流程导出数量超过限制": "任务流程导出数量超过限制",
+      "任务流程复制中": "任务流程复制中",
+      "任务流程数量超过限制": "任务流程数量超过限制",
+      "任务流程发布状态中，不允许删除": "任务流程发布状态中，不允许删除",
+      "预览结果包含敏感词": "预览结果包含敏感词",
+      "分类不存在": "分类不存在",
+      "分类数量超过限制": "分类数量超过限制",
+      "问答对分类层级超过限制": "问答对分类层级超过限制",
+      "错误的父级分类 ID": "错误的父级分类 ID",
+      "问答对分类名称重复": "问答对分类名称重复",
+      "错误的分类 ID": "错误的分类 ID",
+      "语料不存在": "语料不存在",
+      "保存语料失败": "保存语料失败",
+      "该应用下示例问法已经存在": "该应用下示例问法已经存在",
+      "示例问法不存在": "示例问法不存在",
+      "意图与应用绑定关系不对": "意图与应用绑定关系不对",
+      "意图描述超过限定长度": "意图描述超过限定长度",
+      "工作流名称已经存在": "工作流名称已经存在",
+      "工作流画布JSON参数错误": "工作流画布JSON参数错误",
+      "工作流画布JSON参数错误：%s": "工作流画布JSON参数错误：%s",
+      "工作流数量超过限制": "工作流数量超过限制",
+      "工作流被引用中，不允许删除": "工作流被引用中，不允许删除",
+      "工作流不存在": "工作流不存在",
+      "创建工作流程导出工作失败": "创建工作流程导出工作失败",
+      "工作流程导入的文件不存在": "工作流程导入的文件不存在",
+      "工作流程导入的文件数据不完整": "工作流程导入的文件数据不完整",
+      "工作流程导入状态异常": "工作流程导入状态异常",
+      "工作流程节点预览参数异常": "工作流程节点预览参数异常",
+      "工作流程发布状态中，不允许修改": "工作流程发布状态中，不允许修改",
+      "工作流程导出数量超过限制": "工作流程导出数量超过限制",
+      "工作流程复制中": "工作流程复制中",
+      "工作流程发布状态中，不允许删除": "工作流程发布状态中，不允许删除",
+      "预览结果包含敏感词": "预览结果包含敏感词",
+      "不支持调试的节点类型": "不支持调试的节点类型",
+      "未找到节点": "未找到节点",
+      "节点信息缺失": "节点信息缺失",
+      "不能引用已经引用其他工作流的工作流": "不能引用已经引用其他工作流的工作流",
+      "工作流不能引用自己": "工作流不能引用自己",
+      "工作流与应用绑定关系不对": "工作流与应用绑定关系不对",
+      "工作流反馈不存在": "工作流反馈不存在",
+      "当前工作流可能被其他人编辑，请刷新查看": "当前工作流可能被其他人编辑，请刷新查看",
+      "画布内节点名称有重复": "画布内节点名称有重复",
+      "工作流名称已经发布过，不允许重名": "工作流名称已经发布过，不允许重名",
+      "工作流模版引用的工作流名称与当前工作流名称相同": "工作流模版引用的工作流名称与当前工作流名称相同",
+      "工作节点不存在": "工作节点不存在",
+      "工作流运行实例不存在": "工作流运行实例不存在",
+      "该工作流中包含不支持异步调用的节点，请调整后再选择": "该工作流中包含不支持异步调用的节点，请调整后再选择",
+      "该工作流已被修改，请发布成功后再试": "该工作流已被修改，请发布成功后再试",
+      "应用未满足开启异步调用条件": "应用未满足开启异步调用条件",
+      "该工作流中配置的模型余额不足，请充值或调整模型后再试": "该工作流中配置的模型余额不足，请充值或调整模型后再试",
+      "工作流程PDL格式错误": "工作流程PDL格式错误",
+      "工作流程API格式错误": "工作流程API格式错误",
+      "工作流程不支持转换PDL": "工作流程不支持转换PDL",
+      "工作流程正在转换中": "工作流程正在转换中",
+      "工作流程正在转换中，不允许编辑": "工作流程正在转换中，不允许编辑",
+      "工作流程发布状态中，不允许转换": "工作流程发布状态中，不允许转换",
+      "工作流程发布状态中，不允许编辑": "工作流程发布状态中，不允许编辑",
+      "上一次工作流程转换耗时超时过长，请重试": "上一次工作流程转换耗时超时过长，请重试",
+      "工作流程转换状态异常": "工作流程转换状态异常",
+      "工作流PDL版本不存在": "工作流PDL版本不存在",
+      "权限不足": "权限不足",
+      "Agent非工作流编排模式不支持工作流修改": "Agent非工作流编排模式不支持工作流修改",
+      "任务流程加载失败": "任务流程加载失败",
+      "发布任务加载失败": "发布任务加载失败",
+      "发布任务记录加载失败": "发布任务记录加载失败",
+      "配置数据查询错误": "配置数据查询错误",
+      "配置数据发布错误": "配置数据发布错误",
+      "运行数据发布错误": "运行数据发布错误",
+      "获取分享应用信息错误": "获取分享应用信息错误",
+      "实体名称重复": "实体名称重复",
+      "实体不存在": "实体不存在",
+      "词条名称重复": "词条名称重复",
+      "词条名为空": "词条名为空",
+      "词条名与同义词重复": "词条名与同义词重复",
+      "当前应用模型余额不足": "当前应用模型余额不足",
+      "上报用量失败": "上报用量失败",
+      "参数名称重复": "参数名称重复",
+      "参数ID不存在": "参数ID不存在",
+      "工作流发布状态中，不允许修改": "工作流发布状态中，不允许修改",
+      "参数ID相同，不需要拷贝": "参数ID相同，不需要拷贝",
+      "工作流程PDL格式错误:%s": "工作流程PDL格式错误:%s",
+      "工作流程API格式错误:%s": "工作流程API格式错误:%s",
+      "工作流程不支持转换PDL:%s": "工作流程不支持转换PDL:%s",
+      "词条调用中，不可删除": "词条调用中，不可删除",
+      "词槽调用中，不可删除": "词槽调用中，不可删除",
+      "请求参数错误: %s": "请求参数错误: %s",
+      "变量在该应用下不存在": "变量在该应用下不存在",
+      "分类标题少于%d个字符，请重新填写": "分类标题少于%d个字符，请重新填写",
+      "分类标题超过%d个字符，请重新填写": "分类标题超过%d个字符，请重新填写",
+      "该任务流程下示例问法总数不能超过%d个": "该任务流程下示例问法总数不能超过%d个",
+      "词条名超过%d个字符，请重新填写": "词条名超过%d个字符，请重新填写",
+      "词条同义词数量超过%d,请重新填写": "词条同义词数量超过%d,请重新填写",
+      "重复同义词: %s": "重复同义词: %s",
+      "词条同义词名称超过%d个字符,请重新填写": "词条同义词名称超过%d个字符,请重新填写",
+      "词条数量超过%d个": "词条数量超过%d个",
+      "实体名称超过%d个字符，请重新填写": "实体名称超过%d个字符，请重新填写",
+      "实体描述超过%d个字符，请重新填写": "实体描述超过%d个字符，请重新填写",
+      "实体示例数量超过%d个，请重新填写": "实体示例数量超过%d个，请重新填写",
+      "实体示例超过%d个字符，请重新填写": "实体示例超过%d个字符，请重新填写",
+      "流转规则组合条件为%s的用户输入值长度不超过%d个字符，请重新填写": "流转规则组合条件为%s的用户输入值长度不超过%d个字符，请重新填写",
+      "任务流程名大于%d个字符，请重新填写": "任务流程名大于%d个字符，请重新填写",
+      "任务流程名小于%d个字符，请重新填写": "任务流程名小于%d个字符，请重新填写",
+      "变量名超过%d个字符，请重新填写": "变量名超过%d个字符，请重新填写",
+      "变量描述超过%d个字符，请重新填写": "变量描述超过%d个字符，请重新填写",
+      "变量默认值超过%d个字符，请重新填写": "变量默认值超过%d个字符，请重新填写",
+      "变量默认值文件名称超过%d个字符，请重新填写": "变量默认值文件名称超过%d个字符，请重新填写",
+      "写入的变量名不符合 %s 命名规则": "写入的变量名不符合 %s 命名规则",
+      "写入的变量名 %s 在该应用下重复": "写入的变量名 %s 在该应用下重复",
+      "新建变量的数量超过 %d": "新建变量的数量超过 %d",
+      "变量类型错误": "变量类型错误",
+      "示例问法超过%d个字符，请重新填写": "示例问法超过%d个字符，请重新填写",
+      "该工作流下示例问法总数不能超过%d个": "该工作流下示例问法总数不能超过%d个",
+      "参数名称应该在 1~%d个字符，请重新填写": "参数名称应该在 1~%d个字符，请重新填写",
+      "参数描述应该在 1~%d个字符，请重新填写": "参数描述应该在 1~%d个字符，请重新填写",
+      "固定话术询问应该在1~%d个字符，请重新填写": "固定话术询问应该在1~%d个字符，请重新填写",
+      "参数类型不合法，请重新填写": "参数类型不合法，请重新填写",
+      "正确示例名称应该在 1~%d个字符，请重新填写": "正确示例名称应该在 1~%d个字符，请重新填写",
+      "正确示例重复: %s": "正确示例重复: %s",
+      "正确示例同义词个数最大为: %d个": "正确示例同义词个数最大为: %d个",
+      "错误示例名称应该在 1~%d个字符，请重新填写": "错误示例名称应该在 1~%d个字符，请重新填写",
+      "错误示例重复: %s": "错误示例重复: %s",
+      "错误示例个数最大为: %d个": "错误示例个数最大为: %d个",
+      "正确示例与错误示例重复: %s": "正确示例与错误示例重复: %s",
+      "节点名称 %s 不应大于%d个字符，请重新填写": "节点名称 %s 不应大于%d个字符，请重新填写",
+      "同一个节点下最多允许参数个数为: %d": "同一个节点下最多允许参数个数为: %d",
+      "工作流名称大于%d个字符，请重新填写": "工作流名称大于%d个字符，请重新填写",
+      "工作流名称小于%d个字符，请重新填写": "工作流名称小于%d个字符，请重新填写",
+      "请先配置节点": "请先配置节点",
+      "节点总数不能超过%d(现在是%d)": "节点总数不能超过%d(现在是%d)",
+      "存在环%s": "存在环%s",
+      "NodeID不应为空": "NodeID不应为空",
+      "节点名称不应为空": "节点名称不应为空",
+      "NodeID不应包含#": "NodeID不应包含#",
+      "开始节点应该为一个，现在是%d个": "开始节点应该为一个，现在是%d个",
+      "结束节点应该为一个，现在是%d个": "结束节点应该为一个，现在是%d个",
+      "%s节点的下游节点ID非法(%s)": "%s节点的下游节点ID非法(%s)",
+      "空的excel文件": "空的excel文件",
+      "表格条数少于%d条，请修改后重新上传": "表格条数少于%d条，请修改后重新上传",
+      "表格条数超过%d条，请修改后重新上传": "表格条数超过%d条，请修改后重新上传",
+      "%s": "%s",
+      "老任务流程已下线": "任务流程已下线，请使用工作流",
+      "该工作流下示例问法已经存在": "该工作流下示例问法已经存在",
+      "无效的密文模块类型": "无效的密文模块类型"
+    }
+  main.yaml: |
+    storage:
+      {{ include "qbot.bot_task_config_server.s3_storage" . }}
+
+    category:
+      category_name_len: 10
+      category_name_min_len: 1
+      category_node_limit: 2001
+
+    verify_task_flow:
+      task_flow_limit: 1000
+      version: 0.0.1
+      min_intent_name_len: 1
+      intent_name_len: 100
+      intent_desc_len: 200
+      ui_node_total: 100
+      ui_node_name_max: 30
+      ui_node_name_min: 1
+      var_params_count_max: 1000
+      var_params_text_max: 50
+      var_params_desc_text_max: 1000
+      var_params_default_value_max: 3000
+      required_info_name_max: 50
+      required_probe_custom_max: 3000
+      required_probe_preview_max: 3
+      answer_node_custom_max: 3000
+      answer_node_prompt_max: 3000
+      option_contents_text_max: 255
+      api_path_text_max:  500
+      api_node_required_info_max: 50
+      api_node_required_info_min: 0
+      api_request_param_sub_max_depth: 5
+      api_req_slot_format_desc_max: 200
+      api_rsp_params_max: 20
+      api_rsp_params_min: 0
+      api_rsp_param_max_depth: 2
+      api_rsp_sub_param_max_count: 20
+      option_contents_max: 60
+      option_contents_min: 0
+      node_branch_count_max: 20
+      node_branch_count_min: 1
+      condition_count_max: 10
+      condition_count_min: 1
+      condition_contains_value_max: 100
+      condition_contains_value_min: 1
+      condition_in_value_max: 2000
+      api_node_valid_json_field_rex: ^[a-zA-Z0-9\_\-\:]+$
+      branch_condition_max_depth: 2
+      api_node_headers_max_count: 10
+      api_node_headers_param_max_depth: 5
+      api_node_fixed_value_max_count: 2000
+      api_param_valid_json_field_rex: ^[a-zA-Z][a-zA-Z0-9_\-]*$
+
+    verify_workflow:
+      version: 0.0.1
+      workflow_name_len: 100
+      min_workflow_len: 1
+      workflow_limit: 1000
+      # 节点名称长度限制
+      node_name_max_len: 100
+      # 每个节点的输入参数个数限制
+      node_input_param_max: 50
+      # 输入参数名字长度限制
+      node_input_param_name_len: 40
+      # 输入参数名字要求正则表达式
+      node_input_param_name_pattern: ^[a-zA-Z_][a-zA-Z0-9_]*$
+      # 输入参数默认值长度限制
+      node_input_param_default_value_len: 10000
+      # 输入子入参数的数组长度
+      node_sub_input_param_len: 99
+      # 输入子入参数的深度
+      node_sub_input_param_depth: 10
+      # 意图描述长度
+      intent_desc_len: 300
+      # 工作流画布JSON节点总数
+      ui_node_total: 500
+      # 节点中prompt的长度（用于固定长度控制，如知识检索节点）
+      # 前端按照默认4000进行限制，后端需要double
+      node_prompt_max_len: 8000
+      # 每个节点最多支持配置x个参数
+      node_parameter_max_len: 20
+      # 0~1 弃用了
+      llm_node_temperature_max: 10
+      # 0~1
+      llm_node_top_p_max: 1
+      # 最大回复token数 (前端会根据模型取不同的有效区间，这里没有存在的必要了)
+      llm_node_max_tokens_max: 5000000
+      # 知识检索及大模型知识问答两节点文档数量
+      doc_biz_ids_max: 100
+      # 文档召回数量
+      doc_recall_count_min: 3
+      # 文档召回数量Max
+      doc_recall_count_max: 20
+      # 文档检索匹配度Max
+      doc_confidence_max: 0.99
+      # 问答召回数量
+      qa_recall_count_min: 2
+      # 问答召回数量Max
+      qa_recall_count_max: 5
+      # 问答检索匹配度Max, 0.01 ~ 0.99
+      qa_confidence_max: 0.99
+      # 知识检索和知识Max
+      knowledge_tag_max: 10
+      # 标签节点最多支持配置标签的个数
+      node_tag_max_len: 10
+      # 支持输入标签的取值示例，最多支持50个
+      node_tag_example_max_len: 50
+      # 工具节点入参的个数
+      node_tool_max_count: 50
+      # 工具节点入参的深度
+      node_tool_sub_max_depth: 10
+      # 工具节点出入参规则
+      node_tool_valid_json_field_rex: ^[a-zA-Z0-9\_\-\:]+$
+      # 工具节点参数名称最大长度
+      node_tool_name_max: 40
+      # 工具节点resp的最大深度
+      node_tool_resp_max_depth: 11
+      # 用户输入的"固定值"的长度
+      user_input_max_len: 10000
+      # 条件组最多个数限制
+      logic_group_count_max: 50
+      # 回复节点内容最大
+      answer_max_len: 8000
+      code_node_input_len: 99
+      code_node_output_len: 99
+      code_node_code_len: 131072
+      # 反馈描述最大长度
+      feedback_desc_max_len: 2000
+      # 选项卡节点中选项的最大个数（包含else）
+      option_max_item_count: 101
+      # 选项卡问题最大长度
+      option_max_question_len: 2000
+      # 选项卡选项最大长度
+      option_item_max_len: 200
+      # 意图识别模型 - 待识别意图的内容（deprecated，由模型动态配置）
+      intent_prompt: 4000
+      # 循环节点内置的"输入变量"
+      iteration_inner_input_param_names:
+        - Loop
+        - Loop.Index
+        - Loop.Output
+        - Loop.ErrorCode
+        - Loop.Log
+      # 变量聚合节点中 聚合变量组 的最大个数
+      var_aggregation_max_group_count: 10
+      # 变量聚合节点中 聚合变量组 中 聚合变量的最大个数
+      var_aggregation_max_item_count: 50
+      # 知识库数据库节点sql语句最长字符数
+      knowledge_db_sql_max_len: 4000
+      # 知识库数据库节点最多支持选择到10个表
+      knowledge_db_table_max_len: 10
+      # 异常处理机制，最大重试次数
+      retry_max: 5
+      # 异常处理机制，最大重试时间间隔
+      retry_interval_max: 60
+      # 异常处理机制，异常输出变量最大长度
+      abnormal_output_result_len: 4000
+      # 中间消息，最大内容长度 200
+      pending_message_max_content_len: 200
+      # 中间消息，最长输出延时（单位：秒） 5
+      pending_message_max_delay_seconds: 5
+      # 工作流引用最大深度
+      workflow_reference_depth: 5
+      # 意图识别个数
+      intent_max: 51
+      # 是否开启真只针对调试通过和发布的工作流开关
+      debugged_or_published_enable: true
+      # 是否支持工作流高版本向低版本导入，默认false不支持
+      is_support_workflow_import_high_to_low: false
+      # 注释节点文本长度上限
+      node_comment_data_max_len: 1200
+      # 文件采集节点提示词长度上限
+      node_file_collection_question_max_len: 1200
+      # 文件收集节点允许最多上传文件个数
+      node_file_collection_max_allowed_upload_file_count: 20
+      # 工具节点腾讯云签名的SecretId允许的最大长度
+      node_tool_tencent_secret_id_max_len: 1024
+      # 工具节点腾讯云签名的SecretKey允许的最大长度
+      node_tool_tencent_secret_key_max_len: 1024
+      # 工具节点轮训调用超时时间最大值
+      node_tool_polling_max_timeout: 600
+      # 工具节点轮训调用间隔最大值
+      node_tool_polling_max_interval: 10
+
+    verify_parameter:
+      custom_ask_enable_sid: [1] # 第三方集成商是否支持参数提取节点设置自定义话术
+      custom_ask_len: 2000
+      param_max_num: 20
+      param_name_len: 30
+      param_desc_len: 1000
+      correct_example_name_max_len: 50
+      correct_example_max_num: 200
+      incorrect_example_name_max_len: 50
+      incorrect_example_max_num: 20
+
+    task_flow:
+      category_file_name: 分类.xlsx
+      task_flow_file_name: 任务流程.xlsx
+      intent_file_name: 意图.xlsx
+      corpus_file_name: 语料.xlsx
+      slot_file_name: 槽位.xlsx
+      intent_example_file_name: 示例问法.xlsx
+      var_params_file_name: 变量.xlsx
+      min_row: 1
+      max_row: 200
+      history_len: 20
+      export_limit: 200
+      category_head:
+        - 分类ID
+        - 一级分类
+        - 二级分类
+        - 三级分类
+        - 四级分类
+        - 五级分类
+        - 六级分类
+        - 七级分类
+        - 八级分类
+        - 九级分类
+        - 十级分类
+      task_flow_head:
+        - 任务流ID
+        - 意图ID
+        - 意图名称
+        - 意图描述
+        - 分类ID
+        - 画布结构
+      intent_head:
+        - 意图ID
+        - 意图名称
+        - 意图描述
+        - 意图类型
+        - 业务来源
+      corpus_head:
+        - 意图ID
+        - 语料内容
+      slot_head:
+        - 意图ID
+        - 槽位ID
+        - 槽位名称
+        - 槽位描述
+        - 槽位示例
+        - 实体信息
+      intent_example_head:
+        - 意图ID
+        - 示例问法ID
+        - 示例问法内容
+      var_params_head:
+        - 意图ID
+        - 变量ID
+        - 变量名称
+        - 变量描述
+        - 变量类型
+        - 变量默认值
+        - 变量默认值文件名称
+
+    workflow:
+      workflow_file_name: 工作流程.xlsx
+      param_file_name: 参数.xlsx
+      example_file_name: 示例问法.xlsx
+      var_file_name: 变量.xlsx
+      workflow_ref_file_name: 工作流程引用.xlsx
+      workflow_pdl_file_name: 工作流程PDL.xlsx
+      min_row: 1
+      max_row: 200
+      history_len: 20
+      export_limit: 200
+      example_max_row: 200
+      workflow_head:
+        - 工作流ID
+        - 工作流名称
+        - 工作流描述
+        - 画布结构
+      param_head:
+        - 工作流ID
+        - 工作流节点ID
+        - 工作流节点名称
+        - 参数ID
+        - 参数名称
+        - 参数描述
+        - 参数类型
+        - 参数正确示例
+        - 参数错误示例
+        - 父参数ID
+      example_head:
+        - 工作流ID
+        - 示例问法ID
+        - 示例问法内容
+      var_head:
+        - 工作流ID
+        - 变量ID
+        - 变量名称
+        - 变量描述
+        - 变量类型
+        - 变量默认值
+        - 变量默认值文件名称
+        - 参数类型
+      workflow_ref_head:
+        - 工作流ID
+        - 工作流节点ID
+        - 工作流引用ID
+        - 工作流引用名称
+      workflow_pdl_head:
+        - 工作流ID
+        - PDL约束内容
+        - PDL参数结构
+        - PDL内容结构
+        - PDL工具结构
+      run_code:
+        max_result_length: 200000
+        result_separator: "_______ResultSeparator_______"
+        code_template: |-
+        {{`
+          import time
+          import datetime
+          import json
+          import numpy
+          import pandas
+          import math
+          import cmath
+          import decimal
+          import fractions
+          import random
+          import statistics
+          import re
+          import string
+          import stringprep
+          import collections
+          import numbers
+          import unicodedata
+
+          class SystemJsonEncoder(json.JSONEncoder):
+            def default(self, obj):
+                import numpy as np
+                if isinstance(obj, np.timedelta64):
+                    return str(obj)
+                elif isinstance(obj, np.integer):
+                    return int(obj)
+                elif isinstance(obj, (np.void)):
+                    return None
+                elif isinstance(obj, np.floating):
+                    return float(obj)
+                elif isinstance(obj, np.complexfloating):
+                    return {'real': obj.real, 'imag': obj.imag}
+                elif isinstance(obj, np.bytes_):
+                    return obj.decode('utf-8')
+                elif isinstance(obj, np.str_):
+                    return str(obj)
+                elif isinstance(obj, np.datetime64):
+                    return str(obj)
+                elif isinstance(obj, np.ndarray):
+                    return obj.tolist()
+                elif isinstance(obj, pd.DataFrame):
+                    return obj.to_dict()
+                elif isinstance(obj, pd.Series):
+                    return obj.to_list()
+                return super(JsonEncoder, self).default(obj)
+
+          {{CodeContent}}
+
+          main_result = main(json.loads("""{{InputParamObject}}"""))
+          print("{{ResultSeparator}}")
+          print(json.dumps(main_result, ensure_ascii=False, cls=SystemJsonEncoder))`}}
+
+    refresh_workflow:
+      vector:
+        enable: false
+        spec:  "12 */5 * * * *"
+        refresh_all: false
+        white_robot_ids_list:
+          - 1871028654794342400
+
+    #######################
+    # 定时任务
+    # task_prefix: 任务前缀
+    # task_fetch_num: 每批次任务拉取个数
+    # task_fetch_timeout: 拉取任务超时
+    # task_fetch_period: 拉取任务周期
+    # tasks 业务任务配置列表
+    #######################
+    task_prefix: botconfig:task
+    task_fetch_num: 400
+    task_fetch_timeout: 2s
+    task_fetch_period: 2s
+    task_max_timeout: 1h
+    tasks:
+      export_task_flow:
+        runners: 2 #处理协程数，无法动态调整
+        retry_wait_time: 1m #重试等待时间
+        max_retry: 10 #最大重试次数
+        timeout: 10m #超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s #启动延迟
+        batch:  3
+        batch_size: 0
+        stopped_resume_time: 720h
+      import_task_flow_parent:
+        runners: 2 #处理协程数，无法动态调整
+        retry_wait_time: 1m #重试等待时间
+        max_retry: 10 #最大重试次数
+        timeout: 10m #超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s #启动延迟
+        batch:  3
+        batch_size: 0
+        stopped_resume_time: 720h
+      import_task_flow:
+        runners: 2 #处理协程数，无法动态调整
+        retry_wait_time: 1m #重试等待时间
+        max_retry: 10 #最大重试次数
+        timeout: 10m #超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s #启动延迟
+        batch:  3
+        batch_size: 0
+        stopped_resume_time: 720h
+      import_entry_flow:
+        runners: 5 #处理协程数，无法动态调整
+        retry_wait_time: 1m #重试等待时间
+        max_retry: 10 #最大重试次数
+        timeout: 30m #超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s #启动延迟
+        batch:  1
+        batch_size: 0
+        stopped_resume_time: 720h
+      flow_delete:
+        runners: 1 #处理协程数，无法动态调整
+        retry_wait_time: 1m #重试等待时间
+        max_retry: 5 #最大重试次数
+        timeout: 2h #超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s #启动延迟
+        batch:  1
+        batch_size: 0
+        stopped_resume_time: 720h
+      convert_workflow_to_pdl:
+        runners: 5 #处理协程数，无法动态调整
+        retry_wait_time: 1m #重试等待时间
+        max_retry: 1 #最大重试次数
+        timeout: 5m #超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s #启动延迟
+        batch:  1
+        batch_size: 0
+        stopped_resume_time: 720h
+      upgrade_workflow_vector:
+        runners: 5 #处理协程数，无法动态调整
+        retry_wait_time: 1m #重试等待时间
+        max_retry: 1 #最大重试次数
+        timeout: 5m #超时时间
+        fail_timeout: 3s # 失败回调超时
+        delay: 0s #启动延迟
+        batch:  1
+        batch_size: 0
+        stopped_resume_time: 720h
+
+    # 数据同步任务
+    data_sync_task:
+      release_queue_length: 200
+      release_items_per_batch: 10
+
+    # 向量库配置
+    vector_group:
+      Biz: cs
+      Secret: ""
+      OperationMaxIDs: 100
+      EmbeddingModelName: "embedding_1121_7500"
+      TaskFlowUseVdb: true
+      WorkflowUseVdb: true
+
+    workflow_vector_group:
+      EmbeddingModelName: "sn-large-multi-language-v0.2.5"
+      LatestEmbeddingModelName: "sn-large-multi-language-v0.2.5"
+      Biz: cs
+      Secret: ""
+      OperationMaxIDs: 100
+      WorkflowUseVdb: true
+      EmbeddingVersionControl:
+        embedding_1121_7500:
+          GroupSuffix: ""
+          WorkflowNameTemplate: {{`"{{ .WorkflowName }}"`}}
+          WorkflowExampleTemplate: {{`"{{ .Example }}"`}}
+          WorkflowCombinationTemplate: ""
+          WorkflowCombinationExampleNum: 0
+        sn-large-multi-language-v0.2.5:
+          GroupSuffix: "v1"
+          WorkflowNameTemplate: {{`问题:{{ .WorkflowName }}`}}
+          WorkflowExampleTemplate: {{`问题:{{ .Example }}`}}
+          WorkflowCombinationTemplate: |-
+            {{`问题:{{ .WorkflowName }}
+            {{- if .WorkflowExampleList }}
+            {{- range $index, $q := $.WorkflowExampleList }}
+            相似问:{{ $q }}
+            {{- end }}
+            {{- end }}
+            答案:{{ .WorkflowDescription }}`}}
+          WorkflowCombinationExampleNum: 10
+
+    llm_support_workflow:
+      support: ["lke-deepseek-v3", "lke-deepseek-r1", "cs-normal-70b", "hunyuan", "sn-edu-70b", "lke-deepseek-r1-vip","lke-deepseek-v3-vip","lke-deepseek-v3-0324","lke-deepseek-r1-0528"]
+      poor_support: ["cs-normal","hunyuan-13B", "hunyuan-standard-256K", "hunyuan-turbo", "hunyuan-role", "finance-13b", "sn-edu-13b"]
+      not_support: ["medical-6b"]
+
+    workflow_node_llm_support:
+      # 参数提取节点
+      parameter_extractor:
+        high_performance_price: [ "hunyuan","cs-normal-70b","lke-deepseek-v3", "cs-normal-merge","lke-deepseek-v3-0324" ]
+        recommend: [ "hunyuan","cs-normal-70b","lke-deepseek-v3","lke-deepseek-v3-0324" ]
+        depth_think: [ "lke-deepseek-r1", "lke-deepseek-r1-0528" ]
+        more_balanced: [ "workflow-pro", "workflow-pro-merge" ]
+        limit_time_free: [ ]
+        default_selected: [ "workflow-pro" ]
+        not_show: ["cs-normal-merge"]
+
+      # 大模型节点
+      llm:
+        high_performance_price: [ "hunyuan","cs-normal-70b","lke-deepseek-v3", "cs-normal-merge","lke-deepseek-v3-0324" ]
+        recommend: [ "hunyuan","cs-normal-70b","lke-deepseek-v3","lke-deepseek-v3-0324" ]
+        depth_think: [ "lke-deepseek-r1", "lke-deepseek-r1-0528" ]
+        more_balanced: [ "workflow-pro", "workflow-pro-merge" ]
+        limit_time_free: [ ]
+        default_selected: [ "cs-normal-70b" ]
+        not_show: [ "workflow-pro-merge" ]
+
+      # 大模型知识问答节点
+      llm_knowledge_qa:
+        high_performance_price: [ "hunyuan","cs-normal-70b","lke-deepseek-v3", "cs-normal-merge","lke-deepseek-v3-0324" ]
+        recommend: [ "hunyuan","cs-normal-70b","lke-deepseek-v3","lke-deepseek-v3-0324" ]
+        depth_think: [ "lke-deepseek-r1", "lke-deepseek-r1-0528" ]
+        more_balanced: [ "workflow-pro", "workflow-pro-merge" ]
+        limit_time_free: [ ]
+        default_selected: [ "cs-normal-70b" ]
+        not_show: ["workflow-pro-merge"]
+
+      # 标签提取节点
+      tag_extractor:
+        high_performance_price: [ "hunyuan","cs-normal-70b","lke-deepseek-v3", "cs-normal-merge","lke-deepseek-v3-0324" ]
+        recommend: [ "hunyuan","cs-normal-70b","lke-deepseek-v3","lke-deepseek-v3-0324" ]
+        depth_think: [ "lke-deepseek-r1", "lke-deepseek-r1-0528" ]
+        more_balanced: [ "workflow-pro", "workflow-pro-merge" ]
+        limit_time_free: [ ]
+        default_selected: [ "cs-normal-70b" ]
+        not_show: ["workflow-pro-merge"]
+
+      # 意图识别节点
+      intent_recognition:
+        high_performance_price: [ "hunyuan","cs-normal-70b","lke-deepseek-v3", "cs-normal-merge","lke-deepseek-v3-0324" ]
+        recommend: [ "hunyuan","cs-normal-70b","lke-deepseek-v3","lke-deepseek-v3-0324" ]
+        depth_think: [ "lke-deepseek-r1" ]
+        more_balanced: [ "workflow-pro", "workflow-pro-merge" ]
+        limit_time_free: [ ]
+        default_selected: [ "cs-normal-70b" ]
+        not_show: ["cs-normal-merge", "lke-deepseek-r1-0528"]
+
+    promptWordTemplate:
+      - name: 场景1.对话中未提取到参数，告知模型如何反问用户
+        text: "请提取“挂号ID”参数，如果用户没有提供，请提示用户该信息可以在挂号单中找到，并请用户提供准确信息，否则无法完成挂号流程。"
+      - name: 场景2.收集的参数非常重要，需要用户2次确认
+        text: "“发票开通方式”参数非常重要，当你收集到这个参数后，需要再跟用户确认一次，以确保信息准确无误。"
+
+    finance:
+      disabled: false
+
+    api_path_safety:
+      white_ip: ["allow_all"]
+
+    tool_node_path_safety:
+      # 注意！！！注意！！！注意！！！
+      # 后续统一使用op录入，非必要这里不再维护增加
+      white_ip: ["allow_all"]
+
+    app_share:
+      # base_url + "/" + shareCode
+      base_url: {{ .Values.global.scheme }}://{{ .Values.global.clb }}/webim/#/chat
+      immediately_base_url: {{ .Values.global.scheme }}://{{ .Values.global.clb }}/webim/#/chat
+      #  过期时间，0标识不过期
+      expired_time: 0
+      redis_prefix_key: lke_share_url
+      share_code_len: 6
+      white_app_id: ["1887055767721213952", "1881232787362021376", "1878648256573997056"]
+
+    example_corpus:
+      intent_example_content_len: 50
+      intent_example_max: 200
+      example_embedding_batch_size: 2
+
+    entry:
+      # 实体名称最大长度
+      MaxEntityNameLen: 10
+      # 实体示例最大长度
+      MaxEntityExampleLen: 10
+      # 实体示例最多允许的数量
+      MaxEntityExampleNum: 1
+      # 实体描述最大长度
+      MaxEntityDescLen: 200
+      # 词条名称最大长度
+      MaxEntryNameLen: 50
+      # 词条数量最大限制
+      MaxEntryNum: 1000
+      # 词条别名最大长度限制
+      MaxEntryAliasLen: 50
+      # 词条别名最大数量限制
+      MaxEntryAliasNum: 200
+      # 导入词条时Excel文件头
+      EntryHead:
+        - 词条（必填）
+        - 同义词（选填）
+    task_flow_config:
+      # 从v2.1版本升级为v2.4的对话树
+      upgrade_proto_version_from_21_to_24:
+        # 总开关
+        enable: false
+        # cron的 spec
+        spec: "25 * * * * *"
+        # 是否刷全量机器人
+        upgrade_all_bot: false
+        white_bot_list:
+          - "1753038747872264192" # 发布。已经删除的机器人 jianying的
+
+      refresh_del_example_to_vector:
+        enable: false
+        spec:  "59 */2 * * * *"
+        refresh_all: false
+        white_intent_ids_list:
+          - 652e8538-cf72-4c3f-b643-608adcd8d52f
+      ## 10-29 修复删除示例问法但向量没删的数据
+      del_vector_from_del_example:
+        enable: false
+        spec:  "0 */2 * * * *"
+        refresh_all: false
+        white_robot_ids_list:
+          - 1844694714228408320
+
+      # 刷示例问法
+      refresh_example_to_vector:
+        # 总开关
+        enable: false
+        attempts: 6
+        # ms
+        delay: 1800
+        # 秒
+        maxDelay: 14
+        # cron的 spec
+        spec: "55 */8 * * * *"
+        # 是否刷全量机器人
+        refresh_all_bot: false
+        retry_all: false
+        white_bot_list:
+          - "1813248213770829824"
+
+    sync_entity_entries_to_redis:
+      enable: {{ .Values.v2_1.sync_data_switch }}
+      # cron的 spec
+      spec:  "0 */10 * * * *"
+      # 是否刷全量机器人
+      sync_all_bot: true
+      # upgrade_all_bot 是false的情况下，只刷白名单
+      white_bot_list:
+        - "1747088166522585088"
+
+    content_check: {{ if hasKey .Values.global.contentSecurity "auditSwitch" -}}
+      {{ .Values.global.contentSecurity.auditSwitch }}
+    {{- else -}}
+      false
+    {{- end }}
+
+    # 是否为私有化环境部署
+    privacy_env : true
+    # 有些项目不需要工作流，但会依赖task-config服务，如果有工作流则需要通知dm，该参数为true，否则为false
+    workflow_dm_notify: {{- if eq .Values.global.deploy_mode "all_in_one" }} false {{- else}} true {{- end}}
+
+    # 工作流数据库表物理删除配置
+    # need_delete_tables DB需要删除的表名列表
+    #   map:[string]string, key:表名 value:表删除handler name
+    # 	  t_category: ROBOT_ID
+    # 	  ...
+    # delete_batch_size 批次删除最大数量
+    # query_batch_size 批次查询最大数量
+    flow_delete_config:
+      delete_batch_size: 5000 # 批次删除最大数量
+      query_batch_size: 1000 # 批次查询最大数量
+      need_delete_tables:
+        t_var: "OTHER_ROBOT_ID" # f_app_id
+        t_app_shared: "OTHER_ROBOT_ID"
+        t_export_file: "OTHER_ROBOT_ID"
+        t_bot_task_history: "OTHER_ROBOT_ID"
+        t_sync_task: "OTHER_ROBOT_ID" # robot_id
+        t_sync_task_log: "OTHER_ROBOT_ID"
+        # 包含 t_entity, t_entry,t_slot_entity,
+        t_entity: "ENTITY_ID"
+        #  ================= f_robot_id ==============
+        t_category: "ROBOT_ID"
+        t_intent_corpus: "ROBOT_ID"
+        t_slot: "ROBOT_ID"
+        t_task_flow_import: "ROBOT_ID"
+        t_vector_group: "ROBOT_ID"
+        # ================= f_intent_id ===============
+        # 包含 t_robot_intent,t_intent,t_task_flow,t_task_flow_history,t_task_flow_publish_history,t_corpus,t_intent_var,
+        # t_intent_slot,t_intent_flow,t_intent_entry,t_intent_corpus_publish_history
+        t_robot_intent: "FLOW_INTENT_ID"
+        # ================== PROD ==============
+        prod|t_var: "OTHER_ROBOT_ID_PROD"
+        # 包含 t_entity, t_entry,t_slot_entity,
+        prod|t_entity: "ENTITY_ID_PROD"
+        #  ================= f_robot_id ==============
+        prod|t_intent_corpus: "ROBOT_ID_PROD"
+        prod|t_slot: "ROBOT_ID_PROD"
+        # 包含 t_robot_intent,t_intent,t_task_flow,t_corpus,t_intent_var,
+        # t_intent_slot,t_intent_flow,t_intent_entry,
+        prod|t_robot_intent: "FLOW_INTENT_ID_PROD"
+        # ----------------- workflow ---------
+        w|t_workflow: W_ROBOT_ID
+        w|t_robot_workflow: W_ROBOT_ID
+        w|t_workflow_example: W_ROBOT_ID
+        w|t_workflow_var: W_ROBOT_ID
+        w|t_workflow_reference: W_ROBOT_ID
+        w|t_workflow_ref_knowledge: W_ROBOT_ID
+        w|t_workflow_ref_db_knowledge: W_APP_BIZ_ID
+        w|t_workflow_ref_agent: W_APP_BIZ_ID
+        w|t_workflow_parameter: W_ROBOT_ID
+        w|t_parameter: W_ROBOT_ID
+        w|t_vector_group: W_ROBOT_ID
+        w|t_vector_store: W_ROBOT_ID
+        w|t_feedback_reason: W_ROBOT_ID
+        w|t_feedback_record: W_ROBOT_ID
+        w|t_export_file: W_ROBOT_ID
+        w|t_workflow_import: W_ROBOT_ID
+        w|t_pdl_history: W_ROBOT_ID
+        w|t_pdl_version: W_ROBOT_ID
+        w|t_workflow_pdl: W_ROBOT_ID
+        w|t_workflow_plugin: W_ROBOT_ID
+        w|t_workflow_custom_model: W_ROBOT_ID
+        w|t_sync_task: W_ROBOT_OTHER_ID
+        w|t_sync_task_log: W_ROBOT_OTHER_ID
+        w|t_pdl_sync_task: W_ROBOT_OTHER_ID
+        w|t_pdl_sync_task_log: W_ROBOT_OTHER_ID
+        prod|t_workflow: W_ROBOT_ID_PROD
+        prod|t_robot_workflow: W_ROBOT_ID_PROD
+        prod|t_workflow_example: W_ROBOT_ID_PROD
+        prod|t_workflow_var: W_ROBOT_ID_PROD
+        prod|t_workflow_reference: W_ROBOT_ID_PROD
+        prod|t_workflow_ref_knowledge: W_ROBOT_ID_PROD
+        prod|t_workflow_ref_db_knowledge: W_APP_BIZ_ID_PROD
+        prod|t_workflow_ref_agent: W_APP_BIZ_ID_PROD
+        prod|t_workflow_parameter: W_ROBOT_ID_PROD
+        prod|t_parameter: W_ROBOT_ID_PROD
+        prod|t_workflow_pdl: W_ROBOT_ID_PROD
+        prod|t_workflow_custom_model: W_ROBOT_ID_PROD
+
+    # 企点所对应的sid
+    qidian_sid: 2
+
+    # pdl配置
+    pdl_config:
+      # PDL版本数量显示最近20个
+      version_num_limit: 20
+      # 原因描述的字符长度限制
+      reason_len_limit: 200
+      # pdl不可转换和转换失败等原因枚举值对应的描述
+      reason_desc:
+        WORKFLOW_NOT_DEBUGGED: "画布未调试"
+        UNSUPPORTED_NODE: "画布中包含不支持的节点，不支持节点包括：大模型知识问答、知识检索、标签提取、意图识别、选项卡、循环、工作流、聚合变量"
+        UNSUPPORTED_PLUGIN: "画布中包含不支持的插件类型"
+        PARALLEL_BRANCHES: "画布中存在并行分支，建议调整为串行流程后重试"
+        CONDITION_CHAT_HISTORY: "不支持条件判断节点引用系统变量SYS.ChatHistory"
+        ANSWER_CHAT_HISTORY: "不支持回复节点引用系统变量SYS.ChatHistory"
+        REFERENCE_CONDITION_OUTPUT: "不支持变量中引用条件判断节点的条件序号"
+        EXPRESS_LEN_EXCEEDED: "条件表达式转换后字符数超过2000，建议缩减条件逻辑后重试"
+        WORKFLOW_ILLEGAL: "画布数据异常"
+        SYSTEM_ERROR: "系统错误"
+
+    # 转换pdl的配置
+    pdl_convert_config:
+      # 转换方式 rule-工程规则转换 llm-大模型转换
+      convert_method: rule
+      # pdl token长度限制
+      pdl_token_len: 6000
+      # 条件表达式字符长度限制
+      cond_expression_len: 2000
+      # 插件黑名单，包含这些插件工具ID的不允许转换PDL
+      plugin_tool_black_list:
+        - c78ea687-08d9-40d4-9bf2-3bd2c2fa4b5a
+        - 40800552-c520-44d9-90cf-1d0fe66845a5
+        - ec6f8b82-2638-4153-b41c-ae40e5deebeb
+      # 工程规则转换配置
+      rule_convert:
+        # 是否开启提取函数处理及及节点入度和后继节点数配置
+        extract_func_enable: true
+        func_in_degree_num: 2
+        func_successor_num: 2
+
+    # 异步工作流配置
+    async_workflow_config:
+      # 工作流运行实例个数用户级限制
+      workflow_run_limit: 10
+      # 工作流运行实例个数总体限制
+      workflow_run_overall_limit: 100
+      # 定时兜底间隔时间，单位秒
+      fallback_timer_interval: 300
+      #定时重试UIN间隔时间，单位秒
+      retry_timer_interval: 10
+      # 运行中重试间隔时间，单位秒
+      running_retry_interval: 600
+
+    ignore_service_name:
+      trpc.KEP.bot-admin-config-server.Admin: true
+      trpc.KEP.bot-admin-config-server.Api: true
+      qbot.qbot.admin.Admin: true
+      qbot.qbot.chat.Chat: true
+      qbot.qbot.chat.ChatHttp: true
+      qbot.qbot.op.Op: true
+      trpc.KEP.plugin-config-server.PluginConfig: true
+      trpc.KEP.plugin-config-server.PluginConfigApi: true
+      trpc.KEP.agent-config-server.AgentConfig: true
+      trpc.KEP.agent-config-server.AgentConfigApi: true
+      trpc.KEP.channel-msg-svr.trpc: true
+      trpc.KEP.trpc.KEP.channel-msg-svr.Api: true
+      trpc.KEP.bot-agent-server.chat: true
+      trpc.KEP.bot-rag-server.chat: true
+      trpc.adp.bot-op-server.Op: true
+      trpc.adp.resource_gallery.Admin: true
+      trpc.adp.platform_manager.Admin: true
+      trpc.adp.app_config.Admin: true
+  placeholder.yaml: |
+
+  task_en-US.json: |
+    {
+      "__comment_1__": "=============配置=============",
+      "工作流程.xlsx": "Workflow.xlsx",
+      "参数.xlsx": "Parameters.xlsx",
+      "示例问法.xlsx": "Example Queries.xlsx",
+      "变量.xlsx": "Variables.xlsx",
+      "工作流程引用.xlsx": "Workflow References.xlsx",
+      "工作流程PDL.xlsx": "WorkflowPDL.xlsx",
+      "工作流ID": "Workflow ID",
+      "工作流名称": "Workflow Name",
+      "工作流描述": "Workflow Description",
+      "画布结构": "Canvas Structure",
+      "工作流节点ID": "Workflow Node ID",
+      "工作流节点名称": "Workflow Node Name",
+      "参数ID": "Parameter ID",
+      "参数名称": "Parameter Name",
+      "参数描述": "Parameter Description",
+      "参数类型": "Parameter Type",
+      "参数正确示例": "Parameter Correct Example",
+      "参数错误示例": "Parameter Incorrect Example",
+      "父参数ID": "Parameter Parent ID",
+      "示例问法ID": "Example Query ID",
+      "示例问法内容": "Example Query Content",
+      "变量ID": "Variable ID",
+      "变量名称": "Variable Name",
+      "变量描述": "Variable Description",
+      "变量类型": "Variable Type",
+      "变量默认值": "Variable Default Value",
+      "变量默认值文件名称": "Variable Default Value File Name",
+      "工作流引用ID": "Workflow Reference ID",
+      "工作流引用名称": "Workflow Reference Name",
+      "PDL约束内容": "PDL Constraint Content",
+      "PDL参数结构": "PDL Parameter Structure",
+      "PDL内容结构": "PDL Content Structure",
+      "PDL工具结构": "PDL Tool Structure",
+      "任务流程导出中": "Taskflow Exporting",
+      "任务流程导出%s": "Taskflow Export %s",
+      "%s导入中": "%s importing",
+      "%s导入成功": "%s import successful",
+      "%s导入失败，总共%d条，成功%d条，失败%d条": "%s import failed, total: %d, %d successful, %d failed",
+      "%s导入失败": "%s import failed",
+      "共%d条词汇，成功%d条，失败%d条": "A total of %d entries, %d successful, %d failed",
+      "工作流程导出中": "Workflow exporting",
+      "工作流程导出%s": "Workflow export %s",
+      "共%d条示例问法，成功%d条，失败%d条": "A total of %d example queries, %d successful, %d failed",
+      "工作流%s转换中": "Workflow %s converting",
+      "工作流%s转换%s": "Workflow %s conversion %s",
+      "词汇导入成功": "Vocabulary import successful",
+      "词汇导入失败": "Vocabulary import failed",
+      "任务流程导出成功": "Taskflow export successful",
+      "任务流程导入失败": "Taskflow import failed",
+      "示例问法导入成功": "Example Query import successful",
+      "示例问法导入失败": "Example Query import failed",
+      "工作流转换成功": "Workflow conversion successful",
+      "工作流转换失败": "Workflow conversion failed",
+      "反馈信息": "Feedback information",
+      "您对工作流\"%s\"的反馈已提交，反馈ID为%s": "Your feedback for Workflow \"%s\" has been submitted, Feedback ID: %s",
+      "反馈ID为%s的问题\"%s\"的反馈已被处理完成": "Feedback for issue \"%s\" (Feedback ID: %s) has been processed",
+      "你对的问题\"%s\"的反馈(ID:%s)已被技术人员拒绝": "Your feedback for issue \"%s\" (ID: %s) has been rejected by technical staff",
+      "不支持发布": "Releaseing Not Supported",
+      "待转换": "Pending conversion",
+      "不可转换": "Not Convertible",
+      "转换中": "Converting",
+      "转换失败": "Conversion Failed",
+      "待调试": "Debug pending",
+      "待发布": "To be released",
+      "发布中": "Releasing",
+      "已发布": "Released",
+      "发布失败": "Fail",
+      "新增": "New",
+      "修改": "Modified",
+      "删除": "Deleted",
+      "（存在画布配置错误，无法发布）": "(invalid canvas configurations, cannot be released)",
+      "已提交": "Submitted",
+      "定位问题中": "Targeting",
+      "处理中": "Processing",
+      "排期优化中": "Undergoing",
+      "已拒绝": "Rejected",
+      "已处理完成": "Done",
+      "【环境变量】": "[Environment Variable] ",
+      "【API参数】": "[API parameters] ",
+      "【应用变量】": "[Application Variable] ",
+      "本轮对话内容": "Current conversation content",
+      "多轮对话中本轮对话改写结果": "Rewritten response in this round of multi-turn conversation",
+      "对话历史": "Conversation history",
+      "当前时间": "Current time",
+      "对话请求ID（API调用请求参数中的request_id）": "Conversation Request ID (request_id in API call parameters)",
+
+      "__comment_2__": "=============任务流=============",
+      "词汇为空": "Entry is empty",
+      "词汇名称超过最大长度:%d": "Entry name exceeds maximum length: %d",
+      "存在重复： %s": "Duplicate exists: %s",
+      "请用|进行同义词的分割": "Please use | to separate synonyms",
+      "同义词最多%d个": "Up to %d synonyms",
+      "单个同义词长度超过%d": "Single synonym length exceeds %d",
+      "最多导入%d条": "Up to %d can be imported",
+      "该应用下不存在词条:%s": "The entry %s does not exist under this application ",
+      "该应用下不存在变量:%s": "Variable %s does not exist under this application",
+      "画布flowId与前端传参的flowId不一致": "Canvas flowId is inconsistent with the flowId passed from the frontend",
+      "任务流名称修改需同步修改画布JSON中的任务流名称": "Taskflow name modification requires synchronizing the name in the canvas JSON",
+      "画布节点数不符合范围要求！": "Number of nodes in the canvas does not meet the required range!",
+      "画布内节点名称有重复，%s": "Duplicate node names in the canvas, %s",
+      "任务流程json文件:%s不存在或名称不合法；": "Taskflow json file: %s does not exist or the name is invalid;",
+      "任务流ID为空": "Taskflow ID is empty",
+      "任务流ID与第%d行重复": "Task flow ID is duplicated with row %d",
+      "意图ID为空": "Intent ID is empty",
+      "意图ID与第%d行重复": "Intent ID is duplicated with row %d",
+      "意图ID在任务流程文件中不存在": "Intent ID does not exist in the task flow file",
+      "意图名称为空": "Intent name is empty",
+      "意图名称长度超过字符限制": "Intent name exceeds character limit",
+      "意图名称与第%d行重复": "Intent name is duplicated with row %d",
+      "意图名称与管理后台重复": "Intent name is duplicated with the management backend",
+      "意图名称和任务流程文件中对应的意图名称不匹配": "Intent name does not match the corresponding intent name in the task flow file",
+      "意图描述长度超过字符限制": "Intent description exceeds character limit",
+      "意图描述和任务流程文件中对应的意图描述不匹配": "Intent description does not match the corresponding intent description in the task flow file",
+      "意图类型错误": "Intent type error",
+      "业务来源错误": "Business source error",
+      "画布结构解析错误": "Canvas structure parsing error",
+      "任务流程ID和画布结构中的流程ID不匹配": "Taskflow ID does not match the process ID in the canvas structure",
+      "任务流程名称和画布结构中的流程名称不匹配": "Taskflow name does not match the process name in the canvas structure",
+      "分类ID为空": "Category ID is empty",
+      "分类ID与第%d行重复": "Category ID is duplicated with row %d",
+      "分类名称为空": "Category name is empty",
+      "第%d级分类为空": "Level %d category is empty",
+      "第%d级分类名称长度超过字符限制": "Level %d category name exceeds character limit",
+      "变量ID为空": "Variable ID is empty",
+      "意图ID和变量ID与第%d行重复": "Intent ID and variable ID are duplicated with row %d",
+      "导入变量:%s,与应用内其它变量重复": "Imported variable: %s is duplicated with other variables in the application",
+      "变量数据与第%d行冲突": "Variable data conflicts with row %d",
+      "变量名称为空": "Variable name is empty",
+      "变量名称长度超过字符%d限制": "Variable name exceeds the character limit of %d",
+      "示例问法ID为空": "Example query ID is empty",
+      "示例问法ID与第%d行重复": "Example query ID is duplicated with row %d",
+      "示例问法内容为空": "Example query content is empty",
+      "示例问法长度超过%d字符限制": "Example query exceeds the character limit of %d",
+      "示例问法内容与第%d行重复": "Example query content is duplicated with row %d",
+      "示例问法与应用内其它画布示例问法重复": "Example query is duplicated with other canvas ExampleQueries in the application",
+      "语料内容和任务流程文件中对应的意图名称不匹配": "Corpus content does not match the corresponding intent name in the task flow file",
+      "语料内容为空": "Corpus content is empty",
+      "语料内容与第%d行重复": "Corpus content is duplicated with row %d",
+      "槽位实体json文件:%s不存在或名称不合法；": "Slot entity json file: %s does not exist or the name is invalid;",
+      "槽位ID为空": "Slot ID is empty",
+      "意图ID和槽位ID与第%d行重复": "Intent ID and slot ID are duplicated with row %d",
+      "槽位数据与第%d行冲突": "Slot data conflicts with row %d",
+      "槽位名称为空": "Slot name is empty",
+      "槽位名称长度超过字符限制": "Slot name exceeds character limit",
+      "槽位描述为空": "Slot description is empty",
+      "槽位描述长度超过字符限制": "Slot description exceeds character limit",
+      "槽位示例为空": "Slot example is empty",
+      "槽位示例非法，错误详情：%s": "Slot example is invalid, error details: %s",
+      "槽位示例个数超过系统限制": "Number of slot examples exceeds system limit",
+      "实体信息为空": "Entity information is empty",
+      "实体信息非法，错误详情：%s": "Entity information is invalid, error details: %s",
+      "槽位名称和实体名称不一致": "Slot name does not match entity name",
+      "槽位描述和实体描述不一致": "Slot description does not match entity description",
+      "槽位示例和实体示例不一致": "Slot example does not match entity example",
+      "槽位必须且只能绑定一个具体实体": "Slot must and can only be bound to one specific entity",
+
+      "__comment_3__": "=============工作流=============",
+      "文件数据存在错误，请下载并查看错误标注文件": "File data contains errors, please download and view the error-marked file",
+      "下载": "download",
+      "数据库异常": "Database Exception",
+      "请求参数没有应用ID": "Request parameter does not have an application ID",
+      "成功": "Success",
+      "工作流程导出成功": "Workflow export successful",
+      "失败": "Failure",
+      "工作流程导出失败": "Workflow export failed",
+      "工作流程导入失败": "Workflow import failed",
+      "工作流程导入成功": "Workflow import successful",
+      "PDL内容不能为空": "PDL content cannot be empty",
+      "工作流:%s状态切换失败;状态成功切换：%d个": "Workflow: %s status switch failed; Successfully switched: %d",
+      "已启用%d个工作流，发布应用后在生产环境中生效": "%d Workflows enabled, will take effect in production after releasing the application",
+      "已停用%d个工作流，发布应用后在生产环境中生效": "%d workflows disabled, effective after releasing the application in the production environment",
+      "画布workflowID(%s)与接口传参的workflowID(%s)不一致": "Canvas workflowID (%s) is inconsistent with the workflowID (%s) in the interface parameters",
+      "工作流名称修改需同步修改画布JSON中的工作流名称": "Workflow name modification requires synchronizing the name in the canvas JSON",
+      "画布内节点名称有重复, %s": "Duplicate node names in the canvas, %s",
+      "-副本": "-Copy",
+      "工作流程json文件:%s不存在或名称不合法；": "Workflow JSON file: %s does not exist or has an invalid name",
+      "工作流ID为空": "Workflow ID is empty",
+      "工作流ID不存在": "Workflow ID does not exist",
+      "工作流重名或变量缺失": "Workflow name duplicate or missing variables",
+      "工作流引用节点ID为空": "Workflow reference node ID is empty",
+      "工作流引用ID为空": "Workflow reference ID is empty",
+      "工作流引用名称为空": "Workflow reference name is empty",
+      "引用的工作流不存在": "Referenced workflow does not exist",
+      "工作流ID,节点ID,工作流引用ID与第%d行重复": "Workflow ID, Node ID, Workflow Reference ID duplicate with row %d",
+      "示例问法内容为空": "Example query content is empty",
+      "示例问法内容与第%d行重复": "Example query content duplicates with row %d",
+      "示例问法内容与已有问法重复": "Example query duplicates existing questions",
+      "示例问法为空": "Example Query is empty",
+      "内容超过最大长度%d": "Content exceeds maximum length of %d",
+      "最多导入%d条": "A maximum of %d entries can be imported",
+      "PDL画布结构为空": "PDL canvas structure is empty",
+      "PDL画布结构解析错误": "PDL canvas structure parsing error",
+      "工作流程ID和PDL画布结构中的流程ID不匹配": "Workflow ID does not match the process ID in the PDL canvas structure",
+      "PDL参数结构解析错误": "PDL parameter structure parsing error",
+      "PDL工具信息结构解析错误": "PDL tool information structure parsing error",
+      "PDL内容信息结构解析错误": "PDL content information structure parsing error",
+      "工作流节点ID为空": "Workflow node ID is empty",
+      "参数ID为空": "Parameter ID is empty",
+      "工作流ID和参数ID与第%d行重复": "Workflow ID and Parameter ID duplicate with row %d",
+      "参数数据与第%d行冲突": "Parameter data conflicts with row %d",
+      "参数名称重复": "Duplicate parameter name",
+      "参数名称应该在 1~%d个字符，请重新填写": "Parameter name should be 1~%d characters, please re-enter",
+      "参数描述应该在 1~%d个字符，请重新填写": "Parameter description should be 1~%d characters, please re-enter",
+      "参数类型不合法，请重新填写": "Parameter type is invalid, please re-enter",
+      "错误_%s": "Error_%s",
+      "导入示例问法错误信息-%d.xlsx": "Import Example Query error info-%d.xlsx",
+      "该应用的工作流：%s 已经存在示例问法:%s": "The workflow %s in this application already has the example question: %s",
+      "导入工作流程错误信息-%d.xlsx": "Import Workflow error info-%d.xlsx",
+      "工作流程名称": "Workflow Name",
+      "错误原因": "Error Reason",
+      "%s节点 %s 引用的工作流（或引用的工作流中引用的子工作流）中存在参数提取节点或选项卡节点，不允许与其他节点并行": "%s node %s references a workflow (or sub-workflow referenced by the referenced workflow) containing parameter extraction or tab nodes, parallelism with other nodes is not allowed",
+      "%s节点 %s 不允许在节点 %s 后与其他节点并行": "%s node %s is not allowed to be parallel with other nodes after node %s",
+      "引用的工作流（或引用的工作流中引用的子工作流）中存在信息收集类节点（参数提取节点、选项卡节点、文件收集节点）或Agent节点，不允许与其他信息收集类节点并行": "The referenced workflow (or sub-workflow referenced within a referenced workflow) contains information collection nodes (parameter extraction nodes, tab nodes, file collection node) or agent nodes, and cannot run in parallel with other information collection nodes or agent nodes",
+      "不允许在节点 %s 后与其他信息收集类节点（参数提取节点、选项卡节点、文件收集节点）或Agent节点并行": "Information collection nodes (parameter extraction nodes, tab nodes, file collection node) or agent nodes are not allowed to be parallel after node %s",
+      "该节点与引用该工作流的工作流【%s】存在并行冲突": "Workflow %s which referred this workflow has parallism conflicts with this node",
+      "请先配置流程节点": "Please configure the workflow nodes first",
+      "未连接到流程中（请连接到流程中或删除）": "Not connected to the workflow (please connect or delete)",
+      "流程必须以\"结束节点\"作为结束": "The workflow must end with an \"End Node\"",
+      "输入参数个数不能超过%d": "Number of input parameters cannot exceed the %d limit",
+      "最大重试次数不能超过%d": "Maximum retry count cannot exceed the %d limit",
+      "最大重试时间间隔不能超过%d": "Maximum retry interval cannot exceed the %d limit",
+      "异常输出变量长度不能超过%d": "Exception output variable length cannot exceed the %d limit",
+      "异常情况的输出变量json格式不对": "Exception output variable JSON format is incorrect",
+      "%s 参数名不能超过%d": "%s parameter name cannot exceed the %d limit",
+      "%s 参数默认值不能超过%d": "%s parameter default value cannot exceed the %d limit",
+      "%s 参数名不合法": "%s parameter name is invalid",
+      "%s:子参数的长度length不能超过：%d": "%s: Sub-parameter length cannot exceed the %d limit",
+      "%s:子参数的深度depth不能超过：%d": "%s: Sub-parameter depth cannot exceed the %d limit",
+      "%s:参数为:%s类型，子参数:%s的类型必须为:%s": "%s: Parameter is of type %s, sub-parameter %s must be of type %s",
+      "不能引用自身工作流": "Cannot reference the workflow itself",
+      "引用的工作流未调试通过": "Referenced workflow has not passed debugging",
+      "请先调试该流程": "Please debug this workflow first",
+      "工作流或者引用的工作流不存在": "Workflow or referenced workflow does not exist",
+      "工作流被引用+引用的工作流总层级深度已经超过%d层了": "Workflow being referenced + referenced workflow total depth exceeds %d layers",
+      "工作流循环引用了": "Workflow has circular reference",
+      "输入参数不匹配": "Input parameters do not match",
+      "获取模型信息失败": "Failed to get model information",
+      "输入内容为空": "Input content is empty",
+      "输入内容长度不能超过%d": "Input content length cannot exceed the %d limit",
+      "引用的内容为空": "Referenced content is empty",
+      "引用的 (ID:%s) 节点不存在": "Referenced node (ID:%s) does not exist",
+      "引用的 %s(ID:%s) 节点不是前驱节点": "Referenced %s (ID:%s) node is not a predecessor node",
+      "引用的自定义参数为空": "Referenced custom parameter is empty",
+      "引用的%s自定义参数不存在": "Referenced %s custom parameter does not exist",
+      "引用的%s系统参数不存在": "Referenced %s system parameter does not exist",
+      "引用的应用变量为空": "Referenced application variable is empty",
+      "引用的%s应用变量不存在": "Referenced application variable %s does not exist",
+      "引用的%s环境变量不存在": "Referenced environment variable %s does not exist",
+      "引用的%s工作流级参数不存在": "Referenced workflow-level parameter %s does not exist",
+      "未定义输入参数": "Input parameter not defined",
+      "%s 未在输入参数中定义": "%s not defined in input parameters",
+      "长期记忆内容，开启长期记忆功能后可用": "Long term memory content is available after enabling the feature",
+      "草稿": "Draft",
+      "启用": "Enable",
+      "已修改待发布": "Modified",
+      "已发布仍有修改": "Modified after release",
+      "不存在的节点(ID:%s)": "Non-existent node (ID:%s)",
+      "引用内容不合法[%s]": "Referenced content is invalid [%s]",
+      "引用的参数节点[%s]里不存在参数(ID:%s)": "Parameter (ID:%s) does not exist in referenced parameter node [%s]",
+      "引用内容不合法[%s]，应该是%s": "Referenced content is invalid [%s], should be %s",
+      "回复节点内容和输出变量不能同时为空": "Response node content and output variable cannot both be empty",
+      "回复节点内容不能超过%d": "Response node content cannot exceed the %d limit",
+      "引用的工作流为空": "Referenced workflow is empty",
+      "变量名称不能为空": "Variable name cannot be empty",
+      "指定遍历的数组未选择": "Specified array for iteration is not selected",
+      "指定遍历数组不存在": "Specified array for iteration does not exist",
+      "引用的工作流中包含信息收集类节点（参数提取节点、选项卡节点、文件收集节点）或Agent节点，不允许并行处理": "The referenced workflow contains information collection nodes (e.g. Parameter Extractor, Option, File Collection) or Agent nodes, parallel processing is not allowed",
+      "代码为空": "Code is empty",
+      "代码字符数超出%d": "Code character count exceeds the %d limit",
+      "代码存在错误:%s": "Code contains error: %s",
+      "输入参数个数超出%d": "Number of input parameters exceeds the %d limit",
+      "输出参数个数超出%d": "Number of output parameters exceeds the %d limit",
+      "结束节点不能有输入变量": "End node cannot have input variables",
+      "数据来源为空": "Data source is empty",
+      "参数名为空": "Parameter name is empty",
+      "模型为空": "Model is empty",
+      "用户提示词不应为空": "User prompt is empty",
+      "参数%s值类型错误: %v": "Parameter %s has invalid value type: %v",
+      "参数%s范围为%d~%d": "Parameter %s range is %d~%d",
+      "温度范围为0~%f": "Temperature range is 0~%f",
+      "TopP范围为0~%f": "TopP range is 0~%f",
+      "最大回复token范围为0~%d": "Maximum reply token range is 0~%d",
+      "提示词字符数不能超过%d": "Prompt character count cannot exceed the %d limit",
+      "待识别意图的内容字符数不能超过%d": "Content length of intent to be recognized cannot exceed the %d limit",
+      "待识别意图不应为空": "Intent to be recognized should not be empty",
+      "待识别意图的内容不能超过%d": "",
+      "意图识别个数不能超过%d": "Intent recognition count cannot exceed the %d limit",
+      "第%d个意图名称为空": "Intent name %d is empty",
+      "第%d个意图的连线不应为空": "Connection for intent %d should not be empty",
+      "第%d个条件中的左值数据类型无法使用该运算符": "Left value data type in condition %d cannot use this operator",
+      "提示词不应为空": "Prompt should not be empty",
+      "知识库ID不应为空": "Knowledge base ID should not be empty",
+      "知识库类型不合法": "Knowledge base type is invalid",
+      "默认知识库ID不合法": "Default knowledge base ID is invalid",
+      "选择文档数量不应超过最大数量限制%d": "Number of selected documents should not exceed the maximum limit %d",
+      "文档召回数量%d~%d": "Document recall quantity range is %d~%d",
+      "文档检索匹配度0~%f": "Document retrieval match range is 0~%f",
+      "问答召回数量%d~%d": "Q&A recall quantity range is %d~%d",
+      "问答检索匹配度0~%f": "Q&A retrieval match range is 0~%f",
+      "标签最多可配置%d个": "Up to %d tags can be configured",
+      "未选择标签": "No tag selected",
+      "未选择文档或问答": "No document or Q&A selected",
+      "未选择文档或问答或数据库": "No document or Q&A&DB selected",
+      "条件组最多%d个": "Up to %d condition groups",
+      "第%d个条件的连线不应为空": "The %d condition's line should not be empty",
+      "比较运算符仅支持int类型或float类型": "Comparison operator only supports int or float type",
+      "比较运算符右值无法转换为64位int类型": "Right value of comparison operator cannot be converted to 64-bit int",
+      "比较运算符右值无法转换为64位float类型": "Right value of comparison operator cannot be converted to 64-bit float",
+      "目前仅支持发送消息到消息队列中": "Currently only supports sending messages to the message queue",
+      "消息内容不能超过100KB": "Message content cannot exceed 100KB",
+      "不支持的消息队列类型: %v": "Unsupported message queue type: %v",
+      "不支持的Kafka认证方式: %v": "Unsupported Kafka authentication method: %v",
+      "不支持的RocketMQ版本: %v": "Unsupported RocketMQ version: %v",
+      "动态选项卡输入参数：%s 应该为%s类型": "Dynamic tab input parameter: %s should be of type %s",
+      "动态选项卡选项连线不应为空": "Dynamic tab option line should not be empty",
+      "动态选项卡其它选项连线不应为空": "Dynamic tab other option line should not be empty",
+      "最多支持%d个选项": "Up to %d options supported",
+      "问题或提示不能超过%d": "Question or prompt cannot exceed %d",
+      "第%d个选项的内容为空": "Content of option %d is empty",
+      "第%d个选项的连线不应为空": "Connection for option %d should not be empty",
+      "选项内容%d不能超过%d": "Option content %d cannot exceed %d",
+      "参数信息为空": "Parameter information is empty",
+      "参数提取节点中不允许引用系统变量": "System variables cannot be referenced in parameter extraction nodes",
+      "参数个数不能超过%d": "Number of parameters cannot exceed %d",
+      "并行分支中不允许有\"参数收集\"节点": "\"Parameter collection\" nodes are not allowed in parallel branches",
+      "提示词不能超过%d": "Prompt cannot exceed %d",
+      "插件类型、插件ID或工具ID不能为空": "Plugin type, plugin ID or tool ID cannot be empty",
+      "插件节点Header数量超过%d限制": "Plugin node header count exceeds the %d limit",
+      "插件节点Query数量超过%d限制": "Plugin node query count exceeds the %d limit",
+      "插件节点Body数量超过%d限制": "Plugin node body count exceeds the %d limit",
+      "插件不存在": "Plugin does not exist",
+      "工具不存在": "Tool does not exist",
+      "开始节点不能直接连接结束节点": "Start node cannot be directly connected to end node",
+      "标签为空": "Tag is empty",
+      "标签最多为%d": "Up to %d tags",
+      "标签名不应为空": "Tag name should not be empty",
+      "标签值示例最多为%d": "Up to %d tag value examples",
+      "接口链接为空": "Interface link is empty",
+      "接口链接URL解析错误": "Interface link URL parsing error",
+      "接口链接协议需是https或http": "Interface link protocol must be https or http",
+      "工具节点填写的接口：%s无法访问，出于安全角度考虑, 请使用安全的https公网域名接口": "Interface filled in tool node: %s is inaccessible, for security reasons, please use a secure https public domain interface",
+      "请求方式不符合规范,需要：GET或POST或DELETE或PUT或PATCH或HEAD或OPTIONS方法": "Request method is not standard, requires: GET, POST, DELETE, PUT, PATCH, HEAD or OPTIONS",
+      "工具节点Header数量超过%d限制": "Tool node header count exceeds the %d limit",
+      "工具节点Query数量超过%d限制": "Tool node query count exceeds the %d limit",
+      "工具节点Body数量超过%d限制": "Tool node body count exceeds the %d limit",
+      "参数名重复:%s": "Parameter name duplicate: %s",
+      "参数层级超最大限制%d": "Parameter hierarchy exceeds the maximum limit %d",
+      "参数名不能为空": "Parameter name cannot be empty",
+      "%s参数名称不符合": "%s parameter name is invalid",
+      "Header名超过最大限制%d": "Header name exceeds the maximum limit %d",
+      "输入内容为%s类型，格式不正确": "Input content is of type %s, format is incorrect",
+      "%s 参数为%s类型，不能存在子参数": "%s parameter is of type %s, and cannot have sub-parameters",
+      "%s 参数为%s类型，不存在该类型": "%s parameter is of type %s, this type does not exist",
+      "密钥位置不符合规范": "Key position does not meet specifications",
+      "密钥参数名为空": "Key parameter name is empty",
+      "密钥值为空": "Key value is empty",
+      "授权方式不符合规范": "Authorization method does not meet specifications",
+      "调用方式不符合规范": "Invocation method does not meet specifications",
+      "参数最大深度不能超过%d": "Parameter maximum depth cannot exceed the %d limit",
+      "解析方式不符合规范": "Parsing method does not meet specifications",
+      "聚合节点不能有输入变量": "Aggregation node cannot have input variables",
+      "聚合组不能为空": "Aggregation group cannot be empty",
+      "聚合组数不能超过%d": "Number of aggregation groups cannot exceed the %d limit",
+      "聚合组%d的名称不能为空": "Name of aggregation group %d cannot be empty",
+      "聚合组%d的项不能为空": "Items of aggregation group %d cannot be empty",
+      "聚合组%d的项数不能超过%d": "Number of items in aggregation group %d cannot exceed the %d limit",
+      "聚合组%d的第%d项类型不一致, itemType:%s, groupType:%s": "Type of item %d in aggregation group %d is inconsistent, itemType: %s, groupType: %s",
+      "聚合组%d的第%d项不能使用用户输入": "Item %d in aggregation group %d cannot use user input",
+      "Agent信息为空": "Agent information is empty",
+      "查询Agent状态失败": "Failed to query Agent status",
+      "Agent已删除": "Agent has been deleted",
+      "数据库表个数不能超过%d个": "The number of database tables cannot exceed %d",
+      "应用ID格式错误": "Application ID format is incorrect",
+      "数据库信息查询失败": "Failed to query database information",
+      "数据库信息查询结果为空": "Database query result is empty",
+      "该数据库未发布，请选择已发布的数据库": "This database is unpublished; please select a published database",
+      "以下表不存在: %s": "The following tables do not exist: %s",
+      "变量赋值节点不能有输入变量": "Variable assignment node cannot have input variables",
+      "赋值变量个数不能超过%d": "The number of assigned variables cannot exceed %d",
+      "变量赋值节点引用的变量类型错误，只支持应用变量和工作流级变量": "The variable type referenced by the variable assignment node is incorrect; only application and workflow-level variables are supported",
+      "变量类型错误:%s": "Variable type error: %s",
+      "赋值变量节点中要赋值的变量名称%s重复": "The variable name %s to be assigned in the assignment node is duplicated",
+      "变量转换节点不能有输入变量": "Variable transformation node cannot have input variables",
+      "转换变量不能为空": "Transformation variable cannot be empty",
+      "变量转换节点的转换变量不能使用用户输入": "The transformation variable in the transformation node cannot use user input",
+      "JSON反序列化时，变量转换节点的转换变量只支持string类型": "During JSON deserialization, the transformation variable in the transformation node only supports string type",
+      "JSON转换方式不符合规范": "JSON transformation mode does not conform to specification",
+      "列表取值和排序时，变量转换节点的转换变量只支持array类型,不包括array<array>": "When fetching values and sorting in a list, the transformation node only supports array type, excluding array<array>",
+      "列表取值范围不符合规范": "List value range does not conform to specification",
+      "列表排序方式不符合规范": "List sorting method does not conform to specification",
+      "列表排序字段不能为空": "List sorting field cannot be empty",
+      "列表转换方式不符合规范": "List transformation mode does not conform to specification",
+      "字符串拼接至少要两个转换变量": "String concatenation requires at least two transformation variables",
+      "字符串分隔符不能为空": "String separator cannot be empty",
+      "字符串分隔时，变量转换节点的转换变量只支持string和file类型": "When splitting a string, the transformation node only supports string and file types",
+      "字符串转换方式不符合规范": "String transformation mode does not conform to specification",
+      "转换类型不符合规范": "Transformation type does not conform to specification",
+      "工作流ID为空": "Workflow ID is empty",
+      "工作流ID与第%d行重复": "Workflow ID is duplicated with row %d",
+      "工作流名称为空": "Workflow name is empty",
+      "工作流名称长度超过字符限制": "Workflow name exceeds character limit",
+      "工作流名称与第%d行重复": "Workflow name is duplicated with row %d",
+      "工作流名称与已有工作流重复": "Workflow name is duplicated with an existing workflow",
+      "工作流描述长度超过字符限制": "Workflow description exceeds character limit",
+      "画布结构为空": "Canvas structure is empty",
+      "画布结构解析错误": "Canvas structure parsing error",
+      "工作流程ID和画布结构中的流程ID不匹配": "Workflow ID does not match the process ID in the canvas structure",
+      "工作流程名称和画布结构中的流程名称不匹配": "Workflow name does not match the process name in the canvas structure",
+      "工作流ID在工作流程文件中不存在": "Workflow ID does not exist in the workflow file",
+      "变量表格条数超过%d条，请修改后重新上传": "The number of variable table entries exceeds %d. Please modify and re-upload.",
+      "工作流ID和变量ID与第%d行重复": "Workflow ID and variable ID are duplicated with row %d",
+      "导入变量:%s,与应用内其它变量重复": "Imported variable: %s is duplicated with other variables in the application",
+      "变量数据与第%d行冲突": "Variable data conflicts with row %d",
+      "变量名称为空": "Variable name is empty",
+      "变量名称长度超过字符%d限制": "Variable name exceeds the character limit of %d",
+      "变量类型错误": "Variable type error",
+      "节点运行异常": "Node runtime exception",
+      "Node runtime exception": "Node runtime exception",
+      "当前字符数为%d,注释节点允许最大字符为%d": "The current character count is %d, and the maximum allowed characters for the comment node is %d",
+      "当前字符数为%d,文件收集节点提示词语允许最大字符为%d": "The current character count is %d, and the maximum allowed characters for the prompt in the file collection node is %d",
+      "文件收集节点至少要求1个文件类型": "The file collection node requires at least one file type",
+      "文件收集节点不支持类型: %v": "The file collection node does not support this type: %v",
+      "文件收集节点至少要求1个文件上传": "The file collection node requires at least one file to be uploaded",
+      "文件收集节点最大支持%d个文件上传": "The file collection node supports a maximum of %d file uploads.",
+
+      "__comment_4__": "=======自定义变量错误码VarParamNotAllowedDeleted=====",
+      "该变量已被知识库设置引用，需要解除引用关系后删除": "This variable is referenced by the knowledge base settings, please remove the reference before deleting",
+      "该变量已被【%s】引用，需要解除引用关系后删除": "This variable has been referenced by %s, and needs to be unreferenced before deletion",
+
+      "__comment_5__": "==========工作流错误码BadWorkflowReqError===========",
+      "请求参数没有应用ID": "Request parameter does not have an application ID",
+      "请求参数没有应用ID，且没有工作流ID": "Request parameter does not have an application ID and workflow ID",
+      "请求参数没有应用ID或者没有工作流ID": "Request parameter does not have an application ID or workflow ID",
+      "传的参数异常": "Invalid parameters passed",
+      "传的业务ID参数异常": "Invalid business ID parameter passed",
+      "请输入体验中心应用ID": "Please enter the Experience Center Application ID",
+      "解析excel文件错误": "Excel file parsing error",
+      "没有可删除的应用": "No deletable application",
+      "请求参数没有文档ID": "No Document ID in Request Parameters",
+      "请求参数没有标签ID": "Request parameter does not have a tag ID",
+      "请求参数没有标签值ID": "Request parameter does not have a tag value ID",
+      "%s节点类型错误": "%s node type error",
+
+      "__comment_6__": "==========请求错误码BadRequestError=================",
+      "应用ID错误": "Application ID error",
+      "任务事件类型不存在": "Task event type does not exist",
+      "发布任务已经存在, 请勿重新创建": "Release task already exists, please do not recreate",
+      "发布任务不存在或不能发布": "Release task does not exist or cannot be released",
+      "发布任务不存在": "Release task does not exist",
+      "应用ID为空": "Application ID is empty",
+      "恢复历史任务流的槽位或变量错误": "Error restoring slot or variable of historical Taskflow",
+      "参数校验失败": "Parameter validation failed",
+      "缺少必填参数": "Missing required parameter",
+      "反馈描述超过最大限制：%d": "Feedback description exceeds maximum limit: %d",
+      "传入的画布节点Id不对": "Incorrect canvas node ID passed in",
+      "请传入正确的 [TaskID]": "Please enter the correct [TaskID]",
+
+      "__comment_7__": "==========DB操作错误码OpDataFromDBError=============",
+      "获取工作流失败": "Failed to get workflow",
+      "获取模型对应输入框字数限制失败": "Failed to get model input box word limit",
+      "获取分享码信息失败": "Failed to get share code information",
+      "获取工作流列表失败": "Failed to get workflow list",
+      "导入示例问法失败": "Failed to import example query",
+      "创建分类失败": "Failed to create category",
+      "获取分类失败": "Failed to get category",
+      "更新分类失败": "Failed to update category",
+      "删除分类失败": "Failed to delete category",
+      "创建示例问法失败": "Failed to create example query",
+      "获取示例问法失败": "Failed to get example query",
+      "更新示例问法失败": "Failed to update example query",
+      "删除示例问法失败": "Failed to delete example query",
+      "获取员工信息失败：%s": "Failed to get employee information: %s",
+      "画布信息解密失败": "Failed to decrypt canvas information",
+      "获取历史的任务流程失败": "Failed to get historical Taskflow",
+      "获取任务流程历史版本错误": "Failed to get Taskflow historical version",
+      "获取历史任务流程版本详情失败": "Failed to get historical Taskflow version details",
+      "获取发布状态失败": "Failed to get release status",
+      "分组移动失败": "Failed to move group",
+      "创建任务流程失败": "Failed to create Taskflow",
+      "保存工作流失败": "Failed to save Workflow",
+      "删除任务流程失败": "Failed to delete Taskflow",
+      "获取发布任务失败": "Failed to get release task",
+      "获取任务流程详情失败": "Failed to get Taskflow details",
+      "获取变量信息失败": "Failed to get variable information",
+      "变量创建失败": "Failed to create variable",
+      "更新变量失败": "Failed to update variable",
+      "删除变量失败": "Failed to delete variable",
+      "删除工作流反馈失败": "Failed to delete Workflow feedback",
+      "获取详情反馈理由失败": "Failed to get detailed feedback reason",
+      "获取应用信息失败": "Failed to get application information",
+      "添加反馈失败": "Failed to add feedback",
+      "更新反馈失败": "Failed to update feedback",
+      "获取反馈记录失败": "Failed to get feedback records",
+      "获取反馈理由失败": "Failed to get feedback reason",
+      "获取反馈所属工作流失败": "Failed to get Workflow for feedback",
+      "创建工作流示例问法失败": "Failed to create Workflow example query",
+      "更新工作流示例问法失败": "Failed to update Workflow example query",
+      "删除工作流示例问法失败": "Failed to delete Workflow example query",
+      "获取工作流示例问法列表失败": "Failed to get Workflow example query list ",
+      "删除工作流失败": "Failed to delete Workflow",
+      "解析画布信息失败": "Failed to parse canvas information",
+      "获取画布节点信息失败": "Failed to get canvas node information",
+      "获取可以被引用的工作流的列表失败": "Failed to get list of Workflows that can be referenced",
+
+      "__comment_8__": "==========任务流错误码TaskFLowVerifyError===========",
+      "答案节点解析错误": "Answer node parsing error",
+      "答案节点数据来源不对%s": "Answer node data source incorrect %s",
+      "答案节点自定义答案超过最大长度%d限制": "Answer node custom answer exceeds the maximum length of %d",
+      "答案节点智能回复自定义提示词长度超过最大长度%d限制": "Answer node custom prompt for smart reply exceeds maximum length %d",
+      "API节点解析错误": "API node parsing error",
+      "询问内容超过最大限制%d": "Inquiry content exceeds maximum limit %d",
+      "入参参数名重复:%s": "Input parameter name duplicate: %s",
+      "%s 参数层级超最大限制%d": "%s parameter hierarchy exceeds maximum limit %d",
+      "%s 参数必填，其子参数必有至少一项必填": "%s parameter is required, at least one sub-parameter must be required",
+      "API节点请求参数数量超过%d限制": "API node request parameter count exceeds %d limit",
+      "API节点请求参数数量少于%d个": "API node request parameter count less than %d",
+      "API节点输入参数%s类型错误": "API node input parameter %s type error",
+      "API节点请求参数%s的类型为%s，不存在子参数%+v": "API node request parameter %s is of type %s, sub-parameter %+v does not exist",
+      "%s 参数为%s类型，其子参数至少一项必填": "%s parameter is of type %s, at least one sub-parameter is required",
+      "%s 参数为%s类型，其数据来源不可选": "%s parameter is of type %s, data source cannot be selected",
+      "API节点输入参数%s的数据来源为空": "API node input parameter %s data source is empty",
+      "API节点输入参数的%s的接口出参[%s]不存在": "API node input parameter %s interface output parameter [%s] does not exist",
+      "%s超过最大限制%d": "%s exceeds maximum limit %d",
+      "输入参数名不能为空": "Input parameter name cannot be empty",
+      "%s不支持的参数名": "%s unsupported parameter name",
+      "参数名称超过最大限制%d": "Parameter name exceeds maximum limit %d",
+      "Header参数名重复:%s": "Header parameter name duplicate: %s",
+      "Header参数层级超最大限制%d": "Header parameter hierarchy exceeds maximum limit %d",
+      "API节点Header数量超过%d限制": "API node header exceeds the limit %d limit",
+      "Header必填参数的参数名不能为空": "Header required parameter name cannot be empty",
+      "%s不支持的Header名": "%s unsupported header name ",
+      "Header名超过最大限制%d": "Header name exceeds maximum limit %d",
+      "API节点Header的%s类型错误，不支持%s": "API node header %s type error, %s is not supported",
+      "API节点Header的%s类型为%s，不存在子参数%+v": "API node Header %s is of type %s, sub-parameter %+v does not exist",
+      "API节点精准询问话术不能为空": "API node precise inquiry prompt cannot be empty",
+      "精准询问话术超过最大限制%d": "Precise inquiry prompt exceeds maximum limit %d",
+      "API入参格式描述不能全是空格": "API input parameter format description cannot be all spaces",
+      "API入参格式描述超过最大限制%d": "API input parameter format description exceeds maximum limit %d",
+      "API节点参数信息数量超过%d": "API node parameter info count exceeds %d",
+      "API节点参数信息数量少于%d": "API node parameter info count less than %d",
+      "出参参数名重复:%s": "Output parameter name duplicate: %s",
+      "API节点子出参参数信息数量超过%d": "API node sub-output parameter info count exceeds %d",
+      "子出参类型不能为%s类型": "Sub-output parameter type cannot be %s",
+      "API节点%s的子层级出参参数名重复:%s": "API node %s sub-level output parameter name duplicate: %s",
+      "输出参数名不能为空": "Output parameter name cannot be empty",
+      "API节点参数类型错误": "API node parameter type error",
+      "API节点输出参数%s解析路径必填": "API node output parameter %s parse path is required",
+      "出参的层级限制不能超过%d层": "Output parameter hierarchy cannot exceed %d levels",
+      "API地址不能为空": "API address cannot be empty",
+      "API节点：接口请求URL解析错误": "API node: Interface request URL parsing error",
+      "API节点：接口请求路径长度超过最大长度%d限制": "API node: Interface request path length exceeds maximum %d",
+      "API节点：接口请求协议需是https或http": "API node: Interface request protocol must be HTTPS or HTTP",
+      "API节点：接口请求类型需要：GET或POST方法": "API node: Interface request type must be GET or POST",
+      "%s:保存到测试环境失败，出于安全角度考虑，智能接口不支持内部接口的调用，请使用安全的https公网域名接口": "%s: Failed to save to test environment, for security reasons, smart interface does not support internal interface calls, please use a secure https public domain interface",
+      "结束节点的类型必需是答案节点": "End node type must be answer node",
+      "节点超过最大节点分支数：%d": "Node exceeds maximum branch count: %d",
+      "校验流转规则类型错误, DIRECT时条件应为空": "Validation of flow rule type error, condition should be empty for DIRECT",
+      "校验流转规则类型错误, CUSTOM时条件不应为空": "Validation of flow rule type error, condition should not be empty for CUSTOM",
+      "校验流转规则类型错误, 不支持%s": "Validation of flow rule type error, %s not supported",
+      "节点跳转条件最多只支持%d层": "Node jump condition supports up to %d levels",
+      "配置了%s，但是ConditionInfo是空的": "%s is configured, but ConditionInfo is empty",
+      "%s的值不应为空": "Value of %s should not be empty",
+      "在条件分支中引用了不存在的实体:%s": "Entity %s referenced in the condition branch does not exist",
+      "流转规则组合条件为属于用户输入时，其值个数超过最大%d个限制": "Number of values for user input in flow rule combination condition exceeds maximum %d",
+      "条件分支属于，用户输入:%s 重复了": "In condition branch of \"belongs to\", user input: %s is duplicated",
+      "流转规则组合条件为属于且选择词条时，选择词条不": "Flow rule combination condition for \"belongs to\" and selecting entries, selection of entries is not allowed",
+      "流转规则组合条件为包含时，其值个数超过最大%d个限制": "Flow rule combination condition for \"contains\" has exceeded the maximum limit of %d values",
+      "流转规则组合条件为包含时，其值个数少于最少%d个限制": "Flow rule combination condition for \"contains\" is less than the minimum limit of %d values",
+      "数值比较时，值不能为空": "Value cannot be empty for numerical comparison",
+      "SLOT时不支持%s，只支持%s": "%s not supported for SLOT, only %s supported",
+      "在条件分支中收集实体引用了不存在的出参:%s": "Entity collected in condition branch references non-existent output parameter: %s",
+      "在条件分支中引用了不存在的出参:%s": "Non-existent output parameter referenced in condition branch: %s",
+      "分支条件接口出参引用实体不支持%s，只支持%s": "Branch condition interface output entity does not support %s, only supports %s",
+      "在条件分支中接口出参引用了不存在的实体:%s": "In the conditional branch, the interface output paramter references a non-existent entity: %s",
+      "在条件分支中接口出参引用了不存在的词条:%s": "In the conditional branch, the interface output paramter references a non-existent entry: %s",
+      "SYSTEM时不支持%s，只支持%s": "SYSTEM does not support %s, only supports %s",
+      "在条件分支中引用了不存在的自定义变量Id:%s": "Non-existent custom Variable ID referenced in condition branch: %s",
+      "分支条件为收集实体，条件为 %s,不支持选择匹配方式": "Branch condition is entity collection, condition is %s, match method is not supported",
+      "分支条件为接口出参 条件为 %s，不支持选择匹配方式": "Branch condition is interface output parameter, condition %s, matching method selection not supported",
+      "只能在有意向判断的询问节点中直接连线意向判断的条件": "Only in inquiry nodes with intent judgment can intent judgment conditions be directly connected",
+      "意向判断时InputValues只能为:true, false. %s": "During intent determination, InputValues can only be: true, false. &s",
+      "意向判断时不支持%s，只支持%s": "%s not supported for intent judgment, only %s supported",
+      "[%s]不支持的参数类型": "Unsupported parameter type [%s]",
+      "%s不支持在参数类型为%s时使用，只支持%s": "%s not supported for parameter type %s, only %s supported",
+      "节点自定义跳转分支条件数量超过最大%d": "Number of custom jump branch conditions for node exceeds maximum %d",
+      "节点自定义跳转分支数量少于%d个限制": "Number of custom jump branches for node less than %d",
+      "询问节点解析错误": "Inquiry node parsing error",
+      "信息澄清节点-判断意图的询问话术不能为空": "Clarification node - inquiry prompt for intent judgment cannot be empty",
+      "信息澄清节点-判断意图的询问话术超过最大限制%d": "Clarification node - inquiry prompt for intent judgment exceeds maximum %d",
+      "必要信息超过最大限制%d": "Required information exceeds maximum %d",
+      "信息澄清节点询问话术为自定义时，自定义话术不能为空": "Clarification node inquiry prompt is custom, custom prompt cannot be empty",
+      "自定义话术超过最大限制%d": "Custom prompt exceeds maximum %d",
+      "追问语句超过最大限制%d": "Follow-up statement exceeds maximum %d",
+      "选项卡API方式，ParamID不能为空": "In Tab API method, ParamID cannot be empty",
+      "选项卡API方式，ParamID:%s出参不存在": "In Tab API mode, ParamID: %s output parameter does not exist",
+      "选项卡API方式，ParamID:%s出参为%s类型,不存在子参数": "In Tab API mode, ParamID: %s output parameter is of type %s, no sub-parameters",
+      "选项卡API方式，子参数ParamID:%s出参不存在": "In Tab API mode, sub-parameter ParamID: %s output parameter does not exist",
+      "选项卡自定义方式，配置选项不能为空": "Tab custom mode, configuration options cannot be empty",
+      "询问节点选项配置超过最大限制:%d": "Inquiry node option configuration exceeds maximum %d",
+      "询问节点选项配置不能小于:%d": "Inquiry node option configuration less than %d",
+      "询问节点选项配置[%s]超过最大长度%d": "Inquiry node option configuration [%s] exceeds maximum length %d",
+      "开始节点流转规则有误": "Start node flow rule error",
+      "开始节点流转分支数只能为一条,%d": "Start node flow branch count can only be one, %d",
+      "%s节点的SlotID:%s不存在": "%s node SlotID: %s does not exist",
+
+      "__comment_9__": "==========任务流预览错误码PreviewError===============",
+      "自定义prompt解析错误": "Custom prompt parsing error",
+
+      "__comment_10__": "==========GV错误码GVError===============",
+      "请求参数corpId：%d 错误": "Request parameter corpId: %d is incorrect",
+      "参数错误": "Parameter error",
+      "工作流ID不能为空": "Workflow ID cannot be empty",
+      "应用ID错误": "Application ID error",
+      "节点运行实例ID不能为空": "Node instance ID cannot be empty",
+      "调试模式类型不对": "Incorrect debug mode type",
+      "重新生成传入 true或false": "Pass true or false for regeneration",
+      "传入正确的分享码": "Please provide a valid share code",
+      "请传入正确的父分类Id": "Please provide a valid parent category ID",
+      "请传入正确的分类名": "Please provide a valid category name",
+      "分类名最大长度不超过10": "Category name must not exceed 10 characters",
+      "请传入任务流程Id": "Please provide a task flow ID",
+      "请传入正确的业务名称": "Please provide a valid business name",
+      "请传入正确的发布事件": "Please provide a valid release event",
+      "请传入正确的任务 ID": "Please provide a valid task ID",
+      "请传入正确的ID": "Please provide a valid ID",
+      "请传入正确实体名称": "Please provide a valid entity name",
+      "请传入正确的机器人ID": "Please provide a valid bot ID",
+      "请传入正确的实体ID": "Please provide a valid entity ID",
+      "EnvTag请传入正确的环境标识": "Please provide a valid environment tag for EnvTag",
+      "请传入正确的任务流程名": "Please provide a valid task flow name",
+      "请传入正确的分类业务ID": "Please provide a valid category business ID",
+      "选择正确的任务流类型": "Please select the correct task flow type",
+      "请传入正确的任务流版本": "Please provide a valid task flow version",
+      "请传入正确的任务流ID": "Please provide a valid task flow ID",
+      "请传入正确的版本信息": "Please provide valid version information",
+      "请传入正确的工作流名称": "Please provide a valid workflow name",
+      "请传入正确的机器人": "Please provide a valid bot",
+      "请传入正确的工作流id": "Please provide a valid workflow ID",
+      "请传入正确的插件ID": "Please provide a valid plugin ID",
+      "请传入正确的应用Id": "Please provide a valid application ID",
+      "请传入正确的工作流程名": "Please provide a valid workflow name",
+      "每页数量在1到200之间": "Items per page must be between 1 and 200",
+      "请传入正确的工作流PDL id": "Please provide a valid workflow PDL ID",
+      "请传入正确的工作流PDL版本号": "Please provide a valid workflow PDL version number",
+      "请传入正确的新手引导Key": "Please provide a valid onboarding guide key",
+      "请传入示例问法Id": "Please provide a sample question ID",
+      "请传入示例问法": "Please provide a sample question",
+      "请传入工作流ID": "Please provide a workflow ID",
+      "请传入正确的参数名称": "Please provide a valid parameter name",
+      "请传入正确的参数描述": "Please provide a valid parameter description",
+      "请传入正确的参数类型": "Please provide a valid parameter type",
+      "请传入正确的实体名称": "Please provide a valid entity name",
+      "请传入正确的参数ID": "Please provide a valid parameter ID",
+      "请传入正确的应用id": "Please provide a valid application ID",
+      "请传入正确的工作流ID": "Please provide a valid workflow ID",
+      "请传入正确的应用ID": "Please provide a valid application ID",
+      "export-%d.zip": "export-%d.zip",
+      "export-%s.zip": "export-%s.zip",
+      "export-%s等.zip": "export-%s etc.zip",
+      "工作流重名或变量缺失或示例问法重复": "Workflow name duplicate or missing variables or example duplicate ",
+      "该应用下示例问法已经存在": "Example query already exists under this application",
+      "共%d条示例问法，%d条导入成功，%d条未导入(与已有问法重复)": "A total of %d example queries, %d successful, %d failed（duplicate）",
+      "该工作流：%s 已经存在示例问法:%s": "The workflow %s already has the example question: %s",
+      "流式接口不支持轮询": "Streaming interfaces do not support polling.",
+      "轮询超时时间范围是1-%d秒": "Polling timeout range is 1-%d seconds.",
+      "轮询间隔时间范围是1-%d秒": "Polling interval ranges from 1-%d seconds.",
+      "请设置轮询退出条件": "Please set the polling exit condition.",
+      "%s校验失败": "%sverification failed",
+      "%s未使用密文存储，请先加密": "%s encryption is not being used; please encrypt first.",
+      "%s未配置": "%s not config",
+      "秘钥信息缺失": "Secret information missing",
+      "秘钥鉴权方式错误": "Incorrect key authentication method",
+      "请配置腾讯云签名秘钥": "Please configure the Tencent Cloud signature key."
+    }
+  task_zh-CN.json: |
+    {
+      "__comment_1__": "=============配置=============",
+      "工作流程.xlsx": "工作流程.xlsx",
+      "参数.xlsx": "参数.xlsx",
+      "示例问法.xlsx": "示例问法.xlsx",
+      "变量.xlsx": "变量.xlsx",
+      "工作流程引用.xlsx": "工作流程引用.xlsx",
+      "工作流程PDL.xlsx": "工作流程PDL.xlsx",
+      "工作流ID": "工作流ID",
+      "工作流名称": "工作流名称",
+      "工作流描述": "工作流描述",
+      "画布结构": "画布结构",
+      "工作流节点ID": "工作流节点ID",
+      "工作流节点名称": "工作流节点名称",
+      "参数ID": "参数ID",
+      "参数名称": "参数名称",
+      "参数描述": "参数描述",
+      "参数类型": "参数类型",
+      "参数正确示例": "参数正确示例",
+      "参数错误示例": "参数错误示例",
+      "父参数ID": "父参数ID",
+      "示例问法ID": "示例问法ID",
+      "示例问法内容": "示例问法内容",
+      "变量ID": "变量ID",
+      "变量名称": "变量名称",
+      "变量描述": "变量描述",
+      "变量类型": "变量类型",
+      "变量默认值": "变量默认值",
+      "变量默认值文件名称": "变量默认值文件名称",
+      "工作流引用ID": "工作流引用ID",
+      "工作流引用名称": "工作流引用名称",
+      "PDL约束内容": "PDL约束内容",
+      "PDL参数结构": "PDL参数结构",
+      "PDL内容结构": "PDL内容结构",
+      "PDL工具结构": "PDL工具结构",
+      "任务流程导出中": "任务流程导出中",
+      "任务流程导出%s": "任务流程导出%s",
+      "%s导入中": "%s导入中",
+      "%s导入成功": "%s导入成功",
+      "%s导入失败，总共%d条，成功%d条，失败%d条": "%s导入失败，总共%d条，成功%d条，失败%d条",
+      "%s导入失败": "%s导入失败",
+      "共%d条词汇，成功%d条，失败%d条": "共%d条词汇，成功%d条，失败%d条",
+      "工作流程导出中": "工作流程导出中",
+      "工作流程导出%s": "工作流程导出%s",
+      "共%d条示例问法，成功%d条，失败%d条": "共%d条示例问法，成功%d条，失败%d条",
+      "工作流%s转换中": "工作流%s转换中",
+      "工作流%s转换%s": "工作流%s转换%s",
+      "词汇导入成功": "词汇导入成功",
+      "词汇导入失败": "词汇导入失败",
+      "任务流程导出成功": "任务流程导出成功",
+      "任务流程导入失败": "任务流程导入失败",
+      "示例问法导入成功": "示例问法导入成功",
+      "示例问法导入失败": "示例问法导入失败",
+      "工作流转换成功": "工作流转换成功",
+      "工作流转换失败": "工作流转换失败",
+      "反馈信息": "反馈信息",
+      "您对工作流\"%s\"的反馈已提交，反馈ID为%s": "您对工作流\"%s\"的反馈已提交，反馈ID为%s",
+      "反馈ID为%s的问题\"%s\"的反馈已被处理完成": "反馈ID为%s的问题\"%s\"的反馈已被处理完成",
+      "你对的问题\"%s\"的反馈(ID:%s)已被技术人员拒绝": "你对的问题\"%s\"的反馈(ID:%s)已被技术人员拒绝",
+      "不支持发布": "不支持发布",
+      "待转换": "待转换",
+      "不可转换": "不可转换",
+      "转换中": "转换中",
+      "转换失败": "转换失败",
+      "待调试": "待调试",
+      "待发布": "待发布",
+      "发布中": "发布中",
+      "已发布": "已发布",
+      "发布失败": "发布失败",
+      "新增": "新增",
+      "修改": "修改",
+      "删除": "删除",
+      "（存在画布配置错误，无法发布）": "（存在画布配置错误，无法发布）",
+      "已提交": "已提交",
+      "定位问题中": "定位问题中",
+      "处理中": "处理中",
+      "排期优化中": "排期优化中",
+      "已拒绝": "已拒绝",
+      "已处理完成": "已处理完成",
+      "【环境变量】": "【环境变量】",
+      "【API参数】": "【API参数】",
+      "【应用变量】": "【应用变量】",
+      "本轮对话内容": "本轮对话内容",
+      "多轮对话中本轮对话改写结果": "多轮对话中本轮对话改写结果",
+      "对话历史": "对话历史",
+      "当前时间": "当前时间",
+      "对话请求ID（API调用请求参数中的request_id）": "对话请求ID（API调用请求参数中的request_id）",
+
+      "__comment_2__": "=============任务流=============",
+      "文件数据存在错误，请下载并查看错误标注文件": "文件数据存在错误，请下载并查看错误标注文件",
+      "下载": "下载",
+      "词汇为空": "词汇为空",
+      "词汇名称超过最大长度:%d": "词汇名称超过最大长度:%d",
+      "存在重复： %s": "存在重复： %s",
+      "请用|进行同义词的分割": "请用|进行同义词的分割",
+      "同义词最多%d个": "同义词最多%d个",
+      "单个同义词长度超过%d": "单个同义词长度超过%d",
+      "最多导入%d条": "最多导入%d条",
+      "该应用下不存在词条:%s": "该应用下不存在词条:%s",
+      "该应用下不存在变量:%s": "该应用下不存在变量:%s",
+      "画布flowId与前端传参的flowId不一致": "画布flowId与前端传参的flowId不一致",
+      "任务流名称修改需同步修改画布JSON中的任务流名称": "任务流名称修改需同步修改画布JSON中的任务流名称",
+      "画布节点数不符合范围要求！": "画布节点数不符合范围要求！",
+      "画布内节点名称有重复，%s": "画布内节点名称有重复，%s",
+      "任务流程json文件:%s不存在或名称不合法；": "任务流程json文件:%s不存在或名称不合法；",
+      "任务流ID为空": "任务流ID为空",
+      "任务流ID与第%d行重复": "任务流ID与第%d行重复",
+      "意图ID为空": "意图ID为空",
+      "意图ID与第%d行重复": "意图ID与第%d行重复",
+      "意图ID在任务流程文件中不存在": "意图ID在任务流程文件中不存在",
+      "意图名称为空": "意图名称为空",
+      "意图名称长度超过字符限制": "意图名称长度超过字符限制",
+      "意图名称与第%d行重复": "意图名称与第%d行重复",
+      "意图名称与管理后台重复": "意图名称与管理后台重复",
+      "意图名称和任务流程文件中对应的意图名称不匹配": "意图名称和任务流程文件中对应的意图名称不匹配",
+      "意图描述长度超过字符限制": "意图描述长度超过字符限制",
+      "意图描述和任务流程文件中对应的意图描述不匹配": "意图描述和任务流程文件中对应的意图描述不匹配",
+      "意图类型错误": "意图类型错误",
+      "业务来源错误": "业务来源错误",
+      "画布结构解析错误": "画布结构解析错误",
+      "任务流程ID和画布结构中的流程ID不匹配": "任务流程ID和画布结构中的流程ID不匹配",
+      "任务流程名称和画布结构中的流程名称不匹配": "任务流程名称和画布结构中的流程名称不匹配",
+      "分类ID为空": "分类ID为空",
+      "分类ID与第%d行重复": "分类ID与第%d行重复",
+      "分类名称为空": "分类名称为空",
+      "第%d级分类为空": "第%d级分类为空",
+      "第%d级分类名称长度超过字符限制": "第%d级分类名称长度超过字符限制",
+      "变量ID为空": "变量ID为空",
+      "意图ID和变量ID与第%d行重复": "意图ID和变量ID与第%d行重复",
+      "导入变量:%s,与应用内其它变量重复": "导入变量:%s,与应用内其它变量重复",
+      "变量数据与第%d行冲突": "变量数据与第%d行冲突",
+      "变量名称为空": "变量名称为空",
+      "变量名称长度超过字符%d限制": "变量名称长度超过字符%d限制",
+      "示例问法ID为空": "示例问法ID为空",
+      "示例问法ID与第%d行重复": "示例问法ID与第%d行重复",
+      "示例问法内容为空": "示例问法内容为空",
+      "示例问法长度超过%d字符限制": "示例问法长度超过%d字符限制",
+      "示例问法内容与第%d行重复": "示例问法内容与第%d行重复",
+      "示例问法与应用内其它画布示例问法重复": "示例问法与应用内其它画布示例问法重复",
+      "语料内容和任务流程文件中对应的意图名称不匹配": "语料内容和任务流程文件中对应的意图名称不匹配",
+      "语料内容为空": "语料内容为空",
+      "语料内容与第%d行重复": "语料内容与第%d行重复",
+      "槽位实体json文件:%s不存在或名称不合法；": "槽位实体json文件:%s不存在或名称不合法；",
+      "槽位ID为空": "槽位ID为空",
+      "意图ID和槽位ID与第%d行重复": "意图ID和槽位ID与第%d行重复",
+      "槽位数据与第%d行冲突": "槽位数据与第%d行冲突",
+      "槽位名称为空": "槽位名称为空",
+      "槽位名称长度超过字符限制": "槽位名称长度超过字符限制",
+      "槽位描述为空": "槽位描述为空",
+      "槽位描述长度超过字符限制": "槽位描述长度超过字符限制",
+      "槽位示例为空": "槽位示例为空",
+      "槽位示例非法，错误详情：%s": "槽位示例非法，错误详情：%s",
+      "槽位示例个数超过系统限制": "槽位示例个数超过系统限制",
+      "实体信息为空": "实体信息为空",
+      "实体信息非法，错误详情：%s": "实体信息非法，错误详情：%s",
+      "槽位名称和实体名称不一致": "槽位名称和实体名称不一致",
+      "槽位描述和实体描述不一致": "槽位描述和实体描述不一致",
+      "槽位示例和实体示例不一致": "槽位示例和实体示例不一致",
+      "槽位必须且只能绑定一个具体实体": "槽位必须且只能绑定一个具体实体",
+
+      "__comment_3__": "=============工作流=============",
+      "数据库异常": "数据库异常",
+      "请求参数没有应用ID": "请求参数没有应用ID",
+      "成功": "成功",
+      "工作流程导出成功": "工作流程导出成功",
+      "失败": "失败",
+      "工作流程导出失败": "工作流程导出失败",
+      "工作流程导入失败": "工作流程导入失败",
+      "工作流程导入成功": "工作流程导入成功",
+      "PDL内容不能为空": "PDL内容不能为空",
+      "工作流:%s状态切换失败;状态成功切换：%d个": "工作流:%s状态切换失败;状态成功切换：%d个",
+      "已启用%d个工作流，发布应用后在生产环境中生效": "已启用%d个工作流，发布应用后在生产环境中生效",
+      "已停用%d个工作流，发布应用后在生产环境中生效": "已停用%d个工作流，发布应用后在生产环境中生效",
+      "画布workflowID(%s)与接口传参的workflowID(%s)不一致": "画布workflowID(%s)与接口传参的workflowID(%s)不一致",
+      "工作流名称修改需同步修改画布JSON中的工作流名称": "工作流名称修改需同步修改画布JSON中的工作流名称",
+      "画布内节点名称有重复, %s": "画布内节点名称有重复, %s",
+      "-副本": "-副本",
+      "工作流程json文件:%s不存在或名称不合法；": "工作流程json文件:%s不存在或名称不合法；",
+      "工作流重名或变量缺失": "工作流重名或变量缺失",
+      "工作流ID为空": "工作流ID为空",
+      "工作流ID不存在": "工作流ID不存在",
+      "工作流引用节点ID为空": "工作流引用节点ID为空",
+      "工作流引用ID为空": "工作流引用ID为空",
+      "工作流引用名称为空": "工作流引用名称为空",
+      "引用的工作流不存在": "引用的工作流不存在",
+      "工作流ID,节点ID,工作流引用ID与第%d行重复": "工作流ID,节点ID,工作流引用ID与第%d行重复",
+      "示例问法内容为空": "示例问法内容为空",
+      "示例问法内容与第%d行重复": "示例问法内容与第%d行重复",
+      "示例问法内容与已有问法重复": "示例问法内容与已有问法重复",
+      "示例问法为空": "示例问法为空",
+      "内容超过最大长度%d": "内容超过最大长度%d",
+      "示例问法内容与第%d行重复": "示例问法内容与第%d行重复",
+      "最多导入%d条": "最多导入%d条",
+      "PDL画布结构为空": "PDL画布结构为空",
+      "PDL画布结构解析错误": "PDL画布结构解析错误",
+      "工作流程ID和PDL画布结构中的流程ID不匹配": "工作流程ID和PDL画布结构中的流程ID不匹配",
+      "PDL参数结构解析错误": "PDL参数结构解析错误",
+      "PDL工具信息结构解析错误": "PDL工具信息结构解析错误",
+      "PDL内容信息结构解析错误": "PDL内容信息结构解析错误",
+      "工作流节点ID为空": "工作流节点ID为空",
+      "参数ID为空": "参数ID为空",
+      "工作流ID和参数ID与第%d行重复": "工作流ID和参数ID与第%d行重复",
+      "参数数据与第%d行冲突": "参数数据与第%d行冲突",
+      "参数名称重复": "参数名称重复",
+      "参数名称应该在 1~%d个字符，请重新填写": "参数名称应该在 1~%d个字符，请重新填写",
+      "参数描述应该在 1~%d个字符，请重新填写": "参数描述应该在 1~%d个字符，请重新填写",
+      "参数类型不合法，请重新填写": "参数类型不合法，请重新填写",
+      "错误_%s": "错误_%s",
+      "导入示例问法错误信息-%d.xlsx": "导入示例问法错误信息-%d.xlsx",
+      "该应用的工作流：%s 已经存在示例问法:%s": "该应用的工作流：%s 已经存在示例问法:%s",
+      "导入工作流程错误信息-%d.xlsx": "导入工作流程错误信息-%d.xlsx",
+      "工作流程名称": "工作流程名称",
+      "错误原因": "错误原因",
+      "引用的工作流（或引用的工作流中引用的子工作流）中存在信息收集类节点（参数提取节点、选项卡节点、文件收集节点）或Agent节点，不允许与其他信息收集类节点并行": "引用的工作流（或引用的工作流中引用的子工作流）中存在信息收集类节点（参数提取节点、选项卡节点、文件收集节点）或Agent节点，不允许与其他信息收集类节点并行",
+      "不允许在节点 %s 后与其他信息收集类节点（参数提取节点、选项卡节点、文件收集节点）或Agent节点并行": "不允许在节点 %s 后与其他信息收集类节点（参数提取节点、选项卡节点、文件收集节点）或Agent节点并行",
+      "该节点与引用该工作流的工作流【%s】存在并行冲突": "该节点与引用该工作流的工作流【%s】存在并行冲突",
+      "请先配置流程节点": "请先配置流程节点",
+      "未连接到流程中（请连接到流程中或删除）": "未连接到流程中（请连接到流程中或删除）",
+      "流程必须以\"结束节点\"作为结束": "流程必须以\"结束节点\"作为结束",
+      "输入参数个数不能超过%d": "输入参数个数不能超过%d",
+      "最大重试次数不能超过%d": "最大重试次数不能超过%d",
+      "最大重试时间间隔不能超过%d": "最大重试时间间隔不能超过%d",
+      "异常输出变量长度不能超过%d": "异常输出变量长度不能超过%d",
+      "异常情况的输出变量json格式不对": "异常情况的输出变量json格式不对",
+      "%s 参数名不能超过%d": "%s 参数名不能超过%d",
+      "%s 参数默认值不能超过%d": "%s 参数默认值不能超过%d",
+      "%s 参数名不合法": "%s 参数名不合法",
+      "%s:子参数的长度length不能超过：%d": "%s:子参数的长度length不能超过：%d",
+      "%s:子参数的深度depth不能超过：%d": "%s:子参数的深度depth不能超过：%d",
+      "%s:参数为:%s类型，子参数:%s的类型必须为:%s": "%s:参数为:%s类型，子参数:%s的类型必须为:%s",
+      "不能引用自身工作流": "不能引用自身工作流",
+      "引用的工作流未调试通过": "引用的工作流未调试通过",
+      "请先调试该流程": "请先调试该流程",
+      "工作流或者引用的工作流不存在": "工作流或者引用的工作流不存在",
+      "工作流被引用+引用的工作流总层级深度已经超过%d层了": "工作流被引用+引用的工作流总层级深度已经超过%d层了",
+      "工作流循环引用了": "工作流循环引用了",
+      "输入参数不匹配": "输入参数不匹配",
+      "获取模型信息失败": "获取模型信息失败",
+      "输入内容为空": "输入内容为空",
+      "输入内容长度不能超过%d": "输入内容长度不能超过%d",
+      "引用的内容为空": "引用的内容为空",
+      "引用的 (ID:%s) 节点不存在": "引用的 (ID:%s) 节点不存在",
+      "引用的 %s(ID:%s) 节点不是前驱节点": "引用的 %s(ID:%s) 节点不是前驱节点",
+      "引用的自定义参数为空": "引用的自定义参数为空",
+      "引用的%s自定义参数不存在": "引用的%s自定义参数不存在",
+      "引用的%s系统参数不存在": "引用的%s系统参数不存在",
+      "引用的应用变量为空": "引用的应用变量为空",
+      "引用的%s应用变量不存在": "引用的%s应用变量不存在",
+      "引用的%s环境变量不存在": "引用的%s环境变量不存在",
+      "引用的%s工作流级参数不存在": "引用的%s工作流级参数不存在",
+      "未定义输入参数": "未定义输入参数",
+      "%s 未在输入参数中定义": "%s 未在输入参数中定义",
+      "长期记忆内容，开启长期记忆功能后可用": "长期记忆内容，开启长期记忆功能后可用",
+      "草稿": "草稿",
+      "启用": "启用",
+      "已修改待发布": "已修改待发布",
+      "已发布仍有修改": "已发布仍有修改",
+      "不存在的节点(ID:%s)": "不存在的节点(ID:%s)",
+      "引用内容不合法[%s]": "引用内容不合法[%s]",
+      "引用的参数节点[%s]里不存在参数(ID:%s)": "引用的参数节点[%s]里不存在参数(ID:%s)",
+      "引用内容不合法[%s]，应该是%s": "引用内容不合法[%s]，应该是%s",
+      "回复节点内容和输出变量不能同时为空": "回复节点内容和输出变量不能同时为空",
+      "回复节点内容不能超过%d": "回复节点内容不能超过%d",
+      "引用的工作流为空": "引用的工作流为空",
+      "变量名称不能为空": "变量名称不能为空",
+      "指定遍历的数组未选择": "指定遍历的数组未选择",
+      "指定遍历数组不存在": "指定遍历数组不存在",
+      "引用的工作流中包含信息收集类节点（参数提取节点、选项卡节点、文件收集节点）或Agent节点，不允许并行处理": "引用的工作流中包含信息收集类节点（参数提取节点、选项卡节点、文件收集节点）或Agent节点，不允许并行处理",
+      "代码为空": "代码为空",
+      "代码字符数超出%d": "代码字符数超出%d",
+      "代码存在错误:%s": "代码存在错误:%s",
+      "输入参数个数超出%d": "输入参数个数超出%d",
+      "输出参数个数超出%d": "输出参数个数超出%d",
+      "结束节点不能有输入变量": "结束节点不能有输入变量",
+      "数据来源为空": "数据来源为空",
+      "参数名为空": "参数名为空",
+      "模型为空": "模型为空",
+      "用户提示词不应为空": "用户提示词不应为空",
+      "参数%s值类型错误: %v": "参数%s值类型错误: %v",
+      "参数%s范围为%d~%d": "参数%s范围为%d~%d",
+      "温度范围为0~%f": "温度范围为0~%f",
+      "TopP范围为0~%f": "TopP范围为0~%f",
+      "最大回复token范围为0~%d": "最大回复token范围为0~%d",
+      "提示词字符数不能超过%d": "提示词字符数不能超过%d",
+      "待识别意图的内容字符数不能超过%d": "待识别意图的内容字符数不能超过%d",
+      "待识别意图不应为空": "待识别意图不应为空",
+      "意图识别个数不能超过%d": "意图识别个数不能超过%d",
+      "第%d个意图名称为空": "第%d个意图名称为空",
+      "第%d个意图的连线不应为空": "第%d个意图的连线不应为空",
+      "第%d个条件中的左值数据类型无法使用该运算符": "第%d个条件中的左值数据类型无法使用该运算符",
+      "提示词不应为空": "提示词不应为空",
+      "知识库ID不应为空": "知识库ID不应为空",
+      "知识库类型不合法": "知识库类型不合法",
+      "默认知识库ID不合法": "默认知识库ID不合法",
+      "选择文档数量不应超过最大数量限制%d": "选择文档数量不应超过最大数量限制%d",
+      "文档召回数量%d~%d": "文档召回数量%d~%d",
+      "文档检索匹配度0~%f": "文档检索匹配度0~%f",
+      "问答召回数量%d~%d": "问答召回数量%d~%d",
+      "问答检索匹配度0~%f": "问答检索匹配度0~%f",
+      "标签最多可配置%d个": "标签最多可配置%d个",
+      "未选择标签": "未选择标签",
+      "未选择文档或问答": "未选择文档或问答",
+      "未选择文档或问答或数据库": "未选择文档或问答或数据库",
+      "条件组最多%d个": "条件组最多%d个",
+      "第%d个条件的连线不应为空": "第%d个条件的连线不应为空",
+      "比较运算符仅支持int类型或float类型": "比较运算符仅支持int类型或float类型",
+      "比较运算符右值无法转换为64位int类型": "比较运算符右值无法转换为64位int类型",
+      "比较运算符右值无法转换为64位float类型": "比较运算符右值无法转换为64位float类型",
+      "目前仅支持发送消息到消息队列中": "目前仅支持发送消息到消息队列中",
+      "消息内容不能超过100KB": "消息内容不能超过100KB",
+      "不支持的消息队列类型: %v": "不支持的消息队列类型: %v",
+      "不支持的Kafka认证方式: %v": "不支持的Kafka认证方式: %v",
+      "不支持的RocketMQ版本: %v": "不支持的RocketMQ版本: %v",
+      "动态选项卡输入参数：%s 应该为%s类型": "动态选项卡输入参数：%s 应该为%s类型",
+      "动态选项卡选项连线不应为空": "动态选项卡选项连线不应为空",
+      "动态选项卡其它选项连线不应为空": "动态选项卡其它选项连线不应为空",
+      "最多支持%d个选项": "最多支持%d个选项",
+      "问题或提示不能超过%d": "问题或提示不能超过%d",
+      "第%d个选项的内容为空": "第%d个选项的内容为空",
+      "第%d个选项的连线不应为空": "第%d个选项的连线不应为空",
+      "选项内容%d不能超过%d": "选项内容%d不能超过%d",
+      "参数信息为空": "参数信息为空",
+      "参数提取节点中不允许引用系统变量": "参数提取节点中不允许引用系统变量",
+      "参数个数不能超过%d": "参数个数不能超过%d",
+      "并行分支中不允许有\"参数收集\"节点": "并行分支中不允许有\"参数收集\"节点",
+      "提示词不能超过%d": "提示词不能超过%d",
+      "插件类型、插件ID或工具ID不能为空": "插件类型、插件ID或工具ID不能为空",
+      "插件节点Header数量超过%d限制": "插件节点Header数量超过%d限制",
+      "插件节点Query数量超过%d限制": "插件节点Query数量超过%d限制",
+      "插件节点Body数量超过%d限制": "插件节点Body数量超过%d限制",
+      "插件不存在": "插件不存在",
+      "工具不存在": "工具不存在",
+      "开始节点不能直接连接结束节点": "开始节点不能直接连接结束节点",
+      "标签为空": "标签为空",
+      "标签最多为%d": "标签最多为%d",
+      "标签名不应为空": "标签名不应为空",
+      "标签值示例最多为%d": "标签值示例最多为%d",
+      "接口链接为空": "接口链接为空",
+      "接口链接URL解析错误": "接口链接URL解析错误",
+      "接口链接协议需是https或http": "接口链接协议需是https或http",
+      "工具节点填写的接口：%s无法访问，出于安全角度考虑, 请使用安全的https公网域名接口": "工具节点填写的接口：%s无法访问，出于安全角度考虑, 请使用安全的https公网域名接口",
+      "请求方式不符合规范,需要：GET或POST或DELETE或PUT或PATCH或HEAD或OPTIONS方法": "请求方式不符合规范,需要：GET或POST或DELETE或PUT或PATCH或HEAD或OPTIONS方法",
+      "工具节点Header数量超过%d限制": "工具节点Header数量超过%d限制",
+      "工具节点Query数量超过%d限制": "工具节点Query数量超过%d限制",
+      "工具节点Body数量超过%d限制": "工具节点Body数量超过%d限制",
+      "参数名重复:%s": "参数名重复:%s",
+      "参数层级超最大限制%d": "参数层级超最大限制%d",
+      "参数名不能为空": "参数名不能为空",
+      "%s参数名称不符合": "%s参数名称不符合",
+      "Header名超过最大限制%d": "Header名超过最大限制%d",
+      "输入内容为%s类型，格式不正确": "输入内容为%s类型，格式不正确",
+      "%s 参数为%s类型，不能存在子参数": "%s 参数为%s类型，不能存在子参数",
+      "%s 参数为%s类型，不存在该类型": "%s 参数为%s类型，不存在该类型",
+      "密钥位置不符合规范": "密钥位置不符合规范",
+      "密钥参数名为空": "密钥参数名为空",
+      "密钥值为空": "密钥值为空",
+      "授权方式不符合规范": "授权方式不符合规范",
+      "调用方式不符合规范": "调用方式不符合规范",
+      "参数最大深度不能超过%d": "参数最大深度不能超过%d",
+      "解析方式不符合规范": "解析方式不符合规范",
+      "聚合节点不能有输入变量": "聚合节点不能有输入变量",
+      "聚合组不能为空": "聚合组不能为空",
+      "聚合组数不能超过%d": "聚合组数不能超过%d",
+      "聚合组%d的名称不能为空": "聚合组%d的名称不能为空",
+      "聚合组%d的项不能为空": "聚合组%d的项不能为空",
+      "聚合组%d的项数不能超过%d": "聚合组%d的项数不能超过%d",
+      "聚合组%d的第%d项类型不一致, itemType:%s, groupType:%s": "聚合组%d的第%d项类型不一致, itemType:%s, groupType:%s",
+      "聚合组%d的第%d项不能使用用户输入": "聚合组%d的第%d项不能使用用户输入",
+      "Agent信息为空": "Agent信息为空",
+      "查询Agent状态失败": "查询Agent状态失败",
+      "Agent已删除": "Agent已删除",
+      "数据库表个数不能超过%d个": "数据库表个数不能超过%d个",
+      "应用ID格式错误": "应用ID格式错误",
+      "数据库信息查询失败": "数据库信息查询失败",
+      "数据库信息查询结果为空": "数据库信息查询结果为空",
+      "该数据库未发布，请选择已发布的数据库": "该数据库未发布，请选择已发布的数据库",
+      "以下表不存在: %s": "以下表不存在: %s",
+      "变量赋值节点不能有输入变量": "变量赋值节点不能有输入变量",
+      "赋值变量个数不能超过%d": "赋值变量个数不能超过%d",
+      "变量赋值节点引用的变量类型错误，只支持应用变量和工作流级变量": "变量赋值节点引用的变量类型错误，只支持应用变量和工作流级变量",
+      "变量类型错误:%s": "变量类型错误:%s",
+      "赋值变量节点中要赋值的变量名称%s重复": "赋值变量节点中要赋值的变量名称%s重复",
+      "变量转换节点不能有输入变量": "变量转换节点不能有输入变量",
+      "转换变量不能为空": "转换变量不能为空",
+      "变量转换节点的转换变量不能使用用户输入": "变量转换节点的转换变量不能使用用户输入",
+      "JSON反序列化时，变量转换节点的转换变量只支持string类型": "JSON反序列化时，变量转换节点的转换变量只支持string类型",
+      "JSON转换方式不符合规范": "JSON转换方式不符合规范",
+      "列表取值和排序时，变量转换节点的转换变量只支持array类型,不包括array<array>": "列表取值和排序时，变量转换节点的转换变量只支持array类型,不包括array<array>",
+      "列表取值范围不符合规范": "列表取值范围不符合规范",
+      "列表排序方式不符合规范": "列表排序方式不符合规范",
+      "列表排序字段不能为空": "列表排序字段不能为空",
+      "列表转换方式不符合规范": "列表转换方式不符合规范",
+      "字符串拼接至少要两个转换变量": "字符串拼接至少要两个转换变量",
+      "字符串分隔符不能为空": "字符串分隔符不能为空",
+      "字符串分隔时，变量转换节点的转换变量只支持string和file类型": "字符串分隔时，变量转换节点的转换变量只支持string和file类型",
+      "字符串转换方式不符合规范": "字符串转换方式不符合规范",
+      "转换类型不符合规范": "转换类型不符合规范",
+      "工作流ID为空": "工作流ID为空",
+      "工作流ID与第%d行重复": "工作流ID与第%d行重复",
+      "工作流名称为空": "工作流名称为空",
+      "工作流名称长度超过字符限制": "工作流名称长度超过字符限制",
+      "工作流名称与第%d行重复": "工作流名称与第%d行重复",
+      "工作流名称与已有工作流重复": "工作流名称与已有工作流重复",
+      "工作流描述长度超过字符限制": "工作流描述长度超过字符限制",
+      "画布结构为空": "画布结构为空",
+      "画布结构解析错误": "画布结构解析错误",
+      "工作流程ID和画布结构中的流程ID不匹配": "工作流程ID和画布结构中的流程ID不匹配",
+      "工作流程名称和画布结构中的流程名称不匹配": "工作流程名称和画布结构中的流程名称不匹配",
+      "工作流ID在工作流程文件中不存在": "工作流ID在工作流程文件中不存在",
+      "变量表格条数超过%d条，请修改后重新上传": "变量表格条数超过%d条，请修改后重新上传",
+      "工作流ID和变量ID与第%d行重复": "工作流ID和变量ID与第%d行重复",
+      "导入变量:%s,与应用内其它变量重复": "导入变量:%s,与应用内其它变量重复",
+      "变量数据与第%d行冲突": "变量数据与第%d行冲突",
+      "变量名称为空": "变量名称为空",
+      "变量名称长度超过字符%d限制": "变量名称长度超过字符%d限制",
+      "变量类型错误": "变量类型错误",
+      "节点运行异常": "节点运行异常",
+      "Node runtime exception": "节点运行异常",
+      "当前字符数为%d,注释节点允许最大字符为%d": "当前字符数为%d,注释节点允许最大字符为%d",
+      "当前字符数为%d,文件收集节点提示词语允许最大字符为%d": "当前字符数为%d,文件收集节点提示词语允许最大字符为%d",
+      "文件收集节点至少要求1个文件类型": "文件收集节点至少要求1个文件类型",
+      "文件收集节点不支持类型: %v": "文件收集节点不支持类型: %v",
+      "文件收集节点至少要求1个文件上传": "文件收集节点至少要求1个文件上传",
+      "文件收集节点最大支持%d个文件上传": "文件收集节点最大支持%d个文件上传",
+
+      "__comment_4__": "=======自定义变量错误码VarParamNotAllowedDeleted=====",
+      "该变量已被知识库设置引用，需要解除引用关系后删除": "该变量已被知识库设置引用，需要解除引用关系后删除",
+      "该变量已被【%s】引用，需要解除引用关系后删除": "该变量已被【%s】引用，需要解除引用关系后删除",
+
+      "__comment_5__": "==========工作流错误码BadWorkflowReqError===========",
+      "请求参数没有应用ID": "请求参数没有应用ID",
+      "请求参数没有应用ID，且没有工作流ID": "请求参数没有应用ID，且没有工作流ID",
+      "请求参数没有应用ID或者没有工作流ID": "请求参数没有应用ID或者没有工作流ID",
+      "传的参数异常": "传的参数异常",
+      "传的业务ID参数异常": "传的业务ID参数异常",
+      "请输入体验中心应用ID": "请输入体验中心应用ID",
+      "解析excel文件错误": "解析excel文件错误",
+      "没有可删除的应用": "没有可删除的应用",
+      "请求参数没有文档ID": "请求参数没有文档ID",
+      "请求参数没有标签ID": "请求参数没有标签ID",
+      "请求参数没有标签值ID": "请求参数没有标签值ID",
+      "%s节点类型错误": "%s节点类型错误",
+
+      "__comment_6__": "==========请求错误码BadRequestError=================",
+      "应用ID错误": "应用ID错误",
+      "任务事件类型不存在": "任务事件类型不存在",
+      "发布任务已经存在, 请勿重新创建": "发布任务已经存在, 请勿重新创建",
+      "发布任务不存在或不能发布": "发布任务不存在或不能发布",
+      "发布任务不存在": "发布任务不存在",
+      "应用ID为空": "应用ID为空",
+      "恢复历史任务流的槽位或变量错误": "恢复历史任务流的槽位或变量错误",
+      "参数校验失败": "参数校验失败",
+      "缺少必填参数": "缺少必填参数",
+      "反馈描述超过最大限制：%d": "反馈描述超过最大限制：%d",
+      "传入的画布节点Id不对": "传入的画布节点Id不对",
+      "请传入正确的 [TaskID]": "请传入正确的 [TaskID]",
+
+      "__comment_7__": "==========DB操作错误码OpDataFromDBError=============",
+      "获取工作流失败": "获取工作流失败",
+      "获取模型对应输入框字数限制失败": "获取模型对应输入框字数限制失败",
+      "获取分享码信息失败": "获取分享码信息失败",
+      "获取工作流列表失败": "获取工作流列表失败",
+      "导入示例问法失败": "导入示例问法失败",
+      "创建分类失败": "创建分类失败",
+      "获取分类失败": "获取分类失败",
+      "更新分类失败": "更新分类失败",
+      "删除分类失败": "删除分类失败",
+      "创建示例问法失败": "创建示例问法失败",
+      "获取示例问法失败": "获取示例问法失败",
+      "更新示例问法失败": "更新示例问法失败",
+      "删除示例问法失败": "删除示例问法失败",
+      "获取员工信息失败：%s": "获取员工信息失败：%s",
+      "画布信息解密失败": "画布信息解密失败",
+      "获取历史的任务流程失败": "获取历史的任务流程失败",
+      "获取任务流程历史版本错误": "获取任务流程历史版本错误",
+      "获取历史任务流程版本详情失败": "获取历史任务流程版本详情失败",
+      "获取发布状态失败": "获取发布状态失败",
+      "分组移动失败": "分组移动失败",
+      "创建任务流程失败": "创建任务流程失败",
+      "保存工作流失败": "保存工作流失败",
+      "删除任务流程失败": "删除任务流程失败",
+      "获取发布任务失败": "获取发布任务失败",
+      "获取任务流程详情失败": "获取任务流程详情失败",
+      "获取变量信息失败": "获取变量信息失败",
+      "变量创建失败": "变量创建失败",
+      "更新变量失败": "更新变量失败",
+      "删除变量失败": "删除变量失败",
+      "删除工作流反馈失败": "删除工作流反馈失败",
+      "获取详情反馈理由失败": "获取详情反馈理由失败",
+      "获取应用信息失败": "获取应用信息失败",
+      "添加反馈失败": "添加反馈失败",
+      "更新反馈失败": "更新反馈失败",
+      "获取反馈记录失败": "获取反馈记录失败",
+      "获取反馈理由失败": "获取反馈理由失败",
+      "获取反馈所属工作流失败": "获取反馈所属工作流失败",
+      "创建工作流示例问法失败": "创建工作流示例问法失败",
+      "更新工作流示例问法失败": "更新工作流示例问法失败",
+      "删除工作流示例问法失败": "删除工作流示例问法失败",
+      "获取工作流示例问法列表失败": "获取工作流示例问法列表失败",
+      "删除工作流失败": "删除工作流失败",
+      "解析画布信息失败": "解析画布信息失败",
+      "获取画布节点信息失败": "获取画布节点信息失败",
+      "获取可以被引用的工作流的列表失败": "获取可以被引用的工作流的列表失败",
+
+      "__comment_8__": "==========任务流错误码TaskFLowVerifyError===========",
+      "答案节点解析错误": "答案节点解析错误",
+      "答案节点数据来源不对%s": "答案节点数据来源不对%s",
+      "答案节点自定义答案超过最大长度%d限制": "答案节点自定义答案超过最大长度%d限制",
+      "答案节点智能回复自定义提示词长度超过最大长度%d限制": "答案节点智能回复自定义提示词长度超过最大长度%d限制",
+      "API节点解析错误": "API节点解析错误",
+      "询问内容超过最大限制%d": "询问内容超过最大限制%d",
+      "入参参数名重复:%s": "入参参数名重复:%s",
+      "%s 参数层级超最大限制%d": "%s 参数层级超最大限制%d",
+      "%s 参数必填，其子参数必有至少一项必填": "%s 参数必填，其子参数必有至少一项必填",
+      "API节点请求参数数量超过%d限制": "API节点请求参数数量超过%d限制",
+      "API节点请求参数数量少于%d个": "API节点请求参数数量少于%d个",
+      "API节点输入参数%s类型错误": "API节点输入参数%s类型错误",
+      "API节点请求参数%s的类型为%s，不存在子参数%+v": "API节点请求参数%s的类型为%s，不存在子参数%+v",
+      "%s 参数为%s类型，其子参数至少一项必填": "%s 参数为%s类型，其子参数至少一项必填",
+      "%s 参数为%s类型，其数据来源不可选": "%s 参数为%s类型，其数据来源不可选",
+      "API节点输入参数%s的数据来源为空": "API节点输入参数%s的数据来源为空",
+      "API节点输入参数的%s的接口出参[%s]不存在": "API节点输入参数的%s的接口出参[%s]不存在",
+      "%s超过最大限制%d": "%s超过最大限制%d",
+      "输入参数名不能为空": "输入参数名不能为空",
+      "%s不支持的参数名": "%s不支持的参数名",
+      "参数名称超过最大限制%d": "参数名称超过最大限制%d",
+      "Header参数名重复:%s": "Header参数名重复:%s",
+      "Header参数层级超最大限制%d": "Header参数层级超最大限制%d",
+      "API节点Header数量超过%d限制": "API节点Header数量超过%d限制",
+      "Header必填参数的参数名不能为空": "Header必填参数的参数名不能为空",
+      "%s不支持的Header名": "%s不支持的Header名",
+      "Header名超过最大限制%d": "Header名超过最大限制%d",
+      "API节点Header的%s类型错误，不支持%s": "API节点Header的%s类型错误，不支持%s",
+      "API节点Header的%s类型为%s，不存在子参数%+v": "API节点Header的%s类型为%s，不存在子参数%+v",
+      "API节点精准询问话术不能为空": "API节点精准询问话术不能为空",
+      "精准询问话术超过最大限制%d": "精准询问话术超过最大限制%d",
+      "API入参格式描述不能全是空格": "API入参格式描述不能全是空格",
+      "API入参格式描述超过最大限制%d": "API入参格式描述超过最大限制%d",
+      "API节点参数信息数量超过%d": "API节点参数信息数量超过%d",
+      "API节点参数信息数量少于%d": "API节点参数信息数量少于%d",
+      "出参参数名重复:%s": "出参参数名重复:%s",
+      "API节点子出参参数信息数量超过%d": "API节点子出参参数信息数量超过%d",
+      "子出参类型不能为%s类型": "子出参类型不能为%s类型",
+      "API节点%s的子层级出参参数名重复:%s": "API节点%s的子层级出参参数名重复:%s",
+      "输出参数名不能为空": "输出参数名不能为空",
+      "API节点参数类型错误": "API节点参数类型错误",
+      "API节点输出参数%s解析路径必填": "API节点输出参数%s解析路径必填",
+      "出参的层级限制不能超过%d层": "出参的层级限制不能超过%d层",
+      "API地址不能为空": "API地址不能为空",
+      "API节点：接口请求URL解析错误": "API节点：接口请求URL解析错误",
+      "API节点：接口请求路径长度超过最大长度%d限制": "API节点：接口请求路径长度超过最大长度%d限制",
+      "API节点：接口请求协议需是https或http": "API节点：接口请求协议需是https或http",
+      "API节点：接口请求类型需要：GET或POST方法": "API节点：接口请求类型需要：GET或POST方法",
+      "%s:保存到测试环境失败，出于安全角度考虑，智能接口不支持内部接口的调用，请使用安全的https公网域名接口": "%s:保存到测试环境失败，出于安全角度考虑，智能接口不支持内部接口的调用，请使用安全的https公网域名接口",
+      "结束节点的类型必需是答案节点": "结束节点的类型必需是答案节点",
+      "节点超过最大节点分支数：%d": "节点超过最大节点分支数：%d",
+      "校验流转规则类型错误, DIRECT时条件应为空": "校验流转规则类型错误, DIRECT时条件应为空",
+      "校验流转规则类型错误, CUSTOM时条件不应为空": "校验流转规则类型错误, CUSTOM时条件不应为空",
+      "校验流转规则类型错误, 不支持%s": "校验流转规则类型错误, 不支持%s",
+      "节点跳转条件最多只支持%d层": "节点跳转条件最多只支持%d层",
+      "配置了%s，但是ConditionInfo是空的": "配置了%s，但是ConditionInfo是空的",
+      "%s的值不应为空": "%s的值不应为空",
+      "在条件分支中引用了不存在的实体:%s": "在条件分支中引用了不存在的实体:%s",
+      "流转规则组合条件为属于用户输入时，其值个数超过最大%d个限制": "流转规则组合条件为属于用户输入时，其值个数超过最大%d个限制",
+      "条件分支属于，用户输入:%s 重复了": "条件分支属于，用户输入:%s 重复了",
+      "流转规则组合条件为属于且选择词条时，选择词条不": "流转规则组合条件为属于且选择词条时，选择词条不",
+      "流转规则组合条件为包含时，其值个数超过最大%d个限制": "流转规则组合条件为包含时，其值个数超过最大%d个限制",
+      "流转规则组合条件为包含时，其值个数少于最少%d个限制": "流转规则组合条件为包含时，其值个数少于最少%d个限制",
+      "数值比较时，值不能为空": "数值比较时，值不能为空",
+      "SLOT时不支持%s，只支持%s": "SLOT时不支持%s，只支持%s",
+      "在条件分支中收集实体引用了不存在的出参:%s": "在条件分支中收集实体引用了不存在的出参:%s",
+      "在条件分支中引用了不存在的出参:%s": "在条件分支中引用了不存在的出参:%s",
+      "分支条件接口出参引用实体不支持%s，只支持%s": "分支条件接口出参引用实体不支持%s，只支持%s",
+      "在条件分支中接口出参引用了不存在的实体:%s": "在条件分支中接口出参引用了不存在的实体:%s",
+      "在条件分支中接口出参引用了不存在的词条:%s": "在条件分支中接口出参引用了不存在的词条:%s",
+      "SYSTEM时不支持%s，只支持%s": "SYSTEM时不支持%s，只支持%s",
+      "在条件分支中引用了不存在的自定义变量Id:%s": "在条件分支中引用了不存在的自定义变量Id:%s",
+      "分支条件为收集实体，条件为 %s,不支持选择匹配方式": "分支条件为收集实体，条件为 %s,不支持选择匹配方式",
+      "分支条件为接口出参 条件为 %s，不支持选择匹配方式": "分支条件为接口出参 条件为 %s，不支持选择匹配方式",
+      "只能在有意向判断的询问节点中直接连线意向判断的条件": "只能在有意向判断的询问节点中直接连线意向判断的条件",
+      "意向判断时InputValues只能为:true, false. %s": "意向判断时InputValues只能为:true, false. %s",
+      "意向判断时不支持%s，只支持%s": "意向判断时不支持%s，只支持%s",
+      "[%s]不支持的参数类型": "[%s]不支持的参数类型",
+      "%s不支持在参数类型为%s时使用，只支持%s": "%s不支持在参数类型为%s时使用，只支持%s",
+      "节点自定义跳转分支条件数量超过最大%d": "节点自定义跳转分支条件数量超过最大%d",
+      "节点自定义跳转分支数量少于%d个限制": "节点自定义跳转分支数量少于%d个限制",
+      "询问节点解析错误": "询问节点解析错误",
+      "信息澄清节点-判断意图的询问话术不能为空": "信息澄清节点-判断意图的询问话术不能为空",
+      "信息澄清节点-判断意图的询问话术超过最大限制%d": "信息澄清节点-判断意图的询问话术超过最大限制%d",
+      "必要信息超过最大限制%d": "必要信息超过最大限制%d",
+      "信息澄清节点询问话术为自定义时，自定义话术不能为空": "信息澄清节点询问话术为自定义时，自定义话术不能为空",
+      "自定义话术超过最大限制%d": "自定义话术超过最大限制%d",
+      "追问语句超过最大限制%d": "追问语句超过最大限制%d",
+      "选项卡API方式，ParamID不能为空": "选项卡API方式，ParamID不能为空",
+      "选项卡API方式，ParamID:%s出参不存在": "选项卡API方式，ParamID:%s出参不存在",
+      "选项卡API方式，ParamID:%s出参为%s类型,不存在子参数": "选项卡API方式，ParamID:%s出参为%s类型,不存在子参数",
+      "选项卡API方式，子参数ParamID:%s出参不存在": "选项卡API方式，子参数ParamID:%s出参不存在",
+      "选项卡自定义方式，配置选项不能为空": "选项卡自定义方式，配置选项不能为空",
+      "询问节点选项配置超过最大限制:%d": "询问节点选项配置超过最大限制:%d",
+      "询问节点选项配置不能小于:%d": "询问节点选项配置不能小于:%d",
+      "询问节点选项配置[%s]超过最大长度%d": "询问节点选项配置[%s]超过最大长度%d",
+      "开始节点流转规则有误": "开始节点流转规则有误",
+      "开始节点流转分支数只能为一条,%d": "开始节点流转分支数只能为一条,%d",
+      "%s节点的SlotID:%s不存在": "%s节点的SlotID:%s不存在",
+
+      "__comment_9__": "==========任务流预览错误码PreviewError===============",
+      "自定义prompt解析错误": "自定义prompt解析错误",
+
+      "__comment_10__": "==========gv错误码GVError===============",
+      "请求参数corpId：%d 错误": "请求参数corpId：%d 错误",
+      "参数错误": "参数错误",
+      "工作流ID不能为空": "工作流ID不能为空",
+      "应用ID错误": "应用ID错误",
+      "节点运行实例ID不能为空": "节点运行实例ID不能为空",
+      "调试模式类型不对": "调试模式类型不对",
+      "重新生成传入 true或false": "重新生成传入 true或false",
+      "传入正确的分享码": "传入正确的分享码",
+      "请传入正确的父分类Id": "请传入正确的父分类Id",
+      "请传入正确的分类名": "请传入正确的分类名",
+      "分类名最大长度不超过10": "分类名最大长度不超过10",
+      "请传入任务流程Id": "请传入任务流程Id",
+      "请传入正确的业务名称": "请传入正确的业务名称",
+      "请传入正确的发布事件": "请传入正确的发布事件",
+      "请传入正确的任务 ID": "请传入正确的任务 ID",
+      "请传入正确的ID": "请传入正确的ID",
+      "请传入正确实体名称": "请传入正确实体名称",
+      "请传入正确的机器人ID": "请传入正确的机器人ID",
+      "请传入正确的实体ID": "请传入正确的实体ID",
+      "EnvTag请传入正确的环境标识": "EnvTag请传入正确的环境标识",
+      "请传入正确的任务流程名": "请传入正确的任务流程名",
+      "请传入正确的分类业务ID": "请传入正确的分类业务ID",
+      "选择正确的任务流类型": "选择正确的任务流类型",
+      "请传入正确的任务流版本": "请传入正确的任务流版本",
+      "请传入正确的任务流ID": "请传入正确的任务流ID",
+      "请传入正确的版本信息": "请传入正确的版本信息",
+      "请传入正确的工作流名称": "请传入正确的工作流名称",
+      "请传入正确的机器人": "请传入正确的机器人",
+      "请传入正确的工作流id": "请传入正确的工作流id",
+      "请传入正确的插件ID": "请传入正确的插件ID",
+      "请传入正确的应用Id": "请传入正确的应用Id",
+      "请传入正确的工作流程名": "请传入正确的工作流程名",
+      "每页数量在1到200之间": "每页数量在1到200之间",
+      "请传入正确的工作流PDL id": "请传入正确的工作流PDL id",
+      "请传入正确的工作流PDL版本号": "请传入正确的工作流PDL版本号",
+      "请传入正确的新手引导Key": "请传入正确的新手引导Key",
+      "请传入示例问法Id": "请传入示例问法Id",
+      "请传入示例问法": "请传入示例问法",
+      "请传入工作流ID": "请传入工作流ID",
+      "请传入正确的参数名称": "请传入正确的参数名称",
+      "请传入正确的参数描述": "请传入正确的参数描述",
+      "请传入正确的参数类型": "请传入正确的参数类型",
+      "请传入正确的实体名称": "请传入正确的实体名称",
+      "请传入正确的参数ID": "请传入正确的参数ID",
+      "请传入正确的应用id": "请传入正确的应用id",
+      "请传入正确的工作流ID": "请传入正确的工作流ID",
+      "请传入正确的应用ID": "请传入正确的应用ID",
+      "export-%d.zip": "export-%d.zip",
+      "export-%s.zip": "export-%s.zip",
+      "export-%s等.zip": "export-%s等.zip",
+      "工作流重名或变量缺失或示例问法重复": "工作流重名或变量缺失或示例问法重复",
+      "该应用下示例问法已经存在": "该应用下示例问法已经存在",
+      "共%d条示例问法，%d条导入成功，%d条未导入(与已有问法重复)": "共%d条示例问法，%d条导入成功，%d条未导入(与已有问法重复)",
+      "该工作流：%s 已经存在示例问法:%s": "该工作流：%s 已经存在示例问法:%s",
+      "流式接口不支持轮询": "流式接口不支持轮询",
+      "轮询超时时间范围是1-%d秒": "轮询超时时间范围是1-%d秒",
+      "轮询间隔时间范围是1-%d秒": "轮询间隔时间范围是1-%d秒",
+      "请设置轮询退出条件": "请设置轮询退出条件",
+      "%s校验失败": "%s校验失败",
+      "%s未使用密文存储，请先加密": "%s未使用密文存储，请先加密",
+      "%s未配置": "%s未配置",
+      "秘钥信息缺失": "秘钥信息缺失",
+      "秘钥鉴权方式错误": "秘钥鉴权方式错误",
+      "请配置腾讯云签名秘钥": "请配置腾讯云签名秘钥"
+    }
+  trpc_go.yaml: |
+    global:                             #全局配置
+      namespace: ${NAME_SPACE}            #环境类型，分正式production和非正式development两种类型
+      env_name: ${ENV}                     #环境名称，非正式环境下多环境的名称
+      enable_set: ${ENABLE_SET}         #是否启用set
+      full_set_name: ${FULL_SET_NAME}   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+
+    server:                                            #服务端配置
+      app: KEP                                        #业务的应用名
+      server: bot-task-config-server                             #进程服务名
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      admin:
+        ip: 0.0.0.0
+        port: 8081
+        write_timeout: 600000 # ms. 处理的超时时间
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - recovery                                     #拦截框架创建的业务处理协程panic
+        - i18n-adp
+        - opentelemetry                                # 天机阁
+        - galileo
+      stream_filter:
+        - recovery                                     #拦截框架创建的业务处理协程panic
+        - galileo
+      service:                                         #业务服务提供的service，可以有多个
+        # - name: trpc.KEP.bot-task-config-server.task-config      #service的路由名称
+        #   ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+        #   port: 8000                #服务监听端口 可使用占位符 ${port}
+        #   network: tcp                             #网络监听类型  tcp udp
+        #   protocol: trpc               #应用层协议 trpc http
+        #   timeout: 0                            #请求最长处理时间 单位 毫秒
+        #   server_async: true                           #开启异步处理
+        #   idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+        #   filter:
+        #     - session
+        #     - permission
+        - name: trpc.KEP.bot-task-config-server.TimerCheckTaskFlowMigration   # 分布式定时器 任务流迁移任务定时校验
+          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 8005                                                          # 服务监听端口 可使用占位符 ${port}
+          network: "0 */2 * * * * ?startAtOnce=0&scheduler=redis&holdTime=60" # 使用redis分布式锁
+          protocol: timer                                                     # 应用层协议 timer
+          timeout: 120000                                                     # 请求最长处理时间 单位 毫秒
+        # 工作流配置端-内部接口
+        - name: trpc.adp.workflow_config.WorkflowConfig      #service的路由名称
+          ip: ${POD_IP}                            #服务监听ip地址可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+          port: 8000                #服务监听端口可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: trpc               #应用层协议 trpc http
+          timeout: 0                            #请求最长处理时间单位毫秒
+          server_async: true                           #开启异步处理
+          idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+          filter:
+            - session
+            - permission
+        - name: trpc.adp.workflow_config.WorkflowConfigApi      #service的路由名称
+          ip: ${POD_IP}                            #服务监听ip地址可使用占位符 ${ip},ip和nic二选一，优先ip
+          #nic: eth0
+          port: 8001                #服务监听端口可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: trpc               #应用层协议 trpc http
+          timeout: 0                            #请求最长处理时间单位毫秒
+          server_async: true                           #开启异步处理
+          idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+
+
+    client:
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - client_track
+        - galileo
+        - opentelemetry
+      stream_filter:
+        - galileo
+      service:
+        - name: mysql.db_llm_robot_task
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot_task?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.db_llm_robot_task_prod
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot_task_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.db_llm_robot_workflow
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_workflow_formal?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.db_llm_robot_workflow_prod
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_workflow_formal_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.db_llm_robot_task.delete
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot_task?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.db_llm_robot_task_prod.delete
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot_task_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.db_llm_robot_workflow.delete
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_workflow_formal?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.db_llm_robot_workflow_prod.delete
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_workflow_formal_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: redis.bot-task-config-server
+          network: tcp
+          target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/2
+          password: "{{ .Values.global.components.redis.password }}"
+          timeout: 800
+        # 应用配置-登录态接口(旧协议，待废弃)
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 60000
+         # 应用配置-登录态接口
+        - callee: trpc.adp.app_admin_proxy.Login
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 60000
+        # 应用配置-内部接口(旧协议，待废弃)
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 60000
+        # 应用配置-内部接口
+        - callee: trpc.adp.app_admin_proxy.Api
+          target: ip://admin.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 60000
+        # 计费接口(待废弃)
+        - callee: qbot.finance.finance.Finance
+          target: ip://finance.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 300000
+        # 向量库
+        - callee: trpc.smartassistant.vectordbmanager.VectorObj
+          name: trpc.SmartAssistant.VectorDBManager.VectorObj
+          target: ip://vector-db-manager.{{ .Release.Namespace }}.svc.cluster.local:10001
+          protocol: trpc
+          network: tcp
+          timeout: 6000000
+        # 工作流运行时(旧协议，待废弃)
+        - callee: trpc.KEP.bot_workflow_dm_server.WorkflowDm
+          name: trpc.KEP.bot-workflow-dm-server.workflow-dm
+          target: ip://botworkflowdmserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          protocol: trpc
+          network: tcp
+          timeout: 600000
+        # 工作流运行时
+        - callee: trpc.adp.workflow_exec.WorkflowExec
+          target: ip://botworkflowdmserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          namespace: Test
+          timeout: 600000
+         # 知识库-内部接口(旧协议，待废弃)
+        - callee: trpc.KEP.bot_knowledge_config_server.Api
+          name: trpc.KEP.bot-knowledge-config-server.Api
+          target: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+        # 知识库-内部接口
+        - callee: trpc.adp.kb_config.Api
+          target: ip://botknowledgeconfigserver.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: Test
+          env_name: test
+          protocol: trpc
+          timeout: 60000
+        # 计费接口(待废弃)
+        - name: qbot.finance.finance.Finance
+          target: ip://finance.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 300000
+        # 插件中心-内部接口(旧协议，待废弃)
+        - callee: trpc.KEP.plugin_config_server.PluginConfigApi
+          name:  trpc.KEP.plugin-config-server.PluginConfigApi
+          target: ip://pluginconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          network: tcp
+          timeout: 60000
+        # 插件中心-内部接口
+        - callee: trpc.adp.plugin_config.PluginConfigApi
+          target: ip://pluginconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: Test
+          timeout: 60000
+        # 代码执行(旧协议，待废弃)
+        - callee: trpc.KEP.code_interpreter_dispatcher.CodeExec
+          name: trpc.KEP.code-interpreter-dispatcher
+          target: ip://codeinterpreterdispatcher.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          network: tcp
+          timeout: 600000
+        # 代码执行
+        - callee: trpc.adp.plugin_code_interpret.CodeExec
+          target: ip://codeinterpreterdispatcher.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: Test
+          protocol: trpc
+          timeout: 600000
+        # agent配置-内部接口(旧协议，待废弃)
+        - callee: trpc.KEP.agent_config_server.AgentConfigApi
+          name: trpc.KEP.agent-config-server.AgentConfigApi
+          target: ip://agentconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 60000
+        # agent配置-内部接口
+        - callee: trpc.adp.agent_config.AgentConfigApi
+          target: ip://agentconfigserver.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 60000
+        # 模型网关（embedding相关）
+        - name: trpc.adp.ai-gateway.api
+          network: tcp
+          timeout: 4500000
+          target: ip://ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: http
+        # 数据上报-内部接口(旧协议，待废弃)
+        - callee: trpc.KEP.bot_data_statistics_server.Api
+          target: ip://botdatastatisticsserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          protocol: trpc
+          timeout: 60000
+        # 资源管理服务-内部接口
+        - callee: trpc.adp.resource_gallery.Admin
+          target: ip://resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 600000
+        # 数据上报-内部接口
+        - callee: trpc.adp.platform_metrology.Api
+          target: ip://botdatastatisticsserver.{{ .Release.Namespace }}.svc.cluster.local:8000
+          protocol: trpc
+          timeout: 60000
+        # 资源管理服务-登录态接口
+        - callee: trpc.adp.resource_gallery.Login
+          target: ip://resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 600000
+        # 平台管理服务-内部接口
+        - callee: trpc.adp.platform_manager.Admin
+          target: ip://platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 60000
+        # 平台管理服务-登录态接口
+        - callee: trpc.adp.platform_manager.Login
+          target: ip://platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 60000
+        - name: trpc.http.cos.Access
+          namespace: Production
+          network: tcp
+          protocol: http
+          {{ if eq .Values.global.components.s3.providerType "minio" }}
+          target: ip://minio.{{ .Release.Namespace }}.svc.cluster.local:80
+          {{ else if eq .Values.global.components.s3.providerType "obs" }}
+          target: ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}
+          {{ else }}
+          target: dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn
+          {{ end }}
+          timeout: 5000
+
+    plugins:                                          #插件配置
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: console                           #控制台标准输出 默认
+            level: error                              #标准输出日志的级别
+            caller_skip: 3
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+          - writer: file                              #本地文件日志
+            level: info                               #本地文件滚动日志的级别
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/trpc.log    #本地文件滚动日志存放的路径
+              max_size: 100                             #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false                          #日志文件是否压缩
+      config:
+        file:
+          providers:
+          - name: rainbow
+            path: /app/conf/
+          - name: rainbow-comm
+            path: /app/conf/
+      telemetry:
+        opentelemetry:
+          addr: {{ (.Values.global.observability.apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if (.Values.global.observability.apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if (.Values.global.observability.apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+        galileo:
+          verbose: error   # 伽利略自身的诊断日志级别，取值范围：debug, info, error, none，日志输出在 ./galileo/galileo.log 中。
+          ocp_addr: "http://127.0.0.1"
+          config: #配置
+            config_server: "http://127.0.0.1"
+            register_server: "http://127.0.0.1"
+            self_monitor:
+              collector:
+                addr: "http://127.0.0.1"
+            metrics_config: # 指标配置
+              enable: false    # 是否启用指标
+            traces_config: # 追踪配置
+              enable: true    # 是否启用追踪，默认 true。如果设置为 false，会中断 trace，让上游的调用链不完整。v0.3.7 以上生效。
+              processor: # 追踪数据处理相关配置
+                sampler: # 采样器配置
+                  fraction: 0   # 采样比例，默认 0。（v0.11.0)
+                  error_fraction: 0
+                  enable_min_sample: true  # 启用每分钟每接口最少 1 个请求采样，默认 true (v0.11.0)。
+                  enable_dyeing: true # 开启染色采样，默认 true。
+                disable_trace_body: true          # 若为 true，则关闭 trace 中对 req 和 rsp 的 body 上报，可以大幅提高上报性能。默认 true。
+                enable_deferred_sample: false     # 开启延迟采样（请求处理完采样），默认 false。0.3.0 以上生效。
+                deferred_sample_error: false      # 开启延迟采样出错采样（请求处理完出现错误采样），默认 false。0.3.0 以上生效。
+                deferred_sample_slow_duration_ms: 1000    # 慢操作阈值（请求耗时超过该值采样），单位 ms，默认 1000。0.3.0 以上生效。
+                disable_parent_sampling: false            # 忽略上游的采样结果，默认 false。v0.3.7 以上生效。
+              exporter:
+                collector:
+                  addr: "127.0.0.1:80"
+            logs_config: # 日志配置
+              enable: false    # 是否启用日志
+              processor: # 日志数据处理相关配置
+                only_trace_log: false  # 是否只上报命中 trace 的 log，默认关闭
+                must_log_traced: false # 是否命中 traced 不管任何级别日志都上报，默认关闭。v0.3.22 以上生效
+                trace_log_mode: 0   # debug 访问日志 (access_log) 打印模式，0,1：单行打印，3：多行打印，2：不打印，默认 0
+                level: debug        # 上报到远程的日志级别，默认 error
+                enable_recovery: true # 是否捕获 panic，默认 true
+            profiles_config:    # profile配置
+              enable: false # 是否启用 profile
+              processor: # profile 数据处理相关配置
+                profile_types: ["cpu", "heap"] # 采集 profile 的类型，支持 cpu、heap、mutex、block、goroutine，默认开启 cpu 和 heap。
+            version: 1        # 版本号，默认 0，此版本号用于控制远程配置和本地配置的优先级，版本号高的优先，一般设置成 1 即可。
+          resource: # resource 资源信息，在 SDK 运行期间不会改变。resource 中的字段一般不需要配置，默认会填充。
+            platform: STKE   # 服务部署的平台，如 PCG-123, STKE, 默认 PCG-123
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+            - zh-CN
+            - en-US
+          data_provider:
+            type: rainbow
+            prefix: task
+            error_prefix: error
+            char_scaling_factor:
+              zh-CN: 1
+              en-US: 3

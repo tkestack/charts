@@ -1,6 +1,0 @@
-images:
-  adp-file-converter:
-    url: ccr.ccs.tencentyun.com/tke-market/webappchatbot:fileconvertor-a6b5291-74
-  adp-file-converter-sidecar:
-    url: ccr.ccs.tencentyun.com/tke-market/webappchatbot:fileconvertor-sidercar-41745c1-80
-replicas: 1

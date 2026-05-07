@@ -1,0 +1,17 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: channeltokensvr-application
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    task_conf:
+      refreshTokenTime: 5900
+      getOutdatedLimit: 2 # 每次取几条数据
+      concurrentWorkNum: 1 # 并发数
+      lockTime: 3900 # 上锁时间
+      retryRefreshInterval: 5900
+    wechat_conf:
+      componentAppID: {{ (.Values.global.channelmsgsvr).component_app_id | default "" }}  #微信后台的应用appid   公有云用的自己的，这里需要填用户的
+      tokenFreqNum: 1
+      useRedisCache: true

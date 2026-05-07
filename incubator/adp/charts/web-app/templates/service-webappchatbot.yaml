@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: webappchatbot-service
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  ports:
+    - name: tcp-30002-30002
+      port: 30002
+      protocol: TCP
+      targetPort: 30002
+  selector:
+    app: webappchatbot
+  type: ClusterIP

@@ -1,0 +1,15 @@
+tad:
+  type: helm
+  images:
+    channel-proxy-svr:
+      url: "ccr.ccs.tencentyun.com/tke-market/channel-proxy-svr:30_2509191155_master_private_b7399715_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+imagePullSecretName: qcloudregistrykey

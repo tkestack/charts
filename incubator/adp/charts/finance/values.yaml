@@ -1,0 +1,15 @@
+tad:
+  type: helm
+  images:
+    finance:
+      url: "ccr.ccs.tencentyun.com/tke-market/finance-finance:26_2511150728_master_private_2cc55b35_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+imagePullSecretName: qcloudregistrykey

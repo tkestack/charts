@@ -1,4 +1,0 @@
-images:
-  adp-chat-manage:
-    url: ccr.ccs.tencentyun.com/tke-market/chat-manage:3_2604241705_stable_v3.4.1.1_bff262a1_private
-replicas: 1

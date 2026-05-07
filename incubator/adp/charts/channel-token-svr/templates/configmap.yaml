@@ -1,0 +1,152 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-channel-token
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    task_conf:
+      refreshTokenTime: 5900
+      getOutdatedLimit: 2 # 每次取几条数据
+      concurrentWorkNum: 1 # 并发数
+      lockTime: 3900 # 上锁时间
+      retryRefreshInterval: 5900
+    wechat_conf:
+      componentAppID: {{ (.Values.global.channelmsgsvr).component_app_id | default "" }}  #微信后台的应用appid   公有云用的自己的，这里需要填用户的
+      tokenFreqNum: 1
+      useRedisCache: true
+    domain_verify_rule : ^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?$
+  trpc_go.yaml: |
+    global:                             #全局配置
+      namespace: ${NAME_SPACE}            #环境类型，分正式production和非正式development两种类型
+      env_name: ${ENV}                    #环境名称，非正式环境下多环境的名称
+      enable_set: ${ENABLE_SET}         #是否启用set
+      full_set_name: ${FULL_SET_NAME}   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}	
+    server:                                            #服务端配置
+      app: KEP                                        #业务的应用名
+      server: channel-token-svr                             #进程服务名
+      bin_path: /usr/local/trpc/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /usr/local/trpc/conf/                 #业务配置文件所在路径
+      data_path: /usr/local/trpc/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - recovery                                     #拦截框架创建的业务处理协程panic
+        - galileo
+      admin:
+        port: 8081
+      service:                                         #业务服务提供的service，可以有多个
+        - name: trpc.KEP.channel-token-svr.ChannelTokenService      #service的路由名称
+          # ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 8000                #服务监听端口 可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: trpc               #应用层协议 trpc http
+          timeout: 0                            #请求最长处理时间 单位 毫秒
+          server_async: true                           #开启异步处理
+          idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+        - name: trpc.KEP.channel-token-svr.HTTP # service的路由名称，格式：`业务领域.功能模块.服务.Pb定义的服务名称.协议`
+          port: 8001 # 服务监听端口
+          network: tcp # 网络监听类型 tcp/udp
+          protocol: http_no_protocol # 应用层协议 trpc/http
+          timeout: 3000 # 请求最长处理时间，单位毫秒  
+        - name: trpc.KEP.channel-token-svr.wechat-app-timer   #定时更新AgentToken
+          port: 9001                                      #服务监听端口 可使用占位符 ${port}
+          network: "*/10 * * * *"           #网络监听类型  tcp udp
+          protocol: timer                                 #应用层协议 trpc http
+          timeout: 4000  
+        # - name: trpc.KEP.channel-token-svr.alert-expire   #定时更新AgentToken
+        #   nic: eth1
+        #   port: 9002                                      #服务监听端口 可使用占位符 ${port}
+        #   network: "*/5 * * * *"           #网络监听类型  tcp udp
+        #   protocol: timer                                 #应用层协议 trpc http
+        #   timeout: 4000
+        - name: trpc.KEP.channel-token-svr.wecom-agent-timer   #定时更新AgentToken
+          port: 9003                                      #服务监听端口 可使用占位符 ${port}
+          network: "*/10 * * * *"           #网络监听类型  tcp udp
+          protocol: timer                                 #应用层协议 trpc http
+          timeout: 4000     
+    plugins:                                          #插件配置
+      telemetry:
+        galileo:
+          verbose: error   # 伽利略自身的诊断日志级别，取值范围：debug, info, error, none，日志输出在 ./galileo/galileo.log 中。
+          config: #配置
+            metrics_config: # 指标配置
+              enable: true    # 是否启用指标
+            traces_config: # 追踪配置
+              enable: true    # 是否启用追踪，默认 true。如果设置为 false，会中断 trace，让上游的调用链不完整。v0.3.7 以上生效。
+              processor: # 追踪数据处理相关配置
+                sampler: # 采样器配置
+                  fraction: 1   # 采样比例，默认 0。（v0.11.0)
+                  server:
+                    fraction: 0.1
+                  error_fraction: 1
+                  enable_min_sample: true  # 启用每分钟每接口最少 1 个请求采样，默认 true (v0.11.0)。
+                  enable_dyeing: true # 开启染色采样，默认 true。
+                disable_trace_body: false          # 若为 true，则关闭 trace 中对 req 和 rsp 的 body 上报，可以大幅提高上报性能。默认 true。
+                enable_deferred_sample: false     # 开启延迟采样（请求处理完采样），默认 false。0.3.0 以上生效。
+                deferred_sample_error: false      # 开启延迟采样出错采样（请求处理完出现错误采样），默认 false。0.3.0 以上生效。
+                deferred_sample_slow_duration_ms: 1000    # 慢操作阈值（请求耗时超过该值采样），单位 ms，默认 1000。0.3.0 以上生效。
+                disable_parent_sampling: false            # 忽略上游的采样结果，默认 false。v0.3.7 以上生效。
+            logs_config: # 日志配置
+              enable: true    # 是否启用日志
+              processor: # 日志数据处理相关配置
+                only_trace_log: false  # 是否只上报命中 trace 的 log，默认关闭
+                must_log_traced: false # 是否命中 traced 不管任何级别日志都上报，默认关闭。v0.3.22 以上生效,trpc-go v0.16 版本及以上不生效,必须将 writer 的日志级别设置为 debug
+                trace_log_mode: 0   # debug 访问日志 (access_log) 打印模式，0不打印， 1：单行打印，3：多行打印，2：不打印，默认 0
+                level: debug        # 上报到远程的日志级别，默认 error
+                enable_recovery: true # 是否捕获 panic，默认 true
+            profiles_config:    # profile配置
+              enable: true # 是否启用 profile
+              processor: # profile 数据处理相关配置
+                profile_types: ["cpu", "heap"] # 采集 profile 的类型，支持 cpu、heap、mutex、block、goroutine，默认开启 cpu 和 heap。
+            version: 1        # 版本号，默认 0，此版本号用于控制远程配置和本地配置的优先级，版本号高的优先，一般设置成 1 即可。
+          resource: # resource 资源信息，在 SDK 运行期间不会改变。resource 中的字段一般不需要配置，默认会填充。
+            platform: STKE   # 服务部署的平台，如 PCG-123, STKE, 默认 PCG-123
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: galileo                           #控制台标准输出 默认
+            level: debug                              #标准输出日志的级别
+          - writer: console                           #控制台标准输出 默认
+            level: debug                              #标准输出日志的级别
+          - writer: file                              #本地文件日志
+            level: info                               #本地文件滚动日志的级别
+            writer_config:
+              filename: /usr/local/trpc/log/trpc.log    #本地文件滚动日志存放的路径
+              max_size: 10                              #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false                          #日志文件是否压缩     
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+      registry: #服务注册配置
+        polaris: #北极星名字注册服务的配置
+          register_self: false
+          heartbeat_interval: 3000                    #名字注册服务心跳上报间隔
+          heartbeat_timeout: 1000                     #名字服务心跳超时
+          service:
+            - name: trpc.KEP.channel-token-svr.ChannelTokenService    #service name 与上面的service配置一一对应
+              namespace: ${NAME_SPACE}              #环境类型，分正式Production和非正式Development两种类型
+              token: fb61a702cbc64f9ba850a24a880e4e6b             #服务注册所需要的 token
+            - name: trpc.KEP.channel-token-svr.ChannelTokenService.HTTP    #service name 与上面的service配置一一对应
+              namespace: ${NAME_SPACE}              #环境类型，分正式Production和非正式Development两种类型
+              token: 5fa822c08a314513b464061c91735baa             #服务注册所需要的 token
+      selector: #针对用户自定义的selector的配置
+        polaris: #针对polaris整体api的内部配置
+          protocol: grpc                              #名字服务远程交互协议类型
+    client:
+      service:
+        - name: tdsql.tcadp.channel
+          target: dsn://{{ .Values.global.components.db.user }}:{{ .Values.global.components.db.password }}@tcp({{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: redis.qbot.admin
+          network: tcp
+          target: ip://{{ (index .Values.global.components.redis.hosts 0) }}:6379/2
+          password: "{{ .Values.global.components.redis.password }}"
+          timeout: 800
+        - name: wx.nginx   #---------nginx出口-------------
+          target: ip://channelproxysvr.{{ .Release.Namespace }}.svc.cluster.local:8001
+          network: tcp
+          protocol: http
+          timeout: 20000

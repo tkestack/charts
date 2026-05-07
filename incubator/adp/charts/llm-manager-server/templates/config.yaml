@@ -1,0 +1,89 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: llm-manager-server
+  namespace: {{ .Release.Namespace }}
+data:
+  LLMManagerServer.json: |
+    {
+      "LLMConf": {
+        "RetryWaitTime": 10000,
+        "RetrySleepTime": 100
+      },
+      "ChatUpstreamRecvTimeout": 30000,
+      "ChatDownstreamRecvTimeout": 10000,
+      "MaxWindowSize": 1000000,
+      "MaxStreamTimeout": 1200000,
+      "SentenceReg": "[。？！.?!]",
+      "ReloadDBTime": 60,
+      "UseAPIServer": true,
+      "HunYuanConf": {
+        "Authorization": "",
+        "BaseURL": "",
+        "Path": "",
+        "SecretId": "{{ .Values.hunheyun.hunyuan.secret_id }}",
+        "SecretKey": "{{ .Values.hunheyun.hunyuan.secret_key }}",
+        "OpenHYLog": false,
+        "HYSDKTimeout": 240,
+        "Models": {
+          "hunyuan-search": {
+            "model": "hunyuan-pro",
+            "enhance": true,
+            "RequestSource": "PaaSHYPro",
+            "StreamModeration": true,
+            "EnableSpeedSearch": true
+          },
+          "hunyuan": {
+            "model": "hunyuan-pro",
+            "enhance": true,
+            "RequestSource": "PaaSHYPro",
+            "StreamModeration": true
+          },
+          "hunyuan-pro": {
+            "model": "hunyuan-pro",
+            "enhance": true,
+            "RequestSource": "PaaSHYPro",
+            "StreamModeration": true
+          },
+          "hunyuan-turbo": {
+            "model": "hunyuan-turbo",
+            "enhance": true,
+            "RequestSource": "PaaSHYPro",
+            "StreamModeration": true
+          },
+          "hunyuan-13B": {
+            "model": "hunyuan-standard",
+            "enhance": true,
+            "RequestSource": "PaaSHYStd",
+            "StreamModeration": true
+          },
+          "hunyuan-standard-256K": {
+            "model": "hunyuan-standard-256K",
+            "enhance": false,
+            "RequestSource": "PaaSHYStd",
+            "StreamModeration": true
+          }
+        }
+      },
+      "LkeConf": {
+        "AuthType": "openai",
+        "Authorization": "{{ .Values.hunheyun.adp.apiKey }}",
+        "BaseURL": "{{ .Values.hunheyun.adp.base_url }}",
+        "Path": "/chat/completions",
+        "EmptyMessagesLimit": 300
+      },
+      "PrivateConf": {
+        "DeployMode": "hybrid",
+        "FileMapTableNumbers": 5,
+        "CacheExpireMins": 1440,
+        "CacheCleanMins": 60,
+        "CosConfig": {
+          "Bucket": "{{ .Values.cos.bucket }}-{{ printf "%.0f" .Values.cos.app_id }}",
+          "Region": "{{ .Values.cos.region }}",
+          "SecretId": "{{ .Values.cos.secret_id }}",
+          "SecretKey": "{{ .Values.cos.secret_key }}"
+        }
+      }
+    }
+
+

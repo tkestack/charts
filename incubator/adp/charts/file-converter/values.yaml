@@ -1,0 +1,16 @@
+tad:
+  type: helm
+  images:
+    file-converter:
+      url: "ccr.ccs.tencentyun.com/tke-market/webappchatbot:fileconvertor-a6b5291-74"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+
+imagePullSecretName: qcloudregistrykey

@@ -1,0 +1,11 @@
+apiVersion: v2
+name: infosec
+description: A helm chart for infosec
+type: application
+
+version: 1.0.0
+
+appVersion: 1.0.0
+maintainers:
+  - name: sinutelu
+  - name: v_iferen

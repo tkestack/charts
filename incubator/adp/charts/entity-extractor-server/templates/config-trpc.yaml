@@ -1,0 +1,103 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: entity-extractor-server-trpc
+  namespace: {{ .Release.Namespace }}
+data:
+  trpc_cpp.yaml: |
+    global: #全局配置
+      namespace: Production                        #环境类型，分正式Production和非正式Development两种类型
+      env_name: formal                        #环境名称，非正式环境下多环境的名称
+      # container_name: ${POD_NAME}                    #容器名称
+      # local_ip: ${POD_IP}                            #本地IP，容器内为容器ip，物理机或虚拟机为本机ip
+      admin_port: 18888                              #管理命令服务端口
+      enable_set: N                      #是否启用set
+      full_set_name:                      #set名
+      coroutine:
+        enable: true                                               #必须为true启用协程
+      threadmodel:
+        fiber:                                                     #必须配置有fiber配置项
+          - instance_name: fiber_instance                          #实例名称
+            concurrency_hint: 8
+    server:                                            #服务端配置
+      app: SmartAssistant                                 #业务的应用名
+      server: EntityExtractorServer                           #进程服务名
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - simpledebuglog
+        - recovery                                     #拦截框架创建的业务处理协程panic
+      admin:
+        # ip: ${POD_IP}                                  # 必须填外部可访问的ip, 不能填127.0.0.1
+        port: 18888                                    # admin 端口
+        read_timeout: 3000                             #ms. 请求被接受到请求信息被完全读取的超时时间设置，防止慢客户端
+        write_timeout: 60000                           #ms. 处理的超时时间
+      service:                                         #业务服务提供的service，可以有多个
+        - name: trpc.SmartAssistant.EntityExtractorServer.EntityExtractorObj #把ReplaceMe换成自己服务pb里的service名
+          network: tcp                                 #网络监听类型  tcp udp
+          protocol: trpc                               #应用层协议 trpc http
+          timeout: 10000                                #请求最长处理时间 单位 毫秒
+          registry: polaris                            #服务启动时使用的服务注册方式
+          # ip: ${POD_IP}                                #服务监听ip地址 可使用占位符 ip和nic二选一，优先ip
+          port: 10001                                  #服务监听端口
+          threadmodel_type: fiber
+          threadmodel_instance_name: fiber_instance
+    client:                                            #客户端调用的后端配置
+      namespace: Production                          #针对所有后端的环境
+      timeout: 3000                                    #针对所有后端的请求最长处理时间
+      service:
+        - name: mysql_server
+          target: {{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }}  #被调的service路由名称,直连时为一组逗号隔开的ip:port 23.9.0.1:90,34.5.6.7:90
+          namespace: Development #service路由名称所属的命名空间
+          protocol: mysql #协议
+          timeout: 10000000 #调用超时时间，ms
+          idle_time: 10000000
+          max_conn_num: 20
+          network: tcp #网络类型
+          conn_type: short #连接类型，长连接/短连接
+          selector_name: direct #路由选择使用的名字服务,直连时为direct
+          threadmodel_instance_name: fiber_instance
+          threadmodel_type: fiber
+          mysql:
+            db_name: db_llm_robot_task_prod       #库名，不能为空
+            user_name: {{ .Values.global.components.db.user }}    #用户名，不需要鉴权的时候可为空
+            password: {{ .Values.global.components.db.password }}      #密码，不需要鉴权的时候可为空
+            character_set: utf8                  #字符集，默认值"utf8"
+        - name: synonyms_mysql_server
+          target: {{ .Values.global.components.db.host }}:{{ .Values.global.components.db.port }}  #被调的service路由名称,直连时为一组逗号隔开的ip:port 23.9.0.1:90,34.5.6.7:90
+          namespace: Development #service路由名称所属的命名空间
+          protocol: mysql #协议
+          timeout: 10000000 #调用超时时间，ms
+          idle_time: 10000000
+          max_conn_num: 20
+          network: tcp #网络类型
+          conn_type: short #连接类型，长连接/短连接
+          selector_name: direct #路由选择使用的名字服务,直连时为direct
+          threadmodel_instance_name: fiber_instance
+          threadmodel_type: fiber
+          mysql:
+            db_name: db_llm_robot       #库名，不能为空
+            user_name: {{ .Values.global.components.db.user }}    #用户名，不需要鉴权的时候可为空
+            password: {{ .Values.global.components.db.password }}      #密码，不需要鉴权的时候可为空
+            character_set: utf8                  #字符集，默认值"utf8"
+    plugins:                                           #插件配置
+      selector:
+        polaris:
+          protocol: grpc #北极星交互协议支持 http，grpc，trpc
+          discovery:
+            refresh_interval: 10000                    #北极星服务发现刷新间隔，123默认10000
+      log:
+        default:
+          - name: default
+            min_level: 2                                #本地文件日志
+            format: "[%Y-%m-%d %H:%M:%S.%e] [thread %t] [%l] [%@] %v"
+            mode: 2 # 1-同步, 2-异步, 3-极速
+            sinks:
+              local_file:
+                eol: true
+                filename: /app/logs/EntityExtractorServer.log
+                roll_size: 100000000
+                reserve_count: 9
+              stdout:
+                eol: true

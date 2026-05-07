@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: resource-schedule-server
+  name: resource-schedule-server
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: tcp-8000
+      port: 8000
+      protocol: TCP
+      targetPort: 8000
+    - name: tcp-8001
+      port: 8001
+      protocol: TCP
+      targetPort: 8001
+    - name: tcp-8081
+      port: 8081
+      protocol: TCP
+      targetPort: 8081
+  selector:
+    app: resource-schedule-server
+  sessionAffinity: None
+  type: ClusterIP

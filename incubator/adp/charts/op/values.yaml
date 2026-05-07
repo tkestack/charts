@@ -1,0 +1,15 @@
+tad:
+  type: helm
+  images:
+    op:
+      url: "ccr.ccs.tencentyun.com/tke-market/bot-op-server:75_2512051202_master_private_ab0c1b60_private"
+  instanceStrategy:
+    level: region
+  labels: {}
+  namespace: customer
+  product: llm-knowledge-engine
+  registries:
+    images: registry.tce.com
+    packages: http://registry.tce.com:1181
+  services: {}
+imagePullSecretName: qcloudregistrykey

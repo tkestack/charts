@@ -1,0 +1,169 @@
+{{- $helmfileEnvName := .Values.global.helmfileEnvName | default "tke" }}
+{{- $re_nu   := 1}}
+{{- if or (eq $helmfileEnvName "tcs") (eq $helmfileEnvName "tke") }}
+  {{- $re_nu = 2 }}
+{{- end}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    configmap.reloader.stakater.com/reload: "aiconfmanagerserver"
+  name: aiconfmanagerserver
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: aiconfmanagerserver
+    app.kubernetes.io/name: aiconfmanagerserver
+spec:
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  selector:
+    matchLabels:
+      app: aiconfmanagerserver
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 50%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: aiconfmanagerserver
+    spec:
+      imagePullSecrets:
+        - name: {{ $.Values.imagePullSecretName }}
+      terminationGracePeriodSeconds: 90
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - env:
+            - name: MKL_NUM_THREADS
+              value: "2"
+            - name: LOG_SPACES
+              value: "2097152"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: DEPLOYMENT_ENVIRONMENT
+              value: TCS
+            - name: NAME_SPACE
+              value: default
+            - name: ENV
+              value: tcs
+            - name: APP
+              value: SmartService
+            - name: SERVER
+              value: AIConfManagerServer
+            - name: APP_NAME
+              value: SmartService
+            - name: SERVER_NAME
+              value: AIConfManagerServer
+            - name: MYSQL_HOST
+              value: {{ .Values.global.components.db.host | quote }}
+            - name: MYSQL_PORT
+              value: {{ .Values.global.components.db.port | quote }}
+            - name: MYSQL_PWD
+              value: {{ .Values.global.components.db.password | quote }}
+            - name: MYSQL_USER
+              value: {{ .Values.global.components.db.user | quote }}
+            - name: RedisMod
+              value: sentine
+            - name: RedisMasterName
+              value: mymaster
+            - name: RedisAddr
+              value: master://{{- range $host := .Values.global.components.redis.hosts -}} {{- $host}}:{{$.Values.global.components.redis.port -}} {{- end }}
+            - name: RedisPassword
+              value: {{ .Values.global.components.redis.password | quote }}
+            - name: RedisPort
+              value: {{ .Values.global.components.redis.port | quote }}
+            - name: RedisUsername
+              value: ""
+          image: {{(index .Values.tad.images "aiconfmanagerserver").url}}
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "-ec", "/app/bin/AIConfManagerServer -conf /app/conf/trpc_go.yaml"]
+          #command: ["sh", "-c", "while true; do sleep 100; done"]
+          name: aiconfmanagerserver
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "1"
+              memory: "1Gi"
+          {{- end }}
+          volumeMounts:
+            - name: aiconfmanagerserverconfig
+              mountPath: /app/conf
+            - name: log
+              mountPath: /app/log
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - pgrep -f "/app/bin/AIConfManagerServer"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - pgrep -f "/app/bin/AIConfManagerServer"
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+      volumes:
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - name: aiconfmanagerserverconfig
+          configMap:
+            name: aiconfmanagerserver
+            items:
+            - key: key-trpc_go.yaml
+              path: trpc_go.yaml
+            - key: key-AIConfManagerServer
+              path: AIConfManagerServer
+        - name: log
+          hostPath:
+            path: /data/ti-platform/log/aiconfmanagerserver
+            type: DirectoryOrCreate

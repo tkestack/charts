@@ -226,16 +226,12 @@ check_dependency_status() {
         # 始终显示 pod 状态，方便调试
         log_info "    Pod: $pod_name | Phase: $phase | Ready: $ready | ContainerReady: $container_ready" >&2
 
-        # 满足以下任一条件视为正常：
-        # 1. Phase=Running 且 Ready=True 且 ContainerReady=true（正常运行中的 pod）
-        # 2. Phase=Succeeded（Job/CronJob 已成功完成，如 etcd-defrag）
-        if [ "$phase" = "Succeeded" ]; then
-            ready_count=$((ready_count + 1))
-        elif [ "$phase" = "Running" ] && [ "$ready" = "True" ] && [ "$container_ready" = "true" ]; then
-            ready_count=$((ready_count + 1))
-        else
+        # 必须同时满足：Phase=Running 且 Ready=True 且 ContainerReady=true
+        if [ "$phase" != "Running" ] || [ "$ready" != "True" ] || [ "$container_ready" != "true" ]; then
             all_ready=false
             status_summary="${status_summary}${pod_name}(Phase=$phase,Ready=$ready,ContainerReady=$container_ready) "
+        else
+            ready_count=$((ready_count + 1))
         fi
     done
 

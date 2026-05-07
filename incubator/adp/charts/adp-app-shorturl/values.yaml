@@ -1,4 +1,0 @@
-images:
-  adp-app-shorturl:
-    url: ccr.ccs.tencentyun.com/tke-market/bot-shorturl-server:1_2603291741_stable_v3.4.1.1_ac8ea283_private
-replicas: 1
