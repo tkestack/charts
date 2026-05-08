@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apex-entrypoint
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: apex
+data:
+  docker-entrypoint-tke.sh: |
+    #!/bin/bash
+
+    sed -i "s:customer.svc:${LOG_NAMESPACE}.svc:g" /apex/data/routes/*
+    sed -i "s:algorithm.svc:${LOG_NAMESPACE}.svc:g" /apex/data/routes/*
+
+    bash /usr/bin/docker-entrypoint.sh

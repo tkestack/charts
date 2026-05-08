@@ -1,0 +1,43 @@
+{{- if .Values.global }}          # 第一层：判断全局配置 global 是否存在
+  {{- if .Values.global.observability }}  # 第二层：判断可观测性配置 observability 是否存在
+    {{- if .Values.global.observability.prometheus }}  # 第三层：判断 Prometheus 配置节点是否存在
+      {{- if .Values.global.observability.prometheus.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}-services
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  selector:
+    matchLabels:
+      {{- if .Values.global.observability.prometheus.matchLabels }}
+      {{- toYaml .Values.global.observability.prometheus.matchLabels | nindent 6 }}
+      {{- else }}
+      monitoring: enabled
+      {{- end }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  endpoints:
+    - port: {{ .Values.global.observability.prometheus.port | default "metrics" }}
+      interval: {{ .Values.global.observability.prometheus.interval | default "30s" }}
+      path: {{ .Values.global.observability.prometheus.path | default "/metrics" }}
+      scheme: {{ .Values.global.observability.prometheus.scheme | default "http" }}
+      {{- if .Values.global.observability.prometheus.relabelings }}
+      relabelings:
+        {{- toYaml .Values.global.observability.prometheus.relabelings | nindent 8 }}
+      {{- else }}
+      relabelings:
+        - sourceLabels: [__meta_kubernetes_pod_label_app]
+          targetLabel: app
+        - sourceLabels: [__meta_kubernetes_namespace]
+          targetLabel: namespace
+        - sourceLabels: [__meta_kubernetes_pod_name]
+          targetLabel: pod
+      {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}

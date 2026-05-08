@@ -1,0 +1,25 @@
+images:
+  adp-kb-config:
+    url: ccr.ccs.tencentyun.com/tke-market/kb-config:31_2605071331_stable_v3.4.1.1_9ea3060c_private
+resources:
+  limits:
+    cpu: 2
+    memory: 4Gi
+  requests:
+    cpu: 1
+    memory: 2Gi
+easy_graph_config:
+  enabled: true
+  url: ws://193.168.11.194:8190/gremlin
+  user: easygraph
+  password: MOCK_SECRET_KEY_VALUE
+doc_to_index:
+  runners: 5
+  batch: 5
+doc_release_max_limit: 100
+excel_char_size_limit: 1000000
+qa_extract_model_name: cs-normal
+similar_question_model_name: cs-normal
+sync_vector_add_batch_size: 30
+sync_vector_deleted_batch_size: 100
+replicas: 1

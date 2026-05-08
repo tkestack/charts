@@ -1,0 +1,15 @@
+tad:
+  type: helm
+  namespace: ti-base
+  global:
+    productType: lke
+images:
+  ti-auth-web:
+    url: ccr.ccs.tencentyun.com/tke-market/ti-tiauth-prod-production:9_stable_v3.4.1.1_2605071542-61ccf2b
+env: TEST
+namespace: ti-base
+imagePullSecretName: qcloudregistrykey
+SSOLoginPage: false
+ssoLogoutUrl: ''
+ssoTokenKey: ''
+replicas: 1

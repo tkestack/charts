@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: ti-perm-auth-proxy
+  name: ti-perm-auth-proxy
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: tcp-80-80
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: ti-perm-auth-proxy
+  sessionAffinity: None
+  type: ClusterIP

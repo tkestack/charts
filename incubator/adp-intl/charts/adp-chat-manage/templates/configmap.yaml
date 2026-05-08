@@ -1,0 +1,2980 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-chat-manage
+  namespace: {{ .Release.Namespace }}
+data:
+  adp.yaml: |
+    vips:
+    envs:
+      - env: gray-kb
+        uins:
+      - env: gray-base
+        uins:
+
+  agent.yaml: |
+    tipwords_opt:
+      hunyuan_version: {{ .Values.global.ChatServer.tipwords_opt_hunyuan_version }}
+      prompt: |-
+        <Background>
+        You are an expert in enhancing user prompts, skilled at adding detailed clarifications and correcting language issues. Identify unclear, incorrect, or missing information in the "User Prompt", and suggest precise additions or corrections to improve clarity and accuracy.
+        Note: Only supplement user prompts, DO NOT directly answer user prompts, DO NOT omit important information from the "User Prompt".
+        </Background>
+
+        <User Prompt>
+        {{`{{ user_prompt | trim }}`}}
+        </User Prompt>
+
+        <Output Format>
+        - Revise the "User Prompt", and output the revised user prompt directly in Chinese without adding any extra content.
+        - Your output should be formed as:
+
+        (具体的任务目标)
+
+        (详细且完整的任务流程，需要从User Prompt中拆分出具体的执行步骤，每个步骤应逐个列出，确保每个步骤都写得清晰具体完整，不要遗漏"回复示例"或"回复格式")
+
+        (任务的限制条件，例如具体的输出格式要求、内容要求等。需要从User Prompt中提取出所有的限制条件，并合理补充其他的限制条件，以更好地完成任务)
+
+        </Output Format>
+
+        <Revised User Prompt>
+    unsafe_domain:
+      - cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com
+
+
+  application.yaml: |
+    disable_content_check: {{ .Values.global.contentSecurity.disableContentCheck }}
+    skip_check:
+      - 1904364300392464384
+      - 1932043473667783360
+      - 1936050343823431232
+      - 1916769042651152384
+    session:
+      downvote_expire: 900
+      greeting_interval: 900
+      intent_transfer_keyword: transfer to human agent
+      silent_interval: 60
+    websocket:
+      token_ttl: 60
+      client_ttl: 600
+      emit_max_goroutine: 5
+    openclaw: 
+      ws_target: "ws://trpc.adp.adpbot-gateway.websocket.polaris:9003"
+      ws_service_name: trpc.adp.adpbot_gateway.AdpBotGatewayClientWebsocket
+      ws_path: /bot/chat/conn
+      ws_dial_timeout_ms: 5000
+      ws_auth_timeout_ms: 30000
+      greeting_message: "🎉 ClawPro 已成功部署
+    我是你的 ClawPro 助手。
+    <br>
+    我可以帮你：
+    🔎 搜索最新信息：获取实时资讯与资料
+    🌤 查询天气：查看城市天气与出行信息
+    🧩 搜索并安装 Skills：扩展更多能力
+    <br>
+    你还可以进一步设置：
+    • 根据官方文档，配置 企业微信/QQ /飞书 / 钉钉 等消息渠道，实现 IM 接入
+    • 在 ClawPro 列表中开启“按月订阅”，保障 PU 资源充足即可持久使用
+    • 更多配置与使用说明请参考官方文档：[腾讯云智能体开发平台一键部署 ClawPro](https://cloud.tencent.com/document/product/1759/128832 )
+    <br>
+    🔐 温馨提示：在群聊或多人对话中，请避免输入敏感信息。"
+      recommend_questions:
+        - 搜索今天 AI 行业的重要新闻并总结
+        - 这周末我在北京爬山，帮我看一下适合穿什么衣服
+        - 帮我查一下clawhub中的Github技能，并帮我安装
+      text_replacements:
+        400 请求参数不完整或无效，请查阅API文档。: "模型参数错误，请稍后重试，或[切换其他模型](webim-action://switch_model)使用。"
+        403 模型账户余额不足，请充值后继续使用。: "无法发起调试，可能账户欠费、或资源用尽/过期。请前往[控制台充值](https://console.cloud.tencent.com/expense)，或购买[套餐包](https://buy.cloud.tencent.com/adp?packageType=pro)或[增购包](https://buy.cloud.tencent.com/adp?purchaseType=addon)。"
+        500 模型引擎内部错误，请重试或联系支持。: 模型服务异常，请稍后重试。
+        504 请求响应超时。: 请求处理超时，请稍后重试。
+        400 服务内部错误，请稍后重试。: "模型参数错误，请稍后重试，或[切换其他模型](webim-action://switch_model)使用。"
+        403 服务内部错误，请稍后重试。: "无法发起调试，可能账户欠费、或资源用尽/过期。请前往[控制台充值](https://console.cloud.tencent.com/expense)，或购买[套餐包](https://buy.cloud.tencent.com/adp?packageType=pro)或[增购包](https://buy.cloud.tencent.com/adp?purchaseType=addon)。"
+        500 服务内部错误，请稍后重试。: 模型服务异常，请稍后重试。
+        504 服务内部错误，请稍后重试。: 请求处理超时，请稍后重试。
+        400 模型认证失败，凭证无效或已过期。: "模型参数错误，请稍后重试，或[切换其他模型](webim-action://switch_model)使用。"
+        403 模型认证失败，凭证无效或已过期。: "无法发起调试，可能账户欠费、或资源用尽/过期。请前往[控制台充值](https://console.cloud.tencent.com/expense)，或购买[套餐包](https://buy.cloud.tencent.com/adp?packageType=pro)或[增购包](https://buy.cloud.tencent.com/adp?purchaseType=addon)。"
+        504 模型引擎内部错误，请重试或联系支持。: 请求处理超时，请稍后重试。
+        ⚠️ API rate limit reached. Please try again later.: "达到模型限制，请稍后重试，或[切换其他模型](webim-action://switch_model)使用。"
+    reconnect:
+      reconnect_data_ttl: 600
+      reconnect_idle_time: 200
+      output_rate: 200
+      recovery_max_time: 900
+      support_events:
+        - thought
+        - reply
+        - token_stat
+        - reference
+      max_times: 2
+      max_same_event: 600
+      nil_return_msg: "nil returned"
+    clean_data_conf:
+      retention_day: {{ .Values.global.delete_data.chat_server_retention_days }}
+      select_batch_size: 500
+      clean_interval: 1000
+      need_clear_max_cost: 1000
+      retention_session_msg_num: 2000
+      select_session_num: 10
+    sse:
+      enable_defer_client_close: true
+      defer_client_close_time: 1ms
+    bot:
+      timeout: 300
+      evil_reply: 抱歉，您这个问题我暂时无法回答，建议您换一个问题试试呢！
+      busy_replies:
+        1: 抱歉，当前咨询量大，请重新再问我一次。
+        4: 当前用量大，会话摘要生成失败。
+        5: 当前用量大，会话小结生成失败。
+      throttles:
+        check: 100
+        streaming: 5
+      response_channel_size: 1500
+      max_concurrence:
+        standard: {{ .Values.global.ChatServer.max_concurrence }}
+        white_list:
+          10101010110: 50
+      stop_generation:
+        key_expire: 180
+        check_interval: 250
+      history_limit: 50
+      single_message_limit: 5000
+      role_description: 你是腾讯云智能体开发平台，一个善于进行文档阅读、知识问答的智能平台。具备海量的行业知识，对垂直行业超过10项基础能力进行精调优化，涵盖了文档阅读理解、语义理解、安全合规等，可以帮助用户解决行业问题、提高工作效率。
+      bot_role_description:
+        deepseek-r1: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题"
+        deepseek-r1-0528: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1-0528。你会尽你所能帮助用户回答问题、解决问题"
+        deepseek-v3: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题"
+        lke-deepseek-r1: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题"
+        lke-deepseek-v3: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题"
+        lke-deepseek-r1-vip: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题"
+        lke-deepseek-v3-vip: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题"
+        lke-deepseek-r1-0528: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1-0528。你会尽你所能帮助用户回答问题、解决问题"
+      visitor_labels:
+        label_count: 10
+        label_name_length: 30
+        label_value_count: 10
+        label_value_length: 50
+      content_limit: 192000
+      session_regx: "^.{2,64}$"
+      recommend_regex: "\\[推荐问题.*?\\](.*?)\\n"
+      channel_type_list:
+        - 10000
+        - 10001
+        - 10002
+        - 10003
+        - 10004
+        - 10005
+        - 10009
+        - 10011
+        - 10012
+    unsatisfied_reply:
+      context_length:
+        above: 15
+        below: 15
+    reject_answer_judge_length: 20
+    app:
+      black_list:
+        - 1871842609481646080
+      force_close_llm:
+        - 1805415988513734656
+        - 1896940214949773312
+        - 1865966221653180416
+    multi_modal:
+      get_caption_prompt: 用200字以内描述这张图片
+    rate_limiter:
+      enable: ${RATE_LIMITER_ENABLE}
+      redis_address: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/4
+      period: 1s
+      clean_up_interval: 1m
+      limit: 10
+    limiter:
+      enable: ${LIMITER_ENABLE}
+      limit_buffer: 5
+      time_period: 1
+      default_corp_limit: 20
+      report_judge_length: 100 
+      corp_limit:
+        233748: 20
+        274049: 100
+        275582: 84
+        284605: 300
+    workflow_config:
+      model_name: workflow-pro
+      workflow_role_model_name: "Deepseek/deepseek-v3-250324"
+      workflow_intent_model_name: "Deepseek/deepseek-v3-250324"
+      role_intent_model_name: 
+      param_regexp: "{{`{{(.*?)}}`}}"
+      code_gen_model_name: "Deepseek/deepseek-v3-250324"
+      close_token_report: true
+    one_click_optimization:
+      default_model_name: "Deepseek/deepseek-v3-250324"
+      agent_transfer_desc_model_name: "Deepseek/deepseek-v3-250324"
+    pipeline_debugging:
+      keys:
+        - knowledge.SearchPreviewDoc
+        - knowledge.SearchDoc
+    model:
+      local_cache_ttl: 300
+      white_list: []
+      prompt_list:
+        normal_message: |-
+              {{`{{- if gt (len .Docs) 0 -}}`}}
+                以下的已知信息包括多个passage，请基于这个已知信息，简洁和专业的来回答用户的问题。并输出引用的passage编号。
+                已知内容:<$!truN#cAte+>
+                {{`{{range $i, $el := .Docs -}}`}}
+                  【passage {{`{{addOne $i }}`}}】
+                  {{`{{ if or (eq .DocType 1) (eq .DocType 4) -}}`}}
+                    {{`{{.Question}}`}} {{`{{.Answer}}`}}
+                  {{`{{- else -}}`}}
+                    {{`{{.OrgData}}`}}
+                  {{`{{- end}}`}}
+                {{`{{end}}`}}<-truN#cAte!$>
+              问题:
+              {{`{{end -}}`}}
+              {{`{{.Question}}`}}
+        normal_message_non_general_knowledge: |-
+              {{`{{- if gt (len .Docs) 0 -}}`}}
+                以下的已知信息包括多个passage，请基于这个已知信息，简洁和专业的来回答用户的问题。并输出引用的passage编号。如果无法从中得到答案，请拒绝回答，并说明原因。
+                已知内容:<$!truN#cAte+>
+                {{`{{range $i, $el := .Docs -}}`}}
+                  【passage {{`{{addOne $i }}`}}】
+                  {{`{{ if or (eq .DocType 1) (eq .DocType 4) -}}`}}
+                    {{`{{.Question}}`}} {{`{{.Answer}}`}}
+                  {{`{{- else -}}`}}
+                    {{`{{.OrgData}}`}}
+                  {{`{{- end}}`}}
+                {{`{{end}}`}}<-truN#cAte!$>
+              问题:
+              {{`{{end -}}`}}
+              {{`{{.Question}}`}}
+    finance:
+      search_disabled: {{ .Values.global.finance.search_disabled }}
+      disabled: {{ .Values.global.finance.disabled }}
+      report_disabled: {{ .Values.global.finance.report_disabled }}
+      key_expire: 1800
+      default_qpm: 50
+      default_tpm: 100000
+      ds_default_qpm: 50
+      ds_default_tpm: 100000
+      billing_model_map:
+        function-call-pro: "function-call-pro"
+        lke-deepseek-r1: "lke-deepseek-r1"
+        lke-deepseek-r1-agent: "lke-deepseek-r1"
+        lke-deepseek-r1-0528-agent: "lke-deepseek-r1-0528"
+        lke-deepseek-v3-function-call: "lke-deepseek-v3-0324"
+        lke-deepseek-v3-agent: "lke-deepseek-v3-0324"
+        lke-deepseek-v3.1-function-call: "lke-deepseek-v3.1"
+      biz_type: 1
+      model_config: null
+      report_disabled: false
+      search_disabled: true
+    clarify_confirm: # 澄清确认、猜你想问白名单
+      top_n: 3
+      white_list: []
+
+    mock:
+      enable_llm: false
+    debug_message:
+      salt: a99a52254a1d58231ebe07b2a7f28534
+    stage_task_name:
+      dialog_ppl: 1_dialog_ppl
+      check_evil: 2.1_check_evil
+      basic_search: 2.2_basic_search
+      query_rewrite: 2.3_query_rewrite
+      search_knowledge: 3_search_knowledge
+      intent_recognize: 4_intent_recognize
+      search_pro_for_ds: 4_search_pro_for_ds
+      taskflow: 5_taskflow
+      workflow: 5_workflow
+      llm_reply: 5_llm_reply
+      first_thought_cost: first_thought_cost
+      total_thought_cost: total_thought_cost
+      first_reply_cost: first_reply_cost
+      total_cost: total_cost
+    thought_conf:
+      thought_icon: "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/icon/thinking.png"
+      status_title:
+        stop: 思考已停止
+        success: 思考已完成
+        processing: 思考中
+    event_downgrade_conf:
+      recommended_to: true
+      refer_to: true
+    error_downgrade_conf:
+      - "msg:您选择的工作流"
+      - "type:business, code:460032"
+      - "msg:超出并发数限制"
+      - "code:460034"
+    deep_seek_conf:
+      model_name:
+        - "lke-deepseek-r1"
+        - "lke-deepseek-v3"
+        - "lke-deepseek-v3-0324"
+        - "lke-deepseek-r1-0528"
+      model_has_think:
+        - "lke-deepseek-r1"
+        - "lke-deepseek-r1-vip"
+        - "lke-deepseek-r1-lichan"
+        - "lke-deepseek-r1-0528"
+      enable_ds_math_calculate: true
+      no_think_prompt: "<think>\n完成全部分析思考，按照用户要求直接输出答案，不再输出分析步骤或者其他思考内容。\n</think>\n\n"
+      no_think_model_params: "{\"seed\": 0, \"top_p\": 1, \"temperature\": 0, \"max_tokens\": 1000, \"remove_cot\": true}"
+    get_msg_count_limit: 1000
+    get_msg_default_count: 15
+    rtc:
+      user_sig_ttl: 10800
+      robot_user_suffix: _robot
+      avatar_user_suffix: _avatar
+      room_map:
+        1871083815626342400: 10001
+      agent_config:
+        enable: true
+        filter_brackets_content: 1
+      stt_config:
+        enable: true
+        vad_silence_time: 2000
+      limiter:
+        enable: true
+        time_period: 600
+      max_concurrence:
+        standard: 5
+      callback: 
+        enable: true
+        enable_debug: true
+        enable_metric_label: true
+        report_metric_map:
+          asr_latency: histogram
+          llm_network_latency: histogram
+          llm_first_token: histogram
+          tts_network_latency: histogram
+          tts_first_frame_latency: histogram
+          llm_first_sentence_generate_cost: histogram
+          tts_discontinuity: sum
+          interruption: sum
+    trtc:
+      endpoint: ${TRTC_ENDPOINT}
+      region: ${TRTC_REGION}
+      secret_id: ${TRTC_SECRET_ID}
+      secret_key: ${TRTC_SECRET_KEY}
+      sdk_app_id: ${TRTC_SDK_APP_ID}
+      user_key: ${TRTC_USER_KEY}
+      callback_key: ${TRTC_CALLBACK_KEY}
+    llm:
+      api_url: ${LLM_API_URL}
+      api_exp_url: ${LLM_EXP_API_URL}
+      timeout: 100
+      is_ret_thought_event: true
+    tts:
+      app_id: ${TTS_APP_ID}
+      secret_id: ${TTS_SECRET_ID}
+      secret_key: ${TTS_SECRET_KEY}
+      signature_action: ${TTS_SIGNATURE_ACTION}
+      signature_url: ${TTS_SIGNATURE_URL}
+      signature_ttl: ${TTS_SIGNATURE_TTL}
+    digital_human:
+      app_key: ${DIGITAL_HUMAN_APP_KEY}
+      access_token: ${DIGITAL_HUMAN_ACCESS_TOKEN}
+      secret_key: ${DIGITAL_HUMAN_SECRET_KEY}
+      signature_ttl: ${DIGITAL_HUMAN_SIGNATURE_TTL}
+    sts:
+      app_id: ${STS_APP_ID}
+      endpoint: ${STS_ENDPOINT}
+      region: ${STS_REGION}
+      secret_id: ${STS_SECRET_ID}
+      secret_key: ${STS_SECRET_KEY}
+      credential_map: 
+        asr:
+          name: ${STS_ASR_NAME}
+          policy: ${STS_ASR_POLICY}
+          ttl: 3600
+    local_cache:
+      app_cache:
+        switch: false
+        capacity: 10000
+        expiration: 1800
+        update_cache_interval: 30
+    doc_clean_config:
+      doc_record_expire_days: 200
+      default_expire_seconds: 86400
+      custom_app_expire_seconds:
+        1933734924458546752: 2592000
+    core_config:
+      data_channel: 10000
+      sse_timeout: 5400000
+      rag: #基于callee去client.yaml文件去找配置，client的配置是路由到元器
+        blacklist: []
+        switch: true
+        whitelist: []
+        callee: ${CORE_RAG_CALLEE}
+        path: /rag/chat
+      agent: 
+        blacklist: []
+        switch: true
+        whitelist: []
+        callee: ${CORE_AGENT_CALLEE}
+        path: /agent/chat
+      workflow: 
+        blacklist: []
+        switch: true
+        whitelist: []
+        callee: ${CORE_WORKFLOW_CALLEE}
+        path: /single_workflow/chat
+
+    ip_check_list:
+      white:
+
+      black:
+
+    widget:
+      default_uin: 90000001
+      default_action_echo: 我已确认
+      fallback_prefix: Widget无法正常展示
+      component_value_keys:
+      token_verify:
+        disabled: false
+        secret: aGXYPxuVMyXlxyGCfSLqF8Jml1PJExmx
+        cos_config:
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          bucket_path: ${INFRA_MIDDLEWARES_S3_COS_SUBPATH}
+          endpoint:
+        storage:
+          type: cos
+          cos_map:
+            offline:
+              secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+              secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+              app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+              region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+              bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+              domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
+              expire_time: 30m
+              credential_time: 10m
+            realtime:
+              secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+              secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+              app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+              region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+              bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+              domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
+              expire_time: 30m
+              credential_time: 10m
+      optimize:
+        default_model_name: "Deepseek/deepseek-v3-250324"
+        prompt_template: |-
+          You are an expert widget designer and developer. Your final output must be a JSON object containing four keys: "name", "view", "schema", and "state". This JSON represents a small, compact widget that complements the chat.
+
+          Methodology
+          Identify the user’s core intent the widget design that answers it. Write a brief design spec (≤3 sentences).
+          Select the minimal data needed. Exclude everything else.
+          Validate the complexity budget.
+          Output a JSON object with four fields:
+          name: a short, descriptive title for the widget (based on the user request)
+          view: the widget template (in the Widget UI syntax)
+          schema: the Zod schema defining the widget's data structure
+          state: a sample data object that satisfies the schema, in json format
+          Complexity budget Widgets should be very simple pieces of UI. Unless the user explicitly asks for specific rich metadata, try to err on the side of simplicity. e.g. "weather widget for stormy day in Seattle" does not not need to return pressure, humidity, a description, etc. If the user request is ambiguous, err on the side of a small widget. Never add vague sections unless explicitly requested. Keep text short: titles ≤40 chars, text lines ≤100 chars.
+
+          If the user request is ambiguous, return the smallest possible summary.
+
+          That said, avoiding complexity doesn't mean avoiding color and personality. Feel free to use background colors, images, and icons to breathe life into the widget. For example, a flight tracker for Pan America can use a blue gradient for the background with theme="dark" to make it feel branded.
+
+          What are widgets? Widgets appear in chat conversation and are meant to enhance the conversation, not replace it. Widgets only include key contents and key actions. Since the assistant can include more context in the message text (and because the user can ask follow up questions), the widget does not need to include every possible detail.
+
+          Widgets are typically small and visually compact. Widgets are not large, full app interfaces. For example,a recipe widget might only include an image, title, short description, and cooking time badge. The full recipe would only be shown when the user clicks on the card or asks for the recipe steps.
+
+          The code language you use to create widgets looks like JSX, but is much more opinionated so please follow the instructions below and don't assume it works like JSX. For example, text can't be children of elements in this language.
+
+          If you need image, use the web search tool to find images on Wikimedia Commons. Do not hallucinate image URLs. Do not include any citations. Do not include any code comments.
+
+          Widget UI
+          Widget UI is a strict, simplified version of JSX that only permits specific components and props. Failing to follow the spec and adding things like inline styles, class names, or nested text elements will cause the widget to fail.
+
+          Widget UI is designed with opinionated components and default styling to match ChatGPT's design aesthetic. While the default component style is often good enough, it can be styled to match a brand's style. For example, a Pan America flight tracker might have a blue gradient background and use theme="dark" to get white text.
+
+          Widget UI has limited interactivity because the widgets live as messages in a chat conversation. Some components have built in interactivity like onClickAction.
+
+          Widget UI can contain loops, conditions, and data binding; similar to a traditional templating system.
+
+          Widget UI does NOT allow arbitrary code or callbacks. Do not use IIFEs, all rendering is declarative. All interactivity is also expressed declaratively. All templating logic will ultimately be resolved server side by a thin piece of code that resolves the data bindings, loops, and conditionals.
+
+          Core Widget UI principles
+          Opinionated default
+          Widget UI is extremely opinionated and often no props are needed to create a beautiful widget. Default spacing, typography, radii, shadows, and image sizing are well designed.
+
+          Widget UI automatically adds spacing between elements, but this space can be overridden if needed by setting gap on the parent element. This is rarely required.
+
+          Widget UI components adapt to context. A Button may render solid by default but outline when inside a horizontal row.
+
+          Limited interactivity
+          Widgets are not full apps.
+          Some components own minimal state. e.g. ListView, Select, Input
+          All additional effects are server‑driven: a user action posts a message; the server responds with a new widget as a replacement, the client gracefully transitions between the old and new UI tree.
+          Widget UI containers
+          Widgets must be wrapped in a root-level container element. If the content is a single thing (summary, confirmation, form) use Card. If it is a set of options (restaurants, files), use ListView. Only use Basic when explicitly instructed to do so.
+          <Basic>: A minimal container.
+          <Card>: A simple card with a light border and plain background. Supports confirm and cancel actions.
+          <ListView>: A scroll‑friendly list with built in “show more” mechanics. Children of ListView must be <ListViewItem>. <ListViewItem> must only ever be used as the immediate child of <ListView>, and extends <Row>.
+          Layout primitives
+          <Box>: Base building block, similar to a <div>.
+          <Row>: Horizontal flex container for aligning items in a row.
+          <Col>: Vertical flex container for stacking items in a column.
+          <Form>: Like a <Box> but with an onSubmitAction which will capture any user-entered form state.
+          <Spacer>: Flexible spacer that expands to fill remaining space in a flex layout.
+          <Divider>: Theme-aware horizontal rule with optional spacing, thickness, color, and flush to remove surrounding padding.
+          Spacing and size
+          System spacing applies margin-left and margin-top to components based on the component pair and in some cases based on the parent container.
+          System spacing can be overridden by setting gap on the parent container.
+          flush (bool) lets components extend to the container edge and ignore padding. This let's dividers or images bleed to the card edge.
+          Important default to be aware of
+          Box: defaults to direction="col".
+          Row: defaults align="center".
+          Button: defaults to color="secondary".
+          DatePicker / Select: variant="outline", size="md", pill=false, block=false, clearable=false, disabled=false.
+          Divider: color="default", size=1.
+          Image: fit="cover", position="center", radius="md", border={ size: 1, color: "subtle" }.
+          Markdown: streaming=false.
+          Text: size="md", weight="normal", italic=false; color defaults are theme-aware.
+          There are other defaults inline below.
+          Tips
+          Your final output must be the JSON object only. Do not include explanations, comments, or additional text before or after the JSON unless explicitly asked by the user.
+          Use fewer colors and type sizes for a more consistent widget
+          Don't overcomplicate the widget, simple is often better.
+          Common Mistakes to Avoid
+          Missing name on inputs → host receives no form data.
+          Inventing props or values → silently ignored.
+          Forgetting key on mapped rows → janky animations and lost focus.
+          Triggering confirm with invalid fields → action won’t fire (validation error).
+          Using unknown icon names → icon will not render.
+          Relying on implicit defaults for UX‑critical styling (e.g., forgetting variant when you need a bordered control).
+          Do not use any components except the ones defined in the reference! These are the only valid components. Do not use intrinsic components like <div>.
+          Text values
+
+          Unlike traditional JSX, never use children for text.
+          Text-bearing components NEVER accept children. Use value/label props only. This includes Text, Title, Caption, Badge, Button, Label, and Markdown.
+          // Correct
+          <Text value="Hello world" />
+          <Title value="Welcome" />
+          <Caption value="Details" />
+          <Button label="Continue" />
+          <Badge label="Beta" />
+
+          // Invalid
+          <Text>Hello world</Text>
+          <Title>Welcome</Title>
+          <Caption>Details</Caption>
+          <Button>Continue</Button>
+          <Badge>Beta</Badge>
+          Schema format
+          Every view also has a schema that describes the state that it expects. Use zod to define this schema.
+
+          Use zod and only zod, do not import other libraries
+          Do not import zod as anything other than import { z } from "zod"
+          The widget schema must be default exported
+          Use the v4 version of zod
+          Do not create helper functions, or use zod transforms, only define simple schemas using the zod API.
+          You can extract parts of the widget schema to named helper schemas when useful for clarity or formatting (e.g. to avoid deep indenting)
+          Prefer z.strictObject over z.object
+          Ensure that the zod schema correctly satisfies the widget types. It doesn't need to be an exact match e.g. color could be z.union(["red", "blue"]) which satisfies string | ThemeColor.
+          When using colors, generally prefer a subset of good colors over an arbitrary string, first prefer the named tokens, then prefer primitive colors (ala tailwind), avoid using hex colors or only validating as a string.
+          Examples
+          Each example below includes the USER MESSAGE and the GENERATED JSON including "name", "view", "schema", and "state" fields.
+
+          USER MESSAGE "confirm adding a new calendar event"
+
+          GENERATED JSON
+
+          {
+            "name": "Calendar Event Confirmation",
+            "view": "<Card\n  size=\"md\"\n  confirm={{` {{ label: \"Add to calendar\", action: { type: \"calendar.add\" } }} `}}\n  cancel={{` {{ label: \"Discard\", action: { type: \"calendar.discard\" } }} `}}\n>\n  <Row align=\"start\">\n    <Col align=\"start\" gap={1} width={80}>\n      <Caption value={date.name} size=\"lg\" color=\"secondary\" />\n      <Title value={date.number} size=\"3xl\" />\n    </Col>\n\n    <Col flex=\"auto\">\n      {events.map((item) => (\n        <Row\n          key={item.id}\n          padding={{` {{ x: 3, y: 2 }} `}}\n          gap={3}\n          radius=\"xl\"\n          background={item.isNew ? \"none\" : \"surface-secondary\"}\n          border={item.isNew ? { size: 1, color: item.color, style: \"dashed\" } : undefined}\n        >\n          <Box width={4} height=\"40px\" radius=\"full\" background={item.color} />\n          <Col>\n            <Text value={item.title} />\n            <Text value={item.time} size=\"sm\" color=\"tertiary\" />\n          </Col>\n        </Row>\n      ))}\n    </Col>\n  </Row>\n</Card>",
+            "schema": "import {z} from \"zod\"\n\nconst Event = z.strictObject({\n  id: z.string(),\n  isNew: z.boolean(),\n  color: z.enum([\"red\", \"blue\"]),\n  title: z.string(),\n  time: z.string()\n})\n\nconst WidgetState = z.strictObject({\n  date: z.strictObject({\n    name: z.string(),\n    number: z.string(),\n  }),\n  events: z.array(Event)\n})\n\nexport default WidgetState",
+            "state": {
+              "date": {
+                "name": "Today",
+                "number": "27"
+              },
+              "events": [
+                {
+                  "id": "event-1",
+                  "isNew": true,
+                  "color": "blue",
+                  "title": "Team Sync",
+                  "time": "10:00 AM"
+                }
+              ]
+            }
+          }
+          USER MESSAGE "view details of calendar event"
+
+          GENERATED JSON
+
+          {
+            "name": "Calendar Event Details",
+            "view": "<Card>\n  <Row align=\"stretch\" gap={3}>\n    <Box width={5} background={color} radius=\"full\" />\n    <Col flex={1} gap={1}>\n      <Row>\n        <Text\n          color=\"alpha-70\"\n          size=\"sm\"\n          value={`${date.dayName}, ${date.monthName} ${date.dayNumber}`}\n        />\n        <Spacer />\n        <Text color={color} size=\"sm\" value={time} />\n      </Row>\n      <Title value={title} size=\"md\" />\n    </Col>\n  </Row>\n</Card>",
+            "schema": "import { z } from \"zod\"\n\nconst WidgetState = z.strictObject({\n  color: z.enum([\"red\", \"blue\"]),\n  date: z.strictObject({\n    dayName: z.string(),\n    monthName: z.string(),\n    dayNumber: z.string(),\n  }),\n  time: z.string(),\n  title: z.string(),\n})\n\nexport default WidgetState",
+            "state": {
+              "color": "red",
+              "date": {
+                "dayName": "Wednesday",
+                "monthName": "March",
+                "dayNumber": "22"
+              },
+              "time": "11:15 AM",
+              "title": "Design Review"
+            }
+          }
+          USER MESSAGE "create a new task in issue tracker app"
+
+          GENERATED JSON
+
+          {
+            "name": "Issue Tracker - Create New Task",
+            "view": "<Card size=\"md\">\n  <Form onSubmitAction={{` {{ type: \"task.create\" }} `}}>\n    <Col gap={3}>\n      <Text\n        value={initialTitle}\n        size=\"lg\"\n        weight=\"semibold\"\n        editable={{` {{\n          name: \"task.title\",\n          required: true,\n          placeholder: \"Task title\",\n          autoFocus: false,\n          autoSelect: false,\n        }} `}}\n      />\n\n      <Text\n        value={initialDescription}\n        minLines={5}\n        editable={{` {{\n          name: \"task.body\",\n          required: true,\n          placeholder: \"Describe the task…\",\n        }} `}}\n      />\n      <Divider flush />\n      <Row align=\"center\" gap={3}>\n        <Row align=\"center\" gap={2}>\n          <DatePicker\n            name=\"task.due\"\n            placeholder=\"Due date\"\n            defaultValue={initialDueDate}\n            clearable\n            pill\n          />\n        </Row>\n        <Spacer />\n        <Button submit label=\"Create task\" style=\"primary\" />\n      </Row>\n    </Col>\n  </Form>\n</Card>",
+            "schema": "import { z } from \"zod\"\n\nconst WidgetState = z.strictObject({\n  initialTitle: z.string(),\n  initialDescription: z.string(),\n  initialDueDate: z.iso.date(),\n})\n\nexport default WidgetState",
+            "state": {
+              "initialTitle": "Optimize user profile page loading speed",
+              "initialDescription": "1. Analyze current loading bottlenecks (e.g., unoptimized images, redundant API calls)\n2. Compress profile avatar and banner images to WebP format\n3. Implement lazy loading for non-critical components (e.g., past activity feed)\n4. Cache frequent API responses (user basic info, preferences)\n5. Test loading time on 3G/4G networks to ensure <2s load time",
+              "initialDueDate": "2025-12-10"
+            }
+          }
+          USER MESSAGE "a card that shows an attendee at a conferance and any talks they are giving"
+
+          GENERATED JSON
+
+          {
+            "name": "Conference Attendee & Their Talks",
+            "view": "<Card size=\"sm\">\n  <Col align=\"center\" padding={{` {{ top: 6, bottom: 4 }} `}} gap={4}>\n    <Image\n      src={image}\n      aspectRatio={1}\n      radius=\"full\"\n      size={200}\n      frame\n      background=\"surface-elevated-secondary\"\n    />\n    <Col gap={1}>\n      <Title value={name} size=\"xl\" textAlign=\"center\" />\n      <Text value={title} color=\"secondary\" textAlign=\"center\" />\n    </Col>\n  </Col>\n  <Divider flush />\n  <Col gap={3}>\n    {sessions.map((item) => (\n      <Row key={item.id} gap={3}>\n        <Col>\n          <Text value={item.title} size=\"sm\" weight=\"semibold\" color=\"emphasis\" maxLines={1} />\n          <Text value={item.time} size=\"sm\" color=\"secondary\" maxLines={1} />\n        </Col>\n        <Spacer />\n        <Button label=\"View\" variant=\"outline\" />\n      </Row>\n    ))}\n  </Col>\n</Card>",
+            "schema": "import { z } from \"zod\"\n\nconst Session = z.strictObject({\n  id: z.string(),\n  title: z.string(),\n  time: z.string(),\n})\n\nconst WidgetState = z.strictObject({\n  image: z.string(),\n  name: z.string(),\n  title: z.string(),\n  sessions: z.array(Session),\n})\n\nexport default WidgetState",
+            "state": {
+              "image": "https://picsum.photos/id/64/400/400",
+              "name": "Dr. Elena Marquez",
+              "title": "Senior AI Researcher at TechInnovate",
+              "sessions": [
+                {
+                  "id": "session-001",
+                  "title": "Ethical AI in Enterprise Applications",
+                  "time": "Day 1 | 10:30 AM - 11:15 AM"
+                },
+                {
+                  "id": "session-002",
+                  "title": "Panel: Future of AI-Driven Decision Making",
+                  "time": "Day 2 | 2:00 PM - 3:15 PM"
+                },
+                {
+                  "id": "session-003",
+                  "title": "Workshop: Building Bias-Free ML Models",
+                  "time": "Day 3 | 9:00 AM - 11:00 AM"
+                }
+              ]
+            }
+          }
+          USER MESSAGE "list of agenda items for a conference with a custom note generated by the model"
+
+          GENERATED JSON
+
+          {
+            "name": "Conference Agenda with Custom Model Notes",
+            "view": "<ListView>\n  {items.map((item) => (\n    <ListViewItem gap={2} align=\"stretch\">\n      <Box background={item.accent} radius=\"full\" width={3} />\n      <Col gap={0}>\n        <Row>\n          <Caption value={item.time} color={item.accent} />\n          <Caption value={item.location} color={item.accent} />\n        </Row>\n        <Text value={item.title} size=\"sm\" />\n        <Text value={item.note} size=\"sm\" color=\"secondary\" />\n      </Col>\n    </ListViewItem>\n  ))}\n</ListView>",
+            "schema": "import { z } from \"zod\"\n\nconst AgendaItem = z.strictObject({\n  accent: z.union([\"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\"]),\n  time: z.string(),\n  location: z.string(),\n  title: z.string(),\n  note: z.string(),\n})\n\nconst WidgetState = z.strictObject({\n  items: z.array(AgendaItem),\n})\n\nexport default WidgetState",
+            "state": {
+              "items": [
+                {
+                  "accent": "blue",
+                  "time": "09:00 - 10:15 AM",
+                  "location": "Main Hall A",
+                  "title": "Opening Keynote: The Future of Global Collaboration",
+                  "note": "Model note: Speaker is a renowned industry leader—focus on key takeaways about cross-border innovation and post-pandemic work models. Bring questions for the Q&A segment."
+                },
+                {
+                  "accent": "green",
+                  "time": "10:30 - 11:45 AM",
+                  "location": "Room 203",
+                  "title": "Panel Discussion: Sustainable Tech Solutions for Climate Action",
+                  "note": "Model note: Panel includes 3 experts from renewable energy and AI sectors. Expect debates on policy alignment and scalability—take notes on actionable strategies shared."
+                },
+                {
+                  "accent": "orange",
+                  "time": "12:00 - 01:30 PM",
+                  "location": "Exhibition Hall",
+                  "title": "Networking Lunch & Tech Showcase",
+                  "note": "Model note: Connect with 50+ exhibitors showcasing green tech products. Prioritize visiting booths 12 (solar innovations) and 27 (carbon tracking tools) based on your interests."
+                },
+                {
+                  "accent": "purple",
+                  "time": "01:45 - 03:00 PM",
+                  "location": "Room 101",
+                  "title": "Workshop: Building Inclusive Product Roadmaps",
+                  "note": "Model note: Interactive session—come prepared with a draft roadmap or product challenge. The facilitator will provide personalized feedback on accessibility integration."
+                },
+                {
+                  "accent": "red",
+                  "time": "03:15 - 04:30 PM",
+                  "location": "Main Hall A",
+                  "title": "Closing Session: Actionable Steps for 2026",
+                  "note": "Model note: Final session will summarize key conference themes and launch a collaborative resource hub. Don’t miss the announcement of next year’s conference dates and call for speakers."
+                }
+              ]
+            }
+          }
+          USER MESSAGE "detail view for a conference session"
+
+          GENERATED JSON
+
+          {
+            "name": "Conference Session Detail View",
+            "view": "<Card size=\"md\">\n  <Col gap={1}>\n    <Text value={type} size=\"sm\" color=\"purple\" />\n    <Title value={title} size=\"sm\" />\n    <Text value={description} size=\"sm\" color=\"secondary\" />\n  </Col>\n  <Divider flush />\n  <Col gap={3}>\n    <Row gap={3}>\n      <Box size={40} background=\"purple\" radius=\"sm\" align=\"center\" justify=\"center\">\n        <Icon name=\"map-pin\" size=\"xl\" color=\"white\" />\n      </Box>\n      <Col>\n        <Text value={location} size=\"sm\" weight=\"semibold\" color=\"emphasis\" maxLines={1} />\n        <Text value={time} size=\"sm\" color=\"secondary\" maxLines={1} />\n      </Col>\n      <Spacer />\n      <Button label=\"View\" variant=\"outline\" />\n    </Row>\n    {speakers.map((item) => (\n      <Row key={item.id} gap={3}>\n        <Image src={item.image} />\n        <Col>\n          <Text value={item.name} size=\"sm\" weight=\"semibold\" color=\"emphasis\" maxLines={1} />\n          <Text value={item.title} size=\"sm\" color=\"secondary\" maxLines={1} />\n        </Col>\n        <Spacer />\n        <Button label=\"View\" variant=\"outline\" />\n      </Row>\n    ))}\n  </Col>\n</Card>",
+            "schema": "import { z } from \"zod\"\n\nconst Speaker = z.strictObject({\n  id: z.string(),\n  image: z.string(),\n  name: z.string(),\n  title: z.string(),\n})\n\nconst WidgetState = z.strictObject({\n  type: z.string(),\n  title: z.string(),\n  description: z.string(),\n  location: z.string(),\n  time: z.string(),\n  speakers: z.array(Speaker),\n})\n\nexport default WidgetState",
+            "state": {
+              "type": "Keynote Presentation",
+              "title": "Building AI-Powered Customer Experiences That Scale",
+              "description": "This keynote will explore how to design and implement AI-driven customer experience solutions that adapt to growing user bases while maintaining personalization. Attendees will learn about real-world case studies, technical challenges, and best practices for balancing innovation with user trust and data privacy.",
+              "location": "Main Auditorium",
+              "time": "Day 1 | 14:00 - 15:30 PM",
+              "speakers": [
+                {
+                  "id": "speaker-001",
+                  "image": "https://picsum.photos/id/237/200/200",
+                  "name": "Marcus Reynolds",
+                  "title": "CTO at CustomerAI Labs"
+                },
+                {
+                  "id": "speaker-002",
+                  "image": "https://picsum.photos/id/177/200/200",
+                  "name": "Sophia Chen",
+                  "title": "Lead UX Researcher at ExperienceTech"
+                }
+              ]
+            }
+          }
+          USER MESSAGE "flight tracker for pan am"
+
+          GENERATED JSON
+
+          {
+            "name": "Pan Am Flight Tracker",
+            "view": "<Card size=\"md\">\n  <Col gap={1}>\n    <Text value={type} size=\"sm\" color=\"#FF7B00\" />\n    <Title value={title} size=\"sm\" />\n    <Text value={description} size=\"sm\" color=\"secondary\" />\n  </Col>\n  <Divider flush />\n  <Col gap={3}>\n    <Row gap={3}>\n      <Box size={40} background=\"#FF7B00\" radius=\"sm\" align=\"center\" justify=\"center\">\n        <Icon name=\"map-pin\" size=\"xl\" />\n      </Box>\n      <Col>\n        <Text value={location} size=\"sm\" weight=\"semibold\" color=\"emphasis\" maxLines={1} />\n        <Text value={time} size=\"sm\" color=\"secondary\" maxLines={1} />\n      </Col>\n      <Spacer />\n      <Button label=\"View\" variant=\"outline\" />\n    </Row>\n    {speakers.map((item) => (\n      <Row key={item.id} gap={3}>\n        <Image src={item.image} />\n        <Col>\n          <Text value={item.name} size=\"sm\" weight=\"semibold\" color=\"emphasis\" maxLines={1} />\n          <Text value={item.title} size=\"sm\" color=\"secondary\" maxLines={1} />\n        </Col>\n        <Spacer />\n        <Button label=\"View\" variant=\"outline\" />\n      </Row>\n    ))}\n  </Col>\n</Card>",
+            "schema": "import { z } from \"zod\"\n\nconst Speaker = z.strictObject({\n  id: z.string(),\n  image: z.string(),\n  name: z.string(),\n  title: z.string(),\n})\n\nconst WidgetState = z.strictObject({\n  type: z.string(),\n  title: z.string(),\n  description: z.string(),\n  location: z.string(),\n  time: z.string(),\n  speakers: z.array(Speaker),\n})\n\nexport default WidgetState",
+            "state": {
+              "type": "International Flight",
+              "title": "Pan Am Flight PA123 | NYC → LON",
+              "description": "Non-stop transatlantic flight with premium service. Duration: 7h 45m. Aircraft: Boeing 747-400.",
+              "location": "JFK Terminal 4 (NYC) → Heathrow Terminal 3 (LON)",
+              "time": "Departure: 14:30 EDT | Arrival: 04:15 GMT (Next Day)",
+              "speakers": [
+                {
+                  "id": "crew-001",
+                  "image": "https://picsum.photos/id/1005/200/200",
+                  "name": "Captain Robert Mitchell",
+                  "title": "Senior Pilot | 25 Years of Service"
+                },
+                {
+                  "id": "crew-002",
+                  "image": "https://picsum.photos/id/1011/200/200",
+                  "name": "Maria Gonzalez",
+                  "title": "Lead Flight Attendant"
+                },
+                {
+                  "id": "crew-003",
+                  "image": "https://picsum.photos/id/1027/200/200",
+                  "name": "Dr. James Peterson",
+                  "title": "In-Flight Medical Officer"
+                }
+              ]
+            }
+          }
+          USER MESSAGE "a list of user devices"
+
+          GENERATED JSON
+
+          {
+            "name": "User Devices List",
+            "view": "<ListView>\n  {devices.map((item) => (\n    <ListViewItem\n      key={item.id}\n      gap={3}\n      onClickAction={{` {{ type: \"device.select\", payload: { id: item.id } }} `}}\n    >\n      <Box background=\"alpha-10\" radius=\"sm\" padding={2}>\n        <Icon name={item.icon} size=\"lg\" />\n      </Box>\n\n      <Col gap={0}>\n        <Text value={item.name} size=\"sm\" weight=\"semibold\" />\n        <Caption value={`${item.status} • ${item.os} ${item.version}`} color=\"secondary\" />\n      </Col>\n    </ListViewItem>\n  ))}\n</ListView>",
+            "schema": "import { z } from \"zod\"\n\nconst IconName = z.enum([\n  \"analytics\",\n  \"atom\",\n  \"bolt\",\n  \"book-open\",\n  \"book-closed\",\n  \"calendar\",\n  \"chart\",\n  \"check\",\n  \"check-circle\",\n  \"check-circle-filled\",\n  \"chevron-left\",\n  \"chevron-right\",\n  \"circle-question\",\n  \"compass\",\n  \"cube\",\n  \"document\",\n  \"dots-horizontal\",\n  \"empty-circle\",\n  \"globe\",\n  \"keys\",\n  \"lab\",\n  \"images\",\n  \"info\",\n  \"lifesaver\",\n  \"lightbulb\",\n  \"mail\",\n  \"map-pin\",\n  \"maps\",\n  \"name\",\n  \"notebook\",\n  \"notebook-pencil\",\n  \"page-blank\",\n  \"phone\",\n  \"plus\",\n  \"profile\",\n  \"profile-card\",\n  \"star\",\n  \"star-filled\",\n  \"search\",\n  \"sparkle\",\n  \"sparkle-double\",\n  \"square-code\",\n  \"square-image\",\n  \"square-text\",\n  \"suitcase\",\n  \"settings-slider\",\n  \"user\",\n  \"write\",\n  \"write-alt\",\n  \"write-alt2\",\n  \"reload\",\n  \"play\",\n  \"mobile\",\n  \"desktop\",\n  \"external-link\",\n])\n\nconst Device = z.strictObject({\n  id: z.string(),\n  icon: IconName,\n  name: z.string(),\n  status: z.string(),\n  os: z.string(),\n  version: z.string(),\n})\n\nconst WidgetState = z.strictObject({\n  devices: z.array(Device),\n})\n\nexport default WidgetState",
+            "state": {
+              "devices": [
+                {
+                  "id": "device-001",
+                  "icon": "mobile",
+                  "name": "iPhone 15 Pro",
+                  "status": "Online",
+                  "os": "iOS",
+                  "version": "17.5"
+                },
+                {
+                  "id": "device-002",
+                  "icon": "desktop",
+                  "name": "MacBook Pro 16\"",
+                  "status": "Online",
+                  "os": "macOS",
+                  "version": "14.6"
+                },
+                {
+                  "id": "device-003",
+                  "icon": "phone",
+                  "name": "Samsung Galaxy S24 Ultra",
+                  "status": "Idle",
+                  "os": "Android",
+                  "version": "14"
+                },
+                {
+                  "id": "device-004",
+                  "icon": "desktop",
+                  "name": "Dell XPS 13",
+                  "status": "Offline",
+                  "os": "Windows",
+                  "version": "11 23H2"
+                },
+                {
+                  "id": "device-005",
+                  "icon": "cube",
+                  "name": "iPad Air 5th Gen",
+                  "status": "Online",
+                  "os": "iPadOS",
+                  "version": "17.5"
+                },
+                {
+                  "id": "device-006",
+                  "icon": "globe",
+                  "name": "Google Pixel Tablet",
+                  "status": "Idle",
+                  "os": "Android",
+                  "version": "14"
+                }
+              ]
+            }
+          }
+          USER MESSAGE "a dialog asking user to enable notifications"
+
+          GENERATED JSON
+
+          {
+            "name": "Enable Notifications Dialog",
+            "view": "<Card>\n  <Col align=\"center\" gap={4} padding={4}>\n    <Box background=\"green-400\" radius=\"full\" padding={3}>\n      <Icon name=\"check\" size=\"3xl\" color=\"white\" />\n    </Box>\n    <Col align=\"center\" gap={1}>\n      <Title value={title} />\n      <Text value={description} color=\"secondary\" />\n    </Col>\n  </Col>\n\n  <Row>\n    <Button\n      label=\"Yes\"\n      block\n      onClickAction={{` {{\n        type: \"notification.settings\",\n        payload: { enable: true },\n      }} `}}\n    />\n    <Button\n      label=\"No\"\n      block\n      variant=\"outline\"\n      onClickAction={{` {{\n        type: \"notification.settings\",\n        payload: { enable: true },\n      }} `}}\n    />\n  </Row>\n</Card>",
+            "schema": "import { z } from \"zod\"\n\nconst WidgetState = z.strictObject({\n  title: z.string(),\n  description: z.string(),\n})\n\nexport default WidgetState",
+            "state": {
+              "title": "Enable Notifications?",
+              "description": "Stay updated with important alerts, reminders, and account activities. We won’t send unnecessary spam—you can manage preferences anytime in settings."
+            }
+          }
+          USER MESSAGE "sorftware purchase confrimation for ChatGPT Business. Include purpose, start date, end date, volume, and purchase frequency."
+
+          GENERATED JSON
+
+          {
+            "name": "ChatGPT Business Purchase Confirmation",
+            "view": "<Card\n  size=\"sm\"\n  padding={0}\n  confirm={{` {{ label: \"Confirm\", action: { type: \"request.submit\" } }} `}}\n  cancel={{` {{ label: \"Discard\", action: { type: \"request.discard\" } }} `}}\n>\n  <Row align=\"center\" padding={{` {{ x: 4, top: 4, bottom: 1 }} `}}>\n    <Title value=\"Software purchase\" size=\"sm\" />\n  </Row>\n  <Col padding={{` {{ left: 4, right: 2 }} `}}>\n    <Row padding={{` {{ right: 2 }} `}}>\n      <Text value=\"What is it for?\" size=\"sm\" color=\"secondary\" />\n      <Spacer />\n      <Box padding={1.1}>\n        <Text\n          value={productName}\n          textAlign=\"end\"\n          width=\"200px\"\n          editable={{` {{\n            name: \"purchase.purpose\",\n            required: true,\n            placeholder: \"Vendor or tool\",\n          }} `}}\n        />\n      </Box>\n    </Row>\n    <Row>\n      <Text value=\"Start date\" size=\"sm\" color=\"secondary\" />\n      <Spacer />\n      <DatePicker name=\"purchase.start\" defaultValue={startDate} align=\"end\" variant=\"ghost\" />\n    </Row>\n    <Row>\n      <Text value=\"End date\" size=\"sm\" color=\"secondary\" />\n      <Spacer />\n      <DatePicker name=\"purchase.end\" defaultValue={endDate} align=\"end\" variant=\"ghost\" />\n    </Row>\n    <Row>\n      <Text value=\"Volume\" size=\"sm\" color=\"secondary\" />\n      <Spacer />\n      <Select\n        name=\"purchase.volume\"\n        options={volumeOptions}\n        defaultValue={defaultVolume}\n        variant=\"ghost\"\n      />\n    </Row>\n    <Row>\n      <Text value=\"Frequency\" size=\"sm\" color=\"secondary\" />\n      <Spacer />\n      <Select\n        name=\"purchase.frequency\"\n        options={frequencyOptions}\n        defaultValue={defaultFrequency}\n        variant=\"ghost\"\n      />\n    </Row>\n  </Col>\n  <Row\n    padding={{` {{ y: 4, left: 4, right: 5 }} `}}\n    background=\"surface-elevated-secondary\"\n    border={{` {{ top: { size: 1 } }} `}}\n  >\n    <Text value=\"Total amount\" size=\"sm\" />\n    <Spacer />\n    <Text value={totalAmount} weight=\"semibold\" size=\"sm\" />\n  </Row>\n</Card>",
+            "schema": "import { z } from \"zod\"\n\nconst SelectOption = z.strictObject({\n  label: z.string(),\n  value: z.string(),\n  disabled: z.boolean().optional(),\n})\n\nconst WidgetState = z.strictObject({\n  productName: z.string(),\n  startDate: z.string(),\n  endDate: z.string(),\n  volumeOptions: z.array(SelectOption),\n  defaultVolume: z.string(),\n  frequencyOptions: z.array(SelectOption),\n  defaultFrequency: z.string(),\n  totalAmount: z.string(),\n})\n\nexport default WidgetState",
+            "state": {
+              "productName": "ChatGPT Business - Team Collaboration & Workflow Automation",
+              "startDate": "2025-01-01",
+              "endDate": "2025-12-31",
+              "volumeOptions": [
+                { "label": "10 Users", "value": "10" },
+                { "label": "25 Users", "value": "25" },
+                { "label": "50 Users", "value": "50" },
+                { "label": "100 Users", "value": "100" },
+                { "label": "Custom Volume", "value": "custom" }
+              ],
+              "defaultVolume": "25",
+              "frequencyOptions": [
+                { "label": "Annual (Save 20%)", "value": "annual" },
+                { "label": "Quarterly", "value": "quarterly" },
+                { "label": "Monthly", "value": "monthly" }
+              ],
+              "defaultFrequency": "annual",
+              "totalAmount": "$1,200.00/year"
+            }
+          }
+          USER MESSAGE "purchase confirmation for a $20 blue folding chair from OpenAI"
+
+          GENERATED JSON
+
+          {
+            "name": "OpenAI Blue Folding Chair Purchase Confirmation",
+            "view": "<Card\n  size=\"sm\"\n  padding={0}\n  confirm={{` {{ label: \"Confirm\", action: { type: \"request.submit\" } }} `}}\n  cancel={{` {{ label: \"Discard\", action: { type: \"request.discard\" } }} `}}\n>\n  <Row align=\"center\" padding={{` {{ x: 4, top: 4, bottom: 1 }} `}}>\n    <Title value=\"Software purchase\" size=\"sm\" />\n  </Row>\n  <Col padding={{` {{ left: 4, right: 2 }} `}}>\n    <Row padding={{` {{ right: 2 }} `}}>\n      <Text value=\"What is it for?\" size=\"sm\" color=\"secondary\" />\n      <Spacer />\n      <Box padding={1.1}>\n        <Text\n          value={productName}\n          textAlign=\"end\"\n          width=\"200px\"\n          editable={{` {{\n            name: \"purchase.purpose\",\n            required: true,\n            placeholder: \"Vendor or tool\",\n          }} `}}\n        />\n      </Box>\n    </Row>\n    <Row>\n      <Text value=\"Start date\" size=\"sm\" color=\"secondary\" />\n      <Spacer />\n      <DatePicker name=\"purchase.start\" defaultValue={startDate} align=\"end\" variant=\"ghost\" />\n    </Row>\n    <Row>\n      <Text value=\"End date\" size=\"sm\" color=\"secondary\" />\n      <Spacer />\n      <DatePicker name=\"purchase.end\" defaultValue={endDate} align=\"end\" variant=\"ghost\" />\n    </Row>\n    <Row>\n      <Text value=\"Volume\" size=\"sm\" color=\"secondary\" />\n      <Spacer />\n      <Select\n        name=\"purchase.volume\"\n        options={volumeOptions}\n        defaultValue={defaultVolume}\n        variant=\"ghost\"\n      />\n    </Row>\n    <Row>\n      <Text value=\"Frequency\" size=\"sm\" color=\"secondary\" />\n      <Spacer />\n      <Select\n        name=\"purchase.frequency\"\n        options={frequencyOptions}\n        defaultValue={defaultFrequency}\n        variant=\"ghost\"\n      />\n    </Row>\n  </Col>\n  <Row\n    padding={{` {{ y: 4, left: 4, right: 5 }} `}}\n    background=\"surface-elevated-secondary\"\n    border={{` {{ top: { size: 1 } }} `}}\n  >\n    <Text value=\"Total amount\" size=\"sm\" />\n    <Spacer />\n    <Box></Box>\n    <Text value={totalAmount} weight=\"semibold\" size=\"sm\" />\n  </Row>\n</Card>",
+            "schema": "import { z } from \"zod\"\n\nconst SelectOption = z.strictObject({\n  label: z.string(),\n  value: z.string(),\n  disabled: z.boolean().optional(),\n})\n\nconst WidgetState = z.strictObject({\n  productName: z.string(),\n  startDate: z.string(),\n  endDate: z.string(),\n  volumeOptions: z.array(SelectOption),\n  defaultVolume: z.string(),\n  frequencyOptions: z.array(SelectOption),\n  defaultFrequency: z.string(),\n  totalAmount: z.string(),\n})\n\nexport default WidgetState",
+            "state": {
+              "productName": "Blue Folding Chair (OpenAI Merchandise)",
+              "startDate": "2025-12-05",
+              "endDate": "2026-12-05",
+              "volumeOptions": [
+                { "label": "1 Chair", "value": "1" },
+                { "label": "2 Chairs", "value": "2" },
+                { "label": "3 Chairs", "value": "3" },
+                { "label": "5 Chairs", "value": "5" },
+                { "label": "10 Chairs", "value": "10" }
+              ],
+              "defaultVolume": "1",
+              "frequencyOptions": [
+                { "label": "One-Time Purchase", "value": "one-time" }
+              ],
+              "defaultFrequency": "one-time",
+              "totalAmount": "$20.00"
+            }
+          }
+          Component Reference
+          export type WidgetRoot = Card | ListView | Basic
+
+          export type WidgetComponent =
+            | Text
+            | Title
+            | Caption
+            | Badge
+            | Markdown
+            | ListViewItem
+            | Box
+            | Row
+            | Col
+            | Divider
+            | Icon
+            | Image
+            | Button
+            | Checkbox
+            | Chart
+            | Spacer
+            | Select
+            | DatePicker
+            | Form
+            | Input
+            | Label
+            | RadioGroup
+            | Textarea
+            | Transition
+
+          // Containers
+          type Basic = React.FC<BasicProps>
+          type BasicProps = Pick<BoxProps, "gap" | "padding" | "align" | "justify" | "direction"> & {
+            /** Children to render inside this root. Can include WidgetComponents or nested WidgetRoots. */
+            children: React.ReactNode
+            /** Force light or dark theme for this subtree. */
+            theme?: "light" | "dark"
+          }
+
+          type Card = React.FC<CardProps>
+          type CardProps = {
+            /** Child components rendered inside the card. Must be WidgetComponents */
+            children: React.ReactNode
+            /**
+             * Treat the card as an HTML form; enabling the card's `confirm` and `cancel` actions to capture user-entered form data in their payloads.
+             *
+             * @default false
+             */
+            asForm?: boolean
+            /**
+             * Background color; accepts background color token, a primitive color token, a CSS string, or theme-aware `{ light, dark }`.
+             *
+             * Valid tokens: `surface` `surface-secondary` `surface-tertiary` `surface-elevated` `surface-elevated-secondary`
+             *
+             * Primitive color token: e.g. `red-100`, `blue-900`, `gray-500`
+             *
+             * @default "surface-elevated"
+             */
+            background?: string | ThemeColor
+            /**
+             * Visual size of the card.
+             *
+             * | sm    | md    | lg    | full |
+             * | ----- | ----- | ----- | ---- |
+             * | 360px | 440px | 560px | 100% |
+             *
+             * @default "sm"
+             */
+            size?: "sm" | "md" | "lg" | "full"
+            /**
+             * Inner spacing of the card; accepts a spacing unit, CSS string, or padding object.
+             *
+             * @default 4
+             */
+            padding?: number | string | Padding
+            /** Optional status header displayed above the card. */
+            status?: WidgetStatus
+            /**
+             * Collapse card body; useful after the card's main action has been completed.
+             * The user can still expand the card to view the contents.
+             *
+             * @default false
+             */
+            collapsed?: boolean
+
+            /** Confirmation action button shown in the card footer. */
+            confirm?: {
+              /** Text inside the confirm button */
+              label: string
+              /** Declarative action dispatched when the confirm button is clicked */
+              action: ActionConfig
+            }
+
+            /** Cancel action button shown in the card footer. */
+            cancel?: {
+              /** Text inside the confirm button */
+              label: string
+              /** Declarative action dispatched when the confirm button is clicked */
+              action: ActionConfig
+            }
+            /** Force light or dark theme for this subtree. */
+            theme?: "light" | "dark"
+          }
+
+          type ListView = React.FC<ListViewProps>
+          type ListViewProps = {
+            /** Items to render in the list.
+             *
+             * **Important:** All direct children must be ListViewItem components.
+             */
+            children: React.ReactNode
+            /**
+             * Max number of items to show before a "Show more" control.
+             *
+             * @default "auto"
+             */
+            limit?: number | "auto"
+            /** Optional status header displayed above the list. */
+            status?: WidgetStatus
+            /** Force light or dark theme for this subtree. */
+            theme?: "light" | "dark"
+          }
+
+          type ListViewItem = React.FC<ListViewItemProps>
+          type ListViewItemProps = {
+            /** Content for the list item. Must be WidgetComponents */
+            children: React.ReactNode
+            /** Optional action triggered when the list item is clicked. */
+            onClickAction?: ActionConfig
+            /** Gap between children within the list item; accepts a spacing unit or a CSS string. */
+            gap?: number | string
+            /**
+             *  Y-axis alignment for content within the list item.
+             *
+             *  @default "center"
+             */
+            align?: Alignment
+          }
+
+          // Layout Components
+
+          type Box = React.FC<BoxProps>
+          type BoxProps = BlockProps & {
+            /** Child components to render inside the container. Must be WidgetComponents  */
+            children?: React.ReactNode
+            /**
+             * Flex direction for content within this container.
+             *
+             * @default "col"
+             */
+            direction?: "row" | "col"
+            /** Cross-axis alignment of children. */
+            align?: Alignment
+            /** Main-axis distribution of children. */
+            justify?: Justification
+            /** Wrap behavior for flex items. */
+            wrap?: "nowrap" | "wrap" | "wrap-reverse"
+            /** Flex growth/shrink factor. */
+            flex?: number | string
+            /** Gap between direct children; accepts a spacing unit or a CSS string. */
+            gap?: number | string
+            /** Inner padding; accepts a spacing unit, a CSS string, or a padding object. */
+            padding?: number | string | Padding
+            /** Border applied to the container; accepts a numeric pixel value or a border object. */
+            border?: number | Border | Borders
+            /**
+             * Background color; accepts surface color token, a primitive color token, a CSS string, or theme-aware `{ light, dark }`.
+             *
+             * Surface color tokens: `surface` `surface-secondary` `surface-tertiary` `surface-elevated` `surface-elevated-secondary`
+             *
+             * Primitive color token: e.g. `red-100`, `blue-900`, `gray-500`
+             */
+            background?: string | ThemeColor
+          }
+
+          type Row = React.FC<RowProps>
+          type RowProps = Omit<BoxProps, "direction">
+
+          type Col = React.FC<ColProps>
+          type ColProps = Omit<BoxProps, "direction">
+
+          type Form = React.FC<FormProps>
+          type FormProps = BoxProps & {
+            /** Action dispatched when the form is submitted. */
+            onSubmitAction?: ActionConfig
+          }
+
+          type Spacer = React.FC<SpacerProps>
+          type SpacerProps = {
+            /**
+             * Minimum size the spacer should occupy along the flex direction; accepts a numeric pixel value or a CSS string.
+             *
+             * @default "auto"
+             */
+            minSize?: number | string
+          }
+
+          type Divider = React.FC<DividerProps>
+          type DividerProps = {
+            /**
+             * Color of the divider; accepts border color token, a primitive color token, a CSS string, or theme-aware `{ light, dark }`.
+             *
+             * Valid tokens: `default` `subtle` `strong`
+             *
+             * Primitive color token: e.g. `red-100`, `blue-900`, `gray-500`
+             *
+             * @default "default"
+             */
+            color?: string | ThemeColor
+            /**
+             * Thickness of the divider line; accepts a numeric pixel value or a CSS string.
+             *
+             * @default 1
+             */
+            size?: number | string
+            /**
+             * Outer spacing applied above and below the divider; accepts a spacing unit or a CSS string.
+             *
+             * By default, the divider will space itself dynamically based on its siblings' default spacings.
+             */
+            spacing?: number | string
+            /**
+             * Flush the divider to the edge of its container, removing surrounding padding.
+             *
+             * @default false
+             */
+            flush?: boolean
+          }
+
+          /**
+           * Used to animate layout changes when conditionally rendering components, or when swapping out different components.
+           *
+           * **Important:** When swapping between different children, each child should have a distinct `key`.
+           */
+          type Transition = React.FC<TransitionProps>
+          type TransitionProps = {
+            /** The child component to animate layout changes for. */
+            children: WidgetComponent
+          }
+
+          // Text Components
+
+          type Title = React.FC<TitleProps>
+          type TitleProps = {
+            /**
+             * Size of the title text; accepts a title size token.
+             *
+             * @default "md"
+             */
+            size?: TitleSize
+            /**
+             * Font weight; accepts a font weight token.
+             *
+             * @default "medium"
+             */
+            weight?: "normal" | "medium" | "semibold" | "bold"
+            /**
+             * Text color; accepts text color token, a primitive color token, a CSS string, or theme-aware `{ light, dark }`.
+             *
+             * Text color tokens: `prose` `primary` `emphasis` `secondary` `tertiary` `success` `warning` `danger`
+             *
+             * Primitive color token: e.g. `red-100`, `blue-900`, `gray-500`
+             *
+             * @default "prose"
+             */
+            color?: string | ThemeColor
+          } & BaseTextProps
+
+          type Caption = React.FC<CaptionProps>
+          type CaptionProps = {
+            /**
+             * Size of the caption text; accepts a caption size token.
+             *
+             * @default "md"
+             */
+            size?: CaptionSize
+            /**
+             * Font weight; accepts a font weight token.
+             *
+             * @default "normal"
+             */
+            weight?: "normal" | "medium" | "semibold" | "bold"
+            /**
+             * Text color; accepts text color token, a primitive color token, a CSS string, or theme-aware `{ light, dark }`.
+             *
+             * Text color tokens: `prose` `primary` `emphasis` `secondary` `tertiary` `success` `warning` `danger`
+             *
+             * Primitive color token: e.g. `red-100`, `blue-900`, `gray-500`
+             *
+             * @default "secondary"
+             */
+            color?: string | ThemeColor
+          } & BaseTextProps
+
+          type Text = React.FC<TextProps>
+          type TextProps = {
+            /**
+             * Size of the text; accepts a text size token.
+             *
+             * @default "md"
+             */
+            size?: TextSize
+            /**
+             * Font weight; accepts a font weight token.
+             *
+             * @default "normal"
+             */
+            weight?: "normal" | "medium" | "semibold" | "bold"
+            /**
+             * Enables streaming-friendly transitions for incremental updates.
+             *
+             * **Important:** Once incremental updates are complete, this should be set to `false`.
+             *
+             * **Note:** Streaming animations are not currently implemented for basic text components, but we plan to add them in the future.
+             * This prop is here as a way to opt-in to streaming animations for Text components once they are implemented.
+             *
+             * @default false
+             */
+            streaming?: boolean
+            /** Render text in italic style. */
+            italic?: boolean
+            /** Render text with a line-through decoration. */
+            lineThrough?: boolean
+            /** Constrain the text container width; accepts a numeric pixel value or a CSS string. */
+            width?: number | string
+            /** Forces the text container to reserve space for a minimum number of lines. */
+            minLines?: number
+            /**
+             * Enable inline editing for this text node.
+             *
+             * @default false
+             */
+            editable?:
+              | false
+              | {
+                  /**
+                   * The name of the form control field.
+                   * When the form is submitted, the value of this field will be included in the form's `onSubmitAction` payload.
+                   *
+                   * **Note:** Dot-separated paths are supported. e.g. `"myData.myFieldName"` → `payload.myData.myFieldName`
+                   */
+                  name: string
+                  /** Placeholder text for the editable input. */
+                  placeholder?: string
+                  /**
+                   * Autofocus the editable input when it appears.
+                   * @default false
+                   */
+                  autoFocus?: boolean
+                  /**
+                   * Select all text on focus.
+                   * @default false
+                   */
+                  autoSelect?: boolean
+                  /** Native autocomplete hint for the input. */
+                  autoComplete?: string
+                  /**
+                   * Allow browser password/autofill extensions.
+                   * @default false
+                   */
+                  allowAutofillExtensions?: boolean
+                  /** Regex pattern for input validation. */
+                  pattern?: string
+                  /**
+                   * Mark the editable input as required.
+                   * @default false
+                   */
+                  required?: boolean
+                }
+          } & BaseTextProps
+
+          type Markdown = React.FC<MarkdownProps>
+          type MarkdownProps = {
+            /** Markdown source string to render. */
+            value: string
+            /**
+             * Applies streaming-friendly transitions for incremental updates.
+             *
+             * **Important:** Once incremental updates are complete, this should be set to `false`.
+             *
+             * @default false
+             */
+            streaming?: boolean
+          }
+
+          // Content Components
+
+          type Badge = React.FC<BadgeProps>
+          type BadgeProps = {
+            /** Text to display inside the badge. */
+            label: string
+            /**
+             * Color of the badge; accepts a badge color token.
+             * @default "secondary"
+             */
+            color?: "secondary" | "success" | "danger" | "warning" | "info" | "discovery"
+            /**
+             * Visual style of the badge.
+             * @default "soft"
+             */
+            variant?: "solid" | "soft" | "outline"
+            /**
+             * Size of the badge.
+             * @default "sm"
+             */
+            size?: "sm" | "md" | "lg"
+            /**
+             * Determines if the badge should be a fully rounded pill shape.
+             * @default true
+             */
+            pill?: boolean
+          }
+
+          type Icon = React.FC<IconProps>
+          type IconProps = {
+            /** Name of the icon to display. */
+            name: WidgetIcon
+            /**
+             * Icon color; accepts a text color token, a primitive color token, aCSS color string, or a theme-aware `{ light, dark }`.
+             *
+             * Text color tokens: `prose` `primary` `emphasis` `secondary` `tertiary` `success` `warning` `danger`
+             *
+             * Primitive color token: e.g. `red-100`, `blue-900`, `gray-500`
+             *
+             * @default "prose"
+             */
+            color?: string | ThemeColor
+            /**
+             * Size of the icon; accepts an icon size token.
+             * @default "md"
+             */
+            size?: IconSize
+          }
+
+          type Image = React.FC<ImageProps>
+          type ImageProps = {
+            /** Image URL source. */
+            src: string
+            /** Alternate text for accessibility. */
+            alt?: string
+            /**
+             * Draw a subtle frame around the image.
+             *
+             * @default false
+             */
+            frame?: boolean
+            /**
+             * How the image should fit within the container.
+             *
+             * @default "cover"
+             */
+            fit?: "cover" | "contain" | "fill" | "scale-down" | "none"
+            /**
+             * Focal position of the image within the container.
+             *
+             * @default "center"
+             */
+            position?:
+              | "top left"
+              | "top"
+              | "top right"
+              | "left"
+              | "center"
+              | "right"
+              | "bottom left"
+              | "bottom"
+              | "bottom right"
+            /**
+             * Flush the image to the edge of its container, removing surrounding padding.
+             *
+             * @default false
+             */
+            flush?: boolean
+          } & BlockProps
+
+          type Button = React.FC<ButtonProps>
+          type ButtonProps = {
+            /**
+             * Configure the button as a submit button for the nearest form.
+             * @default false
+             */
+            submit?: boolean
+            /** Text to display inside the button. */
+            label?: string
+            /** Action dispatched on click. */
+            onClickAction?: ActionConfig
+            /** Icon shown before the label. Can be used without a label to create an icon-only button. */
+            iconStart?: WidgetIcon
+            /** Optional icon shown after the label. */
+            iconEnd?: WidgetIcon
+            /** Convenience preset for button style. */
+            style?: "primary" | "secondary"
+            /* Controls the size of icons within the button, defaults to value from `size`. */
+            iconSize?: "sm" | "md" | "lg" | "xl" | "2xl"
+            /**
+             * Color of the button; accepts a button color token.
+             * @default "primary"
+             */
+            color?:
+              | "primary"
+              | "secondary"
+              | "info"
+              | "discovery"
+              | "success"
+              | "caution"
+              | "warning"
+              | "danger"
+            /**
+             * Visual variant of the button; accepts a control variant token.
+             *
+             * @default "solid"
+             */
+            variant?: ControlVariant
+            /**
+             * Controls the overall size of the button; maps to the following height values:
+             *
+             * | 3xs     | 2xs     | xs      | sm      | md      | lg      | xl      | 2xl     | 3xl     |
+             * | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- |
+             * | `22px`  | `24px`  | `26px`  | `28px`  | `32px`  | `36px`  | `40px`  | `44px`  | `48px`  |
+             *
+             * @default "lg"
+             */
+            size?: ControlSize
+            /**
+             * Determines if the button should be a fully rounded pill shape.
+             * @default true
+             */
+            pill?: boolean
+            /**
+             * Determines if the button should have matching width and height, based on the `size`.
+             * @default false
+             */
+            uniform?: boolean
+            /**
+             * Extends select to 100% of available width.
+             * @default false
+             */
+            block?: boolean
+            /**
+             * Disables interactions and applies disabled styles.
+             * @default false
+             */
+            disabled?: boolean
+          }
+
+          // Form Controls
+          type Input = React.FC<InputProps>
+          type InputProps = {
+            /**
+             * The name of the form control field.
+             * When the form is submitted, the value of this field will be included in the form's `onSubmitAction` payload.
+             *
+             * **Note:** Dot-separated paths are supported. e.g. `"myData.myFieldName"` → `payload.myData.myFieldName`
+             */
+            name: string
+            /**
+             * Native input type.
+             * @default "text"
+             */
+            inputType?: "number" | "email" | "text" | "password" | "tel" | "url"
+            /** Initial value of the input. */
+            defaultValue?: string
+            /**
+             * Visual style of the input.
+             * @default "outline"
+             */
+            variant?: "soft" | "outline"
+            /**
+             * Controls the size of the input
+             *
+             * | 3xs     | 2xs     | xs      | sm      | md      | lg      | xl      | 2xl     | 3xl     |
+             * | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- |
+             * | `22px`  | `24px`  | `26px`  | `28px`  | `32px`  | `36px`  | `40px`  | `44px`  | `48px`  |
+             *
+             * @default md
+             */
+            size?: ControlSize
+            /**
+             * Controls gutter on the edges of the input, defaults to value from `size`.
+             *
+             * | 2xs    | xs     | sm     | md     | lg     | xl     |
+             * | ------ | ------ | ------ | ------ | ------ | ------ |
+             * | `6px`  | `8px`  | `10px` | `12px` | `14px` | `16px` |
+             */
+            gutterSize?: "2xs" | "xs" | "sm" | "md" | "lg" | "xl"
+            /**
+             * Mark the input as required for form submission.
+             * @default false
+             */
+            required?: boolean
+            /** Regex pattern for input validation. */
+            pattern?: string
+            /** Placeholder text shown when empty. */
+            placeholder?: string
+            /** Allow password managers / autofill extensions to appear.
+             *
+             * @default inputType == "password"
+             */
+            allowAutofillExtensions?: boolean
+            /**
+             * Select all contents of the input when it mounts.
+             * @default false
+             */
+            autoSelect?: boolean
+            /**
+             * Autofocus the input when it mounts.
+             * @default false
+             */
+            autoFocus?: boolean
+            /**
+             * Disable interactions and apply disabled styles.
+             * @default false
+             */
+            disabled?: boolean
+            /**
+             * Determines if the input should be a fully rounded pill shape.
+             * @default false
+             */
+            pill?: boolean
+          }
+
+          type Textarea = React.FC<TextareaProps>
+          type TextareaProps = {
+            /**
+             * The name of the form control field.
+             * When the form is submitted, the value of this field will be included in the form's `onSubmitAction` payload.
+             *
+             * **Note:** Dot-separated paths are supported. e.g. `"myData.myFieldName"` → `payload.myData.myFieldName`
+             */
+            name: string
+            /** Initial value of the textarea. */
+            defaultValue?: string
+            /**
+             * Mark the textarea as required for form submission.
+             * @default false
+             */
+            required?: boolean
+            /** Placeholder text shown when empty. */
+            placeholder?: string
+            /**
+             * Select all contents of the textarea when it mounts.
+             * @default false
+             */
+            autoSelect?: boolean
+            /**
+             * Autofocus the textarea when it mounts.
+             * @default false
+             */
+            autoFocus?: boolean
+            /**
+             * Disable interactions and apply disabled styles.
+             * @default false
+             */
+            disabled?: boolean
+            /**
+             * Visual style of the textarea.
+             * @default "outline"
+             */
+            variant?: "soft" | "outline"
+            /**
+             * Controls the size of the textarea
+             *
+             * | 3xs     | 2xs     | xs      | sm      | md      | lg      | xl      | 2xl     | 3xl     |
+             * | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- |
+             * | `22px`  | `24px`  | `26px`  | `28px`  | `32px`  | `36px`  | `40px`  | `44px`  | `48px`  |
+             *
+             * @default md
+             */
+            size?: ControlSize
+            /**
+             * Controls gutter on the edges of the textarea, defaults to value from `size`.
+             *
+             * | 2xs    | xs     | sm     | md     | lg     | xl     |
+             * | ------ | ------ | ------ | ------ | ------ | ------ |
+             * | `6px`  | `8px`  | `10px` | `12px` | `14px` | `16px` |
+             */
+            gutterSize?: "2xs" | "xs" | "sm" | "md" | "lg" | "xl"
+            /**
+             * Initial number of visible rows.
+             * @default 3
+             */
+            rows?: number
+            /**
+             * Automatically grow/shrink to fit content.
+             * @default false
+             */
+            autoResize?: boolean
+            /**
+             * Maximum number of rows when auto-resizing.
+             *
+             * @default Math.max(rows, 10)
+             */
+            maxRows?: number
+            /**
+             * Allow password managers / autofill extensions to appear.
+             * @default false
+             */
+            allowAutofillExtensions?: boolean
+          }
+
+          type Select = React.FC<SelectProps>
+          type SelectProps = {
+            /**
+             * The name of the form control field.
+             * When the form is submitted, the value of this field will be included in the form's `onSubmitAction` payload.
+             *
+             * **Note:** Dot-separated paths are supported. e.g. `"myData.myFieldName"` → `payload.myData.myFieldName`
+             */
+            name: string
+            /** List of selectable options. */
+            options: {
+              value: string
+              label: string
+              /**
+               * Disable the option.
+               * @default false
+               */
+              disabled?: boolean
+              /** Displayed as secondary text below the option `label`. */
+              description?: string
+            }[]
+            /** Action dispatched when the value changes. */
+            onChangeAction?: ActionConfig
+            /** Placeholder text shown when no value is selected. */
+            placeholder?: string
+            /** Initial value of the select. */
+            defaultValue?: string
+            /**
+             * Visual style of the select.
+             * @default "outline"
+             */
+            variant?: ControlVariant
+            /**
+             * Controls the size of the textarea
+             *
+             * | 3xs     | 2xs     | xs      | sm      | md      | lg      | xl      | 2xl     | 3xl     |
+             * | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- |
+             * | `22px`  | `24px`  | `26px`  | `28px`  | `32px`  | `36px`  | `40px`  | `44px`  | `48px`  |
+             *
+             * @default md
+             */
+            size?: ControlSize
+            /**
+             * Determines if the select should be a fully rounded pill shape.
+             * @default false
+             */
+            pill?: boolean
+            /**
+             * Extends select to 100% of available width.
+             * @default false
+             */
+            block?: boolean
+            /**
+             * Show a clear control to unset the value.
+             * @default false
+             */
+            clearable?: boolean
+            /**
+             * Disable interactions and apply disabled styles.
+             * @default false
+             */
+            disabled?: boolean
+          }
+
+          type DatePicker = React.FC<DatePickerProps>
+          type DatePickerProps = {
+            /**
+             * The name of the form control field.
+             * When the form is submitted, the value of this field will be included in the form's `onSubmitAction` payload.
+             *
+             * **Note:** Dot-separated paths are supported. e.g. `"myData.myFieldName"` → `payload.myData.myFieldName`
+             */
+            name: string
+            /** Action dispatched when the date value changes. */
+            onChangeAction?: ActionConfig
+            /** Placeholder text shown when no date is selected. */
+            placeholder?: string
+            /** Initial ISO date string (e.g., 2024-01-31). */
+            defaultValue?: string
+            /** Earliest selectable ISO date (inclusive). */
+            min?: string
+            /** Latest selectable ISO date (inclusive). */
+            max?: string
+            /**
+             * Visual variant of the datepicker control.
+             * @default "outline"
+             */
+            variant?: ControlVariant
+            /**
+             * Controls the size of the textarea
+             *
+             * | 3xs     | 2xs     | xs      | sm      | md      | lg      | xl      | 2xl     | 3xl     |
+             * | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- |
+             * | `22px`  | `24px`  | `26px`  | `28px`  | `32px`  | `36px`  | `40px`  | `44px`  | `48px`  |
+             *
+             * @default md
+             */
+            size?: ControlSize
+            /** Preferred side to render the calendar. */
+            side?: "top" | "bottom" | "left" | "right"
+            /**
+             * Preferred alignment of the calendar relative to the datepicker control.
+             * @default center
+             */
+            align?: "start" | "center" | "end"
+            /**
+             * Determines if the datepicker should be a fully rounded pill shape.
+             * @default false
+             */
+            pill?: boolean
+            /**
+             * Extends datepicker to 100% of available width.
+             * @default false
+             */
+            block?: boolean
+            /**
+             * Show a clear control to unset the value.
+             * @default false
+             */
+            clearable?: boolean
+            /**
+             * Disable interactions and apply disabled styles.
+             * @default false
+             */
+            disabled?: boolean
+          }
+
+          type Checkbox = React.FC<CheckboxProps>
+          type CheckboxProps = {
+            /**
+             * The name of the form control field.
+             * When the form is submitted, the value of this field will be included in the form's `onSubmitAction` payload.
+             *
+             * **Note:** Dot-separated paths are supported. e.g. `"myData.myFieldName"` → `payload.myData.myFieldName`
+             */
+            name: string
+            /** Optional label text rendered next to the checkbox. */
+            label?: string
+            /**
+             * The initial checked state of the checkbox.
+             * @default false
+             */
+            defaultChecked?: boolean
+            /** Action dispatched when the checked state changes. */
+            onChangeAction?: ActionConfig
+            /**
+             * Disable interactions and apply disabled styles.
+             * @default false
+             */
+            disabled?: boolean
+            /**
+             * Mark the checkbox as required for form submission.
+             * @default false
+             */
+            required?: boolean
+          }
+
+          type RadioGroup = React.FC<RadioGroupProps>
+          type RadioGroupProps = {
+            /**
+             * The name of the form control field.
+             * When the form is submitted, the value of this field will be included in the form's `onSubmitAction` payload.
+             *
+             * **Note:** Dot-separated paths are supported. e.g. `"myData.myFieldName"` → `payload.myData.myFieldName`
+             */
+            name: string
+            /** Array of options to render as radio items. */
+            options?: {
+              label: string
+              value: string
+              /**
+               * Disables a specific radio option.
+               * @default false
+               */
+              disabled?: boolean
+            }[]
+            /** Accessible label for the radio group; falls back to `name`. */
+            ariaLabel?: string
+            /** Action dispatched when the selected value changes. */
+            onChangeAction?: ActionConfig
+            /** Initial selected value of the radio group. */
+            defaultValue?: string
+            /**
+             * Layout direction of the radio items.
+             * @default "row"
+             */
+            direction?: "row" | "col"
+            /**
+             * Disable interactions and apply disabled styles for the entire group.
+             * @default false
+             */
+            disabled?: boolean
+            /**
+             * Mark the group as required for form submission.
+             * @default false
+             */
+            required?: boolean
+          }
+
+          type Label = React.FC<LabelProps>
+          type LabelProps = {
+            /** Text content of the label. */
+            value: string
+            /** Name of the field this label describes. */
+            fieldName: string
+            /**
+             * Size of the label text; accepts a text size token.
+             * @default "sm"
+             */
+            size?: TextSize
+            /**
+             * Font weight; accepts a font weight token.
+             * @default "medium"
+             */
+            weight?: "normal" | "medium" | "semibold" | "bold"
+            /**
+             * Horizontal text alignment.
+             * @default "start"
+             */
+            textAlign?: TextAlign
+            /**
+             * Text color; accepts a text color token, a primitive color token, aCSS color string, or a theme-aware `{ light, dark }`.
+             *
+             * Text color tokens: `prose` `primary` `emphasis` `secondary` `tertiary` `success` `warning` `danger`
+             *
+             * Primitive color token: e.g. `red-100`, `blue-900`, `gray-500`
+             *
+             * @default "secondary"
+             */
+            color?: string | ThemeColor
+          }
+
+          type Chart = React.FC<ChartProps>
+          type ChartProps = {
+            /** Tabular dataset; each object represents a data row.
+             *
+             * @example
+             * [
+             *   { date: "2025-01-01", Desktop: 100, Mobile: 200 },
+             *   { date: "2025-01-02", Desktop: 200, Mobile: 100 },
+             * ]
+             */
+            data: Record<string, number | string>[]
+            /**
+             * Series definitions describing how to read and render `data`.
+             *
+             * @example
+             * [
+             *   { type: "bar", dataKey: "Desktop" },
+             *   { type: "bar", dataKey: "Mobile" },
+             * ]
+             */
+            series: Series[]
+
+            /** X-axis configuration */
+            xAxis: XAxisConfig
+
+            /**
+             * Show a left y-axis with tick labels.
+             * @default false
+             */
+            showYAxis?: boolean
+            /**
+             * Display a legend describing the series.
+             * @default true
+             */
+            showLegend?: boolean
+            /**
+             * Display tooltip when hovering over a datapoint.
+             * @default true
+             */
+            showLegend?: boolean
+            /** Sets a specific gap size in px between bars in the same category. */
+            barGap?: number
+            /** Sets a specific gap size in px between bar categories. */
+            barCategoryGap?: number
+            /** Flex growth/shrink factor. */
+            flex?: number | string
+          } & Pick<
+            BlockProps,
+            | "height"
+            | "width"
+            | "size"
+            | "minSize"
+            | "maxSize"
+            | "maxHeight"
+            | "maxWidth"
+            | "minHeight"
+            | "minWidth"
+            | "aspectRatio"
+          >
+
+          // Shared types
+
+          type ThemeColor = {
+            /** Color to use when the theme is dark. */
+            dark: string
+            /** Color to use when the theme is light. */
+            light: string
+          }
+
+          type Padding = {
+            /** Top padding; accepts a spacing unit or CSS string. */
+            top?: number | string
+            /** Right padding; accepts a spacing unit or CSS string. */
+            right?: number | string
+            /** Bottom padding; accepts a spacing unit or CSS string. */
+            bottom?: number | string
+            /** Left padding; accepts a spacing unit or CSS string. */
+            left?: number | string
+            /** Horizontal padding; accepts a spacing unit or CSS string. */
+            x?: number | string
+            /** Vertical padding; accepts a spacing unit or CSS string. */
+            y?: number | string
+          }
+
+          type Margin = {
+            /** Top margin; accepts a spacing unit or CSS string. */
+            top?: number | string
+            /** Right margin; accepts a spacing unit or CSS string. */
+            right?: number | string
+            /** Bottom margin; accepts a spacing unit or CSS string. */
+            bottom?: number | string
+            /** Left margin; accepts a spacing unit or CSS string. */
+            left?: number | string
+            /** Horizontal margin; accepts a spacing unit or CSS string. */
+            x?: number | string
+            /** Vertical margin; accepts a spacing unit or CSS string. */
+            y?: number | string
+          }
+
+          type Border = {
+            /** Thickness of the border in px. */
+            size: number
+            /**
+             * Border color; accepts border color token, a primitive color token, a CSS string, or theme-aware `{ light, dark }`.
+             *
+             * Border color tokens: `default` `subtle` `strong`
+             *
+             * Primitive color token: e.g. `red-100`, `blue-900`, `gray-500`
+             *
+             * @default "default"
+             */
+            color?: string | ThemeColor
+            /**
+             * Border line style.
+             * @default "solid"
+             */
+            style?: "solid" | "dashed" | "dotted" | "double" | "groove" | "ridge" | "inset" | "outset"
+          }
+
+          /** Per-side border configuration with shorthands. */
+          type Borders = {
+            /** Top border or thickness in px. */
+            top?: number | Border
+            /** Right border or thickness in px. */
+            right?: number | Border
+            /** Bottom border or thickness in px. */
+            bottom?: number | Border
+            /** Left border or thickness in px. */
+            left?: number | Border
+            /** Horizontal borders or thickness in px. */
+            x?: number | Border
+            /** Vertical borders or thickness in px. */
+            y?: number | Border
+          }
+
+          /** Border radius token or CSS keyword/percentage. */
+          type RadiusValue =
+            | "2xs"
+            | "xs"
+            | "sm"
+            | "md"
+            | "lg"
+            | "xl"
+            | "2xl"
+            | "3xl"
+            | "4xl"
+            | "full"
+            | "100%"
+            | "none"
+
+          /** Cross-axis alignment in a flex layout. */
+          type Alignment = "start" | "center" | "end" | "baseline" | "stretch"
+
+          /** Main-axis distribution in a flex layout. */
+          type Justification = "start" | "center" | "end" | "between" | "around" | "evenly" | "stretch"
+
+          /** Visual variants shared by several controls. */
+          type ControlVariant = "solid" | "soft" | "outline" | "ghost"
+          /** Size scale shared by several controls. */
+          type ControlSize = "3xs" | "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl"
+
+          /** Horizontal text alignment. */
+          type TextAlign = "start" | "center" | "end"
+          /** Generic text size scale. */
+          type TextSize = "xs" | "sm" | "md" | "lg" | "xl"
+          /** Title size scale. */
+          type TitleSize = "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl"
+          /** Caption size scale. */
+          type CaptionSize = "sm" | "md" | "lg"
+          /** Icon size scale. */
+          type IconSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl"
+
+          /** Optional status header for containers like `Card` and `ListView`. */
+          type WidgetStatus =
+            | {
+                /** Status text to display. */
+                text: string
+                /** URL of a favicon to render at the start of the status. */
+                favicon?: string
+                /** Show a frame around the favicon for contrast. */
+                frame?: boolean
+              }
+            | {
+                /** Status text to display. */
+                text: string
+                /** Icon to render at the start of the status. */
+                icon?: WidgetIcon
+              }
+
+          /** Action to the server */
+          type ActionConfig = {
+            type: string
+            payload?: Record<string, unknown>
+            handler?: "server" | "client"
+            loadingBehavior?: "auto" | "none" | "self" | "container"
+          }
+
+          /** Common layout props for block-like components. */
+          type BlockProps = {
+            /** Explicit height; accepts a numeric pixel value or a CSS string. */
+            height?: number | string
+            /** Explicit width; accepts a numeric pixel value or a CSS string. */
+            width?: number | string
+            /** Shorthand to set both width and height; accepts a numeric pixel value or a CSS string. */
+            size?: number | string
+            /** Minimum height constraint; accepts a numeric pixel value or a CSS string. */
+            minHeight?: number | string
+            /** Minimum width constraint; accepts a numeric pixel value or a CSS string. */
+            minWidth?: number | string
+            /** Shorthand to set both minWidth and minHeight; accepts a numeric pixel value or a CSS string. */
+            minSize?: number | string
+            /** Maximum height constraint; accepts a numeric pixel value or a CSS string. */
+            maxHeight?: number | string
+            /** Maximum width constraint; accepts a numeric pixel value or a CSS string. */
+            maxWidth?: number | string
+            /** Shorthand to set both maxWidth and maxHeight; accepts a numeric pixel value or a CSS string. */
+            maxSize?: number | string
+            /** Aspect ratio of the box (e.g., 16/9); accepts a numeric value or a CSS string. */
+            aspectRatio?: number | string
+            /** Border radius; accepts a radius token. */
+            radius?: RadiusValue
+            /** Outer margin; accepts a spacing unit, a CSS string, or a margin object. */
+            margin?: number | string | Margin
+          }
+
+          /** Shared text props for Title, Text, and Caption. */
+          type BaseTextProps = {
+            /** Text content to display. */
+            value: string
+            /**
+             * Horizontal text alignment.
+             * @default "start"
+             */
+            textAlign?: TextAlign
+            /**
+             * Truncate overflow with ellipsis.
+             * @default false
+             */
+            truncate?: boolean
+            /** Limit text to a maximum number of lines (applies a line clamp). */
+            maxLines?: number
+          }
+
+          type XAxisConfig = {
+            /** Data key to use for the x-axis. Should be a key in each row of the `data` array. */
+            dataKey: string
+            /**
+             * Hide x-axis labels
+             * @default false
+             */
+            hide?: boolean
+            /**
+             * Map raw x values to custom label strings.
+             * @example
+             * {
+             *   "2025-01-01": "Jan 1",
+             *   "2025-01-02": "Jan 2",
+             * }
+             */
+            labels?: Record<string | number, string>
+          }
+
+          /** Curve types for line/area charts. */
+          type CurveType =
+            | "basis"
+            | "basisClosed"
+            | "basisOpen"
+            | "bumpX"
+            | "bumpY"
+            | "bump"
+            | "linear"
+            | "linearClosed"
+            | "natural"
+            | "monotoneX"
+            | "monotoneY"
+            | "monotone"
+            | "step"
+            | "stepBefore"
+            | "stepAfter"
+
+          type Series = BarSeries | AreaSeries | LineSeries
+
+          type BarSeries = {
+            type: "bar"
+            /** Label displayed in legends and tooltips. */
+            label?: string
+            /** Key in each data row to read numeric values from. */
+            dataKey: string
+            /**
+             * Color for the series; accepts chart color token, a primitive color token, a CSS string, or theme-aware `{ light, dark }`.
+             *
+             * Chart color tokens: `blue` `purple` `orange` `green` `red` `yellow` `pink`
+             *
+             * Primitive color token: e.g. `red-100`, `blue-900`, `gray-500`
+             *
+             * **Note:** By default, a color will be sequentially assigned from the chart series colors.
+             */
+            color?: string | ThemeColor
+            /** Group bars together by the same stack id. */
+            stack?: string
+          }
+
+          type AreaSeries = {
+            type: "area"
+            /** Label displayed in legends and tooltips. */
+            label?: string
+            /** Key in each data row to read numeric values from. */
+            dataKey: string
+            /**
+             * Color for the series; accepts chart color token, a primitive color token, a CSS string, or theme-aware `{ light, dark }`.
+             *
+             * Chart color tokens: `blue` `purple` `orange` `green` `red` `yellow` `pink`
+             *
+             * Primitive color token: e.g. `red-100`, `blue-900`, `gray-500`
+             *
+             * **Note:** By default, a color will be sequentially assigned from the chart series colors.
+             */
+            color?: string | ThemeColor
+            /**
+             * Curve interpolation type.
+             * @default "natural"
+             */
+            curveType?: CurveType
+            /** Group areas together by the same stack id. */
+            stack?: string
+          }
+
+          type LineSeries = {
+            type: "line"
+            /** Label displayed in legends and tooltips. */
+            label?: string
+            /**
+             * Color for the series; accepts chart color token, a primitive color token, a CSS string, or theme-aware `{ light, dark }`.
+             *
+             * Chart color tokens: `blue` `purple` `orange` `green` `red` `yellow` `pink`
+             *
+             * Primitive color token: e.g. `red-100`, `blue-900`, `gray-500`
+             *
+             * **Note:** By default, a color will be sequentially assigned from the chart series colors.
+             */
+            color?: string | ThemeColor
+            /** Key in each data row to read numeric values from. */
+            dataKey: string
+            /**
+             * Curve interpolation type.
+             * @default "natural"
+             */
+            curveType?: CurveType
+          }
+
+          export type WidgetIcon =
+            | "analytics"
+            | "atom"
+            | "bolt"
+            | "book-open"
+            | "book-closed"
+            | "calendar"
+            | "chart"
+            | "check"
+            | "check-circle"
+            | "check-circle-filled"
+            | "chevron-left"
+            | "chevron-right"
+            | "circle-question"
+            | "compass"
+            | "cube"
+            | "document"
+            | "dots-horizontal"
+            | "empty-circle"
+            | "globe"
+            | "keys"
+            | "lab"
+            | "images"
+            | "info"
+            | "lifesaver"
+            | "lightbulb"
+            | "mail"
+            | "map-pin"
+            | "maps"
+            | "name"
+            | "notebook"
+            | "notebook-pencil"
+            | "page-blank"
+            | "phone"
+            | "plus"
+            | "profile"
+            | "profile-card"
+            | "star"
+            | "star-filled"
+            | "search"
+            | "sparkle"
+            | "sparkle-double"
+            | "square-code"
+            | "square-image"
+            | "square-text"
+            | "suitcase"
+            | "settings-slider"
+            | "user"
+            | "write"
+            | "write-alt"
+            | "write-alt2"
+            | "reload"
+            | "play"
+            | "mobile"
+            | "desktop"
+            | "external-link"
+          The description of the widget the user would like you to create is in the next message.
+
+    db_transfer_map:
+      t_visitor: tdsql
+    inner_access_control:
+      enable: false
+      host_switch_enable: false
+      host_switch:
+        api.adp.internal.cloud.tencent.com: false
+    is_private: true
+    apex:
+      use_grpc: true
+      namespace: ""
+      service: apex.router
+      default_target: "apex-router-cmlb-8083-0.{{ .Release.Namespace }}.svc.cluster.local:8083"
+
+  chat_en-US.json: |
+    {
+      "抱歉，您这个问题我暂时无法回答，建议您换一个问题试试呢！": "Sorry, I can't answer your question for now. I suggest you try another question.",
+      "该结果依照法律法规不能展示，已被系统隐藏。": "This result cannot be displayed in accordance with laws and regulations and has been hidden by the system.",
+      "这个问题我不是很清楚，我所提供的答案或建议可能会存在不准确的地方。建议您转到人工，由专业顾问为您提供服务。": "I am not very clear about this question, and the answers or suggestions I provide may be inaccurate. It is recommended that you switch to manual and let professional consultants provide services for you.",
+      "抱歉，目前我无法提供关于这个问题的答复。为了更好地帮助您，请您尝试提出其他问题或需求。": "Sorry, I cannot provide an answer to this question at this time. To better help you, please try to ask other questions or requests.",
+      "对不起，作为知识库问答应用里的人工智能，我无法帮您总结文档。请告诉我你需要了解的其他信息，我会尽力为你提供帮助。": "Sorry, as an AI in a knowledge Q&A app, I can't help you summarize the document. Please tell me what else you need to know and I'll do my best to help you.",
+      "抱歉，当前咨询量大，请重新再问我一次。": "Sorry, the current volume of inquiries is high. Please ask me again.",
+      "当前用量大，会话摘要生成失败。": "The current usage is high and session summary generation failed.",
+      "当前用量大，会话小结生成失败。": "The current usage is high and the session summary generation failed.",
+      "你是腾讯云智能体开发平台，一个善于进行文档阅读、知识问答的智能平台。具备海量的行业知识，对垂直行业超过10项基础能力进行精调优化，涵盖了文档阅读理解、语义理解、安全合规等，可以帮助用户解决行业问题、提高工作效率。": "You are the Tencent Cloud Agent Development Platform, an intelligent platform that is good at document reading and knowledge question and answer. With a vast amount of industry knowledge, you can fine-tune and optimize more than 10 basic capabilities in vertical industries, covering document reading comprehension, semantic understanding, security compliance, etc., which can help users solve industry problems and improve work efficiency.",
+      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题": "The large language model you chose is the intelligent assistant DeepSeek-R1 developed by China's DeepSeek company. You will do your best to help users answer questions and solve problems.",
+      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题": "The large language model you chose is DeepSeek-V3, an intelligent assistant developed by China's DeepSeek company. You will do your best to help users answer questions and solve problems.",
+      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1-0528。你会尽你所能帮助用户回答问题、解决问题": "The large language model you chose is DeepSeek-R1-0528, an intelligent assistant developed by China's DeepSeek company. You will do your best to help users answer questions and solve problems.",
+      "抱歉，未从您提供的信息中提取出标签结果": "Sorry, no label results were extracted from the information you provided",
+      "调用知识库": "Calling the Knowledge Base",
+      "调用任务流程": "Calling task flow",
+      "调用搜索引擎": "Calling search engine",
+      "调用图片理解": "Calling image understanding",
+      "大模型直接回复": "LLM direct reply",
+      "调用计算器": "Calling calculator",
+      "阅读文件": "Reading file",
+      "调用工作流": "Calling workflow",
+      "运行Agent": "Running Agent",
+      "大模型生成中": "LLM generating",
+      "思考已停止": "Thinking has stopped",
+      "思考已完成": "Thinking is complete",
+      "思考中": "Thinking",
+      "正在思考中": "Thinking",
+      "思考": "Thinking",
+      "描述一下这张图片": "Describe this picture",
+      "描述以上图片的内容": "Describe the content of the above pictures",
+      "以客服的语气，根据以下信息，用简短的语言询问用户每个槽位具体是什么：": "In a customer service tone, based on the following information, use short language to ask the user what each slot is:",
+
+      "role_name_regex": "#+\\s*Role Name: (.*)",
+      "speech_style_regex": "#+\\s*Language style:\\n((?:.|\\n)+?)\\n\\n#+\\s*Personality and characteristics:",
+      "personality_regex": "#+\\s*Personality and characteristics:\\n((?:.|\\n)+?)\\n\\n#+\\s*Experience and Background:",
+      "experience_regex": "#+\\s*Experience and Background:\\n((?:.|\\n)+?)\\n\\n#+\\s*Capacity Limitations:",
+      "capability_limit_regex": "#+\\s*Capacity Limitations:\\n(.*?)\\n\\n",
+      "skills_regex": "(#+\\s*Intention\\s*\\d+)：([\\s\\S]*?)(#+\\s*Description of intention)：([\\s\\S]*?)(#+\\s*Fulfillment of Intention)：([\\s\\S]*?)#",
+      "recommend_regex": "\\[Recommended Question.*?\\](.*?)\\n",
+
+      "问题:\n%s\n\n答案:\n%s" : "Q:\n%s\n\nA:\n%s",
+      "工具{%s}不存在, 请尝试使用其他工具": "Tool {%s} Not Exist Please Try Other Tools",
+      "工具{%s}不可用, 请尝试使用其他工具": "Tool {%s} Not Available Please Try Other Tools",
+      "工具{%s}调用失败: %s": "Tool {%s} Invocation Failed %s",
+      "[链接](%s)": "[Link](%s)",
+      "猜你想问:<br><br>%s": "Guess You Want To Ask:<br><br>%s",
+      "就是%s": "Exactly %s",
+      "【图%d】": "[Image %d]",
+      "，也是%s": ", Also %s",
+      "文档URL%d:%s": "Document URL %d:%s",
+      "【图": "[Image",
+      "《%s》摘要：%s\n\n": "《%s》Summary:%s\n\n",
+      "【图%d】描述：%s\n\n": "[Image %d] Description:%s\n\n",
+      "描述所有的文件和图片": "Describe All Files And Images",
+      "文档问答": "knowledge_qa",
+      "工作流": "workflow",
+      "自定义": "custom",
+      "知识库中未检索到相关结果": "No relevant results were retrieved from the knowledge base",
+      "用户输入": "User input",
+      "从长期记忆中召回": "Recall from long-term memory",
+      "调用思考模型": "Calling Thought Model",
+      "调用生成模型": "Calling Generation Model",
+      "调用工具": "Tool call",
+      "执行任务": "Task execute",
+      "用户画像信息\n" : "User profile information\n",
+      "专属模型超出并发数限制" : "The dedicated model has exceeded the concurrency limit."
+    }
+  chat_zh-CN.json: |
+    {
+      "抱歉，您这个问题我暂时无法回答，建议您换一个问题试试呢！": "抱歉，您这个问题我暂时无法回答，建议您换一个问题试试呢！",
+      "该结果依照法律法规不能展示，已被系统隐藏。": "该结果依照法律法规不能展示，已被系统隐藏。",
+      "抱歉，目前我无法提供关于这个问题的答复。为了更好地帮助您，请您尝试提出其他问题或需求。": "抱歉，目前我无法提供关于这个问题的答复。为了更好地帮助您，请您尝试提出其他问题或需求。",
+      "对不起，作为知识库问答应用里的人工智能，我无法帮您总结文档。请告诉我你需要了解的其他信息，我会尽力为你提供帮助。": "对不起，作为知识库问答应用里的人工智能，我无法帮您总结文档。请告诉我你需要了解的其他信息，我会尽力为你提供帮助。",
+      "抱歉，当前咨询量大，请重新再问我一次。": "抱歉，当前咨询量大，请重新再问我一次。",
+      "当前用量大，会话摘要生成失败。": "当前用量大，会话摘要生成失败。",
+      "当前用量大，会话小结生成失败。": "当前用量大，会话小结生成失败。",
+      "你是腾讯云智能体开发平台，一个善于进行文档阅读、知识问答的智能平台。具备海量的行业知识，对垂直行业超过10项基础能力进行精调优化，涵盖了文档阅读理解、语义理解、安全合规等，可以帮助用户解决行业问题、提高工作效率。": "你是腾讯云智能体开发平台，一个善于进行文档阅读、知识问答的智能平台。具备海量的行业知识，对垂直行业超过10项基础能力进行精调优化，涵盖了文档阅读理解、语义理解、安全合规等，可以帮助用户解决行业问题、提高工作效率。",
+      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题": "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题",
+      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题": "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题",
+      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1-0528。你会尽你所能帮助用户回答问题、解决问题": "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1-0528。你会尽你所能帮助用户回答问题、解决问题",
+
+      "抱歉，未从您提供的信息中提取出标签结果": "抱歉，未从您提供的信息中提取出标签结果",
+      "调用知识库": "调用知识库",
+      "调用任务流程": "调用任务流程",
+      "调用搜索引擎": "调用搜索引擎",
+      "调用图片理解": "调用图片理解",
+      "大模型直接回复": "大模型直接回复",
+      "调用计算器": "调用计算器",
+      "阅读文件": "阅读文件",
+      "调用工作流": "调用工作流",
+      "运行Agent": "运行Agent",
+      "大模型生成中": "大模型生成中",
+      "思考已停止": "思考已停止",
+      "思考已完成": "思考已完成",
+      "思考中": "思考中",
+      "正在思考中": "正在思考中",
+      "思考": "思考",
+      "描述一下这张图片": "描述一下这张图片",
+      "描述以上图片的内容": "描述以上图片的内容",
+      "以客服的语气，根据以下信息，用简短的语言询问用户每个槽位具体是什么：": "以客服的语气，根据以下信息，用简短的语言询问用户每个槽位具体是什么：",
+
+
+
+      "role_name_regex": "#+\\s*角色名称: (.*)",
+      "speech_style_regex": "#+\\s*言谈风格:\\n((?:.|\\n)+?)\\n\\n#+\\s*性格特点:",
+      "personality_regex": "#+\\s*性格特点:\\n((?:.|\\n)+?)\\n\\n#+\\s*经历和背景:",
+      "experience_regex": "#+\\s*经历和背景:\\n((?:.|\\n)+?)\\n\\n#+\\s*能力限制:",
+      "capability_limit_regex": "#+\\s*能力限制:\\n(.*?)\\n\\n",
+      "skills_regex": "(#+\\s*意图\\s*\\d+)：([\\s\\S]*?)(#+\\s*意图描述)：([\\s\\S]*?)(#+\\s*意图实现)：([\\s\\S]*?)#",
+      "recommend_regex": "\\[推荐问题.*?\\](.*?)\\n",
+
+      "问题:\n%s\n\n答案:\n%s" : "问题:\n%s\n\n答案:\n%s",
+      "工具{%s}不存在, 请尝试使用其他工具": "工具{%s}不存在，请尝试其他工具",
+      "工具{%s}不可用, 请尝试使用其他工具": "工具{%s}不可用，请尝试其他工具",
+      "工具{%s}调用失败: %s": "工具{%s}调用失败：%s",
+      "[链接](%s)": "[链接](%s)",
+      "猜你想问:<br><br>%s": "猜你想问：<br><br>%s",
+      "就是%s": "就是%s",
+      "【图%d】": "【图%d】",
+      "，也是%s": "，也是%s",
+      "文档URL%d:%s": "文档URL%d：%s",
+      "【图": "【图",
+      "《%s》摘要：%s\n\n": "《%s》摘要：%s\n\n",
+      "【图%d】描述：%s\n\n": "【图%d】描述：%s\n\n",
+      "描述所有的文件和图片": "描述所有文件和图片",
+      "用户输入": "用户输入",
+      "从长期记忆中召回": "从长期记忆中召回",
+      "调用思考模型": "调用思考模型",
+      "调用生成模型": "调用生成模型",
+      "调用工具": "调用工具",
+      "执行任务": "执行任务",
+      "用户画像信息\n" : "用户画像信息\n",
+      "专属模型超出并发数限制" : "专属模型超出并发数限制"
+    }
+  chat_zh.json: |
+    {}
+  error_en-US.json: |
+    {
+      "用户未登录": "User not logged in",
+      "意图不存在": "Intent does not exist",
+      "请求参数错误, 请参阅接入文档.": "Request parameter error, please refer to the access document.",
+      "Token 校验失败": "Token validation failed",
+      "事件处理器不存在": "Event handler does not exist",
+      "坐席用户不存在": "Agent user does not exist",
+      "机器人不存在": "Robot does not exist",
+      "会话未被转人工": "Session was not transferred to human",
+      "消息不存在或没有操作权限": "Message does not exist or no operation permission",
+      "会话创建失败": "Session creation failed",
+      "Prompt 渲染失败": "Prompt rendering failed",
+      "访客用户不存在": "Visitor user does not exist",
+      "会话不存在或没有操作权限": "Session does not exist or no operation permission",
+      "超出并发数限制": "Exceeded concurrency limit",
+      "模型请求超时": "Model request timeout",
+      "知识库未发布": "Knowledge base not published",
+      "访客创建失败": "Visitor creation failed",
+      "消息点赞点踩失败": "Message like/dislike failed",
+      "标签不合法": "Invalid tag",
+      "图像识别失败": "Image recognition failed",
+      "机器人停用或者欠费": "Robot is disabled or overdue",
+      "该应用类型不支持当前请求": "This application type does not support the current request",
+      "当前应用连接数超出请求限制，请稍后再试": "Current application connections exceed the request limit, please try again later",
+      "当前应用模型余额不足": "Insufficient model balance for the current application",
+      "应用不存在或没有操作权限": "Application does not exist or no operation permission",
+      "输入内容过长": "Input content is too long",
+      "计算内容过长, 已经停": "Calculation content is too long, stopped",
+      "任务流程节点预览参数异常": "Task flow node preview parameter exception",
+      "搜索资源已用尽，调用失败": "Search resources exhausted, call failed",
+      "该AppID请求存在异常行为，调用失败": "Abnormal behavior detected in this AppID request, call failed",
+      "工作流功能未启用": "Workflow feature not enabled",
+      "工作流运行异常": "Workflow execution exception",
+      "您选择的工作流未开启，请开启后再调试": "The selected workflow is not enabled, please enable it before debugging",
+      "您选择的工作流待调试，请先在工作流中对其进行调试": "The selected workflow is pending debugging, please debug it in the workflow first",
+      "您选择的工作流已被删除，请重新选择": "The selected workflow has been deleted, please reselect",
+      "您选择的工作流未发布，请先在工作流中对其进行开启": "The selected workflow is not published, please enable it in the workflow first",
+      "该工作流中引用了其他工作流，其他工作流因‘未启用’或‘待调试’导致不可用，请’启用‘或’调试‘后再进行测试。": "This workflow references other workflows, which are unavailable due to being 'not enabled' or 'pending debugging'. please enable or debug them before testing.",
+      "Agent暂时不支持图片": "Agent does not support images temporarily",
+      "Agent暂时不支持文件": "Agent does not support files temporarily",
+      "Agent运行异常": "Agent execution exception",
+      "Agent当前没有可执行的工具": "Agent currently has no executable tools",
+      "Agent工具失败": "Agent tool failed",
+      "Redis数据不存在": "Redis data does not exist",
+      "请求参数错误, 提示词未填写。": "Request Parameter Error Prompt Not Filled",
+      "请求参数错误, 提示词长度过短，应该大于%d个字符。": "Request Parameter Error Prompt Too Short Should Be More Than %d Characters",
+      "请求参数错误, sessionID错误": "Request Parameter Error Session Id Error",
+      "请求参数错误, AppKey未填写": "Request Parameter Error App Key Not Filled",
+      "API参数 varid(%s) 未找到": "Api Parameter Varid(%s) Not Found",
+      "用户未配置自定义API参数 %s": "User Not Configured Custom Api Parameter %s",
+      "创建AES加密器失败: %v": "Create Aes Encryptor Failed %v",
+      "请求参数错误，上次聊天没有请求本地工具调用，请不要配置 LocalToolOuputs 参数": "Request Parameter Error Last Chat Did Not Request Local Tool Invocation Please Do Not Configure LocalToolOutputs Parameter",
+      "请求参数错误，LocalToolOuputs 上报的工具名称不存在": "Request Parameter Error Tool Name Reported In LocalToolOutputs Does Not Exist",
+      "消息记录不合法": "Message Record Invalid",
+      "语音互动功能未开启": "Voice Interaction Feature Not Enabled",
+      "语音通话功能未开启": "Voice Call Feature Not Enabled",
+      "语音通话线路繁忙，请稍后再试": "Voice Call Lines Busy Please Try Again Later",
+      "语音通话声音未配置": "Voice Call Audio Not Configured",
+      "语音通话形象未配置": "Voice Call Digital Human Not Configured",
+      "语音通话形象未启用": "Voice Call Digital Human Not Enabled",
+      "当前语音通话数超出请求限制，请稍后再试": "Current Voice Calls Exceed Request Limit Please Try Again Later",
+      "语音通话任务不存在": "Voice Call Task Does Not Exist",
+      "您尚未选择工作流，请进行选择": "You have not selected a workflow; please make a selection",
+      "ErrIpForbidden": "The current IP address is not authorized.",
+      "ErrAPPResourceLimitQPM": "Request failed: Current application's model QPM limit hit.",
+      "ErrAPPResourceLimitTPM": "Request failed: Current application's model TPM limit hit.",
+      "ErrAPPResourceLimitDailyTokens": "Request failed: Current application's model daily token limit exceeded.",
+      "ErrSpaceResourceLimitQPM": "Request failed: Current space's model QPM limit hit.",
+      "ErrSpaceResourceLimitTPM": "Request failed: Current space's model TPM limit hit.",
+      "ErrSpaceResourceLimitDailyTokens": "Request failed: Current space's model daily token limit exceeded.",
+      "专属模型超出并发数限制": "The exclusive model exceeds the concurrency limit."
+    }
+  error_zh-CN.json: |
+    {
+      "用户未登录": "用户未登录",
+      "意图不存在": "意图不存在",
+      "请求参数错误, 请参阅接入文档.": "请求参数错误, 请参阅接入文档.",
+      "Token 校验失败": "Token 校验失败",
+      "事件处理器不存在": "事件处理器不存在",
+      "坐席用户不存在": "坐席用户不存在",
+      "机器人不存在": "机器人不存在",
+      "会话未被转人工": "会话未被转人工",
+      "消息不存在或没有操作权限": "消息不存在或没有操作权限",
+      "会话创建失败": "会话创建失败",
+      "Prompt 渲染失败":"Prompt 渲染失败",
+      "访客用户不存在": "访客用户不存在",
+      "会话不存在或没有操作权限":  "会话不存在或没有操作权限",
+      "超出并发数限制":       "超出并发数限制",
+      "模型请求超时": "模型请求超时",
+      "知识库未发布": "知识库未发布",
+      "访客创建失败": "访客创建失败",
+      "消息点赞点踩失败": "消息点赞点踩失败",
+      "标签不合法": "标签不合法",
+      "图像识别失败": "图像识别失败",
+      "机器人停用或者欠费": "机器人停用或者欠费",
+      "该应用类型不支持当前请求": "该应用类型不支持当前请求",
+      "当前应用连接数超出请求限制，请稍后再试": "当前应用连接数超出请求限制，请稍后再试",
+      "当前应用模型余额不足": "当前应用模型余额不足",
+      "应用不存在或没有操作权限": "应用不存在或没有操作权限",
+      "输入内容过长": "输入内容过长",
+      "计算内容过长, 已经停": "计算内容过长, 已经停",
+      "任务流程节点预览参数异常": "任务流程节点预览参数异常",
+      "搜索资源已用尽，调用失败": "搜索资源已用尽，调用失败",
+      "该AppID请求存在异常行为，调用失败": "该AppID请求存在异常行为，调用失败",
+      "工作流功能未启用": "工作流功能未启用",
+      "工作流运行异常": "工作流运行异常",
+      "您选择的工作流未开启，请开启后再调试": "您选择的工作流未开启，请开启后再调试",
+      "您选择的工作流待调试，请先在工作流中对其进行调试": "您选择的工作流待调试，请先在工作流中对其进行调试",
+      "您选择的工作流已被删除，请重新选择": "您选择的工作流已被删除，请重新选择",
+      "您选择的工作流未发布，请先在工作流中对其进行开启": "您选择的工作流未发布，请先在工作流中对其进行开启",
+      "该工作流中引用了其他工作流，其他工作流因‘未启用’或‘待调试’导致不可用，请’启用‘或’调试‘后再进行测试。": "该工作流中引用了其他工作流，其他工作流因‘未启用’或‘待调试’导致不可用，请’启用‘或’调试‘后再进行测试。",
+      "Agent暂时不支持图片": "Agent暂时不支持图片",
+      "Agent暂时不支持文件": "Agent暂时不支持文件",
+      "Agent运行异常": "Agent运行异常",
+      "Agent当前没有可执行的工具": "Agent当前没有可执行的工具",
+      "Agent工具失败": "Agent工具失败",
+      "Redis数据不存在": "Redis数据不存在",
+      "请求参数错误, 提示词未填写。": "请求参数错误，提示词未填写",
+      "请求参数错误, 提示词长度过短，应该大于%d个字符。": "请求参数错误，提示词长度过短，应大于%d个字符",
+      "请求参数错误, sessionID错误": "请求参数错误，会话ID错误",
+      "请求参数错误, AppKey未填写": "请求参数错误，应用密钥未填写",
+      "API参数 varid(%s) 未找到": "API参数 varid(%s) 未找到",
+      "用户未配置自定义API参数 %s": "用户未配置自定义API参数 %s",
+      "创建AES加密器失败: %v": "创建AES加密器失败: %v",
+      "请求参数错误，上次聊天没有请求本地工具调用，请不要配置 LocalToolOuputs 参数": "请求参数错误，上次聊天未请求本地工具调用，请勿配置 LocalToolOutputs 参数",
+      "请求参数错误，LocalToolOuputs 上报的工具名称不存在": "请求参数错误，LocalToolOutputs 上报的工具名称不存在",
+      "消息记录不合法": "消息记录不合法",
+      "语音互动功能未开启": "语音互动功能未开启",
+      "语音通话功能未开启": "语音通话功能未开启",
+      "语音通话线路繁忙，请稍后再试": "语音通话线路繁忙，请稍后再试",
+      "语音通话声音未配置": "语音通话声音未配置",
+      "语音通话形象未配置": "语音通话形象未配置",
+      "语音通话形象未启用": "语音通话形象未启用",
+      "当前语音通话数超出请求限制，请稍后再试": "当前语音通话数超出请求限制，请稍后再试",
+      "语音通话任务不存在": "语音通话任务不存在",
+      "ErrIpForbidden": "当前IP地址无访问权限。",
+      "ErrAPPResourceLimitQPM": "请求失败，触发当前应用的模型QPM 上限。",
+      "ErrAPPResourceLimitTPM": "请求失败，触发当前应用的模型TPM 上限。",
+      "ErrAPPResourceLimitDailyTokens": "请求失败，当前应用的模型单日Tokens用量超限。",
+      "ErrSpaceResourceLimitQPM": "请求失败，触发当前空间的模型QPM上限。",
+      "ErrSpaceResourceLimitTPM": "请求失败，触发当前空间的模型 TPM 上限。",
+      "ErrSpaceResourceLimitDailyTokens": "请求失败，触发当前空间的模型单日Tokens用量超限。",
+      "专属模型超出并发数限制": "专属模型超出并发数限制"
+    }
+  placeholder.yaml: |
+
+    CHAT_APEX_ROUTER_TARGET: ip://adp-apex.{{ .Release.Namespace }}.svc.cluster.local:8083
+
+    CHAT_MYSQL_TARGET: 
+    CHAT_TDSQL_TARGET: 
+    CHAT_PROMPT_MYSQL_TARGET: 
+    LLM_MANAGER_SERVER_TARGET: ip://llm-manager-server.{{ .Release.Namespace }}.svc.cluster.local:10001
+    FINANCE_TARGET: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+    INFOSEC_TARGET: ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090
+    AI_GATEWAY_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+    APP_MEMORY_TARGET: ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001
+    BOT_DATA_STATISTICS_SERVER_API_TARGET: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
+    BOT_LLM_SERVER_LLM_TARGET: ip://adp-llm.{{ .Release.Namespace }}.svc.cluster.local:8000
+    BOT_KNOWLEDGE_CONFIG_SERVER_API_TARGET: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+    BOT_ADMIN_CONFIG_SERVER_API_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+    BOT_TASK_CONFIG_SERVER_TASK_CONFIG_TARGET: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+    PLATFORM_MANAGER_LOGIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+    CODE_INTERPRETER_DISPATCHER_CODEEXEC_TARGET: ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001
+    AGENT_CONFIG_SERVER_AGENTCONFIGAPI_TARGET: ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+    RESOURCE_SCHEDULE_SERVER_SCHEDULESERVER_TARGET: ip://adp-plugin-pod-schedule.{{ .Release.Namespace }}.svc.cluster.local:8000
+    BOT_AGENT_SERVER_AGENT_TARGET: ip://adp-agent-exec.{{ .Release.Namespace }}.svc.cluster.local:8001
+    APP_CONFIG_ADMIN_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+    APP_CONFIG_API_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
+    BOT_RAG_SERVER_RPC_TARGET: ip://adp-rag-exec.{{ .Release.Namespace }}.svc.cluster.local:8001
+    BOT_WORKFLOW_DM_SERVER_WORKFLOW_DM_TARGET: ip://adp-workflow-exec.{{ .Release.Namespace }}.svc.cluster.local:8000
+    BOT_ADMIN_CONFIG_SERVER_LOGIN_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+    ADP_RESOURCE_GALLERY_TARGET: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+    PLATFORM_MANAGER_API_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
+    PLATFORM_MANAGER_ADMIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
+    CORE_RAG_TARGET: ip://adp-rag-exec.{{ .Release.Namespace }}.svc.cluster.local:8000
+    CORE_AGENT_TARGET: ip://adp-agent-exec.{{ .Release.Namespace }}.svc.cluster.local:8000
+    CORE_WORKFLOW_TARGET: ip://adp-workflow-exec.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    DISABLE_CONTENT_CHECK: true
+    MULTI_MODAL_GET_CAPTION_PROMPT: 用200字以内描述这张图片
+    RATE_LIMITER_ENABLE: true
+    LIMITER_ENABLE: true
+    TRTC_ENDPOINT:
+    TRTC_REGION:
+    TRTC_SECRET_ID:
+    TRTC_SECRET_KEY:
+    TRTC_SDK_APP_ID: 0
+    TRTC_USER_KEY:
+    TRTC_CALLBACK_KEY:
+    LLM_API_URL:
+    LLM_EXP_API_URL:
+    TTS_APP_ID: 0
+    TTS_SECRET_ID:
+    TTS_SECRET_KEY:
+    TTS_SIGNATURE_ACTION:
+    TTS_SIGNATURE_URL:
+    TTS_SIGNATURE_TTL: 0
+    DIGITAL_HUMAN_APP_KEY:
+    DIGITAL_HUMAN_ACCESS_TOKEN:
+    DIGITAL_HUMAN_SECRET_KEY:
+    DIGITAL_HUMAN_SIGNATURE_TTL: 0
+    STS_APP_ID: 0
+    STS_ENDPOINT:
+    STS_REGION:
+    STS_SECRET_ID:
+    STS_SECRET_KEY:
+    STS_ASR_NAME:
+    STS_ASR_POLICY:
+
+    ADPBOT_GATEWAY_ADPBOTGATEWAY_TARGET: ip://adp-bot-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    ADPBOT_GATEWAY_ADPBOTGATEWAYCLIENTWEBSOCKET_TARGET: ip://adp-bot-gateway.{{ .Release.Namespace }}.svc.cluster.local:9003
+    CORE_RAG_CALLEE: trpc.KEP.bot-rag-server.chat
+    CORE_AGENT_CALLEE: trpc.KEP.bot-agent-server.chat
+    CORE_WORKFLOW_CALLEE: trpc.KEP.bot-workflow-dm-server.workflow-dm-http
+  trpc_go.yaml: |
+    global:
+      env_name: formal
+      namespace: Production
+      enable_set: false         #是否启用set
+      full_set_name: adp   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+    server:
+      app: adp
+      server: chat-manage
+      conf_path: /data/app/conf/
+      admin:
+        ip: ${POD_IP}
+        port: 8081
+      filter:
+        - recovery
+        - accesslog
+        - debuglog
+        - validation
+        - cle-route-propagator
+        - i18n-adp    # 在recovery filter之后引用，避免filter里的错误覆盖掉i18n错误
+        - opentelemetry
+      service:
+        - name: qbot.qbot.chat.Chat
+          ip: ${POD_IP}
+          port: 9090
+          network: tcp
+          protocol: trpc
+          timeout: 10000
+        - name: trpc.KEP.bot-chat-server.chat
+          ip: ${POD_IP}
+          port: 9091
+          network: tcp
+          protocol: trpc
+          timeout: 30000
+        - name: qbot.qbot.chat.ChatHttp
+          ip: ${POD_IP}
+          port: 9099                                                         # 服务监听端口 可使用占位符 ${port}
+          network: tcp                                                       # 网络监听类型  tcp udp
+          protocol: http                                                     # 应用层协议 trpc http
+        - name: qbot.chat.chat.DeleteRealtimeDoc        # 分布式定时器
+          ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 9001                  #服务监听端口 可使用占位符 ${port}
+          network: 0 */29 * * * * ?startAtOnce=0&scheduler=redis&holdTime=5       # 使用redis分布式锁"
+          protocol: timer                 #应用层协议 trpc http
+          timeout: 600000                 # 请求最长处理时间 单位 毫秒
+        - name: qbot.chat.chat.LoadPromptVersionFromDB        # 本地定时器
+          ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 9002                  #服务监听端口 可使用占位符 ${port}
+          network: 0 */2 * * * * ?startAtOnce=1       # 启动立马执行
+          protocol: timer                 #应用层协议 trpc http
+          timeout: 600000                 # 请求最长处理时间 单位 毫秒
+        - name: qbot.chat.chat.UpdateRobotKeywords        # 分布式定时器
+          ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 9003                  #服务监听端口 可使用占位符 ${port}
+          network: 0 */1 * * * * ?startAtOnce=0&scheduler=redis&holdTime=5       # 使用redis分布式锁"
+          protocol: timer                 #应用层协议 trpc http
+          timeout: 600000                 # 请求最长处理时间 单位 毫秒
+        - name: qbot.chat.chat.ClearMsgRecord        # 分布式定时器，清理消息记录表
+          ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 9005                  #服务监听端口 可使用占位符 ${port}
+          network: 0 0/5 2 * * *?startAtOnce=0&scheduler=redis&holdTime=5       # 使用redis分布式锁"每天的 2:00 - 2:55 时间段，每隔 3 分钟执行一次
+          protocol: timer                 #应用层协议 trpc http
+          timeout: 1200000                 # 请求最长处理时间 单位 毫秒
+        - name: qbot.chat.chat.ClearMsgRecordBySession        # 分布式定时器，清理消息记录表
+          ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 9007                  #服务监听端口 可使用占位符 ${port}
+          network: 0 */5 * * * * ?startAtOnce=1       # 使用redis分布式锁"每隔 2 分钟执行一次
+          protocol: timer                 #应用层协议 trpc http
+          timeout: 60000                 # 请求最长处理时间 单位 毫秒   
+    plugins:
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+            - name: rainbow-comm
+              path: /app/
+            - name: apex
+              path: /app/conf/
+            - name: global
+              appid: ${RAINBOW_APP_ID}  # appid
+              group: global # 配置所属组
+              type: kv   # 七彩石数据格式, kv(默认), table
+              env_name: ${RAINBOW_ENV_NAME}
+              timeout: 2000
+              enable_client_provider: true
+      log:
+        default:                                  #默认日志的配置，可支持多输出
+          - writer: console                         #控制台标准输出 默认
+            level: info                            #标准输出日志的级别
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+          - writer: file                            #本地文件日志
+            level: info                             #本地文件滚动日志的级别
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/trpc.log  #本地文件滚动日志存放的路径
+              write_mode: 2
+              roll_type: time
+              max_age: 7
+              max_backups: 10
+              compress: false
+              time_unit: day
+        clues:
+          - writer: console                         #控制台标准输出 默认
+            level: info                            #标准输出日志的级别
+          - writer: file
+            level: info
+            formatter: json
+            writer_config:
+              filename: /app/logs/clues.log
+              write_mode: 2
+              roll_type: time
+              max_age: 7
+              max_backups: 10
+              compress: false
+              time_unit: day
+      selector:
+        polaris:
+          protocal: grpc
+          discovery:
+            refresh_interval: 10000
+          enable_servicerouter: true
+          enable_trans_meta: true
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+            - zh-CN
+            - en-US
+          data_provider:
+            type: rainbow
+            prefix: chat
+            error_prefix: error
+            char_scaling_factor:
+              zh: 1
+              en: 3
+    client:
+      namespace: Production
+      filter:
+        - opentelemetry
+        - cle-route-propagator
+        - chat-trace
+      service:
+        - name: mysql.qbot.qbot
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.qbot
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: trpc.mysql.adp.prompt
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: redis.qbot.qbot
+          network: tcp
+          protocol: redis
+          target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379
+          password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
+          timeout: 2000
+        - name: redis.lke.limiter
+          network: tcp
+          protocol: redis
+          target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/4
+          password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
+          timeout: 800
+        - name: apex.router
+          target: ip://apex-router-cmlb-8083-0.{{ .Release.Namespace }}.svc.cluster.local:8083
+          namespace: Production
+          timeout: 10000
+        - callee: trpc.SmartAssistant.LLMManagerServer.Chat
+          name: trpc.SmartAssistant.LLMManagerServer.Chat
+          target: ip://llm-manager-server.{{ .Release.Namespace }}.svc.cluster.local:10001
+          namespace: Production
+          timeout: 120000
+        - name: pipeline-flow-detail
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot_history_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - callee: qbot.finance.finance.Finance
+          name: qbot.finance.finance.Finance
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          network: tcp
+          timeout: 30000
+        - callee: trpc.adp.platform_charger.Finance
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          network: tcp
+          timeout: 30000
+        - callee: qbot.qbot.infosec.Infosec
+          target: ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          network: tcp
+          timeout: 2000
+        - name: trpc.adp.ai-gateway.api
+          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          network: tcp
+          protocol: http
+          timeout: 1800000
+        - callee: trpc.adp.app_memory.MemoryInner
+          target: ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_metrology.Api
+          target: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.model_token_count.Tokenizer
+          target: ip://llm-manager-server.{{ .Release.Namespace }}.svc.cluster.local:8000
+          namespace: Production
+          network: tcp
+          timeout: 5000
+        - callee: trpc.adp.kb_config.Api
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: Production
+          protocol: trpc
+          timeout: 600000
+        - callee: trpc.adp.app_admin_proxy.Api
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.workflow_config.WorkflowConfig
+          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+          namespace: Production
+          timeout: 5000
+        - callee: trpc.adp.platform_manager.Login
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.plugin_code_interpret.CodeExec
+          target: ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.agent_config.AgentConfigApi
+          target: ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: Production
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.plugin_pod_schedule.ScheduleServer
+          target: ip://adp-plugin-pod-schedule.{{ .Release.Namespace }}.svc.cluster.local:8000
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.agent_exec.Agent
+          target: ip://adp-agent-exec.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_config.Admin
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_config.Api
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_content_moderation.Infosec
+          target: ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          network: tcp
+          timeout: 2000
+        - callee: trpc.adp.rag_exec.Chat
+          target: ip://adp-rag-exec.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.workflow_exec.WorkflowExec
+          target: ip://adp-workflow-exec.{{ .Release.Namespace }}.svc.cluster.local:8000
+          namespace: Production
+          timeout: 600000
+        - callee: trpc.adp.app_admin_proxy.Login
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.resource_gallery.Admin
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_manager.Api
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_manager.Admin
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot-rag-server.chat
+          target: ip://adp-rag-exec.{{ .Release.Namespace }}.svc.cluster.local:8000
+          namespace: Production
+          network: tcp                      # 后端服务的网络类型 tcp udp 配置优先
+          protocol: http                    # 应用层协议 trpc http
+          timeout: 600000                    # 请求最长处理时间
+          serialization: 2                  # (0=pb, 1=JCE, 2=json, 3=flat_buffer, 4=bytes_flow)
+        - callee: trpc.KEP.bot-agent-server.chat         # rag服务
+          target: ip://adp-agent-exec.{{ .Release.Namespace }}.svc.cluster.local:8000
+          namespace: Production
+          network: tcp                      # 后端服务的网络类型 tcp udp 配置优先
+          protocol: http                    # 应用层协议 trpc http
+          timeout: 5400000                    # 请求最长处理时间
+          serialization: 2                  # (0=pb, 1=JCE, 2=json, 3=flat_buffer, 4=bytes_flow)
+        - callee: trpc.KEP.bot-workflow-dm-server.workflow-dm-http        # DM http服务
+          target: ip://adp-workflow-exec.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: Production
+          network: tcp                      # 后端服务的网络类型 tcp udp 配置优先
+          protocol: http                    # 应用层协议 trpc http
+          timeout: 1800000                    # 请求最长处理时间
+          serialization: 2                  # (0=pb, 1=JCE, 2=json, 3=flat_buffer, 4=bytes_flow)

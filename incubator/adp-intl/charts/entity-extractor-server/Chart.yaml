@@ -1,0 +1,10 @@
+apiVersion: v2
+name: entity-extractor-server
+description: A helm chart for entity-extractor-server 
+type: application
+
+version: 1.0.0
+
+appVersion: 1.0.0
+maintainers:
+  - name: v_iferen

@@ -1,0 +1,184 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-data-init-job
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-data-init-job
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    {{- if .Values.global.customLabels }}
+    {{- range $key, $value := .Values.global.customLabels }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-succeeded": continue
+    "helm.sh/hook-delete-policy": before-hook-creation
+    {{- if .Values.global.customAnnotations }}
+    {{- range $key, $value := .Values.global.customAnnotations }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 3600
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-data-init-job
+        release: {{ .Release.Name }}
+        {{- if .Values.global.customLabels }}
+        {{- range $key, $value := .Values.global.customLabels }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+        {{- end }}
+      annotations:
+        eks.tke.cloud.tencent.com/reserve-sandbox-duration: "30m"
+        eks.tke.cloud.tencent.com/reserve-succeeded-sandbox: "true"
+        eks.tke.cloud.tencent.com/reserve-failed-sandbox: "true"
+        {{- if .Values.global.customAnnotations }}
+        {{- range $key, $value := .Values.global.customAnnotations }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+        {{- end }}
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: data-init
+        image: {{ (index .Values.images "deploy-data-init").url }}
+        imagePullPolicy: IfNotPresent
+        workingDir: /app
+        command:
+          - "/bin/sh"
+          - "-c"
+          - |
+            /app/bin/cross-up --config /app/conf/trpc_go.yaml init --target v3.4.1
+            EXIT_CODE=$?
+            if [ $EXIT_CODE -ne 0 ]; then
+              echo "=== FAILED with exit code $EXIT_CODE, sleeping 1h for debug ==="
+              sleep 3600
+            fi
+            exit $EXIT_CODE
+        env:
+          # 部署的地域，国内版(public)还是海外版(intl)，默认public。数据初始化时有差异的情况下基于此变量做差异处理
+          - name: DEPLOY_REGION
+            value: _intl
+          - name: INSTALL_NS
+            value: {{ .Release.Namespace }}
+          # ============================================================
+          # 应用基础URL 用于替换第三方插件mcp服务器的地址
+          # ============================================================
+          - name: APP_BASE_URL
+            value: {{ printf "%s://%s" (.Values.global.scheme | default "http") (.Values.global.clb | default "") | quote }}
+          # ============================================================
+          # ADP apikey替换
+          # ============================================================
+          - name: ADP_API_KEY
+            value: "{{ dig "modelServices" "adp" "apiKey" "" .Values.global }}"
+          - name: HUNYUAN_API_KEY
+            value: "{{ dig "modelServices" "hunyuan" "apiKey" "" .Values.global }}"
+          # ============================================================
+          # MySQL 数据库连接（cross-up 核心 + 各初始化步骤共用）
+          # 用于: config.go applyEnvOverrides, initialize_db_schema,
+          #       initialize_db_configs, initialize_vector_db
+          # ============================================================
+          - name: DB_HOST
+            value: "{{ .Values.global.components.db.host }}"
+          - name: DB_PORT
+            value: "{{ .Values.global.components.db.port | default "3306" }}"
+          - name: DB_USER
+            value: "{{ .Values.global.components.db.user }}"
+          - name: DB_PASSWORD
+            value: "{{ .Values.global.components.db.password }}"
+          - name: DISABLE_SHARDKEY
+            value: "{{ eq .Values.global.components.db.providerType "tdsql" | ternary "false" "true" }}"
+          # ============================================================
+          # Elasticsearch 连接
+          # ============================================================
+          - name: ES_HOST
+            value: "{{ (index .Values.global.components.es.hosts 0) }}"
+          - name: ES_PORT
+            value: "{{ .Values.global.components.es.port | default "9200" }}"
+          - name: ES_USERNAME
+            value: "{{ .Values.global.components.es.user | default "" }}"
+          - name: ES_PASSWORD
+            value: "{{ .Values.global.components.es.password | default "" }}"
+          - name: ES_SCHEME
+            value: "http"
+
+          # ============================================================
+          # s3 对象存储
+          # ============================================================
+          - name: S3_PROVIDER
+            value: "{{ .Values.global.components.s3.providerType }}"
+          - name: S3_HOST
+            value: {{ include "ex.s3_host" . | trim | quote }}
+          - name: S3_RESOURCE_URL
+            value: {{ include "ex.s3_resource_url" . | trim | quote }}
+          - name: S3_ACCESS_KEY
+            value: {{ include "ex.s3_AK" . | trim | quote }}
+          - name: S3_SECRET_KEY
+            value: {{ include "ex.s3_SK" . | trim | quote }}
+          - name: S3_BUCKET_NAME
+            value: {{ include "ex.s3_bucket" . | trim | quote }}
+          - name: S3_RESOURCE_DIR
+            value: "{{ .Values.resourcesDir }}"
+
+          # ============================================================
+          # 向量数据库 (VDB)
+          # ============================================================
+          {{- $vdbList := dig "vdb" (list) .Values.global.components | default (list) }}
+          {{- if gt (len $vdbList) 0 }}
+          {{- $vdb0 := index $vdbList 0 }}
+          - name: ENABLE_VDB
+            value: {{ $vdb0.enabled | default true | toString | quote }}
+          {{- if ne ($vdb0.enabled | default true | toString) "false" }}
+          - name: VDB_ADDR
+            value: {{ $vdb0.addr | quote }}
+          - name: VDB_ACCOUNT
+            value: {{ $vdb0.account | quote }}
+          - name: VDB_APIKEY
+            value: {{ $vdb0.apiKey | quote }}
+          - name: VDB_DATABASES
+            value: "db-vdb-0,db-vdb-1,db-vdb-2,db-vdb-3,db-vdb-4"
+          {{- end }}
+          {{- else }}
+          - name: ENABLE_VDB
+            value: "false"
+          {{- end }}
+
+          # ============================================================
+          # CLICKHOUSE CH_CLUSTER
+          # ============================================================
+          - name: CH_HOST
+            value: {{ index .Values.global.components.clickhouse.hosts 0 | quote }}
+          - name: CH_PORT
+            value: {{ .Values.global.components.clickhouse.port | quote }}
+          - name: CH_USER
+            value: {{ .Values.global.components.clickhouse.user | quote }}
+          - name: CH_PASSWORD
+            value: {{ .Values.global.components.clickhouse.password | quote }}
+          - name: CH_CLUSTER
+            value: "{{ .Values.global.components.clickhouse.cluster | default "default_cluster" }}"
+
+          # ============================================================
+          # 微信第三方平台信息
+          # ============================================================
+          - name: WECHAT_COMPONENT_APP_ID
+            value: {{ index .Values.global.wechat.componentAppId | quote }}
+          - name: WECHAT_COMPONENT_APP_SECRET
+            value: {{ index .Values.global.wechat.componentAppSecret | quote }}
+          - name: WECHAT_COMPONENT_TOKEN
+            value: {{ index .Values.global.wechat.componentToken | quote }}
+          - name: WECHAT_COMPONENT_AES_KEY
+            value: {{ index .Values.global.wechat.componentAesKey | quote }}
+        resources:
+          limits:
+            cpu: "2"
+            memory: 2G
+          requests:
+            cpu: "2"
+            memory: 2G

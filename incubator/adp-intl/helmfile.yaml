@@ -1,0 +1,605 @@
+# Helmfile for tke-access-test
+# 用于管理多个 Helm Charts 的部署
+
+# 依赖检查器全局配置
+dependencyChecker:
+  # 检查间隔（秒）
+  checkInterval: 5
+  # 最大重试次数（120次 * 5秒 = 10分钟）
+  maxRetries: 120
+  # 是否启用详细日志
+  verbose: true
+
+# Helmfile 配置
+helmDefaults:
+  # 等待所有资源就绪
+  wait: true
+  # 超时时间（秒）
+  timeout: 600
+  # 如果 release 不存在则创建，存在则更新
+  createNamespace: true
+  # 强制更新
+  force: false
+  # 原子操作：如果失败则回滚
+  atomic: true
+  # 清理失败的 release
+  cleanupOnFail: true
+  # Helm 命令的额外参数
+  args:
+    - "--debug"
+
+
+# Release 配置
+releases:
+  # 1. ti-common - 公共资源，最先部署
+  - name: ti-common
+    chart: ./charts/ti-common
+    namespace: default
+    installed: {{ env "TI_COMMON_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+
+  # 2. etcd - 基础存储服务
+  - name: etcd
+    chart: ./charts/etcd
+    namespace: default
+    installed: {{ env "ETCD_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+
+  #####################  ti-base  #######################
+
+  # 3. lke-accessmanagerserver - 访问管理服务
+  - name: lke-access-managerserver
+    chart: ./charts/lke-access-managerserver
+    namespace: default
+    installed: {{ env "LKE_ACCESSMANAGERSERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - etcd
+
+  # 5. lke-aiconfmanagerserver - AI配置管理服务
+  - name: lke-aiconf-manager
+    chart: ./charts/lke-aiconf-manager
+    namespace: default
+    installed: {{ env "LKE_AICONFMANAGERSERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - etcd
+
+  # 6. lke-ti-auth-web - 认证前端服务
+  - name: lke-ti-auth-web
+    chart: ./charts/lke-ti-auth-web
+    namespace: default
+    installed: {{ env "LKE_TI_AUTH_WEB_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - etcd
+
+  # 7. lke-ti-gateway - 网关服务
+  - name: lke-ti-gateway
+    chart: ./charts/lke-ti-gateway
+    namespace: default
+    installed: {{ env "LKE_TI_GATEWAY_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - etcd
+
+  # 8. lke-ti-ingress-controller - Ingress控制器
+  - name: lke-ti-ingress-controller
+    chart: ./charts/lke-ti-ingress-controller
+    namespace: default
+    installed: {{ env "LKE_TI_INGRESS_CONTROLLER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - etcd
+
+  # 9. lke-ti-perm-auth - 权限认证服务
+  - name: lke-ti-perm-auth
+    chart: ./charts/lke-ti-perm-auth
+    namespace: default
+    installed: {{ env "LKE_TI_PERM_AUTH_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - etcd
+
+  #####################  业务后台服务  #######################
+  # 0. lke-admin
+  - name: lke-bot-admin-config-server
+    chart: ./charts/lke-bot-admin-config-server
+    namespace: default
+    installed: { { env "ADMIN_ENABLED" | default "true" } }
+    wait: true
+    timeout: 600
+    needs:
+      - ti-perm-auth
+
+  # 1. adp-app-config
+  - name: adp-app-config
+    chart: ./charts/adp-app-config
+    namespace: default
+    installed: { { env "ADP_APP_CONFIG_ENABLED" | default "true" } }
+    wait: true
+    timeout: 600
+    needs:
+      - etcd
+
+  # 2. agent-exec
+  - name: adp-agent-exec
+    chart: ./charts/adp-agent-exec
+    namespace: default
+    installed: { { env "CHAT_ENABLED" | default "true" } }
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 3. apex
+  - name: apex
+    chart: ./charts/apex
+    namespace: default
+    installed: { { env "CHAT_ENABLED" | default "true" } }
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+#  # 3. atomic-api
+#  - name: atomic-api
+#    chart: ./charts/atomic-api
+#    namespace: default
+#    installed: { { env "CHAT_ENABLED" | default "true" } }
+#    wait: true
+#    timeout: 600
+#    needs:
+#      - app-config
+#
+#  # 4. atomic
+#  - name: atomic
+#    chart: ./charts/atomic
+#    namespace: default
+#    installed: {{ env "ATOMIC_ENABLED" | default "true" }}
+#    wait: true
+#    timeout: 600
+#    needs:
+#      - app-config
+
+  # 5. adp-chat-manage
+  - name: adp-chat-manage
+    chart: ./charts/adp-chat-manage
+    namespace: default
+    installed: {{ env "BOT_AGENT_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 6. adp-platform-metrology
+  - name: adp-platform-metrology
+    chart: ./charts/adp-platform-metrology
+    namespace: default
+    installed: {{ env "BOT_DATA_STATISTICS_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 7. adp-agent-config
+  - name: adp-agent-config
+    chart: ./charts/adp-agent-config
+    namespace: default
+    installed: {{ env "ADP_AGENT_CONFIG_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 8. adp-ai-gateway
+  - name: adp-ai-gateway
+    chart: ./charts/adp-ai-gateway
+    namespace: default
+    installed: {{ env "ADP_AI_GATEWAY_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 9. adp-app-channel-msg
+  - name: adp-app-channel-msg
+    chart: ./charts/adp-app-channel-msg
+    namespace: default
+    installed: {{ env "ADP_APP_CHANNEL_MSG_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 10. adp-app-channel-proxy-svr
+  - name: adp-app-channel-proxy-svr
+    chart: ./charts/adp-app-channel-proxy-svr
+    namespace: default
+    installed: {{ env "ADP_APP_CHANNEL_PROXY_SVR_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 11. adp-app-channel-token
+  - name: adp-app-channel-token
+    chart: ./charts/adp-app-channel-token
+    namespace: default
+    installed: {{ env "ADP_APP_CHANNEL_TOKEN_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 12. adp-app-evaluate
+  - name: adp-app-evaluate
+    chart: ./charts/adp-app-evaluate
+    namespace: default
+    installed: {{ env "ADP_APP_EVALUATE_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 13. adp-app-memory
+  - name: adp-app-memory
+    chart: ./charts/adp-app-memory
+    namespace: default
+    installed: {{ env "ADP_APP_MEMORY_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 14. adp-app-shorturl
+  - name: adp-app-shorturl
+    chart: ./charts/adp-app-shorturl
+    namespace: default
+    installed: {{ env "ADP_APP_SHORTURL_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 15. adp-crawler
+  - name: adp-crawler
+    chart: ./charts/adp-crawler
+    namespace: default
+    installed: {{ env "ADP_CRAWLER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 16. adp-file-converter
+  - name: adp-file-converter
+    chart: ./charts/adp-file-converter
+    namespace: default
+    installed: {{ env "ADP_FILE_CONVERTER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 17. adp-kb-config
+  - name: adp-kb-config
+    chart: ./charts/adp-kb-config
+    namespace: default
+    installed: {{ env "ADP_KB_CONFIG_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 18. adp-kb-retrieval
+  - name: adp-kb-retrieval
+    chart: ./charts/adp-kb-retrieval
+    namespace: default
+    installed: {{ env "ADP_KB_RETRIEVAL_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-kb-config
+
+  # 19. adp-kb-vdb-proxy
+  - name: adp-kb-vdb-proxy
+    chart: ./charts/adp-kb-vdb-proxy
+    namespace: default
+    installed: {{ env "ADP_KB_VDB_PROXY_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 20. adp-model-token-count
+  - name: adp-model-token-count
+    chart: ./charts/adp-model-token-count
+    namespace: default
+    installed: {{ env "ADP_MODEL_TOKEN_COUNT_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 21. adp-platform-charger
+  - name: adp-platform-charger
+    chart: ./charts/adp-platform-charger
+    namespace: default
+    installed: {{ env "ADP_PLATFORM_CHARGER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 22. adp-platform-content-moderation
+  - name: adp-platform-content-moderation
+    chart: ./charts/adp-platform-content-moderation
+    namespace: default
+    installed: {{ env "ADP_PLATFORM_CONTENT_MODERATION_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 23. adp-platform-manager
+  - name: adp-platform-manager
+    chart: ./charts/adp-platform-manager
+    namespace: default
+    installed: {{ env "ADP_PLATFORM_MANAGER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 24. adp-platform-op
+  - name: adp-platform-op
+    chart: ./charts/adp-platform-op
+    namespace: default
+    installed: {{ env "ADP_PLATFORM_OP_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 25. adp-plugin-code-interpret
+  - name: adp-plugin-code-interpret
+    chart: ./charts/adp-plugin-code-interpret
+    namespace: default
+    installed: {{ env "ADP_PLUGIN_CODE_INTERPRET_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 26. adp-plugin-code-kernel
+  - name: adp-plugin-code-kernel
+    chart: ./charts/adp-plugin-code-kernel
+    namespace: default
+    installed: {{ env "ADP_PLUGIN_CODE_KERNEL_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 27. adp-plugin-config
+  - name: adp-plugin-config
+    chart: ./charts/adp-plugin-config
+    namespace: default
+    installed: {{ env "ADP_PLUGIN_CONFIG_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 28. adp-plugin-cos-util
+  - name: adp-plugin-cos-util
+    chart: ./charts/adp-plugin-cos-util
+    namespace: default
+    installed: {{ env "ADP_PLUGIN_COS_UTIL_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 29. adp-plugin-exec
+  - name: adp-plugin-exec
+    chart: ./charts/adp-plugin-exec
+    namespace: default
+    installed: {{ env "ADP_PLUGIN_EXEC_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 30. adp-plugin-pod-schedule
+  - name: adp-plugin-pod-schedule
+    chart: ./charts/adp-plugin-pod-schedule
+    namespace: default
+    installed: {{ env "ADP_PLUGIN_POD_SCHEDULE_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 31. adp-pyright
+  - name: adp-pyright
+    chart: ./charts/adp-pyright
+    namespace: default
+    installed: {{ env "ADP_PYRIGHT_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 32. adp-rag-exec
+  - name: adp-rag-exec
+    chart: ./charts/adp-rag-exec
+    namespace: default
+    installed: {{ env "ADP_RAG_EXEC_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 33. adp-resource-gallery
+  - name: adp-resource-gallery
+    chart: ./charts/adp-resource-gallery
+    namespace: default
+    installed: {{ env "ADP_RESOURCE_GALLERY_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 34. adp-web-app
+  - name: adp-web-app
+    chart: ./charts/adp-web-app
+    namespace: default
+    installed: {{ env "ADP_WEB_APP_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 35. adp-workflow-config
+  - name: adp-workflow-config
+    chart: ./charts/adp-workflow-config
+    namespace: default
+    installed: {{ env "ADP_WORKFLOW_CONFIG_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 36. adp-workflow-exec
+  - name: adp-workflow-exec
+    chart: ./charts/adp-workflow-exec
+    namespace: default
+    installed: {{ env "ADP_WORKFLOW_EXEC_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-workflow-config
+
+  # 37. entity-extractor-server
+  - name: entity-extractor-server
+    chart: ./charts/entity-extractor-server
+    namespace: default
+    installed: {{ env "ENTITY_EXTRACTOR_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 38. entity-extractor-server-sand-box
+  - name: entity-extractor-server-sand-box
+    chart: ./charts/entity-extractor-server-sand-box
+    namespace: default
+    installed: {{ env "ENTITY_EXTRACTOR_SERVER_SAND_BOX_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 39. web-parser-server
+  - name: web-parser-server
+    chart: ./charts/web-parser-server
+    namespace: default
+    installed: {{ env "WEB_PARSER_SERVER_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 40. common-config-map
+  - name: common-config-map
+    chart: ./charts/common-config-map
+    namespace: default
+    installed: {{ env "COMMON_CONFIG_MAP_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+
+  # 41. deploy-data-init
+  - name: deploy-data-init
+    chart: ./charts/deploy-data-init
+    namespace: default
+    installed: {{ env "DEPLOY_DATA_INIT_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+
+  # 42. deploy-pre-check
+  - name: deploy-pre-check
+    chart: ./charts/deploy-pre-check
+    namespace: default
+    installed: {{ env "DEPLOY_PRE_CHECK_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+
+  # 43. adp-markmap-service
+  - name: adp-markmap-service
+    chart: ./charts/adp-markmap-service
+    namespace: default
+    installed: {{ env "ADP_MARKMAP_SERVICE_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 44. adp-widget-config
+  - name: adp-widget-config
+    chart: ./charts/adp-widget-config
+    namespace: default
+    installed: {{ env "WEB_WIDGET_CONFIG_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 45. adp-platform-authenticator
+  - name: adp-platform-authenticator
+    chart: ./charts/adp-platform-authenticator
+    namespace: default
+    installed: {{ env "ADP_PLATFORM_AUTHENTICATOR_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+  # 46. adp-platform-permission-config
+  - name: adp-platform-permission-config
+    chart: ./charts/adp-platform-permission-config
+    namespace: default
+    installed: {{ env "ADP_PLATFORM_PERMISSION_CONFIG_ENABLED" | default "true" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
+#############################################################################
+# 模板配置（可选）
+#############################################################################
+templates:
+  # 默认配置模板
+  default: &default
+    missingFileHandler: Warn
+    values:
+      - ./values.yaml
+    verify: false
+
+#############################################################################
+# 全局 Hooks（可选）
+#############################################################################
+helmfiles:
+  # 如果有其他 helmfile 需要包含
+  # - path: ./helmfiles/monitoring.yaml
+  #   selectors:
+  #     - name=prometheus

@@ -1,0 +1,140 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Namespace }}-markmap-service
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: adp-markmap-service
+    app.kubernetes.io/name: adp-markmap-service
+    {{- if .Values.global.customLabels }}
+    {{- range $key, $value := .Values.global.customLabels }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
+  {{- if .Values.global.customAnnotations }}
+  annotations:
+    {{- range $key, $value := .Values.global.customAnnotations }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  selector:
+    matchLabels:
+      app: adp-markmap-service
+  template:
+    metadata:
+      labels:
+        app: adp-markmap-service
+        {{- if .Values.global.customLabels }}
+        {{- range $key, $value := .Values.global.customLabels }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+        {{- end }}
+      {{- if .Values.global.customAnnotations }}
+      annotations:
+        {{- range $key, $value := .Values.global.customAnnotations }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+      {{- end }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - adp-markmap-service
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: GPUName
+                    operator: DoesNotExist
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: product
+                    operator: In
+                    values:
+                      - lke
+      terminationGracePeriodSeconds: 90
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+          image: {{ (index .Values.images "adp-markmap-service").url }}
+          imagePullPolicy: Always
+          name: markmap-sidecar
+          ports:
+            - containerPort: 7001
+              name: sidecar-7001
+              protocol: TCP
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - sleep
+                  - '70'
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "2Gi"
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "2Gi"
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+          {{- end }}
+          securityContext:
+            capabilities:
+              add:
+                - SYS_RESOURCE
+                - NET_ADMIN
+                - SYS_ADMIN
+                - IPC_LOCK
+                - SYS_PTRACE
+            privileged: false
+          stdin: true
+          tty: true
+      imagePullSecrets:
+        - name: qcloudregistrykey
+        - name: lmbkeregistrykey
+      restartPolicy: Always
+      volumes:
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}

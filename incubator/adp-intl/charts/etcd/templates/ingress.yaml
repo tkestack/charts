@@ -1,0 +1,25 @@
+{{- if .Values.externalAccess.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: etcd
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: etcd
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: {{ .Values.externalAccess.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: etcd
+                port:
+                  number: {{ .Values.ports.client | default 2379 }}
+{{- end }}
