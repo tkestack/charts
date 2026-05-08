@@ -3,34 +3,21 @@ kind: Deployment
 metadata:
   annotations:
     ti.cloud.tencent.com/resource-quota: unlimited
-<<<<<<<< HEAD:incubator/adp/charts/adp-platform-authenticator/templates/deployment.yaml
     configmap.reloader.stakater.com/reload: {{ .Release.Name }}-platform-authenticator
-========
-    configmap.reloader.stakater.com/reload: {{ .Release.Name }}-resource-gallery
->>>>>>>> upstream/main:incubator/adp/charts/adp-resource-gallery/templates/deployment.yaml
     {{- if .Values.global.customAnnotations }}
     {{- range $key, $value := .Values.global.customAnnotations }}
     {{ $key }}: {{ $value | toString | quote }}
     {{- end }}
     {{- end }}
   labels:
-<<<<<<<< HEAD:incubator/adp/charts/adp-platform-authenticator/templates/deployment.yaml
     app: adp-platform-authenticator
     app.kubernetes.io/name: adp-platform-authenticator
-========
-    app: adp-resource-gallery
-    app.kubernetes.io/name: adp-resource-gallery
->>>>>>>> upstream/main:incubator/adp/charts/adp-resource-gallery/templates/deployment.yaml
     {{- if .Values.global.customLabels }}
     {{- range $key, $value := .Values.global.customLabels }}
     {{ $key }}: {{ $value | toString | quote }}
     {{- end }}
     {{- end }}
-<<<<<<<< HEAD:incubator/adp/charts/adp-platform-authenticator/templates/deployment.yaml
   name: adp-platform-authenticator
-========
-  name: adp-resource-gallery
->>>>>>>> upstream/main:incubator/adp/charts/adp-resource-gallery/templates/deployment.yaml
   namespace: {{ .Release.Namespace }}
 spec:
   {{- if eq .Values.global.clusterSize "minimal" }}
@@ -42,20 +29,12 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-<<<<<<<< HEAD:incubator/adp/charts/adp-platform-authenticator/templates/deployment.yaml
       app: adp-platform-authenticator
-========
-      app: adp-resource-gallery
->>>>>>>> upstream/main:incubator/adp/charts/adp-resource-gallery/templates/deployment.yaml
   strategy : {}
   template:
     metadata:
       labels:
-<<<<<<<< HEAD:incubator/adp/charts/adp-platform-authenticator/templates/deployment.yaml
         app: adp-platform-authenticator
-========
-        app: adp-resource-gallery
->>>>>>>> upstream/main:incubator/adp/charts/adp-resource-gallery/templates/deployment.yaml
         {{- if .Values.global.customLabels }}
         {{- range $key, $value := .Values.global.customLabels }}
         {{ $key }}: {{ $value | toString | quote }}
@@ -78,11 +57,7 @@ spec:
                 - key: app
                   operator: In
                   values:
-<<<<<<<< HEAD:incubator/adp/charts/adp-platform-authenticator/templates/deployment.yaml
                   - adp-platform-authenticator
-========
-                  - adp-resource-gallery
->>>>>>>> upstream/main:incubator/adp/charts/adp-resource-gallery/templates/deployment.yaml
               topologyKey: kubernetes.io/hostname
             weight: 1
         nodeAffinity:
@@ -128,28 +103,12 @@ spec:
               value: tcs
             - name: SERVER_LOG_LEVEL
               value: info
-<<<<<<<< HEAD:incubator/adp/charts/adp-platform-authenticator/templates/deployment.yaml
             - name: ProductType
               value: {{ include "getProductType" . | quote }}
           image: {{(index .Values.images "adp-platform-authenticator").url}}
           imagePullPolicy: Always
           command: ["/app/bin/platform-authenticator", "-conf", "/app/conf/trpc_go.yaml"]
           name: adp-platform-authenticator
-========
-            - name: ADP_CHANNEL_ID
-              value: "1"
-            - name: ProductType
-              value: {{ include "getProductType" . | quote }}
-            {{- $channelUUID := include "getChannelUUID" . -}}
-            {{- if $channelUUID }}
-            - name: ADP_CHANNEL_UUID
-              value: {{ $channelUUID | quote }}
-            {{- end }}
-          image: {{(index .Values.images "adp-resource-gallery").url}}
-          imagePullPolicy: Always
-          #command: ["sh","/usr/local/app/start.sh"]
-          name: adp-resource-gallery
->>>>>>>> upstream/main:incubator/adp/charts/adp-resource-gallery/templates/deployment.yaml
           {{- if eq .Values.global.clusterSize "minimal" }}
           resources:
             limits:
@@ -157,11 +116,7 @@ spec:
               memory: "1Gi"
             requests:
               cpu: "200m"
-<<<<<<<< HEAD:incubator/adp/charts/adp-platform-authenticator/templates/deployment.yaml
               memory: "512Mi"
-========
-              memory: "256Mi"
->>>>>>>> upstream/main:incubator/adp/charts/adp-resource-gallery/templates/deployment.yaml
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
             limits:
@@ -169,11 +124,7 @@ spec:
               memory: "1Gi"
             requests:
               cpu: "200m"
-<<<<<<<< HEAD:incubator/adp/charts/adp-platform-authenticator/templates/deployment.yaml
               memory: "512Mi"
-========
-              memory: "256Mi"
->>>>>>>> upstream/main:incubator/adp/charts/adp-resource-gallery/templates/deployment.yaml
           {{- else }}
           resources:
             limits:
@@ -181,11 +132,7 @@ spec:
               memory: "2Gi"
             requests:
               cpu: "200m"
-<<<<<<<< HEAD:incubator/adp/charts/adp-platform-authenticator/templates/deployment.yaml
               memory: "512Mi"
-========
-              memory: "256Mi"
->>>>>>>> upstream/main:incubator/adp/charts/adp-resource-gallery/templates/deployment.yaml
           {{- end }}
           livenessProbe:
             failureThreshold: 3
@@ -218,24 +165,6 @@ spec:
             - mountPath: /app/conf/placeholder.yaml
               name: config
               subPath: placeholder.yaml
-<<<<<<<< HEAD:incubator/adp/charts/adp-platform-authenticator/templates/deployment.yaml
-========
-            - mountPath: /app/conf/biz_en-US.json
-              name: config
-              subPath: biz_en-US.json
-            - mountPath: /app/conf/biz_zh-CN.json
-              name: config
-              subPath: biz_zh-CN.json
-            - mountPath: /app/conf/errors_en-US.json
-              name: config
-              subPath: errors_en-US.json
-            - mountPath: /app/conf/errors_zh-CN.json
-              name: config
-              subPath: errors_zh-CN.json
-            - mountPath: /app/conf/model_mappings.json
-              name: config
-              subPath: model_mappings.json
->>>>>>>> upstream/main:incubator/adp/charts/adp-resource-gallery/templates/deployment.yaml
             - mountPath: /app/conf/infrastructure.yaml
               name: infrastructure
               subPath: infrastructure.yaml
@@ -247,11 +176,7 @@ spec:
             path: /etc/localtime
           name: localtime
         - hostPath:
-<<<<<<<< HEAD:incubator/adp/charts/adp-platform-authenticator/templates/deployment.yaml
             path: /data/ti-platform/log/adp-platform-authenticator
-========
-            path: /data/ti-platform/log/adp-resource-gallery
->>>>>>>> upstream/main:incubator/adp/charts/adp-resource-gallery/templates/deployment.yaml
             type: DirectoryOrCreate
           name: logdata
         - configMap:
