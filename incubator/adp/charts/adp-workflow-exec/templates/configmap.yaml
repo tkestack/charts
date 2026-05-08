@@ -313,7 +313,7 @@ data:
     WorkflowEvent:
       Thought:
         Title: "思考"
-        Icon: "/qbot/public/thinking.png"
+        Icon: "/webim/static/thinking.png"
       TokenStat: 
         Title: "调用工作流"
         Icon: "/qbot/public/API.png"

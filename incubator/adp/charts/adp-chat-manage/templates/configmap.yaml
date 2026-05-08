@@ -286,7 +286,7 @@ data:
       workflow: 5_workflow
       llm_reply: 5_llm_reply
     thought_conf:
-      thought_icon: "/qbot/public/thinking.png"
+      thought_icon: "/webim/static/thinking.png"
       status_title:
         stop: 思考已停止
         success: 思考已完成

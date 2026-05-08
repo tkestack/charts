@@ -8,15 +8,16 @@ global:
   # 集群类型：包含 [minimal]、[standard] 和 [recommended] 三个配置段
   clusterSize: minimal
   # CLB 域名（必填）https://console.cloud.tencent.com/clb/instance
+  clb: "xx.adp-private.com"
   # 是否校验 K8s 集群剩余资源是否充足（当部署超级节点时需要关闭）
   checkK8sResources: true
-  clb: "xx.adp-private.com"
   # CLB ID（必填）
   clbId: lb-751o89m3
   # 协议: http 或 https （必填）
   scheme: http
   # CLB HTTPS 证书 ID（scheme 为 https 时必填）https://console.cloud.tencent.com/ssl
   clbCertId: "<YOUR_CLB_CERT_ID>"
+  # 无需关注
   secapi_enable: false
 
   # RSA 密钥配置（必填）用于前后端加解密登录密码
@@ -83,22 +84,6 @@ global:
         subPath: "public"
         expireTime: 3600s
         credentialTime: 3600s
-      minio:
-        secretId: "<YOUR_MINIO_SECRET_ID>"
-        secretKey: "<YOUR_MINIO_SECRET_KEY>"
-        bucket: "<YOUR_MINIO_BUCKET>"
-        host: "<YOUR_MINIO_HOST>"
-        subPath: "public"
-        expireTime: 3600s
-        credentialTime: 3600s
-      s3:
-        secretId: "<YOUR_S3_SECRET_ID>"
-        secretKey: "<YOUR_S3_SECRET_KEY>"
-        bucket: "<YOUR_S3_BUCKET>"
-        region: "<YOUR_S3_REGION>"
-        subPath: "public"
-        expireTime: 3600s
-        credentialTime: 3600s
 
 
     # 消息队列CKafka版 https://console.cloud.tencent.com/ckafka/instance
@@ -143,6 +128,10 @@ global:
       registry: ""
       attributes:
         token: "<YOUR_APM_TOKEN>"
+
+  # ====================================================================================
+  # 以下配置皆为可选配置，如需使用，请联系技术支持人员。
+  # ====================================================================================
 
   # ============================
   # 内容安全配置 (content-security)

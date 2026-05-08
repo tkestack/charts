@@ -31,6 +31,14 @@ spec:
       app: entity-extractor-server-sand-box
   template:
     metadata:
+      annotations:
+        eks.tke.cloud.tencent.com/root-cbs-size: '50'
+        eks.tke.cloud.tencent.com/root-cbs-type: 'CLOUD_SSD'
+        {{- if .Values.global.customAnnotations }}
+        {{- range $key, $value := .Values.global.customAnnotations }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+        {{- end }}
       labels:
         app: entity-extractor-server-sand-box
         {{- if .Values.global.customLabels }}
@@ -38,12 +46,6 @@ spec:
         {{ $key }}: {{ $value | toString | quote }}
         {{- end }}
         {{- end }}
-      {{- if .Values.global.customAnnotations }}
-      annotations:
-        {{- range $key, $value := .Values.global.customAnnotations }}
-        {{ $key }}: {{ $value | toString | quote }}
-        {{- end }}
-      {{- end }}
     spec:
       affinity:
         podAntiAffinity:
@@ -161,7 +163,7 @@ spec:
               memory: "1Gi"
             requests:
               cpu: "200m"
-              memory: "256Mi"
+              memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
             limits:
@@ -169,7 +171,7 @@ spec:
               memory: "2Gi"
             requests:
               cpu: "200m"
-              memory: "256Mi"
+              memory: "512Mi"
           {{- else }}
           resources:
             limits:
@@ -177,7 +179,7 @@ spec:
               memory: "4Gi"
             requests:
               cpu: "200m"
-              memory: "256Mi"
+              memory: "512Mi"
           {{- end }}
           securityContext:
             capabilities:

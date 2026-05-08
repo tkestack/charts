@@ -107,13 +107,15 @@ spec:
               value: tcs
             - name: SERVER_LOG_LEVEL
               value: info
+            - name: TZ
+              value: Asia/Shanghai
             - name: COS_PROXY_URL
               value: {{.Values.cos_proxy_url}}
           image: {{(index .Values.images "adp-plugin-code-kernel").url}}
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 3
-            initialDelaySeconds: 20
+            initialDelaySeconds: 60
             periodSeconds: 3
             successThreshold: 1
             tcpSocket:
@@ -134,7 +136,7 @@ spec:
               memory: "512Mi"
             requests:
               cpu: "200m"
-              memory: "256Mi"
+              memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
             limits:
@@ -142,7 +144,7 @@ spec:
               memory: "1Gi"
             requests:
               cpu: "200m"
-              memory: "256Mi"
+              memory: "512Mi"
           {{- else }}
           resources:
             limits:
@@ -150,12 +152,10 @@ spec:
               memory: "1Gi"
             requests:
               cpu: "200m"
-              memory: "256Mi"
+              memory: "512Mi"
           {{- end }}
           name: adp-plugin-code-kernel
           volumeMounts:
-            - mountPath: /etc/localtime
-              name: localtime
             - mountPath: /usr/local/trpc/log
               name: logdata
               subPathExpr: $(POD_NAME)
@@ -165,14 +165,8 @@ spec:
       restartPolicy: Always
       volumes:
         {{- include "dependencyChecker.volumes" . | nindent 8 }}
-        - hostPath:
-            path: /etc/localtime
-          name: localtime
-        - hostPath:
-            path: /data/ti-platform/log/adp-plugin-code-kernel
-            type: DirectoryOrCreate
+        - emptyDir: {}
           name: logdata
-
         - configMap:
             defaultMode: 420
             name: infrastructure

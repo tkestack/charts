@@ -154,8 +154,8 @@ data:
     instance:
       instance_id: ins-fbdfd9be # llmsgw 实例ID
       app_id: aga-a54ccc08 # llmsgw 应用ID
-      app_sse_url_format: http://21.248.96.25/_llmsgw_/sse?llmsgw_server=%s&llmsgw_app=&llmsgw_key= # llmsgw SSE调用链接格式：http://21.248.96.25/_llmsgw_/sse?llmsgw_server=%s&llmsgw_app=xxx&llmsgw_key=xxx
-      app_streamable_url_format: http://21.248.96.25/_llmsgw_/mcp?llmsgw_server=%s&llmsgw_app=&llmsgw_key= # llmsgw Streamable调用链接格式：http://21.248.96.25/_llmsgw_/mcp?llmsgw_server=%s&llmsgw_app=xxx&llmsgw_key=xxx
+      app_sse_url_format: ""
+      app_streamable_url_format: ""
 
     scf_default:
       url_suffixes:

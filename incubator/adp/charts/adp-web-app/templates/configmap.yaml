@@ -118,6 +118,9 @@ data:
           location /preview/ {
             alias /web/html/manage/preview/;
           }
+          location /qbot/public/ {
+            alias /web/html/qbot/static/;
+          }
           location /qbot/ {
             alias /web/html/qbot/;
           }
