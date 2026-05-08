@@ -1,0 +1,2262 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-resource-gallery
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    cache_limit:
+      corp_expire: 720h
+      staff_expire: 120h
+      intent_expire: 120h
+      app_expire: 120h
+      model_expire: 120h
+    tione:
+      secret_id: ${TIONE_SECRET_ID}
+      secret_key: ${TIONE_SECRET_KEY}
+      region: ${TIONE_REGION}
+      sts_host: ${TIONE_STS_HOST}
+      tione_host: ${TIONE_HOST}
+      service_role_name: ADP_QCSLinkedRoleInTIONE
+      tione_regions: ${TIONE_REGIONS}
+      tione_enable_white: ${TIONE_ENABLE_WHITE}
+      tione_white_uin: ${TIONE_WHITE_UIN}
+    # 模型广场
+    model_hub:
+      model_type: llm
+      model_params:
+        - name: temperature
+          max: 2
+          min: 0
+          default: 0.7
+        - name: top_p
+          max: 1
+          min: 0
+          default: 1
+        - name: seed
+          max: 10000
+          min: 0
+          default: 1024
+        - name: presence_penalty
+          max: 2
+          min: -2
+          default: 0
+        - name: frequency_penalty
+          max: 2
+          min: -2
+          default: 0
+        - name: repetition_penalty
+          max: 2
+          min: 1
+          default: 1
+        - name: max_tokens
+          max: 262144
+          min: 1
+          default: 4096
+      model_tags:
+        - KeyModelTagOmniModal
+      model_properties:
+        model_length: 64k
+        input_length: 57344
+      model_category_to_tags:
+        generate: [KeyModelTagTextReasoning,KeyModelTagToolCalling,KeyModelTagOmniModal]
+        thought: [KeyModelTagTextReasoning,KeyModelTagToolCalling,KeyModelTagOmniModal]
+        standard_thought: [KeyModelTagTextReasoning,KeyModelTagToolCalling,KeyModelTagOmniModal]
+        agent_thought: [KeyModelTagTextReasoning,KeyModelTagToolCalling,KeyModelTagOmniModal]
+        rewrite: [KeyModelTagTextReasoning,KeyModelTagToolCalling,KeyModelTagOmniModal]
+        rerank: [KeyModelTagRerankingModel]
+        embedding: [KeyModelTagVectorModel]
+        widget: [KeyModelTagTextReasoning]
+        openclaw: [KeyModelTagTextReasoning,KeyModelTagToolCalling,KeyModelTagOmniModal]
+      embedding_limit:
+        enable: true
+        max_vector_dimension: 4096
+        default_vector_dimension: 1024
+      model_finance_free_white: ${MODEL_FINANCE_FREE_WHITE}
+      model_reply_format: ${MODEL_REPLY_FORMAT}
+      check_models_before_delete: true
+
+    robot_default:
+      # 模型模型列表
+      app_default_model:
+        knowledge_qa: ${APP_DEFAULT_MODEL_KNOWLEDGE_QA}
+      # 思考模型模型列表
+      app_thought_model:
+        standard: ${APP_THOUGHT_MODEL_STANDARD}
+        agent: ${APP_THOUGHT_MODEL_AGENT}
+      app_rewrite_model: ${APP_REWRITE_MODEL}
+      # rerank 和embedding模型
+      app_rerank_model: ${APP_RERANK_MODEL}
+      app_embedding_model: ${APP_EMBEDDING_MODEL}
+      app_widget_model: ${APP_WIDGET_MODEL}
+      # fileparse模型
+      app_fileparse_model: ${APP_FILEPARSE_MODEL}
+      # openclaw使用模型
+      app_openclaw_model: ${APP_OPENCLAW_MODEL}
+      # 大模型输入框，角色描述，对话历史上下文上限设置
+      llm_word_limit: ${LLM_WORD_LIMIT}
+      search_model_free: ${SEARCH_MODEL_FREE}
+      # 模型对AI通话支持的类型
+      llm_support_ai_call: ${LLM_SUPPORT_AI_CALL}
+      default_model_config: ${DEFAULT_MODEL_CONFIG}
+    # 计费配置
+    finance:
+      disabled: ${FINANCE_DISABLED}
+      search_disabled: ${SEARCH_DISABLED}
+    limit_config_info: #限流信息设置
+      expire: 4m
+      max_unlock_retry: 3
+      try_lock_interval: 50ms
+      concurrency_key_expire: 1800
+    managed_account_ids: ${MANAGED_ACCOUNT_IDS}
+    #国内版多语言开关
+    language_all_switch: ${LANGUAGE_ALL_SWITCH}
+    deep_think_enable_model: ${DEEP_THINK_ENABLE_MODEL}
+    permission_app_category:
+      - permission_id: lkeRepository
+        app_type: knowledge_qa
+        name: 知识库问答
+        logo: /qbot/public/app-icon-knowledge_qa.png
+      - permission_id: lkeSummary
+        app_type: summary
+        name: 知识摘要
+        logo: /qbot/public/app-icon-summary.png
+      - permission_id: lkeClassify
+        app_type: classify
+        name: 标签提取
+        logo: /qbot/public/app-icon-classify.png
+    cipher_config:
+      default_version: 1
+      iv: hBb3Ls3edFBzYyrpQzTGSA==
+      versions:
+        1: Od3J9Ig47ztUpmdqfkRcAqXhqE7dlWHYLOFK/NDA+yU=
+        2: 1ofPtcXorwOy8r74H9DYO5ZMxoTFWdTZVf0bxv5zKqQ=
+        3: woEahOi+Bo6ejhBm2DqJL9wcVzQmoOx+lEE0DjYAaVo=
+    prompt_version:
+      max_limit: 50
+      max_version: 20
+    model_uin_white: ${MODEL_UIN_WHITE}
+    quota_model: ${QUOTA_MODEL}
+    resource_config: ${RESOURCE_CONFIG}
+
+    openclaw_config:
+      default_name: ${OPENCLAW_DEFAULT_NAME}
+      icon_url_regex: ${OPENCLAW_ICON_REGEX}
+      instance:
+        password: ${OPENCLAW_INSTANCE_PASSWORD}
+        create_regions: ${OPENCLAW_CREATE_REGIONS}
+        region_map: ${OPENCLAW_CREATE_REGION_MAP}
+        package_bundle_map: ${OPENCLAW_PACKAGE_BUNDLE_MAP}
+      async_config: ${OPENCLAW_CREATE_ASYNC_CONFIG}
+      credential:
+        secret_id: ""
+        secret_key: ""
+      model_config: ${OPENCLAW_MODEL_CONFIG}
+      channel_config: ${OPENCLAW_CHANNEL_CONFIG}
+      skill_required_config: ${SKILL_REQUIRED_CONFIG}
+      skill_template_config: ${OPENCLAW_SKILL_TEMPLATE_CONFIG}
+      wx_kf: ${OPENCLAW_WX_KF}
+      watch_skill_status_max_seconds: 120
+      skill_desc_max_length: 100
+
+    api_key_config: ${API_KEY_CONFIG}
+
+    adp_cloud:
+      model_list_url: "https://apiintl.adp.cloud.tencent.com/v1/model/list"
+
+    gray_model_uin_white:
+      TCADP/claude-opus-4.6: [200046181154]
+      TCADP/claude-sonnet-4.6: [200046181154]
+    model_package_types:
+      TCADP/gemini-3.0-flash: [3, 5]
+      TCADP/gemini-3.1-pro: [3, 5]
+      TCADP/gpt-5.4: [3, 5]
+
+  biz_en-US.json: |
+    {
+      "KeyModelConnectivityErr": "模型连通性错误:%s",
+      "KeyProviderAliasNameYoutu": "Tencent Youtu",
+      "KeyProviderAliasNameHunyuan": "Tencent Hunyuan",
+      "KeyProviderAliasNameQwen": "Qwen",
+      "KeyProviderAliasNameBaichuan": "Baichuan Intelligent",
+      "KeyProviderAliasNameZhipu": "Zhipu AI",
+      "KeyProviderAliasNameOpenAI": "OpenAI Compatible",
+      "KeyProviderAliasNameMoonshot": "Moonshot AI",
+      "KeyProviderAliasNameDeepSeek": "DeepSeek",
+      "KeyProviderAliasNameMinimax": "Minimax",
+      "KeyProviderAliasNameStepfun": "Stepfun",
+      "KeyProviderAliasNameVolcengine": "Volcengine",
+      "KeyProviderAliasNameTIONE": "Tencent Cloud TI-ONE",
+      "KeyProviderAliasNameYi": "01.AI",
+      "KeyProviderAliasNameOfficial": "OpenAI",
+      "KeyProviderAliasNameAnthropic": "ANTHROPIC",
+      "KeyProviderAliasNameXAI": "xAI",
+      "KeyProviderAliasNameGemini": "Gemini",
+      "KeyProviderAliasNameADP": "ADP DocParsing Protocol",
+      "KeyProviderAliasNameAliyunFileParse": "AliYunFileParse",
+      "KeyProviderAliasNameTCADP": "Platform-Hosted Third-Party Models",
+      "KeyProviderDescHunyuan": "Tencent's self-developed general large-scale model has strong Chinese language comprehension, logical reasoning, and multimodal capabilities. Representative models include the Hunyuan Turbo series.",
+      "KeyProviderDescYoutu": "Focuses on cutting-edge AI technology research and industrial application, covering fields such as visual perception understanding, large language models, multimodal comprehension and generation, and computational acceleration.",
+      "KeyProviderDescQwen": "Tongyi Qianwen possesses multilingual and multimodal comprehension, logical reasoning, code generation, document processing, and audio-video understanding capabilities, while actively building an open-source ecosystem. Representative models include the Qwen series.",
+      "KeyProviderDescZhipu": "Originating from Tsinghua University, it is committed to developing next-generation cognitive intelligence general models. Its GLM series excels in reasoning, long-context processing, multilingual, and multimodal capabilities. Representative models include the GLM-4 series.",
+      "KeyProviderDescStepfun": "A multimodal AGI pioneer focusing on full-stack capabilities in vision, speech, and video, with outstanding performance in reasoning, coding, mathematics, and knowledge. Representative models include Step-2.",
+      "KeyProviderDescBaichuan": "Dedicated to building superior large model foundations. Its Baichuan series excels in long-text processing, multimodal understanding, mathematics, and coding capabilities. Representative models include the Baichuan4 series.",
+      "KeyProviderDescOpenAI": "Supports flexible integration of various custom or third-party large model services through compatibility with the OpenAI API protocol.",
+      "KeyProviderDescVolcengine": "An all-in-one large model service platform by Volcano Engine, offering full-process services including model training, inference, evaluation, and fine-tuning. Supports multimodal understanding, long-context windows, strong reasoning capabilities, and integrates various mainstream models like Doubao.",
+      "KeyProviderDescMoonshot": "Specializes in general artificial intelligence, with models supporting ultra-long contexts and possessing strong Agent capabilities along with multimodal comprehension and generation. Representative models include Kimi K2.",
+      "KeyProviderDescDeepSeek": "Focuses on fundamental general AI model and technology research, renowned for open-source, high performance, and exceptional reasoning capabilities. Representative models include DeepSeek-R1 (reasoning model) and DeepSeek-V3 (MoE architecture, balancing performance and cost-effectiveness).",
+      "KeyProviderDescMinimax": "A leading general AI technology company that independently develops multimodal large models, excelling in long-context processing, reasoning, coding, and multimodal comprehension and generation. Representative models include the M1 series.",
+      "KeyProviderDescTIONE": "Tencent Cloud's all-in-one machine learning platform for AI engineers, providing end-to-end development support from data ingestion, model training, model management to model serving. Supports multiple training methods and algorithm frameworks with a built-in large model library.",
+      "KeyProviderDescYi": "Founded by Dr. Kai-Fu Lee, its Yi series excels in coding, mathematics, reasoning, and instruction-following capabilities, achieving outstanding results in global open-source evaluations. Representative models include Yi-Lightning.",
+      "KeyProviderDescOfficial": "Models provided by OpenAI, such as GPT-4, GPT-5, and others.",
+      "KeyProviderDescAnthropic": "The Claude models provided by Anthropic.",
+      "KeyProviderDescXAI": "The LLMs provided by xAI, where xAI is a company dedicated to developing artificial intelligence (AI) to accelerate human scientific discovery.",
+      "KeyProviderDescGemini": "The Gemini models provided by Google.",
+      "KeyProviderDescADPDocParsing": "The doc parsing protocol defined by ADP. Users can access document parsing service in accordance with the protocol of ADP",
+      "KeyProviderDescAliyunFileParse": "The FileParse Atomic Server of Alibaba cloud.",
+      "KeyModelDesc_sn-edu-13b": "Specialized training on educational data for English speaking practice and lesson planning scenarios. Supports textbook dialogues, difficulty settings, grammar analysis, lesson generation/polishing, and exercise creation.",
+      "KeyModelDesc_hunyuan": "Trillion-parameter MOE-32k long-context model with advanced math capabilities, function call support, and optimizations for multilingual translation, finance, law, and healthcare.",
+      "KeyModelDesc_finance-13b": "Pre-trained and fine-tuned on financial data. Expert in financial Q&A for investment knowledge and product inquiries.",
+      "KeyModelDesc_medical-6b": "Enhanced with medical data. Specializes in medical Q&A, entity extraction, dialogue summarization, and medical record generation.",
+      "KeyModelDesc_sn-edu-70b": "Trained on educational data for scenarios requiring natural English dialogue, task compliance, and rich lesson plan generation.",
+      "KeyModelDesc_hunyuan-turbo": "Novel MoE architecture delivers faster inference and stronger performance compared to Hunyuan Advanced.",
+      "KeyModelDesc_hunyuan-13B": "Improved routing strategy with better load balancing and expert diversity. Cost-effective with long-text processing capabilities.",
+      "KeyModelDesc_function-call-pro": "Capable of task planning, tool selection/execution, and error correction for complex problem-solving.",
+      "KeyModelDesc_cs-normal-70b": "Fine-tuned for enterprise Q&A. Excels at multimodal responses, math calculations, logical reasoning, and table-based Q&A.",
+      "KeyModelDesc_hunyuan-standard-256K": "Optimized routing with 256K context length. Achieves 99.9% needle-in-haystack accuracy with extended input capacity.",
+      "KeyModelDesc_hunyuan-role": "Officially fine-tuned role-playing model with enhanced performance for character simulation scenarios.",
+      "KeyModelDesc_HY-Vision1.5-Instruct": "Comprehensive and Significant Upgrade with Enhanced Performance Across Image Recognition, Creation, and Reasoning. Supports Instant Responses with Image Uploads, More Accurate Entity Recognition, and More Efficient Problem Solving from Visual Input.",
+      "KeyModelDesc_workflow-pro": "Supports combined Q&A, document processing, and workflows with improved intent recognition and custom configuration. May increase response time.",
+      "KeyModelDesc_lke-deepseek-v3-function-call": "Released in March 2025. DeepSeek-V3 with MoE and MLA architecture. Enhanced reasoning, code generation, and Chinese understanding.",
+      "KeyModelDesc_lke-deepseek-v3-0324": "Released in March 2025. DeepSeek-V3 with MoE and MLA architecture. Enhanced reasoning, code generation, and Chinese understanding.",
+      "KeyModelDesc_lke-deepseek-r1": "RL-driven reasoning model comparable to OpenAI-o1 in math, code, and reasoning tasks. Powers DeepSeek's deep thinking mode.",
+      "KeyModelDesc_lke-deepseek-r1-0528": "Released in May 2025. Enhanced DeepSeek-R1 with improved instruction understanding, copywriting, programming, and reasoning. Supports long-duration complex tasks.",
+      "KeyModelDesc_lke-deepseek-v3": "671B parameter MoE model with MLA architecture and optimized load balancing for efficient training/inference.",
+      "KeyModelDesc_lke-deepseek-r1-0528-agent": "Released in May 2025. Enhanced DeepSeek-R1 with improved instruction understanding, copywriting, programming, and reasoning. Supports long-duration complex tasks.",
+      "KeyModelDesc_lke-deepseek-v3-agent": "Released in March 2025. DeepSeek-V3 with MoE and MLA architecture. Enhanced reasoning, code generation, and Chinese understanding.",
+      "KeyModelDesc_cs-normal": "Fine-tuned for enterprise Q&A with multimodal capabilities. Cost-effective for balanced performance and price.",
+      "KeyModelDesc_lke-deepseek-v3.1": "Hybrid reasoning architecture for faster responses. Significantly improved performance on multi-step reasoning and expert-level tasks.",
+      "KeyModelDesc_lke-deepseek-v3.1-function-call": "Hybrid reasoning enables efficient multi-step problem-solving with enhanced performance on complex searches and multidisciplinary tasks.",
+      "KeyModelDesc_sn-large-multi-language-v0.2.5": "General-purpose vector retrieval model",
+      "KeyModelDesc_sn-llm-embedding-2b-v0.2.2": "LLM-enhanced vector retrieval with higher accuracy but increased latency",
+      "KeyModelDesc_sn-reranker-large-v0.4": "General text reranking model",
+      "KeyModelDesc_sn-llm-reranker-2b-v0.2": "LLM-enhanced reranking with improved accuracy and higher latency",
+      "KeyModelDesc_cs-normal-70b-1.1": "Enterprise Q&A model specializing in multimodal responses, math/reasoning, and table-based Q&A for complex scenarios.",
+      "KeyModelDesc_hunyuan-turbos": "The latest version of Hunyuan's flagship large model, featuring enhanced reasoning capabilities and an improved user experience.",
+      "KeyModelDesc_hunyuan-t1": "The industry's first ultra-large-scale Hybrid-Transformer-Mamba inference model, expanding reasoning capabilities with ultra-fast decoding speed and further alignment with human preferences.",
+      "KeyModelDesc_hunyuan-2.0-thinking-251109": "Suitable for advanced reasoning tasks, such as complex mathematical and logical computation, code generation, scientific problem solving, and scenarios requiring strong instruction adherence.",
+      "KeyModelDesc_hunyuan-2.0-instruct-251111": "Suitable for general conversational tasks, including daily multi-turn dialogue, role-playing, creative writing, and scenarios demanding high-level contextual understanding.",
+      "KeyModelDesc_lke-deepseek-v3.1-terminus": "Released in September 2025. Balance reasoning capability with output length, delivering efficient, high-quality responses.",
+      "KeyModelDesc_lke-deepseek-v3.1-terminus-vip": "Released in September 2025. Balance reasoning capability with output length, delivering efficient, high-quality responses.",
+      "KeyModelDesc_zhipuint-glm-5": "Zhipu's latest flagship model can complete large-scale tasks end-to-end. It excels in complex systems engineering and long-horizon Agent tasks.",
+      "KeyModelDesc_tcadp-glm-5": "Globally available. Zhipu's flagship model supports end-to-end large-scale tasks and excels at complex system engineering and long-horizon Agent tasks.",
+      "KeyModelDesc_tcadp-kimi-k2.5": "Globally available. Supports both text and visual inputs, with conversational and Agent capabilities. Switchable reasoning mode makes it suitable for complex reasoning and multimodal understanding.",
+      "KeyModelDesc_tcadp-minimax-m2.5": "Significantly enhanced multilingual programming capabilities with higher decision-making maturity in handling Agentic tasks. Achieved remarkable capability improvements in advanced workspace scenarios such as Word, PPT, Excel financial modeling, and other high-level applications.",
+      "KeyModelTagVectorModel": "VectorModel",
+      "KeyModelTagRerankingModel": "RerankingModel",
+      "KeyModelTagSpeechRecognition": "SpeechRecognition",
+      "KeyModelTagSpeechSynthesis": "SpeechSynthesis",
+      "KeyModelTagTextReasoning": "TextReasoning",
+      "KeyModelTagToolCalling": "ToolCalling",
+      "KeyModelTagAudioUnderstanding": "AudioUnderstanding",
+      "KeyModelTagVideoUnderstanding": "VideoUnderstanding",
+      "KeyModelTagImageUnderstanding": "ImageUnderstanding",
+      "KeyModelTagImageGeneration": "ImageGeneration",
+      "KeyModelTagDeepThinking": "DeepThinking",
+      "KeyModelTagOmniModal": "OmniModal",
+      "KeyModelTagFileParse": "FileParse",
+      "KeyPromptVersionTypeStand": "Role Instruction",
+      "KeyPromptVersionTypeAgent": "Agent Prompt",
+      "KeyPromptVersionTypeWorkflowSys": "Workflow Node System Prompt",
+      "KeyPromptVersionTypeWorkflowCust": "Workflow Node User Prompt",
+      "PromptTemplateOfficialNickName": "ADP",
+      "PromptTemplateModeGeneral": "General",
+      "PromptTemplateModeStandard": "Standard",
+      "PromptTemplateModeMultiAgent": "Multi-Agent",
+      "PromptTemplateModeWorkflow": "Workflow",
+      "PromptTemplateModeEvaluation": "Evaluation",
+      "PromptTemplateModeAppRuntime": "App Runtime Model",
+      "PromptTemplateModeKBProcess": "Knowledge Process Model",
+      "PromptTemplateTypeGeneral": "General",
+      "PromptTemplateTypeStandard": "Standard",
+      "PromptTemplateTypeMultiAgent": "Multi-Agent",
+      "PromptTemplateTypeLLMNode": "LLM Node",
+      "PromptTemplateTypeLLMIntentNode": "LLM Intent Node",
+      "PromptTemplateTypeLLMKnowledgeQANode": "LLM Knowledge QA Node",
+      "PromptTemplateTypeLLMLabelRetrievalNode": "LLM Label Retrieval Node",
+      "PromptTemplateTypeArgumentRetrievalNode": "Argument Retrieval Node",
+      "PromptTemplateTypeOptionsNode": "Options Node",
+      "PromptTemplateTypeBaselineEvaluation": "Baseline Evaluation",
+      "PromptTemplateTypeComparisonEvaluation": "Comparison Evaluation",
+      "PromptTemplateTypeMultimodalQAModel": "Multimodal QA Model",
+      "PromptTemplateTypeQAPairGeneration": "QA Pair Generation Model",
+      "PromptTemplateTypeMultimodalReading": "Multimodal Reading Model",
+      "PromptTemplateRecordSmartCategory": "SmartCategory",
+      "AppTemplateSecondCategoryEducation": "Education",
+      "AppTemplateSecondCategoryFinance": "Finance",
+      "AppTemplateSecondCategoryGovernment": "Government",
+      "AppTemplateSecondCategoryLaw": "Law",
+      "AppTemplateSecondCategoryEntertainment": "Entertainment",
+      "AppTemplateSecondCategoryRetail": "Retail",
+      "AppTemplateSecondCategoryMedical": "Medical",
+      "AppTemplateSecondCategoryInternet": "Internet",
+      "AppTemplateSecondCategoryMedia": "Media",
+      "AppTemplateSecondCategorySales": "Sales",
+      "AppTemplateSecondCategoryMarket": "Market",
+      "AppTemplateSecondCategoryManufacture": "Manufacture",
+      "AppTemplateSecondCategoryCommon": "Common",
+      "KeyPromptTemplateEditTitle": "Prompt template \"%s\" title edited to \"%s\"",
+      "KeyPromptTemplateEditDescription": "Prompt template \"%s\" description edited to \"%s\"",
+      "KeyPromptTemplateEditContent": "Prompt template \"%s\" prompt content edited to \"%s\"",
+      "KeyPromptTemplateEditCategoryKey": "Prompt template \"%s\" prompt type edited to %s",
+      "KeyPromptTemplateAddVariable": "Prompt template \"%s\" template variable added: \"%s\"",
+      "KeyPromptTemplateDeleteVariable": "Prompt template \"%s\" template variable removed: \"%s\"",
+      "KeyPromptTemplateAddLabel": "Prompt template \"%s\" label added: \"%s\"",
+      "KeyPromptTemplateDeleteLabel": "Prompt template \"%s\" label removed: \"%s\"",
+      "KeySpaceResource": "Space Resource Management",
+      "KeySpaceResourceQpm": "Space name \"%s\" call frequency (QPM) changed from %s to %s",
+      "KeySpaceResourceTpm": "Space name \"%s\" tokens processed per minute (TPM) changed from %s to %s",
+      "KeyAppResource": "Application Resource Management",
+      "KeyAppResourceQpm": "Application name \"%s\" call frequency (QPM) changed from %s to %s",
+      "KeyAppResourceTpm": "Application name \"%s\" tokens processed per minute (TPM) changed from %s to %s",
+      "KeyResourceNotSet": "not set",
+      "KeyAppResourceSyncTimeout": "Application name \"%s\" workflow synchronous call timeout changed from %d seconds to %d seconds",
+      "KeyAppResourceAsyncTimeout": "Application name \"%s\" workflow asynchronous call timeout changed from %d seconds to %d seconds",
+      "KeyOpenClawDeploying": "ClawPro is deploying",
+      "KeyOpenClawDeployingContent": "%s Completed in about 3 minutes",
+      "KeyOpenClawDeploymentSuccess": "ClawPro deployment completed",
+      "KeyOpenClawDeploymentSuccessContent": "%s Deployment completed",
+      "KeyOpenClawExpireSoon": "[%s] Expiring soon",
+      "KeyOpenClawExpireSoonContent": "[%s] Expiring soon, Will be frozen for 7 days and then deleted after expiration. Enable monthly subscription to continue using",
+      "KeyOpenClawExpired": "[%s] has expired",
+      "KeyOpenClawExpiredContent": "[%s] has expired, please renew to continue using",
+      "KeyOpenClawRenewFailure": "[%s] Monthly PU deduction failed",
+      "KeyOpenClawRenewFailureContent": "[%s] Monthly PU deduction failed, Will be deleted after 7 days of freezing. Reason: No available PU resources. Please act promptly",
+      "KeyOpenClawExpireDelete": "[%s] Deleted after 7 days of expiry",
+      "KeyOpenClawExpireDeleteContent": "[%s] Deleted after 7 days of expiry",
+      "KeyOpenClawAuditModifyName": "%s-Renamed to %s",
+      "KeyOpenClawAuditOpenAutoRenew": "%s-Enable monthly subscription",
+      "KeyOpenClawAuditCloseAutoRenew": "%s-Disable monthly subscription",
+      "KeyOpenClawAuditReset": "%s-Reinstall system",
+      "KeyOpenClawAuditRestart": "%s-Restart",
+      "KeyOpenClawAuditSetChannel": "%s-Set channel",
+      "KeyOpenClawAuditSetModel": "%s-Set Model",
+      "KeyOpenClawSkillCreate": "Please check if skill: %s is already installed. If not, use %s to install skill: %s at the global level",
+      "KeyOpenClawSkillUpdate": "Please check if skill: %s is already installed. If it is, please delete the old version globally first, then use %s to reinstall skill: %s at the global level",
+      "KeyOpenClawSkillDelete": "Please check if skill: %s is already installed. If it is, delete this skill at the global level",
+      "KeyModelDesc_tcadp-deepseek-v3.2": "Region: Indonesia, Jakarta. Balances reasoning with output length, suitable for daily Q&A and general Agent tasks, achieving GPT-5 level in public benchmarks.",
+      "KeyModelDesc_tcadp-claude-sonnet-4.6": "Region: Global. High-performance balanced model, achieving human-level performance in code generation and long-text reasoning, with best cost-effectiveness.",
+      "KeyModelDesc_tcadp-claude-opus-4.6": "Region: Global. Flagship general-purpose model, featuring adaptive thinking system and multi-agent collaboration for enterprise AI applications.",
+      "KeyModelDesc_tcadp-gpt-5.4": "Region: Global. OpenAI all-in-one model integrating reasoning, coding, computer control, deep web search, and million-token context with native computer use capability.",
+      "KeyModelDesc_tcadp-Gemini-3.0-flash": "Region: Global. Lightweight high-performance model, 3x faster and one-fourth the price, ideal for high-throughput tasks and real-time interactions.",
+      "KeyModelDesc_tcadp-gemini-3.1-pro": "Region: Global. Complex problem-solving baseline model with 2x reasoning capability, suitable for complex system building, multi-step logic planning, and Agent orchestration.",
+      "KeyProviderDescTCADP": "Ready-to-use third-party models, including GPT and others."
+    }
+  biz_zh-CN.json: |
+    {
+      "KeyModelConnectivityErr": "模型连通性错误:%s",
+      "KeyProviderAliasNameYoutu": "腾讯优图",
+      "KeyProviderAliasNameHunyuan": "腾讯混元",
+      "KeyProviderAliasNameQwen": "通义千问",
+      "KeyProviderAliasNameBaichuan": "百川智能",
+      "KeyProviderAliasNameZhipu": "智谱AI",
+      "KeyProviderAliasNameOpenAI": "OpenAI Compatible",
+      "KeyProviderAliasNameMoonshot": "月之暗面",
+      "KeyProviderAliasNameDeepSeek": "深度求索",
+      "KeyProviderAliasNameMinimax": "Minimax",
+      "KeyProviderAliasNameStepfun": "阶跃星辰",
+      "KeyProviderAliasNameVolcengine": "火山引擎",
+      "KeyProviderAliasNameTIONE": "腾讯云TI-ONE",
+      "KeyProviderAliasNameYi": "零一万物",
+      "KeyProviderAliasNameOfficial": "OpenAI",
+      "KeyProviderAliasNameAnthropic": "ANTHROPIC",
+      "KeyProviderAliasNameXAI": "xAI",
+      "KeyProviderAliasNameGemini": "Gemini",
+      "KeyProviderAliasNameAliyunFileParse": "阿里云文档解析",
+      "KeyProviderAliasNameADP": "ADP DocParsing Protocol",
+      "KeyProviderAliasNameTCADP": "平台托管三方模型",
+      "KeyProviderDescHunyuan": "腾讯全链路自研的通用大模型，具备强大的中文理解、逻辑推理及多模态能力代表模型有混元Turbo系列等。",
+      "KeyProviderDescYoutu": "专注于人工智能领域的前沿技术研究和产业实践落地，涵盖了视觉感知理解、大语言模型、多模态理解和生成、计算加速等技术研究领域。",
+      "KeyProviderDescQwen": "通义千问具备多语言与多模态理解、逻辑推理、代码生成、文档处理及音视频理解能力，并积极构建开源生态，代表模型有Qwen系列等",
+      "KeyProviderDescZhipu": "源自清华大学，致力于新一代认知智能通用模型研发，其GLM系列模型在推理、长上下文处理、多语言、多模态能力方面表现突出，代表模型有GLM-4系列等",
+      "KeyProviderDescStepfun": "多模态AGI先锋，专注于视觉、语音、视频全栈能力，在推理、代码、数学和知识方面表现突出，代表模型有Step-2等",
+      "KeyProviderDescBaichuan": "致力于构建优秀的大模型底座，其Baichuan系列模型在长文本处理、多模态理解、数学和代码能力方面表现突出，代表模型有Baichuan4系列等",
+      "KeyProviderDescOpenAI": "支持通过兼容OpenAI API协议的方式，灵活接入各类自定义或第三方大模型服务",
+      "KeyProviderDescVolcengine": "火山引擎推出的一站式大模型服务平台，提供模型训练、推理、评测、精调等全流程服务，支持多模态理解、长上下文窗口和强大的推理能力，并集成了豆包大模型等多种主流模型",
+      "KeyProviderDescMoonshot": "专注于通用人工智能领域，旗下模型支持超长上下文，并具备强大的Agent能力和多模态理解与生成能力，代表模型有Kimi K2等",
+      "KeyProviderDescDeepSeek": "专注于通用人工智能底层模型与技术研究，以开源、高性能和卓越推理能力著称，代表模型有DeepSeek-R1（推理模型）和DeepSeek-V3（MoE架构，兼具性能与成本效益）",
+      "KeyProviderDescMinimax": "领先的通用人工智能科技公司，自主研发多模态大模型，在长上下文处理、推理、代码和多模态理解与生成方面表现突出，代表模型有M1系列模型等。",
+      "KeyProviderDescTIONE": "腾讯云为AI工程师打造的一站式机器学习平台，提供从数据接入、模型训练、模型管理到模型服务的全流程开发支持，支持多种训练方式和算法框架，并内置大模型库。",
+      "KeyProviderDescYi": "由李开复博士创办，其Yi系列模型在代码、数学、推理和指令遵循能力上表现出色，并在全球开源评测中取得优异成绩，代表模型有Yi-Lightning等",
+      "KeyProviderDescOfficial": "OpenAI提供的模型，例如GPT-4、GPT5等。",
+      "KeyProviderDescAnthropic": "Anthropic提供的Claude系列模型",
+      "KeyProviderDescXAI": "xAI 提供的LLMs，xAI是一家致力于研发人工智能（AI）以加速人类科学发现的公司。",
+      "KeyProviderDescGemini": "谷歌提供的Gemini模型",
+      "KeyProviderDescAliyunFileParse": "阿里云文档解析服务",
+      "KeyProviderDescADPDocParsing": "ADP定义的文档解析标准协议，用户根据ADP的文档解析协议标准接入第三方文档解析模型。",
+      "KeyModelDesc_sn-edu-13b": "基于教育领域数据专项训练，适用于英语口语对话练习和教案场景。英语口语陪练场景中，支持教材课后对话练习、对话难度设定、语法分析等能力；教案场景中，支持教案生成、教案润色、教案题目生成。",
+      "KeyModelDesc_hunyuan": "万亿级参数规模 MOE-32k 长文模型，具备复杂数学能力，支持 functioncall，在多语言翻译、金融法律医疗等领域应用重点优化。",
+      "KeyModelDesc_finance-13b": "基于金融领域数据进行预训练和精调训练，擅长金融领域知识问答，适用于投资知识问答、金融产品问答等应用场景。",
+      "KeyModelDesc_medical-6b": "基于医疗领域数据专项强化，擅长医疗领域知识问答，适用于医学实体抽取、医学对话总结、病历撰写等应用场景。",
+      "KeyModelDesc_sn-edu-70b": "基于教育领域数据专项训练，适用于对于英语口语对话练习自然度和任务遵循程度、教案生成丰富度的效果表现有需求的场景。",
+      "KeyModelDesc_hunyuan-turbo": "采用全新的混合专家模型（MoE）结构，相比混元大模型高级版推理效率更快，效果表现更强。",
+      "KeyModelDesc_hunyuan-13B": "采用更优的路由策略，同时缓解了负载均衡和专家趋同的问题， 性价比相对更高，在平衡效果、价格的同时，可对实现对长文本输入的处理。",
+      "KeyModelDesc_function-call-pro": "具备任务规划、工具选择调用以及反思纠错能力，能够支持复杂问题的规划与执行。",
+      "KeyModelDesc_cs-normal-70b": "针对企业知识问答场景精调训练，擅长多模态知识问答，适合图文表答案关联输出、数学计算、逻辑推理、表格问答等复杂场景有需求的场景。",
+      "KeyModelDesc_hunyuan-standard-256K": "采用更优的路由策略，同时缓解了负载均衡和专家趋同的问题。长文方面，大海捞针指标达到99.9%。MOE-256k 在长度和效果上进一步突破，极大的扩展了可输入长度。",
+      "KeyModelDesc_hunyuan-role": "混元最新版角色扮演模型，混元官方精调训练推出的角色扮演模型，基于混元模型结合角色扮演场景数据集进行增训，在角色扮演场景具有更好的基础效果。",
+      "KeyModelDesc_HY-Vision1.5-Instruct": "效果全面显著升级，图像识别、创作、推理全面提升。支持发图秒回答、实体识别更精准、看图解题更高效。",
+      "KeyModelDesc_workflow-pro": "适用于同时配置问答、文档、工作流的场景，意图识别效果更佳，并且支持在角色指令中自定义配置意图。但可能会增加一定的对话耗时。",
+      "KeyModelDesc_lke-deepseek-v3-function-call": "DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。",
+      "KeyModelDesc_lke-deepseek-v3-0324": "25年3月发布的模型，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。",
+      "KeyModelDesc_lke-deepseek-r1": "强化学习（RL）驱动的推理模型，在数学、代码和推理任务中与 OpenAI-o1 表现相当。与DeepSeek助手深度思考模式为同款模型",
+      "KeyModelDesc_lke-deepseek-r1-0528": "25年5月发布的模型，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。",
+      "KeyModelDesc_lke-deepseek-v3": "拥有6710 亿参数的混合专家（MoE）语言模型，采用多头潜在注意力（MLA）和 DeepSeekMoE 架构，结合无辅助损失的负载平衡策略，优化推理和训练效率。",
+      "KeyModelDesc_lke-deepseek-r1-0528-agent": "25年5月发布的模型，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。",
+      "KeyModelDesc_lke-deepseek-v3-agent": "DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。",
+      "KeyModelDesc_cs-normal": "针对企业知识问答场景精调训练，擅长多模态知识问答。性价比相对更高，适合需要同时平衡效果、价格的场景。",
+      "KeyModelDesc_lke-deepseek-v3.1": "采用混合推理架构，具备更高的思考效率，能在更短时间给出答案。在需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。",
+      "KeyModelDesc_lke-deepseek-v3.1-function-call": "采用混合推理架构，具备更高的思考效率，能在更短时间给出答案。在需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。",
+      "KeyModelDesc_sn-large-multi-language-v0.2.5": "通用向量检索模型",
+      "KeyModelDesc_sn-llm-embedding-2b-v0.2.2": "LLM增强向量检索模型，准确率更高，耗时将会有所增加。",
+      "KeyModelDesc_sn-reranker-large-v0.4": "通用文本排序模型",
+      "KeyModelDesc_sn-llm-reranker-2b-v0.2": "LLM 增强排序模型，准确率更高，耗时将会有所增加。",
+      "KeyModelDesc_cs-normal-70b-1.1": "针对企业知识问答场景精调训练，擅长多模态知识问答，适合图文表答案关联输出、数学计算、逻辑推理、表格问答等复杂场景有需求的场景。",
+      "KeyModelDesc_hunyuan-turbos": "混元旗舰大模型最新版本，具备更强的思考能力，更优的体验效果",
+      "KeyModelDesc_hunyuan-t1": "业内首个超大规模Hybrid-Transformer-Mamba 推理模型，扩展推理能力，超强解码速度，进一步对齐人类偏好。",
+      "KeyModelDesc_hunyuan-2.0-thinking-251109": "适用于深度推理任务，比如，复杂的数理逻辑计算、代码生成、科学问题求解以及需要较强指令遵循的场景。",
+      "KeyModelDesc_hunyuan-2.0-instruct-251111": "适用于通用对话任务，比如，日常多轮对话、角色扮演、创意写作以及需要较高上下文理解能力的场景。",
+      "KeyModelDesc_lke-deepseek-v3.1-terminus": "25年9月发布的模型，平衡推理能力与输出长度，能以更高效率给出更好的答案，在公开的推理类测试中已达到全球顶尖水平。",
+      "KeyModelDesc_lke-deepseek-v3.1-terminus-vip": "25年9月发布的模型，平衡推理能力与输出长度，能以更高效率给出更好的答案，在公开的推理类测试中已达到全球顶尖水平。",
+      "KeyModelDesc_zhipuint-glm-5": "智谱最新旗舰模型，可端到端完成大型任务，擅长复杂系统工程与长程 Agent 任务",
+      "KeyModelDesc_tcadp-glm-5": "智谱最新旗舰模型，可端到端完成大型任务，擅长复杂系统工程与长程 Agent 任务",
+      "KeyModelDesc_tcadp-kimi-k2.5": "Kimi K2.5 支持文本与视觉输入，兼具对话与 Agent 任务能力，支持思考与非思考模式切换，适用于复杂推理、代码生成及多模态理解场景。",
+      "KeyModelDesc_tcadp-minimax-m2.5": "显著增强多语言编程能力，在处理 Agentic 任务时具备更高的决策成熟度，在 Word、PPT、Excel 金融建模等 workspace 高阶场景中取得了显著的能力提升。",
+      "KeyModelTagVectorModel": "向量模型",
+      "KeyModelTagRerankingModel": "排序模型",
+      "KeyModelTagSpeechRecognition": "语音识别",
+      "KeyModelTagSpeechSynthesis": "语音合成",
+      "KeyModelTagTextReasoning": "文本推理",
+      "KeyModelTagToolCalling": "工具调用",
+      "KeyModelTagAudioUnderstanding": "音频理解",
+      "KeyModelTagVideoUnderstanding": "视频理解",
+      "KeyModelTagImageUnderstanding": "图片理解",
+      "KeyModelTagImageGeneration": "图片生成",
+      "KeyModelTagDeepThinking": "深度思考",
+      "KeyModelTagOmniModal": "全模态",
+      "KeyModelTagFileParse": "文档解析",
+      "KeyPromptVersionTypeStand": "角色指令",
+      "KeyPromptVersionTypeAgent": "agent提示词",
+      "KeyPromptVersionTypeWorkflowSys": "工作流节点系统提示词",
+      "KeyPromptVersionTypeWorkflowCust": "工作流节点用户提示词",
+      "PromptTemplateOfficialNickName": "智能体开发平台",
+      "PromptTemplateModeGeneral": "通用",
+      "PromptTemplateModeStandard": "标准模式",
+      "PromptTemplateModeMultiAgent": "Multi-Agent模式",
+      "PromptTemplateModeWorkflow": "工作流节点",
+      "PromptTemplateModeEvaluation": "评测",
+      "PromptTemplateModeAppRuntime": "应用运行模型",
+      "PromptTemplateModeKBProcess": "知识处理模型",
+      "PromptTemplateTypeGeneral": "通用",
+      "PromptTemplateTypeStandard": "标准模式",
+      "PromptTemplateTypeMultiAgent": "Multi-Agent模式",
+      "PromptTemplateTypeLLMNode": "大模型节点",
+      "PromptTemplateTypeLLMIntentNode": "大模型意图识别节点",
+      "PromptTemplateTypeLLMKnowledgeQANode": "大模型知识问答节点",
+      "PromptTemplateTypeLLMLabelRetrievalNode": "大模型标签提取节点",
+      "PromptTemplateTypeArgumentRetrievalNode": "参数提取节点",
+      "PromptTemplateTypeOptionsNode": "选项卡节点",
+      "PromptTemplateTypeBaselineEvaluation": "基准评测",
+      "PromptTemplateTypeComparisonEvaluation": "对比评测",
+      "PromptTemplateTypeMultimodalQAModel": "多模态问答模型",
+      "PromptTemplateTypeQAPairGeneration": "问答对生成模型",
+      "PromptTemplateTypeMultimodalReading": "多模态阅读理解模型",
+      "PromptTemplateRecordSmartCategory": "智能分类",
+      "AppTemplateSecondCategoryEducation": "教育",
+      "AppTemplateSecondCategoryFinance": "金融",
+      "AppTemplateSecondCategoryGovernment": "政务",
+      "AppTemplateSecondCategoryLaw": "法律",
+      "AppTemplateSecondCategoryEntertainment": "娱乐",
+      "AppTemplateSecondCategoryRetail": "零售",
+      "AppTemplateSecondCategoryMedical": "医疗",
+      "AppTemplateSecondCategoryInternet": "泛互",
+      "AppTemplateSecondCategoryMedia": "传媒",
+      "AppTemplateSecondCategorySales": "销售",
+      "AppTemplateSecondCategoryMarket": "营销",
+      "AppTemplateSecondCategoryManufacture": "制造",
+      "AppTemplateSecondCategoryCommon": "通用",
+      "KeyPromptTemplateEditTitle": "提示词模版\"%s\"编辑标题为\"%s\"",
+      "KeyPromptTemplateEditDescription": "提示词模版\"%s\"编辑概述为\"%s\"",
+      "KeyPromptTemplateEditContent": "提示词模版\"%s\"编辑提示词内容为\"%s\"",
+      "KeyPromptTemplateEditCategoryKey": "提示词模版\"%s\"编辑类型为%s",
+      "KeyPromptTemplateAddVariable": "提示词模版\"%s\"编辑模板变量-新增变量\"%s\"",
+      "KeyPromptTemplateDeleteVariable": "提示词模版\"%s\"编辑模板变量-删除变量\"%s\"",
+      "KeyPromptTemplateAddLabel": "提示词模版\"%s\"编辑标签-增加标签\"%s\"",
+      "KeyPromptTemplateDeleteLabel": "提示词模版\"%s\"编辑标签-删除标签\"%s\"",
+      "KeySpaceResource": "空间资源管控",
+      "KeySpaceResourceQpm": "空间名\"%s\" 调用频率(QPM) %s 修改为 %s",
+      "KeySpaceResourceTpm": "空间名\"%s\" tokens处理量(TPM) %s 修改为 %s",
+      "KeyAppResource": "应用资源管控",
+      "KeyAppResourceQpm": "应用名\"%s\" 调用频率(QPM) %s 修改为 %s",
+      "KeyAppResourceTpm": "应用名\"%s\" tokens处理量(TPM) %s 修改为 %s",
+      "KeyAppResourceSyncTimeout": "应用名\"%s\" 工作流同步调用超时 %d秒 修改为 %d秒",
+      "KeyAppResourceAsyncTimeout": "应用名\"%s\" 工作流异步调用超时 %d秒 修改为 %d秒",
+      "KeyResourceNotSet": "未设置",
+      "KeyOpenClawDeploying": "ClawPro 正在部署中",
+      "KeyOpenClawDeployingContent": "%s正在部署中，约3分钟后完成",
+      "KeyOpenClawDeploymentSuccess": "ClawPro 部署完成",
+      "KeyOpenClawDeploymentSuccessContent": "%s部署完成",
+      "KeyOpenClawExpireSoon": "【%s】即将到期",
+      "KeyOpenClawExpireSoonContent": "【%s】即将到期，到期后将冻结7天删除，如继续使用可开启按月订阅",
+      "KeyOpenClawExpired": "【%s】已到期",
+      "KeyOpenClawExpiredContent": "【%s】已到期，如继续使用请续费",
+      "KeyOpenClawRenewFailure": "【%s】按月使用pu扣除失败",
+      "KeyOpenClawRenewFailureContent": "【%s】按月使用pu扣除失败，冻结7天后将被删除。原因：无可用的pu资源。建议及时",
+      "KeyOpenClawExpireDelete": "【%s】到期7天已删除",
+      "KeyOpenClawExpireDeleteContent": "【%s】到期7天已删除",
+      "KeyOpenClawAuditModifyName": "%s-改名为%s",
+      "KeyOpenClawAuditOpenAutoRenew": "%s-开启按月订阅",
+      "KeyOpenClawAuditCloseAutoRenew": "%s-关闭按月订阅",
+      "KeyOpenClawAuditReset": "%s-重装系统",
+      "KeyOpenClawAuditRestart": "%s-重启",
+      "KeyOpenClawAuditSetChannel": "%s-渠道设置",
+      "KeyOpenClawAuditSetModel": "%s-模型设置",
+      "KeyOpenClawSkillCreate": "请先检查是否已安装skill: %s，若未安装，请使用%s全局层面安装skill: %s",
+      "KeyOpenClawSkillUpdate": "请先检查是否已安装skill: %s，如果安装，请先全局删除旧版本，然后使用%s全局层面重新安装skill: %s",
+      "KeyOpenClawSkillDelete": "请先检查是否已安装skill: %s，如果安装，全局层面删除这个skill",
+      "KeyModelDesc_tcadp-deepseek-v3.2": "地域：印尼雅加达。平衡推理与输出长度，适合日常问答和通用Agent任务，公开基准达到GPT-5水平。",
+      "KeyModelDesc_tcadp-claude-sonnet-4.6": "地域：全球。高性能均衡模型，代码生成和长文本推理达到人类水平，性价比最优。",
+      "KeyModelDesc_tcadp-claude-opus-4.6": "地域：全球。旗舰级通用模型，具备自适应思维系统和多智能体协作，适合企业级AI应用。",
+      "KeyModelDesc_tcadp-gpt-5.4": "地域：全球。OpenAI大一统全能模型，整合推理、编程、计算机操控、深度网页搜索和百万级上下文，原生支持计算机操作。",
+      "KeyModelDesc_tcadp-Gemini-3.0-flash": "地域：全球。轻量级高性能模型，响应速度快3倍，价格低四分之一，适合高吞吐量和实时交互任务。",
+      "KeyModelDesc_tcadp-gemini-3.1-pro": "地域：全球。复杂问题解决基线模型，推理能力提升2倍，适用于复杂系统构建、多步逻辑规划和Agent调度。",
+      "KeyProviderDescTCADP": "开箱即用的三方模型，包括GPT等。"
+    }
+  errors_en-US.json: |
+    {
+      "ErrSystem": "System error",
+      "ErrParams": "Parameter error, please retry",
+      "ErrOperateDoing": "Request processing, please wait",
+      "ErrCorpNotFound": "Enterprise does not exist",
+      "ErrPermissionDenied": "Insufficient permissions",
+      "ErrAppNotFound": "Application does not exist",
+      "ErrModelDebugNotFound": "Model debugging information does not exist",
+      "ErrModelProviderNotFound": "Model provider does not exist",
+      "ErrModelProviderCredentialsInvalid": "Model provider key configuration information is incorrect",
+      "ErrModelProviderNoNeedCredentials": "No configuration required for the model provider",
+      "ErrModelProviderAssociated": "The model information of the model provider is associated with applications, knowledge bases or ClawPro",
+      "ErrModelProviderConfigMissing": "Model provider is not configured",
+      "ErrProviderModelImmutable": "The models of the model provider are not allowed to be enabled or disabled",
+      "ErrProviderModelAssociated": "The model is associated with applications, knowledge bases, or ClawPro and cannot be disabled",
+      "ErrProviderModelNotFound": "The model of the model provider does not exist",
+      "ErrModelVectorDimension": "The model does not support this vector dimension temporarily",
+      "ErrModelConnectivity": "Model connectivity exception, please check if the model, call address, and key are correct",
+      "ErrModelProviderExist": "Model provider already exists",
+      "ErrProviderModelExist": "The model of the model provider already exists",
+      "ErrGetModelProvider": "Failed to get model provider information",
+      "ErrGetCorpModelProvider": "Failed to get enterprise-associated model provider",
+      "ErrCreateCorpModelProvider": "Failed to associate enterprise with model provider",
+      "ErrGetCorpProviderModel": "Failed to get enterprise-associated model information",
+      "ErrModifyProviderModelStatus": "Failed to modify provider model status",
+      "ErrGetProviderMode": "Failed to get model information",
+      "ErrCreateCorpProviderModel": "Failed to add enterprise-associated provider model information",
+      "ErrRegisterTioneModel": "Failed to register model information in Tione",
+      "ErrGetModelAssociatedInfo": "Failed to get model-associated information",
+      "ErrTioneProviderAuth": "Tione provider authorization failed",
+      "ErrDeleteCorpModelProvider": "Failed to delete enterprise-associated model provider",
+      "ErrNotFoundModel": "Model configuration not found",
+      "ErrCreateModelDebug": "Failed to create model debugging information",
+      "ErrDeleteModelDebug": "Failed to delete model debugging information",
+      "ErrGetModelDebug": "Failed to get model debugging information",
+      "ErrModelIDIsEmpty": "Model ID is empty",
+      "ErrModelLength": "Input length limit must be less than the model's context length limit",
+      "ErrModelCallMethod": "Model call method configuration error, please check the field's help configuration rules",
+      "ErrNotIsCustom": "Not a custom provider",
+      "ErrRegisterModel": "Failed to register model information",
+      "ErrGetProviderModelCacheOfAdp": "Failed to get model cache",
+      "ErrModelNameExist": "Model name already exists",
+      "ErrCreateProviderModel": "Failed to create enterprise-associated provider model information",
+      "ErrModifyCustomModel": "Failed to modify custom model",
+      "ErrDeleteCorpProviderModel": "Failed to delete enterprise-associated provider model information",
+      "ErrDeleteDeleteProviderModel": "Failed to delete enterprise-associated provider model information",
+      "ErrGetCorpByUin": "Failed to get enterprise information",
+      "ErrGetModelList": "Failed to get model list",
+      "ErrGetModelStatus": "Failed to get model billing status",
+      "ErrModelProviderHasEnabledModels": "The model provider has enabled models. Please disable them before deleting.",
+      "ErrGetPromptTemplateFavorite": "Failed to get favorite templates",
+      "ErrGetPromptTemplate": "Failed to get prompt templates",
+      "ErrMsgPromptTemplateExist": "Title already exists",
+      "ErrGetPromptTemplateLabel": "Failed to get prompt template labels",
+      "ErrCreatePromptTemplate": "Failed to create custom prompt template",
+      "ErrModifyPromptTemplate": "Failed to modify custom prompt template",
+      "ErrDeletePromptTemplate": "Failed to delete custom prompt template",
+      "ErrCreatePromptTemplateFavorite": "Failed to favorite prompt template",
+      "ErrDeletePromptTemplateFavorite": "Failed to unfavorite prompt template",
+      "ErrCreatePromptTemplateLabel": "Failed to create prompt template label",
+      "ErrDeletePromptTemplateLabel": "Failed to delete prompt template label",
+      "ErrExpNoManagedAccountIDs": "Experience center manager account ID is not configured",
+      "ErrGetDisplayDocs": "Failed to get the list of publicly displayed documents for the experience application",
+      "ErrDescribeExpInfo": "Failed to get experience application details",
+      "ErrModifyExpInfo": "Failed to modify application template data",
+      "ErrGetExperienceApps": "Failed to get experience application list",
+      "ErrGetBilling": "Error getting billing items",
+      "ErrAppNotSupportModelList": "Corresponding model list not found for the application",
+      "ErrGetPromptVersion": "Failed to query prompt version",
+      "ErrGetPromptVersionEmpty": "This prompt version does not exist",
+      "ErrCreatePromptVersion": "Failed to create prompt version",
+      "ErrGetPromptMaxVersion": "Failed to get the maximum prompt version",
+      "ErrPromptVersionLimit": "Prompt version count has reached the limit",
+      "ErrQuotaModel": "Third-party model usage is not allowed under this plan",
+      "ErrResourceNotFound": "Resource entity not found",
+      "ErrGetResource": "Failed to retrieve resource entity",
+      "ErrGetResourceRule": "Failed to retrieve resource rule",
+      "ErrResourceRuleOverLimit": "Resource rule limit exceeded",
+      "ErrResourceSpaceNotFound": "Space entity not found",
+      "ErrResourceWorkRuleLimit": "Application workflow configuration limit error",
+      "ErrAuditNotPass": "Content audit not passed",
+      "ErrSystemIntegratorNotFound": "System integrator not found",
+      "ErrOpenClawNotFound": "ClawPro record not found",
+      "ErrOpenClawFreezing": "ClawPro is freezing, operation not supported",
+      "ErrGetOpenClaw": "Failed to get ClawPro",
+      "ErrCreateOpenClaw": "Failed to create ClawPro",
+      "ErrModifyOpenClaw": "Failed to modify ClawPro",
+      "ErrDeleteOpenClaw": "Failed to delete ClawPro",
+      "ErrOpenClawNameFormat": "ClawPro name can only contain Chinese, English, numbers, underscores, hyphens, and spaces",
+      "ErrOpenClawIconFormat": "ClawPro icon URL format is invalid",
+      "ErrOpenClawAccountStatus": "Insufficient account balance",
+      "ErrRenewOpenClaw": "Failed to renew ClawPro",
+      "ErrDescribeOpenClawConfig": "Failed to get ClawPro configuration",
+      "ErrModifyOpenClawConfig": "Failed to modify ClawPro configuration",
+      "ErrRestartOpenClaw": "Failed to restart ClawPro",
+      "ErrResetOpenClaw": "Failed to reset ClawPro",
+      "ErrOpenClawQuotaEmpty": "ClawPro quota quota is empty",
+      "ErrOpenClawOverLimit": "ClawPro count has reached the limit",
+      "ErrOpenClawInstanceNotFound": "ClawPro instance not found",
+      "ErrOpenClawNotAllowDelete": "ClawPro is currently not allowed to be deleted",
+      "ErrApiKeyQuotaExceeded": "APIKey quota exceeded",
+      "ErrApiKeyNotFound": "APIKey not found",
+      "ErrApiKeyAlreadyEnabled": "APIKey is already enabled",
+      "ErrApiKeyAlreadyDisabled": "APIKey is already disabled",
+      "ErrApiKeyNotDisabled": "APIKey is not disabled, please disable it before deleting",
+      "ErrApiKeyDisabled": "APIKey is disabled",
+      "ErrSkillNotAllowDelete": "Required skill is not allowed to be deleted",
+      "ErrSkillNotAllowModify": "Required skill is not allowed to be disabled",
+      "ErrDeleteSkill": "Failed to delete skill",
+      "ErrModifySkill": "Failed to modify skill",
+      "ErrDescribeSkillList": "Failed to get skill list",
+      "ErrWxKfSceneParamExpired": "WeChat customer service share link has expired",
+      "ErrWxKfSceneParamInvalid": "WeChat customer service scene parameter is invalid",
+      "ErrWxKfBindUser": "Failed to bind user to ClawPro",
+      "ErrWxKfUserNotBound": "User not bound to ClawPro",
+      "ErrModifyOpenClawModel": "Failed to modify model",
+      "ErrOpenClawModelNotSupported": "The current package does not support this model",
+      "ErrResourceQuotaNotConfig": "Space quota not configured",
+      "ErrOpenClawModelMaxTokensTooSmall": "The model's max output tokens does not meet the minimum requirement",
+      "ErrOpenClawModelContextWindowTooSmall": "The model's context length does not meet the minimum requirement",
+      "ErrCreateSkill": "Failed to install skill", 
+      "ErrSkillVersionNotFound": "Skill version not found",
+      "ErrSkillConfigNotFound": "Skill config not found",
+      "ErrOpenClawSkillNotFound": "OpenClaw skill record not found",
+      "ErrSkillAlreadyExists": "Skill already exists, cannot be created repeatedly",
+      "ErrOpenClawEnableModelFailed": "Failed to switch model, please try again later",
+      "ErrOpenClawProviderNotConfigured": "Coding Plan model is not activated, please configure the API Key first",
+      "ErrRunOpenClawCommandInvalid": "ClawPro Command Invalid",
+      "ErrRunOpenClawCommand": "ClawPro Run Command Fail",
+      "ErrDescribeOpenClawInvocationTask": "ClawPro Describe Task Fail"
+    }
+  errors_zh-CN.json: |
+    {
+      "ErrSystem": "系统错误",
+      "ErrParams": "参数异常，请重试",
+      "ErrOperateDoing": "请求处理中，请稍候",
+      "ErrCorpNotFound": "企业不存在",
+      "ErrPermissionDenied": "权限不足",
+      "ErrAppNotFound": "应用不存在",
+      "ErrModelDebugNotFound": "模型调试信息不存在",
+      "ErrModelProviderNotFound": "模型提供商不存在",
+      "ErrModelProviderCredentialsInvalid": "模型提供商秘钥配置信息错误",
+      "ErrModelProviderNoNeedCredentials": "模型提供商无需配置",
+      "ErrModelProviderAssociated": "模型提供商的模型信息被应用、知识库或ClawPro关联",
+      "ErrModelProviderConfigMissing": "模型提供商未配置",
+      "ErrProviderModelImmutable": "模型提供商的模型不允许开启或关闭",
+      "ErrProviderModelAssociated": "该模型已被应用、知识库或ClawPro关联，不允许关闭",
+      "ErrProviderModelNotFound": "模型提供商的模型不存在",
+      "ErrModelVectorDimension": "模型暂不支持该向量维度",
+      "ErrModelConnectivity": "模型连通性异常，请检查模型、调用地址、秘钥是否正确",
+      "ErrModelProviderExist": "模型提供商已存在",
+      "ErrProviderModelExist": "模型提供商的模型已存在",
+      "ErrGetModelProvider": "获取模型提供商信息失败",
+      "ErrGetCorpModelProvider": "获取企业关联模型提供商失败",
+      "ErrCreateCorpModelProvider": "企业关联模型提供商失败",
+      "ErrGetCorpProviderModel": "获取企业关联模型信息失败",
+      "ErrModifyProviderModelStatus": "修改提供商模型状态失败",
+      "ErrGetProviderMode": "获取模型信息失败",
+      "ErrCreateCorpProviderModel": "添加企业关联的提供商模型信息失败",
+      "ErrRegisterTioneModel": "tione注册模型信息失败",
+      "ErrGetModelAssociatedInfo": "获取模型关联信息失败",
+      "ErrTioneProviderAuth": "tione权限校验失败",
+      "ErrDeleteCorpModelProvider": "删除企业关联的模型提供商失败",
+      "ErrNotFoundModel": "未找到模型配置",
+      "ErrCreateModelDebug": "创建模型调试信息失败",
+      "ErrDeleteModelDebug": "删除模型调试信息失败",
+      "ErrGetModelDebug": "获取模型调试信息失败",
+      "ErrModelIDIsEmpty": "模型ID为空",
+      "ErrModelLength": "输入长度限制需要小于模型上下文长度限制",
+      "ErrModelCallMethod": "调用方式配置错误，请查看字段的小问号配置规则",
+      "ErrNotIsCustom": "不是自定义提供商",
+      "ErrRegisterModel": "注册模型信息失败",
+      "ErrGetProviderModelCacheOfAdp": "获取模型缓存失败",
+      "ErrModelNameExist": "模型名称已存在",
+      "ErrCreateProviderModel": "创建企业关联的提供商模型信息失败",
+      "ErrModifyCustomModel": "编辑自定义模型失败",
+      "ErrDeleteCorpProviderModel": "删除企业关联的提供商模型信息失败",
+      "ErrDeleteDeleteProviderModel": "删除企业关联的提供商模型信息失败",
+      "ErrGetCorpByUin": "获取企业信息失败",
+      "ErrGetModelList": "获取模型列表失败",
+      "ErrGetModelStatus": "获取模型计费状态失败",
+      "ErrModelProviderHasEnabledModels": "模型提供商下有启用中的模型，请先关闭模型后再删除",
+      "ErrGetPromptTemplateFavorite": "获取收藏模版失败",
+      "ErrGetPromptTemplate": "获取提示词模版失败",
+      "ErrMsgPromptTemplateExist": "标题已存在",
+      "ErrGetPromptTemplateLabel": "获取提示词模版标签失败",
+      "ErrCreatePromptTemplate": "创建自定义提示词模版失败",
+      "ErrModifyPromptTemplate": "修改自定义提示词模版失败",
+      "ErrDeletePromptTemplate": "删除自定义提示词模版失败",
+      "ErrCreatePromptTemplateFavorite": "收藏提示词模板失败",
+      "ErrDeletePromptTemplateFavorite": "取消收藏提示词模板失败",
+      "ErrCreatePromptTemplateLabel": "创建提示词模板标签失败",
+      "ErrDeletePromptTemplateLabel": "删除提示词模板标签失败",
+      "ErrExpNoManagedAccountIDs": "未配置体验中心管理者账户ID",
+      "ErrGetDisplayDocs": "获取体验应用对外显示文档列表失败",
+      "ErrDescribeExpInfo": "获取体验应用详情失败",
+      "ErrModifyExpInfo": "修改应用模板数据失败",
+      "ErrGetExperienceApps": "获取体验应用列表失败",
+      "ErrGetBilling": "获取计费项异常",
+      "ErrAppNotSupportModelList": "未找到相应模型列表",
+      "ErrGetPromptVersion": "查询提示词版本失败",
+      "ErrGetPromptVersionEmpty": "该提示词版本不存在",
+      "ErrCreatePromptVersion": "创建提示词版本失败",
+      "ErrGetPromptMaxVersion": "获取提示词最大版本失败",
+      "ErrPromptVersionLimit": "提示词版本数量达到最大",
+      "ErrQuotaModel": "该套餐配额不允许使用第三方模型",
+      "ErrResourceNotFound": "资源实体不存在",
+      "ErrGetResource": "获取资源实体失败",
+      "ErrGetResourceRule": "获取资源规则失败",
+      "ErrResourceRuleOverLimit": "资源规则超限",
+      "ErrResourceSpaceNotFound": "空间实体不存在",
+      "ErrResourceWorkRuleLimit": "应用工作流配置超限",
+      "ErrOpenClawNotFound": "ClawPro记录不存在",
+      "ErrOpenClawFreezing": "ClawPro冻结中，不支持操作",
+      "ErrAuditNotPass": "内容审核不通过",
+      "ErrSystemIntegratorNotFound": "系统集成商不存在",
+      "ErrGetOpenClaw": "获取ClawPro失败",
+      "ErrCreateOpenClaw": "创建ClawPro失败",
+      "ErrModifyOpenClaw": "修改ClawPro失败",
+      "ErrDeleteOpenClaw": "删除ClawPro失败",
+      "ErrOpenClawNameFormat": "ClawPro名称只能包含中文、英文、数字、下划线、中划线、空格",
+      "ErrOpenClawIconFormat": "ClawPro图标链接格式错误",
+      "ErrOpenClawAccountStatus": "账户资源不足",
+      "ErrRenewOpenClaw": "续费ClawPro失败",
+      "ErrDescribeOpenClawConfig": "获取ClawPro配置失败",
+      "ErrModifyOpenClawConfig": "修改ClawPro配置失败",
+      "ErrRestartOpenClaw": "重启ClawPro失败",
+      "ErrResetOpenClaw": "重置ClawPro失败",
+      "ErrOpenClawQuotaEmpty": "ClawPro数量配额为空",
+      "ErrOpenClawOverLimit": "工作空间ClawPro数量达到上限",
+      "ErrOpenClawInstanceNotFound": "ClawPro实例不存在",
+      "ErrOpenClawNotAllowDelete": "ClawPro当前状态不允许删除",
+      "ErrApiKeyQuotaExceeded": "创建的密钥已达到上限",
+      "ErrApiKeyNotFound": "密钥不存在",
+      "ErrApiKeyAlreadyEnabled": "密钥已处于启用状态",
+      "ErrApiKeyAlreadyDisabled": "密钥已处于禁用状态",
+      "ErrApiKeyNotDisabled": "密钥未处于禁用状态，请先禁用后再删除",
+      "ErrApiKeyDisabled": "密钥已禁用",
+      "ErrSkillNotAllowDelete": "必要Skill不允许删除",
+      "ErrSkillNotAllowModify": "必要Skill不允许被禁用",
+      "ErrDeleteSkill": "删除Skill失败",
+      "ErrModifySkill": "修改Skill失败",
+      "ErrDescribeSkillList": "获取Skill列表失败",
+      "ErrWxKfSceneParamExpired": "微信客服分享链接已过期",
+      "ErrWxKfSceneParamInvalid": "微信客服scene参数无效",
+      "ErrWxKfBindUser": "绑定用户到ClawPro失败",
+      "ErrWxKfUserNotBound": "用户未绑定ClawPro",
+      "ErrModifyOpenClawModel": "修改模型失败",
+      "ErrOpenClawModelNotSupported": "当前套餐不支持使用该模型",
+      "ErrResourceQuotaNotConfig": "空间额度未配置",
+      "ErrOpenClawModelMaxTokensTooSmall": "该模型的最大输出Tokens长度不满足最低要求",
+      "ErrOpenClawModelContextWindowTooSmall": "该模型的上下文长度不满足最低要求",
+      "ErrCreateSkill": "安装 skill 失败", 
+      "ErrSkillVersionNotFound": "skill 版本不存在",
+      "ErrSkillConfigNotFound": "skill 配置不存在",
+      "ErrOpenClawSkillNotFound": "openclaw skill 记录不存在",
+      "ErrSkillAlreadyExists": "skill 已存在，不可重复创建",
+      "ErrOpenClawEnableModelFailed": "模型切换失败，请稍后重试",
+      "ErrOpenClawProviderNotConfigured": "Coding Plan模型未激活，请先配置 API Key",
+      "ErrDescribeOpenClawInvocationTask": "ClawPro查询命令执行结果失败",
+      "ErrRunOpenClawCommandInvalid": "ClawPro命令非法",
+      "ErrRunOpenClawCommand": "ClawPro执行命令失败"
+    }
+  model_mappings.json: |
+    {
+      "model_mappings": {
+        "cs-rewrite": "Youtu/youtu-rewrite",
+        "workflow-light-32b": "Youtu/youtu-intent-32b",
+        "workflow-pro": "Youtu/youtu-intent-pro",
+        "workflow-pro-vip": "Youtu/youtu-intent-pro-vip",
+        "youtu-mrc-standard": "Youtu/youtu-mrc-standard",
+        "cs-normal-70b": "Youtu/youtu-mrc-pro",
+        "cs-normal-70b-1.0": "Youtu/youtu-mrc-pro",
+        "cs-normal-70b-1.1": "Youtu/youtu-mrc-pro",
+        "cs-normal-70b-16k": "Youtu/youtu-mrc-pro",
+        "cs-normal-16k": "Youtu/youtu-mrc-pro",
+        "cs-normal-13b-v1.0-hf": "Youtu/youtu-mrc-pro",
+        "taskflow-70b": "Youtu/youtu-intent-32b",
+        "youtu-mrc-pro": "Youtu/youtu-mrc-pro",
+        "function-call-pro-vip": "Youtu/youtu-agent-vip",
+        "function-call-pro": "Youtu/youtu-agent",
+        "cs-normal-mllm-72B": "Youtu/youtu-mllm",
+        "sn-reranker-large-v0.4": "Youtu/youtu-reranker",
+        "sn-llm-reranker-2b-v0.2": "Youtu/youtu-reranker-llm",
+        "sn-large-multi-language-v0.2.5": "Youtu/youtu-embedding",
+        "offline-sn-large-multi-language-v0.2.5": "Youtu/youtu-offline-embedding",
+        "sn-multimodal-embedding-V0.2-text": "Youtu/youtu-clip-text-0.5b",
+        "sn-multimodal-embedding-V0.2-visual": "Youtu/youtu-clip-image-0.5b",
+        "offline-sn-multimodal-embedding-V0.2-visual": "Youtu/youtu-offline-clip-image-0.5b",
+        "youtu-embedding-llm-beta2": "Youtu/youtu-embedding-llm",
+        "nl2sql": "Youtu/youtu-nl2sql-16b",
+        "cs-normal-mllm-parse": "Youtu/youtu-mllm-2b",
+        "cs-segment": "Youtu/youtu-segment-7b",
+        "cs-normal-mllm-parse-offline": "Youtu/youtu-mllm-offline-2b",
+        "youtu-segment-merge": "Youtu/youtu-segment-8b",
+        "header-extraction": "Youtu/youtu-header-extract-7b",
+        "youtu-vita": "Youtu/youtu-vita",
+        "hunyuan-turbos-vision": "Hunyuan/hunyuan-turbos-vision",
+        "hunyuan-turbos-vision-250619": "Hunyuan/hunyuan-turbos-vision-250619",
+        "hunyuan-t1": "Hunyuan/hunyuan-t1",
+        "hunyuan-t1-0529": "Hunyuan/hunyuan-t1-0529",
+        "hunyuan-t1-vision": "Hunyuan/hunyuan-t1-vision",
+        "hunyuan-t1-vision-250619": "Hunyuan/hunyuan-t1-vision-250619",
+        "hunyuan": "Hunyuan/hunyuan",
+        "hunyuan-pro-preview": "Hunyuan/hunyuan-pro-preview",
+        "hunyuan-13B": "Hunyuan/hunyuan-standard",
+        "hunyuan-standard-256K": "Hunyuan/hunyuan-standard-256k",
+        "hunyuan-turbo": "Hunyuan/hunyuan-turbo",
+        "hunyuan-turbos": "Hunyuan/hunyuan-turbos",
+        "hunyuan-role": "Hunyuan/hunyuan-role",
+        "hunyuan-2.0-instruct-251111": "Hunyuan/hunyuan-2.0-instruct-251111",
+        "hunyuan-2.0-thinking-251109": "Hunyuan/hunyuan-2.0-thinking-251109",
+        "hunyuan-search": "Hunyuan/hunyuan-search",
+        "hunyuan-t1-search": "Hunyuan/hunyuan-t1-search",
+        "lke-deepseek-r1-search": "Deepseek/deepseek-r1-250528-search",
+        "lke-deepseek-v3-search": "Deepseek/deepseek-v3-250324-search",
+        "lke-deepseek-r1-0528-search": "Deepseek/deepseek-r1-250528-search",
+        "lke-deepseek-v3-0324-search": "Deepseek/deepseek-v3-250324-search",
+        "lke-deepseek-r1": "Deepseek/deepseek-r1-250528",
+        "lke-deepseek-v3": "Deepseek/deepseek-v3-250324",
+        "lke-deepseek-r1-0528": "Deepseek/deepseek-r1-250528",
+        "lke-deepseek-v3-0324": "Deepseek/deepseek-v3-250324",
+        "lke-deepseek-r1-vip": "Deepseek/deepseek-r1-250528-vip",
+        "lke-deepseek-v3-vip": "Deepseek/deepseek-v3-250324-vip",
+        "lke-deepseek-r1-0528-vip": "Deepseek/deepseek-r1-250528-vip",
+        "lke-deepseek-v3-0324-vip": "Deepseek/deepseek-v3-250324-vip",
+        "lke-deepseek-v3.1-vip": "Deepseek/deepseek-v3.1-vip",
+        "lke-deepseek-v3.1-terminus-vip": "Deepseek/deepseek-v3.1-terminus-vip",
+        "lke-deepseek-v3.2-vip": "Deepseek/deepseek-v3.2-vip",
+        "lke-deepseek-v3-function-call": "Deepseek/deepseek-v3-250324",
+        "lke-deepseek-r1-agent": "Deepseek/deepseek-r1-250528",
+        "lke-deepseek-r1-0528-agent": "Deepseek/deepseek-r1-250528",
+        "lke-deepseek-v3-agent": "Deepseek/deepseek-v3-250324",
+        "lke-deepseek-v3.1": "Deepseek/deepseek-v3.1",
+        "lke-deepseek-v3.1-function-call": "Deepseek/deepseek-v3.1",
+        "lke-deepseek-v3.1-terminus": "Deepseek/deepseek-v3.1-terminus",
+        "lke-deepseek-v3.2": "TCADP/deepseek-v3.2",
+        "lke-deepseek-v3.2-function-call": "TCADP/deepseek-v3.2",
+        "hunyuan-speed-search": "Hunyuan/hunyuan-speed-search",
+        "hunyuan-turbo-vision": "Hunyuan/hunyuan-turbos-vision",
+        "lke-deepseek-v3.1-search": "Deepseek/deepseek-v3.1-search",
+        "lke-deepseek-v3.2-search": "Deepseek/deepseek-v3.2-search"
+      },
+      "third_model_mappings": {
+        "Baichuan/Baichuan-Text-Embedding": "Baichuan/Baichuan-Text-Embedding",
+        "Baichuan/baichuan2-53b": "Baichuan/baichuan2-53b",
+        "Baichuan/baichuan2-turbo": "Baichuan/baichuan2-turbo",
+        "Baichuan/baichuan2-turbo-192k": "Baichuan/baichuan2-turbo-192k",
+        "Baichuan/baichuan3-turbo": "Baichuan/baichuan3-turbo",
+        "Baichuan/baichuan3-turbo-128k": "Baichuan/baichuan3-turbo-128k",
+        "Baichuan/baichuan4": "Baichuan/baichuan4",
+        "Baichuan/baichuan4-air": "Baichuan/baichuan4-air",
+        "Baichuan/baichuan4-turbo": "Baichuan/baichuan4-turbo",
+        "Minimax/abab5.5-chat": "Minimax/abab5.5-chat",
+        "Minimax/abab5.5s-chat": "Minimax/abab5.5s-chat",
+        "Minimax/abab6-chat": "Minimax/abab6-chat",
+        "Minimax/abab6.5-chat": "Minimax/abab6.5-chat",
+        "Minimax/abab6.5s-chat": "Minimax/abab6.5s-chat",
+        "Minimax/abab6.5t-chat": "Minimax/abab6.5t-chat",
+        "Minimax/abab7-chat-preview": "Minimax/abab7-chat-preview",
+        "Minimax/minimax-m1": "Minimax/minimax-m1",
+        "Minimax/minimax-text-01": "Minimax/minimax-text-01",
+        "Moonshot/kimi-k2-0711-preview": "Moonshot/kimi-k2-0711-preview",
+        "Moonshot/kimi-k2-thinking": "Moonshot/kimi-k2-thinking",
+        "Moonshot/moonshot-v1-128k": "Moonshot/moonshot-v1-128k",
+        "Moonshot/moonshot-v1-32k": "Moonshot/moonshot-v1-32k",
+        "Moonshot/moonshot-v1-8k": "Moonshot/moonshot-v1-8k",
+        "Qwen/deepseek-r1-distill-qwen-14b": "Qwen/deepseek-r1-distill-qwen-14b",
+        "Qwen/deepseek-r1-distill-qwen-32b": "Qwen/deepseek-r1-distill-qwen-32b",
+        "Qwen/qvq-max": "Qwen/qvq-max",
+        "Qwen/qvq-max-latest": "Qwen/qvq-max-latest",
+        "Qwen/qwen-coder-turbo": "Qwen/qwen-coder-turbo",
+        "Qwen/qwen-coder-turbo-0919": "Qwen/qwen-coder-turbo-0919",
+        "Qwen/qwen-coder-turbo-latest": "Qwen/qwen-coder-turbo-latest",
+        "Qwen/qwen-long": "Qwen/qwen-long",
+        "Qwen/qwen-math-plus": "Qwen/qwen-math-plus",
+        "Qwen/qwen-math-plus-0816": "Qwen/qwen-math-plus-0816",
+        "Qwen/qwen-math-plus-0919": "Qwen/qwen-math-plus-0919",
+        "Qwen/qwen-math-plus-latest": "Qwen/qwen-math-plus-latest",
+        "Qwen/qwen-math-turbo": "Qwen/qwen-math-turbo",
+        "Qwen/qwen-math-turbo-0919": "Qwen/qwen-math-turbo-0919",
+        "Qwen/qwen-math-turbo-latest": "Qwen/qwen-math-turbo-latest",
+        "Qwen/qwen-max": "Qwen/qwen-max",
+        "Qwen/qwen-max-0125": "Qwen/qwen-max-0125",
+        "Qwen/qwen-max-0403": "Qwen/qwen-max-0403",
+        "Qwen/qwen-max-0428": "Qwen/qwen-max-0428",
+        "Qwen/qwen-max-0919": "Qwen/qwen-max-0919",
+        "Qwen/qwen-max-latest": "Qwen/qwen-max-latest",
+        "Qwen/qwen-max-longcontext": "Qwen/qwen-max-longcontext",
+        "Qwen/qwen-plus": "Qwen/qwen-plus",
+        "Qwen/qwen-plus-0112": "Qwen/qwen-plus-0112",
+        "Qwen/qwen-plus-0125": "Qwen/qwen-plus-0125",
+        "Qwen/qwen-plus-0723": "Qwen/qwen-plus-0723",
+        "Qwen/qwen-plus-0806": "Qwen/qwen-plus-0806",
+        "Qwen/qwen-plus-0919": "Qwen/qwen-plus-0919",
+        "Qwen/qwen-plus-1125": "Qwen/qwen-plus-1125",
+        "Qwen/qwen-plus-1127": "Qwen/qwen-plus-1127",
+        "Qwen/qwen-plus-1220": "Qwen/qwen-plus-1220",
+        "Qwen/qwen-plus-2025-04-28": "Qwen/qwen-plus-2025-04-28",
+        "Qwen/qwen-plus-chat": "Qwen/qwen-plus-chat",
+        "Qwen/qwen-plus-latest": "Qwen/qwen-plus-latest",
+        "Qwen/qwen-turbo": "Qwen/qwen-turbo",
+        "Qwen/qwen-turbo-0624": "Qwen/qwen-turbo-0624",
+        "Qwen/qwen-turbo-0919": "Qwen/qwen-turbo-0919",
+        "Qwen/qwen-turbo-2025-04-28": "Qwen/qwen-turbo-2025-04-28",
+        "Qwen/qwen-turbo-chat": "Qwen/qwen-turbo-chat",
+        "Qwen/qwen-turbo-latest": "Qwen/qwen-turbo-latest",
+        "Qwen/qwen-vl-max": "Qwen/qwen-vl-max",
+        "Qwen/qwen-vl-max-0809": "Qwen/qwen-vl-max-0809",
+        "Qwen/qwen-vl-max-2025-01-25": "Qwen/qwen-vl-max-2025-01-25",
+        "Qwen/qwen-vl-max-latest": "Qwen/qwen-vl-max-latest",
+        "Qwen/qwen-vl-plus": "Qwen/qwen-vl-plus",
+        "Qwen/qwen-vl-plus-0809": "Qwen/qwen-vl-plus-0809",
+        "Qwen/qwen-vl-plus-2025-01-02": "Qwen/qwen-vl-plus-2025-01-02",
+        "Qwen/qwen-vl-plus-2025-01-25": "Qwen/qwen-vl-plus-2025-01-25",
+        "Qwen/qwen-vl-plus-latest": "Qwen/qwen-vl-plus-latest",
+        "Qwen/qwen2.5-0.5b-instruct": "Qwen/qwen2.5-0.5b-instruct",
+        "Qwen/qwen2.5-1.5b-instruct": "Qwen/qwen2.5-1.5b-instruct",
+        "Qwen/qwen2.5-14b-instruct": "Qwen/qwen2.5-14b-instruct",
+        "Qwen/qwen2.5-14b-instruct-1m": "Qwen/qwen2.5-14b-instruct-1m",
+        "Qwen/qwen2.5-32b-instruct": "Qwen/qwen2.5-32b-instruct",
+        "Qwen/qwen2.5-3b-instruct": "Qwen/qwen2.5-3b-instruct",
+        "Qwen/qwen2.5-72b-instruct": "Qwen/qwen2.5-72b-instruct",
+        "Qwen/qwen2.5-7b-instruct": "Qwen/qwen2.5-7b-instruct",
+        "Qwen/qwen2.5-7b-instruct-1m": "Qwen/qwen2.5-7b-instruct-1m",
+        "Qwen/qwen2.5-coder-7b-instruct": "Qwen/qwen2.5-coder-7b-instruct",
+        "Qwen/qwen2.5-vl-3b-instruct": "Qwen/qwen2.5-vl-3b-instruct",
+        "Qwen/qwen2.5-vl-72b-instruct": "Qwen/qwen2.5-vl-72b-instruct",
+        "Qwen/qwen2.5-vl-7b-instruct": "Qwen/qwen2.5-vl-7b-instruct",
+        "Qwen/qwen3-0.6b": "Qwen/qwen3-0.6b",
+        "Qwen/qwen3-1.7b": "Qwen/qwen3-1.7b",
+        "Qwen/qwen3-14b": "Qwen/qwen3-14b",
+        "Qwen/qwen3-235b-a22b": "Qwen/qwen3-235b-a22b",
+        "Qwen/qwen3-30b-a3b": "Qwen/qwen3-30b-a3b",
+        "Qwen/qwen3-32b": "Qwen/qwen3-32b",
+        "Qwen/qwen3-4b": "Qwen/qwen3-4b",
+        "Qwen/qwen3-8b": "Qwen/qwen3-8b",
+        "Qwen/qwen3-omni-flash": "Qwen/qwen3-omni-flash",
+        "Qwen/qwen3-rerank": "Qwen/qwen3-rerank",
+        "Qwen/qwen3-vl-plus": "Qwen/qwen3-vl-plus",
+        "Qwen/qwq-32b": "Qwen/qwq-32b",
+        "Qwen/qwq-plus": "Qwen/qwq-plus",
+        "Qwen/qwq-plus-0305": "Qwen/qwq-plus-0305",
+        "Qwen/text-embedding-v4": "Qwen/text-embedding-v4",
+        "Stepfun/step-1-128k": "Stepfun/step-1-128k",
+        "Stepfun/step-1-256k": "Stepfun/step-1-256k",
+        "Stepfun/step-1-32k": "Stepfun/step-1-32k",
+        "Stepfun/step-1-8k": "Stepfun/step-1-8k",
+        "Stepfun/step-1-flash": "Stepfun/step-1-flash",
+        "Stepfun/step-1v-32k": "Stepfun/step-1v-32k",
+        "Stepfun/step-1v-8k": "Stepfun/step-1v-8k",
+        "Stepfun/step-2-16k": "Stepfun/step-2-16k",
+        "Volcengine/Doubao-Seed-1-6-251015": "Volcengine/Doubao-Seed-1-6-251015",
+        "Volcengine/doubao-1-5-lite-32k-250115": "Volcengine/doubao-1-5-lite-32k-250115",
+        "Volcengine/doubao-1-5-pro-256k-250115": "Volcengine/doubao-1-5-pro-256k-250115",
+        "Volcengine/doubao-1-5-pro-32k-250115": "Volcengine/doubao-1-5-pro-32k-250115",
+        "Volcengine/doubao-1-5-thinking-pro-250415": "Volcengine/doubao-1-5-thinking-pro-250415",
+        "Volcengine/doubao-1-5-thinking-pro-m-250428": "Volcengine/doubao-1-5-thinking-pro-m-250428",
+        "Volcengine/doubao-1-5-thinking-vision-pro-250428": "Volcengine/doubao-1-5-thinking-vision-pro-250428",
+        "Volcengine/doubao-1-5-ui-tars-250428": "Volcengine/doubao-1-5-ui-tars-250428",
+        "Volcengine/doubao-1-5-vision-lite-250315": "Volcengine/doubao-1-5-vision-lite-250315",
+        "Volcengine/doubao-1-5-vision-pro-250328": "Volcengine/doubao-1-5-vision-pro-250328",
+        "Volcengine/doubao-1-5-vision-pro-32k-250115": "Volcengine/doubao-1-5-vision-pro-32k-250115",
+        "Volcengine/doubao-lite-128k-240828": "Volcengine/doubao-lite-128k-240828",
+        "Volcengine/doubao-lite-32k-240828": "Volcengine/doubao-lite-32k-240828",
+        "Volcengine/doubao-lite-4k-character-240828": "Volcengine/doubao-lite-4k-character-240828",
+        "Volcengine/doubao-pro-256k-241115": "Volcengine/doubao-pro-256k-241115",
+        "Volcengine/doubao-pro-32k-241215": "Volcengine/doubao-pro-32k-241215",
+        "Volcengine/doubao-seed-1-6-250615": "Volcengine/doubao-seed-1-6-250615",
+        "Volcengine/doubao-seed-1-6-flash-250715": "Volcengine/doubao-seed-1-6-flash-250715",
+        "Volcengine/doubao-seed-1-6-thinking-250715": "Volcengine/doubao-seed-1-6-thinking-250715",
+        "Volcengine/doubao-vision-lite-32k-241015": "Volcengine/doubao-vision-lite-32k-241015",
+        "Volcengine/doubao-vision-pro-32k-241028": "Volcengine/doubao-vision-pro-32k-241028",
+        "Yi/yi-34b-chat-0205": "Yi/yi-34b-chat-0205",
+        "Yi/yi-34b-chat-200k": "Yi/yi-34b-chat-200k",
+        "Yi/yi-large": "Yi/yi-large",
+        "Yi/yi-lightning": "Yi/yi-lightning",
+        "Yi/yi-medium": "Yi/yi-medium",
+        "Yi/yi-medium-200k": "Yi/yi-medium-200k",
+        "Yi/yi-spark": "Yi/yi-spark",
+        "Yi/yi-vision": "Yi/yi-vision",
+        "Yi/yi-vl-plus": "Yi/yi-vl-plus",
+        "Zhipu/chatglm_lite": "Zhipu/chatglm_lite",
+        "Zhipu/chatglm_pro": "Zhipu/chatglm_pro",
+        "Zhipu/chatglm_std": "Zhipu/chatglm_std",
+        "Zhipu/chatglm_turbo": "Zhipu/chatglm_turbo",
+        "Zhipu/embedding-3": "Zhipu/embedding-3",
+        "Zhipu/glm-3-turbo": "Zhipu/glm-3-turbo",
+        "Zhipu/glm-4": "Zhipu/glm-4",
+        "Zhipu/glm-4-0520": "Zhipu/glm-4-0520",
+        "Zhipu/glm-4-air": "Zhipu/glm-4-air",
+        "Zhipu/glm-4-air-0111": "Zhipu/glm-4-air-0111",
+        "Zhipu/glm-4-air-250414": "Zhipu/glm-4-air-250414",
+        "Zhipu/glm-4-airx": "Zhipu/glm-4-airx",
+        "Zhipu/glm-4-flash": "Zhipu/glm-4-flash",
+        "Zhipu/glm-4-flash-250414": "Zhipu/glm-4-flash-250414",
+        "Zhipu/glm-4-flashx": "Zhipu/glm-4-flashx",
+        "Zhipu/glm-4-flashx-250414": "Zhipu/glm-4-flashx-250414",
+        "Zhipu/glm-4-long": "Zhipu/glm-4-long",
+        "Zhipu/glm-4-plus": "Zhipu/glm-4-plus",
+        "Zhipu/glm-4.5": "Zhipu/glm-4.5",
+        "Zhipu/glm-4v": "Zhipu/glm-4v",
+        "Zhipu/glm-4v-flash": "Zhipu/glm-4v-flash",
+        "Zhipu/glm-4v-plus": "Zhipu/glm-4v-plus",
+        "Zhipu/glm-z1-air": "Zhipu/glm-z1-air",
+        "Zhipu/glm-z1-airx": "Zhipu/glm-z1-airx",
+        "Zhipu/glm-z1-flash": "Zhipu/glm-z1-flash",
+        "Gemini/gemini-1.5-pro-exp-0801": "Gemini/gemini-1.5-pro-exp-0801",
+        "Gemini/gemini-2.0-flash-preview-image-generation": "Gemini/gemini-2.0-flash-preview-image-generation",
+        "Gemini/gemini-2.0-flash-lite-preview-02-05": "Gemini/gemini-2.0-flash-lite-preview-02-05",
+        "Gemini/gemini-2.0-flash-lite-preview": "Gemini/gemini-2.0-flash-lite-preview",
+        "Gemini/gemini-2.0-flash-lite-001": "Gemini/gemini-2.0-flash-lite-001",
+        "Gemini/gemini-2.0-flash-lite": "Gemini/gemini-2.0-flash-lite",
+        "Gemini/gemini-2.0-flash-exp": "Gemini/gemini-2.0-flash-exp",
+        "Gemini/gemini-2.0-flash-001": "Gemini/gemini-2.0-flash-001",
+        "Gemini/gemini-2.0-flash": "Gemini/gemini-2.0-flash",
+        "Gemini/gemini-1.5-pro-latest": "Gemini/gemini-1.5-pro-latest",
+        "Gemini/gemini-1.5-pro-exp-0827": "Gemini/gemini-1.5-pro-exp-0827",
+        "Gemini/learnlm-1.5-pro-experimental": "Gemini/learnlm-1.5-pro-experimental",
+        "Gemini/gemini-1.5-pro-002": "Gemini/gemini-1.5-pro-002",
+        "Gemini/gemini-1.5-pro-001": "Gemini/gemini-1.5-pro-001",
+        "Gemini/gemini-1.5-pro": "Gemini/gemini-1.5-pro",
+        "Gemini/gemini-1.5-flash-latest": "Gemini/gemini-1.5-flash-latest",
+        "Gemini/gemini-1.5-flash-exp-0827": "Gemini/gemini-1.5-flash-exp-0827",
+        "Gemini/gemini-1.5-flash-8b-exp-0924": "Gemini/gemini-1.5-flash-8b-exp-0924",
+        "Gemini/gemini-1.5-flash-8b-exp-0827": "Gemini/gemini-1.5-flash-8b-exp-0827",
+        "Gemini/gemini-1.5-flash-002": "Gemini/gemini-1.5-flash-002",
+        "Gemini/gemini-1.5-flash-001": "Gemini/gemini-1.5-flash-001",
+        "Gemini/gemini-1.5-flash": "Gemini/gemini-1.5-flash",
+        "Gemini/gemini-2.0-flash-thinking-exp-1219": "Gemini/gemini-2.0-flash-thinking-exp-1219",
+        "Gemini/gemini-pro-vision": "Gemini/gemini-pro-vision",
+        "Gemini/gemini-pro": "Gemini/gemini-pro",
+        "Gemini/gemini-exp-1206": "Gemini/gemini-exp-1206",
+        "Gemini/gemini-exp-1121": "Gemini/gemini-exp-1121",
+        "Gemini/gemini-exp-1114": "Gemini/gemini-exp-1114",
+        "Gemini/gemini-3-pro-preview": "Gemini/gemini-3-pro-preview",
+        "Gemini/gemini-2.5-pro-preview-06-05": "Gemini/gemini-2.5-pro-preview-06-05",
+        "Gemini/gemini-2.5-pro-preview-05-06": "Gemini/gemini-2.5-pro-preview-05-06",
+        "Gemini/gemini-2.5-pro-preview-03-25": "Gemini/gemini-2.5-pro-preview-03-25",
+        "Gemini/gemini-2.5-pro-exp-03-25": "Gemini/gemini-2.5-pro-exp-03-25",
+        "Gemini/gemini-2.5-pro": "Gemini/gemini-2.5-pro",
+        "Gemini/gemini-2.5-flash-preview-05-20": "Gemini/gemini-2.5-flash-preview-05-20",
+        "Gemini/gemini-2.5-flash-preview-04-17": "Gemini/gemini-2.5-flash-preview-04-17",
+        "Gemini/gemini-2.5-flash-lite-preview-06-17": "Gemini/gemini-2.5-flash-lite-preview-06-17",
+        "Gemini/gemini-2.5-flash-lite": "Gemini/gemini-2.5-flash-lite",
+        "Gemini/gemini-2.5-flash-image-preview": "Gemini/gemini-2.5-flash-image-preview",
+        "Gemini/gemini-2.5-flash": "Gemini/gemini-2.5-flash",
+        "Gemini/gemini-2.0-pro-exp-02-05": "Gemini/gemini-2.0-pro-exp-02-05",
+        "Gemini/gemini-2.0-pro-exp": "Gemini/gemini-2.0-pro-exp",
+        "Gemini/gemini-2.0-flash-thinking-exp-01-21": "Gemini/gemini-2.0-flash-thinking-exp-01-21",
+        "Official/o3-pro-2025-06-10": "Official/o3-pro-2025-06-10",
+        "Official/o4-mini-2025-04-16": "Official/o4-mini-2025-04-16",
+        "Official/o4-mini": "Official/o4-mini",
+        "Official/gpt-4-turbo-preview": "Official/gpt-4-turbo-preview",
+        "Official/gpt-4o-audio-preview": "Official/gpt-4o-audio-preview",
+        "Official/gpt-4o-2024-11-20": "Official/gpt-4o-2024-11-20",
+        "Official/gpt-4o-2024-08-06": "Official/gpt-4o-2024-08-06",
+        "Official/gpt-4o-2024-05-13": "Official/gpt-4o-2024-05-13",
+        "Official/gpt-4o": "Official/gpt-4o",
+        "Official/gpt-4.1-nano-2025-04-14": "Official/gpt-4.1-nano-2025-04-14",
+        "Official/gpt-4.1-nano": "Official/gpt-4.1-nano",
+        "Official/gpt-4.1-mini-2025-04-14": "Official/gpt-4.1-mini-2025-04-14",
+        "Official/gpt-4.1-mini": "Official/gpt-4.1-mini",
+        "Official/gpt-4.1-2025-04-14": "Official/gpt-4.1-2025-04-14",
+        "Official/gpt-4.1": "Official/gpt-4.1",
+        "Official/gpt-4o-audio-preview-2025-06-03": "Official/gpt-4o-audio-preview-2025-06-03",
+        "Official/gpt-4-turbo-2024-04-09": "Official/gpt-4-turbo-2024-04-09",
+        "Official/gpt-4-turbo": "Official/gpt-4-turbo",
+        "Official/gpt-4-1106-preview": "Official/gpt-4-1106-preview",
+        "Official/gpt-4-0125-preview": "Official/gpt-4-0125-preview",
+        "Official/gpt-4": "Official/gpt-4",
+        "Official/gpt-3.5-turbo-instruct": "Official/gpt-3.5-turbo-instruct",
+        "Official/gpt-3.5-turbo-16k": "Official/gpt-3.5-turbo-16k",
+        "Official/gpt-3.5-turbo-1106": "Official/gpt-3.5-turbo-1106",
+        "Official/gpt-3.5-turbo-0125": "Official/gpt-3.5-turbo-0125",
+        "Official/gpt-3.5-turbo": "Official/gpt-3.5-turbo",
+        "Official/gpt-5.2": "Official/gpt-5.2",
+        "Official/o3-pro": "Official/o3-pro",
+        "Official/o3-mini-2025-01-31": "Official/o3-mini-2025-01-31",
+        "Official/o3-mini": "Official/o3-mini",
+        "Official/o3-2025-04-16": "Official/o3-2025-04-16",
+        "Official/o3": "Official/o3",
+        "Official/o1-preview-2024-09-12": "Official/o1-preview-2024-09-12",
+        "Official/o1-preview": "Official/o1-preview",
+        "Official/o1-mini-2024-09-12": "Official/o1-mini-2024-09-12",
+        "Official/o1-mini": "Official/o1-mini",
+        "Official/o1": "Official/o1",
+        "Official/chatgpt-4o-latest": "Official/chatgpt-4o-latest",
+        "Official/gpt-5.1": "Official/gpt-5.1",
+        "Official/gpt-5-nano-2025-08-07": "Official/gpt-5-nano-2025-08-07",
+        "Official/gpt-5-nano": "Official/gpt-5-nano",
+        "Official/gpt-5-mini-2025-08-07": "Official/gpt-5-mini-2025-08-07",
+        "Official/gpt-5-mini": "Official/gpt-5-mini",
+        "Official/gpt-5-chat-latest": "Official/gpt-5-chat-latest",
+        "Official/gpt-5-2025-08-07": "Official/gpt-5-2025-08-07",
+        "Official/gpt-5": "Official/gpt-5",
+        "Official/gpt-4o-mini-2024-07-18": "Official/gpt-4o-mini-2024-07-18",
+        "Official/gpt-4o-mini": "Official/gpt-4o-mini",
+        "XAI/grok-2-1212": "XAI/grok-2-1212",
+        "XAI/grok-2-vision-1212": "XAI/grok-2-vision-1212",
+        "XAI/grok-3": "XAI/grok-3",
+        "XAI/grok-3-fast": "XAI/grok-3-fast",
+        "XAI/grok-3-mini": "XAI/grok-3-mini",
+        "XAI/grok-3-mini-fast": "XAI/grok-3-mini-fast",
+        "XAI/grok-4-0709": "XAI/grok-4-0709",
+        "XAI/grok-code-fast-1-0825": "XAI/grok-code-fast-1-0825"
+      },
+      "custom_model_mappings": {
+        "200037129141-OpenAI/LXijhDwN": "OpenAI/LXijhDwN",
+        "200044294453-OpenAI/jOfdyOno": "OpenAI/jOfdyOno",
+        "200044608001-OpenAI/yQGSmEOL": "OpenAI/yQGSmEOL",
+        "200042273475-OpenAI/OoRQtJoL": "OpenAI/OoRQtJoL",
+        "200043451167-OpenAI/pziLFqAG": "OpenAI/pziLFqAG",
+        "450200043755-OpenAI/tSyYWAKs": "OpenAI/tSyYWAKs",
+        "450200043755-OpenAI/zRFlKEOa": "OpenAI/zRFlKEOa",
+        "450200043755-OpenAI/EMDQGSwu": "OpenAI/EMDQGSwu",
+        "200045714367-OpenAI/VchxoADg": "OpenAI/VchxoADg",
+        "200044339175-OpenAI/oDrrplsj": "OpenAI/oDrrplsj",
+        "200044339175-OpenAI/yNBmhjXI": "OpenAI/yNBmhjXI",
+        "200044339175-OpenAI/hZOGKEGI": "OpenAI/hZOGKEGI",
+        "200044339175-OpenAI/Ejggrcif": "OpenAI/Ejggrcif",
+        "200045547987-OpenAI/tmZUsBiS": "OpenAI/tmZUsBiS",
+        "200045547987-OpenAI/sEvyMIel": "OpenAI/sEvyMIel",
+        "200044294453-OpenAI/MCNQYiLW": "OpenAI/MCNQYiLW",
+        "200044608001-OpenAI/XyukthVT": "OpenAI/XyukthVT",
+        "200044837715-OpenAI/XYFvYwDo": "OpenAI/XYFvYwDo",
+        "200044205834-OpenAI/idvDYBmR": "OpenAI/idvDYBmR",
+        "200042064731-OpenAI/ImgtqlnT": "OpenAI/ImgtqlnT",
+        "450200043755-OpenAI/XHoAqcmA": "OpenAI/XHoAqcmA",
+        "450200043755-OpenAI/LejtMTmy": "OpenAI/LejtMTmy",
+        "450200043755-OpenAI/IkKGUQho": "OpenAI/IkKGUQho",
+        "200045547987-OpenAI/mFFvQTeg": "OpenAI/mFFvQTeg",
+        "200044608001-OpenAI/pxEzXnIH": "OpenAI/pxEzXnIH",
+        "200042064731-OpenAI/TdGwOBMw": "OpenAI/TdGwOBMw",
+        "450200043755-OpenAI/LHnUdbTN": "OpenAI/LHnUdbTN",
+        "450200043755-OpenAI/ZgMUYRTt": "OpenAI/ZgMUYRTt",
+        "450200043755-OpenAI/aFTUebrx": "OpenAI/aFTUebrx",
+        "450200043755-OpenAI/ZHmeYtoO": "OpenAI/ZHmeYtoO",
+        "200044339175-OpenAI/wvrcrJqt": "OpenAI/wvrcrJqt",
+        "200045995786-OpenAI/smeviJaR": "OpenAI/smeviJaR",
+        "200045547987-OpenAI/ZyUzpSiX": "OpenAI/ZyUzpSiX",
+        "200042273475-OpenAI/thQkQDhn": "OpenAI/thQkQDhn",
+        "450200043755-OpenAI/FyXISFNj": "OpenAI/FyXISFNj",
+        "450200043755-OpenAI/bnpuLXlq": "OpenAI/bnpuLXlq",
+        "450200043755-OpenAI/JjFUpAst": "OpenAI/JjFUpAst",
+        "450200043755-OpenAI/pdMFdgRZ": "OpenAI/pdMFdgRZ",
+        "450200043755-OpenAI/jBlStZdP": "OpenAI/jBlStZdP",
+        "200044339175-OpenAI/dydnECDE": "OpenAI/dydnECDE",
+        "200042064731-OpenAI/XhwzKOZm": "OpenAI/XhwzKOZm",
+        "200041884309-OpenAI/RYBoDnxP": "OpenAI/RYBoDnxP"
+      }
+    }
+  placeholder.yaml: |
+    NAMESPACE: Production
+    ENV_NAME: formal
+
+    # =============================================================================
+    # 【trpc_go.yaml 使用】- 框架核心配置
+    # =============================================================================
+
+    ENABLE_SET: N
+    FULL_SET_NAME: ""
+
+    LOG_WRITER: console
+
+    RAINBOW_APP_ID: 3f090873-420d-4575-b9d2-cf6a72980a33
+    RAINBOW_GROUP: resource-gallery
+    RAINBOW_ENV_NAME: formal
+
+    # --- OpenClaw 定时任务 cron 表达式 ---
+    OPENCLAW_UNSTABLE_TASK_CRON: "0 */3 * * * *?scheduler=OpenClawUnstableTask&holdTime=150"
+    OPENCLAW_EXPIRE_TASK_CRON: "0 */30 * * * *?scheduler=OpenClawExpireTask&holdTime=150"
+    OPENCLAW_DELETE_TASK_CRON: "0 5 */1 * * *?scheduler=OpenClawDeleteTask&holdTime=150"
+    API_KEY_ACCESS_LOG_CLEAN_TASK_CRON: "0 30 */2 * * *?scheduler=ApiKeyAccessLogCleanTask&holdTime=150"
+    OPENCLAW_SKILL_CONFIRM_CRON: "0 */5 * * * *?scheduler=OpenClawSkillConfirmTask&holdTime=150"
+
+    # =============================================================================
+    # 【client.yaml 使用】- 数据存储与依赖服务配置
+    # =============================================================================
+
+
+    # --- trpc.KEP.agent_config_server.AgentConfigApi ---
+    AGENT_CONFIG_API_TARGET: ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    # --- trpc.adp.ai_gateway.Admin ---
+    AI_GATEWAY_ADMIN_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
+
+    # --- qbot.finance.finance.Finance ---
+    FINANCE_TARGET: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    # --- trpc.adp.ai-gateway.api ---
+    AI_GATEWAY_API_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    # --- trpc.KEP.plugin_config_server.PluginConfigApi ---
+    PLUGIN_CONFIG_API_TARGET: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    # --- trpc.KEP.bot-task-config-server.task-config ---
+    TASK_CONFIG_TARGET: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+
+    # --- trpc.adp.kb-config.Api ---
+    KB_CONFIG_API_TARGET: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+
+    # --- trpc.adp.platform_manager.Admin ---
+    PLATFORM_MANAGER_ADMIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    # --- trpc.adp.platform_manager.Api ---
+    PLATFORM_MANAGER_API_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
+
+    # --- trpc.adp.app_config.Admin ---
+    APP_CONFIG_ADMIN_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    # --- trpc.KEP.bot_data_statistics_server.Api ---
+    DATA_STATISTICS_API_TARGET: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
+
+    # --- trpc.KEP.bot_admin_config_server.Login ---
+    ADMIN_CONFIG_LOGIN_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+
+    # --- trpc.KEP.bot_admin_config_server.Api ---
+    ADMIN_CONFIG_API_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+
+    # --- trpc.adp.platform_manager.Login ---
+    PLATFORM_MANAGER_LOGIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+
+    # --- trpc.adp.platform_charger.Finance ---
+    PLATFORM_CHARGER_FINANCE_TARGET: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    # --- trpc.adp.platform_content_moderation.Infosec ---
+    CONTENT_MODERATION_TARGET: ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    # --- trpc.adp.app_admin_proxy.Api ---
+    APP_ADMIN_PROXY_API_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+
+    # --- trpc.adp.platform_metrology.Api ---
+    PLATFORM_METROLOGY_API_TARGET: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
+
+    # --- http.KEP.atomic.PaaS ---
+    # TODO: 这个不存在，待确认
+    ATOMIC_PAAS_TARGET: ip://${ATOMIC_PAAS_TARGET}:8000
+
+    # --- trpc.adp.adpbot_gateway.AdpBotGateway ---
+    ADPBOT_GATEWAY_TARGET: ip://adp-bot-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    # --- trpc.adp.kb-parse-adapter.ParseAdapter ---
+    KB_PARSE_ADAPTER_TARGET: ip://adp-kb-parse-adapter.{{ .Release.Namespace }}.svc.cluster.local:10001
+
+    # ---trpc.adp.skill_config.SkillConfig ---
+    SKILL_CONFIG_INNER_TARGET: ip://adp-skill-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+    # =============================================================================
+    # 【application.yaml 使用】- 业务配置
+    # 占位符顺序与 application.yaml 中出现顺序一致
+    # =============================================================================
+
+    # --- tione 配置 ---
+    TIONE_SECRET_ID: "xxx"
+    TIONE_SECRET_KEY: "xxx"
+    TIONE_REGION: ap-guangzhou
+    TIONE_STS_HOST: sts.tencentcloudapi.com
+    TIONE_HOST: tione.tencentcloudapi.com
+
+    # --- tione_regions 区域列表 ---
+    TIONE_REGIONS:
+      - ap-beijing
+      - ap-guangzhou
+      - ap-nanjing
+      - ap-shanghai
+
+    TIONE_ENABLE_WHITE: false
+    TIONE_WHITE_UIN:
+
+    # --- model_hub 模型广场相关配置 ---
+    MODEL_FINANCE_FREE_WHITE:
+      - workflow-light-32b
+      - Youtu/youtu-intent-32b
+      - cs-normal-mllm-72B
+      - hunyuan-turbos-vision
+      - workflow-pro
+      - function-call-pro
+      - cs-rewrite
+      - sn-llm-reranker-2b-v0.2
+      - sn-reranker-large-v0.4
+      - sn-large-multi-language-v0.2.5
+      - sn-llm-embedding-2b-v0.2.2
+
+    MODEL_REPLY_FORMAT:
+      lke-deepseek-v3.2: [json_schema,json_object,text]
+      Deepseek/deepseek-v3.2: [json_schema,json_object,text]
+      lke-deepseek-r1-0528: [json_schema,json_object,text]
+      Deepseek/deepseek-r1-250528: [json_schema,json_object,text]
+      lke-deepseek-v3.1-terminus: [json_schema,json_object,text]
+      Deepseek/deepseek-v3.1-terminus: [json_schema,json_object,text]
+      lke-deepseek-v3.1: [json_schema,json_object,text]
+      Deepseek/deepseek-v3.1: [json_schema,json_object,text]
+      function-call-pro: [json_schema,json_object,text]
+      Youtu/youtu-agent: [json_schema,json_object,text]
+      # cs-normal-70b: [json_schema,json_object,text]
+      # Youtu/youtu-mrc-pro: [json_schema,json_object,text]
+      # cs-normal: [json_schema,json_object,text]
+      # Youtu/youtu-mrc-standard: [json_schema,json_object,text]
+      doubao-seed-1-6-flash-250715: [json_object,text]
+      Volcengine/doubao-seed-1-6-flash-250715: [json_object,text]
+      doubao-seed-1-6-250615: [json_object,text]
+      Volcengine/doubao-seed-1-6-25061: [json_object,text]
+
+    # --- robot_default 模型列表配置 ---
+    APP_DEFAULT_MODEL_KNOWLEDGE_QA:
+      - alias_name: DeepSeek-V3.2
+        name: TCADP/deepseek-v3.2
+        scene: nl2sql
+        desc: |-
+          地域：印尼雅加达。平衡推理与输出长度，适合日常问答和通用Agent任务，公开基准达到GPT-5水平。
+        icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
+        is_default: true
+      - alias_name: DeepSeek-V3.1-Terminus
+        name: Deepseek/deepseek-v3.1-terminus
+        desc: |-
+          25年9月发布的模型，平衡推理能力与输出长度，能以更高效率给出更好的答案，在公开的推理类测试中已达到全球顶尖水平。
+      - alias_name: DeepSeek-V3-0324
+        name: Deepseek/deepseek-v3-250324
+        desc: |-
+          DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
+        icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
+      - alias_name: DeepSeek-R1-0528
+        name: Deepseek/deepseek-r1-250528
+        desc: |-
+          Deepseek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。
+        icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
+      - alias_name: Gemini-3.0-Flash
+        name: TCADP/gemini-3.0-flash
+        desc: |-
+          地域：全球。复杂问题解决基线模型，推理能力提升2倍，适用于复杂系统构建、多步逻辑规划和Agent调度。
+      - alias_name: Gemini-3.1-Pro
+        name: TCADP/gemini-3.1-pro
+        desc: |-
+          地域：全球。轻量级高性能模型，响应速度快3倍，价格低四分之一，适合高吞吐量和实时交互任务。
+      - alias_name: Flagship Model
+        name: TCADP/claude-opus-4.6
+        desc: |-
+          地域：全球。旗舰级通用模型，具备自适应思维系统和多智能体协作，适合企业级AI应用。
+      - alias_name: Standard Model
+        name: TCADP/claude-sonnet-4.6
+        desc: |-
+          地域：全球。高性能均衡模型，代码生成和长文本推理达到人类水平，性价比最优。
+      - alias_name: GPT-5.4
+        name: TCADP/gpt-5.4
+        desc: |-
+          地域：全球。OpenAI大一统全能模型，整合推理、编程、计算机操控、深度网页搜索和百万级上下文，原生支持计算机操作。
+      - alias_name: GLM-5
+        name: TCADP/glm-5
+        desc: |-
+          地域：全球。智谱旗舰模型，支持端到端大型任务，擅长复杂系统工程和长程Agent任务。
+      - alias_name: Kimi-K2.5
+        name: TCADP/kimi-k2.5
+        desc: |-
+          地域：全球。支持文本与视觉输入，兼具对话与Agent能力，可切换思考模式，适合复杂推理和多模态理解。
+
+    APP_THOUGHT_MODEL_STANDARD:
+      - alias_name: DeepSeek-V3.2
+        name: TCADP/deepseek-v3.2
+        desc: |-
+          地域：印尼雅加达。平衡推理与输出长度，适合日常问答和通用Agent任务，公开基准达到GPT-5水平。
+        icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
+        is_default: true
+      - alias_name: youtu-intent-pro
+        name: Youtu/youtu-intent-pro
+        chat_words_limit: 2000
+        desc: |-
+          适用于同时配置问答、文档、工作流的场景，意图识别效果更佳，并且支持在角色指令中自定义配置意图。但可能会增加一定的对话耗时。
+        is_free: true
+      - alias_name: DeepSeek-V3.1-Terminus
+        name: Deepseek/deepseek-v3.1-terminus
+        desc: |-
+          25年9月发布的模型，平衡推理能力与输出长度，能以更高效率给出更好的答案，在公开的推理类测试中已达到全球顶尖水平。
+      - alias_name: DeepSeek-V3-0324
+        name: Deepseek/deepseek-v3-250324
+        desc: |-
+          DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
+      - alias_name: GPT-5.4
+        name: TCADP/gpt-5.4
+        desc: |-
+          地域：全球。OpenAI大一统全能模型，整合推理、编程、计算机操控、深度网页搜索和百万级上下文，原生支持计算机操作。
+      - alias_name: Gemini-3.0-Flash
+        name: TCADP/gemini-3.0-flash
+        desc: |-
+          地域：全球。复杂问题解决基线模型，推理能力提升2倍，适用于复杂系统构建、多步逻辑规划和Agent调度。
+      - alias_name: Gemini-3.1-Pro
+        name: TCADP/gemini-3.1-pro
+        desc: |-
+          地域：全球。轻量级高性能模型，响应速度快3倍，价格低四分之一，适合高吞吐量和实时交互任务。
+      - alias_name: Flagship Model
+        name: TCADP/claude-opus-4.6
+        desc: |-
+          地域：全球。旗舰级通用模型，具备自适应思维系统和多智能体协作，适合企业级AI应用。
+      - alias_name: Standard Model
+        name: TCADP/claude-sonnet-4.6
+        desc: |-
+          地域：全球。高性能均衡模型，代码生成和长文本推理达到人类水平，性价比最优。
+      - alias_name: GLM-5
+        name: TCADP/glm-5
+        desc: |-
+          地域：全球。智谱旗舰模型，支持端到端大型任务，擅长复杂系统工程和长程Agent任务。
+      - alias_name: Kimi-K2.5
+        name: TCADP/kimi-k2.5
+        desc: |-
+          地域：全球。支持文本与视觉输入，兼具对话与Agent能力，可切换思考模式，适合复杂推理和多模态理解。
+
+    APP_THOUGHT_MODEL_AGENT:
+      # - alias_name: youtu-agent
+      #   name: Youtu/youtu-agent
+      #   chat_words_limit: 2000
+      #   desc: |-
+      #     具备任务规划、工具选择调用以及反思纠错能力，能够支持复杂问题的规划与执行。
+      #   source: Hunyuan
+      #   icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
+      #   is_free: true
+      - alias_name: DeepSeek-V3.2
+        name: TCADP/deepseek-v3.2
+        desc: |-
+          地域：印尼雅加达。平衡推理与输出长度，适合日常问答和通用Agent任务，公开基准达到GPT-5水平。
+        icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
+        is_default: true
+      - alias_name: DeepSeek-V3.1-Terminus
+        name: Deepseek/deepseek-v3.1-terminus
+        desc: |-
+          25年9月发布的模型，平衡推理能力与输出长度，能以更高效率给出更好的答案，在公开的推理类测试中已达到全球顶尖水平。
+      - alias_name: DeepSeek-V3-0324
+        name: Deepseek/deepseek-v3-250324
+        desc: |-
+          DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
+        source: Experience
+        icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
+        finance_model_name: lke-deepseek-v3-0324
+      - alias_name: DeepSeek-R1-0528
+        name:  Deepseek/deepseek-r1-250528
+        desc: |-
+          Deepseek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。
+        source: Experience
+        icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
+        finance_model_name: lke-deepseek-r1-0528
+      - alias_name: GPT-5.4
+        name: TCADP/gpt-5.4
+        desc: |-
+          地域：全球。OpenAI大一统全能模型，整合推理、编程、计算机操控、深度网页搜索和百万级上下文，原生支持计算机操作。
+      - alias_name: Gemini-3.0-Flash
+        name: TCADP/gemini-3.0-flash
+        desc: |-
+          地域：全球。复杂问题解决基线模型，推理能力提升2倍，适用于复杂系统构建、多步逻辑规划和Agent调度。
+      - alias_name: Gemini-3.1-Pro
+        name: TCADP/gemini-3.1-pro
+        desc: |-
+          地域：全球。轻量级高性能模型，响应速度快3倍，价格低四分之一，适合高吞吐量和实时交互任务。
+      - alias_name: Flagship Model
+        name: TCADP/claude-opus-4.6
+        desc: |-
+          地域：全球。旗舰级通用模型，具备自适应思维系统和多智能体协作，适合企业级AI应用。
+      - alias_name: Standard Model
+        name: TCADP/claude-sonnet-4.6
+        desc: |-
+          地域：全球。高性能均衡模型，代码生成和长文本推理达到人类水平，性价比最优。
+      - alias_name: GLM-5
+        name: TCADP/glm-5
+        desc: |-
+          地域：全球。智谱旗舰模型，支持端到端大型任务，擅长复杂系统工程和长程Agent任务。
+      - alias_name: Kimi-K2.5
+        name: TCADP/kimi-k2.5
+        desc: |-
+          地域：全球。支持文本与视觉输入，兼具对话与Agent能力，可切换思考模式，适合复杂推理和多模态理解。
+
+    APP_REWRITE_MODEL:
+      - alias_name: DeepSeek-V3.2
+        name: TCADP/deepseek-v3.2
+        desc: |-
+          地域：印尼雅加达。平衡推理与输出长度，适合日常问答和通用Agent任务，公开基准达到GPT-5水平。
+        icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
+        is_default: true
+      - alias_name: youtu-rewrite
+        name: Youtu/youtu-rewrite
+        chat_words_limit: 14000
+        desc:
+        icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
+        is_free: true
+      - alias_name: DeepSeek-V3.1-Terminus
+        name: Deepseek/deepseek-v3.1-terminus
+        desc: |-
+          25年9月发布的模型，平衡推理能力与输出长度，能以更高效率给出更好的答案，在公开的推理类测试中已达到全球顶尖水平。
+      - alias_name: GPT-5.4
+        name: TCADP/gpt-5.4
+        desc: |-
+          地域：全球。OpenAI大一统全能模型，整合推理、编程、计算机操控、深度网页搜索和百万级上下文，原生支持计算机操作。
+      - alias_name: Gemini-3.0-Flash
+        name: TCADP/gemini-3.0-flash
+        desc: |-
+          地域：全球。复杂问题解决基线模型，推理能力提升2倍，适用于复杂系统构建、多步逻辑规划和Agent调度。
+      - alias_name: Gemini-3.1-Pro
+        name: TCADP/gemini-3.1-pro
+        desc: |-
+          地域：全球。轻量级高性能模型，响应速度快3倍，价格低四分之一，适合高吞吐量和实时交互任务。
+      - alias_name: Flagship Model
+        name: TCADP/claude-opus-4.6
+        desc: |-
+          地域：全球。旗舰级通用模型，具备自适应思维系统和多智能体协作，适合企业级AI应用。
+      - alias_name: Standard Model
+        name: TCADP/claude-sonnet-4.6
+        desc: |-
+          地域：全球。高性能均衡模型，代码生成和长文本推理达到人类水平，性价比最优。
+      - alias_name: GLM-5
+        name: TCADP/glm-5
+        desc: |-
+          地域：全球。智谱旗舰模型，支持端到端大型任务，擅长复杂系统工程和长程Agent任务。
+      - alias_name: Kimi-K2.5
+        name: TCADP/kimi-k2.5
+        desc: |-
+          地域：全球。支持文本与视觉输入，兼具对话与Agent能力，可切换思考模式，适合复杂推理和多模态理解。
+
+    APP_RERANK_MODEL:
+      - alias_name: youtu-reranker-llm
+        name: Youtu/youtu-reranker-llm
+        desc: |
+          LLM 增强排序模型，准确率更高，耗时将会有所增加。
+        is_default: true
+        is_free: true
+      - alias_name: youtu-reranker
+        name: Youtu/youtu-reranker
+        desc: |
+          通用文本排序模型
+        is_free: true
+
+    APP_EMBEDDING_MODEL:
+      - alias_name: youtu-embedding
+        name: Youtu/youtu-embedding
+        is_default: true
+        is_free: true
+      - alias_name: youtu-embedding-llm
+        name: Youtu/youtu-embedding-llm
+        is_free: true
+
+    APP_WIDGET_MODEL:
+      - alias_name: DeepSeek-V3.2
+        name: TCADP/deepseek-v3.2
+        desc: |-
+          地域：印尼雅加达。平衡推理与输出长度，适合日常问答和通用Agent任务，公开基准达到GPT-5水平。
+        icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
+      - alias_name: DeepSeek-V3.1-Terminus
+        name: Deepseek/deepseek-v3.1-terminus
+        desc: |-
+          25年9月发布的模型，平衡推理能力与输出长度，能以更高效率给出更好的答案，在公开的推理类测试中已达到全球顶尖水平。
+      - alias_name: DeepSeek-V3-0324
+        name: Deepseek/deepseek-v3-250324
+        desc: |-
+          DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
+        icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
+      - alias_name: DeepSeek-R1-0528
+        name: Deepseek/deepseek-r1-250528
+        desc: |-
+          Deepseek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。
+        icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
+      - alias_name: GPT-5.4
+        name: TCADP/gpt-5.4
+        desc: |-
+          地域：全球。OpenAI大一统全能模型，整合推理、编程、计算机操控、深度网页搜索和百万级上下文，原生支持计算机操作。
+      - alias_name: Gemini-3.0-Flash
+        name: TCADP/gemini-3.0-flash
+        desc: |-
+          地域：全球。复杂问题解决基线模型，推理能力提升2倍，适用于复杂系统构建、多步逻辑规划和Agent调度。
+      - alias_name: Gemini-3.1-Pro
+        name: TCADP/gemini-3.1-pro
+        desc: |-
+          地域：全球。轻量级高性能模型，响应速度快3倍，价格低四分之一，适合高吞吐量和实时交互任务。
+      - alias_name: Flagship Model
+        name: TCADP/claude-opus-4.6
+        desc: |-
+          地域：全球。旗舰级通用模型，具备自适应思维系统和多智能体协作，适合企业级AI应用。
+      - alias_name: Standard Model
+        name: TCADP/claude-sonnet-4.6
+        desc: |-
+          地域：全球。高性能均衡模型，代码生成和长文本推理达到人类水平，性价比最优。
+      - alias_name: GLM-5
+        name: TCADP/glm-5
+        desc: |-
+          地域：全球。智谱旗舰模型，支持端到端大型任务，擅长复杂系统工程和长程Agent任务。
+      - alias_name: Kimi-K2.5
+        name: TCADP/kimi-k2.5
+        desc: |-
+          地域：全球。支持文本与视觉输入，兼具对话与Agent能力，可切换思考模式，适合复杂推理和多模态理解。
+
+    APP_FILEPARSE_MODEL:
+      - alias_name: youtu-parsing-sync
+        name: Youtu/youtu-parsing-sync
+        scene: realtime_fileparse
+        desc:
+        icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
+        is_free: true
+        finance_model_name: Youtu/youtu-parsing-sync
+      - alias_name: youtu-parsing-async
+        name: Youtu/youtu-parsing-async
+        desc:
+        is_default: true
+        icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
+        is_free: true
+        finance_model_name: Youtu/youtu-parsing-sync
+
+    APP_OPENCLAW_MODEL:
+      - alias_name: DeepSeek-V3.1-Terminus
+        name: Deepseek/deepseek-v3.1-terminus
+        desc: |-
+          25年9月发布的模型，平衡推理能力与输出长度，能以更高效率给出更好的答案，在公开的推理类测试中已达到全球顶尖水平。
+
+    LLM_WORD_LIMIT:
+      default:
+        input_limit: 2500   # 对话框模型输入上限
+        role_len_limit: 4000  # 角色描述输入上限
+        history_words_limit: 2000  # 历史上下文输入上限
+      4K:
+        input_limit: 2500
+        role_len_limit: 4000
+        history_words_limit: 2000
+      8K:
+        input_limit: 6000
+        role_len_limit: 4000
+        history_words_limit: 4000
+      16K:
+        input_limit: 12000
+        role_len_limit: 4000
+        history_words_limit: 8000
+      28K:
+        input_limit: 12000
+        role_len_limit: 6000
+        history_words_limit: 8000
+      32K:
+        input_limit: 15000
+        role_len_limit: 10000
+        history_words_limit: 8000
+      64K:
+        input_limit: 40000
+        role_len_limit: 20000
+        history_words_limit: 12000
+      96K:
+        input_limit: 60000
+        role_len_limit: 20000
+        history_words_limit: 12000
+      128K:
+        input_limit: 80000
+        role_len_limit: 20000
+        history_words_limit: 12000
+      144K:
+        input_limit: 110000
+        role_len_limit: 20000
+        history_words_limit: 12000
+      192K:
+        input_limit: 160000
+        role_len_limit: 20000
+        history_words_limit: 12000
+      256K:
+        input_limit: 200000
+        role_len_limit: 20000
+        history_words_limit: 20000
+      512K:
+        input_limit: 300000
+        role_len_limit: 50000
+        history_words_limit: 100000
+      1000K:
+        input_limit: 500000
+        role_len_limit: 100000
+        history_words_limit: 200000
+
+    SEARCH_MODEL_FREE:
+      - lke-deepseek-r1
+      - lke-deepseek-v3
+      - lke-deepseek-r1-vip
+      - lke-deepseek-v3-vip
+      - lke-deepseek-v3-0324
+      - lke-deepseek-r1-0528
+      - Deepseek/deepseek-v3-250324
+      - Deepseek/deepseek-r1-250528
+      - Deepseek/deepseek-v3-250324-vip
+      - Deepseek/deepseek-r1-250528-vip
+
+    # --- 模型对AI通话支持的类型 ---
+    LLM_SUPPORT_AI_CALL:
+      support: ["function-call-pro","Youtu/youtu-agent","lke-deepseek-v3-function-call","lke-deepseek-v3","Deepseek/deepseek-v3.1","cs-normal-70b","Youtu/youtu-mrc-pro","hunyuan","sn-edu-70b","lke-deepseek-r1-vip","Deepseek/deepseek-r1-250528-vip","lke-deepseek-v3-vip","Deepseek/deepseek-v3-250324-vip","lke-deepseek-v3-0324","Deepseek/deepseek-v3-250324","cs-normal","Youtu/youtu-mrc-standard","hunyuan-13B","Hunyuan/hunyuan-standard","hunyuan-standard-256K","Hunyuan/hunyuan-standard-256k","hunyuan-turbo","Hunyuan/hunyuan-turbo","hunyuan-role","Hunyuan/hunyuan-role","finance-13b","sn-edu-13b","medical-6b"]
+      poor_support: ["lke-deepseek-r1",Deepseek/deepseek-r1-250528]
+      not_support: []
+
+    DEFAULT_MODEL_CONFIG:
+      generate:
+        name: TCADP/deepseek-v3.2
+        alias_name: DeepSeek-V3.2
+      thought:
+        name: TCADP/deepseek-v3.2
+        alias_name: DeepSeek-V3.2
+      mllm_comprehension:
+        name: TCADP/kimi-k2.5
+        alias_name: Kimi-K2.5
+      mllm_qa:
+        name: TCADP/kimi-k2.5
+        alias_name: Kimi-K2.5
+      rewrite:
+        name: TCADP/deepseek-v3.2
+        alias_name: DeepSeek-V3.2
+      long_memory:
+        name: TCADP/deepseek-v3.2
+        alias_name: DeepSeek-V3.2
+      nl2sql:
+        name: TCADP/deepseek-v3.2
+        alias_name: DeepSeek-V3.2
+      ai_optimize:
+        name: TCADP/deepseek-v3.2
+        alias_name: DeepSeek-V3.2
+      realtime_fileparse:
+        alias_name: youtu-parsing-sync
+        name: Youtu/youtu-parsing-sync
+      fileparse:
+        alias_name: youtu-parsing-async
+        name: Youtu/youtu-parsing-async
+      graphrag:
+        name: TCADP/deepseek-v3.2
+        alias_name: DeepSeek-V3.2
+      openclaw:
+        name: TCADP/deepseek-v3.2
+        alias_name: DeepSeek-V3.2
+
+    # --- finance 配置 ---
+    FINANCE_DISABLED: {{ .Values.global.finance.disabled }}
+
+    # --- search 配置 ---
+    SEARCH_DISABLED: true
+
+    # --- managed_account_ids 管理账号 ---
+    MANAGED_ACCOUNT_IDS:
+      - 1042
+
+    # --- language_all_switch 多语言开关 ---
+    LANGUAGE_ALL_SWITCH: false
+
+    DEEP_THINK_ENABLE_MODEL:
+      Volcengine/doubao-seed-1-6-lite-251015: true
+      Volcengine/doubao-seed-1-6-251015: true
+      Deepseek/deepseek-v3.1: false
+      Deepseek/deepseek-v3.1-terminus: false
+      Deepseek/deepseek-v3.2: true
+      Qwen/qwen3-max-preview: false
+      Qwen/qwen-plus: false
+      Qwen/qwen-plus-latest: false
+      Qwen/qwen-plus-2025-04-28: false
+      Qwen/qwen-flash: false
+      Qwen/qwen-flash-2025-07-28: false
+      Qwen/qwen-turbo: false
+      Qwen/qwen-turbo-latest: false
+      Qwen/qwen-turbo-2025-04-28: false
+      doubao-seed-1-6-lite-251015: true
+      doubao-seed-1-6-251015: true
+      lke-deepseek-v3.1: false
+      lke-deepseek-v3.1-terminus: false
+      lke-deepseek-v3.2: false
+      qwen3-max-preview: false
+      qwen-plus: false
+      qwen-plus-latest: false
+      qwen-plus-2025-04-28: false
+      qwen-flash: false
+      qwen-flash-2025-07-28: false
+      qwen-turbo: false
+      qwen-turbo-latest: false
+      qwen-turbo-2025-04-28: false
+      TCADP/glm-5: false
+      TCADP/kimi-k2.5: false
+
+    MODEL_UIN_WHITE:
+
+    QUOTA_MODEL:
+      - lke-deepseek-r1-0528
+      - lke-deepseek-r1-0528-agent
+      - lke-deepseek-v3-0324
+      - lke-deepseek-v3-function-call
+      - lke-deepseek-v3.1
+      - lke-deepseek-v3.1-function-call
+      - cs-normal
+      - cs-normal-70b
+      - hunyuan
+      - hunyuan-Turbo
+      - hunyuan-standard-256k
+      - hunyuan-13B
+      - hunyuan-role
+      - hunyuan-t1
+      - hunyuan-turbos
+      - Deepseek/deepseek-r1-250528
+      - Deepseek/deepseek-v3-250324
+      - Deepseek/deepseek-v3.1
+      - Youtu/youtu-mrc-standard
+      - Youtu/youtu-mrc-pro
+      - Hunyuan/hunyuan
+      - Hunyuan/hunyuan-turbo
+      - Hunyuan/hunyuan-standard-256k
+      - Hunyuan/hunyuan-standard
+      - Hunyuan/hunyuan-role
+      - Hunyuan/hunyuan-t1
+      - Hunyuan/hunyuan-turbos
+      - Hunyuan/hunyuan-2.0-thinking-251109
+      - Hunyuan/hunyuan-2.0-instruct-251111
+
+    # --- resource_config 基础配置 ---
+    RESOURCE_CONFIG:
+      max_async_timeout: 86400
+      max_sync_timeout: 900
+      async_call_timeout: 43200
+      sync_call_timeout: 600
+      resource_expired_time: 86400
+      space_resource_expired_time: 86400
+      force_refresh_cache: true
+
+    # --- openclaw_config 基础配置 ---
+    OPENCLAW_DEFAULT_NAME: "ClawPro 助手"
+    OPENCLAW_ICON_REGEX: '^https:\/\/(qidian-qbot-1251316161\.cos\.ap-guangzhou\.myqcloud\.com|qidian-qbot-test-1251316161\.cos\.ap-guangzhou\.myqcloud\.com|cdn\.xiaowei\.qq\.com)\/[^\s]+$'
+
+    # --- openclaw_config instance配置 ---
+    OPENCLAW_INSTANCE_PASSWORD: ""
+    OPENCLAW_CREATE_REGIONS:
+      - ap-guangzhou
+    OPENCLAW_CREATE_REGION_MAP:
+      ap-guangzhou:
+        bundle_id: "bundle_starter_mc_med4_01"
+        blueprint_id: "lhbp-6l8zgg9z"
+        firewall_template_id: "lhft-7pe799m3"
+
+    # 套餐实例规格映射（按类型覆盖 bundle_id）
+    OPENCLAW_PACKAGE_BUNDLE_MAP:
+      "1":
+        region_bundle_map:
+          ap-guangzhou: "bundle_starter_mc_med2_03"
+      "2":
+        region_bundle_map:
+          ap-guangzhou: "bundle_starter_mc_med4_01"
+
+    # --- openclaw_config 异步配置（async_config） ---
+    OPENCLAW_CREATE_ASYNC_CONFIG:
+      debug_async: false # 为true时，不进行严格的时间校验
+      scan_interval: 10m #异步扫描的间隔，默认10分钟
+      enable_openclaw_status_task: true # 是否启用状态监控任务，默认 false
+      enable_skill_confirm_task: true # 是否启用skill确认任务
+
+    # --- openclaw_config 凭证配置（credential） ---
+    OPENCLAW_SECRET_ID: "xxx"
+    OPENCLAW_SECRET_KEY: "xxx"
+
+    # --- openclaw_config 模型配置（model_config） ---
+    OPENCLAW_MODEL_CONFIG:
+      primary_model: "qcloudadp/TCADP/kimi-k2.5"       # 主模型全名
+      provider: "qcloudadp"                              # 供应商名称
+      base_url: "https://api.adp.cloud.tencent.com/openclaw"  # API 地址
+      api: "openai-completions"                          # API 类型
+      model_id: "TCADP/kimi-k2.5"                        # 模型 ID
+      model_name: "kimi-k2.5"                            # 模型显示名称
+      max_tokens: 32768                                # 模型参数：最大输出Token数
+      allow_third_model_package_types: [3]             # 启用三方模型的套餐类型
+      enable_fill_param: true                          # 启用模型参数填充
+      fill_param_provider_types: ["Third"]             # 启用模型参数填充的供应商，为空时全部填充
+      min_context_window: 16000                        # 第三方模型上下文长度最低要求，默认0不校验
+
+    # --- openclaw_config 渠道配置（channel_config） ---
+    OPENCLAW_CHANNEL_CONFIG:
+      ws_url: "wss://wss.lke.cloud.tencent.com/bot/gateway/conn"  # WebSocket 地址
+
+    # --- openclaw_config 技能配置 ---
+    SKILL_REQUIRED_CONFIG:
+      clawhub: true
+      find-skills: true
+      skill-creator: true
+      feishu-doc: true
+      feishu-drive: true
+      feishu-perm: true
+      feishu-wiki: true
+      qqbot-cron: true
+      qqbot-media: true
+      wecom-doc: true
+      adp-knowledge: true
+      wecom-contact-lookup: true
+      wecom-doc-manager: true
+      wecom-edit-todo: true
+      wecom-get-todo-detail: true
+      wecom-get-todo-list: true
+      wecom-meeting-create: true
+      wecom-meeting-manage: true
+      wecom-meeting-query: true
+      wecom-msg: true
+      wecom-preflight: true
+      wecom-schedule: true
+      wecom-smartsheet-data: true
+      wecom-smartsheet-schema: true
+
+    # --- openclaw_config 技能模板配置 ---
+    OPENCLAW_SKILL_TEMPLATE_CONFIG:
+      - name: "表格处理"
+        template: "帮我安装excel-xlsx技能"
+        sort_order: 1
+      - name: "文档处理"
+        template: "帮我安装文档处理相关技能"
+        sort_order: 2
+      - name: "语音转文字"
+        template: "帮我安装语音转文字相关技能"
+        sort_order: 4
+      - name: "PPT制作"
+        template: "帮我安装powerpoint-pptx技能"
+        sort_order: 3
+
+    # --- openclaw_config.wx_kf ---
+    OPENCLAW_WX_KF:
+      share_url: "https://work.weixin.qq.com/kfid/kfc67c115bb3e705074?enc_scene=ENCGWNvR5FxV8qff1xsvQgMuNBU7KFKoAnAKnjaLXXNMKc8"
+      aes_key: "8f3a9b2c7d6e1f4a5b8c9d0e1f2a3b4c"
+      validity_period: "5m"
+
+    # --- openclaw_config 技能配置 ---
+    WATCH_SKILL_STATUS_MAX_SECONDS: 120
+
+    # --- api_key_config配置 ---
+    API_KEY_CONFIG:
+      encrypt_key_part1: "php9GiXLWVpx64U8rTDhlg=="
+      encrypt_key_part2: "QoFgeYJAjjNCVjLxIqq6Jw=="
+      enable_ciphertext_patch: true
+
+  trpc_go.yaml: |
+    global: #全局配置
+      namespace: Test #环境类型，分正式production和非正式development两种类型
+      env_name: test #环境名称，非正式环境下多环境的名称
+      enable_set: N #是否启用set
+      full_set_name: "" #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+    server: #服务端配置
+      app: adp #业务的应用名
+      server: resource-gallery #进程服务名
+      bin_path: /usr/local/trpc/bin/ #二进制可执行文件和框架配置文件所在路径
+      conf_path: /usr/local/trpc/conf/ #业务配置文件所在路径
+      data_path: /usr/local/trpc/data/ #业务数据文件所在路径
+      filter: #针对所有service处理函数前后的拦截器列表
+        - recovery
+        - opentelemetry
+        - i18n-adp
+        - cle-route-propagator
+      admin:
+        ip: ${POD_IP} #admin的ip，配置网卡nic也可以
+        port: 8081 #admin的port，必须同时配置这里的ip port才会启动admin
+      service: #业务服务提供的service，可以有多个
+        - name: trpc.adp.resource_gallery.Login #service的路由名称，格式：`业务领域.功能模块.项目名.Pb定义的服务名`
+          ip: ${POD_IP}
+          port: 9092 #服务监听端口
+          network: tcp #网络监听类型 tcp/udp
+          protocol: trpc #应用层协议 trpc/restful
+          timeout: 5000 #请求最长处理时间，单位毫秒
+          filter:
+            - session
+            - permission
+        - name: trpc.adp.resource_gallery.Admin #service的路由名称，格式：`业务领域.功能模块.项目名.Pb定义的服务名`
+          ip: ${POD_IP}
+          port: 9090 #服务监听端口
+          network: tcp #网络监听类型 tcp/udp
+          protocol: trpc #应用层协议 trpc/restful
+          timeout: 120000 #请求最长处理时间，单位毫秒
+        - name: trpc.adp.resource_gallery.Http #service的路由名称，格式：`业务领域.功能模块.项目名.Pb定义的服务名`
+          ip: ${POD_IP}
+          port: 9091 #服务监听端口
+          network: tcp #网络监听类型 tcp/udp
+          protocol: http #应用层协议 trpc/restful
+          timeout: 120000 #请求最长处理时间，单位毫秒
+        - name: trpc.adp.resource_gallery.OpenClawUnstableTask #service的路由名称
+          ip: ${POD_IP}
+          port: 9100 #服务监听端口 可使用占位符 ${port}
+          # 定时器cron表达式: [second minute hour day month weekday]
+          network: ${OPENCLAW_UNSTABLE_TASK_CRON}
+          protocol: timer #应用层协议
+          timeout: 3600000 #请求最长处理时间，单位毫秒
+        - name: trpc.adp.resource_gallery.OpenClawExpireTask #service的路由名称
+          ip: ${POD_IP}
+          port: 9101 #服务监听端口 可使用占位符 ${port}
+          # 定时器cron表达式: [second minute hour day month weekday]
+          network: ${OPENCLAW_EXPIRE_TASK_CRON}
+          protocol: timer #应用层协议
+          timeout: 3600000 #请求最长处理时间，单位毫秒
+        - name: trpc.adp.resource_gallery.OpenClawDeleteTask #service的路由名称
+          ip: ${POD_IP}
+          port: 9102 #服务监听端口 可使用占位符 ${port}
+          # 定时器cron表达式: [second minute hour day month weekday]
+          network: ${OPENCLAW_DELETE_TASK_CRON}
+          protocol: timer #应用层协议
+          timeout: 3600000 #请求最长处理时间，单位毫秒
+        - name: trpc.adp.resource_gallery.ApiKeyAccessLogCleanTask
+          ip: ${POD_IP}
+          port: 9104 #服务监听端口 可使用占位符 ${port}
+          # 定时器cron表达式: [second minute hour day month weekday]
+          network: ${API_KEY_ACCESS_LOG_CLEAN_TASK_CRON}
+          protocol: timer #应用层协议
+          timeout: 3600000 #请求最长处理时间，单位毫秒
+        - name: trpc.adp.resource_gallery.OpenClawSkillConfirmTask #service的路由名称
+          ip: ${POD_IP}
+          port: 9106 #服务监听端口 可使用占位符 ${port}
+          # 定时器cron表达式: [second minute hour day month weekday]
+          network: ${OPENCLAW_SKILL_CONFIRM_CRON}
+          protocol: timer #应用层协议
+          timeout: 3600000 #请求最长处理时间，单位毫秒
+    plugins:
+      log: #日志配置
+        default: #默认日志的配置，可支持多输出
+          - writer: console #控制台标准输出 默认
+            level: info #标准输出日志的级别
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+          - writer: file #本地文件日志
+            level: debug #本地文件滚动日志的级别
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/trpc.log #本地文件滚动日志存放的路径
+              write_mode: 2
+              roll_type: time
+              max_age: 7
+              max_backups: 10
+              compress: false
+              time_unit: day
+        clues:
+          - writer: console #控制台标准输出 默认
+            level: info #标准输出日志的级别
+          - writer: file
+            level: info
+            formatter: json
+            writer_config:
+              filename: /app/logs/clues.log
+              write_mode: 2
+              roll_type: time
+              max_age: 7
+              max_backups: 10
+              compress: false
+              time_unit: day
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+            - name: global
+              appid: ${RAINBOW_APP_ID} #appid
+              group: global #配置所属组
+              type: kv #七彩石数据格式, kv(默认), table
+              env_name: ${RAINBOW_ENV_NAME}
+              timeout: 2000
+              enable_client_provider: true
+      i18n:
+        i18n:
+          default_lang: zh-CN
+          supported_languages:
+            - zh-CN
+            - en-US
+          data_provider:
+            type: rainbow
+            prefix: biz
+            error_prefix: errors
+            char_scaling_factor:
+              zh-CN: 1
+              en-US: 3
+      selector:
+        polaris:
+          enable_servicerouter: true #注意这里一定要使用true
+    client:
+      namespace: ${POD_NAMESPACE}
+      filter:
+        - cle-route-propagator
+      service:
+        - name: mysql.qbot.admin
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.qbot
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local
+        - name: tdsql.qbot.openclaw
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_openclaw?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local
+        - name: redis.qbot.admin
+          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/2
+          timeout: 3000
+        - callee: trpc.KEP.agent_config_server.AgentConfigApi
+          name: trpc.KEP.agent-config-server.AgentConfigApi
+          target: ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.adp.ai_gateway.Admin
+          namespace: Production
+          network: tcp
+          protocol: trpc
+          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
+          timeout: 2000
+        - name: qbot.finance.finance.Finance
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          network: tcp
+          protocol: trpc
+          timeout: 30000
+        - name: trpc.adp.ai-gateway.api
+          namespace: Production
+          network: tcp
+          timeout: 4500000
+          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: http
+        - callee: trpc.KEP.plugin_config_server.PluginConfigApi
+          name: trpc.KEP.plugin-config-server.PluginConfigApi
+          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.KEP.bot-task-config-server.task-config
+          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+          namespace: Production
+          env_name: formal
+          callee: trpc.KEP.bot_task_config_server.TaskConfig
+          timeout: 3000
+        - name: trpc.adp.kb-config.Api
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: Production
+          protocol: trpc
+          callee: trpc.adp.kb_config.Api
+          timeout: 10000
+        - name: trpc.adp.platform_manager.Admin
+          namespace: Production
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 10000
+        - name: trpc.adp.platform_manager.Api
+          namespace: Production
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
+          timeout: 30000
+        - name: trpc.adp.app_config.Admin
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          protocol: trpc
+          timeout: 10000
+        - callee: trpc.KEP.bot_data_statistics_server.Api
+          namespace: Production
+          target: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
+          protocol: trpc
+          timeout: 20000
+          env_name: formal
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          namespace: Production
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          namespace: Production
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_manager.Login
+          namespace: Production
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 6000
+        - callee: trpc.adp.platform_charger.Finance
+          namespace: Production
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          network: tcp
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_content_moderation.Infosec
+          target: ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          network: tcp
+          protocol: trpc
+          timeout: 3000
+        - callee: trpc.adp.app_admin_proxy.Api
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: Production
+          protocol: trpc
+          timeout: 3000
+        - callee: trpc.adp.platform_metrology.Api
+          namespace: Production
+          target: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
+          protocol: trpc
+          timeout: 20000
+        - callee: http.KEP.atomic.PaaS
+          namespace: Production
+          target: ip://${ATOMIC_PAAS_TARGET}:8000
+          network: tcp
+          protocol: http
+          timeout: 20000
+        - callee: trpc.adp.adpbot_gateway.AdpBotGateway
+          namespace: Production
+          target: ip://adp-bot-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+          network: tcp
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.kb-parse-adapter.ParseAdapter
+          namespace: Production
+          target: ip://adp-kb-parse-adapter.{{ .Release.Namespace }}.svc.cluster.local:10001
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.skill_config.SkillConfigInner
+          namespace: Production
+          target: ip://adp-skill-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 20000

@@ -1,0 +1,246 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-app-shorturl
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    storage:
+      scheme:
+        cos: 1
+        cosoa: 1
+        realtimeoa: 1
+        cospre: 1
+        realtimepre: 1
+        realtime: 1
+
+    s3_config:
+      type: cos
+      scheme:
+        cos: 1
+        cosoa: 1
+        realtimeoa: 1
+        cospre: 1
+        realtimepre: 1
+        realtime: 1
+      cos_map:
+        cos: 
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: myqcloud.com
+          expire_time: 30m
+        cosoa: 
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: myqcloud.com
+          expire_time: 30m
+        realtimeoa: 
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: myqcloud.com
+          expire_time: 30m
+        cospre: 
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: myqcloud.com
+          expire_time: 30m
+        realtimepre: 
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: myqcloud.com
+          expire_time: 30m
+        realtime:
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: myqcloud.com
+          expire_time: 30m
+
+    data_migration_config: ${DataMigrationConfig}
+
+  data_migration_config: |
+    # 新迁移到TDSQL的数据表
+    tdsql_tables:
+      - table: t_short_url
+        effective_time: "2226-02-02 22:45:00"
+
+
+  placeholder.yaml: |
+
+
+    SHORT_URL_REDIS_PORT: 6379
+    SHORT_URL_REDIS_DB_NUMBER: 7
+
+    DataMigrationConfig:
+      tdsql_tables:
+      - table: t_short_url
+        effective_time: "2026-02-02 22:45:00"
+
+  trpc_go.yaml: |
+    global:
+      namespace: Production
+      env_name: formal
+      enable_set: false         #是否启用set
+      full_set_name: adp   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}  
+    server:
+      app: adp
+      server: app-shorturl
+      admin:
+        ip: 0.0.0.0
+        port: 8081
+      filter:
+        - validation
+        - opentelemetry
+        - recovery
+        - simpledebuglog
+      service:
+        - name: qbot.qbot.short_url.ShortUrl
+          ip: 0.0.0.0
+          port: 8080
+          network: tcp
+          protocol: restful
+          timeout: 1000
+        - name: qbot.qbot.short_url.Admin
+          ip: 0.0.0.0
+          port: 9090
+          network: tcp
+          protocol: trpc
+          timeout: 3000
+
+    plugins:
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+            - name: global
+              appid: ${RAINBOW_APP_ID}  # appid
+              group: global # 配置所属组
+              type: kv   # 七彩石数据格式, kv(默认), table
+              env_name: ${RAINBOW_ENV_NAME}
+              timeout: 2000
+              enable_client_provider: true
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      log:
+        default:
+          - writer: console
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+          - writer: file
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/trpc.log
+              write_mode: 2
+              roll_type: time
+              max_age: 7
+              max_backups: 10
+              compress: false
+              time_unit: day
+
+    client:
+      namespace: Production
+      service:
+        - name: mysql.qbot.short_url.db
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+          timeout: 800
+        - name: redis.qbot.short_url
+          network: tcp
+          target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/7
+          password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
+          timeout: 800
+        - name: tdsql.db_llm_robot
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local
+          timeout: 800
+        - name: qbot.qbot.admin.Login
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: qbot.qbot.admin.Api
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: qbot.qbot.admin.Admin
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: qbot.qbot.chat.Chat
+          target: ip://adp-chat-manage.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: qbot.qbot.short_url.Admin
+          target: ip://adp-app-shorturl.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: qbot.qbot.vector_doc.VectorDoc
+          target: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: qbot.qbot.vector_doc.DirectIndex
+          target: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          network: tcp
+          timeout: 4000

@@ -1,0 +1,251 @@
+# ADP Platform - External Configuration
+# Settings under "global" are automatically passed to all sub-charts
+
+# ============================
+# Global Configuration (automatically passed to sub-charts)
+# ============================
+global:
+  # Cluster type: includes [minimal], [standard], and [recommended] profiles
+  clusterSize: minimal
+  # CLB domain (required) https://console.cloud.tencent.com/clb/instance
+  clb: "xx.adp-private.com"
+  # Whether to validate remaining K8s cluster resources (disable when deploying on super nodes)
+  checkK8sResources: true
+  # CLB ID (required)
+  clbId: lb-example
+  # Protocol: http or https (required)
+  scheme: https
+  # CLB HTTPS certificate ID (required when scheme is https) https://console.cloud.tencent.com/ssl
+  clbCertId: "<YOUR_CLB_CERT_ID>"
+  # No need to modify
+  secapi_enable: false
+
+  # RSA key configuration (required) - used for frontend/backend login password encryption/decryption
+  # Generation method:
+  #   1. Generate private key: openssl genrsa -out private.pem 2048
+  #   2. Generate public key: openssl rsa -in private.pem -pubout -out public.pem
+  #   3. Base64 encode: cat private.pem | base64 -w 0 > privateKey.txt
+  #                     cat public.pem | base64 -w 0 > publicKey.txt
+  rsa:
+    privateKey: "<YOUR_RSA_PRIVATE_KEY_BASE64>"
+    publicKey: "<YOUR_RSA_PUBLIC_KEY_BASE64>"
+
+  # ============================
+  # Component Configuration (components)
+  # ============================
+  # vendor: Cloud provider identifier (tencent/aws/alibaba/azure/gcp/huawei/self)
+  # providerType: Specific product type, uniquely identifies the component implementation together with vendor
+  components:
+    # Database configuration (required) https://cloud.tencent.com/product/tdsql
+    db:
+      vendor: tencent
+      providerType: tdsql  # tencent: tdsql/cynosdb | aws: aurora/rds | alibaba: polardb | self: mysql/mariadb
+      host: "192.168.0.1"
+      port: 3306
+      user: "<YOUR_DB_USER>"
+      password: "<YOUR_DB_PASSWORD>"
+
+    # Redis cache configuration (required) https://cloud.tencent.com/product/crs
+    redis:
+      vendor: tencent
+      providerType: crs  # tencent: crs | aws: elasticache | alibaba: kvstore | self: redis
+      cluster: master
+      hosts:
+        - 192.168.0.1
+      port: 6379
+      password: "<YOUR_REDIS_PASSWORD>"
+
+    # Elasticsearch configuration (required) https://cloud.tencent.com/product/es
+    es:
+      vendor: tencent
+      providerType: es  # tencent: es | aws: opensearch | alibaba: elasticsearch | self: elasticsearch
+      hosts:
+        - 192.168.0.1
+      port: 9200
+      user: elastic
+      password: "<YOUR_ES_PASSWORD>"
+
+    # Object storage configuration (required) https://cloud.tencent.com/product/cos
+    s3:
+      vendor: tencent
+      providerType: cos  # tencent: cos | aws: s3 | alibaba: oss | azure: blob | gcp: gcs | self: minio
+      # COS-specific configuration (effective when providerType=cos)
+      cos:
+        secretId: "<YOUR_COS_SECRET_ID>"
+        secretKey: "<YOUR_COS_SECRET_KEY>"
+        appId: "<YOUR_COS_APP_ID>"
+        bucket: "<YOUR_COS_BUCKET>"
+        region: "<YOUR_COS_REGION>"
+        domain: myqcloud.com
+        subPath: "public"
+        expireTime: 3600s
+        credentialTime: 3600s
+
+
+    # Message Queue CKafka https://console.cloud.tencent.com/ckafka/instance
+    kafka:
+      vendor: tencent
+      providerType: kafka
+      hosts:
+        - 192.168.0.1
+      port: 9092
+
+    # clickhouse
+    clickhouse:
+      vendor: tencent
+      providerType: clickhouse  # tencent: clickhouse |
+      hosts:
+        - 192.168.0.1
+      port: 9000
+      user: "<YOUR_CLICKHOUSE_USER>"
+      password: "<YOUR_CLICKHOUSE_PASSWORD>"
+
+  # ============================
+  # Observability Configuration (observability)
+  # ============================
+  observability:
+    # CLS log collection configuration (optional) https://console.cloud.tencent.com/cls/topic
+    cls:
+      enabled: true # Recommended to enable
+      logsetId: "<YOUR_CLS_LOGSET_ID>"
+      topicId: "<YOUR_CLS_TOPIC_ID>"
+
+    # Prometheus monitoring configuration (optional) https://console.cloud.tencent.com/tke2/prometheus2
+    prometheus:
+      enabled: false
+
+    # APM tracing configuration (optional) https://console.cloud.tencent.com/monitor/apm/system/list
+    apm:
+      vendor: tencent
+      providerType: tps  # tencent: tps | aws: xray | self: jaeger
+      otlp: "pl.ap-beijing.apm.tencentcs.com:4319"
+      registry: ""
+      attributes:
+        token: "<YOUR_APM_TOKEN>"
+
+  # ====================================================================================
+  # All configurations below are optional. Please contact technical support if needed.
+  # ====================================================================================
+
+  # ============================
+  # Content Security Configuration (content-security)
+  # ===========================
+  contentSecurity:
+    # Type: sdk (required)
+    type: sdk
+    # Whether to disable content check (optional, true or false)
+    disableContentCheck: true
+    # Audit switch (optional, true or false)
+    auditSwitch: false
+    # Whether to disable image check (optional, true or false)
+    disableImageCheck: false
+    # `bizType` (required when audit is enabled)
+    bizType: "<YOUR_BIZ_TYPE>"
+    # Text content security configuration (optional) https://cloud.tencent.com/document/product/1124/51860
+    region: ap-guangzhou
+    appId: "<YOUR_APP_ID>"
+    uin: "<YOUR_UIN>"
+    subUin: "<YOUR_SUB_UIN>"
+    secretId: "<YOUR_SECRET_ID>"
+    secretKey: "<YOUR_SECRET_KEY>"
+    callbackUrl: "<YOUR_CALLBACK_URL>"
+
+  # ============================================================
+  # WeChat Third-Party Platform Configuration
+  # ============================================================
+  # After registering a WeChat Open Platform account, obtain the following from the third-party platform details page
+  wechat:
+    componentAppId: "<YOUR_WECHAT_THIRD_PLATFORM_APPID>"
+    componentAppSecret: "<YOUR_WECHAT_THIRD_PLATFORM_SECRET>"
+    componentToken: "<YOUR_WECHAT_THIRD_PLATFORM_TOKEN>"
+    componentAesKey: "<YOUR_WECHAT_THIRD_PLATFORM_AES_KEY>"
+
+  # ============================
+  # Business Configuration (migrated from tad.global)
+  # ============================
+  finance:
+    disabled: true
+    search_disabled: true
+    report_disabled: false
+
+  deploy_mode: "standard"
+  free_preview: false
+  productType: "adp"
+  weakPasswordList: []
+
+  admin:
+    qpm: 100
+    tpm: 100000
+
+  delete_data:
+    chat_server_retention_days: 30
+    retrieval_server_retention_days: 30
+    plugin_config_server_retention_minutes: 1440
+
+  retrieval_config:
+    vector_recall_enable: true
+
+  ChatServer:
+    max_concurrence: 10
+    role_intent_model_name: ""
+    tipwords_opt_hunyuan_version: ""
+    widget_optimize_model_name: ""
+    workflow_config_model_name: ""
+    workflow_intent_model_name: ""
+    workflow_role_model_name: ""
+    multi_modal:
+      disabled: false
+
+  RagServer:
+    ds_faq_reject_model_name: ""
+    search_secret_id: ""
+    search_secret_key: ""
+    workflow_config_model_name: ""
+
+  channelmsgsvr:
+    component_app_id: ""
+
+  ti_license:
+    appId: ""
+    secretKey: ""
+
+  easygraph:
+    credentials:
+      username: ""
+      password: ""
+
+  # ============================
+  # Object Storage Compatibility Layer (legacy reference compatibility)
+  # ============================
+  objectstorage:
+    provider: "cos"
+    minio:
+      host: "minio.adp.svc.cluster.local"
+      port: 80
+    obs:
+      host: ""
+      port: 443
+    cos:
+      host: ""
+      port: 443
+    csp:
+      host: ""
+      port: 443
+    s3:
+      accessKey: ""
+      secretKey: ""
+      region: ""
+
+  # Custom annotations, injected into all Deployment/StatefulSet/Job resources during deployment
+  # Leave empty or comment out specific entries when not needed
+  # Example:
+  #   Icp-notify.cloud.infra/sync-to-cmdb: "true"
+  #   Icp-notify.cloud.infra/app-name-key: nonstandardAppName
+  customAnnotations: {}
+
+  # Custom labels, injected into all Deployment/StatefulSet/Job resources during deployment
+  # Leave empty or comment out specific entries when not needed
+  # Example:
+  #   nonstandardAppName: "txadp"
+  #   envType: "PROD"
+  customLabels: {}

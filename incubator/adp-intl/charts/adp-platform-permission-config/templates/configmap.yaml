@@ -1,0 +1,1070 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-platform-permission-config
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    is_private: ${IS_PRIVATE}
+
+    ######################
+    # 角色相关配置
+    ######################
+    role_conf:
+      business_role_name: 管理员
+      business_role_description: 主账号管理员角色
+      role_id_salt: ${ROLE_ID_SALT}
+
+    get_user_nickname_conc_limit: ${GET_USER_NICKNAME_CONC_LIMIT}
+    space_member_limit: ${SPACE_MEMBER_LIMIT}
+
+    ######################
+    # 子账号默认功能权限
+    ######################
+    sub_uin_default_base_permission_ids: ${SUB_UIN_DEFAULT_BASE_PERMISSION_IDS}
+
+    resource_view_permission_ids: ${RESOURCE_VIEW_PERMISSION_IDS}
+
+    resource_edit_permission_ids: ${RESOURCE_EDIT_PERMISSION_IDS}
+
+    resource_no_permission_id_map: ${RESOURCE_NO_PERMISSION_ID_MAP}
+
+    ######################
+    # 不可用权限id
+    ######################
+    disable_permission_ids: ${DISABLE_PERMISSION_IDS}
+
+    ######################
+    # adp产品所有权限id
+    ######################
+    adp_all_permission_ids: ${ADP_ALL_PERMISSION_IDS}
+
+    ######################
+    # ti-auth 账号服务配置
+    ######################
+    ti_auth_account_conf:
+      account_host: /DescribeSelfInfo
+      describe_users: /DescribeUsers
+      describe_main_user_names: /DescribeMainUserNames
+      create_user: /CreateUser
+      delete_users: /DeleteUsers
+      modify_user_info: /ModifyUser
+      describe_sub_accounts_by_main_user: /DescribeSubAccountsByMainUser
+      disable_user: /DisableUser
+      enable_user: /EnableUser
+      describe_user: /DescribeUser
+      describe_user_depts: /DescribeUserDepts
+      describe_depts: /DescribeDepts
+      describe_dept_details: /DescribeDeptDetails
+      describe_parent_dept_chain_ids: /DescribeParentDeptChainIDs
+      add_user_to_dept: /AddUserToDept
+      remove_user_from_dept: /RemoveUserFromDept
+      create_dept: /CreateDept
+      delete_dept: /DeleteDept
+      delete_space_data: /DeleteSpaceData
+      describe_child_dept_ids: /DescribeChildDeptIDs
+      get_dept_user_list: /DescribeDeptUsers
+
+    resource_name_map:
+      app: 应用开发
+      knowledge: 知识库
+      plugin: 插件广场
+      prompt_template: 提示词模板
+      widget: Widget
+      skill: 技能中心
+
+    super_admin_conf:
+      necessary_permissions:
+        lke:
+          - lkeApp.basic
+      special_platform_permissions_ids: ${SPECIAL_PLATFORM_PERMISSIONS_IDS}
+      necessary_resource_permissions:
+        - lke
+      permission_resource_type_map: ${PERMISSION_RESOURCE_TYPE_MAP}
+
+  error_en-US.json: |
+    {
+        "ErrParams": "Parameter error, please retry",
+        "ErrSystem": "System error",
+        "ErrInvalidParameter": "Invalid parameter",
+        "ErrOwnerAccountCannotBeOperated": "The owner account cannot be operated",
+        "ErrUserCountExceedSpaceLimit": "The number of users exceeds the space limit",
+        "ErrPermissionIdsNotExist": "permissionIds not found",
+        "ErrAccountNotExistOrNotVerified": "Account does not exist or is not verified",
+        "ErrUinNotExist": "does not exist",
+        "ErrUinNotBelong": "does not belong to the current operator",
+        "ErrCorpRoleIDNotExist": "Role ID does not exist",
+        "ErrCreateOwnerUserFailed": "Failed to create owner user",
+        "ErrAttachCorpSuperAdminRoleFailed": "Failed to bind corp super admin role",
+        "ErrCreateAndAttachSpaceAdminFailed": "Failed to create and bind space admin role",
+        "ErrActivateProductFailed": "Failed to activate product",
+        "ErrSpaceAdminRoleNameCannotBeCustom": "Cannot be used as a custom role name",
+        "ErrRoleNotExist": "Role does not exist",
+        "ErrAddUsersToSpaceFailed": "Failed to add users to space",
+        "ErrRoleOperationNotAllowed": "Role operation not allowed",
+        "ErrAttachTypeInvalid": "Invalid AttachType parameter",
+        "ErrInvalidSpaceID": "Invalid space ID",
+        "ErrOnlySpaceAdminRoleAllowed": "Only space admin role is allowed",
+        "ErrCreateAndAttachSpaceRoleFailed": "Failed to create and bind space role",
+        "ErrCreateAndAttachPersonalRoleFailed": "Failed to create and bind personal role",
+        "ErrRoleNameDuplicate": "Role name duplicate",
+        "ErrRoleAlreadyExist": "Role already exists",
+        "ErrDescribeUserInfoFailed": "Failed to describe user info",
+        "ErrGetRolesByRoleIDsFailed": "Failed to get roles by role IDs",
+        "ErrGetRolesByUserFailed": "Failed to get roles by user",
+        "ErrGetUinsByRoleIDsFailed": "Failed to get uins by role IDs",
+        "ErrFilterUinsByCorpRoleTypeFailed": "Failed to filter uins by corp role type",
+        "ErrCreateUserFailed": "Failed to create user",
+        "ErrDeleteSpaceFailed": "Failed to delete space",
+        "ErrCreateAndAttachRoleFailed": "Failed to create and attach role",
+        "ErrGetUserBasicInfoFailed": "Failed to get user basic info",
+        "ErrBatchGetUserInfoFailed": "Failed to batch get user info",
+        "ErrSpatialRemovableFailed": "Failed to get space removable status",
+        "ErrGetNicknameFailed": "Failed to get user nickname"
+    }
+  error_zh-CN.json: |
+    {
+        "ErrParams": "参数异常，请重试",
+        "ErrSystem": "系统错误",
+        "ErrInvalidParameter": "参数不合法",
+        "ErrOwnerAccountCannotBeOperated": "主账号不能被操作",
+        "ErrUserCountExceedSpaceLimit": "用户数量超过空间限制",
+        "ErrPermissionIdsNotExist": "permissionIds不存在",
+        "ErrAccountNotExistOrNotVerified": "账号不存在或者没有实名认证",
+        "ErrUinNotExist": "不存在",
+        "ErrUinNotBelong": "UIN不属于当前操作者",
+        "ErrCorpRoleIDNotExist": "角色ID不存在",
+        "ErrCreateOwnerUserFailed": "添加主账号失败",
+        "ErrAttachCorpSuperAdminRoleFailed": "绑定企业超级管理员角色失败",
+        "ErrCreateAndAttachSpaceAdminFailed": "创建绑定空间管理员角色失败",
+        "ErrActivateProductFailed": "通知业务激活产品失败",
+        "ErrSpaceAdminRoleNameCannotBeCustom": "不能作为自定义角色名",
+        "ErrRoleNotExist": "角色不存在",
+        "ErrAddUsersToSpaceFailed": "添加用户到空间失败",
+        "ErrRoleOperationNotAllowed": "角色不允许操作",
+        "ErrAttachTypeInvalid": "AttachType参数有误",
+        "ErrInvalidSpaceID": "无效的空间ID",
+        "ErrOnlySpaceAdminRoleAllowed": "只能创建绑定空间角色",
+        "ErrCreateAndAttachSpaceRoleFailed": "创建绑定空间角色失败",
+        "ErrCreateAndAttachPersonalRoleFailed": "创建绑定个人角色失败",
+        "ErrRoleNameDuplicate": "角色名称重复",
+        "ErrRoleAlreadyExist": "角色已存在",
+        "ErrDescribeUserInfoFailed": "获取用户信息失败",
+        "ErrGetRolesByRoleIDsFailed": "通过角色ID列表获取角色信息失败",
+        "ErrGetRolesByUserFailed": "通过用户获取关联角色失败",
+        "ErrGetUinsByRoleIDsFailed": "通过角色ID列表获取关联用户失败",
+        "ErrFilterUinsByCorpRoleTypeFailed": "通过企业角色类型过滤用户列表失败",
+        "ErrCreateUserFailed": "账号不存在或者没有实名认证",
+        "ErrDeleteSpaceFailed": "删除空间失败",
+        "ErrCreateAndAttachRoleFailed": "创建并绑定角色失败",
+        "ErrGetUserBasicInfoFailed": "获取用户基本信息失败",
+        "ErrBatchGetUserInfoFailed": "批量获取用户信息失败",
+        "ErrSpatialRemovableFailed": "获取空间可移除状态失败",
+        "ErrGetNicknameFailed": "获取用户昵称失败"
+    }
+  permission_en-US.json: |
+    {
+        "KeyOwnerAccountCannotBeOperated": "The owner account cannot be operated",
+        "KeyUinNotExist": "does not exist",
+        "KeyUinNotBelong": "does not belong to the current operator",
+        "KeyUserCountExceedSpaceLimit": "The number of users exceeds the space limit",
+        "KeyPermissionIdsNotExist": "permissionIds not found",
+        "KeySpaceAdminRoleName": "Space Admin",
+        "KeySpaceAdminRoleDescription": "Space administrator role",
+        "KeyAttachTypeInvalid": "Invalid AttachType parameter",
+        "KeyCorpRoleIDNotExist": "Role ID does not exist",
+        "KeyRoleNotExist": "Role does not exist",
+        "KeyRoleOperationNotAllowed": "Role operation not allowed",
+        "KeyRoleNameCannotBeCustom": "Cannot be used as a custom role name",
+        "KeySpaceRoleAlreadyExist": "Role already exists",
+        "KeyAccountNotExistOrNotVerified": "Account does not exist or is not verified",
+        "KeyCreateOwnerUserFailed": "Failed to create owner user",
+        "KeyAttachCorpSuperAdminRoleFailed": "Failed to bind corp super admin role",
+        "KeyCreateAndAttachSpaceAdminFailed": "Failed to create and bind space admin role",
+        "KeyActivateProductFailed": "Failed to activate product",
+        "KeyInvalidSpaceID": "Invalid space ID",
+        "KeyOnlySpaceAdminRoleAllowed": "Only space admin role is allowed",
+        "KeyCreateAndAttachSpaceRoleFailed": "Failed to create and bind space role",
+        "KeyCreateAndAttachPersonalRoleFailed": "Failed to create and bind personal role",
+        "KeyUserManagerOperDelete": "Delete - User Management",
+        "KeyUserManagerOperCreate": "Create - User Management",
+        "KeyRoleManagerOperCreate": "Create - Role Management",
+        "KeyRoleManagerOperDelete": "Delete - Role Management",
+        "KeyRoleManagerOperModify": "Edit - Role Management",
+        "KeyRoleManagerOperAttach": "Edit - Bind Role",
+        "KeyBasePermissionManagerOperModify": "Edit - Permission Management",
+        "KeyModifyBasePermission": "Configure Function Permission",
+        "KeyResourcePermissionManagerOperModify": "Edit - Permission Management",
+        "KeyModifyResourcePermission": "Configure Data Permission",
+        "主账号管理员角色": "Main Account Administrator Role",
+        "管理员": "Administrator",
+        "空间创建员": "Space Creator",
+        "超级管理员": "Super Administrator",
+        "空间管理员角色": "Space Administrator Role",
+        "普通用户": "Regular User",
+        "高级自定义": "Advanced Customization",
+        "应用配置": "Application Configuration",
+        "高级配置": "Advanced Configuration",
+        "应用端用户权限": "Application-side User Permissions",
+        "上下文改写": "Context Rewriting",
+        "检索知识库回答图片问题": "Retrieve Knowledge Base to Answer Image Questions",
+        "意图达成优先级": "Intent Fulfillment Priority",
+        "同义词": "Synonyms",
+        "Agent协同方式": "Agent Collaboration Mode",
+        "agent协同方式": "Agent Collaboration Mode",
+        "自由转交": "Free Transfer",
+        "工作流编排": "Workflow Orchestration",
+        "对话体验": "Conversation Experience",
+        "编辑应用": "Edit Application",
+        "应用模式": "Application Mode",
+        "欢迎语": "Welcome Message",
+        "知识": "Knowledge",
+        "数据库开关": "Database Toggle",
+        "文档检索匹配度": "Document Retrieval Match Score",
+        "文档开关": "Document Toggle",
+        "文档召回数量": "Document Recall Count",
+        "向量模型": "Vector Model",
+        "Excel检索增强": "Excel Retrieval Enhancement",
+        "问答库答案回复": "Q&A Library Answer Response",
+        "问答检索匹配度": "Q&A Retrieval Match Score",
+        "问答开关": "Q&A Toggle",
+        "问答召回数量": "Q&A Recall Count",
+        "结果重排序": "Result Re-ranking",
+        "检索策略": "Retrieval Strategy",
+        "任务流程配置": "Task Flow Configuration",
+        "模型配置": "Model Configuration",
+        "生成模型": "Generation Model",
+        "上下文轮数": "Context Turn Count",
+        "思考模型": "Reasoning Model",
+        "输出设置": "Output Settings",
+        "输出方式": "Output Method",
+        "回复设置": "Reply Settings",
+        "角色指令": "Role Instructions",
+        "联网搜索": "Web Search",
+        "变量与记忆": "Variables & Memory",
+        "应用评测": "Application Evaluation",
+        "应用运营": "Application Operations",
+        "删除应用/复制应用": "Delete Application / Copy Application",
+        "复制应用": "Copy Application",
+        "删除应用": "Delete Application",
+        "知识管理": "Knowledge Management",
+        "添加共享知识": "Add Shared Knowledge",
+        "数据库": "Database",
+        "文档": "Documents",
+        "下载": "Download",
+        "知识库设置": "Knowledge Base Settings",
+        "标签管理": "Tag Management",
+        "问答": "Q&A",
+        "导出": "Export",
+        "任务流程": "Task Flow",
+        "应用发布": "Application Publishing",
+        "发布按钮": "Publish Button",
+        "发布渠道": "Publishing Channels",
+        "服务状态": "Service Status",
+        "获取appkey": "Get App Key",
+        "体验链接获取": "Get Experience Link",
+        "工作流管理": "Workflow Management",
+        "可编辑": "Editable",
+        "无权限": "No Permission",
+        "可查看": "Viewable",
+        "知识库": "Knowledge Base",
+        "删除知识库": "Delete Knowledge Base",
+        "编辑知识库": "Edit Knowledge Base",
+        "插件广场": "Plugin Marketplace",
+        "删除插件": "Delete Plugin",
+        "编辑插件": "Edit Plugin",
+        "提示词模板": "Prompt Template",
+        "删除提示词模板": "Delete Prompt Template",
+        "编辑提示词模板": "Edit Prompt Template",
+        "模型广场": "Model Marketplace",
+        "添加模型": "Add Model",
+        "删除模型": "Delete Model",
+        "新建提示词模板": "New Prompt Template",
+        "工作空间": "Workspace",
+        "删除工作空间": "Delete Workspace",
+        "修改工作空间": "Modify Workspace",
+        "应用开发": "Application Development",
+        "新建应用": "New Application",
+        "原子能力": "Atomic Capability",
+        "应用模版": "Application Template",
+        "清空会话": "Clear Conversation",
+        "复制": "Copy",
+        "应用体验": "Application Experience",
+        "接入mcp插件": "Integrate MCP Plugin",
+        "创建插件": "Create Plugin",
+        "新建知识库": "New Knowledge Base",
+        "平台管理": "Platform Management",
+        "计费资源清单": "Billing Resource List",
+        "并发资源": "Concurrency Resources",
+        "知识库容量": "Knowledge Base Capacity",
+        "按量资源": "Pay-as-you-go Resources",
+        "后付费设置": "Postpaid Settings",
+        "计费资源使用明细": "Billing Resource Usage Details",
+        "并发统计": "Concurrency Statistics",
+        "知识库容量统计": "Knowledge Base Capacity Statistics",
+        "插件用量统计": "Plugin Usage Statistics",
+        "模型用量统计": "Model Usage Statistics",
+        "平台端用户权限": "Platform-side User Permissions",
+        "权限管理": "Permission Management",
+        "角色管理": "Role Management",
+        "用户管理": "User Management",
+        "内容安全": "Content Security",
+        "应用安全设置": "Application Security Settings",
+        "关键词库": "Keyword Library",
+        "安全策略": "Security Policy",
+        "风险识别明细": "Risk Identification Details",
+        "风险识别统计": "Risk Identification Statistics",
+        "运维管理": "Operations Management",
+        "操作日志": "Operation Logs",
+        "Widget开发": "Widget",
+        "新建Widget": "Create Widget",
+        "复制Widget": "Copy Widget",
+        "删除Widget": "Delete Widget",
+        "导出Widget": "Export Widget",
+        "编辑Widget": "Edit Widget",
+        "对话内容审核": "Conversation content review",
+        "图片审核": "Image Review",
+        "文本审核": "Text Review",
+        "数据报表": "Data Reports",
+        "业务看板": "Business Dashboard",
+        "资源看板": "Resource Dashboard",
+        "创建AppKey": "Create AppKey",
+        "删除AppKey": "Delete AppKey",
+        "修改AppKey状态": "Modify AppKey",
+        "计费资源": "Billing Resources",
+        "输入框按钮": "InputBox Button",
+        "推荐问题": "Recommended Question",
+        "导入应用": "Import App",
+        "导出应用": "Export App",
+        "知识图谱检索": "Knowledge Graph Search",
+        "告警历史": "Alarm History",
+        "告警管理": "Alarm Manage",
+        "资源管控": "Resource management",
+        "联网搜索设置": "Internet search settings",
+        "一键部署 ClawPro": "Install ClawPro",
+        "Skills广场": "Skills Center",
+        "导入Skill": "Import Skill",
+        "智能工作台": "Smart Desk",
+        "密钥管理": "API Key Management",
+        "组织管理":"Organization Management",
+        "license管理":"License Management"
+    }
+  permission_zh-CN.json: |
+    {
+      "KeyOwnerAccountCannotBeOperated": "主账号不能被操作",
+      "KeyUinNotExist": "不存在",
+      "KeyUinNotBelong": "UIN不属于当前操作者",
+      "KeyUserCountExceedSpaceLimit": "用户数量超过空间限制",
+      "KeyPermissionIdsNotExist": "permissionIds不存在",
+      "KeySpaceAdminRoleName": "管理员",
+      "KeySpaceAdminRoleDescription": "空间管理员角色",
+      "KeyAttachTypeInvalid": "AttachType参数有误",
+      "KeyCorpRoleIDNotExist": "角色ID不存在",
+      "KeyRoleNotExist": "角色不存在",
+      "KeyRoleOperationNotAllowed": "角色不允许操作",
+      "KeyRoleNameCannotBeCustom": "不能作为自定义角色名",
+      "KeySpaceRoleAlreadyExist": "角色已存在",
+      "KeyAccountNotExistOrNotVerified": "账号不存在或者没有实名认证",
+      "KeyCreateOwnerUserFailed": "添加主账号失败",
+      "KeyAttachCorpSuperAdminRoleFailed": "绑定企业超级管理员角色失败",
+      "KeyCreateAndAttachSpaceAdminFailed": "创建绑定空间管理员角色失败",
+      "KeyActivateProductFailed": "通知业务激活产品失败",
+      "KeyInvalidSpaceID": "无效的空间ID",
+      "KeyOnlySpaceAdminRoleAllowed": "只能创建绑定空间角色",
+      "KeyCreateAndAttachSpaceRoleFailed": "创建绑定空间角色失败",
+      "KeyCreateAndAttachPersonalRoleFailed": "创建绑定个人角色失败",
+      "KeyUserManagerOperDelete": "删除-用户管理",
+      "KeyUserManagerOperCreate": "新建-用户管理",
+      "KeyRoleManagerOperCreate": "新建-角色管理",
+      "KeyRoleManagerOperDelete": "删除-角色管理",
+      "KeyRoleManagerOperModify": "编辑-角色管理",
+      "KeyRoleManagerOperAttach": "编辑-绑定角色",
+      "KeyBasePermissionManagerOperModify": "编辑-权限管理",
+      "KeyModifyBasePermission": "配置功能权限",
+      "KeyResourcePermissionManagerOperModify": "编辑-权限管理",
+      "KeyModifyResourcePermission": "配置数据权限",
+      "主账号管理员角色": "主账号管理员角色",
+      "管理员": "管理员",
+      "空间创建员": "空间创建员",
+      "超级管理员": "超级管理员",
+      "空间管理员角色": "空间管理员角色",
+      "普通用户": "普通用户",
+      "高级自定义": "高级自定义",
+      "应用配置": "应用配置",
+      "高级配置": "高级配置",
+      "应用端用户权限": "应用端用户权限",
+      "上下文改写": "上下文改写",
+      "检索知识库回答图片问题": "检索知识库回答图片问题",
+      "意图达成优先级": "意图达成优先级",
+      "同义词": "同义词",
+      "Agent协同方式": "Agent协同方式",
+      "agent协同方式": "agent协同方式",
+      "自由转交": "自由转交",
+      "工作流编排": "工作流编排",
+      "对话体验": "对话体验",
+      "编辑应用": "编辑应用",
+      "应用模式": "应用模式",
+      "欢迎语": "欢迎语",
+      "知识": "知识",
+      "数据库开关": "数据库开关",
+      "文档检索匹配度": "文档检索匹配度",
+      "文档开关": "文档开关",
+      "文档召回数量": "文档召回数量",
+      "向量模型": "向量模型",
+      "Excel检索增强": "Excel检索增强",
+      "问答库答案回复": "问答库答案回复",
+      "问答检索匹配度": "问答检索匹配度",
+      "问答开关": "问答开关",
+      "问答召回数量": "问答召回数量",
+      "结果重排序": "结果重排序",
+      "检索策略": "检索策略",
+      "任务流程配置": "任务流程配置",
+      "模型配置": "模型配置",
+      "生成模型": "生成模型",
+      "上下文轮数": "上下文轮数",
+      "思考模型": "思考模型",
+      "输出设置": "输出设置",
+      "输出方式": "输出方式",
+      "回复设置": "回复设置",
+      "角色指令": "角色指令",
+      "联网搜索": "联网搜索",
+      "变量与记忆": "变量与记忆",
+      "应用评测": "应用评测",
+      "应用运营": "应用运营",
+      "删除应用/复制应用": "删除应用/复制应用",
+      "复制应用": "复制应用",
+      "删除应用": "删除应用",
+      "知识管理": "知识管理",
+      "添加共享知识": "添加共享知识",
+      "数据库": "数据库",
+      "文档": "文档",
+      "下载": "下载",
+      "知识库设置": "知识库设置",
+      "标签管理": "标签管理",
+      "问答": "问答",
+      "导出": "导出",
+      "任务流程": "任务流程",
+      "应用发布": "应用发布",
+      "发布按钮": "发布按钮",
+      "发布渠道": "发布渠道",
+      "服务状态": "服务状态",
+      "获取appkey": "获取appkey",
+      "体验链接获取": "体验链接获取",
+      "工作流管理": "工作流管理",
+      "可编辑": "可编辑",
+      "无权限": "无权限",
+      "可查看": "可查看",
+      "知识库": "知识库",
+      "删除知识库": "删除知识库",
+      "编辑知识库": "编辑知识库",
+      "插件广场": "插件广场",
+      "删除插件": "删除插件",
+      "编辑插件": "编辑插件",
+      "提示词模板": "提示词模板",
+      "删除提示词模板": "删除提示词模板",
+      "编辑提示词模板": "编辑提示词模板",
+      "模型广场": "模型广场",
+      "添加模型": "添加模型",
+      "删除模型": "删除模型",
+      "新建提示词模板": "新建提示词模板",
+      "工作空间": "工作空间",
+      "删除工作空间": "删除工作空间",
+      "修改工作空间": "修改工作空间",
+      "应用开发": "应用开发",
+      "新建应用": "新建应用",
+      "原子能力": "原子能力",
+      "应用模版": "应用模版",
+      "清空会话": "清空会话",
+      "复制": "复制",
+      "应用体验": "应用体验",
+      "接入mcp插件": "接入mcp插件",
+      "创建插件": "创建插件",
+      "新建知识库": "新建知识库",
+      "平台管理": "平台管理",
+      "计费资源清单": "计费资源清单",
+      "并发资源": "并发资源",
+      "知识库容量": "知识库容量",
+      "按量资源": "按量资源",
+      "后付费设置": "后付费设置",
+      "计费资源使用明细": "计费资源使用明细",
+      "并发统计": "并发统计",
+      "知识库容量统计": "知识库容量统计",
+      "插件用量统计": "插件用量统计",
+      "模型用量统计": "模型用量统计",
+      "平台端用户权限": "平台端用户权限",
+      "权限管理": "权限管理",
+      "角色管理": "角色管理",
+      "用户管理": "用户管理",
+      "内容安全": "内容安全",
+      "应用安全设置": "应用安全设置",
+      "关键词库": "关键词库",
+      "安全策略": "安全策略",
+      "风险识别明细": "风险识别明细",
+      "风险识别统计": "风险识别统计",
+      "运维管理": "运维管理",
+      "操作日志": "操作日志",
+      "Widget开发": "Widget开发",
+      "新建Widget": "新建Widget",
+      "复制Widget": "复制Widget",
+      "删除Widget": "删除Widget",
+      "导出Widget": "导出Widget",
+      "编辑Widget": "编辑Widget",
+      "对话内容审核": "对话内容审核",
+      "数据报表": "数据报表",
+      "业务看板": "业务看板",
+      "资源看板": "资源看板",
+      "创建AppKey": "创建AppKey",
+      "删除AppKey": "删除AppKey",
+      "修改AppKey状态": "修改AppKey状态",
+      "计费资源": "计费资源",
+      "输入框按钮": "输入框按钮",
+      "推荐问题": "推荐问题",
+      "导入应用": "导入应用",
+      "导出应用": "导出应用",
+      "知识图谱检索": "知识图谱检索",
+      "告警历史": "告警历史",
+      "告警管理": "告警管理",
+      "资源管控": "资源管控",
+      "联网搜索设置": "联网搜索设置",
+      "一键部署 ClawPro": "一键部署 ClawPro",
+      "Skills广场": "Skills广场",
+      "导入Skill": "导入Skill",
+      "智能工作台": "智能工作台",
+      "密钥管理": "密钥管理"
+    }
+  placeholder.yaml: |
+    #trpc_go.yaml start
+    NAMESPACE: Production
+    GLOBAL_ENV_NAME: formal
+    RAINBOW_APP_ID: 3f090873-420d-4575-b9d2-cf6a72980a33
+    RAINBOW_ENV_NAME: formal
+    RAINBOW_GROUP: platform-permission-config
+    #trpc_go.yaml end
+
+    KB_ADMIN_CONFIG_API_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+    KB_ADMIN_CONFIG_LOGIN_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+    KB_PLATFORM_CHARGER_FINANCE_TARGET: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+    KB_PLATFORM_MANAGER_LOGIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+
+    TENCENT_ACCOUNT_TARGET: dns://account.tencentyun.com:50001
+    TENCENT_STS_TARGET: dns://sts.tencentyun.com:50020
+    TI_AUTH_ACCOUNT_TARGET: dns://ti-perm-auth.{{ .Release.Namespace }}.svc.cluster.local:8081
+    PLATFORM_AUTHENTICATOR_TARGET: ip://adp-platform-authenticator.{{ .Release.Namespace }}.svc.cluster.local:9090
+    #client.yaml end
+
+    #application.yaml start
+    IS_PRIVATE: true
+
+    ROLE_ID_SALT: superadmin
+
+    GET_USER_NICKNAME_CONC_LIMIT: 100
+    SPACE_MEMBER_LIMIT: 1000
+
+    SUB_UIN_DEFAULT_BASE_PERMISSION_IDS:
+      - lkeApp
+      - lkeApp.createApp
+      - lkeAtomic
+      - lkeExperienceCenter
+      - lkeExperienceCenter.clean
+      - lkeExperienceCenter.create
+      - lkeExperienceCenter.exp
+      - lkeShareKG
+      - lkeShareKG.createShareKG
+      - adpModelHub
+      - adpModelHub.addModel
+      - adpModelHub.deleteModel
+      - lkePluginCenter
+      - lkePluginCenter.CreateMCPPlugin
+      - lkePluginCenter.CreatePlugin
+      - adpPromptTemplate
+      - adpPromptTemplate.Create
+      - adpWidgetCenter
+      - adpWidgetCenter.Create
+      - lkeOpenClaw
+      - lkeOpenClaw.CreateOpenClaw
+      - lkeSkillsCenter
+      - lkeSkillsCenter.ImportSkill
+
+    RESOURCE_VIEW_PERMISSION_IDS:
+      app: 
+        - adpAppView
+      knowledge: 
+        - adpKnowledgeBaseView
+      plugin: 
+        - adpPluginCenterView
+      prompt_template: 
+        - adpPromptTemplateView
+      widget: 
+        - adpWidgetCenterView
+      skill: 
+        - adpSkillsCenterView
+
+    RESOURCE_EDIT_PERMISSION_IDS:
+      app: 
+        - adpAppEdit
+      knowledge: 
+        - adpKnowledgeBaseEdit
+      plugin: 
+        - adpPluginCenterEdit
+      prompt_template: 
+        - adpPromptTemplateEdit
+      widget: 
+        - adpWidgetCenterEdit
+      openclaw:
+        - adpOpenClawEdit
+      skill: 
+        - adpSkillsCenterEdit
+
+    RESOURCE_NO_PERMISSION_ID_MAP:
+      app: adpAppNoPermission
+      knowledge: adpKnowledgeBaseNoPermission
+      plugin: adpPluginCenterNoPermission
+      prompt_template: adpPromptTemplateNoPermission
+      widget: adpWidgetCenterNoPermission
+      openclaw: adpOpenClawNoPermission
+      skill: adpSkillsCenterNoPermission
+
+    PERMISSION_RESOURCE_TYPE_MAP:
+      NoPermission:
+        app: adpAppNoPermission
+        knowledge: adpKnowledgeBaseNoPermission
+        plugin: adpPluginCenterNoPermission
+        prompt_template: adpPromptTemplateNoPermission
+        widget: adpWidgetCenterNoPermission
+        openclaw: adpOpenClawNoPermission
+        skill: adpSkillsCenterNoPermission
+      View:
+        app: adpAppView
+        knowledge: adpKnowledgeBaseView
+        plugin: adpPluginCenterView
+        prompt_template: adpPromptTemplateView
+        widget: adpWidgetCenterView
+        skill: adpSkillsCenterView
+      Edit:
+        app: adpAppEdit
+        knowledge: adpKnowledgeBaseEdit
+        plugin: adpPluginCenterEdit
+        prompt_template: adpPromptTemplateEdit
+        widget: adpWidgetCenterEdit
+        openclaw: adpOpenClawEdit
+        skill: adpSkillsCenterEdit
+      Custom:
+        app: adpAppCustom
+        knowledge: adpKnowledgeBaseCustom
+        plugin: adpPluginCenterCustom
+        prompt_template: adpPromptTemplateCustom
+        widget: adpWidgetCenterCustom
+        openclaw: adpOpenClawCustom
+        skill: adpSkillsCenterCustom
+      Authorize:
+        app: adpAppAuthorize
+        knowledge: adpKnowledgeBaseAuthorize
+        plugin: adpPluginCenterAuthorize
+        prompt_template: adpPromptTemplateAuthorize
+        widget: adpWidgetCenterAuthorize
+        skill: adpSkillsCenterAuthorize
+
+    SPECIAL_PLATFORM_PERMISSIONS_IDS:
+      - adpSpace
+      - adpSpace.DeleteSpace
+      - adpSpace.ModifySpace
+      - lkeSystem.UserPermission
+      - lkeSystem.UserPermission.Allocation
+      - lkeSystem.UserPermission.DeptManager
+      - lkeSystem.UserPermission.RoleManager
+      - lkeSystem.UserPermission.UserManager
+
+    DISABLE_PERMISSION_IDS:
+      - lkeApp.basic
+      - lkeApp.copyApp
+      - lkeApp.deleteApp
+      - lkeApp.listApp
+      - lkeApp.modifyAppQuota
+      - lkeClassify
+      - lkeClassify.config
+      - lkeClassify.config.basic
+      - lkeClassify.config.chat
+      - lkeClassify.config.model
+      - lkeClassify.config.model.version
+      - lkeClassify.config.tag
+      - lkeClassify.release
+      - lkeClassify.release.call
+      - lkeClassify.release.call.reception
+      - lkeClassify.release.call.secret
+      - lkeClassify.release.do
+      - lkeRepository
+      - lkeRepository.config
+      - lkeRepository.config.AdvancedSettings
+      - lkeRepository.config.AdvancedSettings.synonyms
+      - lkeRepository.config.basic
+      - lkeRepository.config.chat
+      - lkeRepository.config.knowledge
+      - lkeRepository.config.knowledge.db
+      - lkeRepository.config.knowledge.doc
+      - lkeRepository.config.knowledge.qa
+      - lkeRepository.config.knowledge.qaTopN
+      - lkeRepository.config.knowledge.replyFlexibility
+      - lkeRepository.config.knowledge.searchEngine
+      - lkeRepository.config.knowledge.searchStrategy
+      - lkeRepository.config.knowledge.tableEnhancement
+      - lkeRepository.config.knowledge.taskFlow
+      - lkeRepository.config.model
+      - lkeRepository.config.model.historyLimit
+      - lkeRepository.config.model.historyRecordLimit
+      - lkeRepository.config.model.version
+      - lkeRepository.config.output
+      - lkeRepository.config.output.generalKnowledge
+      - lkeRepository.config.output.method
+      - lkeRepository.config.pattern
+      - lkeRepository.config.plugin
+      - lkeRepository.evaluateBatch
+      - lkeRepository.manage
+      - lkeRepository.manage.db
+      - lkeRepository.manage.doc
+      - lkeRepository.manage.doc.download
+      - lkeRepository.manage.knowledgeTag
+      - lkeRepository.manage.qa
+      - lkeRepository.manage.qa.export
+      - lkeRepository.manage.taskFlow
+      - lkeRepository.release
+      - lkeRepository.release.call
+      - lkeRepository.release.call.reception
+      - lkeRepository.release.call.secret
+      - lkeRepository.release.channel
+      - lkeRepository.release.do
+      - lkeRepository.release.do.create
+      - lkeRepository.test
+      - lkeRepository.unsatisfied
+      - lkeRepository.workflow
+      - lkeRepository.workflow.manage
+      - lkeShareKG.listShareKG
+      - lkeShareKG.manager
+      - lkeSummary
+      - lkeSummary.config
+      - lkeSummary.config.basic
+      - lkeSummary.config.chat
+      - lkeSummary.config.model
+      - lkeSummary.config.model.version
+      - lkeSummary.config.output
+      - lkeSummary.config.output.method
+      - lkeSummary.config.output.requirement
+      - lkeSummary.release
+      - lkeSummary.release.call
+      - lkeSummary.release.call.reception
+      - lkeSummary.release.call.secret
+      - lkeSummary.release.do
+
+    ADP_ALL_PERMISSION_IDS:
+      - adpModelHub
+      - adpModelHub.addModel
+      - adpModelHub.deleteModel
+      - adpPromptTemplate
+      - adpPromptTemplate.Create
+      - adpSpace
+      - adpSpace.DeleteSpace
+      - adpSpace.ModifySpace
+      - lkeApp
+      - lkeApp.createApp
+      - lkeApp.createApp.agent
+      - lkeApp.createApp.single_workflow
+      - lkeApp.createApp.standard
+      - lkeAtomic
+      - lkeExperienceCenter
+      - lkeExperienceCenter.clean
+      - lkeExperienceCenter.create
+      - lkeExperienceCenter.exp
+      - lkeOP
+      - lkePluginCenter
+      - lkePluginCenter.CreateMCPPlugin
+      - lkePluginCenter.CreatePlugin
+      - lkeShareKG
+      - lkeShareKG.createShareKG
+      - lkeSystem
+      - lkeSystem.CallStats
+      - lkeSystem.CallStats.concurrency
+      - lkeSystem.CallStats.knowledgeCapacity
+      - lkeSystem.CallStats.usageStats
+      - lkeSystem.contentSecurity
+      - lkeSystem.contentSecurity.appSecurity
+      - lkeSystem.contentSecurity.keywordsLib
+      - lkeSystem.contentSecurity.policy
+      - lkeSystem.contentSecurity.policy.keywords
+      - lkeSystem.contentSecurity.policy.pictureReview
+      - lkeSystem.contentSecurity.policy.textReview
+      - lkeSystem.contentSecurity.recognitionDetail
+      - lkeSystem.contentSecurity.recognitionStats
+      - lkeSystem.license
+      - lkeSystem.OperationManager
+      - lkeSystem.OperationManager.OperationLog
+      - lkeSystem.UserPermission
+      - lkeSystem.UserPermission.Allocation
+      - lkeSystem.UserPermission.DeptManager
+      - lkeSystem.UserPermission.RoleManager
+      - lkeSystem.UserPermission.UserManager
+      - adpAppCustom
+      - adpAppCustom.appConfig
+      - adpAppCustom.appConfig.advancedSetting
+      - adpAppCustom.appConfig.advancedSetting.appUserPermission
+      - adpAppCustom.appConfig.advancedSetting.contextRewriting
+      - adpAppCustom.appConfig.advancedSetting.imageTextRetrieval
+      - adpAppCustom.appConfig.advancedSetting.intentAchievement
+      - adpAppCustom.appConfig.advancedSetting.synonym
+      - adpAppCustom.appConfig.agentCollaboration
+      - adpAppCustom.appConfig.agentCollaboration.plan
+      - adpAppCustom.appConfig.agentCollaboration.transfer
+      - adpAppCustom.appConfig.agentCollaboration.workflow
+      - adpAppCustom.appConfig.conversationExperience
+      - adpAppCustom.appConfig.conversationExperience.inputBoxButton
+      - adpAppCustom.appConfig.edit
+      - adpAppCustom.appConfig.edit.pattern
+      - adpAppCustom.appConfig.greeting
+      - adpAppCustom.appConfig.knowledge
+      - adpAppCustom.appConfig.knowledge.dbSwitch
+      - adpAppCustom.appConfig.knowledge.docRetrievalMatchingDegree
+      - adpAppCustom.appConfig.knowledge.docSwitch
+      - adpAppCustom.appConfig.knowledge.docTopN
+      - adpAppCustom.appConfig.knowledge.embeddingModel
+      - adpAppCustom.appConfig.knowledge.excelEnhancement
+      - adpAppCustom.appConfig.knowledge.qaReplyFlexibility
+      - adpAppCustom.appConfig.knowledge.qaRetrievalMatchingDegree
+      - adpAppCustom.appConfig.knowledge.qaSwitch
+      - adpAppCustom.appConfig.knowledge.qaTopN
+      - adpAppCustom.appConfig.knowledge.rerank
+      - adpAppCustom.appConfig.knowledge.searchStrategy
+      - adpAppCustom.appConfig.knowledge.taskflow
+      - adpAppCustom.appConfig.modelConfig
+      - adpAppCustom.appConfig.modelConfig.generateModel
+      - adpAppCustom.appConfig.modelConfig.historyRecordLimit
+      - adpAppCustom.appConfig.modelConfig.thoughtModel
+      - adpAppCustom.appConfig.output
+      - adpAppCustom.appConfig.output.method
+      - adpAppCustom.appConfig.output.replySetting
+      - adpAppCustom.appConfig.roleDescription
+      - adpAppCustom.appConfig.searchEngine
+      - adpAppCustom.appConfig.variablesAndMemory
+      - adpAppCustom.appEvaluation
+      - adpAppCustom.appOperations
+      - adpAppCustom.deleteCopy
+      - adpAppCustom.deleteCopy.copy
+      - adpAppCustom.deleteCopy.delete
+      - adpAppCustom.knowledgeManager
+      - adpAppCustom.knowledgeManager.addShareKnowledge
+      - adpAppCustom.knowledgeManager.database
+      - adpAppCustom.knowledgeManager.doc
+      - adpAppCustom.knowledgeManager.doc.download
+      - adpAppCustom.knowledgeManager.knowledgeSetting
+      - adpAppCustom.knowledgeManager.label
+      - adpAppCustom.knowledgeManager.qa
+      - adpAppCustom.knowledgeManager.qa.export
+      - adpAppCustom.knowledgeManager.taskflow
+      - adpAppCustom.release
+      - adpAppCustom.release.release
+      - adpAppCustom.release.release.createRelease
+      - adpAppCustom.release.releaseChannel
+      - adpAppCustom.release.releaseChannel.wecomapp
+      - adpAppCustom.release.releaseChannel.wecomrobot
+      - adpAppCustom.release.serviceStatus
+      - adpAppCustom.release.serviceStatus.createAppkey
+      - adpAppCustom.release.serviceStatus.deleteAppkey
+      - adpAppCustom.release.serviceStatus.getAppkey
+      - adpAppCustom.release.serviceStatus.getExperienceLink
+      - adpAppCustom.release.serviceStatus.switchAppkeyStatus
+      - adpAppCustom.workflowManager
+      - adpAppCustom.workflowManager.workflow
+      - adpAppNoPermission
+      - adpAppView
+      - adpKnowledgeBaseCustom
+      - adpKnowledgeBaseCustom.knowledgeBase
+      - adpKnowledgeBaseCustom.knowledgeBase.database
+      - adpKnowledgeBaseCustom.knowledgeBase.delete
+      - adpKnowledgeBaseCustom.knowledgeBase.doc
+      - adpKnowledgeBaseCustom.knowledgeBase.doc.download
+      - adpKnowledgeBaseCustom.knowledgeBase.edit
+      - adpKnowledgeBaseCustom.knowledgeBase.label
+      - adpKnowledgeBaseCustom.knowledgeBase.qa
+      - adpKnowledgeBaseCustom.knowledgeBase.qa.export
+      - adpKnowledgeBaseCustom.knowledgeBase.setting
+      - adpKnowledgeBaseNoPermission
+      - adpKnowledgeBaseView
+      - adpPluginCenterCustom
+      - adpPluginCenterCustom.PluginCenter
+      - adpPluginCenterCustom.PluginCenter.Delete
+      - adpPluginCenterCustom.PluginCenter.Edit
+      - adpPluginCenterNoPermission
+      - lkeApp.importApp
+      - lkeSystem.OperationManager.AlarmHistory
+      - lkeSystem.OperationManager.AlarmManager
+      - lkeSystem.OperationManager.ResourceMana
+      - lkeSystem.dataReport.businessDashboard
+      - lkeSystem.dataReport
+      - lkeSystem.dataReport.resourceDashboard
+      - lkeWidgetCenter
+      - lkeWidgetCenter.CreateWidget
+      - adpWidgetCenterCustom
+      - adpWidgetCenterCustom.CopyWidget
+      - adpWidgetCenterCustom.DeleteWidget
+      - adpWidgetCenterCustom.ExportWidget
+      - adpWidgetCenterCustom.ModifyWidget
+      - adpWidgetCenterEdit
+      - adpWidgetCenterNoPermission
+      - adpWidgetCenterView
+
+    #application.yaml end
+  trpc_go.yaml: |
+    global:
+      namespace: ${NAMESPACE}            #环境类型，分正式production和非正式development两种类型
+      env_name: ${GLOBAL_ENV_NAME}                    #环境名称，非正式环境下多环境的名称
+      enable_set: ${ENABLE_SET}         #是否启用set
+      full_set_name: ${FULL_SET_NAME}   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+
+    server:
+      app: adp
+      server: platform-permission-config
+      filter:
+        - recovery
+        - i18n-adp
+        - accesslog
+        - cle-route-propagator
+        - opentelemetry
+      stream_filter:
+        - opentelemetry
+      admin:
+        ip: ${POD_IP}
+        port: 8081
+      service:
+        - name: trpc.adp.platform_permission_config.Admin
+          ip: ${POD_IP}
+          port: 9090 # 服务监听端口
+          network: tcp # 网络监听类型 tcp/udp
+          protocol: trpc # 应用层协议 trpc/restful
+          timeout: 120000 # 请求最长处理时间，单位毫秒
+          filter:
+            - session
+            - permission
+        - name: trpc.adp.platform_permission_config.Api
+          ip: ${POD_IP}
+          port: 9092 # 服务监听端口
+          network: tcp # 网络监听类型 tcp/udp
+          protocol: trpc # 应用层协议 trpc/restful
+          timeout: 25000 # 请求最长处理时间，单位毫秒
+
+
+    plugins:                                          #插件配置
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: console
+            level: error
+          - writer: file  # 本地文件日志
+            level: debug  # 标准输出日志的级别，开发提测环境可以用debug，线上建议用info
+            writer_config:  # 本地文件输出具体配置
+              filename: /app/log/trpc.log  # 本地文件滚动日志存放的路径
+              max_size: 100   # 本地文件滚动日志大小，单位 MB
+              max_backups: 10 # 最大日志文件数
+              max_age: 7      # 最大日志保留天数
+              compress: false # 日志文件是否压缩
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+            - name: global
+              appid: ${RAINBOW_APP_ID}  # appid
+              group: global # 配置所属组
+              type: kv   # 七彩石数据格式, kv(默认), table
+              env_name: ${RAINBOW_ENV_NAME}
+              timeout: 2000
+              enable_client_provider: true
+      registry:
+        polaris:
+      selector:
+        polaris:
+          enable_servicerouter: true
+      i18n:
+        i18n:
+          default_lang: en-US
+          supported_languages:
+            - zh-CN
+            - en-US
+          data_provider:
+            type: rainbow
+            prefix: permission
+            error_prefix: error
+            char_scaling_factor:
+              zh: 1
+              en: 3
+
+    client:                                            #客户端调用的后端配置
+      filter:                                          #针对所有后端调用函数前后的拦截器列表
+        - cle-route-propagator
+        - opentelemetry
+      namespace: ${NAMESPACE}                          #针对所有后端的环境
+      timeout: 10000                                    #针对所有后端的请求最长处理时间
+      service:                                         #针对单个后端的配置，默认都有默认值，可以完全不用配置
+        - name: mysql.adp.permission
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/openplatform_permission_data?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.adp.conf
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/openplatform_conf_data?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - callee: trpc.adp.app_admin_proxy.Api
+          namespace: ${NAMESPACE}
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_admin_proxy.Login
+          namespace: ${NAMESPACE}
+          target:  ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_charger.Finance
+          namespace: ${NAMESPACE}
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.adp.platform_manager.Login
+          namespace: ${NAMESPACE}
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          timeout: 30000
+        - callee: tencent-account-http
+          target: dns://account.tencentyun.com:50001
+          network: tcp
+          protocol: http
+          timeout: 10000
+        - callee: tencent-sts-http
+          target: dns://sts.tencentyun.com:50020
+          network: tcp
+          protocol: http
+          timeout: 10000
+        - name: trpc.adp.platform_authenticator.Authenticator
+          namespace: ${NAMESPACE}
+          target: ip://adp-platform-authenticator.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 10000
+        - callee: ti-auth-account-http
+          target: dns://ti-perm-auth.{{ .Release.Namespace }}.svc.cluster.local:8081
+          network: tcp
+          protocol: http
+          timeout: 10000

@@ -1,0 +1,223 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    ti.cloud.tencent.com/resource-quota: unlimited
+    configmap.reloader.stakater.com/reload: {{ .Release.Name }}-bot-admin-config-server
+    {{- if .Values.global.customAnnotations }}
+    {{- range $key, $value := .Values.global.customAnnotations }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
+  labels:
+    app: adp-app-admin-proxy
+    app.kubernetes.io/name: adp-app-admin-proxy
+    {{- if .Values.global.customLabels }}
+    {{- range $key, $value := .Values.global.customLabels }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
+  name: adp-app-admin-proxy
+  namespace: {{ .Release.Namespace }}
+spec:
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  selector:
+    matchLabels:
+      app: adp-app-admin-proxy
+  template:
+    metadata:
+      labels:
+        app: adp-app-admin-proxy
+        {{- if .Values.global.customLabels }}
+        {{- range $key, $value := .Values.global.customLabels }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+        {{- end }}
+      {{- if .Values.global.customAnnotations }}
+      annotations:
+        {{- range $key, $value := .Values.global.customAnnotations }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+      {{- end }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - adp-app-admin-proxy
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: GPUName
+                    operator: DoesNotExist
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: product
+                    operator: In
+                    values:
+                      - lke
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - env:
+            - name: MKL_NUM_THREADS
+              value: "2"
+            - name: LOG_SPACES
+              value: "2097152"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: DEPLOYMENT_ENVIRONMENT
+              value: TKE
+            - name: NAME_SPACE
+              value: default
+            - name: ENV
+              value: tcs
+            - name: SERVER_LOG_LEVEL
+              value: info
+          image: {{(index .Values.images .Chart.Name).url}}
+          imagePullPolicy: Always
+          #command: ["sh","-c", "crond start; touch /var/log/log.txt && tail -f /var/log/log.txt"]
+          #command: [ "sh","/usr/local/app/start.sh" ]
+          name: admin-online-prod-env
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "2Gi"
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+          {{- end }}
+          livenessProbe:
+            failureThreshold: 2
+            initialDelaySeconds: 10
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 9092
+            timeoutSeconds: 2
+          readinessProbe:
+            failureThreshold: 2
+            initialDelaySeconds: 10
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 9092
+            timeoutSeconds: 2
+          volumeMounts:
+            - mountPath: /etc/localtime
+              name: localtime
+            - mountPath: /app/logs
+              name: logdata
+              subPathExpr: $(POD_NAME)
+            - mountPath: /app/conf/trpc_go.yaml
+              name: config
+              subPath: trpc_go.yaml
+            - mountPath: /app/conf/application.yaml
+              name: config
+              subPath: application.yaml
+            - mountPath: /app/conf/app_config.yaml
+              name: config
+              subPath: app_config.yaml
+            - mountPath: /app/conf/country_code.yaml
+              name: config
+              subPath: country_code.yaml
+            - mountPath: /app/conf/knowledge_qa_model.yaml
+              name: config
+              subPath: knowledge_qa_model.yaml
+            - mountPath: /app/conf/parse_model.yaml
+              name: config
+              subPath: parse_model.yaml
+            - mountPath: /app/conf/plugin_model.yaml
+              name: config
+              subPath: plugin_model.yaml
+            - mountPath: /app/conf/thought_model.yaml
+              name: config
+              subPath: thought_model.yaml
+            - mountPath: /app/conf/white_list.yaml
+              name: config
+              subPath: white_list.yaml
+            - mountPath: /app/conf/workflow_model.yaml
+              name: config
+              subPath: workflow_model.yaml
+            - mountPath: /app/conf/admin_en-US.json
+              name: config
+              subPath: admin_en-US.json
+            - mountPath: /app/conf/admin_zh-CN.json
+              name: config
+              subPath: admin_zh-CN.json
+            - mountPath: /app/conf/error_en-US.json
+              name: config
+              subPath: error_en-US.json
+            - mountPath: /app/conf/error_zh-CN.json
+              name: config
+              subPath: error_zh-CN.json
+            - mountPath: /app/conf/infrastructure.yaml
+              name: infrastructure
+              subPath: infrastructure.yaml
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      volumes:
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - hostPath:
+            path: /etc/localtime
+          name: localtime
+        - hostPath:
+            path: /data/ti-platform/log/adp-app-admin-proxy
+            type: DirectoryOrCreate
+          name: logdata
+        - configMap:
+            defaultMode: 420
+            name: {{ .Release.Name }}-bot-admin-config-server
+          name: config
+        - configMap:
+            defaultMode: 420
+            name: infrastructure
+          name: infrastructure
