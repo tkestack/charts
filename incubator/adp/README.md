@@ -135,7 +135,7 @@ tdsql -> https://console.cloud.tencent.com/tdsqld/instance-tdmysql
 mysql -> https://console.cloud.tencent.com/cdb/instance
 
 **要求：**
-- TDSQL-MySQL 8.0 或 MySQL 8.0
+- TDSQL-MySQL 8.0 或 MySQL 8.4
 - 字符集必须设置为 `UTF8MB4`
 - 表名大小写敏感必须设置为**不敏感**（`lower_case_table_names = 1`）
 - 需要提前创建用户，并授予相应权限
