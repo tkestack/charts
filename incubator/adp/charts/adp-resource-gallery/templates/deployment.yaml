@@ -120,7 +120,7 @@ spec:
               memory: "512Mi"
             requests:
               cpu: "200m"
-              memory: "256Mi"
+              memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
             limits:
@@ -128,7 +128,7 @@ spec:
               memory: "512Mi"
             requests:
               cpu: "200m"
-              memory: "256Mi"
+              memory: "512Mi"
           {{- else }}
           resources:
             limits:
@@ -136,7 +136,7 @@ spec:
               memory: "2Gi"
             requests:
               cpu: "200m"
-              memory: "256Mi"
+              memory: "512Mi"
           {{- end }}
           livenessProbe:
             failureThreshold: 3

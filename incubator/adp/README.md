@@ -38,7 +38,7 @@
 
 | 配置项           | 必填 | 说明          | 示例值                                                                                                                                                                                                                   |
 |---------------|------|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `clusterSize` | ✅ 必填 | 集群规模，默认minimal     | 可选值：minimal/standard/recommended<br/>minimal 模式单副本部署，需2台16核32G服务器；<br/>standard模式双副本部署，需4台16核32G服务器；<br/>recommend模式三副本部署，需8台16核32G服务器。<br/>除副本数差异外，随集群规模扩大，各服务的CPU、内存request值也会相应调高。<br/>服务器配置参见：[服务器推荐配置](#服务器推荐配置) |
+| `clusterSize` | ✅ 必填 | 集群规模，默认minimal     | 可选值：minimal/standard/recommended<br/>minimal 模式单副本部署，需3台16核32G服务器；<br/>standard模式双副本部署，需6台16核32G服务器；<br/>recommend模式三副本部署，需10台16核32G服务器。<br/>除副本数差异外，随集群规模扩大，各服务的CPU、内存request值也会相应调高。<br/>服务器配置参见：[服务器推荐配置](#服务器推荐配置) |
 | `clb`         | ✅ 必填 | 负载均衡 CLB 域名 | 需要给clb绑定一个自定义域名，例如：`xx-adp.xyz.com`                                                                                                                                                                                   |
 | `clbId`       | ✅ 必填 | CLB 实例 ID   | `lb-h7m35y2x`                                                                                                                                                                                                         |
 | `scheme`      | ✅ 必填 | 协议类型        | `http` 或 `https`                                                                                                                                                                                                      |
@@ -119,19 +119,23 @@ base64 -w 0 public.pem > publicKey.txt
 | 配置项 | 必填 | 说明 | 示例值            |
 |--------|------|------|----------------|
 | `components.db.vendor` | ✅ 必填 | 云厂商 | `tencent`   |
-| `components.db.providerType` | ✅ 必填 | 产品类型 | `tdsql`    |
+| `components.db.providerType` | ✅ 必填 | 产品类型 | `tdsql` 或 `mysql`   |
 | `components.db.host` | ✅ 必填 | 数据库主机地址 | `192.168.8.81` |
 | `components.db.port` | ✅ 必填 | 数据库端口 | `3306`         |
 | `components.db.user` | ✅ 必填 | 数据库用户名 | `adp-test`     |
 | `components.db.password` | ✅ 必填 | 数据库密码 | `your-password` |
 
 **providerType 可选值：**
-- tencent: `tdsql`
+- tencent: `tdsql` 或 `mysql`
 
-**购买链接：** https://cloud.tencent.com/product/tdsql
+**购买链接：** 
+
+tdsql -> https://console.cloud.tencent.com/tdsqld/instance-tdmysql
+
+mysql -> https://console.cloud.tencent.com/cdb/instance
 
 **要求：**
-- TDSQL-MySQL 5.7+ 或兼容版本
+- TDSQL-MySQL 8.0 或 MySQL 8.4
 - 字符集必须设置为 `UTF8MB4`
 - 表名大小写敏感必须设置为**不敏感**（`lower_case_table_names = 1`）
 - 需要提前创建用户，并授予相应权限
@@ -147,15 +151,21 @@ base64 -w 0 public.pem > publicKey.txt
 
 **配置说明：**
 
-- 数据库版本：MySQL 8.0 (TDSQL MySQL)
+- 数据库版本：TDSQL-MySQL 8.0 或 MySQL 8.4
 - 物理备份方式：物理复制（强同步）
-- 分片数：2 个分片
-- 逻辑分区数：64 个
 - 字符集：UTF8MB4
 - 表名大小写敏感：不敏感（可迁移）
 - InnoDB 页面大小：16KB
 - 备份空间：免费赠送实例存储容量的 100%
-- 部署区域：建议与 TKE 集群相同地域（如：北京五区）
+- 部署区域：与 TKE 集群相同地域
+
+TDSQL:
+- 分片数：2 个分片
+- 逻辑分区数：64 个
+
+MySQL:
+- 节点数：至少双节点（主备）
+
 
 > **价格说明**：以上价格基于 1 个月购买周期预估，实际价格可能因地域、优惠活动等因素有所差异。长期使用建议购买更长周期以获取折扣。
 
@@ -264,14 +274,17 @@ base64 -w 0 public.pem > publicKey.txt
 | `components.s3.cos.bucket` | ✅ 必填 | 存储桶名称 | `adp-test-1234567890` |
 | `components.s3.cos.region` | ✅ 必填 | 地域 | `ap-guangzhou` |
 | `components.s3.cos.domain` | ✅ 必填 | COS 域名后缀 | `myqcloud.com` |
-| `components.s3.cos.subPath` | ✅ 必填| 子路径 | `adp-test` |
+| `components.s3.cos.subPath` | ✅ 必填| 子路径 | `adp-test(必须设置公有读权限)` |
 | `components.s3.cos.expireTime` | ⚪ 选填 | 签名过期时间 | `3600s` |
 | `components.s3.cos.credentialTime` | ⚪ 选填 | 临时凭证有效期 | `3600s` |
 
-另外，components.s3.cos.secretId及components.s3.cos.secretKey对应的uin账号，
+**注意**
+
+- 1、components.s3.cos.secretId及components.s3.cos.secretKey对应的uin账号，
 需要授予cos权限、知识引擎原子能力权限（**QcloudLKEAPFullAccess**），另外，同时需要在 https://console.cloud.tencent.com/lkeap/settings 中设置文档解析、文档拆分能力为后付费  
 <img src="https://adp-testing-1406902593.cos.ap-beijing.myqcloud.com/prod_files/%E6%96%87%E6%A1%A3%E8%A7%A3%E6%9E%90%E5%90%8E%E4%BB%98%E8%B4%B9.png" width="400">
 
+- 2、cos桶中要针对使用的域名进行跨域设置，放开GET、PUT、OPTIONS、HEAD等Method。
 
 **购买链接：** https://cloud.tencent.com/product/cos 在页面中创建桶，并且创建一个目录给adp使用。
 
@@ -343,10 +356,10 @@ kafka是可选中间件，如果需要运维管理中的操作日志查询功能
 - 支持公网访问和内网访问
 
 **使用说明：**
-- 主要用于 platform-manager 服务的审计日志生产和消费
-- Topic: `adp_audit_log`
-- Consumer Group: `platform-manager`
-- 需要提前创建 Topic 和配置相应的 ACL 权限
+- 主要用于 审计及统计
+- Topic: `pack_pay`、`event_report_prod`、`msg_record_binlog`、`platform_metrology_report`、`t_check_task-formal`、`adp_audit_log_prod`
+- 需要提前创建 Topic 或者 开启Topic自动创建开关
+- Topic创建参数：3分区2副本
 
 > **价格说明**：以上价格基于 1 个月购买周期预估，实际价格可能因地域、优惠活动等因素有所差异。长期使用建议购买更长周期以获取折扣。
 
@@ -378,25 +391,33 @@ components:
 **providerType 可选值：**
 - tencent: `clickhouse`
 
-**购买链接：** https://cloud.tencent.com/product/clickhouse
+**购买链接：** https://console.cloud.tencent.com/tchousec/instance
 
 **要求：**
-- ClickHouse 21.x 或 22.x 版本
-- 建议至少 3 节点集群
+- ClickHouse 25.x 版本
+- 建议至少 2 节点集群
 
 **规格配置：**
 
+**clickhouse**
+
 | 配置类型 | 节点数 | CPU/节点 | 内存/节点 | 存储/节点 | 适用场景 | 月费用（元/月） |
 |----------|--------|----------|-----------|-----------|----------|----------------|
-| 通用 | 2 | 4核 | 16GB | 200GB | 统计分析 | 4500 |
+| 通用 | 2 | 4核 | 16GB | 200GB（SSD） | 统计分析 | 4500 |
+
+**zookeeper** `购买Clickhouse页面同时选购`
+
+| 配置类型 | 节点数 | CPU/节点 | 内存/节点 | 存储/节点 | 适用场景 | 月费用（元/月） |
+|----------|--------|----------|-----------|-----------|----------|----------------|
+| 通用 | 3(默认) | 4核 | 16GB | 100GB（SSD） |  |  |
 
 **配置说明：**
 - 产品版本：ClickHouse 标准版（推荐）
-- 兼容版本：22.x（支持多个版本可选）
+- 兼容版本：25.x（支持多个版本可选）
 - 节点类型：标准型
-- 存储类型：云硬盘
+- 存储类型：云硬盘(推荐SSD)
 - 部署方式：单可用区部署（2 节点）
-- 部署区域：建议与 TKE 集群相同地域
+- 部署区域：与 TKE 集群相同地域
 - 支持磁盘自动扩容
 
 > **价格说明**：以上价格基于 1 个月购买周期预估，实际价格可能因地域、优惠活动等因素有所差异。长期使用建议购买更长周期以获取折扣。
@@ -414,59 +435,6 @@ components:
     user: default
     password: your-password
 ```
-
----
-
-### 向量数据库配置
-
-支持数组格式配置多个实例。
-
-| 配置项 | 必填 | 说明 | 示例值 |
-|--------|------|------|--------|
-| `components.vdb` | ✅ 必填 | 向量数据库配置（数组） | - |
-| `components.vdb[].vendor` | ✅ 必填 | 云厂商 | `tencent` |
-| `components.vdb[].providerType` | ✅ 必填 | 产品类型 | `vdb` |
-| `components.vdb[].addr` | ✅ 必填 | VDB 地址 | `http://192.168.8.235` |
-| `components.vdb[].account` | ✅ 必填 | VDB 账号 | `root` |
-| `components.vdb[].apiKey` | ✅ 必填 | VDB API Key | `xxxxx` |
-
-**providerType 可选值：**
-- tencent: `vdb`
-
-**购买链接：** https://cloud.tencent.com/product/vdb
-
-**规格配置：**
-
-| 配置类型 | 节点数 | CPU/节点 | 内存/节点 | 存储 | 适用场景 | 月费用（元/月） |
-|----------|--------|----------|-----------|------|----------|----------------|
-| 最小配置 | 3 | 2核 | 8GB | 30GB | 开发测试、PoC 验证 | 450 |
-| 标准配置 | 3 | 4核 | 16GB | 60GB | 生产环境、中小规模 | 900 |
-| 推荐配置 | 3 | 8核 | 32GB | 100GB | 生产环境、大规模 | 1,800 |
-
-**配置说明：**
-- 产品版本：标准版（推荐）
-- 实例类型：高可用版（两可用区部署）
-- 节点规格：标准型
-- 存储类型：云硬盘
-- 部署模式：3 节点集群（支持 2~50 个节点）
-- 部署区域：建议与 TKE 集群相同地域
-- 建议存储容量配置为内存容量的 3 倍左右
-
-> **价格说明**：以上价格基于 1 个月购买周期预估，实际价格可能因地域、优惠活动等因素有所差异。长期使用建议购买更长周期以获取折扣。
-
-**配置示例：**
-
-```yaml
-components:
-  vdb:
-    - vendor: tencent
-      providerType: vdb
-      addr: http://192.168.8.235
-      account: root
-      apiKey: your-api-key
-```
-
----
 
 ## 可观测性配置 (observability)
 
@@ -565,14 +533,13 @@ global:
 - [ ] `global.components.s3.*` - 对象存储配置
 - [ ] `global.components.kafka.*` - Kafka 消息队列配置
 - [ ] `global.components.clickhouse.*` - ClickHouse 配置
-- [ ] `global.components.vdb` - 向量数据库配置
 
 ### 云产品购买清单
 
 | 产品 | 用途 | 购买链接 |
 |------|------|----------|
 | CLB 负载均衡 | 流量入口 | https://console.cloud.tencent.com/clb/instance |
-| TDSQL 数据库 | 业务数据存储 | https://cloud.tencent.com/product/tdsql |
+| TDSQL 数据库 | 业务数据存储 | https://console.cloud.tencent.com/tdsqld/instance-tdmysql |
 | Elasticsearch | 日志检索 | https://cloud.tencent.com/product/es |
 | Redis | 缓存服务 | https://cloud.tencent.com/product/crs |
 | COS 对象存储 | 文件存储 | https://cloud.tencent.com/product/cos |
