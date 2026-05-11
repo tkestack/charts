@@ -5,7 +5,7 @@ tad:
     productType: lke
 images:
   ti-auth-web:
-    url: ccr.ccs.tencentyun.com/tke-market/ti-tiauth-prod-production:9_stable_v3.4.1.1_2605071542-61ccf2b
+    url: "{{ .Values.global.imageRegistry }}/tke-market/ti-tiauth-prod-production:9_stable_v3.4.1.1_2605071542-61ccf2b"
 env: TEST
 namespace: ti-base
 imagePullSecretName: qcloudregistrykey

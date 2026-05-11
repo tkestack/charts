@@ -59,7 +59,7 @@ spec:
           defaultMode: 0755
       containers:
       - name: pre-install-check
-        image: {{ (index .Values.images "pre-install-check").url }}
+        image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "pre-install-check").url "context" .) }}
         imagePullPolicy: Always
         command:
         - python3
@@ -116,6 +116,32 @@ spec:
           value: {{ $components.redis.port | quote }}
         - name: REDIS_PASSWORD
           value: {{ $components.redis.password | quote }}
+        {{- end }}
+        # ---------- Kafka ----------
+        - name: ENABLE_KAFKA
+          value: {{ dig "kafka" "enabled" true $components | toString | quote }}
+        {{- if ne (dig "kafka" "enabled" true $components | toString) "false" }}
+        {{- if hasKey $components "kafka" }}
+        - name: KAFKA_HOST
+          value: {{ index $components.kafka.hosts 0 | quote }}
+        - name: KAFKA_PORT
+          value: {{ $components.kafka.port | quote }}
+        {{- end }}
+        {{- end }}
+        # ---------- ClickHouse ----------
+        - name: ENABLE_CLICKHOUSE
+          value: {{ dig "clickhouse" "enabled" true $components | toString | quote }}
+        {{- if ne (dig "clickhouse" "enabled" true $components | toString) "false" }}
+        {{- if hasKey $components "clickhouse" }}
+        - name: CLICKHOUSE_HOST
+          value: {{ index $components.clickhouse.hosts 0 | quote }}
+        - name: CLICKHOUSE_PORT
+          value: {{ $components.clickhouse.port | quote }}
+        - name: CLICKHOUSE_USER
+          value: {{ $components.clickhouse.user | quote }}
+        - name: CLICKHOUSE_PASSWORD
+          value: {{ $components.clickhouse.password | quote }}
+        {{- end }}
         {{- end }}
         # ---------- VectorDB ----------
         {{- $vdbList := dig "vdb" (list) $components | default (list) }}

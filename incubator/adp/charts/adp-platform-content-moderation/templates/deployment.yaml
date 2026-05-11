@@ -98,7 +98,7 @@ spec:
               value: tcs
             - name: VERSION
               value: "20230925"
-          image: {{(index .Values.images "adp-platform-content-moderation").url}}
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-platform-content-moderation").url "context" .) }}
           imagePullPolicy: Always
           name: adp-platform-content-moderation
           {{- if eq .Values.global.clusterSize "minimal" }}
@@ -107,7 +107,7 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "125m"
               memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
@@ -115,7 +115,7 @@ spec:
               cpu: "1"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "500m"
               memory: "512Mi"
           {{- else }}
           resources:
@@ -123,8 +123,8 @@ spec:
               cpu: "1"
               memory: "2Gi"
             requests:
-              cpu: "200m"
-              memory: "512Mi"
+              cpu: "500m"
+              memory: "1Gi"
           {{- end }}
           livenessProbe:
             failureThreshold: 2

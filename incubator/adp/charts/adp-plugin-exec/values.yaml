@@ -1,8 +1,8 @@
 images:
   adp-plugin-exec:
-    url: ccr.ccs.tencentyun.com/tke-market/plugin-exec:15_2605062222_stable_v3.4.1.1_481925e1_private
+    url: "{{ .Values.global.imageRegistry }}/tke-market/plugin-exec:15_2605062222_stable_v3.4.1.1_481925e1_private"
   adp-plugin-exec-sidecar:
-    url: ccr.ccs.tencentyun.com/tke-market/webappchatbot:markmap-96aaeac-24
+    url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:markmap-96aaeac-24"
 adppluginexec:
   resources:
     limits:

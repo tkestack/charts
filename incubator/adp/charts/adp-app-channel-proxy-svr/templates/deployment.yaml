@@ -103,7 +103,7 @@ spec:
               value: tcs
             - name: SERVER_LOG_LEVEL
               value: info
-          image: {{(index .Values.images "adp-app-channel-proxy").url}}
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-app-channel-proxy").url "context" .) }}
           imagePullPolicy: IfNotPresent
           #imagePullPolicy: Always
           #command: ["sh","-c", "crond start; touch /var/log/log.txt && tail -f /var/log/log.txt"]
@@ -115,7 +115,7 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "125m"
               memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
@@ -123,7 +123,7 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "250m"
               memory: "512Mi"
           {{- else }}
           resources:
@@ -131,7 +131,7 @@ spec:
               cpu: "1"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "500m"
               memory: "512Mi"
           {{- end }}
           volumeMounts:

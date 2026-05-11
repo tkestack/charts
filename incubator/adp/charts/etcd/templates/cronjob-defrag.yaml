@@ -25,7 +25,7 @@ spec:
           restartPolicy: Never
           containers:
             - name: etcd-defrag
-              image: {{ (index .Values.images "etcd").url }}
+              image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "etcd").url "context" .) }}
               imagePullPolicy: IfNotPresent
               command:
                 - /bin/sh

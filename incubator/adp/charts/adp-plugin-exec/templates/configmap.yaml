@@ -3197,7 +3197,7 @@ data:
 
     CODE_EXEC_TARGET: ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001
 
-    WEB_PARSER_TARGET: ip://web-parser-server.adp.svc.cluster.local:10001
+    WEB_PARSER_TARGET: ip://web-parser-server.{{ .Release.Namespace }}.svc.cluster.local:10001
 
     CHAT_STREAM_TARGET: ip://adp-chat-manage.{{ .Release.Namespace }}.svc.cluster.local:9190
 
@@ -3235,7 +3235,7 @@ data:
 
     KB_ADMIN_CONFIG_ADMIN_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9090
 
-    PLUGIN_LLM_MANAGER_SERVER_TARGET: ip://llm-manager-server.adp.svc.cluster.local:10001
+    PLUGIN_LLM_MANAGER_SERVER_TARGET: ip://llm-manager-server.{{ .Release.Namespace }}.svc.cluster.local:10001
 
   plugin-exec_en-US.json: |
     {
@@ -3860,7 +3860,7 @@ data:
           target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
 
         - name: trpc.SmartAssistant.LLMManagerServer.Chat
-          target: ip://llm-manager-server.adp.svc.cluster.local:10001
+          target: ip://llm-manager-server.{{ .Release.Namespace }}.svc.cluster.local:10001
           protocol: trpc
           network: tcp
           timeout: 600000
@@ -3902,7 +3902,7 @@ data:
 
         - callee: trpc.SmartAssistant.WebParserServer.ParserObj
           namespace: Test
-          target: ip://web-parser-server.adp.svc.cluster.local:10001
+          target: ip://web-parser-server.{{ .Release.Namespace }}.svc.cluster.local:10001
           timeout: 60000
 
 

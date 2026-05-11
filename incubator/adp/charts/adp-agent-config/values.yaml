@@ -1,6 +1,6 @@
 images:
   adp-agent-config:
-    url: ccr.ccs.tencentyun.com/tke-market/agent-config-server:3_2605062218_stable_v3.4.1.1_047477bf_private
+    url: "{{ .Values.global.imageRegistry }}/tke-market/agent-config-server:3_2605062218_stable_v3.4.1.1_047477bf_private"
 resources:
   limits:
     cpu: 1

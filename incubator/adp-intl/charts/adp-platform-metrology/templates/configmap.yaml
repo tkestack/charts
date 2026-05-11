@@ -1176,7 +1176,7 @@ data:
 
     # --- trpc.adp.ai_gateway.Admin ---
     AI_GATEWAY_ADMIN_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
-    ATOMIC_GATEWAY_TARGET: dns://api.adp.cloud.tencent.com:443
+    ATOMIC_GATEWAY_TARGET: dns://apiintl.adp.cloud.tencent.com:443
 
 
     KAFKA_MSG_LOG_TOPIC: msg_record_binlog
@@ -1254,6 +1254,7 @@ data:
       filter:                                          #针对所有service处理函数前后的拦截器列表
         - recovery                                       #拦截框架创建的业务处理协程panic
         - i18n-adp
+        - opentelemetry
       admin:
         ip: ${POD_IP}
         port: 8081
@@ -1568,7 +1569,7 @@ data:
         - name: adp.atomic.gateway
           network: tcp
           protocol: http
-          target: dns://api.adp.cloud.tencent.com:443
+          target: dns://apiintl.adp.cloud.tencent.com:443
           timeout: 600000
         - name: trpc.adp.ai_gateway.Admin
           network: tcp

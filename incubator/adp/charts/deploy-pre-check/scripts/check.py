@@ -317,6 +317,143 @@ def check_vectordb() -> bool:
         traceback.print_exc()
         return False
 
+def check_kafka() -> bool:
+    """检查 Kafka 连接"""
+    print_header("检查 Kafka 连接")
+    if not _is_enabled('ENABLE_KAFKA'):
+        print_warning("Kafka 检查已禁用，跳过")
+        return True
+
+    host = os.getenv('KAFKA_HOST', '')
+    if not host:
+        print_warning("未配置 Kafka，跳过检查")
+        return True
+
+    port = int(os.getenv('KAFKA_PORT', '9092'))
+
+    print_info(f"Kafka 地址: {host}:{port}")
+
+    try:
+        import socket
+
+        # 通过 TCP 连接检查 Kafka broker 可达性
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(10)
+        result = sock.connect_ex((host, port))
+        sock.close()
+
+        if result == 0:
+            print_success(f"Kafka broker {host}:{port} 连接成功")
+        else:
+            print_error(f"Kafka broker {host}:{port} 连接失败 (errno={result})")
+            return False
+
+    except socket.timeout:
+        print_error(f"Kafka broker {host}:{port} 连接超时")
+        return False
+    except Exception as e:
+        print_error(f"Kafka 连接失败: {e}")
+        return False
+
+    # 尝试使用 kafka-python 获取更多信息
+    try:
+        from kafka import KafkaConsumer
+        from kafka.errors import NoBrokersAvailable
+
+        consumer = KafkaConsumer(
+            bootstrap_servers=[f"{host}:{port}"],
+            request_timeout_ms=10000,
+            connections_max_idle_ms=5000
+        )
+        topics = consumer.topics()
+        print_success(f"Kafka 集群可用，当前 topic 数量: {len(topics)}")
+        consumer.close()
+    except ImportError:
+        # kafka-python 未安装，仅依赖 TCP 检查结果
+        print_info("kafka-python 未安装，仅通过 TCP 连接验证")
+    except NoBrokersAvailable:
+        print_error(f"Kafka 无可用 broker: {host}:{port}")
+        return False
+    except Exception as e:
+        print_warning(f"Kafka 高级检查失败（不阻塞流程）: {e}")
+
+    return True
+
+def check_clickhouse() -> bool:
+    """检查 ClickHouse 连接"""
+    print_header("检查 ClickHouse 连接")
+    if not _is_enabled('ENABLE_CLICKHOUSE'):
+        print_warning("ClickHouse 检查已禁用，跳过")
+        return True
+
+    host = os.getenv('CLICKHOUSE_HOST', '')
+    if not host:
+        print_warning("未配置 ClickHouse，跳过检查")
+        return True
+
+    port = int(os.getenv('CLICKHOUSE_PORT', '9000'))
+    user = os.getenv('CLICKHOUSE_USER', '')
+    password = os.getenv('CLICKHOUSE_PASSWORD', '')
+
+    print_info(f"ClickHouse 地址: {host}:{port}")
+    print_info(f"ClickHouse 用户: {user}")
+
+    try:
+        import socket
+
+        # 通过 TCP 连接检查 ClickHouse 可达性
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(10)
+        result = sock.connect_ex((host, port))
+        sock.close()
+
+        if result == 0:
+            print_success(f"ClickHouse {host}:{port} TCP 连接成功")
+        else:
+            print_error(f"ClickHouse {host}:{port} TCP 连接失败 (errno={result})")
+            return False
+
+    except socket.timeout:
+        print_error(f"ClickHouse {host}:{port} 连接超时")
+        return False
+    except Exception as e:
+        print_error(f"ClickHouse TCP 连接失败: {e}")
+        return False
+
+    # 尝试通过 HTTP 接口验证（ClickHouse 默认 HTTP 端口为 8123）
+    http_port = int(os.getenv('CLICKHOUSE_HTTP_PORT', '8123'))
+    try:
+        import requests
+
+        auth = (user, password) if user and password else None
+        url = f"http://{host}:{http_port}/"
+        params = {'query': 'SELECT 1'}
+        response = requests.get(url, params=params, auth=auth, timeout=10)
+
+        if response.status_code == 200:
+            print_success(f"ClickHouse HTTP 接口验证成功 (端口 {http_port})")
+            # 获取版本
+            try:
+                ver_resp = requests.get(url, params={'query': 'SELECT version()'}, auth=auth, timeout=5)
+                if ver_resp.status_code == 200:
+                    print_info(f"ClickHouse 版本: {ver_resp.text.strip()}")
+            except Exception:
+                pass
+            return True
+        else:
+            print_warning(f"ClickHouse HTTP 接口返回状态码: {response.status_code}")
+            print_info("TCP 连接已成功，HTTP 验证未通过（不阻塞流程）")
+            return True
+
+    except ImportError:
+        print_info("requests 未安装，仅通过 TCP 连接验证")
+        return True
+    except Exception as e:
+        # HTTP 验证失败不阻塞，TCP 已通过
+        print_warning(f"ClickHouse HTTP 验证失败（不阻塞流程）: {e}")
+        return True
+
+
 def check_object_storage() -> bool:
     """检查对象存储连接"""
     print_header("检查对象存储连接")
@@ -588,6 +725,8 @@ def main():
     check_mysql()
     check_elasticsearch()
     check_redis()
+    check_kafka()
+    check_clickhouse()
     check_vectordb()
     check_object_storage()
 

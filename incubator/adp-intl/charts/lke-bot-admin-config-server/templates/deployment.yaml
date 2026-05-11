@@ -105,7 +105,7 @@ spec:
               value: tcs
             - name: SERVER_LOG_LEVEL
               value: info
-          image: {{(index .Values.images .Chart.Name).url}}
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images .Chart.Name).url "context" .) }}
           imagePullPolicy: Always
           #command: ["sh","-c", "crond start; touch /var/log/log.txt && tail -f /var/log/log.txt"]
           #command: [ "sh","/usr/local/app/start.sh" ]
@@ -116,7 +116,7 @@ spec:
               cpu: "500m"
               memory: "2Gi"
             requests:
-              cpu: "200m"
+              cpu: "125m"
               memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
@@ -124,7 +124,7 @@ spec:
               cpu: "1"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "500m"
               memory: "512Mi"
           {{- else }}
           resources:
@@ -132,8 +132,8 @@ spec:
               cpu: "2"
               memory: "4Gi"
             requests:
-              cpu: "200m"
-              memory: "512Mi"
+              cpu: "1"
+              memory: "2Gi"
           {{- end }}
           livenessProbe:
             failureThreshold: 2

@@ -106,7 +106,7 @@ spec:
               value: tcs
             - name: SERVER_LOG_LEVEL
               value: info
-          image: {{(index .Values.images "adp-workflow-exec").url}}
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-workflow-exec").url "context" .) }}
           imagePullPolicy: Always
           name: adp-workflow-exec
           #command: ["sh", "-c", "while true; do sleep 1800; done"]
@@ -133,7 +133,7 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "125m"
               memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
@@ -141,7 +141,7 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "250m"
               memory: "512Mi"
           {{- else }}
           resources:
@@ -149,8 +149,8 @@ spec:
               cpu: "1"
               memory: "2Gi"
             requests:
-              cpu: "200m"
-              memory: "512Mi"
+              cpu: "500m"
+              memory: "1Gi"
           {{- end }}
           volumeMounts:
             - mountPath: /etc/localtime

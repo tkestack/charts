@@ -110,7 +110,7 @@ spec:
               value: {{ .Values.global.components.db.user | quote }}
             - name: mysql_db
               value: ti_auth_proxy
-          image: {{(index .Values.images "lke-ti-perm-auth-proxy").url}}
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "lke-ti-perm-auth-proxy").url "context" .) }}
           imagePullPolicy: Always
           name: lke-ti-perm-auth-proxy
          # command: ["/app/bin/agent-config", "-conf", "/app/conf/trpc_go.yaml"]
@@ -137,7 +137,7 @@ spec:
               cpu: "500m"
               memory: "512Mi"
             requests:
-              cpu: "200m"
+              cpu: "125m"
               memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
@@ -145,7 +145,7 @@ spec:
               cpu: "500m"
               memory: "512Mi"
             requests:
-              cpu: "200m"
+              cpu: "250m"
               memory: "512Mi"
           {{- else }}
           resources:
@@ -153,7 +153,7 @@ spec:
               cpu: "1"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "500m"
               memory: "512Mi"
           {{- end }}
           volumeMounts:

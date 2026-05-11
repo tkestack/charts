@@ -1,6 +1,6 @@
 images:
   adp-plugin-cos-util:
-    url: ccr.ccs.tencentyun.com/tke-market/plugin-cos-util:20260115_private
+    url: "{{ .Values.global.imageRegistry }}/tke-market/plugin-cos-util:20260115_private"
 nameOverride: ''
 fullnameOverride: ''
 plugincosutil:

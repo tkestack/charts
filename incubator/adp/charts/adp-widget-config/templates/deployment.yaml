@@ -105,7 +105,7 @@ spec:
               value: tcs
             - name: SERVER_LOG_LEVEL
               value: info
-          image: {{(index .Values.images "adp-widget-config").url}}
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-widget-config").url "context" .) }}
           imagePullPolicy: Always
           name: adp-widget-config
           command: ["/app/bin/widget-config", "-conf", "/app/conf/trpc_go.yaml"]
@@ -115,7 +115,7 @@ spec:
               cpu: "500m"
               memory: "512Mi"
             requests:
-              cpu: "200m"
+              cpu: "125m"
               memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
@@ -123,7 +123,7 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "250m"
               memory: "512Mi"
           {{- else }}
           resources:
@@ -131,8 +131,8 @@ spec:
               cpu: "1"
               memory: "2Gi"
             requests:
-              cpu: "200m"
-              memory: "512Mi"
+              cpu: "500m"
+              memory: "1Gi"
           {{- end }}
           livenessProbe:
             failureThreshold: 2

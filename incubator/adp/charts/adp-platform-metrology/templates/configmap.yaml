@@ -1253,6 +1253,7 @@ data:
       filter:                                          #针对所有service处理函数前后的拦截器列表
         - recovery                                       #拦截框架创建的业务处理协程panic
         - i18n-adp
+        - opentelemetry
       admin:
         ip: ${POD_IP}
         port: 8081

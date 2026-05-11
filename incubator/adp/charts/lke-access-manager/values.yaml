@@ -1,4 +1,4 @@
 images:
   adp-access-manager:
-    url: ccr.ccs.tencentyun.com/tke-market/accessmanagerserver:master_private-ff5f4e-20260123
+    url: "{{ .Values.global.imageRegistry }}/tke-market/accessmanagerserver:master_private-ff5f4e-20260123"
 replicas: 1

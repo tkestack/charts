@@ -62,7 +62,7 @@ spec:
               value: {{.Values.global.rsa.publicKey}}
             - name: RsaPublicKey
               value: {{.Values.global.rsa.publicKey}}
-          image: {{(index .Values.images "ti-auth-web").url}}
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "ti-auth-web").url "context" .) }}
           #command: ["sh", "-c", "nginx -c /etc/nginx/nginx.conf -g 'daemon off;'"]
           imagePullPolicy: IfNotPresent
           name: ti-auth-web
@@ -75,7 +75,7 @@ spec:
               cpu: "500m"
               memory: "512Mi"
             requests:
-              cpu: "200m"
+              cpu: "125m"
               memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
@@ -83,7 +83,7 @@ spec:
               cpu: "500m"
               memory: "512Mi"
             requests:
-              cpu: "200m"
+              cpu: "250m"
               memory: "512Mi"
           {{- else }}
           resources:
@@ -91,7 +91,7 @@ spec:
               cpu: "1"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "500m"
               memory: "512Mi"
           {{- end }}
           terminationMessagePath: /dev/termination-log

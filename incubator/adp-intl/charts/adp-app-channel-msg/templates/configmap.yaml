@@ -27,6 +27,8 @@ data:
       wecom: 10002
       wxkf: 10004
       wecomrobot: 10009
+      line: 10011
+      telegram: 10012
     component_app_id: ${COMPONENT_APP_ID}
     wx_authorize_callback_host: {{ .Values.global.scheme }}://{{ .Values.global.clb }}  #需要填写用户自己申请的域名  需要能反代回到msg服务
     wx_authorize_callback: "/online/channel/callback/wx/authorize"
