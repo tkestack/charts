@@ -1,0 +1,190 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    ti.cloud.tencent.com/resource-quota: unlimited
+    configmap.reloader.stakater.com/reload: {{ .Release.Name }}-platform-authenticator
+    {{- if .Values.global.customAnnotations }}
+    {{- range $key, $value := .Values.global.customAnnotations }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
+  labels:
+    app: adp-platform-authenticator
+    app.kubernetes.io/name: adp-platform-authenticator
+    {{- if .Values.global.customLabels }}
+    {{- range $key, $value := .Values.global.customLabels }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
+  name: adp-platform-authenticator
+  namespace: {{ .Release.Namespace }}
+spec:
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  selector:
+    matchLabels:
+      app: adp-platform-authenticator
+  strategy : {}
+  template:
+    metadata:
+      labels:
+        app: adp-platform-authenticator
+        {{- if .Values.global.customLabels }}
+        {{- range $key, $value := .Values.global.customLabels }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+        {{- end }}
+      {{- if .Values.global.customAnnotations }}
+      annotations:
+        {{- range $key, $value := .Values.global.customAnnotations }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+      {{- end }}
+    spec:
+      serviceAccountName: platform-authenticator
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - adp-platform-authenticator
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: GPUName
+                    operator: DoesNotExist
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: product
+                    operator: In
+                    values:
+                      - lke
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - env:
+            - name: ADP-CHANNEL-ID
+              value: "1"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: DEPLOYMENT_ENVIRONMENT
+              value: TKE
+            - name: ENV
+              value: tcs
+            - name: SERVER_LOG_LEVEL
+              value: info
+            - name: ProductType
+              value: {{ include "getProductType" . | quote }}
+          image: {{(index .Values.images "adp-platform-authenticator").url}}
+          imagePullPolicy: Always
+          command: ["/app/bin/platform-authenticator", "-conf", "/app/conf/trpc_go.yaml"]
+          name: adp-platform-authenticator
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+          {{- end }}
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 9090
+            timeoutSeconds: 2
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 9090
+            timeoutSeconds: 2
+          volumeMounts:
+            - mountPath: /etc/localtime
+              name: localtime
+            - mountPath: /app/logs
+              name: logdata
+              subPathExpr: $(POD_NAME)
+            - mountPath: /app/conf/trpc_go.yaml
+              name: config
+              subPath: trpc_go.yaml
+            - mountPath: /app/conf/application.yaml
+              name: config
+              subPath: application.yaml
+            - mountPath: /app/conf/placeholder.yaml
+              name: config
+              subPath: placeholder.yaml
+            - mountPath: /app/conf/infrastructure.yaml
+              name: infrastructure
+              subPath: infrastructure.yaml
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      volumes:
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - hostPath:
+            path: /etc/localtime
+          name: localtime
+        - hostPath:
+            path: /data/ti-platform/log/adp-platform-authenticator
+            type: DirectoryOrCreate
+          name: logdata
+        - configMap:
+            defaultMode: 420
+            name: {{ .Release.Name }}-platform-authenticator
+          name: config
+
+        - configMap:
+            defaultMode: 420
+            name: infrastructure
+          name: infrastructure

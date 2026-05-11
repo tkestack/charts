@@ -1,0 +1,17 @@
+images:
+  ti-gateway-filebeat-oss:
+    url: ccr.ccs.tencentyun.com/tke-market/ti-gateway-filebeat-oss:7.5.2.3_6_0
+  ti-gateway:
+    url: ccr.ccs.tencentyun.com/tke-market/ti-gateway:master_private_1907ac8a_20260414
+namespace: ti-base
+authNamespace: ti-base
+imagePullSecretName: qcloudregistrykey
+replicas: 1
+
+global:
+  etcd:
+    hosts:
+      - "127.0.0.1"
+    port: 2379
+    user: ""
+    password: ""

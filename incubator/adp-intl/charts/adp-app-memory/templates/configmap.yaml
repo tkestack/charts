@@ -1,0 +1,327 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-app-memory
+  namespace: {{ .Release.Namespace }}
+data:
+  error_en-US.json: |
+    {
+      "用户未登录": "User not logged in",
+      "意图不存在": "Intent does not exist"
+    }
+
+  error_zh-CN.json: |
+    {
+      "用户未登录": "用户未登录",
+      "意图不存在": "意图不存在"
+    }
+
+  main.yaml: |
+    memory_prompt: |
+      You are an assistant for summarizing user profiles, tasked with extracting user profiles from the user input based on the <Default Extraction Rules>. When the <Custom Extraction Rules> is not empty, prioritize following the <Custom Extraction Rules>.
+
+      <Default Extraction Rules>
+      The user profile should include the following information:
+      (1) User personal information, such as name, age, gender, hobbies, personality traits, etc.
+      (2) Key events that have already occurred in the user's life.
+
+      The user profile should not contain the following information:
+      (1) Time-sensitive content: "Will it rain in Beijing tomorrow?", "What was the stock market closing index today?", "What is the Lakers' score?"
+      (2) Casual conversation: "The traffic was so bad today," "Can you tell me a joke?"
+      (3) Unoccurred events: "Help me check the flight ticket to Shanghai for the day after tomorrow," "Help me reserve the meeting room at 3 PM," "Xiaozhang invited me to go hiking the day after tomorrow, what equipment do you recommend I prepare?"
+      </Default Extraction Rules>
+
+
+      <Extraction Examples>
+      Example 1:
+      User input: Hi, I'm Owen
+      Model output: {"Contains user profile": "Yes", "User profile": "Name is Owen"}
+
+      Example 2:
+      User input: I run every day. In addition, I love playing in water and have been able to swim since I was young.
+      Model output: {"Contains user profile": "Yes", "User profile": "Likes running and swimming"}
+
+      Example 3:
+      User input: How's the weather tomorrow?
+      Model output: {"Contains user profile": "No", "User profile": ""}
+
+      Example 4:
+      User input: My refrigerator is already empty
+      Model output: {"Contains user profile": "No", "User profile": ""}
+      </Extraction Examples>
+
+
+      <Custom Extraction Rules>
+      {自定义长期记忆提示词}
+      </Custom Extraction Rules>
+
+
+      Now begin your task. Determine whether the <User Input> contains a user profile. If it does, summarize the user profile in one sentence. The user profile should be concise and only include personal information and key events that have already occurred. If the extracted user profile content is duplicate of the <Previously Collected User Profiles>, do not extract it again.
+
+      <Previously Collected User Profiles>
+      {历史用户画像}
+      </Previously Collected User Profiles>
+
+      <User Input>
+      User input:  %s
+      </User Input>
+
+      Output in the following JSON format:
+      {
+      "Contains user profile": "Yes or No",
+      "User profile": "Summarize the user profile in one sentence. If the <User Input> does not contain a user profile, leave it empty."
+      }
+
+      - Only personal information and key events that have already occurred can be recorded, and other information should not be summarized as a user profile
+      - Strictly follow the requirements in the <Custom Extraction Rules>
+      - If the <User Input> is a question and does not clearly express a personal profile, do not extract a user profile
+      - Do not extract user profile content that is duplicate of the <Previously Collected User Profiles>
+
+    llm: 
+      model_name: "lke-deepseek-v3-0324"
+    memory_content_max_length: 140
+    infosec:
+      disable_content_check: true
+
+    # 长期记忆最大数量限制（每个用户最多保留的记忆条数）
+    long_term_memory_max_count: 50 
+    app_var_expire_time: 168
+    long_term_memory_worker_count: 100
+    long_term_memory_scan_batch_size: 1000
+    finance:
+      model_config:
+        # TCADP/glm-5:
+        #   default_qpm: 10
+        #   default_tpm: 20000
+        # TCADP/kimi-k2.5:
+        #   default_qpm: 10
+        #   default_tpm: 20000
+        # TCADP/minimax-m2.5:
+        #   default_qpm: 10
+        #   default_tpm: 20000
+  memory_en-US.json: |
+    {}
+
+  memory_zh-CN.json: |
+    {}
+
+  placeholder.yaml: |
+
+    AI_GATEWAY_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+    ADMIN_LOGIN_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+    ADMIN_API_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+    INFOSEC_TARGET: ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090
+    MEMORY_TARGET: ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001
+    FINANCE_TARGET: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+    PLATFORM_METROLOGY_TARGET: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
+    PLATFORM_LOGIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+    RESOURCE_GALLERY_ADMIN_TARGET: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+    APP_CONFIG_ADMIN_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+  trpc_go.yaml: |
+    global:
+      namespace: Production
+    server:
+      app: adp
+      server: app-memory
+      bin_path: /app/bin/
+      conf_path: /app/conf/
+      log_path: /app/logs/
+      admin:
+        ip: ${POD_IP}
+        port: 8081
+        read_timeout: 3000
+        write_timeout: 60000
+      filter:
+        - recovery
+        - i18n-adp
+        - debuglog
+        - cle-route-propagator
+        - opentelemetry
+      service:
+        - name: trpc.KEP.bot-memory-server.memory
+          ip: ${POD_IP}
+          port: 8000
+          network: tcp
+          protocol: trpc
+          server_async: true
+          idletime: 600000
+          filter:
+            - session
+            - permission
+        - name: trpc.KEP.bot-memory-server.memoryInner
+          ip: ${POD_IP}
+          port: 8001
+          network: tcp
+          protocol: trpc
+          server_async: true
+          idletime: 600000
+        - name: trpc.KEP.bot-memory-server.longTermMemoryReport
+          ip: ${POD_IP}
+          port: 9001
+          network: "0 */13 * * * * ?scheduler=distributed&startAtOnce=1"
+          protocol: timer
+          timeout: 3500000
+    client:
+      filter:
+        - cle-route-propagator
+        - debuglog
+        - opentelemetry
+      service:
+        - name: trpc.tcadp.memory.redis
+          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379
+        - name: redis.lke.limiter
+          network: tcp
+          protocol: redis
+          target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/4
+          password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
+          timeout: 800
+        - name: trpc.tcadp.memory.tdsql
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: trpc.tcadp.memory.mysql
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: trpc.adp.ai-gateway.api
+          namespace: Production
+          network: tcp
+          protocol: http
+          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 1800000
+        - callee: trpc.adp.app_admin_proxy.Login
+          namespace: Production
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_admin_proxy.Api
+          namespace: Production
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_content_moderation.Infosec
+          namespace: Production
+          target: ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090
+          network: tcp
+          timeout: 500
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          namespace: Production
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          namespace: Production
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_manager.Login
+          namespace: Production
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 6000
+        - callee: trpc.adp.platform_metrology.Api
+          namespace: Production
+          target: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot-data-statistics-server.Api
+          namespace: Production
+          target: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_charger.Api
+          name: qbot.finance.finance.Finance
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          network: tcp
+          timeout: 300000
+        - callee: trpc.adp.app_memory.MemoryInner
+          name: trpc.KEP.bot-memory-server.memoryInner
+          namespace: Production
+          target: ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_memory_server.MemoryInner
+          name: trpc.KEP.bot-memory-server.memoryInner
+          namespace: Production
+          target: ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_charger.Finance
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          network: tcp
+          timeout: 30000
+        - callee: trpc.adp.resource_gallery.Admin
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_config.Admin
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          protocol: trpc
+          timeout: 30000
+    plugins:
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      log:
+        default:
+          - writer: console
+            level: error
+          - writer: file
+            level: debug
+            writer_config:
+              filename: /app/logs/trpc.log
+              max_size: 100
+              max_backups: 10
+              max_age: 7
+              compress: false
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+            - name: global
+              appid: ${RAINBOW_APP_ID}  # appid
+              group: global # 配置所属组
+              type: kv   # 七彩石数据格式, kv(默认), table
+              env_name: ${RAINBOW_ENV_NAME}
+              timeout: 2000
+              enable_client_provider: true
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+            - zh-CN
+            - en-US
+          data_provider:
+            type: rainbow
+            prefix: memory
+            error_prefix: error
+            char_scaling_factor:
+              zh-CN: 1
+              en-US: 3
+      registry:
+        polaris:
+      selector:
+        polaris:
+          enable_servicerouter: true

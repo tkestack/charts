@@ -1,0 +1,196 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    ti.cloud.tencent.com/resource-quota: unlimited
+    configmap.reloader.stakater.com/reload: "adp-platform-metrology"
+    {{- if .Values.global.customAnnotations }}
+    {{- range $key, $value := .Values.global.customAnnotations }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
+  labels:
+    app: {{ .Values.appName }}
+    app.kubernetes.io/name: {{ .Values.appName }}
+    {{- if .Values.global.customLabels }}
+    {{- range $key, $value := .Values.global.customLabels }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
+  name: {{ .Values.appName }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+        {{- if .Values.global.customLabels }}
+        {{- range $key, $value := .Values.global.customLabels }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+        {{- end }}
+      {{- if .Values.global.customAnnotations }}
+      annotations:
+        {{- range $key, $value := .Values.global.customAnnotations }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+      {{- end }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - {{ .Values.appName }}
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: GPUName
+                    operator: DoesNotExist
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: product
+                    operator: In
+                    values:
+                      - lke
+      terminationGracePeriodSeconds: 90
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - env:
+            - name: MKL_NUM_THREADS
+              value: "2"
+            - name: LOG_SPACES
+              value: "2097152"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: DEPLOYMENT_ENVIRONMENT
+              value: TKE
+            - name: NAME_SPACE
+              value: default
+            - name: ENV
+              value: tcs
+            - name: SERVER_LOG_LEVEL
+              value: info
+            {{- $channelUUID := include "getChannelUUID" . -}}
+            {{- if $channelUUID }}
+            - name: ADP_CHANNEL_UUID
+              value: {{ $channelUUID | quote }}
+            {{- end }}
+            - name: ADP_CHANNEL_ID
+              value: "1"
+            - name: ProductType
+              value: {{ include "getProductType" . | quote }}
+          image: {{(index .Values.images "adp-platform-metrology").url}}
+          imagePullPolicy: Always
+          #command: ["sh","-c", "crond start; touch /var/log/log.txt && tail -f /var/log/log.txt"]
+         # command: ["sh", "/usr/local/app/start.sh"]
+          name: {{ .Values.appName }}
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+          {{- end }}
+          volumeMounts:
+            - mountPath: /etc/localtime
+              name: localtime
+            - mountPath: /app/logs
+              name: logdata
+              subPathExpr: $(POD_NAME)
+            - mountPath: /app/conf/trpc_go.yaml
+              name: config
+              subPath: trpc_go.yaml
+            - mountPath: /app/conf/application.yaml
+              name: config
+              subPath: application.yaml
+            - mountPath: /app/conf/placeholder.yaml
+              name: config
+              subPath: placeholder.yaml
+            - mountPath: /app/conf/bot-data-statistics-server_en-US.json
+              name: config
+              subPath: bot-data-statistics-server_en-US.json
+            - mountPath: /app/conf/bot-data-statistics-server_zh-CN.json
+              name: config
+              subPath: bot-data-statistics-server_zh-CN.json
+            - mountPath: /app/conf/errors_en-US.json
+              name: config
+              subPath: errors_en-US.json
+            - mountPath: /app/conf/errors_zh-CN.json
+              name: config
+              subPath: errors_zh-CN.json
+            - mountPath: /app/conf/infrastructure.yaml
+              name: infrastructure
+              subPath: infrastructure.yaml
+      restartPolicy: Always
+      volumes:
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - hostPath:
+            path: /etc/localtime
+          name: localtime
+        - hostPath:
+            path: /data/ti-platform/log/{{ .Values.appName }}
+            type: DirectoryOrCreate
+          name: logdata
+        - configMap:
+            defaultMode: 420
+            name: {{ .Release.Name }}-platform-metrology
+          name: config
+        - configMap:
+            defaultMode: 420
+            name: infrastructure
+          name: infrastructure

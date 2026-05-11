@@ -1,0 +1,12 @@
+images:
+  adp-app-config:
+    url: ccr.ccs.tencentyun.com/tke-market/app-config:14_2605061527_stable_v3.4.1.1_a4181506_private
+resources:
+  limits:
+    cpu: 1
+    memory: 4Gi
+  requests:
+    cpu: 1
+    memory: 1Gi
+appName: adp-app-config
+replicas: 1

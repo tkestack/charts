@@ -1,0 +1,972 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-workflow-exec
+  namespace: {{ .Release.Namespace }}
+data:
+  dm_en-US.json: |
+    {
+      "系统运行异常，请稍后重试": "System error, please try again later",
+      "请选择": "Please select",
+      "{\"提示\": \"内容太长，已隐藏\"}": "{\"Hint\": \"Content too long, hidden\"}",
+      "星期日": "Sunday",
+      "星期一": "Monday",
+      "星期二": "Tuesday",
+      "星期三": "Wednesday",
+      "星期四": "Thursday",
+      "星期五": "Friday",
+      "星期六": "Saturday",
+      "今天是%s，%s。现在时间是：%s%d点%s分": "Today is %s, %s. Current time is: %s%d:%s",
+      "上午": "AM",
+      "下午": "PM",
+      "本轮对话内容": "Current conversation content",
+      "多轮对话中本轮对话改写结果": "Rephrased result of current turn in multi-turn conversation",
+      "对话历史": "Conversation history",
+      "当前时间": "Current time",
+      "用户本轮对话内容": "Current user conversation content",
+      "用户输入": "User",
+      "机器人回答": "Assistant",
+      "必填参数": "Required Parameters",
+      "非必填参数": "Option Parameters",
+      "对话是否结束": "Is the Workflow End",
+      "当前节点是否结束": "Is the Current Node Completed",
+      "回复": "Reply",
+      "是": "Yes",
+      "否": "No",
+      "已停止，可能原因：工作流被终止或运行被取消": "Stopped. Possible reasons: The workflow was terminated or the execution was canceled.",
+      "未知错误": "Unknown error",
+      "系统错误": "System error",
+      "获取输入变量失败": "Failed to get input variables",
+      "参数解析失败": "Parameter parsing failed",
+      "参数引用解析失败": "Parameter reference parsing failed",
+      "参数值不合法，请检查参数值是否正确": "Invalid parameter value, please check if the parameter value is correct",
+      "运行时错误": "Runtime error",
+      "工作流已运行结束": "Workflow has finished running",
+      "数据长度超出限制": "Data length exceeds the limit",
+      "获取应用模型信息失败": "Failed to get application model information",
+      "获取账户计费状态失败": "Failed to get account billing status",
+      "大模型资源不足": "Insufficient LLM resources",
+      "大模型并发数超出限制": "LLM concurrency exceeds the limit",
+      "专属并发大模型资源不足": "Insufficient VIP LLM resources",
+      "专属并发大模型并发数超出限制": "VIP LLM concurrency exceeds the limit",
+      "大模型请求超时": "LLM request timed out",
+      "大模型请求失败": "LLM request failed",
+      "大模型结果异常": "Abnormal LLM result",
+      "大模型逻辑判断失败": "LLM logic judgment failed",
+      "大模型请求的prompt超长": "Prompt for LLM request is too long",
+      "大模型追问次数超过限制": "Number of follow-up questions for LLM exceeds the limit",
+      "设置子工作流输入参数失败": "Failed to set input parameters for sub-workflow",
+      "子工作流的节点运行异常": "Node execution exception in sub-workflow",
+      "初始化子工作流失败": "Failed to initialize sub-workflow",
+      "代码执行失败": "Code execution failed",
+      "意图判断结果异常": "Abnormal intent judgment result",
+      "循环条件判断失败": "Loop condition judgment failed",
+      "循环超过系统最大循环次数": "Loop exceeds the system's maximum number of iterations",
+      "知识库检索失败": "Knowledge base retrieval failed",
+      "存在不支持的比较符": "Unsupported comparator exists",
+      "逻辑判断异常，没有满足条件的分支": "Logic error: No conditional branch matched",
+      "获取插件工具详情失败": "Failed to get plugin tool details",
+      "调用工具异常": "Tool invocation exception",
+      "工具结果异常": "Tool result exception",
+      "调用API失败": "Failed to invoke API",
+      "建立连接失败": "Failed to establish connection",
+      "消息队列类型不支持": "Message queue type not supported",
+      "初始化消息队列生产者失败": "Failed to initialize message queue producer",
+      "消息队列生产者发送消息失败": "Message queue producer failed to send message",
+      "批处理并行数不合法": "Invalid batch processing parallel number",
+      "SQL执行失败": "Failed to execute SQL",
+      "节点运行异常": "Node runtime exception",
+      "思考": "Thinking",
+      "调用工作流": "Invoke workflow",
+      "该工作流中引用了其他工作流，其他工作流因‘未启用’导致不可用，请’启用‘后再进行测试。": "This workflow references other workflows, which are unavailable because they are 'not enabled'. Please 'enable' them before testing again.",
+      "2006年01月02日 15:04:05": "January 02, 2006 15:04:05",
+      "当前工作流配置错误，请调整后重新测试。": "Current workflow configuration is incorrect. Please adjust and retry.",
+
+      "发生未知错误，请稍后再试，若问题频繁出现，请联系技术支持，报告该问题": "An unknown error has occurred. Please try again later. If the problem persists, please contact technical support to report this issue.",
+      "发生系统错误，请稍后重试。若问题频繁出现，请联系技术支持，报告该问题。": "A system error has occurred. Please try again later. If the problem persists, please contact technical support to report this issue.",
+      "1.检查该节点的输入配置，确保所有必需的参数都已正确设置。\n2.检查上游节点的输出，确认是否有提供该变量。": "1.Check the node's input configuration and ensure all required parameters are correctly set.\n2.Check the output of the upstream node to confirm that this variable is being provided.",
+      "1.检查参数的格式。当输入为object类型的变量时，请检查并确保json语法的正确性。\n2.检查字段类型与节点要求是否一致。\n3.可考虑在上游节点进行参数的清洗或转义。": "1.Check the parameter format. When the input is a variable of type 'object', ensure the JSON syntax is correct.\n2.Verify that the field type matches the node's requirements.\n3.Consider cleaning or escaping the parameters in an upstream node.",
+      "检查上游节点传递参数的正确性，可在调试面板中查看传入的参数。": "Check the correctness of the parameters passed from the upstream node. You can view the incoming parameters in the debug panel.",
+      "1.检查参数的具体值，查看是否超出参数的合法范围。\n2.检查参数类型是否与节点接受类型一致。\n3.检查是否存在非法字符": "1.Check the parameter's specific value to see if it exceeds the valid range.\n2.Check if the parameter type is consistent with the type accepted by the node.\n3.Check if there are any invalid characters.",
+      "1.检查输入数据的大小，尝试减小数据量。\n2.对于文本数据请考虑对文本进行摘要或分块处理。": "1.Check the size of the input data and try to reduce the data volume.\n2.For text data, consider summarizing the text or processing it in chunks.",
+      "1.检查网络连接是否正常 \n2.确认当前配置无问题，当前用户有权限访问该模型": "1.Check if the network connection is working properly.\n2.Confirm that the current configuration is correct and that the user has permission to access the model.",
+      "当前账户余额或配额不足以支持本次大模型调用，请充值或使用限时免费模型": "Your account balance or quota is insufficient for this request. Please top up your account or use a free model.",
+      "同一时间发起的并发请求数量超过了系统或模型供应商的限制，建议降低当前节点的并发数。若业务需要高并发情况，请申请技术支持以提高并发限制": "The number of concurrent requests has exceeded the limit set by the system or the model provider. We recommend reducing the concurrency level for the current node. If your business requires higher concurrency, please contact technical support to request a limit increase.",
+      "1.检查网络连接到服务商的延迟。\n2.尝试简化Prompt，减少模型的处理时间 \n3.使用“异常处理”功能，开启重试功能。": "1.Check the network latency to the service provider.\n2.Try simplifying the prompt to reduce the model's processing time.\n3.Use the \"exception handling\" feature to enable retries.",
+      "请排查：API认证、账户配额、请求负载（的合法性及网络连通性。若仍无法解决，请提交工单。": "Please investigate the following: API authentication, account quota, the validity of the request payload, and network connectivity. If the issue persists, please submit a support ticket.",
+      "大模型返回的结果格式不符合输出预期，多发于输出格式为JSON的情况，建议在Prompt中明确、清晰地制定输出格式，提供JSON示例。": "The format of the result from the large model does not match the expected output. This is a common issue, especially when the output format is JSON. We recommend clearly and explicitly defining the output format in the prompt and providing a JSON example.",
+      "检查用于意图识别的Prompt是否足够清晰、无歧义、覆盖了足够广的情况。建议丰富和优化判断的示例，让模型更好地学习多种意图。": "Check if the prompt for intent recognition is clear, unambiguous, and covers a comprehensive range of scenarios. We recommend enriching and optimizing the examples to help the model better learn a wide variety of intents.",
+      "发送给大模型的Prompt总长度超过了模型处理的上限，建议1.移除不必要的上下文或输入 2.对过长的上下文进行摘要处理再输入给模型。3.分块处理后再进行汇总 4.切换支持更长上下文的模型": "The total length of the prompt sent to the large language model exceeds its context window limit. We recommend:\n\n1.Remove unnecessary context or input.\nSummarize lengthy context before inputting it to the model.\n2.Process in chunks and then aggregate the results.\n3.Switch to a model with a larger context window.",
+      "建议修改提示词，或使用更清晰的语言描述问题，以便于模型在追问次数的限制内完成任务": "Try refining your prompt or using clearer language to help the model complete the task within the attempt limit.",
+      "1.检查子工作流调用节点的参数映射配置，确保父工作流的输出变量与子工作流的输入变量正确对应。\n2.检查参数的数据类型是否匹配。": "1.Check the parameter mapping configuration of the sub-workflow call node to ensure that the parent workflow's output variables are correctly mapped to the sub-workflow's input variables.\n2.Check if the data types of the parameters match.",
+      "错误发生在子工作流内部，建议检查子工作流具体报错信息，以定位错误发生的位置与原因": "The error occurred within the sub-workflow. We recommend checking the sub-workflow's specific error message to pinpoint the location and cause of the issue.",
+      "1.检查子工作流是否已发布且版本正确。\n2.检查子工作流的触发配置和基本参数是否有效。": "1.Check if the sub-workflow is published and the correct version is being used.\n2.Check if the sub-workflow's trigger configuration and basic parameters are valid.",
+      "代码运行时发生错误。请查看代码节点具体的报错信息以进行修改": "An error occurred during code execution. Please check the specific error message in the code node to make corrections.",
+      "1.检查意图的定义和示例语料是否充分和准确。\n2.检查输入的文本是否过于模糊或与定义的意图相差甚远。": "1.Verify that the intent definitions and their example data are both sufficient and correct.\n2.Determine if the input text is overly ambiguous or too different from any of the intended meanings.",
+      "循环节点的退出条件表达式语法错误或判断逻辑异常，请检查表达式中的语法是否正确，条件表达式中引用的变量在循环过程中是否可用": "There is an issue with the loop's exit condition. The expression may contain a syntax error, or its evaluation logic might be incorrect. Please verify the syntax is correct and that all variables used in the expression are available throughout the loop's execution.",
+      "1.建议检查循环条件设置，是否进入死循环 2.考虑使用数组循环": "1.Check the loop condition for an infinite loop.\n2.Consider using an array loop.",
+      "建议查看节点文档，确认所有支持的比较运算符列表，将不支持的运算符更改为支持的等价逻辑": "Check the node documentation for the list of supported comparison operators and replace any unsupported operators with supported equivalent logic.",
+      "请检查插件是否已经被正确安装并启用，检查网络连接与插件服务的运行状态": "Please check if the plugin is correctly installed and enabled, and verify the network connection and the status of the plugin service.",
+      "插件工具的结果返回了非预期的内容，请重试。若问题频发，请联系插件相关开发者": "The plugin returned an unexpected result. Please try again. If the issue persists, contact the plugin developer.",
+      "1.检查 API 的 URL、请求方法、Headers 和 Body 是否配置正确。\n2.验证 API 的认证信息是否有效。": "1. Check if the API URL, request method, Headers, and Body are configured correctly. \n2. Verify that the API authentication credentials are valid.",
+      "可适当增加工具的最大轮询时间或调整轮询间隔的配置，检查被调用的异步任务是否存在内部异常导致无响应": "Consider increasing the tool's maximum polling time or adjusting the polling interval configuration. Also, check if the called asynchronous task has any internal exceptions that might be causing it to hang.",
+      "无法连接到消息队列服务器，1.请检查Url、用户名、密码等信息填写正确。2.请检查网络连通性与防火墙规则": "Unable to connect to the message queue server. 1. Please verify that the URL, username, and password are correct. 2. Please check network connectivity and firewall rules.",
+      "使用了平台不支持的消息队列类型，请检查消息队列设置": "An unsupported message queue type is being used. Please check your message queue settings.",
+      "1.检查消息内容的大小是否超过限制。\n2.检查消息的序列化格式是否正确。\n3.检查 MQ 服务端的日志，看是否有接收错误。": "1. Check if the message size exceeds the limit. \n2. Verify that the message is serialized in the correct format. \n3. Check the MQ server logs for any receive errors.",
+      "请检查批处理并行数设置，其值只能为正整数，小数、负数等其他类型皆不合法": "Please check the batch parallelism setting. Its value must be a positive integer; decimals, negative numbers, and other types are invalid.",
+      "SQL执行失败。请检查您提交的SQL语句，确认其语法、表名及列名是否正确。建议将完整的SQL语句置于数据库客户端中手动执行，以获取数据库返回的详细错误信息。": "SQL execution failed. Please check the SQL statement you submitted and verify that its syntax, table names, and column names are correct. We recommend manually executing the complete SQL statement in a database client to retrieve the detailed error message from the database.",
+      "请检查输入的变量，以保证转换后的JSON、数组、字符串格式正确": "Please check the input variables to ensure the resulting JSON, array, or string format is correct.",
+      "请核查目标类型与方法是否受支持": "Please verify that the target type and method are supported.",
+      "错误发生在子Agent内部，建议检查子Agent具体报错信息，以定位错误发生的位置与原因": "The error occurred within the sub-agent. Please check the specific error message from the sub-agent to identify the source and cause of the error.",
+      "请求失败，触发当前应用的模型QPM 上限。": "Request failed: Current application's model QPM limit hit.",
+      "请求失败，触发当前应用的模型TPM 上限。": "Request failed: Current application's model TPM limit hit.",
+      "请求失败，当前应用的模型单日Tokens用量超限。": "Request failed: Current application's model daily token limit exceeded.",
+      "请求失败，触发当前空间的模型QPM上限。": "Request failed: Current space's model QPM limit hit.",
+      "请求失败，触发当前空间的模型 TPM 上限。": "Request failed: Current space's model TPM limit hit.",
+      "请求失败，触发当前空间的模型单日Tokens用量超限。": "Request failed: Current space's model daily token limit exceeded."
+    }
+
+  dm_zh-CN.json: |
+    {
+      "系统运行异常，请稍后重试": "系统运行异常，请稍后重试",
+      "请选择": "请选择",
+      "{\"提示\": \"内容太长，已隐藏\"}":"{\"提示\": \"内容太长，已隐藏\"}",
+      "星期日": "星期日",
+      "星期一": "星期一",
+      "星期二": "星期二",
+      "星期三": "星期三",
+      "星期四": "星期四",
+      "星期五": "星期五",
+      "星期六": "星期六",
+      "今天是%s，%s。现在时间是：%s%d点%s分": "今天是%s，%s。现在时间是：%s%d点%s分",
+      "上午": "上午",
+      "下午": "下午",
+      "本轮对话内容": "本轮对话内容",
+      "多轮对话中本轮对话改写结果": "多轮对话中本轮对话改写结果",
+      "对话历史": "对话历史",
+      "当前时间": "当前时间",
+      "用户本轮对话内容": "用户本轮对话内容",
+      "用户输入": "用户输入",
+      "机器人回答": "机器人回答",
+      "必填参数": "必填参数",
+      "非必填参数": "非必填参数",
+      "对话是否结束": "对话是否结束",
+      "当前节点是否结束": "当前节点是否结束",
+      "回复": "回复",
+      "是": "是",
+      "否": "否",
+      "已停止，可能原因：工作流被终止或运行被取消": "已停止，可能原因：工作流被终止或运行被取消",
+      "未知错误": "未知错误",
+      "系统错误": "系统错误",
+      "获取输入变量失败": "获取输入变量失败",
+      "参数解析失败": "参数解析失败",
+      "参数引用解析失败": "参数引用解析失败",
+      "参数值不合法，请检查参数值是否正确": "参数值不合法，请检查参数值是否正确",
+      "运行时错误": "运行时错误",
+      "工作流已运行结束": "工作流已运行结束",
+      "数据长度超出限制": "数据长度超出限制",
+      "获取应用模型信息失败": "获取应用模型信息失败",
+      "获取账户计费状态失败": "获取账户计费状态失败",
+      "大模型资源不足": "大模型资源不足",
+      "大模型并发数超出限制": "大模型并发数超出限制",
+      "专属并发大模型资源不足": "专属并发大模型资源不足",
+      "专属并发大模型并发数超出限制": "专属并发大模型并发数超出限制",
+      "大模型请求超时": "大模型请求超时",
+      "大模型请求失败": "大模型请求失败",
+      "大模型结果异常": "大模型结果异常",
+      "大模型逻辑判断失败": "大模型逻辑判断失败",
+      "大模型请求的prompt超长": "大模型请求的prompt超长",
+      "大模型追问次数超过限制": "大模型追问次数超过限制",
+      "设置子工作流输入参数失败": "设置子工作流输入参数失败",
+      "子工作流的节点运行异常": "子工作流的节点运行异常",
+      "初始化子工作流失败": "初始化子工作流失败",
+      "代码执行失败": "代码执行失败",
+      "意图判断结果异常": "意图判断结果异常",
+      "循环条件判断失败": "循环条件判断失败",
+      "循环超过系统最大循环次数": "循环超过系统最大循环次数",
+      "知识库检索失败": "知识库检索失败",
+      "存在不支持的比较符": "存在不支持的比较符",
+      "逻辑判断异常，没有满足条件的分支": "逻辑判断异常，没有满足条件的分支",
+      "获取插件工具详情失败": "获取插件工具详情失败",
+      "调用工具异常": "调用工具异常",
+      "工具结果异常": "工具结果异常",
+      "调用API失败": "调用API失败",
+      "建立连接失败": "建立连接失败",
+      "消息队列类型不支持": "消息队列类型不支持",
+      "初始化消息队列生产者失败": "初始化消息队列生产者失败",
+      "消息队列生产者发送消息失败": "消息队列生产者发送消息失败",
+      "批处理并行数不合法": "批处理并行数不合法",
+      "SQL执行失败": "SQL执行失败",
+      "节点运行异常": "节点运行异常",
+      "思考": "思考",
+      "调用工作流": "调用工作流",
+      "该工作流中引用了其他工作流，其他工作流因‘未启用’导致不可用，请’启用‘后再进行测试。": "该工作流中引用了其他工作流，其他工作流因‘未启用’导致不可用，请‘启用’后再进行测试。",
+      "2006年01月02日 15:04:05": "2006年01月02日 15:04:05",
+      "当前工作流配置错误，请调整后重新测试。": "当前工作流配置错误，请调整后重新测试。",
+
+      "发生未知错误，请稍后再试，若问题频繁出现，请联系技术支持，报告该问题": "发生未知错误，请稍后再试，若问题频繁出现，请联系技术支持，报告该问题",
+      "发生系统错误，请稍后重试。若问题频繁出现，请联系技术支持，报告该问题。": "发生系统错误，请稍后重试。若问题频繁出现，请联系技术支持，报告该问题。",
+      "1.检查该节点的输入配置，确保所有必需的参数都已正确设置。\n2.检查上游节点的输出，确认是否有提供该变量。": "1.检查该节点的输入配置，确保所有必需的参数都已正确设置。\n2.检查上游节点的输出，确认是否有提供该变量。",
+      "1.检查参数的格式。当输入为object类型的变量时，请检查并确保json语法的正确性。\n2.检查字段类型与节点要求是否一致。\n3.可考虑在上游节点进行参数的清洗或转义。": "1.检查参数的格式。当输入为object类型的变量时，请检查并确保json语法的正确性。\n2.检查字段类型与节点要求是否一致。\n3.可考虑在上游节点进行参数的清洗或转义。",
+      "检查上游节点传递参数的正确性，可在调试面板中查看传入的参数。": "检查上游节点传递参数的正确性，可在调试面板中查看传入的参数。",
+      "1.检查参数的具体值，查看是否超出参数的合法范围。\n2.检查参数类型是否与节点接受类型一致。\n3.检查是否存在非法字符": "1.检查参数的具体值，查看是否超出参数的合法范围。\n2.检查参数类型是否与节点接受类型一致。\n3.检查是否存在非法字符",
+      "1.检查输入数据的大小，尝试减小数据量。\n2.对于文本数据请考虑对文本进行摘要或分块处理。": "1.检查输入数据的大小，尝试减小数据量。\n2.对于文本数据请考虑对文本进行摘要或分块处理。",
+      "1.检查网络连接是否正常 \n2.确认当前配置无问题，当前用户有权限访问该模型": "1.检查网络连接是否正常 \n2.确认当前配置无问题，当前用户有权限访问该模型",
+      "当前账户余额或配额不足以支持本次大模型调用，请充值或使用限时免费模型": "当前账户余额或配额不足以支持本次大模型调用，请充值或使用限时免费模型",
+      "同一时间发起的并发请求数量超过了系统或模型供应商的限制，建议降低当前节点的并发数。若业务需要高并发情况，请申请技术支持以提高并发限制": "同一时间发起的并发请求数量超过了系统或模型供应商的限制，建议降低当前节点的并发数。若业务需要高并发情况，请申请技术支持以提高并发限制",
+      "1.检查网络连接到服务商的延迟。\n2.尝试简化Prompt，减少模型的处理时间 \n3.使用“异常处理”功能，开启重试功能。": "1.检查网络连接到服务商的延迟。\n2.尝试简化Prompt，减少模型的处理时间 \n3.使用“异常处理”功能，开启重试功能。",
+      "请排查：API认证、账户配额、请求负载（的合法性及网络连通性。若仍无法解决，请提交工单。": "请排查：API认证、账户配额、请求负载（的合法性及网络连通性。若仍无法解决，请提交工单。",
+      "大模型返回的结果格式不符合输出预期，多发于输出格式为JSON的情况，建议在Prompt中明确、清晰地制定输出格式，提供JSON示例。": "大模型返回的结果格式不符合输出预期，多发于输出格式为JSON的情况，建议在Prompt中明确、清晰地制定输出格式，提供JSON示例。",
+      "检查用于意图识别的Prompt是否足够清晰、无歧义、覆盖了足够广的情况。建议丰富和优化判断的示例，让模型更好地学习多种意图。": "检查用于意图识别的Prompt是否足够清晰、无歧义、覆盖了足够广的情况。建议丰富和优化判断的示例，让模型更好地学习多种意图。",
+      "发送给大模型的Prompt总长度超过了模型处理的上限，建议1.移除不必要的上下文或输入 2.对过长的上下文进行摘要处理再输入给模型。3.分块处理后再进行汇总 4.切换支持更长上下文的模型": "发送给大模型的Prompt总长度超过了模型处理的上限，建议1.移除不必要的上下文或输入 2.对过长的上下文进行摘要处理再输入给模型。3.分块处理后再进行汇总 4.切换支持更长上下文的模型",
+      "建议修改提示词，或使用更清晰的语言描述问题，以便于模型在追问次数的限制内完成任务": "建议修改提示词，或使用更清晰的语言描述问题，以便于模型在追问次数的限制内完成任务",
+      "1.检查子工作流调用节点的参数映射配置，确保父工作流的输出变量与子工作流的输入变量正确对应。\n2.检查参数的数据类型是否匹配。": "1.检查子工作流调用节点的参数映射配置，确保父工作流的输出变量与子工作流的输入变量正确对应。\n2.检查参数的数据类型是否匹配。",
+      "错误发生在子工作流内部，建议检查子工作流具体报错信息，以定位错误发生的位置与原因": "错误发生在子工作流内部，建议检查子工作流具体报错信息，以定位错误发生的位置与原因",
+      "1.检查子工作流是否已发布且版本正确。\n2.检查子工作流的触发配置和基本参数是否有效。": "1.检查子工作流是否已发布且版本正确。\n2.检查子工作流的触发配置和基本参数是否有效。",
+      "代码运行时发生错误。请查看代码节点具体的报错信息以进行修改": "代码运行时发生错误。请查看代码节点具体的报错信息以进行修改",
+      "1.检查意图的定义和示例语料是否充分和准确。\n2.检查输入的文本是否过于模糊或与定义的意图相差甚远。": "1.检查意图的定义和示例语料是否充分和准确。\n2.检查输入的文本是否过于模糊或与定义的意图相差甚远。",
+      "循环节点的退出条件表达式语法错误或判断逻辑异常，请检查表达式中的语法是否正确，条件表达式中引用的变量在循环过程中是否可用": "循环节点的退出条件表达式语法错误或判断逻辑异常，请检查表达式中的语法是否正确，条件表达式中引用的变量在循环过程中是否可用",
+      "1.建议检查循环条件设置，是否进入死循环 2.考虑使用数组循环": "1.建议检查循环条件设置，是否进入死循环 2.考虑使用数组循环",
+      "建议查看节点文档，确认所有支持的比较运算符列表，将不支持的运算符更改为支持的等价逻辑": "建议查看节点文档，确认所有支持的比较运算符列表，将不支持的运算符更改为支持的等价逻辑",
+      "请检查插件是否已经被正确安装并启用，检查网络连接与插件服务的运行状态": "请检查插件是否已经被正确安装并启用，检查网络连接与插件服务的运行状态",
+      "插件工具的结果返回了非预期的内容，请重试。若问题频发，请联系插件相关开发者": "插件工具的结果返回了非预期的内容，请重试。若问题频发，请联系插件相关开发者",
+      "1.检查 API 的 URL、请求方法、Headers 和 Body 是否配置正确。\n2.验证 API 的认证信息是否有效。": "1.检查 API 的 URL、请求方法、Headers 和 Body 是否配置正确。\n2.验证 API 的认证信息是否有效。",
+      "可适当增加工具的最大轮询时间或调整轮询间隔的配置，检查被调用的异步任务是否存在内部异常导致无响应": "可适当增加工具的最大轮询时间或调整轮询间隔的配置，检查被调用的异步任务是否存在内部异常导致无响应",
+      "无法连接到消息队列服务器，1.请检查Url、用户名、密码等信息填写正确。2.请检查网络连通性与防火墙规则": "无法连接到消息队列服务器，1.请检查Url、用户名、密码等信息填写正确。2.请检查网络连通性与防火墙规则",
+      "使用了平台不支持的消息队列类型，请检查消息队列设置": "使用了平台不支持的消息队列类型，请检查消息队列设置",
+      "1.检查消息内容的大小是否超过限制。\n2.检查消息的序列化格式是否正确。\n3.检查 MQ 服务端的日志，看是否有接收错误。": "1.检查消息内容的大小是否超过限制。\n2.检查消息的序列化格式是否正确。\n3.检查 MQ 服务端的日志，看是否有接收错误。",
+      "请检查批处理并行数设置，其值只能为正整数，小数、负数等其他类型皆不合法": "请检查批处理并行数设置，其值只能为正整数，小数、负数等其他类型皆不合法",
+      "SQL执行失败。请检查您提交的SQL语句，确认其语法、表名及列名是否正确。建议将完整的SQL语句置于数据库客户端中手动执行，以获取数据库返回的详细错误信息。": "SQL执行失败。请检查您提交的SQL语句，确认其语法、表名及列名是否正确。建议将完整的SQL语句置于数据库客户端中手动执行，以获取数据库返回的详细错误信息。",
+      "请检查输入的变量，以保证转换后的JSON、数组、字符串格式正确": "请检查输入的变量，以保证转换后的JSON、数组、字符串格式正确",
+      "请核查目标类型与方法是否受支持": "请核查目标类型与方法是否受支持",
+      "错误发生在子Agent内部，建议检查子Agent具体报错信息，以定位错误发生的位置与原因": "错误发生在子Agent内部，建议检查子Agent具体报错信息，以定位错误发生的位置与原因",
+      "请求失败，触发当前应用的模型QPM 上限。": "请求失败，触发当前应用的模型QPM 上限。",
+      "请求失败，触发当前应用的模型TPM 上限。": "请求失败，触发当前应用的模型TPM 上限。",
+      "请求失败，当前应用的模型单日Tokens用量超限。": "请求失败，当前应用的模型单日Tokens用量超限。",
+      "请求失败，触发当前空间的模型QPM上限。": "请求失败，触发当前空间的模型QPM上限。",
+      "请求失败，触发当前空间的模型 TPM 上限。": "请求失败，触发当前空间的模型 TPM 上限。",
+      "请求失败，触发当前空间的模型单日Tokens用量超限。": "请求失败，触发当前空间的模型单日Tokens用量超限。"
+    }
+
+  error_en-US.json: |
+    {
+      "该工作流中引用了其他工作流，其他工作流因‘未启用’导致不可用，请’启用‘后再进行测试。": "This workflow references other workflows, which are unavailable because they are 'not enabled'. Please 'enable' them before testing again.",
+      "WorkflowRuntimeError": "Workflow runtime error​"
+    }
+  error_zh-CN.json: |
+    {
+      "该工作流中引用了其他工作流，其他工作流因‘未启用’导致不可用，请’启用‘后再进行测试。": "该工作流中引用了其他工作流，其他工作流因‘未启用’导致不可用，请‘启用’后再进行测试。",
+      "WorkflowRuntimeError": "工作流运行异常"
+    }
+
+  main.yaml: |
+    TimeFormat: ${MAIN_TIME_FORMAT}
+    VectorGroup:
+      Biz: cs
+      Secret: e1168c1b14e31acd512ddd566bbe4390
+      EmbeddingModelName: "sn-large-multi-language-v0.2.5"
+      ModelInfos:
+        "embedding_1121_7500":
+          CorpusTemplate: {{`"{{.RewriteQuery}}"`}}
+        "sn-large-multi-language-v0.2.5":
+          CorpusTemplate: {{`"问题:{{.RewriteQuery}}"`}}
+    Retrieve:
+      WorkflowConfidence: 0.0         # 意图置信度
+      WorkflowRelevantTopSize: 100    # 最相关意图的个数
+      WorkflowUniqRelevantTopSize: 5  # 最相关意图的个数
+      EmbeddingLengthLimit: 4090      # Embedding的文本长度限制
+      NERThreshold: 100               # NER阈值，大于阈值不做NER
+    Proxy: ${PROXY_CONFIG}
+    Model:
+      ParameterModifyModelNames: ["workflow-pro", "Youtu/youtu-intent-pro"]
+      ParameterModifyModelName: "workflow-pro"
+      ParameterModelName: "${MODEL_PARAMETER}"
+      LogicModelName: "${MODEL_LOGIC}"
+      OptionCardModelName: "${MODEL_OPTION_CARD}"
+      IntentModelName: "${MODEL_INTENT}"
+      RecommendQuestionModelName: "${MODEL_RECOMMEND_QUESTION}"
+      ToConvertModelNames: ${MODEL_TO_CONVERT_NAMES}
+      PreNameToDefaultParams:
+        workflow-pro: "{\"top_k\":1,\"temperature\":0}"
+        workflow-light-32b: "{\"top_k\":1,\"temperature\":0}"
+        Youtu/youtu-intent-pro: "{\"top_k\":1,\"temperature\":0}"
+        Youtu/youtu-intent-32b: "{\"top_k\":1,\"temperature\":0}"
+      FreeModelNames: ["cs-rewrite","Youtu/youtu-rewrite","Youtu/youtu-rewrite-7b"]
+      ConvertBillingModelName: ${MODEL_CONVERT_BILLING}
+    Session:
+      SaveMaxIdleTime: 1440
+    Finance: # 计费相关配置
+      DefaultQPM: 50
+      DefaultTPM: 100000
+      DsDefaultQPM: 50
+      DsDefaultTPM: 100000
+      DefaultReportStep: 100
+      SpaceLimiterAccount: ${FINANCE_SPACE_LIMITER_ACCOUNTS}
+    # 上传服务配置
+    storage:
+      {{ include "qbot.s3_storage" . }}
+    AsyncTask:
+      Concurrency: 100
+      TaskCheckInterval: 2
+      RecoverCheckInterval: 30
+      LLMFailedRetryInterval: 20
+    WorkflowEvent:
+      Thought:
+        Title: "思考"
+        Icon: "/webim/static/thinking.png"
+      TokenStat: 
+        Title: "调用工作流"
+        Icon: "/qbot/public/API.png"
+    Workflow:
+      WorkflowStackMaxLength: 2
+      FailedReply: "系统运行异常，请稍后重试"
+      StreamOutputInterval: 20
+      # 最大的循环次数
+      LoopMax: ${WORKFLOW_LOOP_MAX}
+      # 最大的执行时间（秒）
+      ExecuteTimeLimit: ${WORKFLOW_EXECUTE_TIME_LIMIT}
+      # 同步模式AppID白名单超时时间（秒）
+      ExecuteTimeLimitByAppID: ${WORKFLOW_EXECUTE_TIME_LIMIT_BY_APPID}
+      # 节点的最大运行次数
+      MaxNodePassTimes: 1500
+      MaxNodeResultTimes: 20000
+      OptionCardDefaultQuestion: "请选择"
+      TextCollectionDefaultQuestion: "请补充相关信息"
+      MaxReplyLength: 1000000
+      MaxDebugDataLength: 1000
+      MaxNodeFailDataLength: 3670016
+      MaxEndNodeDebugDataLength: 64000
+      MaxDebugDataTip: "{\"提示\": \"内容太长，已隐藏\"}"
+      ReplyContentFrequency: [[100, 1], [100000000, 10]]
+      IntelligentWorkflowIDs:
+      AsyncExecuteTimeLimit: 43200
+      ProductNotUploadAppIDs: ${WORKFLOW_PRODUCT_NOT_UPLOAD_APPIDS}
+      FileCollectionDefaultQuestion: "请上传"
+      FullExecutionAppIDs: ${WORKFLOW_FULL_EXECUTION_APPIDS}
+      WriteDBUinList:
+      EnableAsyncWrite: true
+      WriteDBPercentage: ${WORKFLOW_WRITE_DB_PERCENTAGE}
+    LLM:
+      MaxPromptHistoryLength: ${LLM_MAX_PROMPT_HISTORY_LENGTH}    # prompt中的历史信息的最大长度
+      MaxOneHistoryQueryLength: ${LLM_MAX_ONE_HISTORY_QUERY_LENGTH}  # 单条历史信息的最大长度
+      ConditionMaxSize: 10            # 条件判断的表达式的最大数
+      ModelLimitCacheTime: 300        # 模型缓存时间（秒）
+    RunCode:
+      MaxResultLength: 2000000
+      DefaultResultLength: ${RUNCODE_DEFAULT_RESULT_LENGTH}
+      MaxResultLengthUINWhiteList: ${RUNCODE_UIN_WHITELIST}
+      ResultSeparator: "_______ResultSeparator_______"
+      MaxAppParallel: 5
+      AppToMaxAppParallel: ${RUNCODE_APP_TO_MAX_PARALLEL}
+      CodeTemplate: |-
+        {{`import time
+        import datetime
+        import json
+        import numpy
+        import pandas
+        import math
+        import cmath
+        import decimal
+        import fractions
+        import random
+        import statistics
+        import re
+        import string
+        import stringprep
+        import collections
+        import numbers
+        import unicodedata
+
+        lke_system_params=json.loads("""{{InputParamObject}}""")
+
+        {{CodeContent}}
+
+        main_result = main(lke_system_params)
+
+        import json
+
+        class SystemJsonEncoder(json.JSONEncoder):
+          def default(self, obj):
+              import numpy as np
+              import pandas as pd
+              if isinstance(obj, np.timedelta64):
+                  return str(obj)
+              elif isinstance(obj, np.integer):
+                  return int(obj)
+              elif isinstance(obj, (np.void)):
+                  return None
+              elif isinstance(obj, np.floating):
+                  return float(obj)
+              elif isinstance(obj, np.complexfloating):
+                  return {'real': obj.real, 'imag': obj.imag}
+              elif isinstance(obj, np.bytes_):
+                  return obj.decode('utf-8')
+              elif isinstance(obj, np.str_):
+                  return str(obj)
+              elif isinstance(obj, np.datetime64):
+                  return str(obj)
+              elif isinstance(obj, np.ndarray):
+                  return obj.tolist()
+              elif isinstance(obj, pd.DataFrame):
+                  return obj.to_dict()
+              elif isinstance(obj, pd.Series):
+                  return obj.to_list()
+              return super(SystemJsonEncoder, self).default(obj)
+
+        print("{{ResultSeparator}}")
+        print(json.dumps(main_result, ensure_ascii=False, cls=SystemJsonEncoder))`}}
+      JSCodeTemplate: |-
+        {{`const lke_system_params = JSON.parse('{{InputParamObject}}');
+
+          {{CodeContent}}
+
+        const main_result = main(lke_system_params);
+
+        console.log("{{ResultSeparator}}");
+        console.log(JSON.stringify(main_result));`}}
+    API:
+      Timeout: 43200
+      MaxFileSize: 200
+      DownloadLimitBPS: 5242880
+      UploadLimitBPS: 5242880
+      MaxRequestBodySize: 5242880
+      MaxResponseBodySize: 5242880
+      EnableHttpLimit : true
+      WhiteURLs: ${API_WHITE_URLS}
+      Ports: ${API_PORTS}
+    MCP:
+      WhiteURLs: ${MCP_WHITE_URLS}
+      Ports: ${MCP_PORTS}
+    Parameter:
+      ConfirmRobotIDs: ${PARAMETER_CONFIRM_ROBOT_IDS}
+      NotUseHistoryRobotIDs: []
+      MaxParameterProbe: 3
+      ResultTemplate:
+        RequiredParamKey: ${PARAM_REQUIRED_KEY}
+        OptionalParamKey: ${PARAM_OPTIONAL_KEY}
+        HistoricalParamKey: ${PARAM_HISTORICAL_KEY}
+        DialogEndKey: ${PARAM_DIALOG_END_KEY}
+        CurrentNodeEndKey: ${PARAM_CURRENT_NODE_END_KEY}
+        ModifyNodeKey: ${PARAM_MODIFY_NODE_KEY}
+        NodeKey: ${PARAM_NODE_KEY}
+        ReplyKey: ${PARAM_REPLY_KEY}
+        BooleanTrueKey: ${PARAM_BOOLEAN_TRUE_KEY}
+        BooleanFalseKey: ${PARAM_BOOLEAN_FALSE_KEY}
+    OptionCard:
+      MaxSize: 100
+      OneMaxLength: 200
+    Variable:
+      VarIDVisitorBizID: "99999999999"
+    Rewrite:
+      RewriteThreshold: 100
+    ToolCallback:
+      Secret: ${TOOL_CALLBACK_SECRET}
+      ResultTTLSeconds: 600
+    Agent:
+      ServiceCallee: "trpc.adp.agent_exec.chat"
+      ServicePath: "/agent/chat"
+    CustomPrompts:
+    Logical:
+      OperationMap:
+        "==": "等价于"
+        "!=": "不等价于"
+        "contains": "父集"
+        "not contains": "不包含"
+        "belongs to": "子集"
+        "not belongs to": "不属于"
+    RecommendQuestion:
+      ResultTemplate:
+        WhetherGenerateKey: ${RECOMMEND_WHETHER_KEY}
+        BooleanTrueKey: ${RECOMMEND_BOOLEAN_TRUE_KEY}
+        RecommendQuestionsKey: ${RECOMMEND_QUESTIONS_KEY}
+    FileCollection:
+      ImageExts: ["jpg", "jpeg", "png", "bmp"]
+      AudioExts: ["mp3", "wav", "m4a", "aac", "flac"]
+      VideoExts: ["mp4", "mov", "avi", "mkv"]
+      DocumentExts: ${FILE_COLLECTION_DOC_EXTS}
+      ImageMaxMB: 50
+      AudioMaxMB: 50
+      VideoMaxMB: 2000
+      DocumentMaxMB: 200
+    Prompts:
+      TagExtractInfo:
+        Strategy: "workflow_tag_extract"
+      ParameterExtractInfo:
+        Strategy: "workflow_parameter_extract"
+      ParameterExtractNotCOTInfo:
+        Strategy: "workflow_parameter_extract_not_cot"
+      LogicEvaluatorInfo:
+        Strategy: "workflow_logic_evaluator"
+      LogicEvaluatorNotCOTInfo:
+        Strategy: "workflow_logic_evaluator_not_cot"
+      ParameterProbeInfo:
+        Strategy: "workflow_parameter_probe"
+      IntentInfo:
+        Strategy: "workflow_intent"
+      MultiIntentInfo:
+        Strategy: "workflow_multi_intent"
+      OptionCardInfo:
+        Strategy: "workflow_option_card"
+      MultiOptionCardInfo:
+        Strategy: "workflow_multi_option_card"
+      ProbeExceededAnswerInfo:
+        Strategy: "workflow_probe_exceeded_answer"
+      LLMOutputFormatJsonInfo:
+        Strategy: "workflow_llm_output_format_json"
+      RecommendQuestionInfo:
+        Strategy: "workflow_recommend_question"
+    RuntimeDataCleanup:
+      Enable: true
+      DryRun: true
+      RetentionDays: 30
+      WorkflowRunBatchSize: 200
+      SnapshotBatchSize: 100
+      MaxBatchesPerRound: 10000
+      BatchSleepMs: 50
+    PrivacyEnv: true
+    Private:
+      EnableMetrics: false 
+      EnableFinance: {{ .Values.global.finance.disabled }}
+    DbType: ""
+
+  placeholder.yaml: |
+    ###############################################################################
+    # client.yaml 变量
+    ###############################################################################
+    # 基础配置
+    CLIENT_NAMESPACE: Production
+    ENV_NAME: formal # formal test
+    ENV_NAME2: "" # <empty> testing
+    ENV_NAME3: formal  # formal <empty>
+    ENV_NAME4: ""  # <empty> test
+
+    # widget
+    WIDGET_VIEW_TARGET: "ip://adp-markmap-service.{{ .Release.Namespace }}.svc.cluster.local:7001"
+    VECTORDBMANAGER_VECTOROBJ_TARGET: "ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001"
+    ADMIN_CONFIG_LOGIN_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+    APP_ADMIN_PROXY_API_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+    KB_CONFIG_API_TARGET: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+    PLUGIN_CONFIG_API_TARGET: "ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+    PLUGIN_EXEC_TARGET: "ip://adp-plugin-exec.{{ .Release.Namespace }}.svc.cluster.local:8000"
+    PLUGIN_CODE_INTERPRET_EXEC_TARGET: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
+    PLATFORM_CHARGER_FINANCE_TARGET: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
+    MODEL_TOKEN_COUNT_TOKENIZER_TARGET: "ip://adp-model-token-count.{{ .Release.Namespace }}.svc.cluster.local:8000"
+    APP_MEMORY_MEMORY_INNER_TARGET: "ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001"
+    AGENT_EXEC_CHAT_TARGET: "ip://adp-agent-exec.{{ .Release.Namespace }}.svc.cluster.local:8000"
+    RESOURCE_GALLERY_ADMIN_TARGET: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+    AI_GATEWAY_API_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+    RAG_EXEC_CHAT_TARGET: "ip://adp-rag-exec.{{ .Release.Namespace }}.svc.cluster.local:8001"
+    RESOURCE_GALLERY_LOGIN_TARGET: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9092
+    PLATFORM_MANAGER_ADMIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+    PLATFORM_MANAGER_LOGIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+    PLATFORM_METROLOGY_API_TARGET: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
+
+    QBOT_CHAT_STREAMCHAT_TARGET: ip://adp-chat-manage.{{ .Release.Namespace }}.svc.cluster.local:9190
+
+    KB_RETRIEVAL_RETRIEVAL_TARGET: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9090
+    KB_RETRIEVAL_DIRECTINDEX_TARGET: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091
+
+    I18N_DEFAULT_LANG: zh-CN
+    LLM_MAX_ONE_HISTORY_QUERY_LENGTH: 1200
+    LLM_MAX_PROMPT_HISTORY_LENGTH: 1200
+    LOG_REMOTE_LEVEL: info
+
+    ###############################################################################
+    # main.yaml 变量
+    ###############################################################################
+
+    MAIN_TIME_FORMAT: ""
+    PROXY_CONFIG: ""
+
+    # 模型配置
+    MODEL_PARAMETER: "workflow-light-32b"
+    MODEL_LOGIC: "workflow-light-32b"
+    MODEL_OPTION_CARD: "workflow-light-32b"
+    MODEL_INTENT: "workflow-light-32b"
+    MODEL_RECOMMEND_QUESTION: "workflow-light-32b"
+    MODEL_TO_CONVERT_NAMES: ["cs-normal-70b", "hunyuan", "sn-edu-70b", "lke-deepseek-r1", "lke-deepseek-r1-0528"]
+    MODEL_CONVERT_BILLING:
+      workflow-light-32b: Youtu/youtu-intent-pro
+      Youtu/youtu-intent-32b: Youtu/youtu-intent-pro
+
+    FINANCE_SPACE_LIMITER_ACCOUNTS: []
+    # 工作流
+    WORKFLOW_LOOP_MAX: 1000
+    WORKFLOW_EXECUTE_TIME_LIMIT: 600
+    WORKFLOW_EXECUTE_TIME_LIMIT_BY_APPID:
+    WORKFLOW_PRODUCT_NOT_UPLOAD_APPIDS: []
+    WORKFLOW_FULL_EXECUTION_APPIDS: []
+    WORKFLOW_WRITE_DB_UIN_LIST:
+    WORKFLOW_WRITE_DB_PERCENTAGE: 100
+
+    # RunCode
+    RUNCODE_DEFAULT_RESULT_LENGTH: 2000001
+    RUNCODE_UIN_WHITELIST:
+    RUNCODE_APP_TO_MAX_PARALLEL:
+
+    # API
+    API_WHITE_URLS:
+      - http.mock.woa.com
+      - stream-server-online-openapi.turbotke.production.polaris
+      - smart.customer.production.polaris
+      - smart.customer.test.polaris
+      - 8.134.222.238
+      - 21.7.177.158
+      - cloud-arch-ai.test.polaris
+      - tsa-admin-advisor-test.test.polaris
+      - easonsshi-any1.devcloud.woa.com
+    API_PORTS: ["80", "443", "8089", "18080", "1081", "81", "30066", "8090", "8091", "8000", "8080", "8103"]
+
+    # MCP
+    MCP_WHITE_URLS:
+      - qbmanusmcp.woa.com
+      - aitool.woa.com
+      - openapi.zhiyan.woa.com
+      - qgamedevflow.woa.com
+      - qbmanusmcp.testsite.woa.com
+      - mcp.pubnet.woa.com
+      - market-agent-mcp.testsite.woa.com
+    MCP_PORTS: []
+
+    # Parameter
+    PARAMETER_CONFIRM_ROBOT_IDS: ""
+    PARAM_REQUIRED_KEY: "必填参数"
+    PARAM_OPTIONAL_KEY: "非必填参数"
+    PARAM_HISTORICAL_KEY: "历史参数"
+    PARAM_DIALOG_END_KEY: "工作流是否结束"
+    PARAM_CURRENT_NODE_END_KEY: "当前节点是否结束"
+    PARAM_MODIFY_NODE_KEY: "修改的节点编号"
+    PARAM_NODE_KEY: "节点"
+    PARAM_REPLY_KEY: "回复"
+    PARAM_BOOLEAN_TRUE_KEY: "是"
+    PARAM_BOOLEAN_FALSE_KEY: "否"
+
+    # ToolCallback
+    TOOL_CALLBACK_SECRET: ""
+
+    # RecommendQuestion
+    RECOMMEND_WHETHER_KEY: "是否生成推荐问"
+    RECOMMEND_BOOLEAN_TRUE_KEY: "是"
+    RECOMMEND_QUESTIONS_KEY: "生成的三个推荐问"
+
+    # FileCollection
+    FILE_COLLECTION_DOC_EXTS: ["doc", "docx", "pdf", "ppt", "pptx", "xls", "xlsx", "csv", "txt", "md", "pcap"]
+
+  trpc_go.yaml: |
+    global:
+      namespace: Production
+    server:
+      app: adp
+      server: workflow-exec
+      bin_path: /app/bin/
+      conf_path: /app/conf/
+      log_path: /app/logs/
+      admin:
+        ip: ${POD_IP}
+        port: 8081
+        read_timeout: 3000
+        write_timeout: 60000
+      filter:
+        - recovery
+        - i18n-adp
+        - cle-route-propagator
+        - chat-trace
+        - opentelemetry
+      service:
+        - name: trpc.KEP.bot-workflow-dm-server.workflow-dm
+          ip: ${POD_IP}
+          port: 8000
+          network: tcp
+          protocol: trpc
+          timeout: 601000
+          server_async: true
+          idletime: 600000
+        - name: trpc.KEP.bot-workflow-dm-server.workflow-dm-http
+          ip: ${POD_IP}
+          port: 8001
+          network: tcp
+          protocol: http
+          server_async: true
+          idletime: 600000
+        - name: trpc.KEP.bot-workflow-dm-server.workflow-dm-outer
+          ip: ${POD_IP}
+          port: 8002
+          network: tcp
+          protocol: trpc
+          timeout: 50000
+          server_async: true
+          idletime: 600000
+          filter:
+            - session
+            - permission
+        - name: trpc.KEP.bot-workflow-dm-server.runtime-data-cleanup
+          ip: ${POD_IP}
+          port: 8005
+          protocol: timer
+          timeout: 120000
+          network: "0 0 0 * * *?scheduler=runtime_data_cleanup&holdTime=30&startAtOnce=0&disable=0"
+
+    client:                                            #客户端调用的后端配置
+      timeout: 0                                    #针对所有后端的请求最长处理时间
+      namespace: ${CLIENT_NAMESPACE}                           #针对所有后端的环境
+      filter:
+        - cle-route-propagator
+        - chat-trace
+      service:
+        # redis（主要的存储）
+        - name: redis.bot-workflow-dm-server
+          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379
+        # 集群版的redis，用来存储运行的数据
+        - name: redis-cluster.workflow-exec
+          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379
+        # redis（并发控制依赖的redis）
+        - name: redis.lke.limiter
+          network: tcp
+          protocol: redis
+          target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/4
+          password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
+          timeout: 800
+        # DB
+        - name: mysql.qbot.qbot
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_workflow_formal?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        # 配置端的Prod DB
+        - name: mysql.llm_workflow_formal_prod
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_workflow_formal_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        # prompt的DB
+        - name: mysql.adp.prompt
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        # TDSQL
+        - name: tdsql.qbot.qbot
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_workflow?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        # cos
+        - name: trpc.http.cos.Access
+          namespace: Production
+          network: tcp
+          protocol: http
+          target: {{ if eq .Values.global.components.s3.providerType "minio" }}{{ printf "ip://minio.%s.svc.cluster.local:80" .Release.Namespace }}{{- else if eq .Values.global.components.s3.providerType "obs" }}ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}{{- else }} dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn {{- end }}    
+          timeout: 50000
+        # widget
+        - name: trpc.http.widget_view
+          namespace: ${CLIENT_NAMESPACE}
+          network: tcp
+          protocol: http
+          target: "ip://adp-markmap-service.{{ .Release.Namespace }}.svc.cluster.local:7001"
+          timeout: 50000
+        # widget-内部接口
+        - callee: trpc.adp.widget_config.WidgetConfigInner
+          target: ip://adp-widget-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 10000
+
+        ###################################################################################
+        # 向量库
+        - callee: trpc.smartassistant.vectordbmanager.VectorObj
+          name: trpc.SmartAssistant.VectorDBManager.VectorObj
+          target: "ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001"
+          namespace: ${CLIENT_NAMESPACE}
+          env_name: ${ENV_NAME3}
+          timeout: 60000
+        # 应用配置-登录态接口
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          namespace: ${CLIENT_NAMESPACE}
+          env_name: ${ENV_NAME4}
+          protocol: trpc
+          timeout: 20000
+        # 应用配置-内部接口
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          namespace: ${CLIENT_NAMESPACE}
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          env_name: ${ENV_NAME4}
+          protocol: trpc
+          timeout: 60000
+
+        # 应用配置-内部接口
+        - callee: trpc.adp.app_admin_proxy.Api
+          namespace: ${CLIENT_NAMESPACE}
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          env_name: ${ENV_NAME4}
+          protocol: trpc
+          timeout: 60000
+        # 知识库-内部接口
+        - callee: trpc.adp.kb_config.Api
+          namespace: ${CLIENT_NAMESPACE}
+          env_name: ${ENV_NAME4}
+          protocol: trpc
+          timeout: 60000
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+        # 插件配置端
+        - callee: trpc.adp.plugin_config.PluginConfigApi
+          target: "ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          namespace: ${CLIENT_NAMESPACE}
+          env_name: ${ENV_NAME2}
+          timeout: 60000
+        # 插件运行时
+        - callee: trpc.adp.plugin_exec.PluginExec
+          target: "ip://adp-plugin-exec.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          namespace: ${CLIENT_NAMESPACE}
+          env_name: ${ENV_NAME2}
+          timeout: 7200000
+        # 代码执行
+        - callee: trpc.adp.plugin_code_interpret.CodeExec
+          target: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          namespace: ${CLIENT_NAMESPACE}
+          protocol: trpc
+          timeout: 60000
+        # 计费服务, @stanwei 提供。 需要升级废弃
+        - callee: qbot.finance.finance.Finance
+          namespace: ${CLIENT_NAMESPACE}
+          env_name: ${ENV_NAME4}
+          target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          network: tcp
+          timeout: 30000
+        # 计费服务
+        - callee: trpc.adp.platform_charger.Finance
+          namespace: ${CLIENT_NAMESPACE}
+          env_name: ${ENV_NAME4}
+          target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          network: tcp
+          timeout: 30000
+        # token计数
+        - callee: trpc.adp.model_token_count.Tokenizer
+          namespace: ${CLIENT_NAMESPACE}
+          target: "ip://adp-model-token-count.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          timeout: 3000
+        # 记忆服务
+        - callee: trpc.adp.app_memory.MemoryInner
+          target: "ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          namespace: ${CLIENT_NAMESPACE}
+          env_name: ${ENV_NAME2}
+          network: tcp
+          timeout: 30000
+        # agent服务
+        - callee: trpc.adp.agent_exec.chat
+          target: "ip://adp-agent-exec.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          namespace: ${CLIENT_NAMESPACE}
+          network: tcp                    # 后端服务的网络类型 tcp udp 配置优先
+          protocol: http                  # 应用层协议 trpc http
+          timeout: 600000                  # 请求最长处理时间
+          serialization: 2                # (0=pb, 1=JCE, 2=json, 3=flat_buffer, 4=bytes_flow)
+        # 资源管理服务
+        - callee: trpc.adp.resource_gallery.Admin
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: ${CLIENT_NAMESPACE}
+          env_name: ${ENV_NAME4}
+          protocol: trpc
+          timeout: 20000
+        # 模型网关（embedding相关）
+        - callee: trpc.adp.ai-gateway.api
+          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: ${CLIENT_NAMESPACE}
+          network: tcp
+          protocol: http
+          timeout: 1800000
+        # 知识问答服务
+        - callee: trpc.adp.rag_exec.Chat
+          target: "ip://adp-rag-exec.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          namespace: ${CLIENT_NAMESPACE}
+          network: tcp
+          protocol: trpc
+          timeout: 300000
+        # 资源管理服务-登录态接口
+        - callee: trpc.adp.resource_gallery.Login
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: ${CLIENT_NAMESPACE}
+          env_name: ${ENV_NAME4}
+          protocol: trpc
+          timeout: 50000
+        # 平台管理服务-内部接口
+        - callee: trpc.adp.platform_manager.Admin
+          namespace: ${CLIENT_NAMESPACE}
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 6000
+        # 平台管理服务-登录态接口
+        - callee: trpc.adp.platform_manager.Login
+          namespace: ${CLIENT_NAMESPACE}
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 6000
+        # 数据上报服务
+        - callee: trpc.adp.platform_metrology.Api
+          namespace: ${CLIENT_NAMESPACE}
+          target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          protocol: trpc
+          timeout: 20000
+          env_name: ${ENV_NAME4}
+        - name: trpc.adp.kb_retrieval.Retrieval
+          namespace: Test
+          target: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 30000
+        - name: trpc.adp.kb_retrieval.DirectIndex
+          namespace: Test
+          target: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091
+          timeout: 30000
+    plugins:
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      log:
+        default:
+          - writer: console
+            level: error
+          - writer: file
+            level: debug
+            writer_config:
+              filename: /app/logs/trpc.log
+              max_size: 100
+              max_backups: 10
+              max_age: 7
+              compress: false
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+            - name: rainbow-comm
+              path: /app/conf/
+            - name: global
+              appid: ${RAINBOW_APP_ID}  # appid
+              group: global # 配置所属组
+              type: kv   # 七彩石数据格式, kv(默认), table
+              env_name: ${RAINBOW_ENV_NAME}
+              timeout: 2000
+              enable_client_provider: true
+      i18n:
+        i18n-adp:
+            default_lang: zh-CN
+            supported_languages:
+                - zh-CN
+                - en-US
+            data_provider:
+                type: rainbow
+                prefix: dm
+                error_prefix: error
+                char_scaling_factor:
+                    zh-CN: 1
+                    en-US: 3
+      registry:
+        polaris:
+      selector:
+        polaris:
+          enable_servicerouter: true

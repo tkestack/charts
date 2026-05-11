@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: adp-crawler
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  ports:
+    - name: tcp-30009-30009
+      port: 30009
+      protocol: TCP
+      targetPort: 30009
+  selector:
+    app: adp-crawler
+  type: ClusterIP

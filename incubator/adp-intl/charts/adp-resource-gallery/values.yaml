@@ -1,0 +1,12 @@
+images:
+  adp-resource-gallery:
+    url: ccr.ccs.tencentyun.com/tke-market/resource-gallery:16_2604211928_stable_v3.4.1.1_94ca6c11_private
+resources:
+  limits:
+    cpu: 1
+    memory: 4Gi
+  requests:
+    cpu: 1
+    memory: 1Gi
+experience_center_uin: '999999999'
+replicas: 1

@@ -1,0 +1,7 @@
+apiVersion: v2
+name: deploy-data-init
+version: 3.4.1
+annotations:
+  category: ""
+  description: ""
+type: application

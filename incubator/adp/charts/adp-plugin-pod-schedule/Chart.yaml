@@ -1,0 +1,10 @@
+apiVersion: v2
+name: adp-plugin-pod-schedule
+description: A helm chart for adp-plugin-pod-schedule
+type: application
+
+version: 1.0.0
+
+appVersion: 1.0.0
+maintainers:
+  - name: nicholaswei

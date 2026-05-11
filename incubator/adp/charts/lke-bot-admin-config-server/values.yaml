@@ -1,0 +1,5 @@
+images:
+  lke-bot-admin-config-server:
+    url: ccr.ccs.tencentyun.com/tke-market/bot-admin-config-server:19_2605071429_stable_v3.4.1.1_039b1bb3_private	
+experience_center_uin: '999999999'
+replicas: 1

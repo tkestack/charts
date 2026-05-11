@@ -1,0 +1,234 @@
+apiVersion: v2
+name: adp-intl
+description: Tencent Cloud Agent Development Platform (Tencent Cloud ADP) with RAG, Workflow and Multi-agent collaboration for TKE
+type: application
+version: 1.0.3
+appVersion: "1.0.3"
+icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/bd9c98d6-46e2-48ec-a812-7adbbde304b6.jpg
+home: https://tencentcloud.com/product/adp
+
+maintainers:
+  - name: ADP Team
+
+# 子 Chart 依赖（自动生成，请勿手动修改）
+dependencies:
+  - name: adp-agent-config
+    version: "1.0.0"
+    repository: "file://charts/adp-agent-config"
+    condition: adp-agent-config.enabled
+  - name: adp-agent-exec
+    version: "1.0.0"
+    repository: "file://charts/adp-agent-exec"
+    condition: adp-agent-exec.enabled
+  - name: adp-ai-gateway
+    version: "1.0.0"
+    repository: "file://charts/adp-ai-gateway"
+    condition: adp-ai-gateway.enabled
+  - name: adp-apex
+    version: "1.0.0"
+    repository: "file://charts/adp-apex"
+    condition: adp-apex.enabled
+  - name: adp-app-channel-msg
+    version: "1.0.0"
+    repository: "file://charts/adp-app-channel-msg"
+    condition: adp-app-channel-msg.enabled
+  - name: adp-app-channel-proxy-svr
+    version: "1.0.0"
+    repository: "file://charts/adp-app-channel-proxy-svr"
+    condition: adp-app-channel-proxy-svr.enabled
+  - name: adp-app-channel-token
+    version: "1.0.0"
+    repository: "file://charts/adp-app-channel-token"
+    condition: adp-app-channel-token.enabled
+  - name: adp-app-config
+    version: "1.0.0"
+    repository: "file://charts/adp-app-config"
+    condition: adp-app-config.enabled
+  - name: adp-app-evaluate
+    version: "1.0.0"
+    repository: "file://charts/adp-app-evaluate"
+    condition: adp-app-evaluate.enabled
+  - name: adp-app-memory
+    version: "1.0.0"
+    repository: "file://charts/adp-app-memory"
+    condition: adp-app-memory.enabled
+  - name: adp-app-shorturl
+    version: "1.0.0"
+    repository: "file://charts/adp-app-shorturl"
+    condition: adp-app-shorturl.enabled
+  - name: adp-chat-manage
+    version: "1.0.0"
+    repository: "file://charts/adp-chat-manage"
+    condition: adp-chat-manage.enabled
+  - name: adp-crawler
+    version: "1.0.0"
+    repository: "file://charts/adp-crawler"
+    condition: adp-crawler.enabled
+  - name: adp-file-converter
+    version: "2.0.0"
+    repository: "file://charts/adp-file-converter"
+    condition: adp-file-converter.enabled
+  - name: adp-kb-config
+    version: "1.0.0"
+    repository: "file://charts/adp-kb-config"
+    condition: adp-kb-config.enabled
+  - name: adp-kb-retrieval
+    version: "1.0.0"
+    repository: "file://charts/adp-kb-retrieval"
+    condition: adp-kb-retrieval.enabled
+  - name: adp-kb-vdb-proxy
+    version: "1.0.0"
+    repository: "file://charts/adp-kb-vdb-proxy"
+    condition: adp-kb-vdb-proxy.enabled
+  - name: adp-markmap-service
+    version: "2.0.0"
+    repository: "file://charts/adp-markmap-service"
+    condition: adp-markmap-service.enabled
+  - name: adp-model-token-count
+    version: "1.0.0"
+    repository: "file://charts/adp-model-token-count"
+    condition: adp-model-token-count.enabled
+  - name: adp-platform-authenticator
+    version: "1.0.0"
+    repository: "file://charts/adp-platform-authenticator"
+    condition: adp-platform-authenticator.enabled
+  - name: adp-platform-charger
+    version: "1.0.0"
+    repository: "file://charts/adp-platform-charger"
+    condition: adp-platform-charger.enabled
+  - name: adp-platform-content-moderation
+    version: "1.0.0"
+    repository: "file://charts/adp-platform-content-moderation"
+    condition: adp-platform-content-moderation.enabled
+  - name: adp-platform-manager
+    version: "1.0.0"
+    repository: "file://charts/adp-platform-manager"
+    condition: adp-platform-manager.enabled
+  - name: adp-platform-metrology
+    version: "1.0.0"
+    repository: "file://charts/adp-platform-metrology"
+    condition: adp-platform-metrology.enabled
+  - name: adp-platform-op
+    version: "1.0.0"
+    repository: "file://charts/adp-platform-op"
+    condition: adp-platform-op.enabled
+  - name: adp-platform-permission-config
+    version: "1.0.0"
+    repository: "file://charts/adp-platform-permission-config"
+    condition: adp-platform-permission-config.enabled
+  - name: adp-plugin-code-interpret
+    version: "1.0.0"
+    repository: "file://charts/adp-plugin-code-interpret"
+    condition: adp-plugin-code-interpret.enabled
+  - name: adp-plugin-code-kernel
+    version: "1.0.0"
+    repository: "file://charts/adp-plugin-code-kernel"
+    condition: adp-plugin-code-kernel.enabled
+  - name: adp-plugin-config
+    version: "1.0.0"
+    repository: "file://charts/adp-plugin-config"
+    condition: adp-plugin-config.enabled
+  - name: adp-plugin-cos-util
+    version: "1.0.0"
+    repository: "file://charts/adp-plugin-cos-util"
+    condition: adp-plugin-cos-util.enabled
+  - name: adp-plugin-exec
+    version: "1.0.0"
+    repository: "file://charts/adp-plugin-exec"
+    condition: adp-plugin-exec.enabled
+  - name: adp-plugin-pod-schedule
+    version: "1.0.0"
+    repository: "file://charts/adp-plugin-pod-schedule"
+    condition: adp-plugin-pod-schedule.enabled
+  - name: adp-pyright
+    version: "2.0.0"
+    repository: "file://charts/adp-pyright"
+    condition: adp-pyright.enabled
+  - name: adp-rag-exec
+    version: "1.0.0"
+    repository: "file://charts/adp-rag-exec"
+    condition: adp-rag-exec.enabled
+  - name: adp-resource-gallery
+    version: "1.0.0"
+    repository: "file://charts/adp-resource-gallery"
+    condition: adp-resource-gallery.enabled
+  - name: adp-web-app
+    version: "2.0.0"
+    repository: "file://charts/adp-web-app"
+    condition: adp-web-app.enabled
+  - name: adp-widget-config
+    version: "1.0.0"
+    repository: "file://charts/adp-widget-config"
+    condition: adp-widget-config.enabled
+  - name: adp-workflow-config
+    version: "1.0.0"
+    repository: "file://charts/adp-workflow-config"
+    condition: adp-workflow-config.enabled
+  - name: adp-workflow-exec
+    version: "1.0.0"
+    repository: "file://charts/adp-workflow-exec"
+    condition: adp-workflow-exec.enabled
+  - name: common-config-map
+    version: "1.0.0"
+    repository: "file://charts/common-config-map"
+    condition: common-config-map.enabled
+  - name: deploy-data-init
+    version: "3.4.1"
+    repository: "file://charts/deploy-data-init"
+    condition: deploy-data-init.enabled
+  - name: deploy-pre-check
+    version: "1.0.0"
+    repository: "file://charts/deploy-pre-check"
+    condition: deploy-pre-check.enabled
+  - name: entity-extractor-server-sand-box
+    version: "1.0.0"
+    repository: "file://charts/entity-extractor-server-sand-box"
+    condition: entity-extractor-server-sand-box.enabled
+  - name: entity-extractor-server
+    version: "1.0.0"
+    repository: "file://charts/entity-extractor-server"
+    condition: entity-extractor-server.enabled
+  - name: etcd
+    version: "1.0.0"
+    repository: "file://charts/etcd"
+    condition: etcd.enabled
+  - name: lke-access-manager
+    version: "1.0.0"
+    repository: "file://charts/lke-access-manager"
+    condition: lke-access-manager.enabled
+  - name: lke-aiconf-manager
+    version: "1.0.0"
+    repository: "file://charts/lke-aiconf-manager"
+    condition: lke-aiconf-manager.enabled
+  - name: lke-bot-admin-config-server
+    version: "1.0.0"
+    repository: "file://charts/lke-bot-admin-config-server"
+    condition: lke-bot-admin-config-server.enabled
+  - name: lke-ti-auth-web
+    version: "1.0.0"
+    repository: "file://charts/lke-ti-auth-web"
+    condition: lke-ti-auth-web.enabled
+  - name: lke-ti-gateway
+    version: "3.9.0"
+    repository: "file://charts/lke-ti-gateway"
+    condition: lke-ti-gateway.enabled
+  - name: lke-ti-ingress-controller
+    version: "3.6.0"
+    repository: "file://charts/lke-ti-ingress-controller"
+    condition: lke-ti-ingress-controller.enabled
+  - name: lke-ti-perm-auth-proxy
+    version: "1.0.0"
+    repository: "file://charts/lke-ti-perm-auth-proxy"
+    condition: lke-ti-perm-auth-proxy.enabled
+  - name: lke-ti-perm-auth
+    version: "1.0.0"
+    repository: "file://charts/lke-ti-perm-auth"
+    condition: lke-ti-perm-auth.enabled
+  - name: ti-common
+    version: "1.0.0"
+    repository: "file://charts/ti-common"
+    condition: ti-common.enabled
+  - name: web-parser-server
+    version: "1.0.0"
+    repository: "file://charts/web-parser-server"
+    condition: web-parser-server.enabled

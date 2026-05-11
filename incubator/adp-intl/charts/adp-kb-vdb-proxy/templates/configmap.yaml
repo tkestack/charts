@@ -1,0 +1,301 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-kb-vdb-proxy
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    test:
+      service:
+        - name: trpc.mysql.vdm.isearch
+          namespace: ${POD_NAMESPACE}
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm?charset=utf8mb4&timeout=5s&parseTime=true&loc=Local
+        - name: trpc.mysql.vdm.tqi
+          namespace: ${POD_NAMESPACE}
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_production_tqi?charset=utf8mb4&timeout=5s&parseTime=true&loc=Local
+
+  placeholder.yaml: |
+    IS_PRIVATE: true
+
+    VDM_CS_DB_NAME: db_llm
+    VDM_COMMON_DB_NAME: db_llm
+    VDM_ISEARCH_DB_NAME: db_llm_robot_isearch
+    VDM_TQI_DB_NAME: db_llm_production_tqi
+    VDM_QBOT_DB_NAME: db_llm_qbot_prod
+    VDM_ASSISTANT_DB_NAME: db_llm
+    VDM_ANALYTICS_DB_NAME: db_llm
+
+    TRPC_SMARTASSISTANT_EMBEDDINGSERVER_EMBEDDINGOBJ_TARGET: ip://adp-embedding-server.{{ .Release.Namespace }}.svc.cluster.local:10001
+
+    TRPC_SMARTASSISTANT_RERANKSERVER_RERANKOBJ_TARGET: ip://adp-rerank-server.{{ .Release.Namespace }}.svc.cluster.local:10001
+
+  trpc_go.yaml: |
+    global: #全局配置
+      namespace: ${POD_NAMESPACE}                        #环境类型，分正式Production和非正式Development两种类型
+      env_name: formal                        #环境名称，非正式环境下多环境的名称
+      container_name: ${POD_NAME}                    #容器名称
+      local_ip: ${POD_IP}                            #本地IP，容器内为容器ip，物理机或虚拟机为本机ip
+      admin_port: 18888                              #管理命令服务端口
+      enable_set: false                      #是否启用set
+      full_set_name: adp                     #set名
+    server:                                          #服务端配置
+      app: adp                               #业务的应用名
+      server: adp-kb-vdb-proxy                         #进程服务名
+      bin_path: /app/bin/                            #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                          #业务配置文件所在路径
+      data_path: /app/data/                          #业务数据文件所在路径
+      filter:                                        #针对所有service处理函数前后的拦截器列表
+        - recovery                                   #拦截框架创建的业务处理协程panic
+        - opentelemetry
+        - cle-route-propagator
+      admin:
+        ip: ${POD_IP}                                  # 必须填外部可访问的ip, 不能填127.0.0.1
+        port: 18888                                    # admin 端口
+        read_timeout: 3000                             #ms. 请求被接受到请求信息被完全读取的超时时间设置，防止慢客户端
+        write_timeout: 60000                           #ms. 处理的超时时间
+      service:                                         #业务服务提供的service，可以有多个
+        - name: trpc.SmartAssistant.VectorDBManager.VectorObj #service的路由名称，请将ReplaceMe改成自己的service名字，app server占位符不要改
+          network: tcp #网络监听类型  tcp udp
+          protocol: trpc #应用层协议 trpc http
+          timeout: 10000 #请求最长处理时间 单位 毫秒
+          disable_request_timeout: true
+          registry: polaris #服务启动时使用的服务注册方式
+          ip: ${POD_IP} #容器内ip
+          port: 10001
+        - name: trpc.SmartAssistant.VectorDBManager.http #service的路由名称，请将ReplaceMe改成自己的service名字，app server占位符不要改
+          network: tcp #网络监听类型  tcp udp
+          protocol: http #应用层协议 trpc http
+          timeout: 10000 #请求最长处理时间 单位 毫秒
+          registry: polaris #服务启动时使用的服务注册方式
+          ip: ${POD_IP} #容器内ip
+          port: 10002
+        - name: trpc.SmartAssistant.VectorDBManager.Restful #service的路由名称，请将ReplaceMe改成自己的service名字，app server占位符不要改
+          network: tcp #网络监听类型  tcp udp
+          protocol: restful #应用层协议 trpc http
+          timeout: 10000 #请求最长处理时间 单位 毫秒 （腾讯 vdb 创建 collection 需要 6.5s，耗时设为 10s，避免超时）
+          registry: polaris #服务启动时使用的服务注册方式
+          ip: ${POD_IP} #容器内ip
+          port: 10003
+        - name: trpc.SmartAssistant.VectorDBManager.StatResource
+          ip: ${POD_IP}
+          nic: eth1 # 私有云使用eth0
+          port: 10101 #服务监听端口
+          network: "0 */2 * * * *?startAtOnce=1"       # 每天 每2分钟执行一次
+          protocol: timer #应用层协议
+          timeout: 300000 # 请求最长处理时间，单位毫秒
+    client:                                            #客户端调用的后端配置
+      filter:                                          #针对所有后端调用函数前后的拦截器列表
+        - opentelemetry
+      namespace: ${POD_NAMESPACE}                          #针对所有后端的环境
+      timeout: 10000                                   #针对所有后端的请求最长处理时间
+      service:
+        - callee: trpc.smartassistant.embeddingserver.EmbeddingObj
+          name: trpc.SmartAssistant.EmbeddingServer.EmbeddingObj
+          protocol: trpc
+          network: tcp
+          timeout: 5000
+          target: ip://adp-embedding-server.{{ .Release.Namespace }}.svc.cluster.local:10001
+        - callee: trpc.smartassistant.rerankserver.ReRankObj
+          name: trpc.SmartAssistant.ReRankServer.ReRankObj
+          protocol: trpc
+          network: tcp
+          timeout: 9800
+          target: ip://adp-rerank-server.{{ .Release.Namespace }}.svc.cluster.local:10001
+        - name: trpc.mysql.vdm.cs
+          namespace: ${POD_NAMESPACE}
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/${VDM_CS_DB_NAME}?charset=utf8mb4&timeout=5s&parseTime=true&loc=Local
+        - name: trpc.mysql.vdm.common
+          namespace: ${POD_NAMESPACE}
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/${VDM_COMMON_DB_NAME}?charset=utf8mb4&timeout=5s&parseTime=true&loc=Local
+        - name: trpc.mysql.vdm.isearch
+          namespace: ${POD_NAMESPACE}
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/${VDM_ISEARCH_DB_NAME}?charset=utf8mb4&timeout=5s&parseTime=true&loc=Local
+        - name: trpc.mysql.vdm.tqi
+          namespace: ${POD_NAMESPACE}
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/${VDM_TQI_DB_NAME}?charset=utf8mb4&timeout=5s&parseTime=true&loc=Local
+        - name: trpc.mysql.vdm.qbot
+          namespace: ${POD_NAMESPACE}
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/${VDM_QBOT_DB_NAME}?charset=utf8mb4&timeout=5s&parseTime=true&loc=Local
+        - name: trpc.mysql.vdm.assistant
+          namespace: ${POD_NAMESPACE}
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/${VDM_ASSISTANT_DB_NAME}?charset=utf8mb4&timeout=5s&parseTime=true&loc=Local
+        - name: trpc.mysql.vdm.analytics
+          namespace: ${POD_NAMESPACE}
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/${VDM_ANALYTICS_DB_NAME}?charset=utf8mb4&timeout=5s&parseTime=true&loc=Local
+        - name: trpc.redis.vdm.task
+          namespace: ${POD_NAMESPACE}
+          target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379
+          password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
+          timeout: 800                                 #当前这个请求最长处理时间
+    plugins:                                           #插件配置
+      config:
+        file:
+          providers:
+            - name: global
+              appid: ${RAINBOW_APP_ID}  # appid
+              group: global # 配置所属组
+              type: kv   # 七彩石数据格式, kv(默认), table
+              env_name: ${RAINBOW_ENV_NAME}
+              timeout: 2000
+              enable_client_provider: true
+      limiter:
+        polaris: # 不可省略
+          timeout: 1s # 可省略，省略时，使用默认值 1s
+          max_retries: 2 # 可省略，省略时，默认不重试
+      selector:
+        polaris:
+          protocol: grpc #北极星交互协议支持 http，grpc，trpc
+          enable_servicerouter: true
+          enable_trans_meta: true
+          discovery:
+            refresh_interval: 10000                    #北极星服务发现刷新间隔，123默认10000
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: console                           #本地文件日志
+            level: info                               #本地文件滚动日志的级别
+          - writer: file                              #本地文件日志
+            level: info                               #本地文件滚动日志的级别
+            caller_skip: 4
+            writer_config:
+              filename: /app/log/trpc.log               #本地文件滚动日志存放的路径
+              max_size: 100                             #本地文件滚动日志的大小 单位 MB
+              max_backups: 10                           #最大日志文件数
+              max_age: 7                                #最大日志保留天数
+              compress:  false                          #日志文件是否压缩
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+  vector-db-manager.json: |
+    {
+      "Application": {
+        "Callback": {
+          "TaskInterval": 10000,
+          "TaskTimeout": 30000,
+          "TaskNums": 3,
+          "TaskExpireTime": 86400000,
+          "BizSecret": {
+            "cs": "dfe144c8a732a2bfb5ae0bd5df71a275"
+          }
+        },
+        "BizConf": {
+          "test": {
+            "NeedCheckSecret": false,
+            "Secret": "ddd"
+          },
+          "analytics": {
+            "NeedCheckSecret": true,
+            "Secret": "d2b72091d7e52be4c8d8425e8acd9772"
+          },
+          "assistant": {
+            "NeedCheckSecret": false,
+            "Secret": "fc698c061b36a735b607d139608c21cf"
+          },
+          "cs": {
+            "NeedCheckSecret": false,
+            "Secret": "e1168c1b14e31acd512ddd566bbe4390"
+          },
+          "qbot": {
+            "NeedCheckSecret": false,
+            "Secret": "d7504c00cdb46ff4e8eeb8f51fc756da"
+          },
+          "tqi": {
+            "NeedCheckSecret": true,
+            "Secret": "1e2c28494bcd5b50a3d8b6ecb8e78125"
+          },
+          "isearch": {
+            "LargeCapacity": true
+          }
+        },
+        "TCVDBConfig": {
+          "Enabled": true,
+          "EnableBackgroundDelete": true,
+          "TaskBatchCount": 5,
+          "DeleteMaxRetryTimes": 5,
+          "PreCreateInterval": 60,
+          "UpdateInfoInterval": 60,
+          "TaskProcessInterval": 10,
+          "TaskProcessTimeout": 120,
+          "PreCreateCount": 100,
+          "CreateReplicaNum": 2,
+          "CreateShardNum": 1,
+          "CreateLargeShardNum": 100,
+          "CreateM": 24,
+          "CreateEfConstruction": 500,
+          "SearchEf": 500,
+          "ScalarFileds": {
+            "IntentID": true,
+            "general_vector": true,
+            "entityID": true,
+            "entryName": true,
+            "CorpusID": true,
+            "CorpusValue": true
+          }
+        },
+        "ReRankBatchSize": 5,
+        "HnswSmallFlowOpen": false,
+        "ReloadGroupTime": 60,
+        "DebugOption": {
+          "Enable": true,
+          "Filters": []
+        },
+        "DelayCreationStrategy": {
+          "Default": true,
+          "Progressive": false,
+          "WhiteRule":[
+            "1943271407616313664"
+          ]
+        },
+        "ScheduleConfig": {
+          "FetchNum": 20,
+          "FetchTimeout": 5,
+          "FetchPeriod": 2,
+          "TaskPrefix": "adp:vector_system:"
+        },
+        "AsyncTasks": {
+          "reclaim_idle_instance": {
+            "Runners": 5,
+            "RetryWaitTime": 10,
+            "MaxRetry": 3,
+            "Timeout": 1200,
+            "FailTimeout": 60,
+            "Delay": 0,
+            "Batch": 3,
+            "BatchSize": 2,
+            "StoppedResumeTime": 3600
+            },
+            "reclaim_idle_collection": {
+            "Runners": 10,
+            "RetryWaitTime": 20,
+            "MaxRetry": 5,
+            "Timeout": 60,
+            "FailTimeout": 30,
+            "Delay": 0,
+            "Batch": 5,
+            "BatchSize": 10,
+            "StoppedResumeTime": 300
+            }
+        },
+        "IdleCollectionActiveTime": 240,
+        "ResourceStatEnabled": true
+      }
+    }

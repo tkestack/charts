@@ -1,0 +1,12 @@
+images:
+  adp-platform-metrology:
+    url: ccr.ccs.tencentyun.com/tke-market/platform-metrology:33_2605031920_feature_lokli_thirdApi_d7759f82_private	
+resources:
+  limits:
+    cpu: "2"
+    memory: 4Gi
+  requests:
+    cpu: "1"
+    memory: 2Gi
+appName: adp-platform-metrology
+replicas: 1

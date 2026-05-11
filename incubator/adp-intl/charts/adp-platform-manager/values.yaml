@@ -1,0 +1,11 @@
+images:
+  adp-platform-manager:
+    url: ccr.ccs.tencentyun.com/tke-market/platform-manager:62_2605071116_stable_v3.4.1.1_7220eee8_private	
+resources:
+  limits:
+    cpu: 1
+    memory: 4Gi
+  requests:
+    cpu: 1
+    memory: 1Gi
+replicas: 1

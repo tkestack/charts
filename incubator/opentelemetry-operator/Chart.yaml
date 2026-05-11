@@ -1,13 +1,14 @@
 apiVersion: v2
 name: tencent-opentelemetry-operator
-version: 0.91.2
+version: 0.92.1
 description: OpenTelemetry Operator Helm chart for Kubernetes
 type: application
 home: https://opentelemetry.io/
 sources:
   - https://github.com/open-telemetry/opentelemetry-operator
 maintainers:
-  - name: erichchen
+  - name: nevanwang
+    email: nevanwang@tencent.com
 icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/80444e53-c142-4896-bc8a-ef4ecf75c682.png
-appVersion: v0.91.2
+appVersion: v0.92.1
 kubeVersion: '>= 1.19.0-0'

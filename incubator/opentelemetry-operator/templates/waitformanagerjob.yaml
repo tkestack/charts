@@ -24,7 +24,7 @@ spec:
       serviceAccountName: {{ template "opentelemetry-operator.serviceAccountName" . }}
       containers:
         - name: wait-for-manager
-          image: "{{ .Values.waitForManager.image.repository }}:{{ .Values.waitForManager.image.tag }}"
+          image: "{{ include "opentelemetry-operator.jobImageRepository" . }}:{{ .Values.waitForManager.image.tag }}"
           imagePullPolicy: IfNotPresent
           {{- with .Values.waitForManager.resources }}
           resources: {{- toYaml . | nindent 12 }}

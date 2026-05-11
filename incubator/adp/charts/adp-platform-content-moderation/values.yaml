@@ -1,0 +1,11 @@
+images:
+  adp-platform-content-moderation:
+    url: ccr.ccs.tencentyun.com/tke-market/bot-infosec-server:2_2603291425_stable_v3.4.1.1_3e12aa07_private
+resources:
+  limits:
+    cpu: "1"
+    memory: 2Gi
+  requests:
+    cpu: "1"
+    memory: 2Gi
+replicas: 1

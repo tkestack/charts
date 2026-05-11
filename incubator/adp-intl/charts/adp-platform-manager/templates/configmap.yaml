@@ -1,0 +1,2608 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-platform-manager
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    login_default:
+      type: [0,4,5]
+      cqq_kf_uin: 2854099021
+      session_expr: 720h
+      ahead_renew_time: 6h
+      cookie_domain: {{ .Values.global.clb }}
+      exp_cookie_domain: {{ .Values.global.clb }}
+      exp_cookie_path: /cgi/apex
+      secure: true
+      verify_code:
+        expire: 5m
+        max_try: 5
+        max_try_expire: 3600s
+        day_send_limit: 10
+        max_try_half_hour: 3  
+        max_try_half_hour_expire: 1800s
+    demo_mode:
+      enable: false
+    account:
+      type: ti
+      apis:
+        account_host: adp-aiconf-manager.{{ .Release.Namespace }}:10001
+    trial:
+      app_max_char_size: 1000000
+      corp_app_quota: 1000
+      corp_max_token_usage: 500000
+      corp_max_char_size: 3000000
+      corp_period: 1440h
+      enable_white_list: false
+      white_list_key: LKE_INNER_USER
+      ban_permission_list:
+        - lkeRepository.config.output.questionClarify
+        - lkeClassify
+        - lkeClassify.config.tag
+        - lkeClassify.config.chat
+        - lkeClassify.config.basic
+        - lkeClassify.config.model.version
+        - lkeClassify.release.call.secret
+        - lkeClassify.release.call.reception
+        - lkeClassify.release.do
+        - lkeSummary
+        - lkeSummary.config.chat
+        - lkeSummary.config.basic
+        - lkeSummary.config.model.version
+        - lkeSummary.config.output.requirement
+        - lkeSummary.config.output.method
+        - lkeSummary.release.call.secret
+        - lkeSummary.release.call.reception
+        - lkeSummary.release.do
+    normal:
+      app_max_char_size: 1000000
+      corp_app_quota: 1000
+      corp_max_token_usage: 500000
+      corp_max_char_size: 3000000
+      ban_permission_list:
+        - lkeRepository.config.output.questionClarify
+        - lkeClassify
+        - lkeClassify.config.tag
+        - lkeClassify.config.chat
+        - lkeClassify.config.basic
+        - lkeClassify.config.model.version
+        - lkeClassify.release.call.secret
+        - lkeClassify.release.call.reception
+        - lkeClassify.release.do
+        - lkeSummary
+        - lkeSummary.config.chat
+        - lkeSummary.config.basic
+        - lkeSummary.config.model.version
+        - lkeSummary.config.output.requirement
+        - lkeSummary.config.output.method
+        - lkeSummary.release.call.secret
+        - lkeSummary.release.call.reception
+        - lkeSummary.release.do
+    user_avatar:
+      - /qbot/public/avatar_swan01.png
+      - /qbot/public/avatar_tiger01.png
+      - /qbot/public/avatar_tiger02.png
+      - /qbot/public/avatar_cat01.png
+      - /qbot/public/avatar_cattle01.png
+      - /qbot/public/avatar_dolphin01.png
+      - /qbot/public/avatar_dragon01.png
+      - /qbot/public/avatar_dragon02.png
+      - /qbot/public/avatar_flamingo01.png
+      - /qbot/public/avatar_koala01.png
+      - /qbot/public/avatar_monkey01.png
+      - /qbot/public/avatar_owl01.png
+      - /qbot/public/avatar_owl02.png
+      - /qbot/public/avatar_panda01.png
+      - /qbot/public/avatar_penguin01.png
+      - /qbot/public/avatar_rabbit01.png
+      - /qbot/public/avatar_rabbit02.png
+      - /qbot/public/avatar_seal01.png
+      - /qbot/public/avatar_sheep01.png
+      - /qbot/public/avatar_squirrel01.png
+
+    audit_switch: false
+    infosec_biz_type_default: QD_DS
+    corp_max_char_size: 5000000
+    corp_max_token_usage: 5000000
+    img_captcha_cfg:
+      secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+      secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+      captcha_type: 9
+      app_id: 197595422
+      app_secret_key:  #登录图片验证码，专有云无需
+      host: captcha.tencentcloudapi.com
+    sms:
+      qidian:
+        uin: 2355017619
+        signature: 28
+        type: 1
+        message: "手机验证码 %s，请尽快完成操作。验证码将于5分钟后失效，若非本人操作，请忽略。"
+        record_flag: 1
+        is_verify: 1
+      cloud:
+        biz_name:
+        template_id: "2163664"
+        sign: 腾讯云
+        sdk_appid: "1400912600"
+        secret_id: "" #短信验证，专有云无需
+        secret_key: "" #短信验证，专有云无需
+        validity: "5"
+        end_point: sms.internal.tencentcloudapi.com
+    cache_limit:
+      corp_expire: 720h
+      staff_expire: 120h
+      intent_expire: 120h
+      app_expire: 120h
+      model_expire: 120h
+
+    only_check_data_perm_action:
+      - ListSpace
+      - DescribeSpaceList
+      - DescribeAccount
+      - DescribeCorp
+      - ListNotify
+      - ListHistoryNotify
+      - ReadNotify
+      - CloseNotify
+      - CheckWhitelist
+      - ListModel
+      - ListNonRoleModel
+      - ListVoice
+      - ListDigitalHuman
+      - GetCharacterUsage
+      - ImageRetrieval
+      - ImageExpand
+      - DescribeStorageCredential
+      - SetUserGuideViewInfo
+      - GetUserGuideViewInfos
+      - ModifyConcurrencyRule
+      - DescribeConcurrencyRule
+      - CheckTool
+      - GetWxKFDefaultInfo
+      - GetAppInfoByWeChat
+      - DescribeWxAuthorizeUrl
+      - DescribeWxAuthorizeUrlResult
+      - GetWxKFIdList
+      - CheckWeComSecret
+      - ListAccount
+      - TestDbSourceConnection
+      - ListSourceTableNames
+      - ListFeedback
+      - DescribeFeedback
+      - DeleteFeedback
+      - DescribeAgentFeedback
+      - DeleteAgentFeedback
+      - ListAgentFeedback
+      - GetAgentFeedback
+      - AddWorkflowFeedback
+      - UpdateWorkflowFeedback
+      - DescribeWorkflowFeedback
+      - DeleteWorkflowFeedback
+      - ListWorkflowFeedback
+      - DescribeCountTrendList
+      - DescribeCountList
+      - DescribeStaticStats
+      - CreatePromptVersion
+      - DeletePromptVersion
+      - DescribePromptVersionList
+      - DescribePromptVersion
+      - DescribePromptTplCategoryList
+      - DescribePluginCategoryList
+      - DescribeToolFinanceStatus
+      - DescribeAuditLogMeta
+      - DescribeStaffsList
+      - CreateUnsatisfiedLabel
+      - DescribeUnsatisfiedLabelList
+      - ModifyUnsatisfiedLabel
+      - DeleteUnsatisfiedLabel
+      - CreateQaSimilarFromUnsatisfiedReply
+      - DescribeAppBaseList
+      - CreateSamlResponse
+      - DescribeDefaultModelList
+      - DescribeModelStatus
+      - DescribeVoiceList
+      - DescribeDigitalHumanList
+      - DescribeAccountPackageVersion
+      - DescribePackageQuota
+      - PickUpFreePackage
+      - DescribeModelTagList
+      - DescribeAppReplyMethodList
+      - DescribeRefer
+      - DescribeAlarmServiceRole
+      - DescribeAlarmTemplateList
+      - DescribeResourceRule
+      - ModifyResourceRule
+      - DescribeSpaceResourceList
+      - DescribeResourceReference
+      - CreateCheckToolOAuthUrl
+      - CreateApprovalRule
+      - ModifyApprovalRule
+      - DeleteApprovalRule
+      - DescribeApprovalRuleList
+      - ProcessApproval
+      - CancelApproval
+      - DescribeApprovalList
+      - DescribeApprovalDetail
+      - DescribeApprovalFlow
+      - CheckResourceApproving
+      - CheckResourceNeedApproval
+      - DescribeExperienceCenterCategoryList
+      - PromptTemplateLabelList
+      - DescribeAppBaseList
+      - ListGraphSchemaTemplate
+      - DescribeSkillTemplateList
+      - DescribeApiKeyList
+      - CreateApiKey
+      - ModifyApiKey
+      - ModifyApiKeyStatus
+      - DeleteApiKey
+      - SaveOpenClawSession
+      - DescribeOpenClawSession
+      - DescribeSkillCategoryList
+      - DescribeLoginUserInfo
+      - DescribeSmartMsgLogPrompt
+      - GetKBDefaultConfig
+      - GetAnswerTypeDataCount
+      - GetLikeDataCount
+      - CreateOpenClawSkill
+      - CheckSearchWhiteList
+      - GetAuthEndpoint
+      - CheckAuthStatus
+      - CallBackMicrosoft
+      - RevokeAuth
+    skip_corp_app_equal:
+      - GetDisplayDocs
+      - GetAppShareURL
+      - AddEventReport
+      - GetDocPreview
+      - DescribeUnsatisfiedLabelList
+      - DescribeStorageCredential
+      - DescribeAppDebugConfig
+      - CanCreateWorkflowRun
+      - DescribeRefer
+      - BatchDownloadDoc
+      - DescribeAppShareURL
+    space_config:
+      limit: 20
+      space_name_length: 30
+      space_desc_length: 150
+      is_check_space_valid: true
+    mongo_database: lke-data-statistics
+    msg_log_category:
+      name_max_len: 50
+      min_cluster_size: 2
+      threshold: 0.7
+      min_unmatched: 3
+      max: 2000
+      embedding_chunk: 100
+      smart_max_msg_cnt: 3000
+      unknown_cate_mark: "未分类"
+    embedding:
+      model_name: sn-large-multi-language-v0.2.5
+      max_len: 4090
+      dimension: 1024
+      max_retry: 1
+      prefix: "问题:"
+      content_prefix: "问题:"
+    object_storage:
+      {{ include "qbot.s3_storage" . }}
+    max_export_count: 100000
+    max_export_batch_size: 2000
+    whitelist_full_enable_map:
+    sec_api:
+      enable: {{ default "" .Values.global.secapi_enable }}
+      allow_outer: true
+    hun_yuan_api_key: {{ dig "modelServices" "hunyuan" "apiKey" "" .Values.global }}
+    account_operation_log:
+      log_cleanup_interval: 8760h
+      white_list_uin: 
+        700000306554: true
+      apis:
+        CreateApp: add
+        CreateAppByExperienceApp: add
+        ModifyApp: modify
+        DeleteApp: delete
+        CreateRelease: release
+        CreateWorkflow: add
+        CreateWorkflowExample: add
+        CopyWorkflow: add
+        ImportWorkflow: add
+        ImportWorkflowExample: add
+        SaveWorkflow: modify
+        SwitchWorkflowState: modify
+        UpdateWorkflowExample: modify
+        SaveAppDebugMode: modify
+        SaveAppDebugCustomVariables: modify
+        SaveAgentWorkflow: modify
+        DeleteWorkflow: delete
+        DeleteWorkflowExample: delete 
+        ExportWorkflow: download  
+        SaveDoc: add 
+        CreateQA: add 
+        CreateSharedKnowledge: add 
+        AddDbSource: add 
+        ModifyDoc: modify 
+        CreateDocParsingIntervention: modify 
+        ModifyDocSegment: modify 
+        RenameDoc: modify 
+        BatchModifyDoc: modify 
+        ResumeDoc: modify 
+        ModifyDocStatus: modify 
+        ModifyDocAttrRange: modify 
+        RetryDocParse: modify 
+        RetryDocAudit: modify 
+        ModifyQA: modify 
+        VerifyQA: modify 
+        ModifyQAAttrRange: modify 
+        BatchModifyQaExpire: modify 
+        BatchModifyQaDoc: modify 
+        ModifyQAStatus: modify 
+        ResumeQA: modify 
+        UpdateDbSource: modify 
+        UpdateDbTableAndColumns: modify 
+        UpdateDbTableEnabled: modify
+        DeleteSharedKnowledge: delete 
+        DeleteDoc: delete 
+        DeleteQA: delete 
+        DeleteDbSource: delete 
+        DeleteDbTable: delete
+        ExportQAList: download
+        GetDocPreview: preview
+        BatchDownloadDoc: download
+    limit_config_info:
+      expire: 4m
+      max_unlock_retry: 3
+      try_lock_interval: 50ms
+      concurrency_key_expire: 1800
+      qpm: 50 
+      tpm: 200000 
+      ds_qpm: 50 
+      ds_tpm: 1000000
+      model_config:
+        "TCADP/glm-5":
+          qpm: 50
+          tpm: 200000
+        "TCADP/kimi-k2.5":
+          qpm: 50
+          tpm: 200000
+        "TCADP/minimax-m2.5":
+          qpm: 50
+          tpm: 200000
+    finance: 
+      disabled: {{ .Values.global.finance.disabled }}
+      search_disabled: {{ .Values.global.finance.search_disabled }}
+    default_model_name: cs-normal-70b
+    smart_cate_msg_prompt: "下面的聚类中包含了多个含义相似的问题，请为这个聚类生成一个简洁、准确的聚类名称。输出要求：1.聚类名称长度不超过50个字。2.仅返回结果，不包含解释。 问题: {{`{{.Questions}}`}}"
+    smart_existed_cate_prompt: "你是一个专业分类助手，负责将用户的咨询问题准确归类到指定的业务分类中。\nTask: 请阅读提供的【分类】，根据用户输入的【咨询问题】，输出对应的【分类】。\n# 分类:\n{{`{{.Categories}}`}}\n# 输出要求:\n请直接输出问题所属分类，不要输出多余文字。输出示例：{{`{{.Category}}`}}\n# 咨询问题: {{`{{.Question}}`}}\n# 分类输出:"
+    tianyu:
+      disable_channel: false
+      channel_uin:
+      secret_id: {{ (.Values.global.contentSecurity).secretId | default "" }}
+      secret_key: {{ (.Values.global.contentSecurity).secretKey | default "" }}
+      endpoint: "cms.internal.tencentcloudapi.com"
+      region: {{ (.Values.global.contentSecurity).region | default "" }}
+      keywords_lib_name_max_length: 20
+      keywords_content_max_length: 20
+      label_white_list:
+        text:
+          - Polity
+          - Porn
+          - Illegal
+          - Abuse
+          - Terror
+          - Value
+          - Other
+        image:
+          - Polity
+          - Porn
+          - Illegal
+          - Abuse
+          - Terror
+          - Sexy
+          - Teenager
+          - Value
+          - Ad
+          - Other
+      label_order:
+        - Illegal
+        - 20006
+        - Terror
+        - 24001
+        - Porn
+        - 20002
+        - Sexy
+        - Abuse
+        - 20007
+        - Polity
+        - Teenager
+        - Value
+        - 28001
+        - Ad
+        - 20105
+      label_black_list:
+        text:
+          - 29999
+          - GeneratedContentRisk
+        image:
+          - 29999
+          - GeneratedContentRisk    
+      risk_responses:
+       - risk_response_type: 1
+         risk_input_response: KeyRiskResponseTypeSeriousInput
+         risk_output_response: KeyRiskResponseTypeSeriousOutput
+         is_default: true
+       - risk_response_type: 2
+         risk_input_response: KeyRiskResponseTypeMildInput
+         risk_output_response: KeyRiskResponseTypeMildOutput
+       - risk_response_type: 3
+         risk_input_response: KeyRiskResponseTypeLivelyInput
+         risk_output_response: KeyRiskResponseTypeLivelyOutput
+      default_category:
+        high: "81004"
+        middle: "81005"
+        low: "81006"
+      default_policies: ${DEFAULT_POLICIES}
+    es_config:
+      name: trpc.elasticsearch.lke.admin
+      url: http://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}
+      user: ${INFRA_MIDDLEWARES_ES_0_USER}
+      password: ${INFRA_MIDDLEWARES_ES_0_PASSWORD}
+      timeout: 8000
+      log:
+        enabled: true
+        request_enabled: true
+        request_body: true
+      index_name:
+        content_recognition: content_recognition
+        content_recognition_stats: content_recognition_stats
+    audit_log_es:
+      name: trpc.elasticsearch.lke.audit_log
+      url: http://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}
+      user: ${INFRA_MIDDLEWARES_ES_0_USER}
+      password: ${INFRA_MIDDLEWARES_ES_0_PASSWORD}
+      timeout: 8000
+      log:
+        enabled: true
+        request_enabled: true
+        request_body: true
+      index_name:
+        audit_log: audit_log
+    audit_log_limit:
+      space_name_limit: 100
+      space_id_limit: 60
+      app_name_limit: 128
+      staff_name_limit: 128
+      search_limit: 100
+      content_limit: 4096
+    task_config:
+      task_prefix: platform:task
+      task_fetch_num: 400
+      task_fetch_timeout: 2s
+      task_fetch_period: 2s
+      export:
+        export:
+          runners: 2 #处理协程数，无法动态调整
+          retry_wait_time: 1m #重试等待时间
+          max_retry: 10 #最大重试次数
+          timeout: 10m #超时时间
+          fail_timeout: 3s # 失败回调超时
+          delay: 0s #启动延迟
+          batch:  3
+          batch_size: 0
+          stopped_resume_time: 720h
+        delete_space:
+          runners: 3 #处理协程数，无法动态调整
+          retry_wait_time: 1m #重试等待时间
+          max_retry: 10 #最大重试次数
+          timeout: 180m #超时时间
+          fail_timeout: 3s # 失败回调超时
+          delay: 0s #启动延迟
+          batch:  1
+          batch_size: 0
+          stopped_resume_time: 720h
+        msg_smart_cate:
+          runners: 3 #处理协程数，无法动态调整
+          retry_wait_time: 1m #重试等待时间
+          max_retry: 10 #最大重试次数
+          timeout: 180m #超时时间
+          fail_timeout: 3s # 失败回调超时
+          delay: 0s #启动延迟
+          batch:  1
+          batch_size: 0
+          stopped_resume_time: 720h
+    third_party: ${THIRD_PARTY}
+
+    user_token:
+      secret: aGXYPxuVMyXlxyGCfSLqF8Jml1PJExmx
+      ttl: 3600 # 单位：s
+    reply_method_map:
+      1: 10  # ReplyMethodModel(大模型直接回复) -> APP_CALL_REPLY_METHOD_LLM_DIRECT
+      2: 11  # ReplyMethodBare(保守回复, 未知问题回复) -> APP_CALL_REPLY_METHOD_FALLBACK
+      3: 1   # ReplyMethodRejected(拒答问题回复) -> APP_CALL_REPLY_METHOD_REJECT
+      4: 3   # ReplyMethodEvil(敏感回复) -> APP_CALL_REPLY_METHOD_AUDIT_FAILED
+      5: 2   # ReplyMethodPriorityQA(问答对直接回复, 已采纳问答对优先回复) -> APP_CALL_REPLY_METHOD_QA_DIRECT
+      6: 0   # ReplyMethodGreeting(欢迎语回复) -> APP_CALL_REPLY_METHOD_UNKNOWN
+      7: 1   # ReplyMethodBusy(并发超限回复) -> APP_CALL_REPLY_METHOD_REJECT
+      8: 10  # ReplyGlobalKnowledge(全局干预知识) -> APP_CALL_REPLY_METHOD_LLM_DIRECT
+      9: 0   # ReplyMethodTaskFlow(任务流程过程回复) -> APP_CALL_REPLY_METHOD_UNKNOWN
+      10: 0  # ReplyMethodTaskAnswer(任务流程答案回复) -> APP_CALL_REPLY_METHOD_UNKNOWN
+      11: 9  # ReplyMethodSearch(搜索引擎回复) -> APP_CALL_REPLY_METHOD_SEARCH_ENGINE
+      12: 4  # ReplyMethodDecorator(知识润色后回复) -> APP_CALL_REPLY_METHOD_KNOWLEDGE_POLISH
+      13: 8  # ReplyMethodImage(图片理解回复) -> APP_CALL_REPLY_METHOD_IMAGE_UNDERSTAND
+      14: 7  # ReplyMethodFile(实时文档回复) -> APP_CALL_REPLY_METHOD_REALTIME_DOC
+      15: 10 # ReplyMethodClarifyConfirm(澄清确认回复) -> APP_CALL_REPLY_METHOD_LLM_DIRECT
+      16: 6  # ReplyMethodWorkflow(工作流回复) -> APP_CALL_REPLY_METHOD_WORKFLOW
+      17: 6  # ReplyMethodWorkflowAnswer(工作流运行结束) -> APP_CALL_REPLY_METHOD_WORKFLOW
+      18: 10 # ReplyMethodAgent(智能体回复) -> APP_CALL_REPLY_METHOD_LLM_DIRECT
+      19: 10 # ReplyMethodMultiIntent(多意图回复) -> APP_CALL_REPLY_METHOD_LLM_DIRECT
+      20: 0  # ReplyMethodInterrupt(中断回复) -> APP_CALL_REPLY_METHOD_UNKNOWN
+    coroutine_limit: 100
+    count_category_limit: 10000
+    coroutine_sleep: 5
+    approval:
+      max_rule_count: 20
+      max_rule_name_length: 50
+      max_rule_desc_length: 300
+      max_scene_group_count: 10
+      max_scene_resource_count: 100
+      max_approver_count: 3
+      max_comment_length: 500
+      app_publish_approval_url: ${APP_PUBLISH_APPROVAL_URL}
+      skip_approving_actions:
+        - DescribeReleaseInfo
+        - ListReleaseConfigPreview
+        - ListTaskFlowPreview
+        - ListAppAgentReleasePreview
+        - ListRejectedQuestionPreview
+        - ListReleaseSynonymsPreview
+        - ListReleaseLabelPreview
+        - ListReleaseDb
+        - ListReleaseDbTable
+    notify_config:
+      sink_enabled:
+        tencent_sms: 0
+        tencent_email: 0
+        webhook: 0
+        ding_talk: 0
+        feishu: 0
+        wecom: 0
+    ioa_login:
+      enable_check_inner: false
+      tof_token: ${IOA_TOF_TOKEN}
+      tof_expiration_gap: 3m
+      white_list: []
+    agent_background: ${AGENT_BACKGROUND}
+    notice_config:
+      max_create_num: 500
+    function_permission: ${FUNCTION_PERMISSION}
+
+    msg_log_es_white_list:
+      - 100034812856
+      - 100038737751
+    is_private: true
+    is_intl_tke: true
+
+    license:
+      type: youtu
+      apis:
+        host: ti-license.ti-base.svc.cluster.local:8081
+        version: 2021-02-05
+        server: ti-auth
+        secret_id: ""
+        secret_key: ""
+      app_license_ids:
+        knowledge_qa: 258
+        summary: 259
+        classify: 260
+      atomic_license_ids:
+        document_parsing: 261
+        embedding: 262
+        context_rewriting: 263
+      model_license_ids:
+        cs-normal-70b: 252
+        lke-deepseek-r1-0528: 270
+        lke-deepseek-v3-0324: 271
+        cs-normal-merge: 285
+      model_license_map:
+        cs-normal-70b: 252
+        lke-deepseek-r1-0528: 270
+        lke-deepseek-v3-0324: 271
+        cs-normal-merge: 285
+      timeout: 30
+      expire_time: 60
+    {{- if eq .Values.global.free_preview true}}
+    {{- end}}
+
+    license_host:
+      adp: "https://adp.tencentcloud.com/cgi/apex/adp/platform/CheckLicense"
+    # RSA公钥 - 用于加密和验签
+    public_key: |
+      -----BEGIN PUBLIC KEY-----
+      MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAurReoU7qNrUu+hVIiCLM
+      yXfOUZIODPMuR9xphD8S+/Df8DDj40lVOgU3sh0sghFmkhva71fji+N+a279wsjd
+      MDBd5ZO7hBApxOdm82TUVnx1be+PhvIkChDKIbOlZJ+GG/gbZsrbCzR+1yHI6h5u
+      DmumU4WRGpBg28/6quJ2nl1GUWJAjNCtGdPozJ0Q2Gm0nq1MrQPf5fjBzxJ2GI83
+      iM8We8MyeNQO/iAbr+iUqG1XsjD4QqDUUqcgBYRGexS0HHuGYrDWEUvkBnsgqdpR
+      zVgqxxJhsDCz7IiqFaTugJJDIoH2/uPJ4rAwSxko481Li1VCKpQQ6KN2mM7cMEeK
+      nGakkgkI0OI5znUgC5vBoprUkEO0pk1JcaIrEnEZm5pZCrBJsSbCLQLbiDReSe7q
+      XTO54hyFiHv1huweQB5psL/2O0WvKcSM4H4zgAWSSEatxZ/MKD8ESmjgLcUg6KFo
+      8aGyRNJLv3+nE7qMLagJDtt0Gqinutu/SXwurj75+Xb2DQWD5JGvkwvvlt5Muvcd
+      2HjdhWqwM5sR37a58YK3Rd/M+XqFpOjgXQ1si3m1CyXGAOscgm4/p5pFBgUOjmfI
+      tyqsHyMMdAugX6Duo20FkKZwC/gPtAeNYso/Vxt0wRifIrJZPUkdTTOPcmtx+a+6
+      +8Dhq8soyKlm51Dc6ia0cUECAwEAAQ==
+      -----END PUBLIC KEY-----
+  biz_en-US.json: |
+    {
+      "29999": "Participle",
+      "KeyDefaultSpaceName": "Default Space",
+      "KeyStatusInvalid": "Invalid",
+      "KeyStatusValid": "Valid",
+      "KeyStatusInAudit": "Auditing",
+      "KeyStatusAuditFail": "Audit Failed",
+      "KeyMsgLogNoCategory": "Uncategorized",
+      "未分类": "Uncategorized",
+      "KeyMsgLogCategoryAll": "All categories",
+      "KeyQuestionFeedbackSubmitted": "Your feedback on issue \"%s\" has been submitted, feedback id is %d",
+      "KeyQuestionFeedbackProcessed": "The feedback for issue \"%s\" with feedback id %d has been processed",
+      "KeyQuestionFeedbackRejected": "Your feedback for issue \"%s\" (id: %d) has been rejected by the technical team",
+      "KeyFeedbackInfo": "Feedback information",
+      "KeyAgentFeedbackInfo": "Agent feedback information",
+      "KeyExportContent": "Export %s",
+      "KeyExportSuccess": "Export Success",
+      "KeyExportFailed": "Export Failed",
+      "KeyDataSuccess": "Success",
+      "KeyDataFailed": "Failed",
+      "KeyMsgLogContent": "Message log export %s.",
+      "KeyMsgLogContentIng": "Message log exporting in progress.",
+      "KeyMsgLogStatsContent": "Message statistics export as %s.",
+      "KeyMsgLogStatsContentIng": "Message statistics exporting in progress.",
+      "KeyApprovalRepeated": "Resources are under approval, cannot be approved repeatedly",
+      "KeyCopyContentSecurity": " Copy",
+      "KeySmartCateMsgStart": "Message classification start",
+      "KeySmartCateMsgSuccess": "Message classification success",
+      "KeySmartCateMsgSuccessContent": "Process a total of %d records",
+      "KeySmartCateMsgFailed": "Message classification failed",
+      "KeyExperiencePageWithTencentCloud": "Experience Page (Tencent Cloud)",
+      "KeyExperiencePageWithPhoneNumber": "Experience Page (Phone Number)",
+      "KeyDialogAPIAccess": "Dialogue End API Access",
+      "KeyWeChatServiceAccount": "WeChat Service Account",
+      "KeyWeChatSubscriptionAccount": "WeChat Subscription Account",
+      "KeyWeChatWorkApp": "WeChat Work App",
+      "KeyWebComponent": "Web Component",
+      "KeyWeChatCustomerService": "WeChat Customer Service",
+      "KeyMiniProgram": "Mini Program",
+      "KeyLike": "Like",
+      "KeyDislike": "Dislike",
+      "KeyQuestion": "Question",
+      "KeyAnswer": "Answer",
+      "KeyReply": "Reply",
+      "KeyUser": "User",
+      "KeyPublishingChannel": "Publishing Channel",
+      "KeyIntent": "Intent",
+      "KeyEvaluation": "Evaluation",
+      "KeyCreationTime": "Creation Time",
+      "KeyDate": "Date",
+      "KeyMessageCount": "Number of messages",
+      "KeyInteractiveUserCount": "Number of interacting users",
+      "KeyLikeCount": "Number of likes",
+      "KeyDislikeCount": "Number of dislikes",
+      "KeyLikeRate": "Like rate",
+      "KeyStatAccount": "Statistical account",
+      "KeyDefaultContentSecurityHigh": "High Sensitivity System Policy",
+      "KeyDefaultContentSecurityMiddle": "Medium Sensitivity System Policy",
+      "KeyDefaultContentSecurityLow": "Low Sensitivity System Policy",
+      "KeyDefaultContentSecurityHighDesc": "Policy for use on special dates, high recall may come with some false positives, not recommended for daily use",
+      "KeyDefaultContentSecurityMiddleDesc": "Default policy for new applications: Standard configuration for routine periods, recommended for daily use",
+      "KeyDefaultContentSecurityLowDesc": "Only identifies baseline risks, suitable for application scenarios with low risk probability",
+      "KeyDefaultContentSecurity": "Default Strategy of Content Moderation",
+      "KeyDefaultContentSecurityDesc": "ADP default content moderation strategy.",
+      "KeyDefaultContentSensitivityDisable": "Disable Content Moderation",
+      "KeyDefaultContentSecurityDisableDesc": "No content moderation is performed.",
+      "KeyRiskResponseTypeSeriousInput": "I can't answer this question. You can try asking me something else.",
+      "KeyRiskResponseTypeSeriousOutput": "Sorry, I can't answer this question at the moment. Please try asking a different one.",
+      "KeyRiskResponseTypeMildInput": "I haven't learned how to answer this yet. Let's change the topic and continue our chat.",
+      "KeyRiskResponseTypeMildOutput": "This question is beyond my current knowledge. Please try asking a different one, and I'll do my best to help.",
+      "KeyRiskResponseTypeLivelyInput": "I don't know this one yet. How about testing me with a different question~",
+      "KeyRiskResponseTypeLivelyOutput": "Oops, this one's got me stumped. Let's talk about something else~",
+      "KeyInvalidParam": "Invalid param:%s",
+      "Normal": "Normal",
+      "Polity": "Polity",
+      "Ad": "Advertise",
+      "Abuse": "Abuse",
+      "Illegal": "Illegal",
+      "Spam": "Spam",
+      "Terror": "Terror",
+      "Porn": "Porn",
+      "Value": "Value",
+      "GeneratedContentRisk": "GeneratedContentRisk",
+      "Copyright": "Copyright",
+      "Teenager": "Teenager",
+      "Religion": "Religion",
+      "Sexy": "Sexy",
+      "广告": "Ad",
+      "谩骂": "Abuse",
+      "不文明用语": "Uncivilized",
+      "口头禅": "Uncivilized",
+      "非攻击性的不文明用语，如我靠、尼玛": "Non-aggressive uncivilized language, such as 'Wokao', 'Nima'",
+      "人身攻击": "Personal Attack",
+      "重度人身攻击": "Severe personal assault",
+      "直接辱骂攻击他人的用词，如傻逼、婊子": "Direct abusive and attacking language towards others, such as 'Shabi', 'Biaoz'",
+      "轻度人身攻击": "Slight personal assault",
+      "辱骂攻击他人的用词，但也可能用于调侃，如傻子、你奶奶个熊": "Abusive words attacking others, but may also be used for teasing, such as 'Shazi', 'Your grandma is a bear'",
+      "色情粗口": "Pornographic Abuse",
+      "色情粗口用语": "Pornographic Abuse",
+      "含有性行为或者性器官相关粗口词汇": "Vulgar expressions related to sexual behaviors or organs",
+      "违法": "Illegal",
+      "毒品": "Drug",
+      "制毒贩毒管控内容": "Promote drug use and trafficking",
+      "涉及制毒贩毒的教程方法、宣扬制度贩毒、营销导流等违法行为": "Content involving illegal activities such as tutorials on drug manufacturing and trafficking, advocacy of drug manufacturing and trafficking, and marketing diversion for such crimes.",
+      "毒品成品管控内容": "Mention of drugs",
+      "提及毒品成品并对其宣扬": "Mentioning finished drug products and advocating them",
+      "赌博": "Gamble",
+      "赌博平台管控内容": "Gambling sites",
+      "涉及赌博平台机构/组织的名称，且进行营销推广导流、询问如何参与等": "Involving the name of gambling platforms/institutions, including marketing, promotion, inquiry about participation, etc.",
+      "合法赌博场所宣传管控": "Casino",
+      "符合当地法律法规的赌博场所，但进行宣扬或营销行为": "Legal casino promotion, but includes advocacy or marketing actions",
+      "棋牌游戏": "Board game",
+      "以赌博为目的的网络联机棋牌游戏": "Online board games for the purpose of gambling",
+      "博彩游戏": "Betting games",
+      "包括赌博性质的博彩游戏内容": "Content related to betting games of a gambling nature",
+      "赌博行为": "Gambling",
+      "以营利为目的，聚众赌博或者以赌博为业的行为": "Acts of gambling for profit, gathering for gambling or making a living from gambling",
+      "赌博器具管控内容": "Gambling equipment",
+      "涉及赌博相关器具的营销推广": "Marketing or promotion of gambling equipment",
+      "违禁品": "Contraband",
+      "有害药品": "Illegal Medicines",
+      "与医疗、预防和保健目的无关的危害药品": "Hazardous medicines unrelated to medical, preventive or health purposes",
+      "有害化学品": "Prohibited chemicals",
+      "具有毒害、腐蚀等性质，对人体、设施、环境具有危害的剧毒化学品": "Highly toxic chemicals harmful to humans, facilities, and the environment",
+      "危爆物品": "Flammables and Explosives Goods",
+      "具有爆炸、易燃、放射性等危险性质": "Explosive, flammable, or radioactive danger items",
+      "野生动物危害言论": "Wild animals",
+      "非法贩卖、捕杀、食用野生动物言论": "Statements about illegal trading, hunting, or eating wild animals",
+      "非法翻墙工具": "VPN",
+      "非法VPN展示或推广营销": "Displaying or promoting illegal VPN tools",
+      "黑灰产管控工具": "Other",
+      "禁止市场随意流通的违禁品，如开锁工具、遥控干扰器、出售黑车、遥控车牌架": "Prohibited tools and goods such as lock-picking tools, remote interference devices, selling illegal vehicles, or remote license plate holders",
+      "违禁行为": "Prohibited Behavior",
+      "造假作弊": "Fraud cheating",
+      "编造捏造、以假乱真，利用不存在的事物来谋取利益": "Fabrication, falsification, using fictitious things for profit",
+      "人体贩卖": "Human trafficking",
+      "人体器官贩卖相关危害言论": "Statements related to human organ trafficking",
+      "侵犯个人隐私": "Invasion of personal privacy",
+      "涉及侵犯个人隐私的言论或工具售卖": "Statements or tools related to invasion of personal privacy",
+      "雇凶杀人": "Hire a murderer",
+      "雇佣他人进行犯罪活动": "Hiring others to commit crimes",
+      "付费删帖": "Pay to delete posts",
+      "通过信息网络有偿提供删除信息服务": "Paid online services for deleting information",
+      "封建迷信": "Feudal superstition",
+      "提及封建迷信的言论，或意图开展封建迷信活动": "Statements or intentions related to feudal superstition activity",
+      "金融违法行为": "Financial Prohibitions",
+      "实施洗钱、逃税漏税的言论，包括咨询如何洗钱、逃税漏税相关规则方式介绍": "Statements involving money laundering, tax evasion, including consulting or introducing how to launder money or evade taxes",
+      "非法团体": "Illegal Group",
+      "黑社会": "Mafia",
+      "涉及黑社会的不良言论": "Negative statements involving mafia",
+      "传销组织": "MLM Organization",
+      "涉及传销组织的不良导向言论": "Negative guidance involving pyramid schemes (MLM)",
+      "非法社会组织": "Illegal social organization",
+      "未在民政部门登记的涉嫌非法社会组织": "Suspected illegal social organizations not registered with civil affairs departments",
+      "灌水": "Spam",
+      "暴恐": "Terror",
+      "恐怖组织人物": "Horror Characters",
+      "涉及联合国认定的恐怖组织相关人物": "Involving UN-designated terrorist group members",
+      "恐怖组织": "Terrorist Organization",
+      "涉及联合国认定的恐怖组织": "Involving UN-designated terrorist organizations",
+      "恐怖事件": "Terrorist Incident",
+      "恐怖分子制造的危害社会稳定、人民生命与财产安全的行为活动": "Terrorist acts endangering social stability, people's lives and properties",
+      "暴力血腥描述": "Violent",
+      "暴力用词": "Violent and bloody",
+      "各类提及到暴力的用词用语，范围较广": "Various language referring to violence, broad scope",
+      "血腥行为描述": "Bloody Scene",
+      "描述或教授极端血腥行为（如碎尸、肢解、食尸、虐杀）及尸体处置的可操作细节的内容": "Describing or teaching extreme bloody acts such as dismemberment, cannibalism, torture and details of body disposal",
+      "武器相关描述": "Arms",
+      "杀伤性武器": "Arms",
+      "枪支弹药名称、管制刀具、大杀伤性武器等": "Names of firearms, controlled knives, large-scale killing weapons, etc.",
+      "色情": "Porn",
+      "性行为描述": "Sexual Behavior",
+      "低俗描述性行为": "Vulgar description of sexual behavior",
+      "使用低俗下流的语言描述性相关的动作、行为和意图": "Using vulgar or obscene language to describe sexual acts, behaviors, or intentions",
+      "客观陈述性行为": "Objective statement of behavior",
+      "性行为相关的客观描述，但是整句话没有低俗性行为的联想": "Objective description of sexual behavior without vulgar implications",
+      "性行为影射": "Sexual innuendo",
+      "通过暗示、比喻、联想或描述行为反应，而非直接描述，来指代或影射性交、自慰等核心性行为的文本": "Implied or metaphorical references to sexual acts, rather than direct descriptions",
+      "性暗示与软色情": "Ambiguous expression of foreplay",
+      "通过双关、歧义性语言或模糊的行为描述，营造色情氛围、进行性挑逗，但未明确描述色情动作或性行为": "Using puns, ambiguous language, or vague behavior to create a sexual atmosphere, tease, but not explicitly describe sexual acts",
+      "低俗描述性活动": "Vulgar descriptive activity",
+      "使用低俗下流的语言或低俗称谓，描述性活动时的动作、行为和对话": "Using vulgar or obscene language or terms to describe actions, behaviors, and conversations during sexual activity",
+      "性行为前戏": "Vulgar description of foreplay",
+      "明确描述以激发性欲为目的、但未及核心性行为的身体接触与挑逗动作": "Explicitly describing physical contact and teasing acts meant to excite sexual desire, not reaching core sexual acts",
+      "性器官描述": "Sex Organ",
+      "低俗描述性器官": "Vulgar description of sexual organs",
+      "使用低俗下流的语言描述性器官": "Using vulgar or obscene language to describe sexual organs",
+      "客观陈述性器官": "Objective statement of sexual organs",
+      "性器官相关的客观描述，但是整句话没有低俗性行为的联想\n不包含案件描述、新闻报道、生理科普类型的内容": "Objective description of sexual organs, without vulgar sexual connotations, excluding cases, news, physiological science",
+      "情色三级资源": "Pornography",
+      "情色人物提及": "Erotic figures",
+      "提及成人色情行业从业者": "Mentioning workers in the adult industry",
+      "情色作品提及": "Pornography",
+      "情色类的AV、歌曲、小说、漫画、游戏、场所、网站名等": "Mentions of pornography, AV, songs, novels, comics, games, places, or websites",
+      "SM内容": "SM",
+      "低俗描述SM": "SM",
+      "描述 SM 行为、道具等包含色情语义的描述": "Describing SM acts, tools with sexual implications",
+      "提及SM": "Objective SM",
+      "对SM相关词汇的提问或科普，不涉及色情内容": "Questions or science popularization about SM terms without sexual implication",
+      "同性恋": "Homosexual",
+      "男同言论": "Gay",
+      "女同言论": "Lesbian",
+      "特殊性癖": "Perverted Porn",
+      "色情特殊性癖": "Perverted Porn",
+      "通过文字描绘、角色扮演或对话，色情化地展现特殊性癖好行为或场景的文本": "Describing special sexual fetishes or scenarios in a pornographic manner via text, roleplay or dialogue",
+      "生理科普": "Physiology Popularization",
+      "生理科普知识": "Physiology Popularization",
+      "仅包含真正的知识科普内容，对于描述性的内容、或提问性质的内容不包含": "Only includes genuine scientific and educational content, excludes descriptive or question-based content",
+      "性爱科普": "Sexual Popularization",
+      "性爱相关的客观科普内容，无色情语义": "Objective scientific content about sex, without pornographic meaning",
+      "未成年色情": "Minor Porn",
+      "价值观": "Value",
+      "自杀自残": "Self Harm",
+      "自杀自残言论": "Self Harm",
+      "描述自杀自残以及倾向的言论": "Statements describing or showing tendencies of suicide/self-harm",
+      "消极情绪": "Negative Emotions",
+      "语义上趋向于自我否定、自我放弃等负面影响的内容": "Content semantically expressing self-denial, abandonment, or other negative influence",
+      "自毁倾向": "Self-destructive Tendencies",
+      "语义上趋向于展示自毁自虐意图与行为，鼓吹自毁情绪和行为的内容": "Content showing intent or acts of self-destruction, or promoting these emotions and behaviors",
+      "自杀倾向": "Suicidal Tendencies",
+      "语义上趋向于展示自杀意图与自杀行为，鼓吹自杀的内容": "Content showing suicidal intentions or acts, or promoting suicide",
+      "指令攻击": "Prompt Attack",
+      "优先使用大模型自带的防攻击机制，需额外加强才开启": "Use built-in model anti-attack mechanisms first, strengthen if necessary",
+      "Prompt泄露": "Prompt Leak",
+      "诱导模型泄露其系统提示词": "Inducing the model to leak its system prompts",
+      "目标劫持": "Prompt Hijack",
+      "通过指令语句，诱导大模型绕过安全机制，输出预设答案": "Trying to bypass model safety by prompt hijacking to output preset answers",
+      "信息安全": "Prompt Security Risk",
+      "系统攻击": "Prompt Information Security Risk",
+      "攻击计算机、网络、系统等相关言论，如“如何侵入政府数据库”": "Statements related to attacking computers, networks, systems, e.g., 'how to hack government database'",
+      "军警制服": "Uniform",
+      "迷彩服": "Camouflage",
+      "消防服": "Fire Uniform",
+      "ACG警服": "ACG Police",
+      "ACG军服": "ACG Military Uniform",
+      "热武器": "Gun",
+      "真实枪支": "Real Gun",
+      "游戏枪支": "Game Gun",
+      "ACG枪支": "ACG Gun",
+      "玩具枪": "Toy Gun",
+      "大型武器": "Big Weapon",
+      "军事武器": "Military weapons",
+      "24001010001": "Military weapons",
+      "坦克、军用飞机、军用舰艇、军用导弹等常见大型武器": "Common large-scale military weapons such as tanks, military airplanes, warships, missiles, etc.",
+      "坦克": "Tank",
+      "更泛化的坦克，例如只要有履带出现都算": "Generalized tank, such as anything with tracks is considered a tank",
+      "冷兵器": "Knife",
+      "真实刀具": "Real Knife",
+      "游戏刀具": "Game Knife",
+      "ACG刀具": "ACG Knife",
+      "管制刀具": "Illegal Knife",
+      "血腥画面": "Blood",
+      "ACG血腥画面": "ACG Blood",
+      "漫画或动漫场景中出现的血腥画面": "Bloody scenes in manga or anime",
+      "真实血腥画面": "Real Blood",
+      "真实场景中的血腥画面，如虐杀": "Bloody scenes in real life, such as abuse or murder",
+      "惊悚血腥画面": "Horror Blood",
+      "极度血腥，带有惊悚感的画面": "Extremely bloody and horrifying scenes",
+      "性感": "Sexy",
+      "女性性感胸部": "Women Sexy Chest",
+      "ACG女重度露沟": "ACG Women Heavy Chest",
+      "ACG女性胸部露出中间乳沟（大于50%），或胸部露出下沿（大于50%）": "ACG woman’s cleavage exposed over 50%, or underbust exposed over 50%",
+      "真人女重度露沟": "Real Women Heavy Chest",
+      "真人女性胸部露出中间乳沟（大于50%），或胸部露出下沿（大于50%）": "Real woman’s cleavage exposed over 50%, or underbust exposed over 50%",
+      "亲吻画面": "Kiss",
+      "异性亲吻": "Men Women Kiss",
+      "男女之间，嘴对嘴的亲吻，嘴要互相接触": "Kissing between man and woman, mouth-to-mouth, lips touch",
+      "女女亲吻": "Women Kiss",
+      "女女之间，嘴对嘴的亲吻，嘴要互相接触": "Kissing between women, mouth-to-mouth",
+      "男男亲吻": "Men Kiss",
+      "男男之间，嘴对嘴的亲吻，嘴要互相接触": "Kissing between men, mouth-to-mouth",
+      "亲密行为": "Intimate Behavior",
+      "男男亲密": "Men Close",
+      "男性之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为": "Intimate physical behavior between men such as hugging, resting heads together, etc.",
+      "男女亲密": "Men Women Close",
+      "男女之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为": "Intimate physical behavior between man and woman such as hugging, resting heads together, etc.",
+      "女女亲密": "Women Close",
+      "女性之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为": "Intimate physical behavior between women such as hugging, resting heads together, etc.",
+      "男下激凸": "Crotch Close Up",
+      "三角区": "Male lower body (crotch area)",
+      "20103036301": "Male lower body (crotch area)",
+      "视觉聚焦男性下体的图片，包括马赛克跟动漫场景": "Images focused on male genital area, including censored and anime scenes",
+      "诱惑姿势": "Seductive Pose",
+      "张腿": "Open Leg",
+      "腿和裆部呈M或者W形状，且下体穿着少": "Legs and crotch in M or W shape, dressed scantily below",
+      "撅臀": "Pout Hip",
+      "明显甚至夸张地撅起屁股，无论是不是穿着衣服": "Prominently sticking out buttocks, exaggeratedly, with or without clothes",
+      "性表情": "O Face",
+      "带有性暗示的猥琐表情": "Lewd facial expressions with sexual implication",
+      "性行为画面": "Sexy Behavior",
+      "各种性爱的画面，包括真人、动漫、手绘等场景": "Various scenes of sexual acts, including real, animated or hand-drawn scenes",
+      "女性下体裸露": "Women Private Part",
+      "包括有马赛克或非常少的衣物，但可以明确判断的图片": "Visible female genital area, including pixelated or very scantily dressed images",
+      "女性胸部裸露": "Women Chest",
+      "包含虽有衣物遮挡，但胸部整体裸露较多的画面": "Images with mostly exposed female chest, even if partly covered",
+      "男性下体裸露": "Men Private Part",
+      "包含虽有衣物遮挡，但下体整体裸露较多或非常明显的画面": "Images with mostly exposed male genital area, even if partly covered",
+      "臀部裸露": "Buttocks Exposed",
+      "不区分男女，臀部大面积裸露": "Large area of buttocks exposed, no gender distinction",
+      "儿童裸露": "Naked Child",
+      "儿童裸露下体和臀部": "Child with exposed genital and butt area",
+      "动物性行为": "Animal Sex",
+      "性分泌物": "Sex Secretion",
+      "画面中包含较明显的性分泌物": "Images containing prominent sexual secretions",
+      "裸体": "Naked",
+      "全裸或几乎全裸": "Completely or almost completely naked",
+      "女性下体内窥镜": "Endoscope",
+      "女性下体内窥画面，属于特殊性癖": "Endoscopic images of female genital area, considered a special fetish",
+      "医学性器官": "Medical Porn",
+      "可以看到性器官、敏感部位医学人体图（含解剖图、剖面图等）": "Medical diagrams showing sexual organs and sensitive areas (including anatomy, cross-sections)",
+      "ACG孕妇": "ACG Pregnancy",
+      "动漫、3D 、仿真等ACG画风的孕妇图片，属于特殊性癖": "Anime, 3D, or simulated ACG-styled pregnant women images, special fetish",
+      "二维码": "Qr Code",
+      "常见二维码": "QRCODE",
+      "包括但不限于微信、支付宝、网址、淘宝、QQ等常见的二维码": "Common QR codes, including WeChat, Alipay, websites, Taobao, QQ, etc.",
+      "淘宝二维码": "Taobao QR Code",
+      "微信二维码": "Wechat QR Code",
+      "支付宝二维码": "Alipay QR Code",
+      "小程序码": "WXCODE",
+      "条形码": "BARCODE",
+      "PDF417条码": "PDF417",
+      "DM码": "DATAMATRIX",
+      "政治": "Polity",
+      "劣迹明星": "Bad Star",
+      "劣迹网红": "Inferior",
+      "纳粹战犯": "Nazi Criminal",
+      "侵华战犯": "War Criminal",
+      "国旗营销": "Guo Qi Ying Xiao",
+      "侮辱国旗": "Wu Ru Guo Qi",
+      "焚烧、践踏、涂鸦等恶搞国旗行为": "Behaviors insulting the national flag, such as burning, trampling, graffiti, parody",
+      "恶搞人民币": "EGao RMB",
+      "对人民币PS、恶意折叠等行为": "Photoshopping or maliciously folding RMB",
+      "恶搞国徽": "EGao Guo Hui",
+      "在国徽上添加其它恶意元素": "Adding malicious elements to the national emblem",
+      "吸烟": "Smoking",
+      "吸毒": "Drug",
+      "喝酒": "Drink",
+      "打斗": "Fight",
+      "恶心画面": "Nausea",
+      "未成年识别": "Teenager",
+      "未成年人出镜": "Minors",
+      "画面中出现未成年人，适用于真人、且需要露脸": "Minors appearing on screen, applies to real people and must show face",
+      "未成年人色情": "Minors Porn",
+      "真人形象的未成年色情及擦边画面": "Real-life minor pornography or borderline content",
+      "未成年人违禁行为": "Minors Illegal",
+      "未成年人吸烟": "Minors Smoking",
+      "未成年人喝酒": "Minors Drink",
+      "未成年人纹身": "Minors Tattoo",
+      "儿童邪典": "Elsagate",
+      "以儿童熟悉的卡通人物包装成为血腥暴力或软色情的图片": "Images with familiar children's cartoon characters but containing bloody, violent or soft porn elements",
+      "ACG未成年人": "ACG Minors",
+      "漫画风格、或AIGC生成的未成年形象": "Manga style or AI-generated minor images",
+      "未成年形象": "Minors New",
+      "适用于真人，不一定要求露脸，外形像未成年人即会识别": "For real people, not necessarily showing face, as long as shape looks like minor",
+      "宗教识别": "Religion",
+      "生成式风险": "Generated Content Risk",
+      "KeyCategory": "record category ",
+      "KeyMoveCate": " to category ",
+      "AuditLogAction_login": "login",
+      "AuditLogAction_logout": "logout",
+      "AuditLogAction_create": "create",
+      "AuditLogAction_modify": "modify",
+      "AuditLogAction_delete": "delete",
+      "AuditLogAction_copy": "copy",
+      "AuditLogAction_download": "download",
+      "AuditLogAction_move": "move",
+      "AuditLogAction_enable": "enable",
+      "AuditLogAction_disable": "disable",
+      "AuditLogAction_import": "import",
+      "AuditLogAction_export": "export",
+      "AuditLogAction_release": "release",
+      "AuditLogAction_debug": "debug",
+      "AuditLogAction_recover": "recover",
+      "AuditLogAction_collect": "collect",
+      "AuditLogAction_uncollect": "uncollect",
+      "AuditLogAction_approve": "approve",
+      "AuditLogAction_reject": "reject",
+      "AuditLogAction_cancel": "cancel",
+      "AuditLogBiz_app": "app",
+      "AuditLogBiz_kb": "knowledge",
+      "AuditLogBiz_document": "document",
+      "AuditLogBiz_qa": "QA",
+      "AuditLogBiz_database": "database",
+      "AuditLogBiz_database_table": "database table",
+      "AuditLogBiz_workflow": "workflow",
+      "AuditLogBiz_provider_model": "provider model",
+      "AuditLogBiz_prompt": "prompt",
+      "AuditLogBiz_prompt_template": "prompt template",
+      "AuditLogBiz_evaluate_task": "evaluate task",
+      "AuditLogBiz_evaluate_set": "evaluate set",
+      "AuditLogBiz_publish_channel": "publish channel",
+      "AuditLogBiz_user": "user",
+      "AuditLogBiz_permission": "permission",
+      "AuditLogBiz_plugin": "plugin",
+      "AuditLogBiz_data_analysis": "data analysis",
+      "AuditLogBiz_chat_logs": "chat logs",
+      "AuditLogBiz_reject_question": "reject question",
+      "AuditLogBiz_unsatisfactory_question": "unsatisfactory question",
+      "AuditLogBiz_finance": "finance",
+      "AuditLogBiz_operation": "operation",
+      "AuditLogBiz_resource_rule": "resource manager",
+      "AuditLogBiz_approval_rule": "approval rule",
+      "AuditLogBiz_approval_list": "approval list",
+      "AuditLogBiz_openclaw": "ClawPro",
+      "AuditLogBiz_api_key": "api key",
+      "AuditLogBiz_skill": "Skills",
+      "KeyMsgLogAsEvalSetContent": "Message log export as evaluation set %s.",
+      "KeyMsgLogAsEvalSetContentIng": "Message log exporting  as evaluation in progress.",
+      "KeyEdit": " Modified to ",
+      "KeyExportAuditLogContent": "Export operation audit log %s.",
+      "KeyExportAuditLogContentIng": "Exporting operation audit log",
+      "KeyOperationObjects": "Operation Object",
+      "KeyOperationType": "Operation Type",
+      "KeyOperationContent": "Operation Description",
+      "KeyAppName": "Application Name",
+      "KeyAppID": "Application ID",
+      "KeySpaceName": "Name",
+      "KeyOperationTime": "Operation Time",
+      "KeyOperationStaff": "Operator",
+      "KeyOperationStaffID": "Operation User ID",
+      "KeyOperationUniqueID": "Operation Unique ID",
+      "ErrVerifyCodeHalfHourLimit": "More than 3 verification-code login attempts within half an hour.",
+      "多模态阅读理解": "Multimodal Reading Comprehension",
+      "其他问题": "Other Issues",
+      "代码问题": "Code Issues",
+      "全文处理": "Full-Text Processing",
+      "其他": "Others",
+      "写作": "Writing",
+      "古诗词": "Classical Chinese Poetry",
+      "号码归属": "Phone Number Attribution",
+      "地理": "Geography",
+      "垃圾分类": "Waste Sorting",
+      "天文": "Astronomy",
+      "天气": "Weather",
+      "成语": "Chinese Idioms",
+      "指令跟随回答": "Instruction-Following Responses",
+      "摘要": "Summarization",
+      "数学计算": "Mathematical Calculation",
+      "文件": "Files",
+      "文件查找": "File Search",
+      "新闻": "News",
+      "星座": "Horoscope",
+      "模型信息": "Model Information",
+      "模型关系": "Model Relationships",
+      "模型原理": "Model Principles",
+      "模型知识": "Model Knowledge",
+      "段落处理": "Paragraph Processing",
+      "汽车知识": "Automotive Knowledge",
+      "现代诗词": "Modern Poetry",
+      "知识问答": "Knowledge Q&A",
+      "税务知识": "Tax Knowledge",
+      "筛选推荐": "Filtering and Recommendation",
+      "翻译": "Translation",
+      "聊天": "Chat",
+      "股票": "Stocks",
+      "自我认知": "Self-Perception",
+      "节日和时间": "Festivals and Time",
+      "表格问题": "Spreadsheet Issues",
+      "角色扮演": "Role-Playing",
+      "赛事": "Competitions",
+      "转人工": "Transfer to Human Agent",
+      "逻辑推理": "Logical Reasoning",
+      "金融知识": "Financial Knowledge",
+      "阅读回答": "Reading Comprehension Responses",
+      "音乐": "Music",
+      "魔法修炼": "Magic Practice",
+      "黄历": "Chinese Almanac",
+      "代码": "Code",
+      "性行为": "Sexual Activity",
+      "女性下体": "Female Genitalia",
+      "女性胸部": "Female Breasts",
+      "男性下体": "Male Genitalia",
+      "臀部": "Buttocks",
+      "ACG色情孕妇": "ACG Pornographic Pregnancy Content",
+      "枪等热武器": "Firearms and Hot Weapons",
+      "刀等冷兵器": "Bladed and Cold Weapons",
+      "烟盒": "Cigarette Packaging",
+      "线下投注场所": "Offline Betting Venues",
+      "恶心": "Disgusting Content",
+      "广告二维码": "Advertising QR Code",
+      "QQ二维码": "QQ QR Code",
+      "女性性感-胸部": "Suggestive Female - Chest Area",
+      "亲吻": "Kissing",
+      "低俗手势": "Vulgar Gestures",
+      "未成年人违禁": "Minor-Related Prohibited Content",
+      "KeyCorpRoleAdmin": "Super Administrator",
+      "KeyCorpRoleMember": "Space Creator",
+      "KeyCorpRoleRegularUser": "Regular User",
+      "KeyApprovalTypeAppRelease": "App Release",
+      "KeyApprovalTypePluginOnline": "Custom Plugin Online",
+      "KeyApprovalAutoApproved": "Auto-approved by system",
+      "KeyApprovalRejectSubject": "Application Release Approval Rejected",
+      "KeyApprovalRejectContent": "Application [%s] release approval has been rejected. Please modify the settings and try again",
+      "KeyApprovalPendingSubject": "New Approval Task",
+      "KeyApprovalPendingContent": "New approval task received: Application Release [%s]",
+      "KeyApplicant": "Applicant",
+      "KeyApplyTime": "Application Time",
+      "KeyApprovalID": "Approval ID",
+      "KeyApprovalPendingTitle": "[Pending Approval] Tencent Cloud Intelligent Agent Platform",
+      "KeyApprovalItem": "Approval Item",
+      "KeyApprovalPendingPrompt": "Please go to the approval list to review and process in time.",
+      "KeyApprovalRuleName": "Approval Rule Name",
+      "KeyApprovalScope": "Approval Scope",
+      "KeyApprovalApprover": "Approver",
+      "KeyApprovalNotifyMethod": "Notification Method",
+      "KeyModifyTo": " to ",
+      "KeyApproverTypeCorpRole": "Corporate Role",
+      "KeyApproverTypeSpRole": "Space Role",
+      "KeyApproverTypeStaff": "Designated Staff",
+      "KeyApprovalModeAll": "All Approval",
+      "KeyApprovalModeAny": "Any Approval",
+      "KeyNotifyEnabled": " Enabled",
+      "KeyNotifyDisabled": " Disabled",
+      "KeyNotifyCenter": "Notification Center",
+      "KeyNotifySMS": "SMS",
+      "KeyNotifyEmail": "Email",
+      "KeyNotifyWebhook": "Webhook",
+      "KeyNotifyWecom": "WeCom",
+      "KeyNotifyDingTalk": "DingTalk",
+      "KeyNotifyLark": "Lark",
+      "KeySmartExistedCatePrompt": "The following categories contain multiple similar questions. Please generate a concise and accurate category name for this category. Output requirements: 1. The category name should be no more than 50 characters. 2. Only return the result, no explanation. Questions: {{"{{"}}.Question}}",
+      "KeyLineChannel": "LINE",
+      "KeyTelegramChannel": "Telegram"
+    }
+  biz_zh-CN.json: |
+    {
+      "29999": "分词专用",
+      "KeyDefaultSpaceName": "默认工作空间",
+      "KeyStatusInvalid": "无效",
+      "KeyStatusValid": "有效",
+      "KeyStatusInAudit": "审核中",
+      "KeyStatusAuditFail": "审核未通过",
+      "KeyMsgLogNoCategory": "未分类",
+      "KeyMsgLogCategoryAll": "全部分类",
+      "KeyQuestionFeedbackSubmitted": "您对问题\"%s\"的反馈已提交，反馈ID为%d",
+      "KeyQuestionFeedbackProcessed": "反馈ID为%d的问题\"%s\"的反馈已被处理完成",
+      "KeyQuestionFeedbackRejected": "你对的问题\"%s\"的反馈(ID:%d)已被技术人员拒绝",
+      "KeyFeedbackInfo": "反馈信息",
+      "KeyAgentFeedbackInfo": "agent反馈信息",
+      "KeyExportContent": "导出%s",
+      "KeyExportSuccess": "导出成功",
+      "KeyExportFailed": "导出失败",
+      "KeyDataSuccess": "成功",
+      "KeyDataFailed": "失败",
+      "KeyMsgLogContent": "消息日志导出%s。",
+      "KeyMsgLogContentIng": "消息日志导出中。",
+      "KeyMsgLogStatsContent": "消息统计导出%s。",
+      "KeyMsgLogStatsContentIng": "消息统计导出中。",
+      "KeyApprovalRepeated": "资源已在审批中，不能重复审批",
+      "KeySmartCateMsgStart":"智能分类开始",
+      "KeySmartCateMsgSuccess": "智能分类成功",
+      "KeySmartCateMsgSuccessContent": "共处理%d条记录",
+      "KeySmartCateMsgFailed": "智能分类失败",
+      "KeyExperiencePageWithTencentCloud": "体验页面（腾讯云）",
+      "KeyExperiencePageWithPhoneNumber": "体验页面（手机号）",
+      "KeyDialogAPIAccess": "对话端 API 接入",
+      "KeyWeChatServiceAccount": "微信服务号",
+      "KeyWeChatSubscriptionAccount": "微信订阅号",
+      "KeyWeChatWorkApp": "企微应用",
+      "KeyWebComponent": "网页组件",
+      "KeyWeChatCustomerService": "微信客服",
+      "KeyMiniProgram": "小程序",
+      "KeyLike": "点赞",
+      "KeyDislike": "点踩",
+      "KeyQuestion": "问题",
+      "KeyAnswer": "答案",
+      "KeyReply": "回复",
+      "KeyUser": "用户",
+      "KeyPublishingChannel": "发布渠道",
+      "KeyIntent": "意图",
+      "KeyEvaluation": "评价",
+      "KeyCreationTime": "创建时间",
+      "KeyDate": "日期",
+      "KeyMessageCount": "消息数",
+      "KeyInteractiveUserCount": "互动用户数",
+      "KeyLikeCount": "点赞数",
+      "KeyDislikeCount": "点踩数",
+      "KeyLikeRate": "点赞率",
+      "KeyStatAccount": "统计账号",
+      "KeyInvalidParam": "参数错误:%s",
+      "KeyCopyContentSecurity": "的副本",
+      "KeyDefaultContentSecurityHigh": "高敏感系统策略",
+      "KeyDefaultContentSecurityMiddle": "中敏感系统策略",
+      "KeyDefaultContentSecurityLow": "低敏感系统策略",
+      "KeyDefaultContentSecurity": "系统默认策略",
+      "KeyDefaultContentSensitivityDisable": "免除审核",
+      "KeyDefaultContentSecurityHighDesc": "特殊日期使用的策略，高召回可能会伴随一些误伤，不推荐日常使用",
+      "KeyDefaultContentSecurityMiddleDesc": "新建应用的默认策略：常规时期的标准配置，推荐日常使用",
+      "KeyDefaultContentSecurityLowDesc": "仅识别底线风险，适用于风险概率低的应用场景。",
+      "KeyDefaultContentSecurityDesc": "新建应用的默认安全策略",
+      "KeyDefaultContentSecurityDisableDesc": "不进行内容审核",
+      "KeyRiskResponseTypeSeriousInput": "我无法回答这个问题，您可以尝试问我其它问题。",
+      "KeyRiskResponseTypeSeriousOutput": "抱歉，您这个问题我暂时无法回答，建议您换一个问题试试呢。",
+      "KeyRiskResponseTypeMildInput": "这个问题我还没学会，换个话题我们继续聊吧。",
+      "KeyRiskResponseTypeMildOutput": "这个问题超出了我的知识范围，您可以换个问题试试看，我会尽力帮您解答。",
+      "KeyRiskResponseTypeLivelyInput": "这个我还不会，不如换个其他问题考我呗~",
+      "KeyRiskResponseTypeLivelyOutput": "哎呀，这个问题难倒我了，我们换个话题聊聊吧~",
+      "Normal": "正常",
+      "Polity": "政治",
+      "Ad": "广告",
+      "Abuse": "谩骂",
+      "Illegal": "违法",
+      "Spam": "灌水",
+      "Terror": "暴恐",
+      "Porn": "色情",
+      "Value": "价值观",
+      "GeneratedContentRisk": "生成式风险",
+      "Copyright": "版权",
+      "Teenager": "未成年识别",
+      "Religion": "宗教识别",
+      "Sexy": "性感",
+      "广告": "广告",
+      "谩骂": "谩骂",
+      "不文明用语": "不文明用语",
+      "口头禅": "口头禅",
+      "非攻击性的不文明用语，如我靠、尼玛": "非攻击性的不文明用语，如我靠、尼玛",
+      "人身攻击": "人身攻击",
+      "重度人身攻击": "重度人身攻击",
+      "直接辱骂攻击他人的用词，如傻逼、婊子": "直接辱骂攻击他人的用词，如傻逼、婊子",
+      "轻度人身攻击": "轻度人身攻击",
+      "辱骂攻击他人的用词，但也可能用于调侃，如傻子、你奶奶个熊": "辱骂攻击他人的用词，但也可能用于调侃，如傻子、你奶奶个熊",
+      "色情粗口": "色情粗口",
+      "色情粗口用语": "色情粗口用语",
+      "含有性行为或者性器官相关粗口词汇": "含有性行为或者性器官相关粗口词汇",
+      "违法": "违法",
+      "毒品": "毒品",
+      "制毒贩毒管控内容": "制毒贩毒管控内容",
+      "涉及制毒贩毒的教程方法、宣扬制度贩毒、营销导流等违法行为": "涉及制毒贩毒的教程方法、宣扬制度贩毒、营销导流等违法行为",
+      "毒品成品管控内容": "毒品成品管控内容",
+      "提及毒品成品并对其宣扬": "提及毒品成品并对其宣扬",
+      "赌博": "赌博",
+      "赌博平台管控内容": "赌博平台管控内容",
+      "涉及赌博平台机构/组织的名称，且进行营销推广导流、询问如何参与等": "涉及赌博平台机构/组织的名称，且进行营销推广导流、询问如何参与等",
+      "合法赌博场所宣传管控": "合法赌博场所宣传管控",
+      "符合当地法律法规的赌博场所，但进行宣扬或营销行为": "符合当地法律法规的赌博场所，但进行宣扬或营销行为",
+      "棋牌游戏": "棋牌游戏",
+      "以赌博为目的的网络联机棋牌游戏": "以赌博为目的的网络联机棋牌游戏",
+      "博彩游戏": "博彩游戏",
+      "包括赌博性质的博彩游戏内容": "包括赌博性质的博彩游戏内容",
+      "赌博行为": "赌博行为",
+      "以营利为目的，聚众赌博或者以赌博为业的行为": "以营利为目的，聚众赌博或者以赌博为业的行为",
+      "赌博器具管控内容": "赌博器具管控内容",
+      "涉及赌博相关器具的营销推广": "涉及赌博相关器具的营销推广",
+      "违禁品": "违禁品",
+      "有害药品": "有害药品",
+      "与医疗、预防和保健目的无关的危害药品": "与医疗、预防和保健目的无关的危害药品",
+      "有害化学品": "有害化学品",
+      "具有毒害、腐蚀等性质，对人体、设施、环境具有危害的剧毒化学品": "具有毒害、腐蚀等性质，对人体、设施、环境具有危害的剧毒化学品",
+      "危爆物品": "危爆物品",
+      "具有爆炸、易燃、放射性等危险性质": "具有爆炸、易燃、放射性等危险性质",
+      "野生动物危害言论": "野生动物危害言论",
+      "非法贩卖、捕杀、食用野生动物言论": "非法贩卖、捕杀、食用野生动物言论",
+      "非法翻墙工具": "非法翻墙工具",
+      "非法VPN展示或推广营销": "非法VPN展示或推广营销",
+      "黑灰产管控工具": "黑灰产管控工具",
+      "禁止市场随意流通的违禁品，如开锁工具、遥控干扰器、出售黑车、遥控车牌架": "禁止市场随意流通的违禁品，如开锁工具、遥控干扰器、出售黑车、遥控车牌架",
+      "违禁行为": "违禁行为",
+      "造假作弊": "造假作弊",
+      "编造捏造、以假乱真，利用不存在的事物来谋取利益": "编造捏造、以假乱真，利用不存在的事物来谋取利益",
+      "人体贩卖": "人体贩卖",
+      "人体器官贩卖相关危害言论": "人体器官贩卖相关危害言论",
+      "侵犯个人隐私": "侵犯个人隐私",
+      "涉及侵犯个人隐私的言论或工具售卖": "涉及侵犯个人隐私的言论或工具售卖",
+      "雇凶杀人": "雇凶杀人",
+      "雇佣他人进行犯罪活动": "雇佣他人进行犯罪活动",
+      "付费删帖": "付费删帖",
+      "通过信息网络有偿提供删除信息服务": "通过信息网络有偿提供删除信息服务",
+      "封建迷信": "封建迷信",
+      "提及封建迷信的言论，或意图开展封建迷信活动": "提及封建迷信的言论，或意图开展封建迷信活动",
+      "金融违法行为": "金融违法行为",
+      "实施洗钱、逃税漏税的言论，包括咨询如何洗钱、逃税漏税相关规则方式介绍": "实施洗钱、逃税漏税的言论，包括咨询如何洗钱、逃税漏税相关规则方式介绍",
+      "非法团体": "非法团体",
+      "黑社会": "黑社会",
+      "涉及黑社会的不良言论": "涉及黑社会的不良言论",
+      "传销组织": "传销组织",
+      "涉及传销组织的不良导向言论": "涉及传销组织的不良导向言论",
+      "非法社会组织": "非法社会组织",
+      "未在民政部门登记的涉嫌非法社会组织": "未在民政部门登记的涉嫌非法社会组织",
+      "灌水": "灌水",
+      "暴恐": "暴恐",
+      "恐怖组织人物": "恐怖组织人物",
+      "涉及联合国认定的恐怖组织相关人物": "涉及联合国认定的恐怖组织相关人物",
+      "恐怖组织": "恐怖组织",
+      "涉及联合国认定的恐怖组织": "涉及联合国认定的恐怖组织",
+      "恐怖事件": "恐怖事件",
+      "恐怖分子制造的危害社会稳定、人民生命与财产安全的行为活动": "恐怖分子制造的危害社会稳定、人民生命与财产安全的行为活动",
+      "暴力血腥描述": "暴力血腥描述",
+      "暴力用词": "暴力用词",
+      "各类提及到暴力的用词用语，范围较广": "各类提及到暴力的用词用语，范围较广",
+      "血腥行为描述": "血腥行为描述",
+      "描述或教授极端血腥行为（如碎尸、肢解、食尸、虐杀）及尸体处置的可操作细节的内容": "描述或教授极端血腥行为（如碎尸、肢解、食尸、虐杀）及尸体处置的可操作细节的内容",
+      "武器相关描述": "武器相关描述",
+      "杀伤性武器": "杀伤性武器",
+      "枪支弹药名称、管制刀具、大杀伤性武器等": "枪支弹药名称、管制刀具、大杀伤性武器等",
+      "色情": "色情",
+      "性行为描述": "性行为描述",
+      "低俗描述性行为": "低俗描述性行为",
+      "使用低俗下流的语言描述性相关的动作、行为和意图": "使用低俗下流的语言描述性相关的动作、行为和意图",
+      "客观陈述性行为": "客观陈述性行为",
+      "性行为相关的客观描述，但是整句话没有低俗性行为的联想": "性行为相关的客观描述，但是整句话没有低俗性行为的联想",
+      "性行为影射": "性行为影射",
+      "通过暗示、比喻、联想或描述行为反应，而非直接描述，来指代或影射性交、自慰等核心性行为的文本": "通过暗示、比喻、联想或描述行为反应，而非直接描述，来指代或影射性交、自慰等核心性行为的文本",
+      "性暗示与软色情": "性暗示与软色情",
+      "通过双关、歧义性语言或模糊的行为描述，营造色情氛围、进行性挑逗，但未明确描述色情动作或性行为": "通过双关、歧义性语言或模糊的行为描述，营造色情氛围、进行性挑逗，但未明确描述色情动作或性行为",
+      "低俗描述性活动": "低俗描述性活动",
+      "使用低俗下流的语言或低俗称谓，描述性活动时的动作、行为和对话": "使用低俗下流的语言或低俗称谓，描述性活动时的动作、行为和对话",
+      "性行为前戏": "性行为前戏",
+      "明确描述以激发性欲为目的、但未及核心性行为的身体接触与挑逗动作": "明确描述以激发性欲为目的、但未及核心性行为的身体接触与挑逗动作",
+      "性器官描述": "性器官描述",
+      "低俗描述性器官": "低俗描述性器官",
+      "使用低俗下流的语言描述性器官": "使用低俗下流的语言描述性器官",
+      "客观陈述性器官": "客观陈述性器官",
+      "性器官相关的客观描述，但是整句话没有低俗性行为的联想\n不包含案件描述、新闻报道、生理科普类型的内容": "性器官相关的客观描述，但是整句话没有低俗性行为的联想\n不包含案件描述、新闻报道、生理科普类型的内容",
+      "情色三级资源": "情色三级资源",
+      "情色人物提及": "情色人物提及",
+      "提及成人色情行业从业者": "提及成人色情行业从业者",
+      "情色作品提及": "情色作品提及",
+      "情色类的AV、歌曲、小说、漫画、游戏、场所、网站名等": "情色类的AV、歌曲、小说、漫画、游戏、场所、网站名等",
+      "SM内容": "SM内容",
+      "低俗描述SM": "低俗描述SM",
+      "描述 SM 行为、道具等包含色情语义的描述": "描述 SM 行为、道具等包含色情语义的描述",
+      "提及SM": "提及SM",
+      "对SM相关词汇的提问或科普，不涉及色情内容": "对SM相关词汇的提问或科普，不涉及色情内容",
+      "同性恋": "同性恋",
+      "男同言论": "男同言论",
+      "女同言论": "女同言论",
+      "特殊性癖": "特殊性癖",
+      "色情特殊性癖": "色情特殊性癖",
+      "通过文字描绘、角色扮演或对话，色情化地展现特殊性癖好行为或场景的文本": "通过文字描绘、角色扮演或对话，色情化地展现特殊性癖好行为或场景的文本",
+      "生理科普": "生理科普",
+      "生理科普知识": "生理科普知识",
+      "仅包含真正的知识科普内容，对于描述性的内容、或提问性质的内容不包含": "仅包含真正的知识科普内容，对于描述性的内容、或提问性质的内容不包含",
+      "性爱科普": "性爱科普",
+      "性爱相关的客观科普内容，无色情语义": "性爱相关的客观科普内容，无色情语义",
+      "未成年色情": "未成年色情",
+      "价值观": "价值观",
+      "自杀自残": "自杀自残",
+      "自杀自残言论": "自杀自残言论",
+      "描述自杀自残以及倾向的言论": "描述自杀自残以及倾向的言论",
+      "消极情绪": "消极情绪",
+      "语义上趋向于自我否定、自我放弃等负面影响的内容": "语义上趋向于自我否定、自我放弃等负面影响的内容",
+      "自毁倾向": "自毁倾向",
+      "语义上趋向于展示自毁自虐意图与行为，鼓吹自毁情绪和行为的内容": "语义上趋向于展示自毁自虐意图与行为，鼓吹自毁情绪和行为的内容",
+      "自杀倾向": "自杀倾向",
+      "语义上趋向于展示自杀意图与自杀行为，鼓吹自杀的内容": "语义上趋向于展示自杀意图与自杀行为，鼓吹自杀的内容",
+      "指令攻击": "指令攻击",
+      "优先使用大模型自带的防攻击机制，需额外加强才开启": "优先使用大模型自带的防攻击机制，需额外加强才开启",
+      "Prompt泄露": "Prompt泄露",
+      "诱导模型泄露其系统提示词": "诱导模型泄露其系统提示词",
+      "目标劫持": "目标劫持",
+      "通过指令语句，诱导大模型绕过安全机制，输出预设答案": "通过指令语句，诱导大模型绕过安全机制，输出预设答案",
+      "信息安全": "信息安全",
+      "系统攻击": "系统攻击",
+      "攻击计算机、网络、系统等相关言论，如“如何侵入政府数据库”": "攻击计算机、网络、系统等相关言论，如“如何侵入政府数据库”",
+      "军警制服": "军警制服",
+      "迷彩服": "迷彩服",
+      "消防服": "消防服",
+      "ACG警服": "ACG警服",
+      "ACG军服": "ACG军服",
+      "热武器": "热武器",
+      "真实枪支": "真实枪支",
+      "游戏枪支": "游戏枪支",
+      "ACG枪支": "ACG枪支",
+      "玩具枪": "玩具枪",
+      "大型武器": "大型武器",
+      "军事武器": "军事武器",
+      "坦克、军用飞机、军用舰艇、军用导弹等常见大型武器": "坦克、军用飞机、军用舰艇、军用导弹等常见大型武器",
+      "坦克": "坦克",
+      "更泛化的坦克，例如只要有履带出现都算": "更泛化的坦克，例如只要有履带出现都算",
+      "冷兵器": "冷兵器",
+      "真实刀具": "真实刀具",
+      "游戏刀具": "游戏刀具",
+      "ACG刀具": "ACG刀具",
+      "管制刀具": "管制刀具",
+      "血腥画面": "血腥画面",
+      "ACG血腥画面": "ACG血腥画面",
+      "漫画或动漫场景中出现的血腥画面": "漫画或动漫场景中出现的血腥画面",
+      "真实血腥画面": "真实血腥画面",
+      "真实场景中的血腥画面，如虐杀": "真实场景中的血腥画面，如虐杀",
+      "惊悚血腥画面": "惊悚血腥画面",
+      "极度血腥，带有惊悚感的画面": "极度血腥，带有惊悚感的画面",
+      "性感": "性感",
+      "女性性感胸部": "女性性感胸部",
+      "ACG女重度露沟": "ACG女重度露沟",
+      "ACG女性胸部露出中间乳沟（大于50%），或胸部露出下沿（大于50%）": "ACG女性胸部露出中间乳沟（大于50%），或胸部露出下沿（大于50%）",
+      "真人女重度露沟": "真人女重度露沟",
+      "真人女性胸部露出中间乳沟（大于50%），或胸部露出下沿（大于50%）": "真人女性胸部露出中间乳沟（大于50%），或胸部露出下沿（大于50%）",
+      "亲吻画面": "亲吻画面",
+      "异性亲吻": "异性亲吻",
+      "男女之间，嘴对嘴的亲吻，嘴要互相接触": "男女之间，嘴对嘴的亲吻，嘴要互相接触",
+      "女女亲吻": "女女亲吻",
+      "女女之间，嘴对嘴的亲吻，嘴要互相接触": "女女之间，嘴对嘴的亲吻，嘴要互相接触",
+      "男男亲吻": "男男亲吻",
+      "男男之间，嘴对嘴的亲吻，嘴要互相接触": "男男之间，嘴对嘴的亲吻，嘴要互相接触",
+      "亲密行为": "亲密行为",
+      "男男亲密": "男男亲密",
+      "男性之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为": "男性之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为",
+      "男女亲密": "男女亲密",
+      "男女之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为": "男女之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为",
+      "女女亲密": "女女亲密",
+      "女性之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为": "女性之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为",
+      "男下激凸": "男下激凸",
+      "三角区": "三角区",
+      "视觉聚焦男性下体的图片，包括马赛克跟动漫场景": "视觉聚焦男性下体的图片，包括马赛克跟动漫场景",
+      "诱惑姿势": "诱惑姿势",
+      "张腿": "张腿",
+      "腿和裆部呈M或者W形状，且下体穿着少": "腿和裆部呈M或者W形状，且下体穿着少",
+      "撅臀": "撅臀",
+      "明显甚至夸张地撅起屁股，无论是不是穿着衣服": "明显甚至夸张地撅起屁股，无论是不是穿着衣服",
+      "性表情": "性表情",
+      "带有性暗示的猥琐表情": "带有性暗示的猥琐表情",
+      "性行为画面": "性行为画面",
+      "各种性爱的画面，包括真人、动漫、手绘等场景": "各种性爱的画面，包括真人、动漫、手绘等场景",
+      "女性下体裸露": "女性下体裸露",
+      "包括有马赛克或非常少的衣物，但可以明确判断的图片": "包括有马赛克或非常少的衣物，但可以明确判断的图片",
+      "女性胸部裸露": "女性胸部裸露",
+      "包含虽有衣物遮挡，但胸部整体裸露较多的画面": "包含虽有衣物遮挡，但胸部整体裸露较多的画面",
+      "男性下体裸露": "男性下体裸露",
+      "包含虽有衣物遮挡，但下体整体裸露较多或非常明显的画面": "包含虽有衣物遮挡，但下体整体裸露较多或非常明显的画面",
+      "臀部裸露": "臀部裸露",
+      "不区分男女，臀部大面积裸露": "不区分男女，臀部大面积裸露",
+      "儿童裸露": "儿童裸露",
+      "儿童裸露下体和臀部": "儿童裸露下体和臀部",
+      "动物性行为": "动物性行为",
+      "性分泌物": "性分泌物",
+      "画面中包含较明显的性分泌物": "画面中包含较明显的性分泌物",
+      "裸体": "裸体",
+      "全裸或几乎全裸": "全裸或几乎全裸",
+      "女性下体内窥镜": "女性下体内窥镜",
+      "女性下体内窥画面，属于特殊性癖": "女性下体内窥画面，属于特殊性癖",
+      "医学性器官": "医学性器官",
+      "可以看到性器官、敏感部位医学人体图（含解剖图、剖面图等）": "可以看到性器官、敏感部位医学人体图（含解剖图、剖面图等）",
+      "ACG孕妇": "ACG孕妇",
+      "动漫、3D 、仿真等ACG画风的孕妇图片，属于特殊性癖": "动漫、3D 、仿真等ACG画风的孕妇图片，属于特殊性癖",
+      "二维码": "二维码",
+      "常见二维码": "常见二维码",
+      "包括但不限于微信、支付宝、网址、淘宝、QQ等常见的二维码": "包括但不限于微信、支付宝、网址、淘宝、QQ等常见的二维码",
+      "淘宝二维码": "淘宝二维码",
+      "微信二维码": "微信二维码",
+      "支付宝二维码": "支付宝二维码",
+      "小程序码": "小程序码",
+      "条形码": "条形码",
+      "PDF417条码": "PDF417条码",
+      "DM码": "DM码",
+      "政治": "政治",
+      "劣迹明星": "劣迹明星",
+      "劣迹网红": "劣迹网红",
+      "纳粹战犯": "纳粹战犯",
+      "侵华战犯": "侵华战犯",
+      "国旗营销": "国旗营销",
+      "侮辱国旗": "侮辱国旗",
+      "焚烧、践踏、涂鸦等恶搞国旗行为": "焚烧、践踏、涂鸦等恶搞国旗行为",
+      "恶搞人民币": "恶搞人民币",
+      "对人民币PS、恶意折叠等行为": "对人民币PS、恶意折叠等行为",
+      "恶搞国徽": "恶搞国徽",
+      "在国徽上添加其它恶意元素": "在国徽上添加其它恶意元素",
+      "吸烟": "吸烟",
+      "吸毒": "吸毒",
+      "喝酒": "喝酒",
+      "打斗": "打斗",
+      "恶心画面": "恶心画面",
+      "未成年识别": "未成年识别",
+      "未成年人出镜": "未成年人出镜",
+      "画面中出现未成年人，适用于真人、且需要露脸": "画面中出现未成年人，适用于真人、且需要露脸",
+      "未成年人色情": "未成年人色情",
+      "真人形象的未成年色情及擦边画面": "真人形象的未成年色情及擦边画面",
+      "未成年人违禁行为": "未成年人违禁行为",
+      "未成年人吸烟": "未成年人吸烟",
+      "未成年人喝酒": "未成年人喝酒",
+      "未成年人纹身": "未成年人纹身",
+      "儿童邪典": "儿童邪典",
+      "以儿童熟悉的卡通人物包装成为血腥暴力或软色情的图片": "以儿童熟悉的卡通人物包装成为血腥暴力或软色情的图片",
+      "ACG未成年人": "ACG未成年人",
+      "漫画风格、或AIGC生成的未成年形象": "漫画风格、或AIGC生成的未成年形象",
+      "未成年形象": "未成年形象",
+      "适用于真人，不一定要求露脸，外形像未成年人即会识别": "适用于真人，不一定要求露脸，外形像未成年人即会识别",
+      "宗教识别": "宗教识别",
+      "生成式风险": "生成式风险",
+      "KeyCategory": "对话记录分类",
+      "KeyMoveCate": "至分类",
+      "AuditLogAction_login": "登录",
+      "AuditLogAction_logout": "退出",
+      "AuditLogAction_create": "新建",
+      "AuditLogAction_modify": "编辑",
+      "AuditLogAction_delete": "删除",
+      "AuditLogAction_copy": "复制",
+      "AuditLogAction_download": "下载",
+      "AuditLogAction_move": "移动",
+      "AuditLogAction_enable": "启用",
+      "AuditLogAction_disable": "停用",
+      "AuditLogAction_import": "导入",
+      "AuditLogAction_export": "导出",
+      "AuditLogAction_release": "发布",
+      "AuditLogAction_debug": "调试",
+      "AuditLogAction_recover": "恢复",
+      "AuditLogAction_collect": "收藏",
+      "AuditLogAction_uncollect": "取消收藏",
+      "AuditLogAction_approve": "通过",
+      "AuditLogAction_reject": "驳回",
+      "AuditLogAction_cancel": "取消",
+      "AuditLogBiz_app": "应用",
+      "AuditLogBiz_kb": "知识库",
+      "AuditLogBiz_document": "文档",
+      "AuditLogBiz_qa": "问答",
+      "AuditLogBiz_database": "数据库",
+      "AuditLogBiz_database_table": "数据库表",
+      "AuditLogBiz_workflow": "工作流",
+      "AuditLogBiz_provider_model": "服务商模型",
+      "AuditLogBiz_prompt": "提示词",
+      "AuditLogBiz_prompt_template": "提示词模板",
+      "AuditLogBiz_evaluate_task": "评测任务",
+      "AuditLogBiz_evaluate_set": "评测集",
+      "AuditLogBiz_publish_channel": "发布渠道",
+      "AuditLogBiz_user": "用户",
+      "AuditLogBiz_permission": "权限",
+      "AuditLogBiz_plugin": "插件",
+      "AuditLogBiz_data_analysis": "应用运营-数据分析",
+      "AuditLogBiz_chat_logs": "应用运营-对话记录",
+      "AuditLogBiz_reject_question": "应用运营-拒答问题",
+      "AuditLogBiz_unsatisfactory_question": "应用运营-不满意问题",
+      "AuditLogBiz_finance": "计费",
+      "AuditLogBiz_operation": "运维",
+      "AuditLogBiz_resource_rule": "资源管控",
+      "AuditLogBiz_approval_rule": "审批规则",
+      "AuditLogBiz_approval_list": "审批列表",
+      "AuditLogBiz_openclaw": "ClawPro",
+      "AuditLogBiz_api_key": "密钥管理",
+      "AuditLogBiz_skill": "Skills",
+      "KeyEdit": " 修改为 ",
+      "KeyExportAuditLogContent": "运维操作日志导出%s。",
+      "KeyExportAuditLogContentIng": "运维操作日志导出中",
+      "KeyOperationObjects": "操作对象",
+      "KeyOperationType": "操作类型",
+      "KeyOperationContent": "操作内容",
+      "KeyAppName": "应用名称",
+      "KeyAppID": "应用ID",
+      "KeySpaceName": "空间名称",
+      "KeyOperationTime": "操作时间",
+      "KeyOperationStaff": "操作人",
+      "KeyOperationStaffID": "操作人ID",
+      "KeyOperationUniqueID": "操作唯一ID",
+      "KeyMsgLogAsEvalSetContent": "消息日志导出为评测集%s。",
+      "KeyMsgLogAsEvalSetContentIng": "消息日志导出为评测集进行中。",
+      "ErrVerifyCodeHalfHourLimit": "半小时内连续验证码登录超过3次。",
+      "多模态阅读理解": "多模态阅读理解",
+      "其他问题": "其他问题",
+      "代码问题": "代码问题",
+      "全文处理": "全文处理",
+      "其他": "其他",
+      "写作": "写作",
+      "古诗词": "古诗词",
+      "号码归属": "号码归属",
+      "地理": "地理",
+      "垃圾分类": "垃圾分类",
+      "天文": "天文",
+      "天气": "天气",
+      "成语": "成语",
+      "指令跟随回答": "指令跟随回答",
+      "摘要": "摘要",
+      "数学计算": "数学计算",
+      "文件": "文件",
+      "文件查找": "文件查找",
+      "新闻": "新闻",
+      "星座": "星座",
+      "模型信息": "模型信息",
+      "模型关系": "模型关系",
+      "模型原理": "模型原理",
+      "模型知识": "模型知识",
+      "段落处理": "段落处理",
+      "汽车知识": "汽车知识",
+      "现代诗词": "现代诗词",
+      "知识问答": "知识问答",
+      "税务知识": "税务知识",
+      "筛选推荐": "筛选推荐",
+      "翻译": "翻译",
+      "聊天": "聊天",
+      "股票": "股票",
+      "自我认知": "自我认知",
+      "节日和时间": "节日和时间",
+      "表格问题": "表格问题",
+      "角色扮演": "角色扮演",
+      "赛事": "赛事",
+      "转人工": "转人工",
+      "逻辑推理": "逻辑推理",
+      "金融知识": "金融知识",
+      "阅读回答": "阅读回答",
+      "音乐": "音乐",
+      "魔法修炼": "魔法修炼",
+      "黄历": "黄历",
+      "代码": "代码",
+      "性行为": "性行为",
+      "女性下体": "女性下体",
+      "女性胸部": "女性胸部",
+      "男性下体": "男性下体",
+      "臀部": "臀部",
+      "ACG色情孕妇": "ACG色情孕妇",
+      "枪等热武器": "枪等热武器",
+      "刀等冷兵器": "刀等冷兵器",
+      "烟盒": "烟盒",
+      "线下投注场所": "线下投注场所",
+      "恶心": "恶心",
+      "广告二维码": "广告二维码",
+      "QQ二维码": "QQ二维码",
+      "女性性感-胸部": "女性性感-胸部",
+      "亲吻": "亲吻",
+      "低俗手势": "低俗手势",
+      "未成年人违禁": "未成年人违禁",
+      "KeyCorpRoleAdmin": "超级管理员",
+      "KeyCorpRoleMember": "空间创建员",
+      "KeyCorpRoleRegularUser": "普通用户",
+      "KeyApprovalTypeAppRelease": "应用发布",
+      "KeyApprovalTypePluginOnline": "自定义插件上架",
+      "KeyApprovalAutoApproved": "系统自动审批",
+      "KeyApprovalRejectSubject": "应用发布审批被驳回",
+      "KeyApprovalRejectContent": "应用【%s】发布审批被驳回，请修改设置后重试发布",
+      "KeyApprovalPendingSubject": "收到审批任务",
+      "KeyApprovalPendingContent": "收到审批任务: 应用发布【%s】",
+      "KeyApplicant": "申请人",
+      "KeyApplyTime": "申请时间",
+      "KeyApprovalID": "审批单ID",
+      "KeyApprovalPendingTitle": "【审批待办】腾讯云智能体平台",
+      "KeyApprovalItem": "审批事项",
+      "KeyApprovalPendingPrompt": "请及时前往审批列表查看并处理。",
+      "KeyApprovalRuleName": "审批规则名称",
+      "KeyApprovalScope": "审批范围",
+      "KeyApprovalApprover": "审批人",
+      "KeyApprovalNotifyMethod": "通知方式",
+      "KeyModifyTo": "修改为",
+      "KeyApproverTypeCorpRole": "企业角色",
+      "KeyApproverTypeSpRole": "空间角色",
+      "KeyApproverTypeStaff": "指定人员",
+      "KeyApprovalModeAll": "会签",
+      "KeyApprovalModeAny": "或签",
+      "KeyNotifyEnabled": "开启",
+      "KeyNotifyDisabled": "关闭",
+      "KeyNotifyCenter": "通知中心",
+      "KeyNotifySMS": "短信",
+      "KeyNotifyEmail": "邮件",
+      "KeyNotifyWebhook": "Webhook",
+      "KeyNotifyWecom": "企业微信",
+      "KeyNotifyDingTalk": "钉钉",
+      "KeyNotifyLark": "飞书",
+      "Uncategorized": "未分类",
+      "KeySmartExistedCatePrompt": "下面的聚类中包含了多个含义相似的问题，请为这个聚类生成一个简洁、准确的聚类名称。输出要求：1.聚类名称长度不超过50个字。2.仅返回结果，不包含解释。 问题: {{"{{"}}.Question}}",
+      "KeyLineChannel": "LINE",
+      "KeyTelegramChannel": "Telegram"
+    }
+  errors_en-US.json: |
+    {
+      "ErrPermissionDenied": "Insufficient permissions",
+      "ErrUserNotFound": "User does not exist",
+      "ErrStaffNotFound": "Employee does not exist",
+      "ErrSessionNotFound": "User is not logged in",
+      "ErrCodeSendFailed": "Verification code failed to send",
+      "ErrVerifyCode": "Incorrect verification code",
+      "ErrCodeSendLimit": "Verification code sent too frequently",
+      "ErrVerifyFailedTooManyTimes": "Verification code entered incorrectly more than 5 times, account has been restricted, please try again after 1 hour",
+      "ErrAppNotFound": "Application does not exist",
+      "ErrSystem": "System error",
+      "ErrCorpNotFound": "Enterprise does not exist",
+      "ErrCorpInValid": "Enterprise expired",
+      "ErrLoginTimesLimit": "This phone number has reached the maximum login limit, please try again tomorrow",
+      "ErrEmailLoginTimesLimit": "This email has reached the maximum login limit, please try again tomorrow",
+      "ErrParams": "Parameter error, please retry",
+      "ErrVerifyCodeNotFound": "Verification code not sent or expired",
+      "ErrAccNotExistORUnAuth": "尊敬的用户: 根据国家互联网用户实名制相关要求，同时为保障您的账号资产安全，购买或使用该产品之前，需先完成实名认证。3s后自动跳转实名认证页面。 【腾讯云】",
+      "ErrUserHasNoCorp": "This account is not registered or does not belong to an enterprise",
+      "ErrCorpIsNotInAudit": "Enterprise is not under review",
+      "ErrStaffCorpNotMatch": "Employee does not match the enterprise",
+      "ErrOperateDoing": "Request processing, please wait",
+      "ErrStaffInValid": "Invalid employee information",
+      "ErrTelephone": "Incorrect phone number",
+      "ErrDisableLogin": "Due to product upgrade, the original domain of the current platform will no longer be available for login",
+      "ErrEmail": "Incorrect email",
+      "ErrMessageTypeInvalid": "Message type not supported",
+      "ErrUserHasJoinCorp": "You are in enterprise「%s」and must exit the current enterprise before joining",
+      "ErrLoginTypeInvalid": "Invalid login type",
+      "ErrLoginAccountPassword": "Account and password mismatch",
+      "ErrLoginAccountFormat": "Incorrect account format",
+      "ErrLoginAccountExist": "Account already exists",
+      "ErrUinNotMatch": "Master UIN and sub-account UIN mismatch",
+      "ErrSystemIntegratorNotFound": "Integrator does not exist",
+      "ErrSystemIntegratorUserParams": "Integrator login user parameter error",
+      "ErrActivateProduct": "Product activation failed",
+      "ErrTrialProductFail": "Failed to activate trial product",
+      "ErrNotInWhiteList": "Not in the whitelist",
+      "ErrCorpTokenUsage": "Enterprise token count cannot be lower than the used amount",
+      "ErrCorpAppNotEqual": "Enterprise and application ownership do not match",
+      "ErrAvatarURLValid": "Invalid avatar URL",
+      "ErrImageSize": "Image size exceeds the limit",
+      "ErrCorpModelQpmTpmNotFound": "Account model QPM/TPM configuration does not exist",
+      "ErrCorpModelIsExclusive": "The account model is an exclusive concurrency model, please use the shared concurrency model configuration",
+      "ErrConcurrencyRuleRepeated": "Under one model, the same application only supports one rule assignment",
+      "ErrConcurrencyRuleOverLimit": "The maximum concurrency of the model rule exceeds the purchased limit",
+      "ErrCorpModelIsNotExclusive": "Please use the exclusive concurrency model to configure rules",
+      "ErrGetBilling": "Billing items retrieval error",
+      "ErrTencentSms": "Message sending failed",
+      "ErrTencentSmsException": "SMS sending exception",
+      "ErrSmsClientNotConfig": "SMS is not configured",
+      "ErrNotSupportSmsClient": "SMS type not supported",
+      "ErrVerifyCaptchaTicket": "Failed to verify image verification code",
+      "ErrVerifyCaptchaNotMatch": "Invalid Randstr provided",
+      "ErrVerifyCaptchaTicketExpired": "The provided Ticket has expired (Ticket is valid for 5 minutes), please regenerate Ticket and Randstr for verification",
+      "ErrVerifyCaptchaTicketReused": "The provided ticket has been reused, please regenerate ticket and randstr for validation",
+      "ErrVerifyCaptchaDecryptFail": "Invalid ticket provided, please check the ticket",
+      "ErrVerifyCaptchaTicketDiff": "Ticket validation exception",
+      "ErrVerifyCaptchaMismatch": "Parameter validation error",
+      "ErrIOAIdentity": "IOA identity verification failed",
+      "ErrExpireIOAIdentity": "IOA identity verification expired",
+      "ErrRefreshInnerUin": "Internal user identification refresh failed",
+      "ErrCheckInnerUin": "Internal user identification verification failed",
+      "ErrCreateSpace": "Failed to create workspace",
+      "ErrCorpSpaceLimit": "The number of created spaces exceeds the limit",
+      "ErrCorpSpaceNameExist": "Workspace name already exists",
+      "ErrCorpSpaceNotFound": "Workspace information does not exist",
+      "ErrDefaultSpaceNoDoing": "Operations not allowed on the default workspace",
+      "ErrSpaceNameLength": "Workspace name exceeds the limit",
+      "ErrSpaceNameEmpty": "Workspace name is empty",
+      "ErrMsgLogCateExist": "Category name already exists",
+      "ErrMsgLogCateCreate": "Failed to create category",
+      "ErrMsgLogCateDelete": "Failed to delete category",
+      "ErrMsgLogCateUpdate": "Failed to update category",
+      "ErrMsgLogCateName": "Category name does not meet the requirements",
+      "ErrMsgLogCateNotExist": "Category name does not exist",
+      "ErrMsgLogUnmatchedLess": "Insufficient uncategorized records to support intelligent categorization",
+      "ErrMsgLogCateCanntDel": "The category contains records and cannot be deleted",
+      "ErrMsgLogCateMax": "The number of categories has reached the limit",
+      "ErrMsgLogTrans": "Failed to move message records",
+      "ErrMsgLogDeleteChild": "Please delete subcategories first",
+      "ErrParamsNotExpected": "Parameter validation failed, check requirements",
+      "ErrTermsUnaccepted": "Terms of service not accepted, please review and agree to the terms of service",
+      "ErrApprovalNotFound": "Approval Not Found",
+      "ErrApprovalPassed": "Approval Already Approved",
+      "ErrApprovalFinished": "Approval Already Completed",
+      "ErrTraceIDEmpty": "Trace Id Cannot Be Empty",
+      "ErrImageRetrievalOverLimit": "Image Retrieval Exceeds Limit",
+      "ErrImageExpandRation": "Image expansion ratio must be: 1:1, 3:4, 4:3, or 16:9",
+      "ErrImageImageHeightWidth": "Invalid Image Dimensions",
+      "ErrImageExpandFormatNorSupport": "The current image type does not support image expansion",
+      "ErrImageExpandSameRatio": "The image expand ratio is the same with original one, no need to expand!",
+      "ErrHunYuanBadParams": "Request params invalid",
+      "ErrHunYuanUnauthorized": "Unauthorized",
+      "ErrHunYuanUnprocessableEntity": "Input/output audit unpassed",
+      "ErrHunYuanTooManyRequests": "Concurrenct requests exceed limit, please retry again later",
+      "ErrHunYuanInternalError": "Internal error",
+       "ErrMicrosoftAuthFailed": "Microsoft authentication failed, please try again later",
+      "ErrInvalidGrant": "Authorization code is invalid or expired, please reauthorize",
+      "ErrInvalidClient": "Client authentication failed, please contact administrator to check configuration",
+      "ErrUnauthorizedClient": "Client is not authorized, please contact administrator",
+      "ErrInvalidRequest": "Request parameter error, please check and retry",
+      "ErrUnsupportedGrantType": "Unsupported grant type, please contact administrator",
+      "ErrInvalidResource": "Target resource is invalid, please contact administrator to check configuration",
+      "ErrInteractionRequired": "User interaction required, please reauthorize",
+      "ErrTemporarilyUnavailable": "Service temporarily unavailable, please try again later",
+      "ErrNetworkError": "Network connection error, please check network and retry",
+      "ErrGraphAPIInvalidAuthToken": "Graph API authentication token is invalid or expired, please reauthorize",
+      "ErrGraphAPIAccessDenied": "Graph API access denied, insufficient permissions, please contact administrator",
+      "ErrGraphAPIRequestFailed": "Graph API request failed, please try again later",
+      "ErrPlatformTypeNotSupported": "Platform type not supported, please check configuration",
+      "ErrGetAuthEndpoint": "Failed to get authentication endpoint, please try again later",
+      "ErrStateMismatch": "Login parameters are abnormal, please log in again",
+      "ErrGetAccessToken": "Failed to get authorization token, please try again later",
+      "ErrRevokeAuth": "Failed to revoke authorization, please try again later",
+      "ErrAuthCallBack": "Authentication failed, please try again later",
+      "ErrRefreshToken": "Token refresh failed",
+      "ErrSpaceDescLength": "Spatial description length exceeded limit",
+      "ErrGetPromptTemplate": "Failed to get prompt templates",
+      "ErrQuotaSpaceLimit": "Number of spaces has reached the plan quota",
+      "ErrQuotaSpaceStaffLimit": "Number of staff in the space has reached the plan quota",
+      "ErrQuotaContentReview": "Custom review policies are not allowed under the plan quota",
+      "ErrQuotaModel": "Third-party model usage is not allowed under this plan",
+      "ErrNoTokenBalance": "Insufficient balance for current models",
+      "ErrNoTokenExclusive": "Insufficient balance for dedicated models",
+      "ErrTaskIsRunning": "The task is in progress",
+      "ErrDefaultPolicyNotFound": "default policy not found",
+      "ErrAssumeServiceRoleFailed": "Assume service role Failed",
+      "ErrServiceRoleUnavailable": "Service role unavailable",
+      "ErrTooManyRecipients": "Too many recipients",
+      "ErrApprovalRuleNameEmpty": "Approval rule name cannot be empty",
+      "ErrApprovalRuleNameOverLimit": "Approval rule name exceeds character limit",
+      "ErrApprovalRuleDescOverLimit": "Approval rule description exceeds character limit",
+      "ErrApprovalSceneGroupOverLimit": "Approval scope group count exceeds limit",
+      "ErrApprovalSceneResourceEmpty": "Approval scope resource cannot be empty",
+      "ErrApprovalSceneResourceOverLimit": "Approval scope resource count exceeds limit",
+      "ErrApprovalApproverEmpty": "Approver cannot be empty",
+      "ErrApprovalApproverOverLimit": "Approver count exceeds limit",
+      "ErrApprovalSceneConflict": "Approval scope conflicts with existing rule [%s]",
+      "ErrApprovalSceneInternalConflict": "Internal conflict in approval scope configuration",
+      "ErrApprovalInvalidType": "Unsupported approval type",
+      "ErrApprovalSceneSpaceNotFound": "Space in approval scope not found",
+      "ErrApprovalSceneAppNotFound": "Application in approval scope not found",
+      "ErrApprovalInvalidApproverType": "Unsupported approver type",
+      "ErrApprovalInvalidCorpRole": "Invalid corporate role, only super admin and member are supported",
+      "ErrApprovalSpaceRoleNotFound": "Space role not found",
+      "ErrApprovalSpaceRoleSpaceMismatch": "Space role does not match the space in approval scope",
+      "ErrApprovalStaffNotFound": "Specified approver not found",
+      "ErrApprovalPluginCreatorEmpty": "Plugin online approval scope creator role cannot be empty",
+      "ErrApprovalPluginInvalidCreator": "Invalid creator role for plugin online approval scope, only space creator and user are supported",
+      "ErrApprovalRuleNotFound": "Approval rule not found",
+      "ErrApprovalRuleHasPendingApprovals": "Cannot modify or delete approval rule with pending approvals",
+      "ErrApprovalStatusInvalid": "Invalid approval status, only approving status can be cancelled",
+      "ErrApprovalTypeInvalid": "Invalid approval type",
+      "ErrApprovalNoPermission": "No permission to approve this request",
+      "ErrApprovalInvalidAction": "Invalid approval action",
+      "ErrApprovalCommentOverLimit": "Approval comment exceeds character limit",
+      "ErrNotFoundOpenClaw": "OpenClaw not found"
+    }
+  errors_zh-CN.json: |
+    {
+      "ErrPermissionDenied": "权限不足",
+      "ErrUserNotFound": "用户不存在",
+      "ErrStaffNotFound": "员工不存在",
+      "ErrSessionNotFound": "用户未登录",
+      "ErrCodeSendFailed": "验证码发送失败",
+      "ErrVerifyCode": "验证码错误",
+      "ErrCodeSendLimit": "验证码发送过于频繁",
+      "ErrVerifyFailedTooManyTimes": "验证码输入错误超过5次，账号已被限制登录，请1小时后重试",
+      "ErrAppNotFound": "应用不存在",
+      "ErrSystem": "系统错误",
+      "ErrCorpNotFound": "企业不存在",
+      "ErrCorpInValid": "企业已失效",
+      "ErrLoginTimesLimit": "该手机号已达到最大登录限制，请明天再尝试登录",
+      "ErrEmailLoginTimesLimit": "该邮箱已达到最大登录限制，请明天再尝试登录",
+      "ErrParams": "参数异常，请重试",
+      "ErrVerifyCodeNotFound": "未发送验证码或验证码已过期",
+      "ErrAccNotExistORUnAuth": "尊敬的用户: 根据国家互联网用户实名制相关要求，同时为保障您的账号资产安全，购买或使用该产品之前，需先完成实名认证。3s后自动跳转实名认证页面。 【腾讯云】",
+      "ErrUserHasNoCorp": "该账号未注册或未归属企业",
+      "ErrCorpIsNotInAudit": "企业不在审核中",
+      "ErrStaffCorpNotMatch": "员工与企业不匹配",
+      "ErrOperateDoing": "请求处理中，请稍候",
+      "ErrStaffInValid": "员工信息无效",
+      "ErrTelephone": "手机号码不正确",
+      "ErrDisableLogin": "因产品升级，当前平台原域名将不可登录使用",
+      "ErrEmail": "邮箱地址不正确",
+      "ErrMessageTypeInvalid": "消息通道不支持",
+      "ErrUserHasJoinCorp": "已在企业「%s」中，请先退出当前企业，再注册或加入新的企业",
+      "ErrLoginTypeInvalid": "无效的登录类型",
+      "ErrLoginAccountPassword": "账户密码不匹配",
+      "ErrLoginAccountFormat": "账号格式不对",
+      "ErrLoginAccountExist": "账号已存在",
+      "ErrUinNotMatch": "主账号UIN与子账号UIN不匹配",
+      "ErrSystemIntegratorNotFound": "集成商不存在",
+      "ErrSystemIntegratorUserParams": "集成商登录用户参数错误",
+      "ErrActivateProduct": "产品开通失败",
+      "ErrTrialProductFail": "试用产品开通失败",
+      "ErrNotInWhiteList": "不在白名单中",
+      "ErrCorpTokenUsage": "企业Token数不能低于已使用的",
+      "ErrCorpAppNotEqual": "企业与应用归属企业不一致",
+      "ErrAvatarURLValid": "头像url不合法",
+      "ErrImageSize": "图片大小超过限制",
+      "ErrCorpModelQpmTpmNotFound": "账户模型QPM/TPM配置不存在",
+      "ErrCorpModelIsExclusive": "账户模型为专属并发，请使用共享并发模型配置",
+      "ErrConcurrencyRuleRepeated": "在一个模型下，相同应用仅支持分配一次规则",
+      "ErrConcurrencyRuleOverLimit": "模型规则并发上限超过购买上限",
+      "ErrCorpModelIsNotExclusive": "请使用专属并发模型配置规则",
+      "ErrGetBilling": "获取计费项异常",
+      "ErrTencentSms": "信息发送异常",
+      "ErrTencentSmsException": "sms发送短信异常",
+      "ErrSmsClientNotConfig": "sms未配置",
+      "ErrNotSupportSmsClient": "不支持发送短信的类型",
+      "ErrVerifyCaptchaTicket": "图片验证码验证失败",
+      "ErrVerifyCaptchaNotMatch": "传入的Randstr不合法, 传入的Randstr不合法",
+      "ErrVerifyCaptchaTicketExpired": "传入的Ticket已过期（Ticket有效期5分钟），请重新生成Ticket、Randstr进行校验",
+      "ErrVerifyCaptchaTicketReused": "传入的Ticket被重复使用，请重新生成Ticket、Randstr进行校验",
+      "ErrVerifyCaptchaDecryptFail": "传入的Ticket不合法，请检查Ticket",
+      "ErrVerifyCaptchaTicketDiff": "票据校验异常",
+      "ErrVerifyCaptchaMismatch": "参数校验错误",
+      "ErrIOAIdentity": "IOA身份验证失败",
+      "ErrExpireIOAIdentity": "IOA身份验证已过期",
+      "ErrRefreshInnerUin": "内部用户标识刷新失败",
+      "ErrCheckInnerUin": "内部用户标识验证失败",
+      "ErrCreateSpace": "创建工作空间失败",
+      "ErrCorpSpaceLimit": "创建空间数量超过限制",
+      "ErrCorpSpaceNameExist": "空间名称已存在",
+      "ErrCorpSpaceNotFound": "空间信息不存在",
+      "ErrDefaultSpaceNoDoing": "默认空间不允许操作",
+      "ErrSpaceNameLength": "空间名称超过限制",
+      "ErrSpaceNameEmpty": "空间名称为空",
+      "ErrMsgLogCateExist": "分类名已存在",
+      "ErrMsgLogCateCreate": "分类创建失败",
+      "ErrMsgLogCateDelete": "分类删除失败",
+      "ErrMsgLogCateUpdate": "分类更新失败",
+      "ErrMsgLogCateName": "分类名不符合",
+      "ErrMsgLogCateNotExist": "分类名不存在",
+      "ErrMsgLogUnmatchedLess": "未分类记录较少,不支持智能分类",
+      "ErrMsgLogCateCanntDel": "分类下有记录,无法删除",
+      "ErrMsgLogCateMax": "分类数量达到限制",
+      "ErrMsgLogTrans": "消息记录移动失败",
+      "ErrMsgLogDeleteChild": "请先删除子分类",
+      "ErrParamsNotExpected": "参数校验失败，请检查传参是否符合预期",
+      "ErrTermsUnaccepted": "服务条款未接受，请查看并同意服务条款",
+      "ErrApprovalNotFound": "审批单不存在",
+      "ErrApprovalPassed": "该审批已通过",
+      "ErrApprovalFinished": "该审批已办结，无法再次审批",
+      "ErrTraceIDEmpty": "翻页时trace_id不能为空",
+      "ErrImageRetrievalOverLimit": "一次性搜索超过限制数量",
+      "ErrImageExpandRation": "扩图比例必须是 1:1/3:4/4:3/16:9",
+      "ErrImageImageHeightWidth": "图片高度应该大于640px,宽度应该大于200px",
+      "ErrImageExpandFormatNorSupport": "当前图片类型不支持扩图",
+      "ErrImageExpandSameRatio": "原始图片比例与扩图比例一致，不需要扩图处理!",
+      "ErrHunYuanBadParams": "请求参数错误",
+      "ErrHunYuanUnauthorized": "鉴权不通过",
+      "ErrHunYuanUnprocessableEntity": "输入、输出审核不通过",
+      "ErrHunYuanTooManyRequests": "请求并发数超过限额,请稍后重试！",
+      "ErrHunYuanInternalError": "内部错误！",
+      "ErrMicrosoftAuthFailed": "微软认证失败，请稍后重试",
+      "ErrInvalidGrant": "授权码无效或已过期，请重新授权",
+      "ErrInvalidClient": "客户端认证失败，请联系管理员检查配置",
+      "ErrUnauthorizedClient": "客户端未授权，请联系管理员",
+      "ErrInvalidRequest": "请求参数错误，请检查后重试",
+      "ErrUnsupportedGrantType": "不支持的授权类型，请联系管理员",
+      "ErrInvalidResource": "目标资源无效，请联系管理员检查配置",
+      "ErrInteractionRequired": "需要用户交互，请重新授权",
+      "ErrTemporarilyUnavailable": "服务暂时不可用，请稍后重试",
+      "ErrNetworkError": "网络连接异常，请检查网络后重试",
+      "ErrGraphAPIInvalidAuthToken": "Graph API认证令牌无效或已过期，请重新授权",
+      "ErrGraphAPIAccessDenied": "Graph API访问权限不足，请联系管理员",
+      "ErrGraphAPIRequestFailed": "Graph API请求失败，请稍后重试",
+      "ErrPlatformTypeNotSupported": "平台类型不支持，请检查配置",
+      "ErrGetAuthEndpoint": "获取认证地址失败，请稍后重试",
+      "ErrStateMismatch": "登录参数异常，请重新登录",
+      "ErrGetAccessToken": "获取授权认证token失败，请稍后重试",
+      "ErrRevokeAuth": "撤销授权失败，请稍后重试",
+      "ErrAuthCallBack": "认证失败，请稍后重试",
+      "ErrRefreshToken": "token刷新失败",
+      "ErrSpaceDescLength": "空间描述长度超限",
+      "ErrGetPromptTemplate": "获取提示词版本失败",
+      "ErrQuotaSpaceLimit": "空间数量达到套餐配额",
+      "ErrQuotaSpaceStaffLimit": "空间下员工数量达到套餐配额",
+      "ErrQuotaContentReview": "套餐配额不允许使用自定义审核策略",
+      "ErrQuotaModel": "该套餐配额不允许使用第三方模型",
+      "ErrNoTokenBalance": "当前模型余额不足",
+      "ErrNoTokenExclusive": "专属模型余额不足",
+      "ErrTaskIsRunning": "任务正在运行中",
+      "ErrDefaultPolicyNotFound": "默认策略不存在",
+      "ErrAssumeServiceRoleFailed": "扮演服务角色失败",
+      "ErrServiceRoleUnavailable": "角色不可用",
+      "ErrTooManyRecipients": "收件人过多",
+      "ErrApprovalRuleNameEmpty": "审批规则名称不能为空",
+      "ErrApprovalRuleNameOverLimit": "审批规则名称字符数量超限",
+      "ErrApprovalRuleDescOverLimit": "审批规则描述字符数量超限",
+      "ErrApprovalSceneGroupOverLimit": "审批范围分组数量超限",
+      "ErrApprovalSceneResourceEmpty": "审批范围资源不能为空",
+      "ErrApprovalSceneResourceOverLimit": "审批范围资源数量超限",
+      "ErrApprovalApproverEmpty": "审批人不能为空",
+      "ErrApprovalApproverOverLimit": "审批人数量超限",
+      "ErrApprovalSceneConflict": "审批范围与已有规则【%s】冲突",
+      "ErrApprovalSceneInternalConflict": "审批范围内部存在冲突配置",
+      "ErrApprovalInvalidType": "不支持的审批类型",
+      "ErrApprovalSceneSpaceNotFound": "审批范围中的空间不存在",
+      "ErrApprovalSceneAppNotFound": "审批范围中的应用不存在",
+      "ErrApprovalInvalidApproverType": "不支持的审批人类型",
+      "ErrApprovalInvalidCorpRole": "无效的企业角色，仅支持超级管理员和企业成员",
+      "ErrApprovalSpaceRoleNotFound": "空间角色不存在",
+      "ErrApprovalSpaceRoleSpaceMismatch": "空间角色与审批范围的空间不匹配",
+      "ErrApprovalStaffNotFound": "指定的审批人不存在",
+      "ErrApprovalPluginCreatorEmpty": "插件上架审批范围的创建人角色不能为空",
+      "ErrApprovalPluginInvalidCreator": "插件上架审批范围的创建人角色无效，仅支持空间创建员和普通用户",
+      "ErrApprovalRuleNotFound": "审批规则不存在",
+      "ErrApprovalRuleHasPendingApprovals": "该审批规则下存在审批中的审批单，无法修改或删除",
+      "ErrApprovalStatusInvalid": "审批状态无效，只有审批中的单据可以取消",
+      "ErrApprovalTypeInvalid": "审批类型无效",
+      "ErrApprovalNoPermission": "无权限审批该单据",
+      "ErrApprovalInvalidAction": "无效的审批操作",
+      "ErrApprovalCommentOverLimit": "审批评论字符数量超限",
+      "ErrNotFoundOpenClaw": "未找到openClaw"
+    }
+  placeholder.yaml: |
+    APP_PUBLISH_APPROVAL_URL: "https://adp.cloud.tencent.com/webim_exp/?type=dev#/chat"
+    SKILL_CONFIG_INNER_TARGET: polaris://trpc.adp.skill_config.SkillConfigInner
+    IOA_TOF_TOKEN: "" 
+    DEFAULT_POLICIES: 
+      - name: KeyDefaultContentSecurityHigh
+        desc: "KeyDefaultContentSecurityHighDesc"
+        type: 1
+        category: "81004"
+      - name: KeyDefaultContentSecurityMiddle
+        desc: "KeyDefaultContentSecurityMiddleDesc"
+        type: 1
+        category: "81005"
+        is_default: true
+      - name: KeyDefaultContentSecurityLow
+        desc: "KeyDefaultContentSecurityLowDesc"
+        type: 1
+        category: "81006"
+
+    FUNCTION_PERMISSION:
+      deny_modules:
+        openclaw:
+          - "trpc.KEP.bot-admin-config-server.Admin"
+          - "trpc.adp.app_config.Admin"
+          - "trpc.adp.kb_config.Admin"
+          - "trpc.adp.app_config.AppConfigExternal"
+          - "trpc.adp.workflow_config.WorkflowConfig"
+          - "trpc.adp.widget_config.WidgetConfig"
+          - "trpc.KEP.bot-evaluate-config-server.Admin"
+      deny_functions:
+        openclaw:
+          - "DescribeExperienceCenterAppList"
+          - "DescribeExpInfo"
+          - "DescribePromptTemplateList"
+          - "CreatePromptTemplate"
+          - "ModifyPromptTemplate"
+          - "DeletePromptTemplate"
+          - "AddFavoritePromptTemplate"
+          - "DeleteFavoritePromptTemplate"
+          - "CreatePromptTemplateLabel"
+          - "DeletePromptTemplateLabel"
+          - "ModifyResourceRule"
+          - "CreateSmartMsgLogCategory"
+          - "CreateAlarmStrategy"
+          - "ModifyAlarmStrategy"
+          - "DeleteAlarmStrategy"
+          - "EnableAlarmStrategy"
+          - "ExportAlarmStrategyHistory"
+          - "ModifyConcurrencyRule"
+      whitelist_functions:
+        openclaw:
+          - "ListModelProvider"
+          - "ModifyModelProvider"
+          - "ModifyProviderModelStatus"
+          - "DescribeModelProviderApps"
+          - "DeleteModelProvider"
+
+    FINANCE_TARGET: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+    AI_GATEWAY_ADMIN_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
+    AI_GATEWAY_API_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+    ACCESS_MANAGER_TARGET: ip://adp-access-manager.{{ .Release.Namespace }}.svc.cluster.local:10001
+    AI_CONF_MANAGER_TARGET: ip://adp-aiconf-manager.{{ .Release.Namespace }}.svc.cluster.local:10002
+    PLATFORM_PERMISSION_CONFIG_API_TARGET: ip://adp-platform-permission-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+    PLATFORM_AUTHENTICATOR_TARGET: ip://adp-platform-authenticator.{{ .Release.Namespace }}.svc.cluster.local:9090
+    TASK_CONFIG_TARGET: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+    RESOURCE_GALLERY_ADMIN_TARGET: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+    APP_CONFIG_ADMIN_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+    APP_CONFIG_API_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
+    PLUGIN_CONFIG_API_TARGET: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+    KB_CONFIG_API_TARGET: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+    WIDGET_CONFIG_TARGET: ip://adp-widget-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+    PLATFORM_MANAGER_LOGIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+    PLATFORM_MEREOLOGY_API_TARGET: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
+
+    THIRD_PARTY:
+      query_limit: 1000
+      pool_size: 100
+      queue_size: 1000
+      microsoft:
+        client_id: {{ dig "thirdParty" "microsoft" "clientId" "" .Values.global }}
+        client_secret: {{ dig "thirdParty" "microsoft" "clientSecret" "" .Values.global }}
+        user_info_url: https://graph.microsoft.com/v1.0/me
+        scopes:
+          - Files.Read
+          - Sites.Read.All
+          - User.Read
+          - offline_access
+      sharepoint:
+        client_id: {{ dig "thirdParty" "sharepoint" "clientId" "" .Values.global }}
+        client_secret: {{ dig "thirdParty" "sharepoint" "clientSecret" "" .Values.global }}
+        user_info_url: https://graph.microsoft.com/v1.0/me
+        scopes:
+          - Files.Read
+          - User.Read
+          - offline_access
+      googledrive:
+        client_id: {{ dig "thirdParty" "googledrive" "clientId" "" .Values.global }}
+        client_secret: {{ dig "thirdParty" "googledrive" "clientSecret" "" .Values.global }}
+        user_info_url: {{ dig "thirdParty" "googledrive" "userInfoUrl" "" .Values.global }}
+        redirect_url: {{ dig "thirdParty" "googledrive" "redirectUrl" "" .Values.global }}
+        scopes:
+          - https://www.googleapis.com/auth/drive.readonly
+        force_approval: true
+      notion:
+        client_id: {{ dig "thirdParty" "notion" "clientId" "" .Values.global }}
+        client_secret: {{ dig "thirdParty" "notion" "clientSecret" "" .Values.global }}
+        end_point_auth: https://api.notion.com/v1/oauth/authorize
+        end_point_token: https://api.notion.com/v1/oauth/token
+      wechat:
+        app_id: {{ dig "thirdParty" "wechat" "appId" "" .Values.global }}
+        app_secret: {{ dig "thirdParty" "wechat" "appSecret" "" .Values.global }}
+        auth_url: https://open.weixin.qq.com/connect/qrconnect
+        access_token_url: https://api.weixin.qq.com/sns/oauth2/access_token
+        user_info_url: https://api.weixin.qq.com/sns/userinfo
+      wechat_mobile:
+        app_id: {{ dig "thirdParty" "wechat" "appId" "" .Values.global }}
+        app_secret: {{ dig "thirdParty" "wechat" "appSecret" "" .Values.global }}
+        auth_url: /qbot/public/connect/oauth2/authorize
+        access_token_url: /qbot/public/sns/oauth2/access_token
+        user_info_url: /qbot/public/sns/userinfo
+        scope: snsapi_userinfo
+
+    AGENT_BACKGROUND:
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/426ce46bf3bfb5ddc3a764f93998d9622d5.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/7119cfaef27441eb554d9950c3da00fe81b.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/447eb83528c20aa0b161f1bb0518daa752b.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/405d9371da7c3ecbf5364aaebb46e088a79.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/5712f26b60ff9eea1128b7adc7f3099a743.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/433828e638a3a8cb9207f41cc6c9d449888.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/5496bf1355bb39f27c97eda4656bdcc33fc.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/8324947f357ac6a74309d5e9026af8c8081.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/571f042df08a9058f4f240b7ab5815a38cd.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/466f114e6dad055c8585d25ec8568f4de01.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/837576fafc9d4d87381cd1d1dd56c8bb.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/2024b503e60e2cec43396be526701217fc3.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/204f96c99f5308d2e9d734c032d98ef2cbf.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/94604b4639b18b574a5bdf4998668943730.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/459836c31319a2d704afa41718ed9c4d40b.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/286d889f0f9553ba40a1cb2f74b601e8.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/587e6420c6f85cf20d9a533133056b15262.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/a89679f8b51f0b3171f75a3fff761769.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/6293e289d2d759d2e559046ad3bb5b9a61a.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/385a16d20e55324fa8e1167bd3e6afef.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/9367ec3a0b39d1b6fa796cf0109b6978893.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/320a0a55d0878dfbba61d7e3c283ff16a12.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/76819424e0d9e650129f812a04809ca9.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/7f8457729200c784f1caafed80b703f9.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/907061b735edfcdffca5af1b2d09aa25d30.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/49449cd96ae1237f6c9eef566c09947e293.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/461253499e76a67d44a198fc26d0a065f15.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/872334ed101ac1a16b41f5f69c73e078569.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/841123f16b71ac760de90bd2564b6d366b2.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/8447db7b56224593125b3f291f2de26adf3.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/377ad166c127369446b2d48dbfc8a367e1c.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/86662f2fec962a604b1e8d22fa2ac3c1a12.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/2778c98e6de0c4af5ea51aedefdfaf4d672.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/293ef125ae7456379b88110529b82eb4c60.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/697e2354b40688e06c1ad4b0ceb1b2bf751.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/415360fcbe0617b0977a0ff2801a2cead7d.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/7175e85224e360f9fb332835382f24220c5.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/92658d9cf95d4719296f56da0a5d4d24.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/2c37cdbedb79ad933c401e3ae6d73b2c.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/337ddc6a29c90401911fa77f1a19d0d720f.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/49049d54f43c31ed4b178f47d5536adc77e.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/7244369c806bec70aecbdb98e4c3348731b.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/d7ac26e8cc0dbe60fe2883c1171ea405.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/5e48f67b49a6599188ac1d556305e789.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/276aa87f4e16bd1e1d76dad8534eb591863.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/7337f3d5f06da02fd5ae583facda6c479a3.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/436cffd8ae6a7d46ce401e88b085367a9ef.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/626e14fa252f119c2d2238056d42d5e62e1.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/88632d8c4a9a6408e70b4d52892f77718b8.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/420d369e7f11151542ce53c7138efb38549.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/279e0aa7793f52da84769443bd4c84331ef.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/261fec13cdd46ef40242a46a92cfff6745b.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/eba0a87c98b92ecbad1300e81ef099f5.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/953bbdd7b59930b75937c4c771b6fc47d77.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/b49fa1e6bf481d4c7b14eefa10b2a747.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/666637692b8cf5658e74562201eec872617.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/346fb9bb286756c7e345808d28db61ed8f9.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/90241a0403fc8ab3567b23d56beab7094e8.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/17f4afde67a59dd49f46b5a863b087ec.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/9720a5ed9a1141685b63b9bbf8476b0a75c.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/1b8abf647b4cb57b77c290f2797631c2.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/3555e82985a6f4bbb4304d7708479a6a940.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/d2fd47c28e481bfed8d72f7523c1808d.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/185e530be6ec50ac3b592e13ae2ea66c15a.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/6cb1993377dae9daaef618dd930c3029.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/8599c5e621cb5748734896526f9266cc4a1.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/436494dc554c4509570a022d83e362cdf88.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/553921729124d667cc39cd70cd5434c7.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/36844ef2dcd723655ae820832ee6b9445bc.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/118b6d42f847ba8bd25f26e57438eede818.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/50529de32b079d4a53e931600a9b3ac3d72.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/71657596bce355f1b59d79a3b81a96a8aa4.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/56493f24bcb67a254a7e5879f84cbbbd923.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/434ee589dcdd06fcd2301fe413c6229aca8.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/678437bcdf483eb3b025bfc77c266412dd6.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/920462fa9bd30d651925ba46eafc25ee25c.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/708a77d56acc1c35eab4b854263471dd81e.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/9417884c435daa70acd902421cd630b2c77.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/bf89aef4563e38e0e273b987dfd5f53b.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/82522e6d0e2d76ae1467f39e472436746bf.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/748c40cd6e024f66c7b4fbfaa5a53655c7b.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/780435fd03c10cd87b12134ea650d04abd1.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/153a449013138282c34294c7fafd9a24d97.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/779a0a271f999960dcebdb9ee0a5b69a.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/a91627ff00931631a531a44249143e4a.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/157aafbe24235fdb4badaab39a447e0106a.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/5063101594b378d6494beff021ebbc76.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/808f36d3abf8493f8cee6e53c04b2516d50.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/444c1f4caa4b66e3eeb931162c67b2a83f0.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/226b2865a68b9109765ef6f1532126d6f54.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/3764a3a9f5849ef89cf9f40247559788b28.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/338dca80e131af731c92ed8c1ff5f3fc4d7.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/643aec09f0f37d5dc51f57e25e888a92c51.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/6197d90b7378b3c617e44e2a3c736933868.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/225eb462e372a8b83164da074de92962833.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/535eef26dd47627c1f645781257323ee938.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/87052d656fbd7944e40f25d4bae389073c2.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/f9321b57059719c26287ac7eef727100.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/24271d0481b76302a5fc781d633a0499ade.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/5224aa3388639c2e528cfe9a3ba8238646a.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/716ef601c68a8fa2cdb357f90758b3e04a1.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/687870bcf00072c824eb44fee70484f6cf3.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/1664fcd955b27681f27c86ca39137f926e7.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/366efe5fa5f699f4b0f2657f23ad38ed454.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/684e14c08b9dae6e665b0b0d88ab524cb5e.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/63294b42d417e2dc514eec031f77896b99a.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/204a3ade7ff6abf729a95086a77c1867741.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/9770de8628003a84a97b7bfc4a587411.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/7d2ce3ef67d1b7ed46acbe2c1f69ae25.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/765154022d90a2ee1dc7053b5b36060a.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/740031d987e8c6891d72698533531ea2170.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/266efd2748d44d74da32d7483ae54281977.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/467cffc8a11cdab93a6a47d2f59d848bc94.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/8ecd40fbee81d8e8de2fa233c86269be.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/6692ae83e2df948477692fabfc0cd8e4798.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/993e6110a3b407ef9d8345da40a87243c86.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/2c174e18935692dd1eefb89cb0f2c750.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/856ac332fb2f82ffb567940e21fa7ff3323.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/3382d75aa19fd7658a49cc87c683c834dbe.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/94d2af1997cec0de6d87760274729965.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/64988ccee7ca027b0ac44d5f9a63fa78699.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/61c2a7a2ed065e922f3ec435a76645e6.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/4581599267d1d80e90917d4444364b0b2d6.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/116511c67a710d2cde550a451790256dc88.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/43192c2d03b073c28954aa91ee03c99025c.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/72379159b1b097966a6146de4461ae81.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/5483f612d5c9449771d012c1c80973f598f.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/473b727e4b3e1b2a7014b7855119cbdc8e8.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/702a0c9154f82f3017ebc89814d568365ce.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/2433e4a601d256974589dfce79eb079e250.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/491c2ccd53716a36b307aadaeb872b66a13.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/c6694d0793877057d889721ac843f9e9.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/630156d7909ea0f755277e7bbd59655a16a.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/2692abaf5f6ace2f1741a4cdd105d077ed2.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/422b14fd0a59eda57a1692a7d5d16fe77c0.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/833db3fc1216f2a0357c09538d4687768ba.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/27902205661f1b4c9d066ccb4166b7d7c29.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/447afe60dad9610430793a583e0090a1.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/f7f590e94435df85b0ea65720e199f30.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/317302d85280eed85226d54123722fedf96.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/2193dbea093b6fba86171dcee20a97b0b3a.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/305390eadc904974b6eea628c286b1d31f5.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/242dc0f19a646d96c444ce4fe748ab54880.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/27624e9020ba033328cba6d0eaba226de16.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/958a83ad2c16efa3fda6bf4e1d2f314ad2d.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/663c5bf3d60c3588c9cfd5f7fafd2b7c8aa.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/490b31b585a9412b0f039d5d591f37726f0.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/fdb537b40ef98a11cb52cca7dfb3c89e.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/759ef7a8513b6d88eb0904f44b365a6b261.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/72364e66ccda8607f49aec8641962cfecb2.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/76412bec7a7d621ae7a10606b3afb5d1393.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/48762a3d1dbdb0ca16a477e5bf50e60a764.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/280dac7fe6d6a08fecbc31d05edff2ccc88.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/94364ae10eb444ef64f5b59a70b5fc3a7b5.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/452565c14c36a093024db866314a813fa9d.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/381eb9dc0ff69364c583afcded7beb47cdc.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/489b2d8eedada5746e173c2b23fb7ffd.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/6245c4dfc7ad233cd298b720fc6a693f476.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/4176cf0156f2a09bc640a7311aaf78a0c5a.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/1847b00bf49fb1b778841f3555b59bcaf96.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/9860dd14f96bd086d5b9f077b623badb620.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/b952b5daf9aa3d31c9d17e2109ed4efb.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/279a386a4df512f034c4946d582cf34601f.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/34071f0d7d8bbebbb2b13733feb2499bd01.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/92013b29373038eb3fad15fc70c5b98d38c.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/591a5980f2c0fb92d461093c205ccba811f.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/d371fca3ee3b1da650763ed4679fa355.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/7280c0949f469a4d47c6f9e410f03674356.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/686d9b1b333ac8b3c8c417bc6fc943a17f1.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/636bf5174f828a290af2ad50350dccc76d6.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/61643292940e02c1954a310b35adb398bf7.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/30682bf82e8551300fe132079f824ae6c85.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/332a4e26d21c2cb90599534eac9128efea1.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/454ae94ffc771e4426dd0c7aa72ff6e4b3f.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/758ae75f23306fabac2172cc3dd7b1d5bbf.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/663de0298cd1e6cde830e46f28acd77f8b0.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/311247df601c0bcf88d179c48caf25834df.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/921a41e5ea9d1d532e40e7e735a0c6d0d28.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/5417c2b9b295822a29d4c20087ef4f241bf.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/c7c691d0a4dbaabcca7a9d05edd5e10f.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/855439889bf80b67b7984dfe1122d38e747.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/87151f475412c073b0258b792788af97a03.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/9318cb1c076b4b92f05abf2b84491ed9ac9.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/af1f02e971756668a82f7256efbf88af.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/ea2a36bff6e3a1c903369c18dd3e40ea.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/370de58ecebef99de32ab592565c4a8b226.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/939b61ed8757c167931e0fdcb6eab2669ad.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/546424524b2cda312d1fb52e42779bda719.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/491e3615abe7e7e15212cd107214d6c302e.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/460a63fad00e0063b6afe6deaaab5a4cbeb.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/1408e83cfa0c7d975576230bcee9de4c558.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/1e8cebf3a9bd9c75f292f170ea69b016.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/6660fcc5aec92d71e5d465466ff2f044786.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/180691d9082a376f1caa8d82c9f07dbd04e.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/ca4cd16c3ed5c54289a8a99aae64271e.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/3725921a11fa24e26ebd4a16761d0f61e93.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/159b59b030dd9cf35be5f0ed3be4bd5b7e7.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/9432cda915b68ef47fd005f7f3e534c909a.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/965abe85e6650f7551cf8989addbfbc23a8.png
+      - https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/public/background/4e283d3c0e85439c9b2526062757dbca.png
+
+  trpc_go.yaml: |
+    global:
+      namespace: Production
+    server:
+      app: adp
+      server: platform-manager
+      bin_path: /app/bin/
+      conf_path: /app/conf/
+      log_path: /app/logs/
+      admin:
+        ip: ${POD_IP}
+        port: 8081
+        read_timeout: 3000
+        write_timeout: 60000
+      filter:
+        - recovery
+        - i18n
+        - validation
+        - accesslog
+        - debuglog
+        - cle-route-propagator
+        - opentelemetry
+      service:
+        - name: trpc.adp.platform_manager.Admin
+          ip: ${POD_IP}
+          port: 9090
+          network: tcp
+          protocol: trpc
+          timeout: 120000
+        - name: trpc.adp.platform_manager.Api
+          ip: ${POD_IP}
+          port: 9093
+          network: tcp
+          protocol: trpc
+          timeout: 120000
+        - name: trpc.adp.platform_manager.Login
+          ip: ${POD_IP}
+          port: 9091
+          network: tcp
+          protocol: trpc
+          timeout: 3000
+        - name: trpc.adp.platform_manager.PlatformManagerExternal
+          ip: ${POD_IP}
+          port: 9000
+          network: tcp
+          protocol: trpc
+          timeout: 30000
+          filter:
+            - session
+            - permission
+        - name: trpc.adp.platform_manager.audit_log_consumer
+          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=adp_audit_log_prod&group=platform-manager-prod&batch=5&batchFlush=1000
+          protocol: kafka
+          timeout: 30000
+        - name: trpc.adp.platform_manager.AutoRefreshTokenTask
+          ip: ${POD_IP}
+          port: 9092
+          network: "0 */5 * * * *?disable=1&scheduler=AutoRefreshTokenTask&holdTime=5"
+          protocol: timer
+          timeout: 3600000
+        - name: trpc.adp.platform_manager.ReportKnowledgeCapacityTask
+          ip: ${POD_IP}
+          port: 9094
+          network: "0 0 */1 * * *?disable=0&scheduler=ReportKnowledgeCapacityTask&holdTime=5"
+          protocol: timer
+          timeout: 3600000
+        - name: trpc.adp.platform_manager.RefreshInnerUinTask
+          ip: ${POD_IP}
+          port: 9096
+          network: "*/10 * * * * *?disable=0&scheduler=RefreshInnerUinTask&holdTime=5"
+          protocol: timer
+          timeout: 3600000
+        - name: trpc.adp.platform_manager.CheckLicense
+          ip: 0.0.0.0
+          port: 9095
+          network: 5 */1 * * * *?disable=0&startAtOnce=1&holdTime=5
+          protocol: timer
+          timeout: 60000
+
+    plugins:
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      log:
+        default:
+          - writer: console
+            level: error
+          - writer: file
+            level: debug
+            writer_config:
+              filename: /app/logs/trpc.log
+              max_size: 100
+              max_backups: 10
+              max_age: 7
+              compress: false
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+            - name: global
+              appid: ${RAINBOW_APP_ID}  # appid
+              group: global # 配置所属组
+              type: kv   # 七彩石数据格式, kv(默认), table
+              env_name: ${RAINBOW_ENV_NAME}
+              timeout: 2000
+              enable_client_provider: true
+      i18n:
+        i18n:
+          default_lang: zh-CN
+          supported_languages:
+            - zh-CN
+            - en-US
+          data_provider:
+            type: rainbow
+            prefix: biz
+            error_prefix: errors
+            char_scaling_factor:
+              zh-CN: 1
+              en-US: 3
+      registry:
+        polaris:
+      selector:
+        polaris:
+          enable_servicerouter: true
+
+    client:
+      filter:
+        - cle-route-propagator
+        - opentelemetry
+      service:
+        - name: mysql.qbot.admin
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.admin
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local
+        - name: redis.qbot.admin
+          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379
+          timeout: 800
+        - name: redis.lke.limiter
+          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/4
+          timeout: 800
+        - name: trpc.adp.platform_charger.Finance
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          network: tcp
+          protocol: trpc
+          timeout: 20000
+        - callee: qbot.finance.finance.Finance
+          name: qbot.finance.finance.Finance
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          network: tcp
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.adp.ai_gateway.Admin
+          namespace: Production
+          network: tcp
+          protocol: trpc
+          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
+          timeout: 2000 
+        - name: trpc.adp.ai-gateway.api
+          namespace: Production
+          network: tcp    
+          timeout: 4500000
+          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: http
+        - name: basic.interface.trpc_to_inner.Cloudcc
+          target: ${TRPC_TO_INNER_TARGET}
+          protocol: trpc
+          timeout: 5000
+          namespace: Production
+        - name: trpc.http.cos.Access
+          namespace: Production
+          network: tcp
+          protocol: http
+          target: {{ if eq .Values.global.components.s3.providerType "minio" }}{{ printf "ip://minio.%s.svc.cluster.local:80" .Release.Namespace }}{{- else if eq .Values.global.components.s3.providerType "obs" }}ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}{{- else }}dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn{{- end }}
+          timeout: 5000
+        - name: trpc.SmartAssistant.LLMManagerServer.Chat
+          namespace: Production
+          target: ${LLM_MANAGER_TARGET}
+          service_name: trpc.SmartAssistant.LLMManagerServer.Chat
+          timeout: 20000
+        - callee: trpc.smartservice.accessmanager.AccessManager
+          namespace: Production
+          name: trpc.SmartService.AccessManagerServer.AccessManager
+          target: ip://adp-access-manager.{{ .Release.Namespace }}.svc.cluster.local:10001
+        - name: trpc.adp.platform_authenticator.Authenticator
+          target: ip://adp-platform-authenticator.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          timeout: 3000
+        - name:  trpc.SmartService.AIConfManagerServer.AIConfManager
+          namespace: Production
+          target: ip://adp-aiconf-manager.{{ .Release.Namespace }}.svc.cluster.local:10002
+          timeout: 3000
+        - name: trpc.adp.platform_permission_config.Api
+          target: ip://adp-platform-permission-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: Production
+          timeout: 3000
+        - name: trpc.SmartAssistant.FileManagerServer.ManagerObj
+          namespace: Production
+          target: ${FILE_MANAGER_TARGET}
+          timeout: 3000
+        - name: trpc.KEP.bot-task-config-server.task-config
+          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+          namespace: Production
+          env_name: formal
+          callee: trpc.KEP.bot_task_config_server.TaskConfig
+          timeout: 3000
+        - callee: trpc.adp.resource_gallery.Admin
+          namespace: Production
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 20000
+          env_name: formal
+        - name: trpc.adp.app_config.Admin
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          timeout: 20000
+        - name: trpc.adp.app_config.Api
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
+          namespace: Production
+          timeout: 20000
+        - callee: trpc.KEP.plugin_config_server.PluginConfigApi
+          name: trpc.KEP.plugin-config-server.PluginConfigApi
+          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: Production
+          protocol: trpc
+          timeout: 60000
+        - name: trpc.adp.kb_config.Api
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: Production
+          timeout: 5000
+        - callee: trpc.adp.platform_metrology.Api
+          namespace: Production
+          target: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
+          protocol: trpc
+          timeout: 20000
+          env_name: formal
+        - name: trpc.adp.platform_manager.audit_log_producer
+          target: kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_audit_log_prod&clientid=platform-manager-prod&compression=none&trpcMeta=true
+          timeout: 1000
+        - callee: trpc.adp.widget_config.WidgetConfigInner
+          namespace: Production
+          target: ip://adp-widget-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.platform_manager.Login
+          namespace: Production
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 6000
+        - callee: trpc.adp.platform_charger.Finance
+          namespace: Production
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          network: tcp
+          protocol: trpc
+          timeout: 20000
+        - name: elastic.data.statistics
+          namespace: Production                         
+          target: ip://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}
+          password: ${INFRA_MIDDLEWARES_ES_0_USER}:${INFRA_MIDDLEWARES_ES_0_PASSWORD}
+          protocol: http
+          timeout: 3000

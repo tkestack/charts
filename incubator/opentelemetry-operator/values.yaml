@@ -29,7 +29,7 @@ pdb:
 manager:
   image:
     repository: ccr.ccs.tencentyun.com/tke-market/opentelemetry-operator
-    tag: v0.91.2
+    tag: v0.92.1
   collectorImage:
     repository: ccr.ccs.tencentyun.com/tke-market/opentelemetry-collector-contrib
     tag: 0.85.0
@@ -264,6 +264,11 @@ nodeSelector: {}
 topologySpreadConstraints: []
 hostNetwork: false
 
+## Cluster network mode configuration
+## Optional value: "" (default, auto-detect), "cilium-overlay" (force enable)
+## In general, leaving the default values unchanged is sufficient.
+networkMode: ""
+
 # Allows for pod scheduler prioritisation
 priorityClassName: ""
 
@@ -287,8 +292,6 @@ env:
   ## Required, obtained from the apm console
   APM_TOKEN: ""
   ENDPOINT: ""
-  API_REGION: ""
-
 
   ## Optional, default latest; If you want to specify the version, you can get it from the apm documentation
   JAVA_INSTR_VERSION: "latest"
@@ -301,9 +304,6 @@ env:
 
   ## Optional, default "false"; Set to "true" for integrating with APM service via internet endpoint
   FROM_INTERNET: "false"
-
-  ## Optional, default false; Set to true for directly creating instrumentation by helm.
-  DIRECTLY_CREATE_INSTRUMENTATION: false
 
 config:
   "java": "bwiefeunq4+28k5omTkgc3XQLHjDEh4aylntxj4NiVRsibnL5n4Kk0EHTYJPoXHe"

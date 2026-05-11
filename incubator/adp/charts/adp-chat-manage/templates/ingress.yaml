@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    meta.helm.sh/release-name: {{ .Release.Name }}
+    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  ingressClassName: nginx
+  rules:
+  {{- if eq .Values.global.scheme "https" }}
+  - host: {{ .Values.global.clb }}
+    http:
+  {{- else }}
+  - http:
+  {{- end }}
+      paths:
+      - backend:
+          service:
+            name: {{ .Release.Name }}
+            port:
+              number: 9099
+        path: /adp/v2/chat
+        pathType: ImplementationSpecific

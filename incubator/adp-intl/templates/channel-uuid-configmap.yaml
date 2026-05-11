@@ -1,0 +1,14 @@
+{{- $channelUUID := include "getChannelUUID" . -}}
+{{- if $channelUUID }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: adp-channel-uuid
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/resource-policy": keep
+  labels:
+    {{- include "adp.labels" . | nindent 4 }}
+data:
+  uuid: {{ $channelUUID | quote }}
+{{- end }}

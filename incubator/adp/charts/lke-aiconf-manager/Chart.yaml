@@ -1,0 +1,10 @@
+apiVersion: v2
+name: lke-aiconf-manager
+version: 1.0.0
+appVersion: 4.0.0
+description: lke-aiconf-manager
+
+sources:
+  - https://git.woa.com/sppd_ai_tsk/TSK
+maintainers:
+  - name: brucezylin

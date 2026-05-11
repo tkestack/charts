@@ -1,0 +1,111 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-app-channel-proxy-svr
+  namespace: {{ .Release.Namespace }}
+data:
+  fullchain.pem: |
+
+    -----BEGIN CERTIFICATE-----
+
+    -----END CERTIFICATE-----
+
+  privkey.pem: |
+    -----BEGIN RSA PRIVATE KEY-----
+
+    -----END RSA PRIVATE KEY-----
+
+  proxy.conf: |
+
+    server {
+      listen 8000 ;
+      listen 8443;
+      server_name _;
+
+      resolver kube-dns.kube-system.svc.cluster.local ipv6=off valid=10s;
+
+
+
+
+
+      tcp_nodelay on;
+      client_max_body_size 100m;
+
+      location ~ ^/online/channel/callback/ {
+          proxy_buffering off;
+          proxy_pass http://adp-app-channel.{{ .Release.Namespace }}.svc.cluster.local:8000$uri?$args;
+          proxy_set_header Connection "close";
+          proxy_ignore_client_abort on;
+          proxy_http_version 1.1;
+          proxy_read_timeout 600s;
+          proxy_send_timeout 600s;
+      }
+
+      location ~ ^/online/wx/ticket/callback {
+          proxy_buffering off;
+          proxy_pass http://adp-app-channel-token.{{ .Release.Namespace }}.svc.cluster.local:8001$uri?$args;
+          proxy_set_header Connection "close";
+          proxy_ignore_client_abort on;
+          proxy_http_version 1.1;
+          proxy_read_timeout 600s;
+          proxy_send_timeout 600s;
+      }
+
+      # 企微 gettoken：channel-token-svr 取 access_token 时，Host 头取自 wecom_callback_url（业务回调域名），
+      # 并非企微真实域名。这里使用 location = 精确匹配，强制固定转发到 qyapi.weixin.qq.com，
+      # 仅覆盖 /cgi-bin/gettoken 一个路径；其他 /cgi-bin/* 仍按下面的通用规则按 Host 头动态路由，
+      # 以兼容微信公众号 api.weixin.qq.com 等场景。
+      location = /cgi-bin/gettoken {
+          proxy_buffering off;
+          proxy_pass https://qyapi.weixin.qq.com$uri?$args;
+          proxy_set_header Connection "close";
+          proxy_set_header Host qyapi.weixin.qq.com;
+          proxy_ignore_client_abort on;
+          proxy_http_version 1.1;
+          proxy_ssl_name qyapi.weixin.qq.com;
+          proxy_ssl_server_name on;
+          proxy_read_timeout 600s;
+          proxy_send_timeout 600s;
+      }
+
+      # 微信/企微公网接口：正向代理，按请求 Host 头自动路由到 api.weixin.qq.com / qyapi.weixin.qq.com
+      location ~ ^/cgi-bin/ {
+          proxy_buffering off;
+          proxy_pass https://$http_host$uri?$args;
+          proxy_set_header Connection "close";
+          proxy_set_header Host $http_host;
+          proxy_ignore_client_abort on;
+          proxy_http_version 1.1;
+          proxy_ssl_name $http_host;
+          proxy_ssl_server_name on;
+          proxy_read_timeout 600s;
+          proxy_send_timeout 600s;
+      }
+
+
+      access_log /var/log/nginx/http_forward_proxy_8000.access.log;
+      error_log /var/log/nginx/http_forward_proxy_8000.error.log;
+    }
+    server {
+      listen 8001 ;
+      server_name _;
+
+      resolver 119.29.29.29 182.254.116.116 ipv6=off valid=60s;
+      tcp_nodelay on;
+      client_max_body_size 100m;
+
+      location / {
+          proxy_buffering off;
+          proxy_pass https://$http_host$uri?$args;
+          proxy_set_header Connection "";
+          proxy_set_header Host $http_host;
+          proxy_ignore_client_abort on;
+          proxy_http_version 1.1;
+
+          proxy_ssl_name $http_host;
+          proxy_ssl_server_name on;
+      }
+
+      access_log /var/log/nginx/http_forward_proxy_8001.access.log;
+      error_log /var/log/nginx/http_forward_proxy_8001.error.log;
+    }

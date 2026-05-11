@@ -1,0 +1,23 @@
+images:
+  adp-crawler:
+    url: ccr.ccs.tencentyun.com/tke-market/webappchatbot:crawl-59d89d1-147
+resources:
+  limits:
+    cpu: 1
+    memory: 2Gi
+  requests:
+    cpu: 1
+    memory: 2Gi
+tad:
+  components:
+    adp-crawler:
+      replicas: 1
+      type: Deployment
+
+  type: helm
+  instanceStrategy:
+    level: region
+  labels: {}
+  product: llm-knowledge-engine
+  services: {}
+

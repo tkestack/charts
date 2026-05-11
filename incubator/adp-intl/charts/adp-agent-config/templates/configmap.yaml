@@ -1,0 +1,800 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-agent-config
+  namespace: {{ .Release.Namespace }}
+data:
+  agent-config_en-US.json: |
+    {
+      "应用ID为空": "Application ID cannot be empty",
+      "AgentID为空": "Agent ID cannot be empty",
+      "获取测试环境Agent失败": "Failed to retrieve test environment agent",
+      "获取发布环境Agent失败": "Failed to retrieve production environment agent",
+      "Agent": "Agent",
+      "名称": "Name",
+      "模型": "Model",
+      "模型选择": "Model Selection",
+      "温度": "Temperature",
+      "Top-P": "Top-P",
+      "最大推理轮数": "Max Reasoning Rounds",
+      "上下文记忆轮数": "History Limit",
+      "转交描述": "Handoff Description",
+      "转交关系": "Handoff Relationship",
+      "提示词": "Prompt",
+      "插件": "Plugin",
+      "新增": "Add",
+      "修改": "Modify",
+      "删除": "Delete",
+      "知识库问答": "Knowledge Base QA",
+      "是": "Yes",
+      "否": "No",
+      "；": ";",
+      ".": ".",
+      "/": "/",
+      "变更为": "Changed to",
+      "工具描述变更为": "Tool description changed to",
+      "值变更为": "Value changed to",
+      "必填属性变更为": "Required attribute changed to",
+      "模型名称变更为": "Model name changed to",
+      "配置": "Configuration",
+      "配置参数": "Configuration Parameters",
+      "头部参数": "Header Parameter",
+      "输入参数": "Input Parameter",
+      "输出参数": "Output Parameter",
+      "子参数": "Sub Parameter",
+      "单选参数": "Single-choice Parameter",
+      "多选参数": "Multiple-choice Parameter",
+      "知识库": "Knowledge Base",
+      "参数": "Parameter",
+      "新增参数": "Add Parameter",
+      "删除参数": "Delete Parameter",
+      "参数名称变更为": "Parameter name changed to",
+      "Input配置发生变更": "Input configuration changed",
+      "描述变更为": "Description changed to",
+      "类型变更为": "Type changed to",
+      "默认值变更为": "Default value changed to",
+      "模型是否可见变更为": "Model visibility changed to",
+      "分析方法变更为": "Analysis method changed to",
+      "新增转交Agent:": "Added handoff agent:",
+      "删除转交Agent:": "Removed handoff agent:",
+      "整体检索范围变更为": "Overall retrieval scope changed to",
+      "问答开关变更为": "QA toggle changed to",
+      "文档列表发生变更": "Document list changed",
+      "标签过滤操作符变更为": "Tag filter operator changed to",
+      "标签过滤标签发生变更": "Tag filter labels changed",
+      "知识库类型变更为：": "Knowledge base type changed to:",
+      "知识库检索范围变更为：": "Knowledge base retrieval scope changed to:",
+      "知识库文档列表发生变更": "Knowledge base document list changed",
+      "知识库问答开关变更为：": "Knowledge base QA toggle changed to:",
+      "知识库标签发生变更": "Knowledge base tags changed",
+      "全部知识": "All knowledge",
+      "按知识库": "By knowledge base",
+      "按特定知识": "By specific knowledge",
+      "按标签": "By tags",
+      "且": "AND",
+      "或": "OR",
+      "默认知识库": "Default Knowledge Base",
+      "共享知识库": "Shared Knowledge Base",
+      "高级设置": "Advanced Setting",
+      "开启": "Enable",
+      "关闭": "Disable",
+      "澄清询问": "Clarification",
+      "思考模式": "Thinking Mode",
+      "结构化输出": "Structured Output",
+      "效率优先": "Effect First",
+      "速度优先": "Speed First",
+      "工具": "Tool",
+      "转交高级设置": "Handoff Advanced Setting",
+      "上一轮回复用户的Agent": "The Agent Who Replied To The User Last",
+      "主Agent": "Main Agent",
+      "随机种子": "Random Seed",
+      "存在惩罚": "Presence Penalty",
+      "频率惩罚": "Frequency Penalty",
+      "重复惩罚": "Repetition Penalty",
+      "最大输出长度": "Maximum Output Length",
+      "停止序列": "Stop Sequence",
+      "输出格式": "Output Format",
+      "Multi-Agent模式-更新Agent插件列表-%s": "Multi-Agent mode – update agent plugin list – %s",
+      "Multi-Agent模式-批量删除Plan & Execute Agents": "Multi-Agent mode – batch delete Plan & Execute Agents",
+      "Multi-Agent模式-初始化Plan & Execute Agents": "Multi-Agent mode – initialize Plan & Execute Agents",
+      "Multi-Agent模式-Agent“%s”添加": "Multi-Agent mode – add agent “%s”",
+      "Multi-Agent模式-Agent“%s”删除": "Multi-Agent mode – delete agent “%s”",
+      "Multi-Agent模式-转交关系设置-转交方agent“%s”转交为接收方agent“%s”": "Multi-Agent mode – handoff setup – transfer agent “%s” to agent “%s”",
+      "Multi-Agent模式-Agent“%s”编辑Agent名称为“%s”": "Multi-Agent mode – agent “%s” renamed to “%s”",
+      "Multi-Agent模式-模型编辑--Agent“%s”编辑模型为模型“%s”": "Multi-Agent mode – agent “%s” switched to model “%s”",
+      "Multi-Agent模式-转交描述-Agent“%s”编辑转交描述为“%s”": "Multi-Agent mode – agent “%s” updated handoff description to “%s”",
+      "Multi-Agent模式-提示词-Agent“%s”编辑提示词为“%s”": "Multi-Agent mode – agent “%s” updated prompt to “%s”",
+      "Multi-Agent模式-Agent“%s”高级设置": "Multi-Agent mode – agent “%s” advanced settings",
+      "Multi-Agent模式-Agent“%s”添加工具“%s”": "Multi-Agent mode – agent “%s” added tool “%s”",
+      "Multi-Agent模式-Agent“%s”删除工具“%s”": "Multi-Agent mode – agent “%s” removed tool “%s”",
+      "Multi-Agent模式-Agent“%s”更新工具“%s”": "Multi-Agent mode – agent “%s” updated tool “%s”",
+      "工作流[%s]不可用或不存在": "Workflow [%s] is unavailable or missing",
+      "模型[%s]不可用或不存在":"Model [%s] is unavailable or does not exist",
+      "引用的工具不存在或不可用(工具ID:%s)": "Referenced tool does not exist or is unavailable (Tool ID: %s)",
+      "官方": "Official"
+    }
+  agent-config_zh-CN.json: |
+    {
+      "应用ID为空": "应用ID为空",
+      "AgentID为空": "AgentID为空",
+      "获取测试环境Agent失败": "获取测试环境Agent失败",
+      "获取发布环境Agent失败": "获取发布环境Agent失败",
+      "Agent": "Agent",
+      "名称": "名称",
+      "模型": "模型",
+      "模型选择": "模型选择",
+      "温度": "温度",
+      "Top-P": "Top-P",
+      "最大推理轮数": "最大推理轮数",
+      "上下文记忆轮数": "上下文记忆轮数",
+      "转交描述": "转交描述",
+      "转交关系": "转交关系",
+      "提示词": "提示词",
+      "插件": "插件",
+      "新增": "新增",
+      "修改": "修改",
+      "删除": "删除",
+      "知识库问答": "知识库问答",
+      "是": "是",
+      "否": "否",
+      "；": "；",
+      ".": ".",
+      "/": "/",
+      "变更为": "变更为",
+      "工具描述变更为": "工具描述变更为",
+      "值变更为": "值变更为",
+      "必填属性变更为": "必填属性变更为",
+      "模型名称变更为": "模型名称变更为",
+      "配置": "配置",
+      "配置参数": "配置参数",
+      "头部参数": "头部参数",
+      "输入参数": "输入参数",
+      "输出参数": "输出参数",
+      "子参数": "子参数",
+      "单选参数": "单选参数",
+      "多选参数": "多选参数",
+      "知识库": "知识库",
+      "参数": "参数",
+      "新增参数": "新增参数",
+      "删除参数": "删除参数",
+      "参数名称变更为": "参数名称变更为",
+      "Input配置发生变更": "Input配置发生变更",
+      "描述变更为": "描述变更为",
+      "类型变更为": "类型变更为",
+      "默认值变更为": "默认值变更为",
+      "模型是否可见变更为": "模型是否可见变更为",
+      "分析方法变更为": "分析方法变更为",
+      "新增转交Agent:": "新增转交Agent:",
+      "删除转交Agent:": "删除转交Agent:",
+      "整体检索范围变更为": "整体检索范围变更为",
+      "问答开关变更为": "问答开关变更为",
+      "文档列表发生变更": "文档列表发生变更",
+      "标签过滤操作符变更为": "标签过滤操作符变更为",
+      "标签过滤标签发生变更": "标签过滤标签发生变更",
+      "知识库类型变更为：": "知识库类型变更为：",
+      "知识库检索范围变更为：": "知识库检索范围变更为：",
+      "知识库文档列表发生变更": "知识库文档列表发生变更",
+      "知识库问答开关变更为：": "知识库问答开关变更为：",
+      "知识库标签发生变更": "知识库标签发生变更",
+      "全部知识": "全部知识",
+      "按知识库": "按知识库",
+      "按特定知识": "按特定知识",
+      "按标签": "按标签",
+      "且": "且",
+      "或": "或",
+      "默认知识库": "默认知识库",
+      "共享知识库": "共享知识库",
+      "高级设置": "高级设置",
+      "开启": "开启",
+      "关闭": "关闭",
+      "澄清询问": "澄清询问",
+      "思考模式":"思考模式",
+      "结构化输出":"结构化输出",
+      "效率优先":"效率优先",
+      "速度优先":"速度优先",
+      "工具":"工具",
+      "转交高级设置": "转交高级设置",
+      "上一轮回复用户的Agent": "上一轮回复用户的Agent",
+      "主Agent": "主Agent",
+      "随机种子": "随机种子",
+      "存在惩罚": "存在惩罚",
+      "频率惩罚": "频率惩罚",
+      "重复惩罚": "重复惩罚",
+      "最大输出长度": "最大输出长度",
+      "停止序列": "停止序列",
+      "输出格式": "输出格式",
+      "Multi-Agent模式-更新Agent插件列表-%s": "Multi-Agent模式-更新Agent插件列表-%s",
+      "Multi-Agent模式-批量删除Plan & Execute Agents": "Multi-Agent模式-批量删除Plan & Execute Agents",
+      "Multi-Agent模式-初始化Plan & Execute Agents": "Multi-Agent模式-初始化Plan & Execute Agents",
+      "Multi-Agent模式-Agent“%s”添加": "Multi-Agent模式-Agent“%s”添加",
+      "Multi-Agent模式-Agent“%s”删除": "Multi-Agent模式-Agent“%s”删除",
+      "Multi-Agent模式-转交关系设置-转交方agent“%s”转交为接收方agent“%s”": "Multi-Agent模式-转交关系设置-转交方agent“%s”转交为接收方agent“%s”",
+      "Multi-Agent模式-Agent“%s”编辑Agent名称为“%s”": "Multi-Agent模式-Agent“%s”编辑Agent名称为“%s”",
+      "Multi-Agent模式-模型编辑--Agent“%s”编辑模型为模型“%s”": "Multi-Agent模式-模型编辑--Agent“%s”编辑模型为模型“%s”",
+      "Multi-Agent模式-转交描述-Agent“%s”编辑转交描述为“%s”": "Multi-Agent模式-转交描述-Agent“%s”编辑转交描述为“%s”",
+      "Multi-Agent模式-提示词-Agent“%s”编辑提示词为“%s”": "Multi-Agent模式-提示词-Agent“%s”编辑提示词为“%s”",
+      "Multi-Agent模式-Agent“%s”高级设置": "Multi-Agent模式-Agent“%s”高级设置",
+      "Multi-Agent模式-Agent“%s”添加工具“%s”": "Multi-Agent模式-Agent“%s”添加工具“%s”",
+      "Multi-Agent模式-Agent“%s”删除工具“%s”": "Multi-Agent模式-Agent“%s”删除工具“%s”",
+      "Multi-Agent模式-Agent“%s”更新工具“%s”": "Multi-Agent模式-Agent“%s”更新工具“%s”",
+      "工作流[%s]不可用或不存在": "工作流[%s]不可用或不存在",
+      "模型[%s]不可用或不存在":"模型[%s]不可用或不存在",
+      "引用的工具不存在或不可用(工具ID:%s)": "引用的工具不存在或不可用(工具ID:%s)",
+      "官方": "官方"
+    }
+  error_en-US.json: |
+    {
+      "应用信息不存在": "Application information does not exist",
+      "资源权限不足": "Insufficient resource permissions",
+      "您的服务已到期，请联系架构师续费": "Your service has expired, please contact our SA to renew",
+      "系统内部错误": "Internal system error",
+      "参数异常，请重试": "Parameter error, please try again",
+      "当前用户无权限": "Current user has no permission",
+      "版本号异常，请检查是否为最新版本": "Version number error, please check if it is the latest version",
+      "数据不存在": "Data does not exist",
+      "调用api失败": "API call failed",
+      "agent_id已存在": "agent_id already exists",
+      "同一应用下agent名称重复": "Duplicate agent name under the same application",
+      "同一应用下启动agent已存在": "A startup agent already exists under the same application",
+      "图标不合法": "Invalid icon",
+      "头像尺寸不合法": "Invalid avatar size",
+      "Agent数量超出限制": "Number of agents exceeds the limit",
+      "发布中，不允许删除": "Cannot delete during publishing",
+      "发布中，不允许编辑": "Cannot edit during publishing",
+      "Agent加载失败": "Failed to load agent",
+      "发布任务加载失败": "Failed to load publishing task",
+      "发布任务记录加载失败": "Failed to load publishing task record",
+      "配置数据查询错误": "Configuration data query error",
+      "配置数据发布错误": "Configuration data publishing error",
+      "运行数据发布错误": "Runtime data publishing error",
+      "机器人不存在": "Bot does not exist",
+      "插件不存在": "Plugin does not exist",
+      "Agent插件数量超出限制": "Number of agent plugins exceeds the limit",
+      "工具不存在": "Tool does not exist",
+      "该插件工具已存在": "This plugin tool already exists",
+      "该插件工具未添加": "This plugin tool has not been added",
+      "没有可删除的工具": "No tools available for deletion",
+      "Agent(工具+转交)数量超出限制": "Number of agent (tools + handoff) exceeds the limit",
+      "Agent工具信息内容超出容量限制": "Agent tool information exceeds capacity limit",
+      "缺少必填信息，不允许添加该工具": "Required information is missing, cannot add this tool",
+      "请求参数错误: %s": "Request parameter error: %s",
+      "内部服务器错误: %s": "Internal server error: %s"
+    }
+
+  error_zh-CN.json: |
+    {
+      "应用信息不存在": "应用信息不存在",
+      "资源权限不足": "资源权限不足",
+      "您的服务已到期，请联系架构师续费": "您的服务已到期，请联系架构师续费",
+      "系统内部错误": "系统内部错误",
+      "参数异常，请重试": "参数异常，请重试",
+      "当前用户无权限": "当前用户无权限",
+      "版本号异常，请检查是否为最新版本": "版本号异常，请检查是否为最新版本",
+      "数据不存在": "数据不存在",
+      "调用api失败": "调用api失败",
+      "agent_id已存在": "agent_id已存在",
+      "同一应用下agent名称重复": "同一应用下agent名称重复",
+      "同一应用下启动agent已存在": "同一应用下启动agent已存在",
+      "图标不合法": "图标不合法",
+      "头像尺寸不合法": "头像尺寸不合法",
+      "Agent数量超出限制": "Agent数量超出限制",
+      "发布中，不允许删除": "发布中，不允许删除",
+      "发布中，不允许编辑": "发布中，不允许编辑",
+      "Agent加载失败": "Agent加载失败",
+      "发布任务加载失败": "发布任务加载失败",
+      "发布任务记录加载失败": "发布任务记录加载失败",
+      "配置数据查询错误": "配置数据查询错误",
+      "配置数据发布错误": "配置数据发布错误",
+      "运行数据发布错误": "运行数据发布错误",
+      "机器人不存在": "机器人不存在",
+      "插件不存在": "插件不存在",
+      "Agent插件数量超出限制": "Agent插件数量超出限制",
+      "工具不存在": "工具不存在",
+      "该插件工具已存在": "该插件工具已存在",
+      "该插件工具未添加": "该插件工具未添加",
+      "没有可删除的工具": "没有可删除的工具",
+      "Agent(工具+转交)数量超出限制": "Agent(工具+转交)数量超出限制",
+      "Agent工具信息内容超出容量限制": "Agent工具信息内容超出容量限制",
+      "缺少必填信息，不允许添加该工具": "缺少必填信息，不允许添加该工具",
+      "请求参数错误: %s": "请求参数错误: %s",
+      "内部服务器错误: %s": "内部服务器错误: %s"
+    }
+
+  main.yaml: |
+    storage:
+      {{ include "qbot.s3_storage" . }}
+    experience_center_uin: 100000000
+    knowledge_qa_tool:
+      tool_name: KnowledgeRetrievalAnswer
+      plugin_id: 3ad93aae-587e-4bcc-ae07-ad13bfb1aaca
+      tool_id: 0ca8d482-1e77-462b-bc21-807c8f052f69
+      tool_id_map: 
+        0ca8d482-1e77-462b-bc21-807c8f052f69: KnowledgeRetrievalAnswer
+        080bbce6-b02b-466e-a152-967c1546eb05: BoundedKnowledgeQA
+        cf5b121f-57d7-47c1-937a-2f9993ec0a63: Text2SQL
+    kb_agent:
+      agent_id: "26cba316-d6ff-4a74-9964-cfd0bd41d7dd"
+      handoff_description: "A knowledge base Q&A agent responsible for <typical scenarios>, capable of answering related questions within those scenarios."
+    workflow_tool:
+      icon_url: "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/_adp_/qbot/public/workflow-tool.svg"
+    agent_config:
+      default_starting_agent_handoff_description: 
+      default_history_limit: 5
+      import_icon_dir: {{ (.Values.global.components.s3.cos).subPath | default "" }}
+    clarification:
+      widget_configs:
+        - widget_id: 3b65b7ac63504c63855caff4ff872ce2
+          clarification_widget_type: 1
+        - widget_id: f68c478e080749a090e0ebec1b6f4d2d
+          clarification_widget_type: 2
+        - widget_id: 8da86e24c79f4fb29e5c150fe6636929
+          clarification_widget_type: 3
+        - widget_id: 2c3e4c2d15464c13a31c35eb5e82f9f6
+          clarification_widget_type: 4
+    agent_check:
+      agent_name_min_len: 1
+      agent_name_max_len: 100
+      agent_handoff_description_min_len: 0
+      agent_handoff_description_max_len: 0
+      agent_instructions_min_len: 0
+      agent_instructions_max_len: 20000 # 若动态拉取不到模型配置，则启用此处限制
+      max_page_size: 200
+      default_icon: "/qbot/public/static/lke/agent-robot.png"
+      max_icon_size: 524288
+      agent_limit: 10 # 同一应用下Agent数量限制
+      agent_tool_limit: 50 # 同一应用下Agent工具数量限制
+      tool_limit_whitelist: # 主要用于hank效果测试
+        "100034812856": 300  
+    data_sync_task:
+      release_queue_length: 200
+      release_items_per_batch: 100
+
+    task_config:
+      task_prefix: agent-config-server:task
+      task_fetch_num: 400
+      task_fetch_timeout: 2s
+      task_fetch_period: 2s
+      task_max_timeout: 1h
+      tasks:
+        agent_app_delete:
+          runners: 5 #处理协程数，无法动态调整
+          retry_wait_time: 1m #重试等待时间
+          max_retry: 2 #最大重试次数
+          timeout: 5m #超时时间
+          fail_timeout: 3s # 失败回调超时
+          delay: 0s #启动延迟
+          batch:  1
+          batch_size: 0
+          stopped_resume_time: 720h
+    agent_app_delete_config:
+      delete_batch_size: 10
+      query_batch_size: 10
+    pe_config:
+      tool_info:
+        read_file:
+          plugin_id: "b5e4919f-e6c0-4eac-84ec-65a4f9ed44ee"
+          tool_id: "f0eb36ab-e7db-4b45-ba5a-e68fe46f3d05"
+          parameters:
+            path:
+              agent_hidden: false  # 文件路径对模型可见
+            end_line:
+              agent_hidden: true   # 结束行号对模型不可见，由系统控制
+            start_line:
+              agent_hidden: true   # 开始行号对模型不可见，由系统控制
+            sudo:
+              agent_hidden: true   # sudo权限对模型不可见，由系统控制
+
+        write_file:
+          plugin_id: "b5e4919f-e6c0-4eac-84ec-65a4f9ed44ee"
+          tool_id: "bd3a0222-4ee5-4f14-a776-a0b2d2a9f5ee"
+          parameters:
+            path:
+              agent_hidden: false  # 文件路径对模型可见
+            content:
+              agent_hidden: false  # 文件内容对模型可见
+            append:
+              agent_hidden: false   # 追加模式对模型不可见，由系统控制
+            sudo:
+              agent_hidden: true   # sudo权限对模型不可见，由系统控制
+            leading_newline:
+              agent_hidden: true   # 前导换行符对模型不可见，由系统控制
+            trailing_newline:
+              agent_hidden: true   # 尾随换行符对模型不可见，由系统控制
+
+        shell_exec:
+          plugin_id: "b5e4919f-e6c0-4eac-84ec-65a4f9ed44ee"
+          tool_id: "f81cc02e-d1e1-410c-ae68-3203d64694f8"
+          parameters:
+            command:
+              agent_hidden: false  # 命令对模型可见
+            exec_dir:
+              agent_hidden: true   # 执行目录对模型不可见，由系统控制
+            session_id:
+              agent_hidden: true   # 会话ID对模型不可见，由系统控制
+
+        code_interpreter:
+          plugin_id: "b5e4919f-e6c0-4eac-84ec-65a4f9ed44ee"
+          tool_id: "766231d0-6825-4d83-9cf4-c2d339740134"
+          parameters:
+            Code:
+              agent_hidden: false  # 代码对模型可见
+
+        file_str_replace:
+          plugin_id: "b5e4919f-e6c0-4eac-84ec-65a4f9ed44ee"
+          tool_id: "74e4a73c-72bb-417d-aee4-5967282b3621"
+          parameters:
+            path:
+              agent_hidden: false  # 文件路径对模型可见
+            old_str:
+              agent_hidden: false  # 旧字符串对模型可见
+            new_str:
+              agent_hidden: false  # 新字符串对模型可见
+            sudo:
+              agent_hidden: true   # sudo权限对模型不可见，由系统控制
+        DocParsingQA:
+          plugin_id: "7a8d9c0e-1f2a-4b3c-8d4e-5f6a7b8c9d0e"
+          tool_id: "8a8c9d0e-1f2a-4b3c-8d4e-5f6a7b8c9d0f"
+
+        ImageQuiz:
+          plugin_id: "61a2635f-62f8-4e44-94fd-38cf07a9cc71"
+          tool_id: "6f7a8b9c-0d1e-4f2a-3456-789abcdef01a"
+
+        WebpageParsingQA:
+          plugin_id: "d6dd384b-8eb3-43c0-8d10-68933b4ceaa8"
+          tool_id: "5c7d2f4a-2b5e-4f8c-9a7d-3b2c1d4e5f8c"
+      common_tools: []
+      model_name: "Deepseek/deepseek-v3.2"
+      filter_agent: Assigner Agent
+      agents:
+        planner:
+          name: "Planner Agent"
+          instructions: ""
+          handoff_description: "Plan and execute complex tasks with detailed step-by-step planning and coordination."
+          icon_url: /qbot/public/icon/pe_icon.png
+          action: "plan_task"
+          special_tools: []
+          model_params:
+            temperature: 0.3
+            top_p: 0.9
+            deep_thinking: "disabled"
+
+        assigner:
+          name: "Assigner Agent"
+          instructions: ""
+          handoff_description: "Can handoff to all executor agents for task distribution and coordination."
+          icon_url: /qbot/public/icon/pe_icon.png
+          action: "assign_task"
+          special_tools: []
+          model_params:
+            temperature: 0.3
+            top_p: 0.9
+            deep_thinking: "disabled"
+
+        search:
+          name: "Search Agent"
+          instructions: ""
+          handoff_description: "Perform web search and information retrieval tasks."
+          icon_url: /qbot/public/icon/pe_icon.png
+          action: "search_info"
+          special_tools: []
+          model_params:
+            temperature: 0.3
+            top_p: 0.9 
+            deep_thinking: "disabled"
+          advanced_config: 
+            max_reasoning_round: 15
+
+        code:
+          name: "Code Agent"
+          instructions: ""
+          handoff_description: "Write and execute code in various programming languages."
+          icon_url: /qbot/public/icon/pe_icon.png
+          action: "write_code"
+          special_tools:
+            - "code_interpreter"
+          model_params:
+            temperature: 0.3
+            top_p: 0.9 
+            deep_thinking: "disabled"
+
+        shell:
+          name: "Shell Agent"
+          instructions: ""
+          handoff_description: "Execute shell commands and perform system operations."
+          icon_url: /qbot/public/icon/pe_icon.png
+          action: "execute_shell"
+          model_params:
+            temperature: 0.3
+            top_p: 0.9 
+            deep_thinking: "disabled"
+          special_tools:
+            - "shell_exec"
+            - "read_file"
+            - "write_file"
+            - "file_str_replace"
+
+        report:
+          name: "Report Agent"
+          instructions: ""
+          handoff_description: "Generate professional reports and documentation."
+          icon_url: /qbot/public/icon/pe_icon.png
+          action: "generate_report"
+          model_params:
+            temperature: 0.6
+            top_p: 0.95
+            max_tokens: 32000
+          special_tools:
+            - "write_file"
+
+          model_name: "lke-deepseek-r1-0528-agent"
+        webpage:
+          name: "Webpage Generation Agent"
+          instructions: ""
+          handoff_description: "Create and deploy web pages with HTML, CSS, and JavaScript."
+          icon_url: /qbot/public/icon/pe_icon.png
+          action: "create_webpage"
+          model_params:
+            temperature: 0.6
+            top_p: 0.95 
+            max_tokens: 32000
+            deep_thinking: "enabled"
+          special_tools:
+            - "write_file"
+            - "deploy_html"
+
+        assist:
+          name: "Assist Agent"
+          instructions: ""
+          handoff_description: "You are a versatile assistant agent, serving as a general-purpose helper that can provide guidance and support across a wide range of tasks and domains."
+          icon_url: /qbot/public/icon/pe_icon.png
+          action: "assist"
+          model_params:
+            temperature: 0.3
+            top_p: 0.9
+            max_tokens: 16384
+            deep_thinking: "disabled"
+          special_tools: [] 
+
+        attachment:
+          name: "Attachment Agent"
+          instructions: ""
+          handoff_description: "Attachment parsing and extraction."
+          icon_url: /qbot/public/icon/pe_icon.png
+          action: "attachment"
+          model_params:
+            temperature: 0.3
+            top_p: 0.9 
+            deep_thinking: "disabled"
+          special_tools: 
+            - "DocParsingQA"
+            - "ImageQuiz"
+            - "WebpageParsingQA"
+
+  placeholder.yaml: |
+
+    COS_TARGET: dns://cos-internal.ap-guangzhou.tencentcos.cn
+  trpc_go.yaml: |
+    global:
+      namespace: Production
+    server:
+      app: adp
+      server: agent-config
+      bin_path: /app/bin/
+      conf_path: /app/conf/
+      log_path: /app/logs/
+      admin:
+        ip: ${POD_IP}
+        port: 8081
+        read_timeout: 3000
+        write_timeout: 60000
+      filter:
+        - recovery
+        - debuglog
+        - i18n-adp
+        - cle-route-propagator
+        - opentelemetry
+      service:
+        - name: trpc.KEP.agent-config-server.AgentConfig
+          ip: ${POD_IP}
+          port: 8000
+          network: tcp
+          protocol: trpc
+          server_async: true
+          idletime: 600000
+          filter:
+            - session
+        - name: trpc.KEP.agent-config-server.AgentConfigApi
+          ip: ${POD_IP}
+          port: 8001
+          network: tcp
+          protocol: trpc
+          server_async: true
+          idletime: 600000
+        - name: trpc.KEP.agent-config-server.TimerCheckAgentSchedulerTasks
+          ip: ${POD_IP}
+          port: 8002
+          network: "0 */2 * * * * ?startAtOnce=0&scheduler=redis&holdTime=60"
+          protocol: timer
+          timeout: 120000
+        - name: trpc.KEP.agent-config-server.TimerMarkedInvalidAgentRecords
+          ip: ${POD_IP}
+          port: 8003
+          network: "0 0 2 * * *"
+          protocol: timer
+          timeout: 600000
+        - name: trpc.KEP.agent-config-server.TimerCleanDeletedAgentsMonthly
+          ip: ${POD_IP}
+          port: 8004
+          network: "0 0 3 1 * *"
+          protocol: timer
+          timeout: 600000
+    client:
+      filter:
+        - debuglog
+        - cle-route-propagator
+        - opentelemetry
+      service:
+        - name: redis.plugin-config-server
+          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/23
+        - name: mysql.db_llm_plugin
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.db_llm_prod_plugin
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: trpc.redis.agent_config
+          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/25
+        - name: trpc.mysql.agent_config
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: trpc.mysql.agent_config_prod
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.qbot.admin
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: trpc.tcadp.agent.tdsql
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - callee: trpc.KEP.plugin_config_server.PluginConfigApi
+          name: trpc.KEP.plugin-config-server.PluginConfigApi
+          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: Production
+          timeout: 30000
+        - callee: trpc.adp.plugin_config.PluginConfigApi
+          name: trpc.adp.plugin_config.PluginConfigApi
+          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: Production
+          timeout: 60000
+        - name: trpc.KEP.bot_task_config_server.TaskConfig
+          namespace: Production
+          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+          timeout: 3000
+        - callee: trpc.adp.workflow_config.WorkflowConfig
+          namespace: Production
+          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+          timeout: 60000
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          namespace: Production
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_admin_proxy.Login
+          namespace: Production
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          namespace: Production
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_admin_proxy.Api
+          namespace: Production
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_knowledge_config_server.Api
+          name: trpc.KEP.bot-knowledge-config-server.Api
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: Production
+          protocol: trpc
+          env_name: formal
+          timeout: 30000
+        - callee: trpc.adp.kb_config.Api
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: Production
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.resource_gallery.Admin
+          namespace: Production
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.widget_config.WidgetConfigInner
+          namespace: Production
+          target: ip://adp-widget-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.platform_manager.Login
+          namespace: Production
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.platform_manager.Admin
+          namespace: Production
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.app_config.Admin
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          protocol: trpc
+          timeout: 10000
+        - name: trpc.http.cos.Access
+          network: tcp
+          protocol: http
+          target: dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn
+          timeout: 5000
+    plugins:
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      log:
+        default:
+          - writer: console
+            level: error
+          - writer: file
+            level: debug
+            writer_config:
+              filename: /app/logs/trpc.log
+              max_size: 100
+              max_backups: 10
+              max_age: 7
+              compress: false
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+            - name: rainbow-comm
+              path: /app/conf/
+            - name: global
+              appid: ${RAINBOW_APP_ID}  # appid
+              group: global # 配置所属组
+              type: kv   # 七彩石数据格式, kv(默认), table
+              env_name: ${RAINBOW_ENV_NAME}
+              timeout: 2000
+              enable_client_provider: true
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+            - zh-CN
+            - en-US
+          data_provider:
+            type: rainbow
+            prefix: agent-config
+            error_prefix: error
+            char_scaling_factor:
+              zh-CN: 1
+              en-US: 3
+      registry:
+        polaris:
+      selector:
+        polaris:
+          enable_servicerouter: true
