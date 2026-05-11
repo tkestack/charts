@@ -2,4 +2,4 @@ enabled: true
 resourcesDir: ""
 images:
   deploy-data-init:
-    url: ccr.ccs.tencentyun.com/tke-market/data-init:29__master_305a8f63_iaas
+    url: "{{ .Values.global.imageRegistry }}/tke-market/data-init:31__master_80e8b7d1_iaas"

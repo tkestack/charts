@@ -1176,7 +1176,7 @@ data:
 
     # --- trpc.adp.ai_gateway.Admin ---
     AI_GATEWAY_ADMIN_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
-    ATOMIC_GATEWAY_TARGET: dns://api.adp.cloud.tencent.com:443
+    ATOMIC_GATEWAY_TARGET: dns://apiintl.adp.cloud.tencent.com:443
 
 
     KAFKA_MSG_LOG_TOPIC: msg_record_binlog
@@ -1254,6 +1254,7 @@ data:
       filter:                                          #针对所有service处理函数前后的拦截器列表
         - recovery                                       #拦截框架创建的业务处理协程panic
         - i18n-adp
+        - opentelemetry
       admin:
         ip: ${POD_IP}
         port: 8081
@@ -1463,7 +1464,7 @@ data:
           service:
             - name: trpc.KEP.bot-data-statistics-server.Api      #service name 与上面的service配置一一对应
               namespace: Test                #环境类型，分正式Production和非正式Development两种类型
-              token: e145f79eac6b4eeea2e89983691ccd46               #服务注册所需要的 token
+              token: xxxxxxxxxxxx               #服务注册所需要的 token
       selector: #针对用户自定义的selector的配置
         polaris: #针对polaris整体api的内部配置
           protocol: grpc                              #名字服务远程交互协议类型
@@ -1568,7 +1569,7 @@ data:
         - name: adp.atomic.gateway
           network: tcp
           protocol: http
-          target: dns://api.adp.cloud.tencent.com:443
+          target: dns://apiintl.adp.cloud.tencent.com:443
           timeout: 600000
         - name: trpc.adp.ai_gateway.Admin
           network: tcp

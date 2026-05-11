@@ -1,6 +1,6 @@
 images:
   ti-ingress-controller:
-    url: ccr.ccs.tencentyun.com/tke-market/ti-ingress-controller:feature_3.9-lke_7695473b_20260120_zhiyan31
+    url: "{{ .Values.global.imageRegistry }}/tke-market/ti-ingress-controller:feature_3.9-lke_7695473b_20260120_zhiyan31"
 namespace: ti-base
 imagePullSecretName: qcloudregistrykey
 replicas: 1

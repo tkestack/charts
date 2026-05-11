@@ -1,4 +1,4 @@
 images:
   adp-web-app:
-    url: ccr.ccs.tencentyun.com/tke-market/webappchatbot:173_2605081831_stable_v3.4.1.1-34825e10b-aee6cd989-2be1c2841-en
+    url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:187_2605111721_stable_v3.4.1.1-5431bcb68-435399474-a11c6701b-en"
 replicas: 1

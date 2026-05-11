@@ -3234,10 +3234,14 @@ data:
             namespace = service_infos[1]
             # exvars 路由使用 /cgi/capi*，非 exvars 路由使用 /gateway* 支持前端访问
             # arg_action exvars 路由需要同时匹配 /gateway* 和 /cgi/capi*
+            # arg_cmd exvars 路由额外匹配 /cgi/apex/qbot/api/*（兼容前端 QBOT_API_BASE_URL=/cgi/apex 访问方式）
             if ex_vars:
                 is_arg_action = any(v[0] == "arg_action" for v in ex_vars)
+                is_arg_cmd = any(v[0] == "arg_cmd" for v in ex_vars)
                 if is_arg_action:
                     uris = ["/gateway*", "/cgi/capi*"]
+                elif is_arg_cmd:
+                    uris = ["/cgi/capi*"]
                 else:
                     uris = ["/cgi/capi*"]
             else:
@@ -3266,6 +3270,27 @@ data:
                 else:
                     route_detail["priority"] = 20   # header 兜底: 35 -> 20, 必须 > ti-web-static(10) 且 < 精确版本(35)
             routes = [route_detail]
+
+            # arg_cmd 类型额外生成一条 /cgi/apex/qbot/api/* 的 path-only 路由（无 exprs 条件）
+            # 允许前端通过 /cgi/apex/qbot/api/<cmd> 路径直接访问，无需在 query 里带 cmd 参数
+            # rewrite-lke.lua 会从 uri path 中提取 cmd 并组装标准 YunAPI body
+            if ex_vars and any(v[0] == "arg_cmd" for v in ex_vars):
+                apex_path_uris = ["/cgi/apex/qbot/api/*"]
+                apex_route_detail = Route.create_crd_base_route_interface(
+                    global_reg,
+                    apex_path_uris,
+                    desc,
+                    service_name,
+                    upstream_address,
+                    action,
+                    scheme=scheme,
+                    forward_uri=forward_uri,
+                    ex_vars=None,   # 无 exprs，纯 path 匹配
+                )
+                # 不设 vars，只按 path 匹配
+                apex_route_detail["interface_name"] = apex_route_detail["interface_name"] + "-apex-path"
+                apex_route_detail["priority"] = 50  # 高于通用兜底(20/35)，低于精确 cmd 匹配(100)
+                routes.append(apex_route_detail)
             route_body = {
                 "route_name": route_name,
                 "namespace": namespace,

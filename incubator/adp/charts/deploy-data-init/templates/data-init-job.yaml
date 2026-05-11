@@ -48,7 +48,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: data-init
-        image: {{ (index .Values.images "deploy-data-init").url }}
+        image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "deploy-data-init").url "context" .) }}
         imagePullPolicy: IfNotPresent
         workingDir: /app
         command:
@@ -58,8 +58,8 @@ spec:
             /app/bin/cross-up --config /app/conf/trpc_go.yaml init --target v3.4.1
             EXIT_CODE=$?
             if [ $EXIT_CODE -ne 0 ]; then
-              echo "=== FAILED with exit code $EXIT_CODE, sleeping 1h for debug ==="
-              sleep 3600
+              echo "=== FAILED with exit code $EXIT_CODE, sleeping 10min for debug ==="
+              sleep 600
             fi
             exit $EXIT_CODE
         env:

@@ -105,7 +105,7 @@ spec:
               value: info
             - name: ProductType
               value: {{ include "getProductType" . | quote }}
-          image: {{(index .Values.images "adp-platform-authenticator").url}}
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-platform-authenticator").url "context" .) }}
           imagePullPolicy: Always
           command: ["/app/bin/platform-authenticator", "-conf", "/app/conf/trpc_go.yaml"]
           name: adp-platform-authenticator
@@ -115,7 +115,7 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "125m"
               memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
@@ -123,7 +123,7 @@ spec:
               cpu: "1"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "500m"
               memory: "512Mi"
           {{- else }}
           resources:
@@ -131,8 +131,8 @@ spec:
               cpu: "1"
               memory: "2Gi"
             requests:
-              cpu: "200m"
-              memory: "512Mi"
+              cpu: "500m"
+              memory: "1Gi"
           {{- end }}
           livenessProbe:
             failureThreshold: 3

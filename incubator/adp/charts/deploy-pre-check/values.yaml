@@ -4,7 +4,7 @@ enabled: true
 # 镜像配置
 images:
   pre-install-check:
-    url: ccr.ccs.tencentyun.com/tke-market/pre-install-check:v1.1
+    url: "{{ .Values.global.imageRegistry }}/tke-market/pre-install-check:v1.1"
 
 # 检查任务配置
 job:

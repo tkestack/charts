@@ -41,7 +41,7 @@ spec:
     spec:
       containers:
         - name: etcd
-          image: {{ (index .Values.images "etcd").url }}
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "etcd").url "context" .) }}
           imagePullPolicy: IfNotPresent
           command:
             - etcd

@@ -1,6 +1,6 @@
 images:
   adp-plugin-pod-schedule:
-    url: ccr.ccs.tencentyun.com/tke-market/resource-schedule-server:1_2603291708_stable_v3.4.1.1_e5a6b24c_private
+    url: "{{ .Values.global.imageRegistry }}/tke-market/resource-schedule-server:1_2603291708_stable_v3.4.1.1_e5a6b24c_private"
 resources:
   limits:
     cpu: 1

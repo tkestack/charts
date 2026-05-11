@@ -700,7 +700,7 @@ data:
         new_index_url: /project/new
         update_index_url: /project/update
       filemanage_client:
-        target: ip://file-manager-server.adp.svc.cluster.local:10001
+        target: ip://file-manager-server.{{ .Release.Namespace }}.svc.cluster.local:10001
         name: trpc.SmartAssistant.FileManagerServer.ManagerObj
         protocol: trpc
         timeout: 2000
@@ -713,7 +713,7 @@ data:
         ocr_debug_file_path: debug_files/
       fileparser_client:
         name: trpc.SmartAssistant.FileParserServer.ParserObj
-        target: ip://file-parser-server.adp.svc.cluster.local:10001
+        target: ip://file-parser-server.{{ .Release.Namespace }}.svc.cluster.local:10001
         protocol: trpc
         conv_file_path: debug_files/pdf2image/
       storage:
@@ -734,7 +734,7 @@ data:
       llm_client:
         addr: "https://qbot-v2.llm.test.polaris:8080"
         index_interface: /index
-        token: de1b2a7baf7850243db71c4abd4e5a39
+        token: xxxxxxxxxxxx
     hunyuan_tools:
       prompt_max_time_range: 345600
       default_max_time_range: 2678400

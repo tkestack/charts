@@ -1,8 +1,8 @@
 images:
   adp-apex:
-    url: ccr.ccs.tencentyun.com/tke-market/apex:4_2603280059_master_private_247b5729_private
+    url: "{{ .Values.global.imageRegistry }}/tke-market/apex:4_2603280059_master_private_247b5729_private"
   apex-router:
-    url: ccr.ccs.tencentyun.com/tke-market/apex-router:5.8.0
+    url: "{{ .Values.global.imageRegistry }}/tke-market/apex-router:5.8.0"
 apex:
   database:
     type: mysql

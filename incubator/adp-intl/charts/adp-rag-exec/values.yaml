@@ -1,6 +1,6 @@
 images:
   adp-rag-exec:
-    url: ccr.ccs.tencentyun.com/tke-market/rag-exec:5_2605062044_stable_v3.4.1.1_11c95b8c_private
+    url: "{{ .Values.global.imageRegistry }}/tke-market/rag-exec:5_2605062044_stable_v3.4.1.1_11c95b8c_private"
 resources:
   limits:
     cpu: 1

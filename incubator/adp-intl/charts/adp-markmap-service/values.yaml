@@ -1,6 +1,6 @@
 images:
   adp-markmap-service:
-    url: ccr.ccs.tencentyun.com/tke-market/webappchatbot:markmap-98407ee-55
+    url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:markmap-98407ee-55"
 replicas: 1
 resources:
   limits:

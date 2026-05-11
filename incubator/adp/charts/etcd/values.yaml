@@ -1,6 +1,6 @@
 images:
   etcd:
-    url: ccr.ccs.tencentyun.com/tke-market/etcd:3.6.4-0
+    url: "{{ .Values.global.imageRegistry }}/tke-market/etcd:3.6.4-0"
 imagePullSecretName: qcloudregistrykey
 replicas: 3
 resources:

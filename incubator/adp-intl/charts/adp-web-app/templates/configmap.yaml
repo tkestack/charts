@@ -158,12 +158,12 @@ data:
             alias /web/html/workflow/;
           }
           location /s/ {
-            set $short_url_upstream http://adp-app-shorturl.adp.svc.cluster.local:8080;
+            set $short_url_upstream http://adp-app-shorturl.{{ .Release.Namespace }}.svc.cluster.local:8080;
             rewrite ^/s/(.*)$ /$1 break;
             proxy_pass $short_url_upstream;
           }
           location /renderfile {
-            set $file_converter_upstream http://adp-file-converter.adp.svc.cluster.local:30007;
+            set $file_converter_upstream http://adp-file-converter.{{ .Release.Namespace }}.svc.cluster.local:30007;
             proxy_pass $file_converter_upstream;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;

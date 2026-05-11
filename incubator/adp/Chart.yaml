@@ -9,7 +9,6 @@ home: https://cloud.tencent.com/product/adp
 
 maintainers:
   - name: ADP Team
-    email: adp@tencent.com
 
 # 子 Chart 依赖（自动生成，请勿手动修改）
 dependencies:

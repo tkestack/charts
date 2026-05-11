@@ -401,7 +401,7 @@ data:
 
     SELF_AWARENESS_DIRECT_REPLY_MODELS: ["Youtu/youtu-mllm","Hunyuan/hunyuan-pro","Hunyuan/hunyuan-standard","Hunyuan/hunyuan-turbo","Hunyuan/hunyuan-standard-256k","Hunyuan/hunyuan-turbos-vision","Hunyuan/hunyuan-turbos-latest","Hunyuan/hunyuan-T1-latest"]
 
-    RAG_THOUGHT_ICON: "/webim/static/thinking.png"
+    RAG_THOUGHT_ICON: "/qbot/public/thinking.png"
     #调用搜狗搜索（TMS）接口，使用cam的id key
     RAG_SEARCH_SECRET_ID: {{ .Values.global.components.s3.cos.secretId }}
     RAG_SEARCH_SECRET_KEY: {{ .Values.global.components.s3.cos.secretKey }}

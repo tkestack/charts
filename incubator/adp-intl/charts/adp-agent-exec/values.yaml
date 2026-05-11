@@ -1,6 +1,6 @@
 images:
   adp-agent-exec:
-    url: ccr.ccs.tencentyun.com/tke-market/agent-exec:3_2605032058_stable_v3.4.1.1_b12916f8_private
+    url: "{{ .Values.global.imageRegistry }}/tke-market/agent-exec:3_2605032058_stable_v3.4.1.1_b12916f8_private"
 resources:
   limits:
     cpu: 4

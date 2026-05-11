@@ -1,4 +1,4 @@
 images:
   adp-pyright:
-    url: ccr.ccs.tencentyun.com/tke-market/webappchatbot:pyright-681d856-83
+    url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:pyright-681d856-83"
 replicas: 1

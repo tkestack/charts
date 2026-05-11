@@ -1,6 +1,6 @@
 images:
   lke-ti-perm-auth-proxy:
-    url: ccr.ccs.tencentyun.com/tke-market/ti_auth_proxy:master_private_9f15a04c_20260414
+    url: "{{ .Values.global.imageRegistry }}/tke-market/ti_auth_proxy:master_private_9f15a04c_20260414"
 resources:
     limits:
       cpu: "2"
