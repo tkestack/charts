@@ -23,7 +23,7 @@ metadata:
 spec:
   progressDeadlineSeconds: 600
   {{- if eq .Values.global.clusterSize "minimal" }}
-  replicas: 2
+  replicas: 1
   {{- else if eq .Values.global.clusterSize "standard" }}
   replicas: 2
   {{- else }}
@@ -131,7 +131,7 @@ spec:
               value: "1"
             - name: LIMIT_DELTA
               value: "1.2"
-          image: {{(index .Values.images "ti-gateway").url}}
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "ti-gateway").url "context" .) }}
           imagePullPolicy: Always
           name: ti-gateway
           #command: ["sh", "-c", "while true; do sleep 100; done"]
@@ -141,7 +141,7 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "125m"
               memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
@@ -149,15 +149,15 @@ spec:
               cpu: "500m"
               memory: "2Gi"
             requests:
-              cpu: "200m"
-              memory: "512Mi"
+              cpu: "250m"
+              memory: "1Gi"
           {{- else }}
           resources:
             limits:
               cpu: "1"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "500m"
               memory: "512Mi"
           {{- end }}
           readinessProbe:
@@ -190,6 +190,9 @@ spec:
             - mountPath: /usr/local/apisix/conf/config-default.yaml
               name: ti-gateway-config
               subPath: config-default.yaml
+            - mountPath: /usr/local/apisix/apisix/plugins/rewrite-lke.lua
+              name: ti-gateway-config
+              subPath: rewrite-lke.lua
             - mountPath: /usr/local/apisix/utils/init-route-crd.sh
               name: ti-gateway-route-crd
               subPath: init-route-crd.sh
@@ -232,7 +235,7 @@ spec:
               value: "error"
             - name: KEEP_LOG_FILE
               value: "3"
-          image: {{(index .Values.images "ti-gateway-filebeat-oss").url}}
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "ti-gateway-filebeat-oss").url "context" .) }}
           imagePullPolicy: Always
           name: ti-gateway-filebeat
           {{- if eq .Values.global.clusterSize "minimal" }}
@@ -241,7 +244,7 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "125m"
               memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
@@ -249,15 +252,15 @@ spec:
               cpu: "500m"
               memory: "2Gi"
             requests:
-              cpu: "200m"
-              memory: "512Mi"
+              cpu: "250m"
+              memory: "1Gi"
           {{- else }}
           resources:
             limits:
               cpu: "1"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "500m"
               memory: "512Mi"
           {{- end }}
           terminationMessagePath: /dev/termination-log

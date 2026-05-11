@@ -123,7 +123,7 @@ TKE 环境返回 1，其他环境返回 2
 {{- define "dependencyChecker.initContainer" -}}
 {{- if eq (include "needInitContainer" .) "true" }}
 - name: wait-for-dependencies
-  image: ccr.ccs.tencentyun.com/tke-market/kubectl:20260130
+  image: {{ .Values.global.imageRegistry }}/tke-market/kubectl:20260130
   env:
     - name: RELEASE_NAME
       value: "{{ .Values.helmfileReleaseName | default .Chart.Name }}"
@@ -169,4 +169,12 @@ TKE 环境格式: ${yyyyMMddHHmmss}-tke-${集群UUID}
     {{- end -}}
   {{- end -}}
 {{- end -}}
+{{- end -}}
+
+{{/*
+解析镜像 URL：对 values.yaml 中包含 {{ .Values.global.imageRegistry }} 等模板语法的 url 做二次渲染
+使用方式：image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "xxx").url "context" .) }}
+*/}}
+{{- define "resolveImageUrl" -}}
+{{- tpl .url .context -}}
 {{- end -}}

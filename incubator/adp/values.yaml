@@ -12,13 +12,15 @@ global:
   # 是否校验 K8s 集群剩余资源是否充足（当部署超级节点时需要关闭）
   checkK8sResources: true
   # CLB ID（必填）
-  clbId: lb-751o89m3
+  clbId: lb-example
   # 协议: http 或 https （必填）
-  scheme: http
+  scheme: https
   # CLB HTTPS 证书 ID（scheme 为 https 时必填）https://console.cloud.tencent.com/ssl
   clbCertId: "<YOUR_CLB_CERT_ID>"
   # 无需关注
   secapi_enable: false
+  # 镜像仓库地址（勿动）
+  imageRegistry: "ccr.ccs.tencentyun.com"
 
   # RSA 密钥配置（必填）用于前后端加解密登录密码
   # 生成方法:
@@ -38,7 +40,6 @@ global:
   components:
     # 数据库配置 (必填) https://cloud.tencent.com/product/tdsql
     db:
-      enabled: true  # 设为 false 可跳过该组件的部署前置检查
       vendor: tencent
       providerType: tdsql  # tencent: tdsql/cynosdb | aws: aurora/rds | alibaba: polardb | self: mysql/mariadb
       host: "192.168.0.1"
@@ -48,7 +49,6 @@ global:
 
     # Redis 缓存配置 (必填) https://cloud.tencent.com/product/crs
     redis:
-      enabled: true  # 设为 false 可跳过该组件的部署前置检查
       vendor: tencent
       providerType: crs  # tencent: crs | aws: elasticache | alibaba: kvstore | self: redis
       cluster: master
@@ -59,7 +59,6 @@ global:
 
     # Elasticsearch 配置 (必填) https://cloud.tencent.com/product/es
     es:
-      enabled: true  # 设为 false 可跳过该组件的部署前置检查
       vendor: tencent
       providerType: es  # tencent: es | aws: opensearch | alibaba: elasticsearch | self: elasticsearch
       hosts:
@@ -70,7 +69,6 @@ global:
 
     # 对象存储配置 (必填) https://cloud.tencent.com/product/cos
     s3:
-      enabled: true  # 设为 false 可跳过该组件的部署前置检查
       vendor: tencent
       providerType: cos  # tencent: cos | aws: s3 | alibaba: oss | azure: blob | gcp: gcs | self: minio
       # COS 专用配置 (providerType=cos 时生效)
@@ -88,7 +86,6 @@ global:
 
     # 消息队列CKafka版 https://console.cloud.tencent.com/ckafka/instance
     kafka:
-      enabled: true  # 设为 false 可跳过该组件的部署前置检查
       vendor: tencent
       providerType: kafka
       hosts:
@@ -97,7 +94,6 @@ global:
 
     # clickhouse
     clickhouse:
-      enabled: true  # 设为 false 可跳过该组件的部署前置检查
       vendor: tencent
       providerType: clickhouse  # tencent: clickhouse |
       hosts:
@@ -112,7 +108,7 @@ global:
   observability:
     # CLS 日志收集配置 (可选) https://console.cloud.tencent.com/cls/topic
     cls:
-      enabled: false
+      enabled: true # 建议开启
       logsetId: "<YOUR_CLS_LOGSET_ID>"
       topicId: "<YOUR_CLS_TOPIC_ID>"
 
@@ -148,7 +144,7 @@ global:
     # `bizType` （启用审核时 必选）
     bizType: "<YOUR_BIZ_TYPE>"
     # 文本内容安全配置 (可选) https://cloud.tencent.com/document/product/1124/51860
-    region: ap-beijing
+    region: ap-guangzhou
     appId: "<YOUR_APP_ID>"
     uin: "<YOUR_UIN>"
     subUin: "<YOUR_SUB_UIN>"

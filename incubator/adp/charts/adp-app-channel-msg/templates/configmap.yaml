@@ -29,6 +29,8 @@ data:
       wecom: 10002
       wxkf: 10004
       wecomrobot: 10009
+      line: 10011
+      telegram: 10012
     component_app_id: ${COMPONENT_APP_ID}
     wx_authorize_callback_host: {{ .Values.global.scheme }}://{{ .Values.global.clb }}  #需要填写用户自己申请的域名  需要能反代回到msg服务
     wx_authorize_callback: "/online/channel/callback/wx/authorize"
@@ -314,13 +316,13 @@ data:
           service:
             - name: trpc.KEP.channel-msg-svr.HTTP
               namespace: ${POD_NAMESPACE}
-              token: d8b87889e517410e9a963c191f378d09  #safe
+              token: xxxxxxxxxxxx  #safe
             - name: trpc.KEP.channel-msg-svr.trpc
               namespace: ${POD_NAMESPACE}
-              token: 34c9fa7d88974ac09189c928a7cb6fe2 #safe
+              token: xxxxxxxxxxxx #safe
             - name: trpc.KEP.trpc.KEP.channel-msg-svr.Api
               namespace: ${POD_NAMESPACE}
-              token: a294ef928f0648a3989999fe5186aa3a #safe
+              token: xxxxxxxxxxxx #safe
       selector:
         polaris:
           protocol: grpc

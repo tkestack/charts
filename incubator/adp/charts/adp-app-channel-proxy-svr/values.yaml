@@ -1,5 +1,5 @@
 images:
   adp-app-channel-proxy:
-    url: ccr.ccs.tencentyun.com/tke-market/channel-proxy-svr:1_2603291133_stable_v3.4.1.1_9ec0fc55_private
+    url: "{{ .Values.global.imageRegistry }}/tke-market/channel-proxy-svr:1_2603291133_stable_v3.4.1.1_9ec0fc55_private"
 enableCgiBinProxy: true
 replicas: 1

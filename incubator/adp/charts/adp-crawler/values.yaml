@@ -1,6 +1,6 @@
 images:
   adp-crawler:
-    url: ccr.ccs.tencentyun.com/tke-market/webappchatbot:crawl-59d89d1-147
+    url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:crawl-59d89d1-147"
 resources:
   limits:
     cpu: 1

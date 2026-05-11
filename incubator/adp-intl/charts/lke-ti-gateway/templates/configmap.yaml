@@ -268,3 +268,262 @@ data:
       uri:
         check_notebook_access: "/Notebook/CheckNotebookAccessPermission"
       timeout: 3000
+  rewrite-lke.lua: |
+    local core = require("apisix.core")
+    local decode_array_with_array_mt = require("cjson.safe").decode_array_with_array_mt
+    local ngx = ngx
+    local string = string
+    local plugin_name = "rewrite-ti"
+
+    local schema = {
+        type = "object",
+        additionalProperties = false
+    }
+
+    local _M = {
+        version = 0.1,
+        priority = 903,
+        name = plugin_name,
+        schema = schema
+    }
+
+    function _M.check_schema(conf)
+        local ok, err = core.schema.check(schema, conf)
+        if not ok then
+            return false, err
+        end
+
+        return true
+    end
+
+    function forward_uri(ctx)
+        if ctx.route_labels and type(ctx.route_labels) == "table" then
+            for key, value in pairs(ctx.route_labels) do
+                core.log.info("table key:", tostring(key), ", value:", tostring(value))
+                if key == "forward_uri" then
+                    -- ctx.var.upstream_uri = "/" .. value
+                    return value
+                end
+            end
+        end
+    end
+
+    -- 从 /cgi/apex/qbot/api/<cmd> 路径中提取 cmd 名（path 最后一段，去掉 query string）
+    local function extract_apex_cmd(uri)
+        -- 匹配 /cgi/apex/qbot/api/ 后面的第一段路径（字母数字下划线）
+        local cmd = string.match(uri, "^/cgi/apex/qbot/api/([%w_]+)")
+        return cmd
+    end
+
+    function _M.rewrite(conf, ctx)
+        if ctx.var.http_x_tc_service == "iotexplorer-api" then
+            -- for caryhuang's IOT
+            -- yunapiv3/CreateDevice
+            ctx.var.upstream_uri = "/yunapiv3"
+            return
+        end
+        if ctx.var.http_x_tc_action and string.sub(ctx.var.http_x_tc_action, 1, 1) == "/" then
+            -- for ti-gateway-admin, third-party services
+            ctx.var.upstream_uri = ctx.var.http_x_tc_action
+            return
+        end
+        if forward_uri(ctx) ~= nil then
+            ctx.var.upstream_uri = forward_uri(ctx)
+            core.request.set_header(nil, "Accept-Encoding", "identity")
+            return
+        end
+        -- 支持 /cgi/apex/qbot/api/<cmd> 路径（兼容前端 QBOT_API_BASE_URL=/cgi/apex 访问方式）
+        if string.sub(ctx.var.uri, 1, 20) == "/cgi/apex/qbot/api/" then
+            local cmd = extract_apex_cmd(ctx.var.uri)
+            if cmd then
+                ctx.var.http_x_tc_action = cmd
+            end
+            ctx.var.upstream_uri = "/cgi/commonapi"
+            return
+        end
+        if string.sub(ctx.var.uri, 1, 9) == "/cgi/capi" then
+            ctx.var.upstream_uri = "/cgi/commonapi"
+            return
+        end
+
+        if ctx.var.http_x_tc_action then
+            ctx.var.upstream_uri = "/" .. ctx.var.http_x_tc_action
+        end
+    end
+
+    function _M.access(conf, ctx)
+        -- 从 Language header 读取语言值，设置 X-TC-Language，默认 zh-CN
+        local language = ctx.var.http_language
+        if not language or language == "" then
+            language = "zh-CN"
+        end
+        core.request.set_header(nil, "X-TC-Language", language)
+
+        -- resolve & compose body for YunAPI 3.0
+        local client_ip = ctx.var.http_x_real_ip or core.request.get_remote_client_ip(ctx)
+        local req_body, _ = core.request.get_body()
+        if not req_body then
+            req_body = ""
+        end
+        if string.sub(ctx.var.uri, 1, 9) == "/cgi/capi" then
+            if not ctx.var.http_x_tc_action then
+                local req_obj = core.json.decode(req_body)
+                local action = req_obj["cmd"]
+                ctx.var.http_x_tc_action = action
+            end
+        end
+        -- set headers
+        core.request.set_header(nil, "X-TC-Action", ctx.var.http_x_tc_action)
+        core.request.set_header(nil, "X-Tc-Action", ctx.var.http_x_tc_action)
+        core.request.set_header(nil, "X-TC-Uin", ctx.ti_perm_uin)
+        core.request.set_header(nil, "X-Tc-Uin", ctx.ti_perm_uin)
+        core.request.set_header(nil, "X-TC-SubAccountUin", ctx.ti_perm_sub_uin)
+        core.request.set_header(nil, "X-Tc-SubAccountUin", ctx.ti_perm_sub_uin)
+        core.request.set_header(nil, "X-TC-ClientIp", client_ip)
+        core.request.set_header(nil, "X-Tc-ClientIp", client_ip)
+
+        -- record for nginx log
+        ngx.var.ti_uin = ctx.ti_perm_uin
+        ngx.var.ti_service = ctx.var.http_x_tc_service
+        ngx.var.ti_action = ctx.var.http_x_tc_action
+        ngx.var.ti_application = ctx.var.http_x_tc_application
+        ngx.var.api_version = ctx.var.http_x_tc_version
+        ngx.var.ti_project_id = ctx.var.http_x_tc_projectid
+        ngx.var.ti_business_id = ctx.var.http_x_tc_businessid
+        ngx.var.client_ip = client_ip
+
+        -- GET
+        if ctx.var.request_method == "GET" then
+            local uri_args = ngx.req.get_uri_args()
+            uri_args["RequestId"] = ctx.var.request_id
+            if ctx.var.http_x_tc_service and string.sub(ctx.var.http_x_tc_service, 1, 3) == "app" and
+                    ctx.var.http_x_tc_action == "api" then
+                -- due to caryhuang & chuangchen
+                uri_args["Action"] = uri_args["Action"]
+                ngx.var.ti_action = uri_args["Action"]
+                core.request.set_header("X-TC-Action", uri_args["Action"])
+                core.log.debug(
+                        "[tianyuapi]: action in header: ",
+                        ctx.var.http_x_tc_action,
+                        " RequestId: ",
+                        ctx.var.request_id,
+                        " action in param: ",
+                        uri_args["Action"]
+                )
+            elseif ctx.var.http_x_tc_service == "iotexplorer-api" then
+                -- for caryhuang's IOT
+                -- yunapiv3/CreateDevice
+                uri_args["Action"] = string.sub(ctx.var.http_x_tc_action, 10)
+                ngx.var.ti_action = uri_args["Action"]
+                core.request.set_header("X-TC-Action", uri_args["Action"])
+                core.log.debug(
+                        "[iotexplorer]: action in header: ",
+                        ctx.var.http_x_tc_action,
+                        " RequestId: ",
+                        ctx.var.request_id,
+                        " action in param: ",
+                        uri_args["Action"]
+                )
+            else
+                uri_args["Action"] = ctx.var.http_x_tc_action
+            end
+            uri_args["Version"] = ctx.var.http_x_tc_version
+            uri_args["Uin"] = ctx.ti_perm_uin
+            uri_args["SubAccountUin"] = ctx.ti_perm_sub_uin
+            uri_args["ClientIp"] = client_ip
+            uri_args["TraceId"] = ctx.var.http_x_tc_traceid
+
+            local req_body, _ = core.request.get_body()
+            if not req_body then
+                req_body = ""
+            end
+            req_body, _ = core.json.encode(uri_args)
+
+            ngx.req.set_header("Content-Type", "application/json; charset=utf-8")
+            ngx.req.set_method(ngx.HTTP_POST)
+            ngx.req.set_body_data(req_body)
+
+            ngx.update_time()
+            core.log.debug(
+                    "[GET]: action: ",
+                    ctx.var.http_x_tc_action,
+                    " RequestId: ",
+                    ctx.var.request_id,
+                    " [after rewrite set_body_data] current_time: ",
+                    ngx.now()
+            )
+
+            return
+        end
+
+        -- POST
+        local content_type = ctx.var.content_type or ""
+        if ctx.var.request_method == "POST" and string.find(content_type, "application/json", 1, true) then
+            -- POST + application/json
+
+            local req_obj, err = core.json.decode(req_body)
+            if not req_obj then
+                return 400, {
+                    error_msg = "invalid request body: " .. req_body .. ", err: " .. err
+                }
+            end
+
+            local decoded = nil
+            if string.sub(ctx.var.uri, 1, 9) == "/cgi/capi" then
+                local action = req_obj["cmd"]
+                decoded = req_obj["data"]
+                decoded["Action"] = action
+            elseif string.sub(ctx.var.uri, 1, 20) == "/cgi/apex/qbot/api/" then
+                -- /cgi/apex/qbot/api/<cmd> 路径：body 直接是业务参数（无 cmd/data 包裹）
+                -- Action 已在 rewrite 阶段从 path 提取并写入 ctx.var.http_x_tc_action
+                decoded = req_obj
+                decoded["Action"] = ctx.var.http_x_tc_action
+            else
+                decoded = req_obj
+                decoded["Action"] = ctx.var.http_x_tc_action
+            end
+
+            decode_array_with_array_mt(true)
+            if not decoded then
+                core.log.warn("RequestId: ", ctx.var.request_id, "; req_body: ", req_body)
+                decoded = core.table.new(0, 8)
+            end
+
+            -- set json body
+            decoded["RequestId"] = ctx.var.request_id
+            decoded["Version"] = ctx.var.http_x_tc_version
+            decoded["Uin"] = ctx.ti_perm_uin
+            decoded["SubAccountUin"] = ctx.ti_perm_sub_uin
+            decoded["UserToken"] = ctx.ti_perm_token
+            decoded["ClientIp"] = client_ip
+            decoded["TraceId"] = ctx.var.http_x_tc_traceid
+
+            req_body, _ = core.json.encode(decoded)
+            -- set body
+            ngx.req.set_body_data(req_body)
+
+            ngx.update_time()
+            core.log.warn("RequestId: ", ctx.var.request_id,
+                    " request body: ", req_body,
+                    " [after rewrite set_body_data] current_time: ", ngx.now())
+
+            return
+        end
+
+        if ctx.var.request_method == "POST" and string.find(content_type, "multipart/form-data", 1, true) then
+            -- POST + multipart/form-data
+            core.log.warn("[POST] form-data: ", " RequestId: ", ctx.var.request_id,
+                    " ctx.var.http_x_tc_action: ", ctx.var.http_x_tc_action)
+        else
+            -- other methods
+            core.log.warn("[OTHER] method: ", ctx.var.request_method, " RequestId: ", ctx.var.request_id,
+                    " ctx.var.http_x_tc_action: ", ctx.var.http_x_tc_action)
+        end
+
+        -- set headers already, just forward
+
+        ngx.update_time()
+        core.log.warn("RequestId: ", ctx.var.request_id, " [after rewrite set_body_data] current_time: ", ngx.now())
+    end
+
+    return _M

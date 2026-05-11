@@ -90,7 +90,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
-          image: {{(index .Values.images "adp-file-converter").url}}
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-file-converter").url "context" .) }}
           imagePullPolicy: Always
           command: ["bash","-c","/usr/local/bin/start.sh"]
           name: adp-file-converter
@@ -100,7 +100,7 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "125m"
               memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
@@ -108,7 +108,7 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "250m"
               memory: "512Mi"
           {{- else }}
           resources:
@@ -116,8 +116,8 @@ spec:
               cpu: "1"
               memory: "2Gi"
             requests:
-              cpu: "200m"
-              memory: "512Mi"
+              cpu: "500m"
+              memory: "1Gi"
           {{- end }}
           volumeMounts:
             - mountPath: /adp-file-converter/config.json
@@ -129,7 +129,7 @@ spec:
               name: infrastructure
               subPath: infrastructure.yaml
       #  - name: fileconvertor-sidecar
-      #    image: {{(index .Values.images "adp-file-converter-sidecar").url}}
+      #    image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-file-converter-sidecar").url "context" .) }}
       #    imagePullPolicy: Always
       #    resources:
       #      limits:

@@ -130,7 +130,7 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.name
-          image: {{(index .Values.images "web-parser-server").url}}
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "web-parser-server").url "context" .) }}
           imagePullPolicy: Always
           # command: ["bash","/usr/local/app/start.sh"]
           #command: ["bash","-c","while true; do sleep 30; done"]
@@ -163,7 +163,7 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "125m"
               memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
@@ -171,7 +171,7 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "250m"
               memory: "512Mi"
           {{- else }}
           resources:
@@ -179,8 +179,8 @@ spec:
               cpu: "1"
               memory: "2Gi"
             requests:
-              cpu: "200m"
-              memory: "512Mi"
+              cpu: "500m"
+              memory: "1Gi"
           {{- end }}
           securityContext:
             privileged: true
@@ -223,7 +223,7 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.name
-          image: {{(index .Values.images "web-parser-server-sidecar").url}}
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "web-parser-server-sidecar").url "context" .) }}
           imagePullPolicy: Always
           lifecycle:
             preStop:
@@ -238,7 +238,7 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "125m"
               memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
@@ -246,7 +246,7 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "250m"
               memory: "512Mi"
           {{- else }}
           resources:
@@ -254,8 +254,8 @@ spec:
               cpu: "1"
               memory: "2Gi"
             requests:
-              cpu: "200m"
-              memory: "512Mi"
+              cpu: "500m"
+              memory: "1Gi"
           {{- end }}
           securityContext:
             capabilities:

@@ -1,6 +1,6 @@
 images:
   adp-ai-gateway:
-    url: ccr.ccs.tencentyun.com/tke-market/ai-gateway:20_2604271939_stable_v3.4.1.1_intl_c829fcce_private
+    url: "{{ .Values.global.imageRegistry }}/tke-market/ai-gateway:20_2604271939_stable_v3.4.1.1_intl_c829fcce_private"
 resources:
   limits:
     cpu: 2

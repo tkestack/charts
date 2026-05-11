@@ -87,7 +87,7 @@ spec:
               value: "20230925"
             - name: DEPLOYMENT_ENVIRONMENT
               value: "TKE"
-          image: {{(index .Values.images "adp-chat-manage").url}}
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-chat-manage").url "context" .) }}
           imagePullPolicy: Always
           # command: ["sh","-c", "crond start; touch /var/log/log.txt && tail -f /var/log/log.txt"]
           livenessProbe:
@@ -113,7 +113,7 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "200m"
+              cpu: "125m"
               memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
@@ -121,16 +121,16 @@ spec:
               cpu: "1"
               memory: "2Gi"
             requests:
-              cpu: "200m"
-              memory: "512Mi"
+              cpu: "500m"
+              memory: "1Gi"
           {{- else }}
           resources:
             limits:
               cpu: "1"
               memory: "4Gi"
             requests:
-              cpu: "200m"
-              memory: "512Mi"
+              cpu: "500m"
+              memory: "2Gi"
           {{- end }}
           securityContext:
             capabilities:

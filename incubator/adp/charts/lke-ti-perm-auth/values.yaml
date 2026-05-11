@@ -1,6 +1,6 @@
 images:
   ti-perm-auth:
-    url: ccr.ccs.tencentyun.com/tke-market/ti-auth-cust-trpc:master_private_e2f193a8_20260127
+    url: "{{ .Values.global.imageRegistry }}/tke-market/ti-auth-cust-trpc:master_private_e2f193a8_20260127"
 env: TEST
 namespace: ti-base
 imagePullSecretName: qcloudregistrykey

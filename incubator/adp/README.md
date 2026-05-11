@@ -228,7 +228,7 @@ MySQL:
 **购买链接：** https://cloud.tencent.com/product/es
 
 **要求：**
-- Elasticsearch 7.x 或 8.x 版本
+- Elasticsearch 8.16.1及以上版本
 - 建议至少 3 节点集群
 
 **规格配置：**
