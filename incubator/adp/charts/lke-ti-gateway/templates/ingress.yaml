@@ -347,7 +347,7 @@ spec:
               number: 9080
         path: /op
         pathType: ImplementationSpecific
-  {{- if eq $.Values.global.scheme "https" }}
+  {{- if eq (default $.Values.global.scheme $.Values.global.clbScheme) "https" }}
   tls:
   - hosts:
       - {{ $.Values.global.clb }}

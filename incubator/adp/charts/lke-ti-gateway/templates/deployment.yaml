@@ -190,9 +190,6 @@ spec:
             - mountPath: /usr/local/apisix/conf/config-default.yaml
               name: ti-gateway-config
               subPath: config-default.yaml
-            - mountPath: /usr/local/apisix/apisix/plugins/rewrite-lke.lua
-              name: ti-gateway-config
-              subPath: rewrite-lke.lua
             - mountPath: /usr/local/apisix/utils/init-route-crd.sh
               name: ti-gateway-route-crd
               subPath: init-route-crd.sh
