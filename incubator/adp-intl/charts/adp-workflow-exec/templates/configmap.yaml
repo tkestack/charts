@@ -580,11 +580,11 @@ data:
     PROXY_CONFIG: ""
 
     # 模型配置
-    MODEL_PARAMETER: "workflow-light-32b"
-    MODEL_LOGIC: "workflow-light-32b"
-    MODEL_OPTION_CARD: "workflow-light-32b"
-    MODEL_INTENT: "workflow-light-32b"
-    MODEL_RECOMMEND_QUESTION: "workflow-light-32b"
+    MODEL_PARAMETER: "Youtu/youtu-intent-pro"
+    MODEL_LOGIC: "Youtu/youtu-intent-pro"
+    MODEL_OPTION_CARD: "Youtu/youtu-intent-pro"
+    MODEL_INTENT: "Youtu/youtu-intent-pro"
+    MODEL_RECOMMEND_QUESTION: "Youtu/youtu-intent-pro"
     MODEL_TO_CONVERT_NAMES: ["cs-normal-70b", "hunyuan", "sn-edu-70b", "lke-deepseek-r1", "lke-deepseek-r1-0528"]
     MODEL_CONVERT_BILLING:
       workflow-light-32b: Youtu/youtu-intent-pro

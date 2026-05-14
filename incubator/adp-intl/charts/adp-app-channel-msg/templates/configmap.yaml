@@ -11,8 +11,12 @@ data:
     msg_menu_item_num_limit: 10
     create_session_words:
       "新建对话": true
+      "/new": true
+      "/NEW": true
     reset_session_words:
       "清除上下文关联": true
+      "/clear": true
+      "/CLEAR": true
     session_secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
     session_secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
     session_end_point: ${SESSIONS_END_POINT}
@@ -92,6 +96,7 @@ data:
 
     # 构建菜单描述文本
     menu_select_text: "Please select an option:"
+
 
   channel-msg_en-US.json: |
     {}
@@ -327,13 +332,13 @@ data:
           service:
             - name: trpc.KEP.channel-msg-svr.HTTP
               namespace: ${POD_NAMESPACE}
-              token: xxxxxxxxxxxx  #safe
+              token: d8b87889e517410e9a963c191f378d09  #safe
             - name: trpc.KEP.channel-msg-svr.trpc
               namespace: ${POD_NAMESPACE}
-              token: xxxxxxxxxxxx #safe
+              token: 34c9fa7d88974ac09189c928a7cb6fe2 #safe
             - name: trpc.KEP.trpc.KEP.channel-msg-svr.Api
               namespace: ${POD_NAMESPACE}
-              token: xxxxxxxxxxxx #safe
+              token: a294ef928f0648a3989999fe5186aa3a #safe
       selector:
         polaris:
           protocol: grpc

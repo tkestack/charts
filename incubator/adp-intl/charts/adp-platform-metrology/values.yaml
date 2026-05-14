@@ -1,6 +1,6 @@
 images:
   adp-platform-metrology:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/platform-metrology:33_2605031920_feature_lokli_thirdApi_d7759f82_private	"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/platform-metrology:34_2605071116_stable_v3.4.1.1_5baef15d_private	"
 resources:
   limits:
     cpu: "2"
