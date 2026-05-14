@@ -164,7 +164,7 @@ data:
       service_name: adp-plugin-code-kernel
 
       max_pods: 300     # 最大数量
-      min_pods: 10      # 最小数量
+      min_pods: {{- if eq .Values.global.clusterSize "minimal" }} 2{{- else if eq .Values.global.clusterSize "standard" }} 5{{- else }} 10{{- end }}      # 最小数量，由 inject-resource-config.sh 按 clusterSize 注入（来源 resource_require.conf）
       upper_thr: 0.8    # 扩容阈值
       lower_thr: 0.3    # 缩容阈值
 

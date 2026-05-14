@@ -13,9 +13,13 @@ global:
   checkK8sResources: true
   # CLB ID（必填）
   clbId: lb-example
-  # 协议: http 或 https （必填）
+  # 平台访问协议: http 或 https （必填）
   scheme: https
-  # CLB HTTPS 证书 ID（scheme 为 https 时必填）https://console.cloud.tencent.com/ssl
+  # CLB 监听协议: http 或 https （必填，默认与 scheme 保持一致）
+  # 适用场景：当 CLB 与后端应用集群之间存在协议卸载（SSL Offload）时配置此项
+  # 例如：客户端通过 https 访问 CLB，CLB 以 http 协议转发至后端集群，此时 scheme=https，clbScheme=http
+  clbScheme: https
+  # CLB HTTPS 证书 ID（clbScheme 为 https 时必填）https://console.cloud.tencent.com/ssl
   clbCertId: "<YOUR_CLB_CERT_ID>"
   # 无需关注
   secapi_enable: false
