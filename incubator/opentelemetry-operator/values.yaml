@@ -74,6 +74,7 @@ manager:
   ## e.g ENV_VAR: env_value
   env:
     ENABLE_WEBHOOKS: "true"
+    ENABLED_APM_API: "true"
 
   # -- Create the manager ServiceAccount
   serviceAccount:
