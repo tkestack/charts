@@ -45,11 +45,11 @@ spec:
           {{- toYaml .Values.resources | nindent 10 }}
         env:
         - name: CLUSTER_ID
-          value: {{ .Values.env.CLUSTER_ID | quote }}        
+          value: {{ .Values.env.CLUSTER_ID | quote }}
         - name: TKE_REGION
-          value: {{ .Values.env.TKE_REGION | quote }}        
+          value: {{ .Values.env.TKE_REGION | quote }}
         - name: APM_TOKEN
-          value: {{ .Values.env.APM_TOKEN | quote }}        
+          value: {{ .Values.env.APM_TOKEN | quote }}
         securityContext:
           allowPrivilegeEscalation: false
         volumeMounts:
