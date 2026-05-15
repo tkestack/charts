@@ -11,8 +11,12 @@ data:
     msg_menu_item_num_limit: 10
     create_session_words:
       "新建对话": true
+      "/new": true
+      "/NEW": true
     reset_session_words:
       "清除上下文关联": true
+      "/clear": true
+      "/CLEAR": true
     session_secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
     session_secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
     session_end_point: ${SESSIONS_END_POINT}
@@ -92,6 +96,7 @@ data:
 
     # 构建菜单描述文本
     menu_select_text: "Please select an option:"
+
 
   channel-msg_en-US.json: |
     {}

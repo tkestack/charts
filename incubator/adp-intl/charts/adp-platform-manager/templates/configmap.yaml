@@ -263,7 +263,7 @@ data:
       - BatchDownloadDoc
       - DescribeAppShareURL
     space_config:
-      limit: 20
+      limit: 500
       space_name_length: 30
       space_desc_length: 150
       is_check_space_valid: true
