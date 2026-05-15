@@ -513,7 +513,7 @@ data:
     third_party: ${THIRD_PARTY}
 
     user_token:
-      secret: aGXYPxuVMyXlxyGCfSLqF8Jml1PJExmx
+      secret: xxxxxxxxxxxx
       ttl: 3600 # 单位：s
     reply_method_map:
       1: 10  # ReplyMethodModel(大模型直接回复) -> APP_CALL_REPLY_METHOD_LLM_DIRECT
