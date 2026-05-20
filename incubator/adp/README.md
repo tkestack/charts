@@ -42,8 +42,11 @@
 | `clb`         | ✅ 必填 | 负载均衡 CLB 域名 | 需要给clb绑定一个自定义域名，例如：`xx-adp.xyz.com`                                                                                                                                                                                   |
 | `clbId`       | ✅ 必填 | CLB 实例 ID   | `lb-h7m35y2x`                                                                                                                                                                                                         |
 | `scheme`      | ✅ 必填 | 协议类型        | `http` 或 `https`                                                                                                                                                                                                      |
+| `clbScheme`      | ✅ 必填 | 协议类型        | `http` 或 `https`，默认与 scheme 保持一致。适用场景：当 CLB 与后端应用集群之间存在协议卸载（SSL Offload）时配置此项                                                                                                                                                                                                     |
 | `clbCertId`   | 条件必填 | CLB HTTPS 证书 ID（scheme 为 https 时必填） | `abcdef123456`                                                                                                                                                                                                         |
 | `checkK8sResources`      | ✅ 必填 | 是否关闭 k8s 资源检查，使用超级节点时需要设置 false        | `true` 或 `false`                                                                                                                                                                                                      |
+| `internalClb.enabled`      | ✅ 可选 |  是否开启内网clb配置     |  `true` 或 `false`，默认保持false即可。适用于 内网用户和公网用户使用同一域名访问 ADP 平台的情况                                                                                                                                                                                                 |
+| `internalClb.clbId`      | 条件必填 |  内网CLB 实例 ID     |  lb-h7m35y1y                                                                                                                                                                                    |
 
 **购买链接：** https://console.cloud.tencent.com/clb/instance
 
@@ -270,7 +273,7 @@ MySQL:
 |--------|------|------|-----------------------|
 | `components.s3.cos.secretId` | ✅ 必填 | 腾讯云 SecretId | `AKIDxxxx`            |
 | `components.s3.cos.secretKey` | ✅ 必填 | 腾讯云 SecretKey | `xxxxx`               |
-| `components.s3.cos.appId` | ✅ 必填 | 腾讯云 AppId | `1392479074` 不能加引号    |
+| `components.s3.cos.appId` | ✅ 必填 | 腾讯云 AppId | 使用引号，防止数值溢出    |
 | `components.s3.cos.bucket` | ✅ 必填 | 存储桶名称 | `adp-test-1234567890` |
 | `components.s3.cos.region` | ✅ 必填 | 地域 | `ap-guangzhou` |
 | `components.s3.cos.domain` | ✅ 必填 | COS 域名后缀 | `myqcloud.com` |

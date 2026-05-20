@@ -734,7 +734,7 @@ data:
       llm_client:
         addr: "https://qbot-v2.llm.test.polaris:8080"
         index_interface: /index
-        token: xxxxxxxxxxxx
+        token: de1b2a7baf7850243db71c4abd4e5a39
     hunyuan_tools:
       prompt_max_time_range: 345600
       default_max_time_range: 2678400

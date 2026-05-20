@@ -3083,7 +3083,6 @@ data:
       max_vector_dimension: 4096
       default_vector_dimension: 1024
       white_list_uin: null
-
   country_code.yaml: |
     country_code:
       - en_name: "Albania"

@@ -41,8 +41,12 @@ This document describes the deployment of Tencent Cloud Agent Development Platfo
 | `clb`           | ✅ Required | CLB (Cloud Load Balancer) domain | Bind a custom domain to the CLB, e.g. `xx-adp.xyz.com` |
 | `clbId`         | ✅ Required | CLB instance ID | `lb-h7m35y2x` |
 | `scheme`        | ✅ Required | Protocol type | `http` or `https` |
+| clbScheme | ✅ Required | Protocol type | http or https, defaults to the same as scheme. Applicable scenario: configure this when SSL Offload exists between CLB and the backend application cluster |
 | `clbCertId`     | Conditionally required | CLB HTTPS certificate ID (required when `scheme` is `https`) | `abcdef123456` |
 | `checkK8sResources` | ✅ Required | Whether to disable Kubernetes resource checks. Set to `false` when using super nodes. | `true` or `false` |
+| internalClb.enabled | ✅ Optional | Whether to enable internal CLB configuration | true or false, defaults to false. Applicable for scenarios where internal network users and public network users access the ADP platform using the same domain |
+| `internalClb.clbId`      | Conditionally required |  Internal CLB instance ID     |  lb-h7m35y1y  |
+
 
 **Purchase link:** https://buy.intl.cloud.tencent.com/clb
 
@@ -269,7 +273,7 @@ The unified key is `s3`. The exact storage type is differentiated by `providerTy
 |-----|----------|-------------|---------|
 | `components.s3.cos.secretId`       | ✅ Required | Tencent Cloud SecretId | `AKIDxxxx` |
 | `components.s3.cos.secretKey`      | ✅ Required | Tencent Cloud SecretKey | `xxxxx` |
-| `components.s3.cos.appId`          | ✅ Required | Tencent Cloud AppId | `1392479074` (do **not** wrap in quotes) |
+| `components.s3.cos.appId`          | ✅ Required | Tencent Cloud AppId | Use quotes to prevent numeric overflow |
 | `components.s3.cos.bucket`         | ✅ Required | Bucket name | `adp-test-1234567890` |
 | `components.s3.cos.region`         | ✅ Required | Region | `ap-guangzhou` |
 | `components.s3.cos.domain`         | ✅ Required | COS domain suffix | `myqcloud.com` |

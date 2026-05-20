@@ -21,6 +21,12 @@ global:
   clbScheme: https
   # CLB HTTPS 证书 ID（clbScheme 为 https 时必填）https://console.cloud.tencent.com/ssl
   clbCertId: "<YOUR_CLB_CERT_ID>"
+  # 内网 CLB 配置。内网 域名/TLS 全部与公网配置保持一致
+  internalClb:
+    # 默认保持关闭即可。适用于 内网用户和公网用户使用同一域名访问 ADP 平台的情况
+    enabled: false
+    # 内网 CLB ID（开启必填）
+    clbId: lb-internal-example
   # 无需关注
   secapi_enable: false
   # 镜像仓库地址（勿动）
