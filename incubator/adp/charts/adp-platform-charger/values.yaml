@@ -1,6 +1,6 @@
 images:
   adp-platform-charger:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/finance-finance:1_2603291355_stable_v3.4.1.1_6333365e_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/finance-finance:2_2605191655_stable_v3.4.1.1_c33e8680_private"
 resources:
   limits:
     cpu: "1"

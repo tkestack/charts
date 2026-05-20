@@ -41,10 +41,14 @@ This document describes the deployment of Tencent Cloud Agent Development Platfo
 | `clb`           | ✅ Required | CLB (Cloud Load Balancer) domain | Bind a custom domain to the CLB, e.g. `xx-adp.xyz.com` |
 | `clbId`         | ✅ Required | CLB instance ID | `lb-h7m35y2x` |
 | `scheme`        | ✅ Required | Protocol type | `http` or `https` |
+| clbScheme | ✅ Required | Protocol type | http or https, defaults to the same as scheme. Applicable scenario: configure this when SSL Offload exists between CLB and the backend application cluster |
 | `clbCertId`     | Conditionally required | CLB HTTPS certificate ID (required when `scheme` is `https`) | `abcdef123456` |
 | `checkK8sResources` | ✅ Required | Whether to disable Kubernetes resource checks. Set to `false` when using super nodes. | `true` or `false` |
+| internalClb.enabled | ✅ Optional | Whether to enable internal CLB configuration | true or false, defaults to false. Applicable for scenarios where internal network users and public network users access the ADP platform using the same domain |
+| `internalClb.clbId`      | Conditionally required |  Internal CLB instance ID     |  lb-h7m35y1y  |
 
-**Purchase link:** https://console.cloud.tencent.com/clb/instance
+
+**Purchase link:** https://buy.intl.cloud.tencent.com/clb
 
 **Specification options:**
 
@@ -131,8 +135,8 @@ All component configurations live under `global.components`. Each component cont
 
 **Purchase links:**
 
-- TDSQL → https://console.cloud.tencent.com/tdsqld/instance-tdmysql
-- MySQL → https://console.cloud.tencent.com/cdb/instance
+- TDSQL → https://buy.intl.cloud.tencent.com/tdstore
+- MySQL → https://buy.intl.cloud.tencent.com/cdb
 
 **Requirements:**
 - TDSQL-MySQL 8.0 or MySQL 8.4
@@ -184,7 +188,7 @@ MySQL:
 **Allowed `providerType` values:**
 - tencent: `crs`
 
-**Purchase link:** https://cloud.tencent.com/product/crs
+**Purchase link:** https://buy.intl.cloud.tencent.com/redis
 
 **Requirements:**
 - Redis 7.0+
@@ -224,7 +228,7 @@ MySQL:
 **Allowed `providerType` values:**
 - tencent: `es`
 
-**Purchase link:** https://cloud.tencent.com/product/es
+**Purchase link:** https://buy.intl.cloud.tencent.com/es
 
 **Requirements:**
 - Elasticsearch 7.x or 8.x
@@ -269,7 +273,7 @@ The unified key is `s3`. The exact storage type is differentiated by `providerTy
 |-----|----------|-------------|---------|
 | `components.s3.cos.secretId`       | ✅ Required | Tencent Cloud SecretId | `AKIDxxxx` |
 | `components.s3.cos.secretKey`      | ✅ Required | Tencent Cloud SecretKey | `xxxxx` |
-| `components.s3.cos.appId`          | ✅ Required | Tencent Cloud AppId | `1392479074` (do **not** wrap in quotes) |
+| `components.s3.cos.appId`          | ✅ Required | Tencent Cloud AppId | Use quotes to prevent numeric overflow |
 | `components.s3.cos.bucket`         | ✅ Required | Bucket name | `adp-test-1234567890` |
 | `components.s3.cos.region`         | ✅ Required | Region | `ap-guangzhou` |
 | `components.s3.cos.domain`         | ✅ Required | COS domain suffix | `myqcloud.com` |
@@ -284,7 +288,7 @@ The unified key is `s3`. The exact storage type is differentiated by `providerTy
 
 2. Configure CORS on the COS bucket for the domain in use, allowing the `GET`, `PUT`, `OPTIONS`, and `HEAD` methods.
 
-**Purchase link:** https://cloud.tencent.com/product/cos — create a bucket, then create a directory inside it for ADP.
+**Purchase link:** https://buy.tencentcloud.com/cos — create a bucket, then create a directory inside it for ADP.
 
 **Specification options:**
 
@@ -329,7 +333,7 @@ Kafka is an optional middleware. Purchase Kafka if you need the operation-log qu
 **Allowed `providerType` values:**
 - tencent: `kafka`
 
-**Purchase link:** https://console.cloud.tencent.com/ckafka/instance
+**Purchase link:** https://buy.intl.cloud.tencent.com/ckafka
 
 **Requirements:**
 - Kafka 2.x or 3.x
@@ -389,7 +393,7 @@ components:
 **Allowed `providerType` values:**
 - tencent: `clickhouse`
 
-**Purchase link:** https://console.cloud.tencent.com/tchousec/instance
+**Purchase link:** https://buy.intl.cloud.tencent.com/cdwch
 
 **Requirements:**
 - ClickHouse 25.x
@@ -448,7 +452,7 @@ All observability-related configurations live under `global.observability`.
 
 > Other optional parameters (`logType`, `timeKey`, `timeFormat`, etc.) already have sensible defaults set in the template; no further configuration is required.
 
-**Purchase link:** https://console.cloud.tencent.com/cls/topic
+**Purchase link:** https://console.intl.cloud.tencent.com/cls/topic
 
 ---
 
@@ -460,7 +464,7 @@ All observability-related configurations live under `global.observability`.
 
 > Other optional parameters (`port`, `interval`, `path`, `scheme`, `matchLabels`, etc.) already have sensible defaults set in the template; no further configuration is required.
 
-**Purchase link:** https://console.cloud.tencent.com/tke2/prometheus2
+**Purchase link:** https://buy.intl.cloud.tencent.com/prometheus
 
 ---
 
@@ -479,7 +483,7 @@ All observability-related configurations live under `global.observability`.
 - aws: `xray`
 - self: `jaeger`
 
-**Purchase link:** https://console.cloud.tencent.com/monitor/apm/system/list
+**Purchase link:** https://console.intl.cloud.tencent.com/monitor/apm/system/list
 
 ---
 
@@ -496,7 +500,7 @@ Used for text content moderation. Optional configuration.
 | `contentSecurity.secretId`  | ⚪ Optional | Tencent Cloud SecretId | `AKIDxxxx` |
 | `contentSecurity.secretKey` | ⚪ Optional | Tencent Cloud SecretKey | `xxxxx` |
 
-**Purchase link:** https://cloud.tencent.com/document/product/1124/51860
+**Purchase link:** https://console.intl.cloud.tencent.com/cms
 
 **Example configuration:**
 
@@ -534,19 +538,19 @@ Before deploying, make sure the following items are filled in correctly:
 
 ### Cloud Product Purchase List
 
-| Product | Purpose | Purchase Link |
-|---------|---------|---------------|
-| CLB Load Balancer | Traffic ingress | https://console.cloud.tencent.com/clb/instance |
-| TDSQL Database | Business data storage | https://console.cloud.tencent.com/tdsqld/instance-tdmysql |
-| Elasticsearch | Log search | https://cloud.tencent.com/product/es |
-| Redis | Caching | https://cloud.tencent.com/product/crs |
-| COS Object Storage | File storage | https://cloud.tencent.com/product/cos |
-| CKafka Message Queue | Audit log message queue | https://console.cloud.tencent.com/ckafka/instance |
-| ClickHouse | Data analytics | https://console.cloud.tencent.com/tchousec/instance |
-| CLS Log Service | Log collection (optional) | https://console.cloud.tencent.com/cls/topic |
-| Prometheus | Monitoring (optional) | https://console.cloud.tencent.com/tke2/prometheus2 |
-| APM | Tracing (optional) | https://console.cloud.tencent.com/monitor/apm/system/list |
-| ADP Platform | Knowledge Engine | https://console.cloud.tencent.com/lkeap |
+| Product              | Purpose | Purchase Link |
+|----------------------|---------|---------------|
+| CLB Load Balancer    | Traffic ingress | https://buy.intl.cloud.tencent.com/clb |
+| MySQL Database       | Business data storage | https://buy.intl.cloud.tencent.com/cdb |
+| Elasticsearch        | Log search | https://buy.intl.cloud.tencent.com/es |
+| Redis                | Caching | https://buy.intl.cloud.tencent.com/redis |
+| COS Object Storage   | File storage | https://buy.tencentcloud.com/cos |
+| CKafka Message Queue | Audit log message queue | https://buy.intl.cloud.tencent.com/ckafka |
+| ClickHouse           | Data analytics | https://buy.intl.cloud.tencent.com/cdwch |
+| CLS Log Service      | Log collection (optional) | https://console.intl.cloud.tencent.com/cls/topic |
+| Prometheus           | Monitoring (optional) | https://buy.intl.cloud.tencent.com/prometheus |
+| APM                  | Tracing (optional) | https://console.intl.cloud.tencent.com/monitor/apm/system/list |
+| ADP Platform         | Knowledge Engine | https://console.intl.cloud.tencent.com/lkeap |
 
 ## Recommended Server Configuration
 
