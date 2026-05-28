@@ -68,6 +68,7 @@ spec:
             - --secret-key=$(SECRET_KEY)
             - --eklet-service-name=eks-eklet
             - --eklet-service-namespace={{ .Release.Namespace }}
+            - --sa-token-refresh-interval=30m
           image: {{ .Values.eklet.image.ref }}
           imagePullPolicy: {{ .Values.eklet.image.pullPolicy }}
           livenessProbe:
