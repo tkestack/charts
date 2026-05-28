@@ -1,0 +1,122 @@
+{{- if and (ne .Values.global.deployMode "leecher") (eq .Values.agent.trackerType "ntracker") }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ntracker
+  namespace: {{ .Values.global.namespace }}
+spec:
+  serviceName: ntracker-service
+  replicas: {{ .Values.ntracker.replicaCount }}
+  selector:
+    matchLabels:
+      app: ntracker
+  template:
+    metadata:
+      labels:
+        app: ntracker
+    spec:
+      {{- if .Values.ntracker.hostNetwork }}
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      {{- end }}
+      tolerations:
+{{ toYaml .Values.tolerations.server | indent 8 }}
+      affinity:
+{{ toYaml .Values.affinity.server | indent 8 }}
+        {{- if .Values.ntracker.hostNetwork }}
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: ntracker
+              topologyKey: kubernetes.io/hostname
+        {{- end }}
+      containers:
+        - name: ntracker
+          image: "{{ .Values.images.ntracker.image }}:{{ .Values.images.ntracker.tag }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+{{- with .Values.resources.ntracker }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+{{- end }}
+          command: ["/app/tracker"]
+          args:
+            - "-config"
+            - "/app/config/config.yaml"
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: NTRACKER_SERVICE_DNS
+              value: "ntracker-service.{{ .Values.global.namespace }}.svc.cluster.local"
+            - name: REPLICA_COUNT
+              value: "{{ .Values.ntracker.replicaCount }}"
+          volumeMounts:
+            - name: tracker-data
+              mountPath: /app/data
+            - name: config-volume
+              mountPath: /app/config
+          ports:
+            - containerPort: {{ .Values.ntracker.port }}
+              name: http
+      volumes:
+        - name: config-volume
+          configMap:
+            name: ntracker-config
+  volumeClaimTemplates:
+    - metadata:
+        name: tracker-data
+      spec:
+        accessModes:
+          - {{ .Values.ntracker.persistence.accessMode }}
+        {{- if .Values.ntracker.persistence.storageClass }}
+        storageClassName: {{ .Values.ntracker.persistence.storageClass }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.ntracker.persistence.size }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ntracker-service
+  namespace: {{ .Values.global.namespace }}
+spec:
+  clusterIP: None
+  selector:
+    app: ntracker
+  ports:
+    - port: {{ .Values.ntracker.port }}
+      targetPort: {{ .Values.ntracker.port }}
+      name: http
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ntracker-config
+  namespace: {{ .Values.global.namespace }}
+data:
+  config.yaml: |
+    port: {{ .Values.ntracker.port }}
+    shard_count: {{ .Values.ntracker.shardCount }}
+    cleanup_interval: {{ .Values.ntracker.cleanupInterval }}
+    expire_time: {{ .Values.ntracker.expireTime }}
+    aof_path: {{ .Values.ntracker.aofPath }}
+    aof_sync_interval: {{ .Values.ntracker.aofSyncInterval }}
+    hot_threshold: {{ .Values.ntracker.hotThreshold }}
+    hot_cache_size: {{ .Values.ntracker.hotCacheSize }}
+    peer_hot_threshold: {{ .Values.ntracker.peerHotThreshold }}
+    peer_number: {{ .Values.ntracker.peerNumber }}
+    log:
+      level: {{ .Values.ntracker.logLevel }}
+      path: {{ .Values.ntracker.logPath }}
+      max_size: {{ .Values.ntracker.logMaxSize }}
+      max_backups: {{ .Values.ntracker.logMaxBackups }}
+      max_age: {{ .Values.ntracker.logMaxAge }}
+      compress: {{ .Values.ntracker.logCompress }}
+{{- end }}
