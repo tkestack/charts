@@ -1,4 +1,4 @@
-{{- if ne .Values.global.deployMode "leecher" }}
+{{- if and (ne .Values.global.deployMode "leecher") (ne .Values.agent.trackerType "ntracker") }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,11 +14,18 @@ spec:
       labels:
         app: tracker
     spec:
+      tolerations:
+{{ toYaml .Values.tolerations.server | indent 8 }}
+      affinity:
+{{ toYaml .Values.affinity.server | indent 8 }}
       containers:
         - name: tracker
           image: "{{ .Values.images.tracker.image }}:{{ .Values.images.tracker.tag }}"
           imagePullPolicy: {{ .Values.global.imagePullPolicy }}
-          # command: ["/bin/bash", "-c", "sleep 1234"]
+{{- with .Values.resources.tracker }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+{{- end }}
           ports:
             - containerPort: {{ .Values.tracker.port }}
           env:

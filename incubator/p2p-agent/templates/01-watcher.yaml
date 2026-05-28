@@ -1,10 +1,11 @@
 {{- if and .Values.watcher.enabled (ne .Values.global.deployMode "leecher") }}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: watcher
   namespace: {{ .Values.global.namespace }}
 spec:
+  serviceName: watcher-service
   replicas: {{ .Values.watcher.replicaCount }}
   selector:
     matchLabels:
@@ -14,19 +15,45 @@ spec:
       labels:
         app: watcher
     spec:
+      tolerations:
+{{ toYaml .Values.tolerations.server | indent 8 }}
+      affinity:
+{{ toYaml .Values.affinity.server | indent 8 }}
       containers:
         - name: watcher
           image: "{{ .Values.images.watcher.image }}:{{ .Values.images.watcher.tag }}"
           imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+{{- with .Values.resources.watcher }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+{{- end }}
           volumeMounts:
             - name: config-volume
               mountPath: /app/config
+            {{- if .Values.watcher.persistence.enabled }}
+            - name: watcher-snapshot
+              mountPath: /app/persistence
+            {{- end }}
           ports:
             - containerPort: {{ .Values.watcher.port }}
       volumes:
         - name: config-volume
           configMap:
             name: watcher-config
+  {{- if .Values.watcher.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: watcher-snapshot
+      spec:
+        accessModes:
+          - {{ .Values.watcher.persistence.accessMode }}
+        {{- if .Values.watcher.persistence.storageClass }}
+        storageClassName: {{ .Values.watcher.persistence.storageClass }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.watcher.persistence.size }}
+  {{- end }}
 ---
 apiVersion: v1
 kind: Service
@@ -54,15 +81,27 @@ data:
     manager:
       cluster_id: {{ .Values.watcher.manager.clusterId }}
       token: {{ .Values.watcher.manager.token }}
-      limit: {{ .Values.watcher.manager.limit}}
+      limit: {{ .Values.watcher.manager.limit }}
       endpoints: {{ .Values.watcher.manager.endpoints }}
-      seeder_cleanup_interval: {{ .Values.watcher.manager.seederCleanupInterval | default 10800 }}
+      seeder_cleanup_interval: {{ .Values.watcher.manager.seederCleanupInterval | default 1200 }}
     preheat:
       poll_interval: {{ .Values.watcher.preheatInterval }}
+      filter_time_window: {{ .Values.watcher.passivePreheatTimeWindow }}
+      filter_threshold: {{ .Values.watcher.passivePreheatThreshold }}
     registry:
-      enabled: {{ .Values.watcher.registryEnabled | default false }}
       username: "{{ .Values.watcher.registryUsername | default "" }}"
       password: "{{ .Values.watcher.registryPassword | default "" }}"
     http_port: {{ .Values.watcher.port }}
+    log:
+      path: "{{ .Values.watcher.logPath }}"
+      level: "{{ .Values.watcher.logLevel | default "info" }}"
+      max_size: {{ .Values.watcher.logMaxSize | default 100 }}
+      max_backups: {{ .Values.watcher.logMaxBackups | default 3 }}
+      max_age: {{ .Values.watcher.logMaxAge | default 10 }}
+      compress: {{ .Values.watcher.logCompress | default true }}
+    persistence:
+      enabled: {{ .Values.watcher.persistence.enabled | default true }}
+      snapshot_interval: {{ .Values.watcher.persistence.snapshotInterval | default 20 }}
+      aof_sync_interval: {{ .Values.watcher.persistence.aofSyncInterval | default 1 }}
 
 {{- end }}
