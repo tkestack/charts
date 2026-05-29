@@ -307,7 +307,7 @@ env:
   FROM_INTERNET: "false"
 
 config:
-  "java": "bwiefeunq4+28k5omTkgc3XQLHjDEh4aylntxj4NiVRsibnL5n4Kk0EHTYJPoXHe"
-  "python": "4jIDAZIsW4/kuFgKHgcZwjQo31drB4bfliBsaNdflQuak7EXJvmx+aoQ4s3bQjxd"
+  "java": "LnMJIlbZkvA1tdECzP49rxZJxtdG+BzcE0lwEuNtM7HowDt6DHf/1S9KULD6ov75"
+  "python": "oxhyWG+SYAFO65Cl8g33Fkk5NDioZ+/e6N3wG8mk9Dy8w1U7OCAaAgvrGLGAJXMn"
   "dotnet": "6/U0Gb1SHpaaUl0YwK40PKFd6tBckngcpqe2LCxnp/lMCD0q0XOxLkmY1UAS4L8t"
   "nodejs": "Rb+Igu4pvBox8cxM1ZjcL1LpAzq7EDRS/NBRPOUQ6cC5+hPYlYDFps2GgZMWmzhb"
