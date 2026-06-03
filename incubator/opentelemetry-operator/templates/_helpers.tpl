@@ -155,10 +155,15 @@ Create an ordered name of the MutatingWebhookConfiguration
 
 {{/*
 Modify image repository by region.
+仅当仓库前缀为 ccr.ccs.tencentyun.com 时才根据 TKE_REGION 进行区域仓库替换，否则保持原值不变。支持客户私有镜像仓库配置。
 */}}
 {{- define "opentelemetry-operator.managerImageRepository" -}}
 {{- $parts := regexSplit "/" .Values.manager.image.repository -1 -}}
+{{- if eq (index $parts 0) "ccr.ccs.tencentyun.com" -}}
 {{- printf "%s/%s" (include "regionRepositoryMap" .Values.env.TKE_REGION) (join "/" (slice $parts 1 (len $parts))) -}}
+{{- else -}}
+{{- .Values.manager.image.repository -}}
+{{- end -}}
 {{- end -}}
 
 
@@ -167,7 +172,11 @@ Modify collector image repository by region.
 */}}
 {{- define "opentelemetry-operator.managerCollectorImageRepository" -}}
 {{- $parts := regexSplit "/" .Values.manager.collectorImage.repository -1 -}}
+{{- if eq (index $parts 0) "ccr.ccs.tencentyun.com" -}}
 {{- printf "%s/%s" (include "regionRepositoryMap" .Values.env.TKE_REGION) (join "/" (slice $parts 1 (len $parts))) -}}
+{{- else -}}
+{{- .Values.manager.collectorImage.repository -}}
+{{- end -}}
 {{- end -}}
 
 
@@ -176,13 +185,21 @@ Modify kubeRBACProxy image repository by region.
 */}}
 {{- define "opentelemetry-operator.proxyImageRepository" -}}
 {{- $parts := regexSplit "/" .Values.kubeRBACProxy.image.repository -1 -}}
+{{- if eq (index $parts 0) "ccr.ccs.tencentyun.com" -}}
 {{- printf "%s/%s" (include "regionRepositoryMap" .Values.env.TKE_REGION) (join "/" (slice $parts 1 (len $parts))) -}}
+{{- else -}}
+{{- .Values.kubeRBACProxy.image.repository -}}
+{{- end -}}
 {{- end -}}
 
 
 {{- define "opentelemetry-operator.jobImageRepository" -}}
 {{- $parts := regexSplit "/" .Values.waitForManager.image.repository -1 -}}
+{{- if eq (index $parts 0) "ccr.ccs.tencentyun.com" -}}
 {{- printf "%s/%s" (include "regionRepositoryMap" .Values.env.TKE_REGION) (join "/" (slice $parts 1 (len $parts))) -}}
+{{- else -}}
+{{- .Values.waitForManager.image.repository -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
