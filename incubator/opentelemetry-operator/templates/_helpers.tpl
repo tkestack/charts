@@ -341,10 +341,16 @@ Instrumentation resource spec definition.
 用于在多个地方复用 Instrumentation 资源定义
 */}}
 {{- define "opentelemetry-operator.instrumentation" -}}
-{{- $registry := include "regionRepositoryMap" .Values.env.TKE_REGION -}}
+{{- $registry := "" -}}
+{{- if and (ne .Values.env.INSTR_REPOSITORY "") (ne .Values.env.INSTR_REPOSITORY "ccr.ccs.tencentyun.com/tapm") -}}
+{{- $registry = .Values.env.INSTR_REPOSITORY -}}
+{{- else -}}
+{{- $registry = include "regionRepositoryMap" .Values.env.TKE_REGION -}}
+{{- $registry = printf "%s/tapm" $registry -}}
+{{- end -}}
 {{- $javaVersion := ternary "2.11-20260228" .Values.env.JAVA_INSTR_VERSION (eq .Values.env.JAVA_INSTR_VERSION "latest") -}}
 {{- $nodejsVersion := ternary "0.51.0" .Values.env.NODEJS_INSTR_VERSION (eq .Values.env.NODEJS_INSTR_VERSION "latest") -}}
-{{- $pythonVersion := ternary "0.51b0" .Values.env.PYTHON_INSTR_VERSION (eq .Values.env.PYTHON_INSTR_VERSION "latest") -}}
+{{- $pythonVersion := ternary "0.58b0" .Values.env.PYTHON_INSTR_VERSION (eq .Values.env.PYTHON_INSTR_VERSION "latest") -}}
 {{- $dotnetVersion := ternary "1.10.0" .Values.env.DOTNET_INSTR_VERSION (eq .Values.env.DOTNET_INSTR_VERSION "latest") -}}
 apiVersion: opentelemetry.io/v1alpha1
 kind: Instrumentation
@@ -362,16 +368,16 @@ spec:
     resourceAttributes:
       token: {{ .Values.env.APM_TOKEN }}
   java:
-    image: {{ printf "%s/tapm/opentelemetry-java-agent:%s" $registry $javaVersion }}
+    image: {{ printf "%s/opentelemetry-java-agent:%s" $registry $javaVersion }}
   nodejs:
-    image: {{ printf "%s/tapm/autoinstrumentation-nodejs:%s" $registry $nodejsVersion }}
+    image: {{ printf "%s/autoinstrumentation-nodejs:%s" $registry $nodejsVersion }}
   python:
-    image: {{ printf "%s/tapm/autoinstrumentation-python:%s" $registry $pythonVersion }}
+    image: {{ printf "%s/autoinstrumentation-python:%s" $registry $pythonVersion }}
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: {{ printf "%s/otlp" (include "opentelemetry-operator.host" . ) | quote | trim }}
   dotnet:
-    image: {{ printf "%s/tapm/autoinstrumentation-dotnet:%s" $registry $dotnetVersion }}
+    image: {{ printf "%s/autoinstrumentation-dotnet:%s" $registry $dotnetVersion }}
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: {{ printf "%s/otlp" (include "opentelemetry-operator.host" . ) | quote | trim }}
