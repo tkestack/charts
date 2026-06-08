@@ -155,10 +155,15 @@ Create an ordered name of the MutatingWebhookConfiguration
 
 {{/*
 Modify image repository by region.
+仅当仓库前缀为 ccr.ccs.tencentyun.com 时才根据 TKE_REGION 进行区域仓库替换，否则保持原值不变。支持客户私有镜像仓库配置。
 */}}
 {{- define "opentelemetry-operator.managerImageRepository" -}}
 {{- $parts := regexSplit "/" .Values.manager.image.repository -1 -}}
+{{- if eq (index $parts 0) "ccr.ccs.tencentyun.com" -}}
 {{- printf "%s/%s" (include "regionRepositoryMap" .Values.env.TKE_REGION) (join "/" (slice $parts 1 (len $parts))) -}}
+{{- else -}}
+{{- .Values.manager.image.repository -}}
+{{- end -}}
 {{- end -}}
 
 
@@ -167,7 +172,11 @@ Modify collector image repository by region.
 */}}
 {{- define "opentelemetry-operator.managerCollectorImageRepository" -}}
 {{- $parts := regexSplit "/" .Values.manager.collectorImage.repository -1 -}}
+{{- if eq (index $parts 0) "ccr.ccs.tencentyun.com" -}}
 {{- printf "%s/%s" (include "regionRepositoryMap" .Values.env.TKE_REGION) (join "/" (slice $parts 1 (len $parts))) -}}
+{{- else -}}
+{{- .Values.manager.collectorImage.repository -}}
+{{- end -}}
 {{- end -}}
 
 
@@ -176,13 +185,21 @@ Modify kubeRBACProxy image repository by region.
 */}}
 {{- define "opentelemetry-operator.proxyImageRepository" -}}
 {{- $parts := regexSplit "/" .Values.kubeRBACProxy.image.repository -1 -}}
+{{- if eq (index $parts 0) "ccr.ccs.tencentyun.com" -}}
 {{- printf "%s/%s" (include "regionRepositoryMap" .Values.env.TKE_REGION) (join "/" (slice $parts 1 (len $parts))) -}}
+{{- else -}}
+{{- .Values.kubeRBACProxy.image.repository -}}
+{{- end -}}
 {{- end -}}
 
 
 {{- define "opentelemetry-operator.jobImageRepository" -}}
 {{- $parts := regexSplit "/" .Values.waitForManager.image.repository -1 -}}
+{{- if eq (index $parts 0) "ccr.ccs.tencentyun.com" -}}
 {{- printf "%s/%s" (include "regionRepositoryMap" .Values.env.TKE_REGION) (join "/" (slice $parts 1 (len $parts))) -}}
+{{- else -}}
+{{- .Values.waitForManager.image.repository -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -324,6 +341,17 @@ Instrumentation resource spec definition.
 用于在多个地方复用 Instrumentation 资源定义
 */}}
 {{- define "opentelemetry-operator.instrumentation" -}}
+{{- $registry := "" -}}
+{{- if and (ne .Values.env.INSTR_REPOSITORY "") (ne .Values.env.INSTR_REPOSITORY "ccr.ccs.tencentyun.com/tapm") -}}
+{{- $registry = .Values.env.INSTR_REPOSITORY -}}
+{{- else -}}
+{{- $registry = include "regionRepositoryMap" .Values.env.TKE_REGION -}}
+{{- $registry = printf "%s/tapm" $registry -}}
+{{- end -}}
+{{- $javaVersion := ternary "2.11-20260228" .Values.env.JAVA_INSTR_VERSION (eq .Values.env.JAVA_INSTR_VERSION "latest") -}}
+{{- $nodejsVersion := ternary "0.51.0" .Values.env.NODEJS_INSTR_VERSION (eq .Values.env.NODEJS_INSTR_VERSION "latest") -}}
+{{- $pythonVersion := ternary "0.58b0" .Values.env.PYTHON_INSTR_VERSION (eq .Values.env.PYTHON_INSTR_VERSION "latest") -}}
+{{- $dotnetVersion := ternary "1.10.0" .Values.env.DOTNET_INSTR_VERSION (eq .Values.env.DOTNET_INSTR_VERSION "latest") -}}
 apiVersion: opentelemetry.io/v1alpha1
 kind: Instrumentation
 metadata:
@@ -340,16 +368,16 @@ spec:
     resourceAttributes:
       token: {{ .Values.env.APM_TOKEN }}
   java:
-    image:
+    image: {{ printf "%s/opentelemetry-java-agent:%s" $registry $javaVersion }}
   nodejs:
-    image:
+    image: {{ printf "%s/autoinstrumentation-nodejs:%s" $registry $nodejsVersion }}
   python:
-    image:
+    image: {{ printf "%s/autoinstrumentation-python:%s" $registry $pythonVersion }}
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: {{ printf "%s/otlp" (include "opentelemetry-operator.host" . ) | quote | trim }}
   dotnet:
-    image:
+    image: {{ printf "%s/autoinstrumentation-dotnet:%s" $registry $dotnetVersion }}
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: {{ printf "%s/otlp" (include "opentelemetry-operator.host" . ) | quote | trim }}
