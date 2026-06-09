@@ -103,6 +103,10 @@ spec:
               value: {{ .Values.env.DOTNET_INSTR_VERSION | quote }}
             - name: NODEJS_INSTR_VERSION
               value: {{ .Values.env.NODEJS_INSTR_VERSION | quote }}
+            - name: JAVA_INSTR_NACOS_SERVER
+              value: {{ .Values.env.JAVA_INSTR_NACOS_SERVER | quote }}
+            - name: JAVA_INSTR_ARTHAS_URL
+              value: {{ .Values.env.JAVA_INSTR_ARTHAS_URL | quote }}
             - name: INTL_SITE
               value: {{ .Values.env.INTL_SITE | quote }}
             - name: CONFIG_JAVA
