@@ -38,22 +38,17 @@ manager:
     tag: ""
   autoInstrumentationImage:
     java:
-      repository: ""
-      tag: ""
+      repository: "ccr.ccs.tencentyun.com/tapm/opentelemetry-java-agent"
+      tag: "2.11-20260228"
     nodejs:
-      repository: ""
-      tag: ""
+      repository: "ccr.ccs.tencentyun.com/tapm/autoinstrumentation-nodejs"
+      tag: "0.51.0"
     python:
-      repository: ""
-      tag: ""
+      repository: "ccr.ccs.tencentyun.com/tapm/autoinstrumentation-python"
+      tag: "0.58b0"
     dotnet:
-      repository: ""
-      tag: ""
-    # The Go instrumentaiton support in the operator is disabled by default.
-    # To enable it, use the operator.autoinstrumentation.go feature gate.
-    go:
-      repository: ""
-      tag: ""
+      repository: "ccr.ccs.tencentyun.com/tapm/autoinstrumentation-dotnet"
+      tag: "1.10.0"
   # Feature Gates are a a comma-delimited list of feature gate identifiers.
   # Prefix a gate with '-' to disable support.
   # Prefixing a gate with '+' or no prefix will enable support.
@@ -295,11 +290,16 @@ env:
   ENDPOINT: ""
 
   ## Optional, specify the image repository and image version;
-  INSTR_REPOSITORY: "ccr.ccs.tencentyun.com/tapm"
   JAVA_INSTR_VERSION: "latest"
   PYTHON_INSTR_VERSION: "latest"
   DOTNET_INSTR_VERSION: "latest"
   NODEJS_INSTR_VERSION: "latest"
+
+  ## Optional, specify the Nacos server address
+  JAVA_INSTR_NACOS_SERVER: ""
+  ## Optional, specify the Arthas URL
+  JAVA_INSTR_ARTHAS_URL: ""
+
 
   ## Optional, default "false"; Set to "true" for international users
   INTL_SITE: "false"
