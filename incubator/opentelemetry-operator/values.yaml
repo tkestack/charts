@@ -291,6 +291,7 @@ env:
 
   ## Optional, specify the image repository and image version;
   INSTR_IMAGE_REPOSITORY: "ccr.ccs.tencentyun.com"
+  INSTR_IMAGE_NAMESPACE: "tapm"
   JAVA_INSTR_VERSION: "latest"
   PYTHON_INSTR_VERSION: "latest"
   DOTNET_INSTR_VERSION: "latest"

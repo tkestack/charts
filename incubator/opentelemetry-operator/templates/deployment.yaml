@@ -127,6 +127,8 @@ spec:
               {{- else }}
               value: {{ .Values.env.INSTR_IMAGE_REPOSITORY | quote }}
               {{- end }}
+            - name: IMAGE_NAMESPACE
+              value: {{ .Values.env.INSTR_IMAGE_NAMESPACE | default "tapm" | quote }}
           {{- end }}
           image: "{{ include "opentelemetry-operator.managerImageRepository" . }}:{{ .Values.manager.image.tag }}"
           name: manager
