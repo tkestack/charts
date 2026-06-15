@@ -368,7 +368,7 @@ data:
     task_config:
       task_prefix: agent-config-server:task
       task_fetch_num: 400
-      task_fetch_timeout: 2s
+      task_fetch_timeout: 10s
       task_fetch_period: 2s
       task_max_timeout: 1h
       tasks:
@@ -609,6 +609,7 @@ data:
         - i18n-adp
         - cle-route-propagator
         - opentelemetry
+        - cos_rewrite
       service:
         - name: trpc.KEP.agent-config-server.AgentConfig
           ip: ${POD_IP}
@@ -814,3 +815,8 @@ data:
       selector:
         polaris:
           enable_servicerouter: true
+      filter:
+        cos_rewrite:
+          path_prefixes:
+            - /public
+            - /qbot

@@ -1076,6 +1076,10 @@ data:
           bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
           domain: myqcloud.com
           expire_time: 30m
+          assume_role:
+            role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
         fileparser:
           secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
           secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
@@ -1084,6 +1088,10 @@ data:
           bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
           domain: tencentcos.cn
           expire_time: 180m
+          assume_role:
+            role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
         realtime:
           secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
           secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
@@ -1093,6 +1101,10 @@ data:
           domain: myqcloud.com
           expire_time: 30m
           credential_time: 10m
+          assume_role:
+            role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
 
     ElasticSearchConfig:
       index_big_data: doc_big_data_preview
@@ -1172,6 +1184,10 @@ data:
           bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
           domain: tencentcos.cn
           expire_time: 180m
+          assume_role:
+            role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
       rich_content:
         richContent_max: 100000
         miniChunk_max: 100000

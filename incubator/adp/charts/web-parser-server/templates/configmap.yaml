@@ -30,6 +30,56 @@ data:
           "Endpoint": "{{ include "web-parser-server.cos.endpoint" . | trim }}",
           "Protocol": "{{ include "web-parser-server.cos.protocol" . | trim }}"
       },
+      "S3XConf":{
+        "Type": "{{ .Values.global.components.s3.providerType }}",
+        "CosMap": {
+          "default": {
+            "SecretId": "{{ include "web-parser-server.cos.secretId" . | trim }}",
+            "SecretKey": "{{ include "web-parser-server.cos.secretKey" . | trim }}",
+            "AppId": "{{ .Values.global.components.s3.cos.appId }}",
+            "Region": "{{ .Values.global.components.s3.cos.region }}",
+            "Bucket": "{{ include "web-parser-server.cos.bucket" . | trim }}",
+            "Domain": "{{ .Values.global.components.s3.cos.domain }}",
+            "ExpireTime": "30m",
+            "CredentialTime": "10m",
+            "AssumeRole": {
+              "RoleArn": "{{ .Values.global.components.s3.cos.stsRoleArn }}",
+              "DurationSeconds": 43200,
+              "RefreshAheadSeconds": 300
+            }
+          },
+          "offline": {
+            "SecretId": "{{ include "web-parser-server.cos.secretId" . | trim }}",
+            "SecretKey": "{{ include "web-parser-server.cos.secretKey" . | trim }}",
+            "AppId": "{{ .Values.global.components.s3.cos.appId }}",
+            "Region": "{{ .Values.global.components.s3.cos.region }}",
+            "Bucket": "{{ include "web-parser-server.cos.bucket" . | trim }}",
+            "Domain": "{{ .Values.global.components.s3.cos.domain }}",
+            "ExpireTime": "30m",
+            "CredentialTime": "10m",
+            "AssumeRole": {
+              "RoleArn": "{{ .Values.global.components.s3.cos.stsRoleArn }}",
+              "DurationSeconds": 43200,
+              "RefreshAheadSeconds": 300
+            }
+          },
+          "realtime": {
+            "SecretId": "{{ include "web-parser-server.cos.secretId" . | trim }}",
+            "SecretKey": "{{ include "web-parser-server.cos.secretKey" . | trim }}",
+            "AppId": "{{ .Values.global.components.s3.cos.appId }}",
+            "Region": "{{ .Values.global.components.s3.cos.region }}",
+            "Bucket": "{{ include "web-parser-server.cos.bucket" . | trim }}",
+            "Domain": "{{ .Values.global.components.s3.cos.domain }}",
+            "ExpireTime": "30m",
+            "CredentialTime": "10m",
+            "AssumeRole": {
+              "RoleArn": "{{ .Values.global.components.s3.cos.stsRoleArn }}",
+              "DurationSeconds": 43200,
+              "RefreshAheadSeconds": 300
+            }
+          }
+        }
+      },
       "WorkerCount": 1,
       "TaskScanInterval": 1,
       "TaskProcessTimeout": 600000000000,
@@ -103,7 +153,7 @@ data:
         ]
       },
       "AutoUpdateList": ["1924489468235778112","1788032699535982592","1707741546843766784"],
-      "WhiteCosList": ["{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.{{ .Values.global.components.s3.cos.domain }}"]
+      "WhiteCosList": ["{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.{{ .Values.global.components.s3.cos.domain }}","{{ .Values.global.clb }}"]
     }
   WebParser_en-US.json: |
     {
@@ -267,6 +317,11 @@ data:
           protocol: trpc
           timeout: 20000
           target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+        - name: trpc.http.cos.Access
+          network: tcp
+          protocol: http
+          target: dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn
+          timeout: 5000
     plugins:                                           #插件配置
       config:
         file:

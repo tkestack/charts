@@ -69,6 +69,10 @@ cos:
   bucket: {{ .Values.global.components.s3.cos.bucket }}
   domain: {{ .Values.global.components.s3.cos.domain }}
   expire_time: 30m
+  assume_role:
+    role_arn: {{ .Values.global.components.s3.cos.stsRoleArn | quote }}
+    duration_seconds: 43200
+    refresh_ahead_seconds: 300
 cos_map:
   default:
     secret_id: {{ .Values.global.components.s3.cos.secretId }}
@@ -78,6 +82,10 @@ cos_map:
     bucket: {{ .Values.global.components.s3.cos.bucket }}
     domain: {{ .Values.global.components.s3.cos.domain }}
     expire_time: 30m
+    assume_role:
+      role_arn: {{ .Values.global.components.s3.cos.stsRoleArn | quote }}
+      duration_seconds: 43200
+      refresh_ahead_seconds: 300
   offline:
     secret_id: {{ .Values.global.components.s3.cos.secretId }}
     secret_key: {{ .Values.global.components.s3.cos.secretKey }}
@@ -86,6 +94,10 @@ cos_map:
     bucket: {{ .Values.global.components.s3.cos.bucket }}
     domain: {{ .Values.global.components.s3.cos.domain }}
     expire_time: 30m
+    assume_role:
+      role_arn: {{ .Values.global.components.s3.cos.stsRoleArn | quote }}
+      duration_seconds: 43200
+      refresh_ahead_seconds: 300
   realtime:
     secret_id: {{ .Values.global.components.s3.cos.secretId }}
     secret_key: {{ .Values.global.components.s3.cos.secretKey }}
@@ -94,5 +106,9 @@ cos_map:
     bucket: {{ .Values.global.components.s3.cos.bucket }}
     domain: {{ .Values.global.components.s3.cos.domain }}
     expire_time: 30m
+    assume_role:
+      role_arn: {{ .Values.global.components.s3.cos.stsRoleArn | quote }}
+      duration_seconds: 43200
+      refresh_ahead_seconds: 300
 {{- end -}}
 {{- end -}}

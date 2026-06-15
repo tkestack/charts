@@ -87,6 +87,20 @@ spec:
               value: "20230925"
             - name: QA_DRAW_BASE_URL
               value: "/lke/#/app/knowledge/qa-draw?appType=knowledge_qa&_for_op=private"
+            {{- if .Values.global.components.s3.cos.stsKey }}
+            - name: ADP_ASSUME_ROLE_SECRET_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  key: ADP_ASSUME_ROLE_SECRET_ID
+                  optional: true
+            - name: ADP_ASSUME_ROLE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  key: ADP_ASSUME_ROLE_SECRET_KEY
+                  optional: true
+            {{- end }}
           image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-platform-op").url "context" .) }}
           imagePullPolicy: Always
           # lifecycle:

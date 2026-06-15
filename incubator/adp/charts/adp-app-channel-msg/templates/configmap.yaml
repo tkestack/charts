@@ -227,6 +227,7 @@ data:
         - debuglog
         - cle-route-propagator
         - opentelemetry
+        - cos_rewrite
       admin:
         ip: ${POD_IP}
         port: 8081
@@ -341,6 +342,11 @@ data:
             char_scaling_factor:
               zh-CN: 1
               en-US: 3
+      filter:
+        cos_rewrite:
+          path_prefixes:
+            - /public
+            - /qbot
     client:
       filter:
         - cle-route-propagator

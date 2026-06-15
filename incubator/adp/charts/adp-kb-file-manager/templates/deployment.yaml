@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: adp-agent-exec
+  name: adp-kb-file-manager
   namespace: {{ .Release.Namespace }}
   annotations:
     ti.cloud.tencent.com/resource-quota: unlimited
-    configmap.reloader.stakater.com/reload: {{ .Release.Name }}-agent-exec
+    configmap.reloader.stakater.com/reload: {{ .Release.Name }}-kb-file-manager
     {{- if .Values.global.customAnnotations }}
     {{- range $key, $value := .Values.global.customAnnotations }}
     {{ $key }}: {{ $value | toString | quote }}
     {{- end }}
     {{- end }}
   labels:
-    app: adp-agent-exec
-    app.kubernetes.io/name: adp-agent-exec
+    app: adp-kb-file-manager
+    app.kubernetes.io/name: adp-kb-file-manager
     {{- if .Values.global.customLabels }}
     {{- range $key, $value := .Values.global.customLabels }}
     {{ $key }}: {{ $value | toString | quote }}
@@ -29,11 +29,11 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      app: adp-agent-exec
+      app: adp-kb-file-manager
   template:
     metadata:
       labels:
-        app: adp-agent-exec
+        app: adp-kb-file-manager
         {{- if .Values.global.customLabels }}
         {{- range $key, $value := .Values.global.customLabels }}
         {{ $key }}: {{ $value | toString | quote }}
@@ -49,15 +49,15 @@ spec:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - adp-agent-exec
-              topologyKey: kubernetes.io/hostname
-            weight: 1
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - adp-kb-file-manager
+                topologyKey: kubernetes.io/hostname
+              weight: 1
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - weight: 50
@@ -80,10 +80,6 @@ spec:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       containers:
         - env:
-            - name: MKL_NUM_THREADS
-              value: "2"
-            - name: LOG_SPACES
-              value: "2097152"
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -100,14 +96,8 @@ spec:
                   fieldPath: status.podIP
             - name: DEPLOYMENT_ENVIRONMENT
               value: TKE
-            - name: NAME_SPACE
-              value: default
             - name: ENV
               value: tcs
-            - name: SERVER_LOG_LEVEL
-              value: info
-            - name: ADP_HOST
-              value: "{{ .Values.global.scheme }}://{{ .Values.global.clb }}"
             {{- if .Values.global.components.s3.cos.stsKey }}
             - name: ADP_ASSUME_ROLE_SECRET_ID
               valueFrom:
@@ -122,52 +112,34 @@ spec:
                   key: ADP_ASSUME_ROLE_SECRET_KEY
                   optional: true
             {{- end }}
-          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-agent-exec").url "context" .) }}
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-kb-file-manager").url "context" .) }}
           imagePullPolicy: Always
-          name: adp-agent-exec
-          command: ["/app/bin/agent-exec", "-conf", "/app/conf/trpc_go.yaml"]
-          #command: ["sh", "-c", "while true; do sleep 1800; done"]
-          livenessProbe:
-            failureThreshold: 2
-            initialDelaySeconds: 20
-            periodSeconds: 3
-            successThreshold: 1
-            tcpSocket:
-              port: 8001
-            timeoutSeconds: 2
-          readinessProbe:
-            failureThreshold: 2
-            initialDelaySeconds: 2
-            periodSeconds: 3
-            successThreshold: 1
-            tcpSocket:
-              port: 8001
-            timeoutSeconds: 2
           {{- if eq .Values.global.clusterSize "minimal" }}
           resources:
             limits:
               cpu: "500m"
-              memory: "1Gi"
+              memory: "2Gi"
             requests:
               cpu: "125m"
               memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
             limits:
-              cpu: "1"
-              memory: "1Gi"
-            requests:
               cpu: "500m"
-              memory: "512Mi"
+              memory: "2Gi"
+            requests:
+              cpu: "250m"
+              memory: "1Gi"
           {{- else }}
           resources:
             limits:
-              cpu: "2"
-              memory: "4Gi"
-            requests:
               cpu: "1"
               memory: "2Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
           {{- end }}
+          name: adp-kb-file-manager
           volumeMounts:
             - mountPath: /etc/localtime
               name: localtime
@@ -177,28 +149,18 @@ spec:
             - mountPath: /app/conf/trpc_go.yaml
               name: config
               subPath: trpc_go.yaml
+            - mountPath: /app/conf/application.yaml
+              name: config
+              subPath: application.yaml
             - mountPath: /app/conf/main.yaml
               name: config
               subPath: main.yaml
             - mountPath: /app/conf/placeholder.yaml
               name: config
               subPath: placeholder.yaml
-            - mountPath: /app/conf/agent_en-US.json
+            - mountPath: /app/conf/client.yaml
               name: config
-              subPath: agent_en-US.json
-            - mountPath: /app/conf/agent_zh-CN.json
-              name: config
-              subPath: agent_zh-CN.json
-            - mountPath: /app/conf/error_en-US.json
-              name: config
-              subPath: error_en-US.json
-            - mountPath: /app/conf/error_zh-CN.json
-              name: config
-              subPath: error_zh-CN.json
-            - mountPath: /app/conf/scurl.yaml
-              name: rainbow-comm
-              subPath: scurl.yaml
-
+              subPath: client.yaml
             - mountPath: /app/conf/infrastructure.yaml
               name: infrastructure
               subPath: infrastructure.yaml
@@ -209,18 +171,13 @@ spec:
             path: /etc/localtime
           name: localtime
         - hostPath:
-            path: /data/ti-platform/log/adp-agent-exec
+            path: /data/ti-platform/log/adp-kb-file-manager
             type: DirectoryOrCreate
           name: logdata
         - configMap:
             defaultMode: 420
-            name: {{ .Release.Name }}-agent-exec
+            name: {{ .Release.Name }}-kb-file-manager
           name: config
-        - configMap:
-            defaultMode: 420
-            name: rainbow-comm
-          name: rainbow-comm
-
         - configMap:
             defaultMode: 420
             name: infrastructure

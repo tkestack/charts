@@ -111,6 +111,10 @@ data:
       app_id: 197595422
       app_secret_key:  #登录图片验证码，专有云无需
       host: captcha.tencentcloudapi.com
+      assume_role:
+        role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+        duration_seconds: 43200
+        refresh_ahead_seconds: 300
     sms:
       qidian:
         uin: 2355017619
@@ -2006,6 +2010,7 @@ data:
         - debuglog
         - cle-route-propagator
         - opentelemetry
+        - cos_rewrite
       service:
         - name: trpc.adp.platform_manager.Admin
           ip: ${POD_IP}
@@ -2129,7 +2134,11 @@ data:
       selector:
         polaris:
           enable_servicerouter: true
-
+      filter:
+        cos_rewrite:
+          path_prefixes:
+            - /public
+            - /qbot
     client:
       filter:
         - cle-route-propagator

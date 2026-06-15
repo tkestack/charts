@@ -1,4 +1,4 @@
 images:
   adp-web-app:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:196_2605191705_stable_v3.4.1.1-de81fafb4-126271a8c-a11c6701b-cn"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:226_2606140002_stable_v3.4.1.1-33c8949a77-8777a9d38-88a31fa5d-cn"
 replicas: 1

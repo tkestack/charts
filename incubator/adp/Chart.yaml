@@ -1,11 +1,9 @@
 apiVersion: v2
 name: adp
-description: Tencent Cloud Agent Development Platform (Tencent Cloud ADP) with RAG, Workflow and Multi-agent collaboration for TKE
+description: ADP 智能体开发平台 - 专有云部署 (Umbrella Chart)
 type: application
-version: 1.0.3
-appVersion: "1.0.3"
-icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/bd9c98d6-46e2-48ec-a812-7adbbde304b6.jpg
-home: https://cloud.tencent.com/product/adp
+version: 1.0.0
+appVersion: "1.0.0"
 
 maintainers:
   - name: ADP Team
@@ -72,6 +70,10 @@ dependencies:
     version: "1.0.0"
     repository: "file://charts/adp-kb-config"
     condition: adp-kb-config.enabled
+  - name: adp-kb-file-manager
+    version: "1.0.0"
+    repository: "file://charts/adp-kb-file-manager"
+    condition: adp-kb-file-manager.enabled
   - name: adp-kb-retrieval
     version: "1.0.0"
     repository: "file://charts/adp-kb-retrieval"

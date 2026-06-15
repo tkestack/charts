@@ -34,6 +34,10 @@ cos_map:
     domain: {{ .Values.global.components.s3.cos.domain }}
     expire_time: 30m
     credential_time: 10m
+    assume_role:
+      role_arn: {{ .Values.global.components.s3.cos.stsRoleArn | quote }}
+      duration_seconds: 43200
+      refresh_ahead_seconds: 300
   realtime:
     secret_id: {{ .Values.global.components.s3.cos.secretId }}
     secret_key: {{ .Values.global.components.s3.cos.secretKey }}
@@ -43,5 +47,9 @@ cos_map:
     domain: {{ .Values.global.components.s3.cos.domain }}
     expire_time: 30m
     credential_time: 10m
+    assume_role:
+      role_arn: {{ .Values.global.components.s3.cos.stsRoleArn | quote }}
+      duration_seconds: 43200
+      refresh_ahead_seconds: 300
 {{- end }}
 {{- end }}

@@ -1,0 +1,607 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-kb-file-manager
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    {{- if eq .Values.global.components.s3.providerType "minio" }}
+    storage:
+      type: minio
+      min_io_map:
+        offline:
+          secret_id: ${INFRA_MIDDLEWARES_S3_MINIO_ACCESSKEY}
+          secret_key: ${INFRA_MIDDLEWARES_S3_MINIO_SECRETKEY}
+          region: ""
+          bucket: ${INFRA_MIDDLEWARES_S3_MINIO_BUCKET}
+          sts_endpoint: http://${INFRA_MIDDLEWARES_S3_MINIO_HOST}
+          end_point: ${INFRA_MIDDLEWARES_S3_MINIO_HOST}
+          external_end_point: {{ .Values.global.clb }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+          insecure_skip_verify: true
+        realtime:
+          secret_id: ${INFRA_MIDDLEWARES_S3_MINIO_ACCESSKEY}
+          secret_key: ${INFRA_MIDDLEWARES_S3_MINIO_SECRETKEY}
+          region: ""
+          bucket: ${INFRA_MIDDLEWARES_S3_MINIO_BUCKET}
+          sts_endpoint: http://${INFRA_MIDDLEWARES_S3_MINIO_HOST}
+          end_point: ${INFRA_MIDDLEWARES_S3_MINIO_HOST}
+          external_end_point: {{ .Values.global.clb }}
+          use_https: {{ eq .Values.global.scheme "https" }}
+          expire_time: 30m
+          insecure_skip_verify: true
+    {{- else if eq .Values.global.components.s3.providerType "s3" }}
+    storage:
+      type: s3
+      s3_map:
+        offline:
+          secret_id: ${INFRA_MIDDLEWARES_S3_AWS_ACCESSKEY}
+          secret_key: ${INFRA_MIDDLEWARES_S3_AWS_SECRETKEY}
+          region: ${INFRA_MIDDLEWARES_S3_S3_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_S3_BUCKET}
+          end_point: ${INFRA_MIDDLEWARES_S3_S3_ENDPOINT}
+          expire_time: 30m
+        realtime:
+          secret_id: ${INFRA_MIDDLEWARES_S3_AWS_ACCESSKEY}
+          secret_key: ${INFRA_MIDDLEWARES_S3_AWS_SECRETKEY}
+          region: ${INFRA_MIDDLEWARES_S3_S3_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_S3_BUCKET}
+          end_point: ${INFRA_MIDDLEWARES_S3_S3_ENDPOINT}
+          expire_time: 30m
+    {{- else }}
+    storage:
+      type: cos
+      cos_map:
+        offline:
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
+          expire_time: 30m
+          credential_time: 10m
+          assume_role:
+            role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
+        realtime:
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
+          expire_time: 30m
+          credential_time: 10m
+          assume_role:
+            role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
+    {{- end }}
+    cos_document:
+      sts_endpoint: ""
+      sts_region: ""
+      secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+      secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+      service_role: ""
+      cos_service_endpoint: ""
+      cors_origin: {{ .Values.global.scheme }}://{{ .Values.global.clb }}
+      credential_duration: 30m
+      bucket_cors_concurrency: 18
+    # Connector 接入配置
+    connector_config: ${APPLICATION_CONNECTOR_CONFIG}
+    # ============================================================
+    # cos_proxy: COS 资源反向代理（替代独立 adp-cos-proxy 服务）
+    # 通过原生 HTTP service（trpc.adp.kb_file_manager.CosProxy）暴露 GET/HEAD 接口：
+    #   /adp/cos-proxy/<object-key> -> 用永久密钥签名后反代到 COS 私有桶
+    # 用途：让前端可以保持稳定 URL 访问 COS 资源，从而去除 subPath 公有读权限。
+    # ============================================================
+    cos_proxy:
+      # 路径前缀（必须以斜杠结尾），与前端约定一致
+      path_prefix: "/adp/cos-proxy/"
+
+      # 签名 URL 过期时间，例如 1h / 30m
+      sign_expire: "1h"
+
+      # 反向代理整体超时
+      proxy_timeout: "60s"
+
+      # 命中 200 且无 Cache-Control 时设置的默认值
+      cache_control: "public, max-age=300"
+
+      # 调试日志
+      debug: false
+
+  client.yaml: |
+    client:
+      namespace: ${CLIENT_CLIENT_NAMESPACE}
+      filter:
+        - cle-route-propagator
+      service:
+        - name: mysql.qbot.admin
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.qbot.admin.read
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.qbot
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.qbot.read
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.qbot.delete
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: redis.qbot.admin
+          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${INFRA_MIDDLEWARES_REDIS_0_PORT}/2
+          timeout: 5000
+        - name: basic.interface.trpc_to_inner.Cloudcc
+          target: ${CLIENT_CLIENT_SERVICE_BASIC_INTERFACE_TRPC_TO_INNER_CLOUDCC_TARGET}
+          protocol: trpc
+          timeout: 5000
+          namespace: ${CLIENT_CLIENT_SERVICE_BASIC_INTERFACE_TRPC_TO_INNER_CLOUDCC_NAMESPACE}
+        - name: trpc.http.cos.Access
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_HTTP_COS_ACCESS_NAMESPACE}
+          network: tcp
+          protocol: http
+          target: '{{ include "storage.Access" . }}'
+          timeout: 30000
+        - name: trpc.adp.app_config.Api
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_APP_CONFIG_API_NAMESPACE}
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
+          timeout: 30000
+        - name: trpc.adp.platform_manager.Api
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_PLATFORM_MANAGER_API_NAMESPACE}
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
+          timeout: 30000
+        - callee: trpc.adp.kb_config.Api
+          name: trpc.adp.kb-config.Api
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_KB_CONFIG_API_NAMESPACE}
+          timeout: 30000
+        - callee: trpc.adp.kb_config.Admin
+          name: trpc.adp.kb-config.Admin
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_KB_CONFIG_ADMIN_NAMESPACE}
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.plugin_config.PluginConfigApi
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_PLUGIN_CONFIG_API_NAMESPACE}
+          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          env_name:
+          timeout: 60000
+        - callee: trpc.adp.platform_manager.Login
+          namespace: Production
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 6000
+
+  main.yaml: |
+    gorm_debug: true
+    file_manager: ${MAIN_KB_FILE_MANAGER}
+
+  placeholder.yaml: |
+    ENV_METADATA_NAME: formal
+
+    ##### TRPC
+    TRPC_GO_GLOBAL_NAMESPACE: Production
+    TRPC_GO_GLOBAL_ENV_NAME: formal
+    TRPC_GO_PLUGINS_CONFIG_RAINBOW_APPID:
+    TRPC_GO_PLUGINS_CONFIG_RAINBOW_GROUP: kb-file-manager
+    TRPC_GO_PLUGINS_CONFIG_RAINBOW_ENV_NAME:
+    TRPC_GO_PLUGINS_CONFIG_RAINBOW_RAVEN_APPID:
+    TRPC_GO_PLUGINS_CONFIG_RAINBOW_RAVEN_ENV_NAME:
+    TRPC_GO_PLUGINS_I18N_I18N_ADP_DEFAULT_LANG: zh-CN
+    TRPC_GO_PLUGINS_LOG_DEFAULT_LEVEL: info
+    TRPC_GO_PLUGINS_LOG_DEFAULT_FILE_MAX_SIZE: 100
+    TRPC_GO_GLOBAL_SERVER_CONNECTOR_JOIN_POINT:
+    TRPC_GO_PLUGINS_TELEMETRY_GALILEO_OCP_ADDR:
+    TRPC_GO_PLUGINS_TELEMETRY_GALILEO_ACCESS_POINT:
+    TRPC_GO_PLUGINS_SELECTOR_POLARIS_JOIN_POINT:
+
+    #### CLIENT
+    CLIENT_CLIENT_NAMESPACE: Production
+    CLIENT_CLIENT_SERVICE_MYSQL_QBOT_ADMIN_TARGET: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+    CLIENT_CLIENT_SERVICE_MYSQL_QBOT_ADMIN_READ_TARGET: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+    CLIENT_CLIENT_SERVICE_TDSQL_QBOT_QBOT_TARGET: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+    CLIENT_CLIENT_SERVICE_TDSQL_QBOT_QBOT_READ_TARGET: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+    CLIENT_CLIENT_SERVICE_MYSQL_QBOT_ADMIN_DELETE_TARGET: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+    CLIENT_CLIENT_SERVICE_ISEARCH_TDSQL_QBOT_QBOT_TARGET: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot_isearch?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+    CLIENT_CLIENT_SERVICE_TDSQL_QBOT_QBOT_DELETE_TARGET: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+    CLIENT_CLIENT_SERVICE_MYSQL_DB_TEXT2SQL_TARGET: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/?charset=utf8mb4&timeout=1s&readTimeout=30s&writeTimeout=30s&parseTime=true&interpolateParams=true&loc=Local
+    CLIENT_CLIENT_SERVICE_TDSQL_QBOT_GRAPH_TARGET: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_graph?charset=utf8mb4&timeout=5s&parseTime=true&interpolateParams=true&loc=Local
+
+    CLIENT_CLIENT_SERVICE_REDIS_QBOT_ADMIN_TARGET: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${INFRA_MIDDLEWARES_REDIS_0_PORT}/2
+    CLIENT_CLIENT_SERVICE_REDIS_QBOT_RETRIEVAL_CONFIG_TARGET: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${INFRA_MIDDLEWARES_REDIS_0_PORT}/1
+
+
+    CLIENT_CLIENT_SERVICE_BASIC_INTERFACE_TRPC_TO_INNER_CLOUDCC_TARGET:
+    CLIENT_CLIENT_SERVICE_BASIC_INTERFACE_TRPC_TO_INNER_CLOUDCC_NAMESPACE: Production
+
+    CLIENT_CLIENT_SERVICE_TRPC_HTTP_COS_ACCESS_NAMESPACE: Production
+    CLIENT_CLIENT_SERVICE_TRPC_HTTP_COS_ACCESS_TARGET: '{{ include "storage.Access" . }}'
+
+    CLIENT_CLIENT_SERVICE_TRPC_ADP_APP_CONFIG_API_NAMESPACE: Production
+    CLIENT_CLIENT_SERVICE_TRPC_ADP_APP_CONFIG_API_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
+
+    CLIENT_CLIENT_SERVICE_TRPC_ADP_PLATFORM_MANAGER_API_NAMESPACE: Production
+    CLIENT_CLIENT_SERVICE_TRPC_ADP_PLATFORM_MANAGER_API_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
+
+    CLIENT_CLIENT_SERVICE_TRPC_ADP_KB_CONFIG_API_NAMESPACE: Production
+    CLIENT_CLIENT_SERVICE_TRPC_ADP_KB_CONFIG_API_TARGET: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+
+    CLIENT_CLIENT_SERVICE_TRPC_ADP_KB_CONFIG_ADMIN_NAMESPACE: Production
+    CLIENT_CLIENT_SERVICE_TRPC_ADP_KB_CONFIG_ADMIN_TARGET: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+
+    CLIENT_CLIENT_SERVICE_TRPC_ADP_PLUGIN_CONFIG_API_NAMESPACE: Production
+    CLIENT_CLIENT_SERVICE_TRPC_ADP_PLUGIN_CONFIG_API_TARGET: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    PLATFORM_LOGIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+
+    #### APPLICATION
+    APPLICATION_STORAGE:
+      type: cos
+      video_domain: qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com
+      cos_map:
+        offline:
+          ssm_tag:
+          app_id: 1251316161
+          region: aAPPLICATION_STORAGEp-guangzhou
+          bucket: qidian-qbot-1251316161
+          domain: myqcloud.com
+          expire_time: 30m
+          credential_time: 10m
+          polaris_service: 1084865:196608
+          polaris_namespace: Production
+          assume_role:
+            role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
+        realtime:
+          ssm_tag:
+          app_id: 1251316161
+          region: ap-guangzhou
+          bucket: lke-realtime-1251316161
+          domain: myqcloud.com
+          expire_time: 30m
+          credential_time: 10m
+          polaris_service: 1084865:196608
+          polaris_namespace: Production
+          assume_role:
+            role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
+
+    APPLICATION_COS_DOCUMENT_CONFIG:
+      sts_endpoint: sts.tencentcloudapi.com
+      sts_region: ap-guangzhou
+      secret_id:
+      secret_key:
+      service_role: ADP_QCSLinkedRolelnCOS
+      cos_service_endpoint: https://service.cos.myqcloud.com
+      cors_origin: https://adp.cloud.tencent.com
+      credential_duration: 30m
+      bucket_cors_concurrency: 18
+
+    APPLICATION_FILE_TYPE_SIZE:
+      pdf: 209715200  # 200M
+      doc: 209715200  # 200M
+      docx: 209715200 # 200M
+      ppt: 209715200  # 200M
+      pptx: 209715200 # 200M
+      xls: 20971520   # 20M
+      xlsx: 20971520  # 20M
+      csv: 20971520   # 20M
+      md: 209715200   # 200M
+      txt: 20971520   # 20M
+      png: 52428800   # 50M
+      jpg: 52428800   # 50M
+      jpeg: 52428800  # 50M
+      wps: 209715200  # 200M
+      ppsx: 209715200 # 200M
+      tiff: 52428800  # 50M
+      bmp: 52428800   # 50M
+      gif: 52428800   # 50M
+      html: 20971520  # 20M
+      mhtml: 209715200 # 200M
+      json: 20971520  # 20M
+      log: 20971520  # 20M
+      xml: 20971520  # 20M
+      xmind: 20971520  # 20M
+      numbers: 20971520 # 20M
+      key: 52428800 # 50M
+      pages: 52428800 # 50M
+      jsonl: 20971520  # 20M
+
+    APPLICATION_ALLOWED_FILE_TYPES:
+      - pdf
+      - doc
+      - docx
+      - ppt
+      - pptx
+      - xls
+      - xlsx
+      - txt
+      - md
+      - csv
+      - html
+      - mhtml
+      - wps
+      - ppsx
+      - ppsm
+      - pages
+      - key
+      - numbers
+      - tsv
+      - jpg
+      - jpeg
+      - png
+      - bmp
+      - gif
+      - tiff
+      - webp
+      - heif
+      - heic
+      - jp2
+      - eps
+      - icns
+      - im
+      - pcx
+      - ppm
+      - xbm
+      - json
+      - jsonl
+      - log
+      - xml
+      - xmind
+      - epub
+      - ofd
+    APPLICATION_CONNECTOR_CONFIG:
+      preset_connectors:
+        - provider: "lexiang"
+          display_name: "腾讯乐享"
+          # 乐享 Block 递归深度（合并到 preset connector 配置）
+          block_depth: all     # 1（默认，只读一层）/ N（正整数）/ 0 或 "all"（全量）
+        - provider: "tencent_doc"
+          display_name: "腾讯文档"
+          # 内容获取模式："sync"（默认，直接调 get_content）/"async"（export + poll）
+          content_mode: "sync"
+          # 异步模式超时秒数（默认 180）
+          async_timeout_sec: 180
+          # 异步模式轮询间隔秒数（默认 3）
+          async_poll_interval_sec: 3
+          # 同步模式 get_content 重试次数（默认 2），MCP 返回空内容或错误时重试
+          sync_retry_count: 2
+          # 同步模式重试间隔毫秒（默认 1000）
+          sync_retry_interval_ms: 1000
+          # 同步重试全部失败后是否自动降级为异步模式（默认 true）
+          fallback_async: true
+
+    MAIN_KB_FILE_MANAGER:
+      enabled: true
+
+      upload:
+        # 单文件大小上限（字节），默认 200MB
+        max_file_size: 209715200
+        # 按文件类型设置大小上限（字节）
+        file_type_size: ${APPLICATION_FILE_TYPE_SIZE}
+        # 允许的文件类型白名单
+        allowed_file_types: ${APPLICATION_ALLOWED_FILE_TYPES}
+
+        # 批量导入最大文件数
+        max_batch_size: 50
+        # 上传超时时间（秒）
+        upload_timeout: 300
+        # 网页内容抓取最大大小（字节），默认 10MB
+        web_content_max_size: 10485760
+
+      cleanup:
+        # 清理任务执行间隔（分钟）
+        interval_minutes: 60
+        # pending 状态文件过期时间（小时）
+        pending_expire_hours: 24
+        # 未关联文档的文件过期时间（小时）
+        unlinked_expire_hours: 72
+
+      rate_limit:
+        # 单知识库最大 QPS
+        kb_max_qps: 100
+        # 单知识库最大并发数
+        kb_max_concurrent: 20
+        # 每日上传流量上限（字节），默认 10GB
+        daily_upload_bytes: 10737418240
+        # 单实例最大并发导入数
+        instance_max_concurrent: 50
+        # 内存水位线百分比，超过后拒绝新请求
+        memory_watermark_percent: 85
+        # 网页抓取 QPS 限制
+        web_fetch_qps: 10
+
+      circuit_breaker:
+        # 连续失败次数触发熔断
+        failure_threshold: 5
+        # 熔断恢复超时时间（秒）
+        reset_timeout_seconds: 30
+
+      progress:
+        # 进度轮询间隔（毫秒）
+        poll_interval_ms: 500
+
+  trpc_go.yaml: |
+    global:                        #全局配置
+      namespace: ${POD_NAMESPACE}
+      env_name: formal
+      enable_set: false
+      full_set_name: adp
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+
+    server:
+      app: adp
+      server: kb-file-manager
+      filter:
+        - recovery
+        - i18n-adp
+        - validation
+        - accesslog
+      admin:
+        port: 8081
+      service:
+        - name: trpc.adp.kb_file_manager.External
+          ip: ${POD_IP}
+          port: 9090
+          network: tcp
+          protocol: trpc
+          timeout: 120000
+          filter:
+            - session
+            - permission
+        - name: trpc.adp.kb_file_manager.Internal
+          ip: ${POD_IP}
+          port: 9091
+          network: tcp
+          protocol: trpc
+          timeout: 60000
+        - name: trpc.adp.kb_file_manager.CosProxy
+          ip: ${POD_IP}
+          port: 8001
+          network: tcp
+          protocol: http
+
+    client:
+      namespace: ${CLIENT_CLIENT_NAMESPACE}
+      filter:
+        - cle-route-propagator
+      service:
+        - name: mysql.qbot.admin
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.qbot.admin.read
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.qbot
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.qbot.read
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.qbot.delete
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: redis.qbot.admin
+          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${INFRA_MIDDLEWARES_REDIS_0_PORT}/2
+          timeout: 5000
+        - name: basic.interface.trpc_to_inner.Cloudcc
+          target: ${CLIENT_CLIENT_SERVICE_BASIC_INTERFACE_TRPC_TO_INNER_CLOUDCC_TARGET}
+          protocol: trpc
+          timeout: 5000
+          namespace: ${CLIENT_CLIENT_SERVICE_BASIC_INTERFACE_TRPC_TO_INNER_CLOUDCC_NAMESPACE}
+        - name: trpc.http.cos.Access
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_HTTP_COS_ACCESS_NAMESPACE}
+          network: tcp
+          protocol: http
+          target: '{{ include "storage.Access" . }}'
+          timeout: 30000
+        - name: trpc.adp.app_config.Api
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_APP_CONFIG_API_NAMESPACE}
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
+          timeout: 30000
+        - name: trpc.adp.platform_manager.Api
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_PLATFORM_MANAGER_API_NAMESPACE}
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
+          timeout: 30000
+        - callee: trpc.adp.kb_config.Api
+          name: trpc.adp.kb-config.Api
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_KB_CONFIG_API_NAMESPACE}
+          timeout: 30000
+        - callee: trpc.adp.kb_config.Admin
+          name: trpc.adp.kb-config.Admin
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_KB_CONFIG_ADMIN_NAMESPACE}
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.plugin_config.PluginConfigApi
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_PLUGIN_CONFIG_API_NAMESPACE}
+          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          env_name:
+          timeout: 60000
+        - callee: trpc.adp.platform_manager.Login
+          namespace: Production
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 6000
+
+    plugins:
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+            - name: global
+              appid: ${RAINBOW_APP_ID}
+              group: global
+              type: kv
+              env_name: ${RAINBOW_ENV_NAME}
+              timeout: 2000
+              enable_client_provider: true
+
+      log:
+        default:
+          - writer: console
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+          - writer: file
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/trpc.log
+              max_size: 100
+              max_backups: 10
+              max_age: 7
+              compress: false
+
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+            - zh-CN
+            - en-US
+          data_provider:
+            type: rainbow
+            prefix: kb-file-manager
+            error_prefix: error
+            char_scaling_factor:
+              zh: 1
+              en: 3

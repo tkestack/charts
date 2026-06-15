@@ -43,5 +43,9 @@
         bucket: {{ .Values.global.components.s3.cos.bucket }}
         domain: {{ .Values.global.components.s3.cos.domain }}
         expire_time: 30m
+        assume_role:
+          role_arn: {{ .Values.global.components.s3.cos.stsRoleArn | quote }}
+          duration_seconds: 43200
+          refresh_ahead_seconds: 300
       {{- end -}}
 {{- end -}}

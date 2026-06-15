@@ -32,7 +32,8 @@ data:
       Favicon: '/portal/config/favicon.ico',
       MaxDocLen: 100,
       objectStorageAddr: 'https://obs.cn-east-3.myhuaweicloud.com',
-      IsGenerateFromDoc: true
+      IsGenerateFromDoc: true,
+      proxyCos: {{ if .Values.global.components.s3.cos.stsKey }}true{{ else }}false{{ end }}
     };
 
   nginx.conf: |

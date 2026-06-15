@@ -307,6 +307,10 @@ data:
         app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
         bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
         domain: myqcloud.com
+        assume_role:
+          role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+          duration_seconds: 43200
+          refresh_ahead_seconds: 300
 
     storage:
       {{ include "qbot.s3_storage" . }}
@@ -421,7 +425,7 @@ data:
     cam:
       sts_host: "sts.tencentcloudapi.com"
       region: "ap-guangzhou"
-      duration_seconds: 7200
+      duration_seconds: 43200
       tmp_key_expire: 7195
       role_credential_concurrency: 2
       role_config:
@@ -762,6 +766,7 @@ data:
         - recovery                                     #拦截框架创建的业务处理协程panic
         - i18n-adp
         - opentelemetry                                # 天机阁
+        - cos_rewrite
       stream_filter:
         - recovery                                     #拦截框架创建的业务处理协程panic
       admin:
@@ -1040,6 +1045,11 @@ data:
               env_name: ${RAINBOW_ENV_NAME}
               timeout: 2000
               enable_client_provider: true
+      filter:
+        cos_rewrite:
+          path_prefixes:
+            - /public
+            - /qbot
       i18n:
         i18n-adp:
           default_lang: zh-CN

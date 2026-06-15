@@ -129,9 +129,15 @@ spec:
         {{- end }}
         {{- end }}
         # ---------- ClickHouse ----------
+        # 由 global.components.clickhouse.disabled 控制（默认 false=启用）
+        {{- if eq (dig "clickhouse" "disabled" false $components | toString) "true" }}
         - name: ENABLE_CLICKHOUSE
-          value: {{ dig "clickhouse" "enabled" true $components | toString | quote }}
-        {{- if ne (dig "clickhouse" "enabled" true $components | toString) "false" }}
+          value: "false"
+        {{- else }}
+        - name: ENABLE_CLICKHOUSE
+          value: "true"
+        {{- end }}
+        {{- if ne (dig "clickhouse" "disabled" false $components | toString) "true" }}
         {{- if hasKey $components "clickhouse" }}
         - name: CLICKHOUSE_HOST
           value: {{ index $components.clickhouse.hosts 0 | quote }}

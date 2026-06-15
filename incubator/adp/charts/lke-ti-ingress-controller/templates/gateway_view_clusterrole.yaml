@@ -38,7 +38,7 @@ rules:
       - replicationcontrollers/scale
       - serviceaccounts
       - services
-      - secrets
+      # secrets 已移出，由 gateway_secrets_reader_* 在 Release Namespace 内通过 RoleBinding 单独授权
     verbs:
       - get
       - list

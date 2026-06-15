@@ -1,6 +1,6 @@
 images:
   adp-plugin-exec:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/plugin-exec:15_2605062222_stable_v3.4.1.1_481925e1_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/plugin-exec:36_2606151046_stable_iaas_cos_27870f1c_private"
   adp-plugin-exec-sidecar:
     url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:markmap-96aaeac-24"
 adppluginexec:

@@ -74,6 +74,10 @@ data:
           domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
           expire_time: 30m
           credential_time: 10m
+          assume_role:
+            role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
     space_limiter_account: ${SPACE_LIMITER_ACCOUNT}
     local_cache:
       app_cache:

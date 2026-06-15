@@ -165,6 +165,8 @@ data:
       model_list_url: "https://api.adp.cloud.tencent.com/v1/model/list"
 
 
+    connectivity_test:
+        default_max_tokens: 100
   biz_en-US.json: |
     {
         "KeyModelConnectivityErr": "模型连通性错误:%s",
@@ -2833,6 +2835,7 @@ data:
         - opentelemetry
         - i18n-adp
         - cle-route-propagator
+        - cos_rewrite
       admin:
         ip: ${POD_IP} #admin的ip，配置网卡nic也可以
         port: 8081 #admin的port，必须同时配置这里的ip port才会启动admin
@@ -2990,6 +2993,11 @@ data:
       selector:
         polaris:
           enable_servicerouter: true #注意这里一定要使用true
+      filter:
+        cos_rewrite:
+          path_prefixes:
+            - /public
+            - /qbot
     client:
       namespace: ${POD_NAMESPACE}
       filter:
