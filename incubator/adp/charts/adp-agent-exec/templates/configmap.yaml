@@ -285,6 +285,7 @@ data:
       tool_call: 调用%s
     unsafe_domain:
       - cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com
+      - {{ .Values.global.clb }}
     max_tool_response: 40960
     agent_model_map:
       lke-deepseek-r1: lke-deepseek-r1-agent
@@ -665,6 +666,7 @@ data:
         - cle-route-propagator
         - chat-trace
         - opentelemetry
+        - cos_rewrite
       service:
         - name: trpc.KEP.bot-agent-server.chat
           ip: ${POD_IP}
@@ -911,3 +913,8 @@ data:
       selector:
         polaris:
           enable_servicerouter: true
+      filter:
+        cos_rewrite:
+          path_prefixes:
+            - /public
+            - /qbot

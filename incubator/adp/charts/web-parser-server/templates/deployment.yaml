@@ -130,6 +130,20 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.name
+            {{- if .Values.global.components.s3.cos.stsKey }}
+            - name: ADP_ASSUME_ROLE_SECRET_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  key: ADP_ASSUME_ROLE_SECRET_ID
+                  optional: true
+            - name: ADP_ASSUME_ROLE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  key: ADP_ASSUME_ROLE_SECRET_KEY
+                  optional: true
+            {{- end }}
           image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "web-parser-server").url "context" .) }}
           imagePullPolicy: Always
           # command: ["bash","/usr/local/app/start.sh"]

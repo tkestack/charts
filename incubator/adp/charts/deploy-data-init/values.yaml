@@ -2,4 +2,4 @@ enabled: true
 resourcesDir: ""
 images:
   deploy-data-init:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/data-init:35__master_68025549_iaas"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/data-init:37__feature_iaas_cos_a370cf8c_iaas"

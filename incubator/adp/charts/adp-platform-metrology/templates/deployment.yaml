@@ -116,6 +116,20 @@ spec:
               value: "1"
             - name: ProductType
               value: {{ include "getProductType" . | quote }}
+            {{- if .Values.global.components.s3.cos.stsKey }}
+            - name: ADP_ASSUME_ROLE_SECRET_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  key: ADP_ASSUME_ROLE_SECRET_ID
+                  optional: true
+            - name: ADP_ASSUME_ROLE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  key: ADP_ASSUME_ROLE_SECRET_KEY
+                  optional: true
+            {{- end }}
           image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-platform-metrology").url "context" .) }}
           imagePullPolicy: Always
           #command: ["sh","-c", "crond start; touch /var/log/log.txt && tail -f /var/log/log.txt"]

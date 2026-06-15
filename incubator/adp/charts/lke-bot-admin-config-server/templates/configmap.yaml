@@ -2842,6 +2842,7 @@ data:
         "${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com",
         "${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com",
          "hunyuanapi.woa.com",
+         "{{ .Values.global.clb }}",
       ]
       allow_outer: true
 
@@ -5625,7 +5626,7 @@ data:
           protocol: timer
           timeout: 18000000
         - name: trpc.kafka.statistics.consumer.service
-          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=event_report_prod&group=event_report_consumer&batch=10&batchFlush=1000
+          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=adp_event_report_prod&group=event_report_consumer&batch=10&batchFlush=1000
           protocol: kafka
           timeout: 600000
     plugins:
@@ -5926,7 +5927,7 @@ data:
           callee: trpc.adp.kb_config.Api
           timeout: 10000
         - name: trpc.kafka.statistics.producer.service
-          target: kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=event_report_prod&compression=none&partitioner=random&requiredAcks=-1
+          target: kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_event_report_prod&compression=none&partitioner=random&requiredAcks=-1
           timeout: 10000
         - name: qbot.qbot.chat.Chat
           target: ip://adp-chat-manage.{{ .Release.Namespace }}.svc.cluster.local:9090

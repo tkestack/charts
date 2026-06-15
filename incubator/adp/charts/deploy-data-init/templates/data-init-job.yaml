@@ -126,6 +126,8 @@ spec:
             value: {{ include "ex.s3_bucket" . | trim | quote }}
           - name: S3_RESOURCE_DIR
             value: "{{ .Values.resourcesDir }}"
+          - name: S3_ENABLE_PROXY
+            value: "{{ .Values.global.components.s3.enableProxy | default false }}"
 
           # ============================================================
           # 向量数据库 (VDB)
@@ -152,7 +154,16 @@ spec:
 
           # ============================================================
           # CLICKHOUSE CH_CLUSTER
+          # ENABLE_CLICKHOUSE 由 cross-up 的 initialize_clickhouse.yaml file when 条件读取
+          # 置为 "false" 时跳过整个 ClickHouse 初始化，适用于客户暂未部署 CH 的场景
+          # 由 global.components.clickhouse.disabled 控制（默认 false=启用），老客户未填写时保持启用，向后兼容
           # ============================================================
+          {{- if eq (dig "clickhouse" "disabled" false .Values.global.components | toString) "true" }}
+          - name: ENABLE_CLICKHOUSE
+            value: "false"
+          {{- else }}
+          - name: ENABLE_CLICKHOUSE
+            value: "true"
           - name: CH_HOST
             value: {{ index .Values.global.components.clickhouse.hosts 0 | quote }}
           - name: CH_PORT
@@ -163,6 +174,7 @@ spec:
             value: {{ .Values.global.components.clickhouse.password | quote }}
           - name: CH_CLUSTER
             value: "{{ .Values.global.components.clickhouse.cluster | default "default_cluster" }}"
+          {{- end }}
 
           # ============================================================
           # 微信第三方平台信息

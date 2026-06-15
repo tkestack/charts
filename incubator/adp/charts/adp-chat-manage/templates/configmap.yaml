@@ -40,6 +40,7 @@ data:
         <Revised User Prompt>
     unsafe_domain:
       - cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com
+      - {{ .Values.global.clb }}
 
 
   application.yaml: |
@@ -438,6 +439,10 @@ data:
               domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
               expire_time: 30m
               credential_time: 10m
+              assume_role:
+                role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+                duration_seconds: 43200
+                refresh_ahead_seconds: 300
             realtime:
               secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
               secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
@@ -447,6 +452,10 @@ data:
               domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
               expire_time: 30m
               credential_time: 10m
+              assume_role:
+                role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+                duration_seconds: 43200
+                refresh_ahead_seconds: 300
       optimize:
         default_model_name: lke-deepseek-v3.1
         prompt_template: |-
@@ -2567,8 +2576,8 @@ data:
 
     DISABLE_CONTENT_CHECK: false
     MULTI_MODAL_GET_CAPTION_PROMPT: 用200字以内描述这张图片
-    RATE_LIMITER_ENABLE: false
-    LIMITER_ENABLE: false
+    RATE_LIMITER_ENABLE: true
+    LIMITER_ENABLE: true
     TRTC_ENDPOINT:
     TRTC_REGION:
     TRTC_SECRET_ID:
@@ -2625,6 +2634,7 @@ data:
         - cle-route-propagator
         - i18n-adp    # 在recovery filter之后引用，避免filter里的错误覆盖掉i18n错误
         - opentelemetry
+        - cos_rewrite
       service:
         - name: qbot.qbot.chat.Chat
           ip: ${POD_IP}
@@ -2778,6 +2788,11 @@ data:
             char_scaling_factor:
               zh: 1
               en: 3
+      filter:
+        cos_rewrite:
+          path_prefixes:
+            - /public
+            - /qbot
     client:
       namespace: Production
       filter:

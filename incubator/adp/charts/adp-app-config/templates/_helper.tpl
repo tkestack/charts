@@ -87,6 +87,13 @@
         bucket: {{ .Values.global.components.s3.cos.bucket }}
         domain: {{ .Values.global.components.s3.cos.domain }}
         expire_time: 30m
+        # AssumeRole STS 配置：仅当 global.components.s3.cos.stsKey 非空时启用
+        # role_arn 非空 + 主凭证（环境变量 ADP_ASSUME_ROLE_SECRET_ID/_KEY 由 K8s Secret 注入）
+        # 三者齐全时 IsValid()=true，业务自动切换为 STS 临时凭证模式
+        assume_role:
+          role_arn: {{ .Values.global.components.s3.cos.stsRoleArn | quote }}
+          duration_seconds: 43200
+          refresh_ahead_seconds: 300
       cos_map:
         default:
           secret_id: {{ .Values.global.components.s3.cos.secretId }}
@@ -96,6 +103,13 @@
           bucket: {{ .Values.global.components.s3.cos.bucket }}
           domain: {{ .Values.global.components.s3.cos.domain }}
           expire_time: 30m
+          # AssumeRole STS 配置：仅当 global.components.s3.cos.stsKey 非空时启用
+          # role_arn 非空 + 主凭证（环境变量 ADP_ASSUME_ROLE_SECRET_ID/_KEY 由 K8s Secret 注入）
+          # 三者齐全时 IsValid()=true，业务自动切换为 STS 临时凭证模式
+          assume_role:
+            role_arn: {{ .Values.global.components.s3.cos.stsRoleArn | quote }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
         offline:
           secret_id: {{ .Values.global.components.s3.cos.secretId }}
           secret_key: {{ .Values.global.components.s3.cos.secretKey }}
@@ -104,6 +118,13 @@
           bucket: {{ .Values.global.components.s3.cos.bucket }}
           domain: {{ .Values.global.components.s3.cos.domain }}
           expire_time: 30m
+          # AssumeRole STS 配置：仅当 global.components.s3.cos.stsKey 非空时启用
+          # role_arn 非空 + 主凭证（环境变量 ADP_ASSUME_ROLE_SECRET_ID/_KEY 由 K8s Secret 注入）
+          # 三者齐全时 IsValid()=true，业务自动切换为 STS 临时凭证模式
+          assume_role:
+            role_arn: {{ .Values.global.components.s3.cos.stsRoleArn | quote }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
         realtime:
           secret_id: {{ .Values.global.components.s3.cos.secretId }}
           secret_key: {{ .Values.global.components.s3.cos.secretKey }}

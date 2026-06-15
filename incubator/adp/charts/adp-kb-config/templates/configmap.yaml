@@ -92,6 +92,10 @@ data:
         domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
         expire_time: ${INFRA_MIDDLEWARES_S3_COS_EXPIRETIME}
         credential_time: ${INFRA_MIDDLEWARES_S3_COS_CREDENTIALTIME}
+        assume_role:
+          role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+          duration_seconds: 43200
+          refresh_ahead_seconds: 300
       cos_map:
         offline:
           secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
@@ -102,6 +106,10 @@ data:
           domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
           expire_time: ${INFRA_MIDDLEWARES_S3_COS_EXPIRETIME}
           credential_time: ${INFRA_MIDDLEWARES_S3_COS_CREDENTIALTIME}
+          assume_role:
+            role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
         realtime:
           secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
           secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
@@ -111,6 +119,10 @@ data:
           domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
           expire_time: ${INFRA_MIDDLEWARES_S3_COS_EXPIRETIME}
           credential_time: ${INFRA_MIDDLEWARES_S3_COS_CREDENTIALTIME}
+          assume_role:
+            role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
       {{- end }}
     sec_api:
       enable: {{ default "" .Values.global.secapi_enable }}
@@ -1529,7 +1541,7 @@ data:
         ---
         ##待分析的文档内容
         ---
-        {{`.DocContent`}}
+        {{`{{.DocContent}}`}}
 
     release_param_config:
       get_releasing_record_size: 2500
@@ -4604,8 +4616,8 @@ data:
         <摘要>这是一个数据分布文件，包含了不同类别（如通用、客观、代码、数学、翻译）数据集在各个批次中的分布情况。</摘要>
 
         现在请你帮我生成摘要:
-        <文件名>{{`.FileName`}}</文件名>
-        <文件内容>{{`.FileContent`}}</文件内容>
+        <文件名>{{`{{.FileName}}`}}</文件名>
+        <文件内容>{{`{{.FileContent}}`}}</文件内容>
         <摘要>
       dir_summary_prompt: |-
         你是一个专业的摘要生成专家，我会给你一些文件，请你帮我生成一个可以高度概括所有文件的100字以内的简短的摘要，并生成一个文件夹名。
@@ -4631,7 +4643,7 @@ data:
 
         现在请你帮我生成摘要和文件夹名:
         <文件列表>
-        {{`.FileInfo`}}
+        {{`{{.FileInfo}}`}}
         </文件列表>
         <摘要>
         <文件夹名>
@@ -4780,6 +4792,29 @@ data:
       region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
       endpoint: lkeap.tencentcloudapi.com
       timeout: 10
+      assume_role:
+        role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+        duration_seconds: 43200
+        refresh_ahead_seconds: 300
+
+
+    # 专有云文档解析配置（启用后替代 cloud_doc_parse_config 链路）
+    iaas_doc_parse_config:
+      enabled: true                                  # 是否启用专有云文档解析适配器，默认 false
+      client_name: adp.atomic.gateway                # tRPC HTTP 客户端名，默认 adp.atomic.gateway
+      target: "dns://atomicapi.adp.qq.com:443"     # 直连 atomic-api 域名（HTTPS 默认 443；走 trpc_go.yaml client 段时留空）
+      create_path: /v1/CreateSplitDocumentFlow      # atomic-api 创建任务路径（path-based 路由）
+      result_path: /v1/GetSplitDocumentResult       # atomic-api 查询结果路径（path-based 路由）
+      action_header: X-TC-Action                     # 动作请求头，默认 X-TC-Action（path-based 路由下 atomic-api 会忽略，无害保留）
+      create_action: CreateSplitDocumentFlow         # 创建任务动作名，默认 CreateSplitDocumentFlow
+      result_action: GetSplitDocumentResult          # 查询结果动作名，默认 GetSplitDocumentResult
+      timeout: 10                                    # 调用超时（秒），默认 10
+      #api_key: "test-dVohwYkVGYWVcrlnnoWCt7IBmL5zKpKGJ0mDbj5N8SXThhqEzfrtdwdtwsRLZHFz"  #safe atomic-api 公有云联调专用 test-key（非生产敏感）；优先于 ai-gateway 取值，留空则回退 ai-gateway
+      headers:                                       # 可选：透传给 atomic-api 的额外请求头
+        X-TC-Source: kb-config
+      transfer_file_url: true                       # 是否由 kb-config 先转存文件 URL，默认 false
+      sse_path: /v1/SplitDocumentSSE               # 同步/实时文档解析 SSE 接口路径（对齐 atomic-api 路由）
+      sse_timeout: 300                              # SSE 连接超时秒数，默认 300
 
   placeholder.yaml: |
     KB_ADMIN_REDIS_USER:
@@ -4837,6 +4872,7 @@ data:
         - validation
         - accesslog
         - opentelemetry
+        - cos_rewrite
       admin:
         ip: ${POD_IP}
         port: 8081
@@ -5001,6 +5037,11 @@ data:
             char_scaling_factor:
               zh: 1
               en: 3
+      filter:
+        cos_rewrite:
+          path_prefixes:
+            - /public
+            - /qbot
 
     client:
       namespace: Test
@@ -5142,6 +5183,12 @@ data:
           protocol: http
           target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
           timeout: 1800000
+
+        - name: trpc.adp.ai_gateway.Admin
+          network: tcp
+          protocol: trpc
+          target: ip://adp-ai-gateway.adp.svc.cluster.local:9092
+          timeout: 5000 
 
         - callee:  trpc.SmartService.AIConfManagerServer.AIConfManager
           target: ip://adp-aiconf-manager.{{ .Release.Namespace }}.svc.cluster.local:10002

@@ -159,6 +159,8 @@ data:
     cloud_secret:
       secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
       secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+      assume_role:
+        role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
 
     storage:
       {{ include "qbot.s3_storage" . }}
@@ -172,9 +174,13 @@ data:
           app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
           region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
           bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
-          domain: myqcloud.com
-          expire_time: 31536000s
+          domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
+          expire_time: 30m
           credential_time: 10m
+          assume_role:
+            role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
       file_limit:
         upload_limit:
           - type_name: doc
@@ -269,6 +275,8 @@ data:
       search_secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
       deepSeek_r1_name: "Deepseek/deepseek-r1-250528-search"
       deepSeek_v3_name: "Deepseek/deepseek-v3-250324-search"
+      assume_role:
+        role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
       summary_prompt_tpl: |-
         {{`下面我会给你用户当前问题question、当前检索结果search_result。你的任务是依据上述内容生成答案来回答用户问题，在答案中使用[num]来注明这个信息来源是来自哪篇搜索文章。请注意现在的时间是{{.CurDate}}。
         <question>{{.CurQuestion}}</question>
@@ -291,6 +299,8 @@ data:
       doc_parse_region: "ap-guangzhou"
       doc_parse_size: 15360
       model_name_llm: {{ .Values.adppluginexec.doc_model_name_llm }}
+      assume_role:
+        role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
 
     api:
       timeout: 120
@@ -454,6 +464,8 @@ data:
       service: "tms"
       version: "2020-12-29"
       action: "SearchPro"
+      assume_role:
+        role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
 
     es_web_search:
       end_point: "es.tencentcloudapi.com"
@@ -759,6 +771,8 @@ data:
     vi_cloud_secret:
       secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}   # 腾讯云 SecretID
       secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}  # 腾讯云 SecretKey
+      assume_role:
+        role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
 
     gemini:
       gi_image_endpoint: "aiart.tencentcloudapi.com"       # GI图片生成endpoint

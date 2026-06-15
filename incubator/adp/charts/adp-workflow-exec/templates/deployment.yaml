@@ -106,6 +106,20 @@ spec:
               value: tcs
             - name: SERVER_LOG_LEVEL
               value: info
+            {{- if .Values.global.components.s3.cos.stsKey }}
+            - name: ADP_ASSUME_ROLE_SECRET_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  key: ADP_ASSUME_ROLE_SECRET_ID
+                  optional: true
+            - name: ADP_ASSUME_ROLE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  key: ADP_ASSUME_ROLE_SECRET_KEY
+                  optional: true
+            {{- end }}
           image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-workflow-exec").url "context" .) }}
           imagePullPolicy: Always
           name: adp-workflow-exec

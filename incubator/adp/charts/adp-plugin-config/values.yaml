@@ -1,6 +1,6 @@
 images:
   adp-plugin-config:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/plugin-config:18_2605061619_stable_v3.4.1.1_d2280cfc_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/plugin-config:54_2606132011_stable_iaas_cos_edacb22b_private"
 adppluginconfig:
   resources:
     limits:

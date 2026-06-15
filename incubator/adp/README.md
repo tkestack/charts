@@ -263,8 +263,10 @@ MySQL:
 |--------|------|------|-------|
 | `components.s3.vendor` | ✅ 必填 | 云厂商 | `tencent` |
 | `components.s3.providerType` | ✅ 必填 | 产品类型 | `cos` |
+| `components.s3.enableProxy` | ⚪ 选填 | 是否开启S3代理，false：默认关闭代理，直接访问S3资源，针对部分路径自动设置公有读。true：开启代理，S3资源默认设置私有读，资源访问由adp服务代理。 | `false` |
 
 **providerType 可选值：**
+
 - tencent: `cos`
 
 #### COS 专用配置 (providerType=cos 时生效)
@@ -279,7 +281,9 @@ MySQL:
 | `components.s3.cos.domain` | ✅ 必填 | COS 域名后缀 | `myqcloud.com` |
 | `components.s3.cos.subPath` | ✅ 必填| 子路径 | `adp-test(必须设置公有读权限)` |
 | `components.s3.cos.expireTime` | ⚪ 选填 | 签名过期时间 | `3600s` |
-| `components.s3.cos.credentialTime` | ⚪ 选填 | 临时凭证有效期 | `3600s` |
+| `components.s3.cos.credentialTime` | ⚪ 选填 | 临时凭证有效期                                               | `3600s`                                     |
+| `components.s3.cos.stsKey`         | ⚪ 选填 | sts模式下，保存cos访问秘钥的secret名称，需部署前主动创建。若配置该值，则仅支持通过sts模式访问cos资源，禁止使用永久secretId、secretKey | `sts-key`                                   |
+| `components.s3.cos.stsRoleArn`     | ⚪ 选填 | sts模式的角色标识，需要在腾讯云控制台创建CAM角色，并授予cos全读写权限 | `qcs::cam::uin/1234567890:roleName/CosFull` |
 
 **注意**
 

@@ -81,6 +81,8 @@ global:
     s3:
       vendor: tencent
       providerType: cos  # tencent: cos | aws: s3 | alibaba: oss | azure: blob | gcp: gcs | self: minio
+      # 是否启用s3代理 (非必填，默认false：关闭代理，会针对s3部分路径自动设置公有读；true: 开启代理，s3默认私有读，s3资源访问转发到adp服务代理)
+      enableProxy: false
       # COS 专用配置 (providerType=cos 时生效)
       cos:
         secretId: "<YOUR_COS_SECRET_ID>"
@@ -92,7 +94,10 @@ global:
         subPath: "public"
         expireTime: 3600s
         credentialTime: 3600s
-
+        # cos sts secret key（非必填），sts模式下，保存cos访问秘钥的secret名称，需部署前主动创建。若配置该值，则表示仅支持通过sts模式访问cos资源，禁止使用永久secretId、secretKey
+        stsKey: ""
+        # cos sts RoleArn（非必填，stsKey不为空时必填），需要在腾讯云控制台创建CAM角色，并授予QcloudTsearchFullAccess、QcloudHunYuanFullAccess、QcloudOCRFullAccess、QcloudLKEAPFullAccess、QcloudCOSFullAccess权限
+        stsRoleArn: ""
 
     # 消息队列CKafka版 https://console.cloud.tencent.com/ckafka/instance
     kafka:
@@ -104,6 +109,9 @@ global:
 
     # clickhouse
     clickhouse:
+      # 是否禁用 ClickHouse 初始化（用于客户暂未部署 CH 的场景）
+      # 默认 false（启用）；老客户 values.yaml 未填写时按启用处理，向后兼容
+      disabled: false
       vendor: tencent
       providerType: clickhouse  # tencent: clickhouse |
       hosts:

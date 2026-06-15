@@ -105,6 +105,10 @@ data:
           domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
           expire_time: 30m
           credential_time: 10m
+          assume_role:
+            role_arn: {{ .Values.global.components.s3.cos.stsRoleArn | quote }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
         realtime:
           secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
           secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
@@ -114,6 +118,10 @@ data:
           domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
           expire_time: 30m
           credential_time: 10m
+          assume_role:
+            role_arn: {{ .Values.global.components.s3.cos.stsRoleArn | quote }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
       {{- end }}
       file_limit:
         offline:
@@ -1178,15 +1186,15 @@ data:
     ATOMIC_GATEWAY_TARGET: dns://api.adp.cloud.tencent.com:443
 
 
-    KAFKA_MSG_LOG_TOPIC: msg_record_binlog
+    KAFKA_MSG_LOG_TOPIC: adp_msg_record_binlog
     KAFKA_MSG_LOG_GROUP: bot-data-statistics-msg-log
-    KAFKA_USER_STAT_TOPIC: msg_record_binlog
+    KAFKA_USER_STAT_TOPIC: adp_msg_record_binlog
     KAFKA_USER_STAT_GROUP: bot-data-statistics-msg-user
 
-    KAFKA_CHECK_TASK_TOPIC: t_check_task-formal
+    KAFKA_CHECK_TASK_TOPIC: adp_t_check_task-formal
     KAFKA_CHECK_TASK_GROUP: bot-data-statistics-check-task
 
-    KAFKA_PLATFORM_METROLOY_TOPIC: platform_metrology_report
+    KAFKA_PLATFORM_METROLOY_TOPIC: adp_platform_metrology_report
     KAFKA_PLATFORM_METROLOY_GROUP: bot-data-statistics-report
 
     MSG_LOG_TO_KAFKA_SERVER1: trpc.KEP.msg-log-kafka.toyota
@@ -1233,8 +1241,6 @@ data:
       - name:  test
         uin:  700001751666
         kafka_client: trpc.KEP.msg-log-kafka.700001751666-test
-
-
   trpc_go.yaml: |
     global:                             #全局配置
       namespace: Test          #环境类型，分正式production和非正式development两种类型
@@ -1278,13 +1284,13 @@ data:
             - session
             - permission
         - name: trpc.kafka.consumer.service.msg_log
-          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=msg_record_binlog&group=bot-data-statistics-msg-log&batch=20&batchFlush=2000
+          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=adp_msg_record_binlog&group=bot-data-statistics-msg-log&batch=20&batchFlush=2000
           protocol: kafka
         - name: trpc.kafka.consumer.service.user_stat
-          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=msg_record_binlog&group=bot-data-statistics-msg-user&batch=20&batchFlush=2000
+          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=adp_msg_record_binlog&group=bot-data-statistics-msg-user&batch=20&batchFlush=2000
           protocol: kafka
         - name: trpc.kafka.consumer.service.check_task
-          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=t_check_task-formal&group=bot-data-statistics-check-task&batch=50&batchFlush=2000
+          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=adp_t_check_task-formal&group=bot-data-statistics-check-task&batch=50&batchFlush=2000
           protocol: kafka
         - name: trpc.KEP.bot-data-statistics-server.TriggerHistoryTask   #service的路由名称,
           ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
@@ -1359,7 +1365,7 @@ data:
           protocol: timer #应用层协议
           timeout: 5000
         - name: trpc.kafka.consumer.platform_metrology.report
-          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=platform_metrology_report&group=bot-data-statistics-report&batch=100&batchFlush=2000
+          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=adp_platform_metrology_report&group=bot-data-statistics-report&batch=100&batchFlush=2000
           protocol: kafka
     plugins:                                          #插件配置
       telemetry:
@@ -1542,10 +1548,10 @@ data:
           timeout: 60000
 
         - name: trpc.kafka.producer.platform_metrology.finance_pay
-          target: kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=pack_pay&compression=none&partitioner=random&requiredAcks=-1
+          target: kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_pack_pay&compression=none&partitioner=random&requiredAcks=-1
 
         - name: trpc.kafka.producer.platform_metrology.report
-          target: kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=platform_metrology_report
+          target: kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_platform_metrology_report
         - name: trpc.http.cos.Access
           network: tcp
           protocol: http

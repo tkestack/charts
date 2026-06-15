@@ -349,6 +349,14 @@ spec:
               number: 9080
         path: /op
         pathType: ImplementationSpecific
+      # COS 资源反向代理，由 adp-kb-file-manager 内置 HTTP service 处理
+      - backend:
+          service:
+            name: adp-kb-file-manager
+            port:
+              number: 8001
+        path: /adp/cos-proxy
+        pathType: ImplementationSpecific
   {{- if eq (default $.Values.global.scheme $.Values.global.clbScheme) "https" }}
   tls:
   - hosts:

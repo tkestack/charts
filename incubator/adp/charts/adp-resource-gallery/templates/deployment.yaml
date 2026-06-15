@@ -100,6 +100,8 @@ spec:
               value: tcs
             - name: SERVER_LOG_LEVEL
               value: info
+            - name: ADP_HOST
+              value: "{{ .Values.global.scheme }}://{{ .Values.global.clb }}"
             - name: ADP_CHANNEL_ID
               value: "1"
             - name: ProductType
@@ -109,6 +111,20 @@ spec:
             - name: ADP_CHANNEL_UUID
               value: {{ $channelUUID | quote }}
             {{- end }}
+            {{- if .Values.global.components.s3.cos.stsKey }}
+            - name: ADP_ASSUME_ROLE_SECRET_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  key: ADP_ASSUME_ROLE_SECRET_ID
+                  optional: true
+            - name: ADP_ASSUME_ROLE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  key: ADP_ASSUME_ROLE_SECRET_KEY
+                  optional: true
+            {{- end }}
           image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-resource-gallery").url "context" .) }}
           imagePullPolicy: Always
           #command: ["sh","/usr/local/app/start.sh"]
@@ -117,7 +133,7 @@ spec:
           resources:
             limits:
               cpu: "500m"
-              memory: "512Mi"
+              memory: "1Gi"
             requests:
               cpu: "125m"
               memory: "512Mi"
@@ -125,7 +141,7 @@ spec:
           resources:
             limits:
               cpu: "500m"
-              memory: "512Mi"
+              memory: "1Gi"
             requests:
               cpu: "250m"
               memory: "512Mi"

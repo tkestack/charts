@@ -1,0 +1,11 @@
+images:
+  adp-kb-file-manager:
+    url: "{{ .Values.global.imageRegistry }}/tke-market/kb-file-manager:32_2606132006_stable_iaas_cos_0a01c2a6_private"
+resources:
+  limits:
+    cpu: 2
+    memory: 4Gi
+  requests:
+    cpu: 1
+    memory: 2Gi
+replicas: 1

@@ -53,9 +53,11 @@ data:
                 port: {{ .Values.global.components.clickhouse.port }}
                 user: {{ .Values.global.components.clickhouse.user }}
                 password: {{ .Values.global.components.clickhouse.password }}
+                disabled: {{ dig "clickhouse" "disabled" false .Values.global.components }}
             s3:
                 vendor: {{ .Values.global.components.s3.vendor }}
                 providerType: {{ .Values.global.components.s3.providerType }}
+                enableProxy: {{ .Values.global.components.s3.enableProxy }}
                 cos:
                   secretId: {{ (.Values.global.components.s3.cos).secretId | default "" }}
                   secretKey: {{ (.Values.global.components.s3.cos).secretKey | default "" }}

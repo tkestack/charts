@@ -32,6 +32,10 @@ data:
           bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
           domain: myqcloud.com
           expire_time: 30m
+          assume_role:
+            role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
         cosoa: 
           secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
           secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
@@ -40,6 +44,10 @@ data:
           bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
           domain: myqcloud.com
           expire_time: 30m
+          assume_role:
+            role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
         realtimeoa: 
           secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
           secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
@@ -48,6 +56,10 @@ data:
           bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
           domain: myqcloud.com
           expire_time: 30m
+          assume_role:
+            role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
         cospre: 
           secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
           secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
@@ -56,6 +68,10 @@ data:
           bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
           domain: myqcloud.com
           expire_time: 30m
+          assume_role:
+            role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
         realtimepre: 
           secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
           secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
@@ -64,6 +80,10 @@ data:
           bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
           domain: myqcloud.com
           expire_time: 30m
+          assume_role:
+            role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
         realtime:
           secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
           secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
@@ -72,6 +92,10 @@ data:
           bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
           domain: myqcloud.com
           expire_time: 30m
+          assume_role:
+            role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
 
     data_migration_config: ${DataMigrationConfig}
 
