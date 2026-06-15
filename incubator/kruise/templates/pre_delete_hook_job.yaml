@@ -1,0 +1,92 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: kruise-helm-hook-role
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-weight": "1"
+rules:
+  - apiGroups:
+      - apps.kruise.io
+    resources:
+      - clonesets
+    verbs:
+      - list
+  - apiGroups:
+      - apps.kruise.io
+    resources:
+      - daemonsets
+    verbs:
+      - list
+  - apiGroups:
+      - apps.kruise.io
+    resources:
+      - statefulsets
+    verbs:
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kruise-helm-hook-rolebinding
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-weight": "2"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kruise-helm-hook-role
+subjects:
+  - kind: ServiceAccount
+    name: kruise-helm-hook
+    namespace: {{ .Values.installation.namespace }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-finalizer"
+  namespace: {{ .Values.installation.namespace }}
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    kruise: helm-finalizer
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-weight": "4"
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      name: "{{ .Release.Name }}-finalizer"
+      labels:
+        app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+        app.kubernetes.io/instance: {{ .Release.Name | quote }}
+        helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        kruise: helm-finalizer
+    spec:
+      restartPolicy: Never
+      serviceAccountName: kruise-helm-hook
+      containers:
+        - name: pre-delete-job
+          image: {{ .Values.helmHooks.image.repository }}:{{ .Values.helmHooks.image.tag }}
+          imagePullPolicy: IfNotPresent
+---
+# write a service account named kruise-helm-hook:
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kruise-helm-hook
+  namespace: {{ .Values.installation.namespace }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-weight": "3"
