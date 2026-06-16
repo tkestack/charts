@@ -466,15 +466,20 @@ def check_object_storage() -> bool:
     cos_region = os.getenv('COS_REGION', '')
     cos_bucket = os.getenv('COS_BUCKET', '')
     cos_subpath = os.getenv('COS_SUBPATH', '')
-    
+    cos_sts_key = os.getenv('COS_STS_KEY', '')
+
     print_info("对象存储类型: 腾讯云 COS")
     print_info(f"COS 区域: {cos_region}")
     print_info(f"COS 存储桶: {cos_bucket}")
     print_info(f"COS 子路径: {cos_subpath}")
 
-    if not cos_secret_id or cos_secret_id == 'xxx':
-        print_error("COS 配置无效（secret_id 未设置）")
-        return False
+    # stsKey 不为空时说明已开启 sts 代理模式，无需校验 secretId/secretKey
+    if cos_sts_key:
+        print_info("COS sts模式（stsKey 已配置），跳过 SecretId/SecretKey 校验")
+    else:
+        if not cos_secret_id or cos_secret_id == 'xxx':
+            print_error("COS 配置无效（secret_id 未设置）")
+            return False
 
     if not cos_bucket:
         print_error("COS 配置无效（bucket 未设置）")
