@@ -128,6 +128,17 @@ spec:
         nodeAffinity:
 {{ toYaml . | indent 10 }}
 {{- end }}
+      topologySpreadConstraints:
+      - labelSelector:
+          matchLabels:
+            control-plane: controller-manager
+{{- if and ( eq (int .Capabilities.KubeVersion.Major) 1) ( gt (int .Capabilities.KubeVersion.Minor) 26 ) }}
+        matchLabelKeys:
+        - pod-template-hash
+{{- end }}
+        maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable:  ScheduleAnyway
 
 {{- if .Values.manager.nodeSelector }}
       nodeSelector:

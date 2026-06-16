@@ -1,28 +1,27 @@
-annotations:
-  artifacthub.io/changes: |
-    - "[Changed]: https://github.com/openkruise/kruise/blob/master/CHANGELOG.md"
-    - "[Security]: Fix potential security issues of dependent packages"
-    - "[Changed]: Change kruise daemon dns policy to ClusterFirstWithHostNet"
 apiVersion: v1
-appVersion: 1.7.2
+name: kruise
 description: Helm chart for kruise components
-home: https://openkruise.io
+version: 1.8.3
+appVersion: 1.8.3
+kubeVersion: ">= 1.18.0-0"
 icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/4a7ca09f-eb3a-461d-a830-ce4728a7258f.png
 maintainers:
   - name: rockerchen
     email: rockerchen@tencent.com
 keywords:
-- openkruise
-- kubernetes
-- kruise
-- workload
-- statefulset
-- sidecar
-- job
-- deployment
-- cloneset
-kubeVersion: '>= 1.18.0-0'
-name: kruise
+  - openkruise
+  - kubernetes
+  - kruise
+  - workload
+  - statefulset
+  - sidecar
+  - job
+  - deployment
+  - cloneset
+home: https://openkruise.io
 sources:
-- https://github.com/openkruise/kruise
-version: 1.7.2
+  - https://github.com/openkruise/kruise
+annotations:
+  artifacthub.io/changes: |
+    - "[Changed]: https://github.com/openkruise/kruise/blob/master/CHANGELOG.md"
+    - "[Security]: Fix potential security issues of dependent packages"

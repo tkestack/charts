@@ -32,7 +32,7 @@ manager:
   replicas: 2
   image:
     repository: ccr.ccs.tencentyun.com/tke-market/kruise-manager
-    tag: v1.7.2
+    tag: v1.8.3
   webhook:
     port: 9876
   metrics:
@@ -113,3 +113,8 @@ daemon:
 
 serviceAccount:
   annotations: {}
+
+helmHooks:
+  image:
+    repository: ccr.ccs.tencentyun.com/tke-market/kruise-helm-hook
+    tag: v0.1.0

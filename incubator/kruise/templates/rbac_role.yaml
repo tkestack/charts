@@ -790,6 +790,16 @@ rules:
   - get
   - patch
   - update
+{{- if (contains "StatefulSetAutoResizePVCGate=true" .Values.featureGates) }}
+- apiGroups:
+    - storage.k8s.io
+  resources:
+    - storageclasses
+  verbs:
+    - get
+    - list
+    - watch
+{{- end }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -941,3 +951,114 @@ subjects:
 - kind: ServiceAccount
   name: kruise-daemon
   namespace: {{ .Values.installation.namespace }}
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: aggregate-kruise-view
+  labels:
+    # Add these permissions to the "view" default role.
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+rules:
+- apiGroups: ["apps.kruise.io"]
+  resources:
+    - advancedcronjobs
+    - advancedcronjobs/status
+    - broadcastjobs
+    - broadcastjobs/status
+    - clonesets
+    - clonesets/scale
+    - clonesets/status
+    - containerrecreaterequests
+    - containerrecreaterequests/status
+    - daemonsets
+    - daemonsets/status
+    - imagelistpulljobs
+    - imagelistpulljobs/status
+    - imagepulljobs
+    - imagepulljobs/status
+    - nodeimages
+    - nodeimages/status
+    - nodepodprobes
+    - nodepodprobes/status
+    - persistentpodstates
+    - persistentpodstates/status
+    - podprobemarkers
+    - podprobemarkers/status
+    - sidecarsets
+    - sidecarsets/status
+    - statefulsets
+    - statefulsets/scale
+    - statefulsets/status
+    - uniteddeployments
+    - uniteddeployments/scale
+    - uniteddeployments/status
+    - workloadspreads
+    - workloadspreads/status
+  verbs:
+    - get
+    - list
+    - watch
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: aggregate-kruise-edit
+  labels:
+    # Add these permissions to the "admin" and "edit" default roles.
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+rules:
+- apiGroups: ["apps.kruise.io"]
+  resources:
+    - advancedcronjobs
+    - broadcastjobs
+    - clonesets
+    - clonesets/scale
+    - containerrecreaterequests
+    - daemonsets
+    - imagelistpulljobs
+    - imagepulljobs
+    - nodeimages
+    - nodepodprobes
+    - persistentpodstates
+    - podprobemarkers
+    - sidecarsets
+    - statefulsets
+    - statefulsets/scale
+    - uniteddeployments
+    - uniteddeployments/scale
+    - workloadspreads
+  verbs:
+    - create
+    - delete
+    - deletecollection
+    - patch
+    - update
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: aggregate-kruise-admin
+  labels:
+    # Add these permissions to the "admin" default roles.
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+rules:
+- apiGroups: ["apps.kruise.io"]
+  resources:
+    - resourcedistributions/status
+  verbs:
+    - get
+    - list
+    - watch
+- apiGroups: ["apps.kruise.io"]
+  resources:
+    - resourcedistributions
+  verbs:
+    - get
+    - list
+    - watch
+    - create
+    - delete
+    - deletecollection
+    - patch
+    - update
