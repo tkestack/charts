@@ -185,7 +185,6 @@ spec:
           value: {{ dig "s3" "cos" "stsKey" "" $components | quote }}
         {{- end }}
         # ---------- K8s Resources ----------
-          value: {{ .Values.global.components.s3.cos.subPath | quote }}
         - name: CHECK_K8S_RESOURCES
           value: {{ .Values.global.checkK8sResources | quote }}
         - name: REQUIRED_CPU
