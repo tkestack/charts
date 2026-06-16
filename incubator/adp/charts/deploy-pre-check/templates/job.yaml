@@ -6,11 +6,6 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "pre-install-check.labels" . | nindent 4 }}
-    {{- if .Values.global.customLabels }}
-    {{- range $key, $value := .Values.global.customLabels }}
-    {{ $key }}: {{ $value | toString | quote }}
-    {{- end }}
-    {{- end }}
   annotations:
     "helm.sh/hook": pre-install
     "helm.sh/hook-succeeded": continue
@@ -18,11 +13,6 @@ metadata:
     "helm.sh/hook-weight": {{ .Values.hook.weight | quote }}
     "helm.sh/hook-delete-policy": {{ .Values.hook.deletePolicy }}
     "meta.helm.sh/release-time": {{ now | date "2006-01-02T15:04:05Z07:00" | quote }}
-    {{- if .Values.global.customAnnotations }}
-    {{- range $key, $value := .Values.global.customAnnotations }}
-    {{ $key }}: {{ $value | toString | quote }}
-    {{- end }}
-    {{- end }}
 spec:
   parallelism: 1
   completions: 1
@@ -33,162 +23,154 @@ spec:
       name: {{ include "pre-install-check.fullname" . }}
       labels:
         {{- include "pre-install-check.selectorLabels" . | nindent 8 }}
-        {{- if .Values.global.customLabels }}
-        {{- range $key, $value := .Values.global.customLabels }}
-        {{ $key }}: {{ $value | toString | quote }}
-        {{- end }}
-        {{- end }}
       annotations:
         eks.tke.cloud.tencent.com/reserve-sandbox-duration: "30m"
         eks.tke.cloud.tencent.com/reserve-succeeded-sandbox: "true"
         eks.tke.cloud.tencent.com/reserve-failed-sandbox: "true"
-        {{- if .Values.global.customAnnotations }}
-        {{- range $key, $value := .Values.global.customAnnotations }}
-        {{ $key }}: {{ $value | toString | quote }}
-        {{- end }}
-        {{- end }}
     spec:
       restartPolicy: Never
       {{- if .Values.rbac.create }}
       serviceAccountName: {{ include "pre-install-check.serviceAccountName" . }}
       {{- end }}
       volumes:
-      - name: check-script
-        configMap:
-          name: {{ include "pre-install-check.fullname" . }}-script
-          defaultMode: 0755
-      containers:
-      - name: pre-install-check
-        image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "pre-install-check").url "context" .) }}
-        imagePullPolicy: Always
-        command:
-        - python3
-        - -u
-        - /scripts/check.py
-        volumeMounts:
         - name: check-script
-          mountPath: /scripts
+          configMap:
+            name: {{ include "pre-install-check.fullname" . }}-script
+            defaultMode: 0755
+      containers:
+        - name: pre-install-check
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "pre-install-check").url "context" .) }}
+          imagePullPolicy: Always
+          command:
+            - python3
+            - -u
+            - /scripts/check.py
+          volumeMounts:
+            - name: check-script
+              mountPath: /scripts
         {{- if .Values.job.resources }}
-        resources:
+          resources:
           {{- toYaml .Values.job.resources | nindent 10 }}
         {{- end }}
-        env:
-        - name: PYTHONUNBUFFERED
-          value: "1"
-        - name: NAMESPACE
-          value: {{ .Release.Namespace }}
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: NAMESPACE
+              value: {{ .Release.Namespace }}
         {{- $components := .Values.global.components }}
-        # ---------- MySQL ----------
-        - name: ENABLE_MYSQL
-          value: {{ dig "db" "enabled" true $components | toString | quote }}
+            # ---------- MySQL ----------
+            - name: ENABLE_MYSQL
+              value: {{ dig "db" "enabled" true $components | toString | quote }}
         {{- if ne (dig "db" "enabled" true $components | toString) "false" }}
-        - name: DB_HOST
-          value: {{ $components.db.host | quote }}
-        - name: DB_PORT
-          value: {{ $components.db.port | quote }}
-        - name: DB_USER
-          value: {{ $components.db.user | quote }}
-        - name: DB_PASSWORD
-          value: {{ $components.db.password | quote }}
-        - name: DB_PROVIDER_TYPE
-          value: {{ $components.db.providerType | quote }}
+            - name: DB_HOST
+              value: {{ $components.db.host | quote }}
+            - name: DB_PORT
+              value: {{ $components.db.port | quote }}
+            - name: DB_USER
+              value: {{ $components.db.user | quote }}
+            - name: DB_PASSWORD
+              value: {{ $components.db.password | quote }}
+            - name: DB_PROVIDER_TYPE
+              value: {{ $components.db.providerType | quote }}
         {{- end }}
-        # ---------- Elasticsearch ----------
-        - name: ENABLE_ES
-          value: {{ dig "es" "enabled" true $components | toString | quote }}
+            # ---------- Elasticsearch ----------
+            - name: ENABLE_ES
+              value: {{ dig "es" "enabled" true $components | toString | quote }}
         {{- if ne (dig "es" "enabled" true $components | toString) "false" }}
-        - name: ES_HOST
-          value: {{ index $components.es.hosts 0 | quote }}
-        - name: ES_PORT
-          value: {{ $components.es.port | quote }}
-        - name: ES_USER
-          value: {{ $components.es.user | quote }}
-        - name: ES_PASSWORD
-          value: {{ $components.es.password | quote }}
+            - name: ES_HOST
+              value: {{ index $components.es.hosts 0 | quote }}
+            - name: ES_PORT
+              value: {{ $components.es.port | quote }}
+            - name: ES_USER
+              value: {{ $components.es.user | quote }}
+            - name: ES_PASSWORD
+              value: {{ $components.es.password | quote }}
         {{- end }}
-        # ---------- Redis ----------
-        - name: ENABLE_REDIS
-          value: {{ dig "redis" "enabled" true $components | toString | quote }}
+            # ---------- Redis ----------
+            - name: ENABLE_REDIS
+              value: {{ dig "redis" "enabled" true $components | toString | quote }}
         {{- if ne (dig "redis" "enabled" true $components | toString) "false" }}
-        - name: REDIS_HOST
-          value: {{ index $components.redis.hosts 0 | quote }}
-        - name: REDIS_PORT
-          value: {{ $components.redis.port | quote }}
-        - name: REDIS_PASSWORD
-          value: {{ $components.redis.password | quote }}
+            - name: REDIS_HOST
+              value: {{ index $components.redis.hosts 0 | quote }}
+            - name: REDIS_PORT
+              value: {{ $components.redis.port | quote }}
+            - name: REDIS_PASSWORD
+              value: {{ $components.redis.password | quote }}
         {{- end }}
-        # ---------- Kafka ----------
-        - name: ENABLE_KAFKA
-          value: {{ dig "kafka" "enabled" true $components | toString | quote }}
+            # ---------- Kafka ----------
+            - name: ENABLE_KAFKA
+              value: {{ dig "kafka" "enabled" true $components | toString | quote }}
         {{- if ne (dig "kafka" "enabled" true $components | toString) "false" }}
         {{- if hasKey $components "kafka" }}
-        - name: KAFKA_HOST
-          value: {{ index $components.kafka.hosts 0 | quote }}
-        - name: KAFKA_PORT
-          value: {{ $components.kafka.port | quote }}
+            - name: KAFKA_HOST
+              value: {{ index $components.kafka.hosts 0 | quote }}
+            - name: KAFKA_PORT
+              value: {{ $components.kafka.port | quote }}
         {{- end }}
         {{- end }}
-        # ---------- ClickHouse ----------
-        # 由 global.components.clickhouse.disabled 控制（默认 false=启用）
+            # ---------- ClickHouse ----------
+            # 由 global.components.clickhouse.disabled 控制（默认 false=启用）
         {{- if eq (dig "clickhouse" "disabled" false $components | toString) "true" }}
-        - name: ENABLE_CLICKHOUSE
-          value: "false"
+            - name: ENABLE_CLICKHOUSE
+              value: "false"
         {{- else }}
-        - name: ENABLE_CLICKHOUSE
-          value: "true"
+            - name: ENABLE_CLICKHOUSE
+              value: "true"
         {{- end }}
         {{- if ne (dig "clickhouse" "disabled" false $components | toString) "true" }}
         {{- if hasKey $components "clickhouse" }}
-        - name: CLICKHOUSE_HOST
-          value: {{ index $components.clickhouse.hosts 0 | quote }}
-        - name: CLICKHOUSE_PORT
-          value: {{ $components.clickhouse.port | quote }}
-        - name: CLICKHOUSE_USER
-          value: {{ $components.clickhouse.user | quote }}
-        - name: CLICKHOUSE_PASSWORD
-          value: {{ $components.clickhouse.password | quote }}
+            - name: CLICKHOUSE_HOST
+              value: {{ index $components.clickhouse.hosts 0 | quote }}
+            - name: CLICKHOUSE_PORT
+              value: {{ $components.clickhouse.port | quote }}
+            - name: CLICKHOUSE_USER
+              value: {{ $components.clickhouse.user | quote }}
+            - name: CLICKHOUSE_PASSWORD
+              value: {{ $components.clickhouse.password | quote }}
         {{- end }}
         {{- end }}
-        # ---------- VectorDB ----------
+            # ---------- VectorDB ----------
         {{- $vdbList := dig "vdb" (list) $components | default (list) }}
         {{- if gt (len $vdbList) 0 }}
         {{- $vdb0 := index $vdbList 0 }}
-        - name: ENABLE_VDB
-          value: {{ $vdb0.enabled | default true | toString | quote }}
+            - name: ENABLE_VDB
+              value: {{ $vdb0.enabled | default true | toString | quote }}
         {{- if ne ($vdb0.enabled | default true | toString) "false" }}
-        - name: VDB_ADDR
-          value: {{ $vdb0.addr | quote }}
-        - name: VDB_ACCOUNT
-          value: {{ $vdb0.account | quote }}
-        - name: VDB_APIKEY
-          value: {{ $vdb0.apiKey | quote }}
+            - name: VDB_ADDR
+              value: {{ $vdb0.addr | quote }}
+            - name: VDB_ACCOUNT
+              value: {{ $vdb0.account | quote }}
+            - name: VDB_APIKEY
+              value: {{ $vdb0.apiKey | quote }}
         {{- end }}
         {{- else }}
-        - name: ENABLE_VDB
-          value: "false"
+            - name: ENABLE_VDB
+              value: "false"
         {{- end }}
-        # ---------- 对象存储 ----------
-        - name: ENABLE_COS
-          value: {{ dig "s3" "enabled" true $components | toString | quote }}
+            # ---------- 对象存储 ----------
+            - name: ENABLE_COS
+              value: {{ dig "s3" "enabled" true $components | toString | quote }}
         {{- if ne (dig "s3" "enabled" true $components | toString) "false" }}
-        - name: COS_SECRET_ID
-          value: {{ $components.s3.cos.secretId | quote }}
-        - name: COS_SECRET_KEY
-          value: {{ $components.s3.cos.secretKey | quote }}
-        - name: COS_REGION
-          value: {{ $components.s3.cos.region | quote }}
-        - name: COS_BUCKET
-          value: {{ $components.s3.cos.bucket | quote }}
-        - name: COS_SUBPATH
-          value: {{ $components.s3.cos.subPath | quote }}
-        - name: COS_STS_KEY
-          value: {{ dig "s3" "cos" "stsKey" "" $components | quote }}
+            - name: COS_SECRET_ID
+              value: {{ $components.s3.cos.secretId | quote }}
+            - name: COS_SECRET_KEY
+              value: {{ $components.s3.cos.secretKey | quote }}
+            - name: COS_REGION
+              value: {{ $components.s3.cos.region | quote }}
+            - name: COS_BUCKET
+              value: {{ $components.s3.cos.bucket | quote }}
+            - name: COS_SUBPATH
+              value: {{ $components.s3.cos.subPath | quote }}
+            - name: COS_STS_KEY
+              value: {{ dig "s3" "cos" "stsKey" "" $components | quote }}
+            - name: ENABLE_PROXY
+              value: {{ $components.s3.enableProxy | default false | toString | quote }}
         {{- end }}
-        # ---------- K8s Resources ----------
-        - name: CHECK_K8S_RESOURCES
-          value: {{ .Values.global.checkK8sResources | quote }}
-        - name: REQUIRED_CPU
-          value: {{ if eq .Values.global.clusterSize "minimal" }}{{ .Values.requirements.minimal.cpu | quote }}{{ else if eq .Values.global.clusterSize "standard" }}{{ .Values.requirements.standard.cpu | quote }}{{ else if eq .Values.global.clusterSize "recommended" }}{{ .Values.requirements.recommended.cpu | quote }}{{ else }}{{ .Values.requirements.standard.cpu | quote }}{{ end }}
-        - name: REQUIRED_MEMORY
-          value: {{ if eq .Values.global.clusterSize "minimal" }}{{ .Values.requirements.minimal.memory | quote }}{{ else if eq .Values.global.clusterSize "standard" }}{{ .Values.requirements.standard.memory | quote }}{{ else if eq .Values.global.clusterSize "recommended" }}{{ .Values.requirements.recommended.memory | quote }}{{ else }}{{ .Values.requirements.standard.memory | quote }}{{ end }}
+            # ---------- K8s Resources ----------
+            - name: CHECK_K8S_RESOURCES
+              value: {{ .Values.global.checkK8sResources | quote }}
+            - name: REQUIRED_CPU
+              value: {{ if eq .Values.global.clusterSize "minimal" }}{{ .Values.requirements.minimal.cpu | quote }}{{ else if eq .Values.global.clusterSize "standard" }}{{ .Values.requirements.standard.cpu | quote }}{{ else if eq .Values.global.clusterSize "recommended" }}{{ .Values.requirements.recommended.cpu | quote }}{{ else }}{{ .Values.requirements.standard.cpu | quote }}{{ end }}
+            - name: REQUIRED_MEMORY
+              value: {{ if eq .Values.global.clusterSize "minimal" }}{{ .Values.requirements.minimal.memory | quote }}{{ else if eq .Values.global.clusterSize "standard" }}{{ .Values.requirements.standard.memory | quote }}{{ else if eq .Values.global.clusterSize "recommended" }}{{ .Values.requirements.recommended.memory | quote }}{{ else }}{{ .Values.requirements.standard.memory | quote }}{{ end }}
 {{- end }}

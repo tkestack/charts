@@ -519,6 +519,12 @@ def check_object_storage() -> bool:
             return False
 
         # 2. 验证subpath是否为公有读
+        # 若启用了 enableProxy 代理模式，文件通过后端代理访问，无需公有读权限，跳过检查
+        enable_proxy = os.getenv('ENABLE_PROXY', 'false').lower() in ('true', '1', 'yes')
+        if enable_proxy:
+            print_info("已启用 enableProxy 代理模式，跳过 COS 子路径公有读权限检查")
+            return True
+
         subpath_clean = cos_subpath.strip('/')
         subpath_url = f"https://{cos_bucket}.cos.{cos_region}.myqcloud.com/{subpath_clean}/"
 
