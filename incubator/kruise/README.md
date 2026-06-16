@@ -21,7 +21,7 @@ The following table lists the configurable parameters of the kruise chart and th
 |-------------------------------------|----------------------------------------------------------------|-----------------------------|
 | `manager.log.level`                 | Log level that kruise-manager printed                          | `4`                         |
 | `manager.replicas`                  | Replicas of kruise-controller-manager deployment               | `2`                         |
-| `manager.image.repository`          | Repository for kruise-manager image                            | `openkruise/kruise-manager` |
+| `manager.image.repository`          | Repository for kruise-manager image                            | `ccr.ccs.tencentyun.com/tke-market/kruise-manager` |
 | `manager.image.tag`                 | Tag for kruise-manager image                                   | `v1.8.3`                    |
 | `manager.resources.limits.cpu`      | CPU resource limit of kruise-manager container                 | `200m`                      |
 | `manager.resources.limits.memory`   | Memory resource limit of kruise-manager container              | `512Mi`                     |
@@ -65,7 +65,7 @@ The following table lists the configurable parameters of the kruise chart and th
 | `webhookConfiguration.timeoutSeconds` | The timeoutSeconds for all webhook configuration                                                                                                                                             | `30`    |
 | `serviceAccount.annotations`          | Annotations to patch for serviceAccounts                                                                                                                                                     | `{}`    |
 | `externalCerts.annotations`           | Annotations to patch for webhook configuration and crd when featuregate `EnableExternalCerts` is enabled. For example, `cert-manager.io/inject-ca-from: kruise-system/kruise-webhook-certs`. | `{}`    |
-| `helmHooks.image.repository`          | Repository for kruise pre-delete hook image                                                                                                                                                | `openkruise/kruise-helm-hook` |
+| `helmHooks.image.repository`          | Repository for kruise pre-delete hook image                                                                                                                                                | `ccr.ccs.tencentyun.com/tke-market/kruise-helm-hook` |
 | `helmHooks.image.tag`                 | Tag for kruise pre-delete hook image                                                                                                                                                       | `v0.1.0` |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
