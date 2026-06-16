@@ -183,6 +183,8 @@ spec:
           value: {{ $components.s3.cos.subPath | quote }}
         - name: COS_STS_KEY
           value: {{ dig "s3" "cos" "stsKey" "" $components | quote }}
+        - name: ENABLE_PROXY
+          value: {{ $components.s3.enableProxy | default false | toString | quote }}
         {{- end }}
         # ---------- K8s Resources ----------
         - name: CHECK_K8S_RESOURCES
