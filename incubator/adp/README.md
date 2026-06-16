@@ -283,7 +283,7 @@ MySQL:
 | `components.s3.cos.expireTime` | ⚪ 选填 | 签名过期时间 | `3600s` |
 | `components.s3.cos.credentialTime` | ⚪ 选填 | 临时凭证有效期                                               | `3600s`                                     |
 | `components.s3.cos.stsKey`         | ⚪ 选填 | sts模式下，保存cos访问秘钥的secret名称，需部署前主动创建。若配置该值，则仅支持通过sts模式访问cos资源，禁止使用永久secretId、secretKey | `sts-key`                                   |
-| `components.s3.cos.stsRoleArn`     | ⚪ 选填 | sts模式的角色标识，需要在腾讯云控制台创建CAM角色，并授予cos全读写权限 | `qcs::cam::uin/1234567890:roleName/CosFull` |
+| `components.s3.cos.stsRoleArn`     | ⚪ 选填 | sts模式的角色标识，需要在腾讯云控制台创建CAM角色，并关联QcloudTsearchFullAccess、QcloudHunYuanFullAccess、QcloudOCRFullAccess、QcloudLKEAPFullAccess、QcloudCOSFullAccess权限策略 | `qcs::cam::uin/1234567890:roleName/CosFull` |
 
 **注意**
 
@@ -394,8 +394,10 @@ components:
 | `components.clickhouse.port` | ✅ 必填 | ClickHouse 端口 | `9000` |
 | `components.clickhouse.user` | ✅ 必填 | ClickHouse 用户名 | `default` |
 | `components.clickhouse.password` | ✅ 必填 | ClickHouse 密码 | `your-password` |
+| `components.clickhouse.disabled` | ✅ 必填 | 是否禁用ClickHouse，默认启用，禁用后部分功能不可用 | `false` |
 
 **providerType 可选值：**
+
 - tencent: `clickhouse`
 
 **购买链接：** https://console.cloud.tencent.com/tchousec/instance

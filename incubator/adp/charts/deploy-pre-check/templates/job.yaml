@@ -181,6 +181,8 @@ spec:
           value: {{ $components.s3.cos.bucket | quote }}
         - name: COS_SUBPATH
           value: {{ $components.s3.cos.subPath | quote }}
+        - name: COS_STS_KEY
+          value: {{ dig "s3" "cos" "stsKey" "" $components | quote }}
         {{- end }}
         # ---------- K8s Resources ----------
           value: {{ .Values.global.components.s3.cos.subPath | quote }}
