@@ -29,7 +29,7 @@ pdb:
 manager:
   image:
     repository: ccr.ccs.tencentyun.com/tke-market/opentelemetry-operator
-    tag: v0.92.5
+    tag: v0.93.0
   collectorImage:
     repository: ccr.ccs.tencentyun.com/tke-market/opentelemetry-collector-contrib
     tag: 0.85.0
@@ -39,7 +39,7 @@ manager:
   autoInstrumentationImage:
     java:
       repository: "ccr.ccs.tencentyun.com/tapm/opentelemetry-java-agent"
-      tag: "2.11-20260228"
+      tag: "2.11-20260430"
     nodejs:
       repository: "ccr.ccs.tencentyun.com/tapm/autoinstrumentation-nodejs"
       tag: "0.51.0"
@@ -301,11 +301,8 @@ env:
   JAVA_INSTR_NACOS_SERVER: ""
   ## Optional, specify the Arthas URL
   JAVA_INSTR_ARTHAS_URL: ""
-
-
   ## Optional, default "false"; Set to "true" for international users
   INTL_SITE: "false"
-
   ## Optional, default "false"; Set to "true" for integrating with APM service via internet endpoint
   FROM_INTERNET: "false"
 
