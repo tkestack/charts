@@ -8,27 +8,27 @@ global:
 images:
   agent:
     image: ccr.ccs.tencentyun.com/tke-market/p2p-agent
-    tag: 0.2.3-rc3
+    tag: 0.2.3
     pullPolicy: IfNotPresent
   tracker:
     image: ccr.ccs.tencentyun.com/tke-market/tracker
-    tag: 0.2.3-rc3
+    tag: 0.2.3
     pullPolicy: IfNotPresent
   seedServer:
     image: ccr.ccs.tencentyun.com/tke-market/seed-server
-    tag: 0.2.3-rc3
+    tag: 0.2.3
     pullPolicy: IfNotPresent
   watcher:
     image: ccr.ccs.tencentyun.com/tke-market/watcher
-    tag: 0.2.3-rc3
+    tag: 0.2.3
     pullPolicy: IfNotPresent
   ntracker:
     image: ccr.ccs.tencentyun.com/tke-market/ntracker
-    tag: 0.2.3-rc3
+    tag: 0.2.3
     pullPolicy: IfNotPresent
   mirrorSetup:
     image: ccr.ccs.tencentyun.com/tke-market/p2p-mirror-setup
-    tag: 0.2.3-rc3
+    tag: 0.2.3
     pullPolicy: IfNotPresent
   minio:
     image: quay.io/minio/minio
@@ -120,6 +120,8 @@ agent:
 
   # P2P 下载配置
   maxConcurrent: 8
+  globalMaxConcurrent: 32
+  headSlices: 0
   shuffleSize: 8
   minSliceSize: 4
   maxSliceSize: 128
@@ -132,8 +134,9 @@ agent:
   seederReadRateLimit: 500
   seederWriteRateLimit: 750
   maxMemoryUsageMB: 2048
+  maxConcurrentUploads: 256
 
-  maxBtConcurrentFlow: 32
+  maxBtConcurrentFlow: 256
   maxCpuPercentage: 75
   maxMemoryPercentage: 75
   maxCpuUpperBound: 300
@@ -250,13 +253,18 @@ ntracker:
   hostNetwork: false
   shardCount: 1024
   cleanupInterval: 120
-  expireTime: 1800
+  infoHashLimit: 200000
+  tombstoneTTL: 1800
+  unreachableWindow: 20
+  unreachableThreshold: 2
   aofPath: "/app/data/ntracker.aof"
   aofSyncInterval: 5
   hotThreshold: 500
   hotCacheSize: 1000
   peerHotThreshold: 1000
   peerNumber: 8192
+  originMaxConcurrentPerSlice: 0
+  originPermitLeaseTTL: 300
   logPath: "/app/ntracker.log"
   logLevel: "info"
   persistence:

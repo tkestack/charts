@@ -23,7 +23,10 @@ Context:
 {{- end -}}
 {{- $registryHttp = join "," $registryHttp -}}
 {{- if and $root.Values.agent.reuseContainerdContentStore (ne $root.Values.agent.trackerType "ntracker") -}}
-  {{- fail "agent.reuseContainerdContentStore=true 仅支持 trackerType=ntracker，请修改 agent.trackerType" -}}
+  {{- fail "agent.reuseContainerdContentStore=true only supports trackerType=ntracker" -}}
+{{- end -}}
+{{- if and (gt (int $root.Values.ntracker.originMaxConcurrentPerSlice) 0) (ne $root.Values.agent.trackerType "ntracker") -}}
+  {{- fail "ntracker.originMaxConcurrentPerSlice>0 only supports trackerType=ntracker" -}}
 {{- end -}}
 {{- $roleName := $role.name -}}
 {{- $daemonSetName := ( eq $roleName "" ) | ternary "p2p-agent" (printf "p2p-agent-%s" $roleName) -}}
@@ -246,6 +249,7 @@ data:
       ntracker_dns: "{{ $root.Values.agent.ntrackerDNS }}"
       ntrackers_addr: "{{ $root.Values.agent.ntrackersAddr }}"
       ntracker_port: {{ $root.Values.ntracker.port }}
+      ntracker_unreachable_window: {{ $root.Values.ntracker.unreachableWindow }}
       peer_port_range: "{{ $root.Values.agent.peerPortRange }}"
       meta_manager_polaris: "{{ $root.Values.agent.metaManagerAddr }}"
       min_p2p_timeout: {{ $root.Values.agent.minP2PTimeout }}
@@ -276,6 +280,9 @@ data:
       torrent_storage_prefix: "tj-common"
 
       max_concurrent: {{ $root.Values.agent.maxConcurrent }}
+      global_max_concurrent: {{ $root.Values.agent.globalMaxConcurrent }}
+      origin_max_concurrent_per_slice: {{ $root.Values.ntracker.originMaxConcurrentPerSlice }}
+      head_slices: {{ default 0 $root.Values.agent.headSlices }}
       {{- if $role.leecherMode }}
       shuffle_size: 0
       {{- else }}
@@ -334,6 +341,7 @@ data:
           overload_strategy: {{ $root.Values.agent.overloadStrategy }}
       bittorrent:
         max_peer_connection: {{ $root.Values.agent.maxPeerConnection }}
+        max_concurrent_uploads: {{ $root.Values.agent.maxConcurrentUploads }}
       gc:
         expire_time: {{ $root.Values.agent.expireTime }}
         detection_interval: {{ $root.Values.agent.detectionInterval }}
