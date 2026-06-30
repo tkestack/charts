@@ -104,14 +104,19 @@ data:
   config.yaml: |
     port: {{ .Values.ntracker.port }}
     shard_count: {{ .Values.ntracker.shardCount }}
+    info_hash_limit: {{ .Values.ntracker.infoHashLimit }}
     cleanup_interval: {{ .Values.ntracker.cleanupInterval }}
-    expire_time: {{ .Values.ntracker.expireTime }}
+    tombstone_ttl: {{ .Values.ntracker.tombstoneTTL }}
+    unreachable_window: {{ .Values.ntracker.unreachableWindow }}
+    unreachable_threshold: {{ .Values.ntracker.unreachableThreshold }}
     aof_path: {{ .Values.ntracker.aofPath }}
     aof_sync_interval: {{ .Values.ntracker.aofSyncInterval }}
     hot_threshold: {{ .Values.ntracker.hotThreshold }}
     hot_cache_size: {{ .Values.ntracker.hotCacheSize }}
     peer_hot_threshold: {{ .Values.ntracker.peerHotThreshold }}
     peer_number: {{ .Values.ntracker.peerNumber }}
+    origin_max_concurrent_per_slice: {{ .Values.ntracker.originMaxConcurrentPerSlice }}
+    origin_permit_lease_ttl: {{ .Values.ntracker.originPermitLeaseTTL }}
     log:
       level: {{ .Values.ntracker.logLevel }}
       path: {{ .Values.ntracker.logPath }}
