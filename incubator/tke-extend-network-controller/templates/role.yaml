@@ -242,3 +242,11 @@ rules:
   - get
   - patch
   - update
+- apiGroups:
+  - node.tke.cloud.tencent.com
+  resources:
+  - machines
+  verbs:
+  - get
+  - list
+  - watch

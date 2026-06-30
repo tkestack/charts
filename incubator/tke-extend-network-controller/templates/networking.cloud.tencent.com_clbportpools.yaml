@@ -232,6 +232,37 @@ spec:
                 - InOrder
                 - Random
                 type: string
+              listenerPrecreate:
+                description: |-
+                  监听器预创建，预先为 lb 创建一些固定的监听器，不销毁，用于加快扩缩容时 CLB 的绑定和解绑速度。
+
+
+                  注意：预创建监听器的端口池只支持 TCP 和 UDP 协议（不支持 TCP_SSL 和 QUIC）。
+                properties:
+                  enabled:
+                    description: 是否启用监听器预创建
+                    type: boolean
+                    x-kubernetes-validations:
+                    - message: Value is immutable
+                      rule: self == oldSelf
+                  tcp:
+                    description: TCP 监听器预创建数量
+                    type: integer
+                    x-kubernetes-validations:
+                    - message: Value is immutable
+                      rule: self == oldSelf
+                  udp:
+                    description: UDP 监听器预创建数量
+                    type: integer
+                    x-kubernetes-validations:
+                    - message: Value is immutable
+                      rule: self == oldSelf
+                required:
+                - enabled
+                type: object
+                x-kubernetes-validations:
+                - message: Value is immutable
+                  rule: self == oldSelf
               listenerQuota:
                 description: |-
                   监听器数量配额。仅用在单独调整了指定 CLB 实例监听器数量配额的场景（TOTAL_LISTENER_QUOTA），
