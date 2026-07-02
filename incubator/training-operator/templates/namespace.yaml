@@ -2,5 +2,5 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: {{ include "tf-operator.namespaceName" . }}
+  name: {{ include "training-operator.namespaceName" . }}
 {{- end }}
