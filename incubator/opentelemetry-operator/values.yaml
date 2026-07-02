@@ -301,6 +301,8 @@ env:
   JAVA_INSTR_NACOS_SERVER: ""
   ## Optional, specify the Arthas URL
   JAVA_INSTR_ARTHAS_URL: ""
+  ## Optional, specify the yun api server address
+  API_ENDPOINT: ""
   ## Optional, default "false"; Set to "true" for international users
   INTL_SITE: "false"
   ## Optional, default "false"; Set to "true" for integrating with APM service via internet endpoint

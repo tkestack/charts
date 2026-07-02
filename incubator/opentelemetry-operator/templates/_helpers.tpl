@@ -370,6 +370,4 @@ spec:
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: {{ printf "%s/otlp" (include "opentelemetry-operator.host" . ) | quote | trim }}
-  go:
-    image: ccr.ccs.tencentyun.com/tapm/autoinstrumentation-go:v0.8.0-alpha
 {{- end -}}

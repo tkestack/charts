@@ -21,7 +21,8 @@
         "hostNetwork",
         "priorityClassName",
         "securityContext",
-        "testFramework"
+        "testFramework",
+        "env"
     ],
     "properties": {
         "replicaCount": {
@@ -1519,6 +1520,141 @@
                     "tag": "latest"
                 }
             }]
+        },
+        "env": {
+            "type": "object",
+            "default": {},
+            "title": "The env Schema",
+            "required": [
+                "TKE_CLUSTER_ID",
+                "TKE_REGION",
+                "APM_TOKEN",
+                "ENDPOINT"
+            ],
+            "properties": {
+                "TKE_CLUSTER_ID": {
+                    "type": "string",
+                    "default": "",
+                    "title": "TKE Cluster ID",
+                    "description": "Required, obtained from the TKE console. For non-TKE users, enter 'N/A'",
+                    "examples": [""]
+                },
+                "TKE_REGION": {
+                    "type": "string",
+                    "default": "",
+                    "title": "TKE Region",
+                    "description": "Required, obtained from the TKE console. For non-TKE users, enter 'N/A'",
+                    "examples": ["ap-guangzhou"]
+                },
+                "APM_TOKEN": {
+                    "type": "string",
+                    "default": "",
+                    "title": "APM Token",
+                    "description": "Required, obtained from the APM console",
+                    "examples": [""]
+                },
+                "ENDPOINT": {
+                    "type": "string",
+                    "default": "",
+                    "title": "APM Endpoint",
+                    "description": "Required, obtained from the APM console",
+                    "examples": [""]
+                },
+                "INSTR_IMAGE_REPOSITORY": {
+                    "type": "string",
+                    "default": "ccr.ccs.tencentyun.com",
+                    "title": "Instrumentation Image Repository",
+                    "description": "Optional, specify the image repository for instrumentation images",
+                    "examples": ["ccr.ccs.tencentyun.com"]
+                },
+                "INSTR_IMAGE_NAMESPACE": {
+                    "type": "string",
+                    "default": "tapm",
+                    "title": "Instrumentation Image Namespace",
+                    "description": "Optional, specify the image namespace for instrumentation images",
+                    "examples": ["tapm"]
+                },
+                "JAVA_INSTR_VERSION": {
+                    "type": "string",
+                    "default": "latest",
+                    "title": "Java Instrumentation Version",
+                    "description": "Optional, specify the Java instrumentation image version",
+                    "examples": ["latest"]
+                },
+                "PYTHON_INSTR_VERSION": {
+                    "type": "string",
+                    "default": "latest",
+                    "title": "Python Instrumentation Version",
+                    "description": "Optional, specify the Python instrumentation image version",
+                    "examples": ["latest"]
+                },
+                "DOTNET_INSTR_VERSION": {
+                    "type": "string",
+                    "default": "latest",
+                    "title": "DotNet Instrumentation Version",
+                    "description": "Optional, specify the .NET instrumentation image version",
+                    "examples": ["latest"]
+                },
+                "NODEJS_INSTR_VERSION": {
+                    "type": "string",
+                    "default": "latest",
+                    "title": "NodeJS Instrumentation Version",
+                    "description": "Optional, specify the Node.js instrumentation image version",
+                    "examples": ["latest"]
+                },
+                "JAVA_INSTR_NACOS_SERVER": {
+                    "type": "string",
+                    "default": "",
+                    "title": "Java Instrumentation Nacos Server",
+                    "description": "Optional, specify the Nacos server address for Java instrumentation",
+                    "examples": [""]
+                },
+                "JAVA_INSTR_ARTHAS_URL": {
+                    "type": "string",
+                    "default": "",
+                    "title": "Java Instrumentation Arthas URL",
+                    "description": "Optional, specify the Arthas URL for Java instrumentation",
+                    "examples": [""]
+                },
+                "API_ENDPOINT": {
+                    "type": "string",
+                    "default": "",
+                    "title": "API Endpoint",
+                    "description": "Optional, specify the yun api server address",
+                    "examples": [""]
+                },
+                "INTL_SITE": {
+                    "type": "string",
+                    "default": "false",
+                    "title": "International Site",
+                    "description": "Optional, set to 'true' for international users",
+                    "examples": ["false"]
+                },
+                "FROM_INTERNET": {
+                    "type": "string",
+                    "default": "false",
+                    "title": "From Internet",
+                    "description": "Optional, set to 'true' for integrating with APM service via internet endpoint",
+                    "examples": ["false"]
+                }
+            },
+            "examples": [{
+                "TKE_CLUSTER_ID": "",
+                "TKE_REGION": "",
+                "APM_TOKEN": "",
+                "ENDPOINT": "",
+                "INSTR_IMAGE_REPOSITORY": "ccr.ccs.tencentyun.com",
+                "INSTR_IMAGE_NAMESPACE": "tapm",
+                "JAVA_INSTR_VERSION": "latest",
+                "PYTHON_INSTR_VERSION": "latest",
+                "DOTNET_INSTR_VERSION": "latest",
+                "NODEJS_INSTR_VERSION": "latest",
+                "JAVA_INSTR_NACOS_SERVER": "",
+                "JAVA_INSTR_ARTHAS_URL": "",
+                "API_ENDPOINT": "",
+                "INTL_SITE": "false",
+                "FROM_INTERNET": "false"
+            }]
         }
     },
     "examples": [{
@@ -1682,6 +1818,23 @@
                 "repository": "busybox",
                 "tag": "latest"
             }
+        },
+        "env": {
+            "TKE_CLUSTER_ID": "",
+            "TKE_REGION": "",
+            "APM_TOKEN": "",
+            "ENDPOINT": "",
+            "INSTR_IMAGE_REPOSITORY": "ccr.ccs.tencentyun.com",
+            "INSTR_IMAGE_NAMESPACE": "tapm",
+            "JAVA_INSTR_VERSION": "latest",
+            "PYTHON_INSTR_VERSION": "latest",
+            "DOTNET_INSTR_VERSION": "latest",
+            "NODEJS_INSTR_VERSION": "latest",
+            "JAVA_INSTR_NACOS_SERVER": "",
+            "JAVA_INSTR_ARTHAS_URL": "",
+            "API_ENDPOINT": "",
+            "INTL_SITE": "false",
+            "FROM_INTERNET": "false"
         }
     }]
 }
