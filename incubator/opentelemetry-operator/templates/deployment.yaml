@@ -67,9 +67,6 @@ spec:
             {{- if and .Values.manager.autoInstrumentationImage.dotnet.repository .Values.manager.autoInstrumentationImage.dotnet.tag }}
             - --auto-instrumentation-dotnet-image={{ .Values.manager.autoInstrumentationImage.dotnet.repository }}:{{ .Values.manager.autoInstrumentationImage.dotnet.tag }}
             {{- end }}
-            {{- if and .Values.manager.autoInstrumentationImage.go.repository .Values.manager.autoInstrumentationImage.go.tag }}
-            - --auto-instrumentation-go-image={{ .Values.manager.autoInstrumentationImage.go.repository }}:{{ .Values.manager.autoInstrumentationImage.go.tag }}
-            {{- end }}
             {{- if .Values.manager.featureGates }}
             - --feature-gates={{ .Values.manager.featureGates }}
             {{- end }}
@@ -83,10 +80,6 @@ spec:
             {{- range $name, $value := .Values.manager.env }}
             - name: {{ $name }}
               value: {{ $value | quote -}}
-            {{- end }}
-            {{- if (eq .Values.env.FROM_INTERNET "true") }}
-            - name: API_ENDPOINT
-              value: "apm.tencentcloudapi.com"
             {{- end }}
             - name: TKE_CLUSTER_ID
               value: {{ .Values.env.TKE_CLUSTER_ID | quote }}
@@ -106,6 +99,17 @@ spec:
               value: {{ .Values.env.DOTNET_INSTR_VERSION | quote }}
             - name: NODEJS_INSTR_VERSION
               value: {{ .Values.env.NODEJS_INSTR_VERSION | quote }}
+            - name: JAVA_INSTR_NACOS_SERVER
+              value: {{ .Values.env.JAVA_INSTR_NACOS_SERVER | quote }}
+            - name: JAVA_INSTR_ARTHAS_URL
+              value: {{ .Values.env.JAVA_INSTR_ARTHAS_URL | quote }}
+            {{- if ne (toString .Values.env.API_ENDPOINT) "" }}
+            - name: API_ENDPOINT
+              value: {{ .Values.env.API_ENDPOINT | quote }}
+            {{- else if eq (toString .Values.env.FROM_INTERNET) "true" }}
+            - name: API_ENDPOINT
+              value: "apm.tencentcloudapi.com"
+            {{- end }}
             - name: INTL_SITE
               value: {{ .Values.env.INTL_SITE | quote }}
             - name: CONFIG_JAVA
@@ -121,7 +125,13 @@ spec:
             - name: HELM_CHART_VERSION
               value: {{ .Chart.Version | quote }}
             - name: IMAGE_REPOSITORY
+              {{- if or (eq (toString .Values.env.INSTR_IMAGE_REPOSITORY) "") (eq (toString .Values.env.INSTR_IMAGE_REPOSITORY) "ccr.ccs.tencentyun.com") }}
               value: {{ include "regionRepositoryMap" .Values.env.TKE_REGION | default (include "regionRepositoryMap" "ap-guangzhou") | quote }}
+              {{- else }}
+              value: {{ .Values.env.INSTR_IMAGE_REPOSITORY | quote }}
+              {{- end }}
+            - name: IMAGE_NAMESPACE
+              value: {{ .Values.env.INSTR_IMAGE_NAMESPACE | default "tapm" | quote }}
           {{- end }}
           image: "{{ include "opentelemetry-operator.managerImageRepository" . }}:{{ .Values.manager.image.tag }}"
           name: manager
