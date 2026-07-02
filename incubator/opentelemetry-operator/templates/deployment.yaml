@@ -81,10 +81,6 @@ spec:
             - name: {{ $name }}
               value: {{ $value | quote -}}
             {{- end }}
-            {{- if (eq .Values.env.FROM_INTERNET "true") }}
-            - name: API_ENDPOINT
-              value: "apm.tencentcloudapi.com"
-            {{- end }}
             - name: TKE_CLUSTER_ID
               value: {{ .Values.env.TKE_CLUSTER_ID | quote }}
             - name: TKE_REGION
@@ -107,8 +103,13 @@ spec:
               value: {{ .Values.env.JAVA_INSTR_NACOS_SERVER | quote }}
             - name: JAVA_INSTR_ARTHAS_URL
               value: {{ .Values.env.JAVA_INSTR_ARTHAS_URL | quote }}
+            {{- if ne (toString .Values.env.API_ENDPOINT) "" }}
             - name: API_ENDPOINT
               value: {{ .Values.env.API_ENDPOINT | quote }}
+            {{- else if eq (toString .Values.env.FROM_INTERNET) "true" }}
+            - name: API_ENDPOINT
+              value: "apm.tencentcloudapi.com"
+            {{- end }}
             - name: INTL_SITE
               value: {{ .Values.env.INTL_SITE | quote }}
             - name: CONFIG_JAVA
