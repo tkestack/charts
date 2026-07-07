@@ -15,6 +15,16 @@ The following table lists the configurable parameters of the kruise chart and th
 | `crds.managed`                 | Kruise will not install CRDs with chart if this is false        | `true`          |
 | `imagePullSecrets`             | The list of image pull secrets for kruise image                 | `[]`            |
 
+### Installation namespace
+
+By default the Helm release can be installed into an existing namespace, such as `default`, and the chart creates
+`installation.namespace` (`kruise-system`) with the labels required by Kruise webhooks.
+
+Do not combine `--namespace kruise-system --create-namespace` with the default `installation.createNamespace=true`.
+Helm creates the release namespace before chart resources, which conflicts with the chart-managed Namespace object. If
+you want the Helm release stored in `kruise-system`, create that namespace before installation and set
+`installation.createNamespace=false`.
+
 #### manager parameters
 
 | Parameter                           | Description                                                    | Default                     |
