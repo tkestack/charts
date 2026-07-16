@@ -13,6 +13,17 @@ spec:
   containers:
     - name: wget
       image: "{{ .Values.testFramework.image.repository }}:{{ .Values.testFramework.image.tag }}"
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
       env:
         - name: CERT_MANAGER_CLUSTERIP
           value: "cert-manager-webhook"
