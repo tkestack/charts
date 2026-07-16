@@ -1636,6 +1636,13 @@
                     "title": "From Internet",
                     "description": "Optional, set to 'true' for integrating with APM service via internet endpoint",
                     "examples": ["false"]
+                },
+                "ENABLE_SECURITY_CONTEXT": {
+                    "type": "string",
+                    "default": "false",
+                    "title": "Enable Security Context",
+                    "description": "Optional, set to 'true' to enable SecurityContext inheritance. When enabled, the injected init container will inherit the target container's securityContext to satisfy security policy engines like OPA Gatekeeper",
+                    "examples": ["false"]
                 }
             },
             "examples": [{
@@ -1653,7 +1660,8 @@
                 "JAVA_INSTR_ARTHAS_URL": "",
                 "API_ENDPOINT": "",
                 "INTL_SITE": "false",
-                "FROM_INTERNET": "false"
+                "FROM_INTERNET": "false",
+                "ENABLE_SECURITY_CONTEXT": "false"
             }]
         }
     },
@@ -1834,7 +1842,8 @@
             "JAVA_INSTR_ARTHAS_URL": "",
             "API_ENDPOINT": "",
             "INTL_SITE": "false",
-            "FROM_INTERNET": "false"
+            "FROM_INTERNET": "false",
+            "ENABLE_SECURITY_CONTEXT": "false"
         }
     }]
 }

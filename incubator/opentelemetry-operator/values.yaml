@@ -307,6 +307,10 @@ env:
   INTL_SITE: "false"
   ## Optional, default "false"; Set to "true" for integrating with APM service via internet endpoint
   FROM_INTERNET: "false"
+  ## Optional, default "false"; Set to "true" to enable SecurityContext inheritance
+  ## When enabled, the injected init container will inherit the target container's securityContext
+  ## to satisfy security policy engines like OPA Gatekeeper
+  ENABLE_SECURITY_CONTEXT: "false"
 
 config:
   "java": "LnMJIlbZkvA1tdECzP49rxZJxtdG+BzcE0lwEuNtM7HowDt6DHf/1S9KULD6ov75"

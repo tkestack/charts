@@ -112,6 +112,8 @@ spec:
             {{- end }}
             - name: INTL_SITE
               value: {{ .Values.env.INTL_SITE | quote }}
+            - name: ENABLE_SECURITY_CONTEXT
+              value: {{ .Values.env.ENABLE_SECURITY_CONTEXT | default "false" | quote }}
             - name: CONFIG_JAVA
               value: {{ .Values.config.java | quote }}
             - name: CONFIG_PYTHON
