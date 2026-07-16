@@ -182,10 +182,10 @@ waitForManager:
   resources:
     limits:
       cpu: 100m
-      memory: 128Mi
+      memory: 256Mi
     requests:
-      cpu: 10m
-      memory: 64Mi
+      cpu: 50m
+      memory: 128Mi
 
 ## Admission webhooks make sure only requests with correctly formatted rules will get into the Operator.
 ## They also enable the sidecar injection for OpenTelemetryCollector and Instrumentation CR's
