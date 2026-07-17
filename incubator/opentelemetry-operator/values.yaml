@@ -137,7 +137,6 @@ manager:
   rolling: false
 
   ## Container specific securityContext
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
   securityContext: {}
     # allowPrivilegeEscalation: false
     # capabilities:
@@ -166,12 +165,20 @@ kubeRBACProxy:
   extraArgs: []
 
   ## Container specific securityContext
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
   securityContext: {}
     # allowPrivilegeEscalation: false
     # capabilities:
     #   drop:
   #   - ALL
+
+## SecurityContext holds deployment pod-level security attributes.
+securityContext:
+  runAsGroup: 65532
+  runAsNonRoot: true
+  runAsUser: 65532
+  fsGroup: 65532
+
+
 
 ## Provide wait-for-manager Job container image and resources.
 ##
@@ -186,6 +193,21 @@ waitForManager:
     requests:
       cpu: 50m
       memory: 128Mi
+
+  ## Container specific securityContext
+  securityContext:
+    runAsNonRoot: false
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+
+  ## Pod-level securityContext (applies to all containers in the Job Pod)
+  podSecurityContext: {}
+    # runAsGroup: 1000
+    # runAsNonRoot: true
+  # runAsUser: 1000
+  # fsGroup: 1000
 
 ## Admission webhooks make sure only requests with correctly formatted rules will get into the Operator.
 ## They also enable the sidecar injection for OpenTelemetryCollector and Instrumentation CR's
@@ -268,13 +290,6 @@ networkMode: ""
 # Allows for pod scheduler prioritisation
 priorityClassName: ""
 
-## SecurityContext holds pod-level security attributes and common container settings.
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
-securityContext:
-  runAsGroup: 65532
-  runAsNonRoot: true
-  runAsUser: 65532
-  fsGroup: 65532
 
 testFramework:
   image:
