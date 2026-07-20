@@ -61,7 +61,8 @@ spec:
             {{- $javaTag = .Values.env.JAVA_INSTR_VERSION }}
             {{- end }}
             {{- if $javaTag }}
-            - --auto-instrumentation-java-image={{ .Values.manager.autoInstrumentationImage.java.repository }}:{{ $javaTag }}
+            {{- $javaImageName := include "opentelemetry-operator.autoInstrImageRepository" .Values.manager.autoInstrumentationImage.java.repository }}
+            - --auto-instrumentation-java-image={{ include "opentelemetry-operator.instrImageRegistry" . }}/{{ include "opentelemetry-operator.instrImageNamespace" . }}/{{ $javaImageName }}:{{ $javaTag }}
             {{- end }}
             {{- end }}
             {{- if .Values.manager.autoInstrumentationImage.nodejs.repository }}
@@ -70,7 +71,8 @@ spec:
             {{- $nodejsTag = .Values.env.NODEJS_INSTR_VERSION }}
             {{- end }}
             {{- if $nodejsTag }}
-            - --auto-instrumentation-nodejs-image={{ .Values.manager.autoInstrumentationImage.nodejs.repository }}:{{ $nodejsTag }}
+            {{- $nodejsImageName := include "opentelemetry-operator.autoInstrImageRepository" .Values.manager.autoInstrumentationImage.nodejs.repository }}
+            - --auto-instrumentation-nodejs-image={{ include "opentelemetry-operator.instrImageRegistry" . }}/{{ include "opentelemetry-operator.instrImageNamespace" . }}/{{ $nodejsImageName }}:{{ $nodejsTag }}
             {{- end }}
             {{- end }}
             {{- if .Values.manager.autoInstrumentationImage.python.repository }}
@@ -79,7 +81,8 @@ spec:
             {{- $pythonTag = .Values.env.PYTHON_INSTR_VERSION }}
             {{- end }}
             {{- if $pythonTag }}
-            - --auto-instrumentation-python-image={{ .Values.manager.autoInstrumentationImage.python.repository }}:{{ $pythonTag }}
+            {{- $pythonImageName := include "opentelemetry-operator.autoInstrImageRepository" .Values.manager.autoInstrumentationImage.python.repository }}
+            - --auto-instrumentation-python-image={{ include "opentelemetry-operator.instrImageRegistry" . }}/{{ include "opentelemetry-operator.instrImageNamespace" . }}/{{ $pythonImageName }}:{{ $pythonTag }}
             {{- end }}
             {{- end }}
             {{- if .Values.manager.autoInstrumentationImage.dotnet.repository }}
@@ -88,7 +91,8 @@ spec:
             {{- $dotnetTag = .Values.env.DOTNET_INSTR_VERSION }}
             {{- end }}
             {{- if $dotnetTag }}
-            - --auto-instrumentation-dotnet-image={{ .Values.manager.autoInstrumentationImage.dotnet.repository }}:{{ $dotnetTag }}
+            {{- $dotnetImageName := include "opentelemetry-operator.autoInstrImageRepository" .Values.manager.autoInstrumentationImage.dotnet.repository }}
+            - --auto-instrumentation-dotnet-image={{ include "opentelemetry-operator.instrImageRegistry" . }}/{{ include "opentelemetry-operator.instrImageNamespace" . }}/{{ $dotnetImageName }}:{{ $dotnetTag }}
             {{- end }}
             {{- end }}
             {{- if .Values.manager.featureGates }}
