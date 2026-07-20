@@ -357,16 +357,12 @@ spec:
     resourceAttributes:
       token: {{ .Values.env.APM_TOKEN }}
   java:
-    image: ""
   nodejs:
-    image: ""
   python:
-    image: ""
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: {{ printf "%s/otlp" (include "opentelemetry-operator.host" . ) | quote | trim }}
   dotnet:
-    image: ""
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: {{ printf "%s/otlp" (include "opentelemetry-operator.host" . ) | quote | trim }}

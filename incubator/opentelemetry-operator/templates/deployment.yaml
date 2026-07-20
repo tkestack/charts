@@ -55,17 +55,41 @@ spec:
             {{- if and .Values.manager.targetAllocatorImage.repository .Values.manager.targetAllocatorImage.tag }}
             - --target-allocator-image={{ .Values.manager.targetAllocatorImage.repository }}:{{ .Values.manager.targetAllocatorImage.tag }}
             {{- end }}
-            {{- if and .Values.manager.autoInstrumentationImage.java.repository .Values.manager.autoInstrumentationImage.java.tag }}
-            - --auto-instrumentation-java-image={{ .Values.manager.autoInstrumentationImage.java.repository }}:{{ .Values.manager.autoInstrumentationImage.java.tag }}
+            {{- if .Values.manager.autoInstrumentationImage.java.repository }}
+            {{- $javaTag := .Values.manager.autoInstrumentationImage.java.tag }}
+            {{- if and .Values.env.JAVA_INSTR_VERSION (ne .Values.env.JAVA_INSTR_VERSION "latest") }}
+            {{- $javaTag = .Values.env.JAVA_INSTR_VERSION }}
             {{- end }}
-            {{- if and .Values.manager.autoInstrumentationImage.nodejs.repository .Values.manager.autoInstrumentationImage.nodejs.tag }}
-            - --auto-instrumentation-nodejs-image={{ .Values.manager.autoInstrumentationImage.nodejs.repository }}:{{ .Values.manager.autoInstrumentationImage.nodejs.tag }}
+            {{- if $javaTag }}
+            - --auto-instrumentation-java-image={{ .Values.manager.autoInstrumentationImage.java.repository }}:{{ $javaTag }}
             {{- end }}
-            {{- if and .Values.manager.autoInstrumentationImage.python.repository .Values.manager.autoInstrumentationImage.python.tag }}
-            - --auto-instrumentation-python-image={{ .Values.manager.autoInstrumentationImage.python.repository }}:{{ .Values.manager.autoInstrumentationImage.python.tag }}
             {{- end }}
-            {{- if and .Values.manager.autoInstrumentationImage.dotnet.repository .Values.manager.autoInstrumentationImage.dotnet.tag }}
-            - --auto-instrumentation-dotnet-image={{ .Values.manager.autoInstrumentationImage.dotnet.repository }}:{{ .Values.manager.autoInstrumentationImage.dotnet.tag }}
+            {{- if .Values.manager.autoInstrumentationImage.nodejs.repository }}
+            {{- $nodejsTag := .Values.manager.autoInstrumentationImage.nodejs.tag }}
+            {{- if and .Values.env.NODEJS_INSTR_VERSION (ne .Values.env.NODEJS_INSTR_VERSION "latest") }}
+            {{- $nodejsTag = .Values.env.NODEJS_INSTR_VERSION }}
+            {{- end }}
+            {{- if $nodejsTag }}
+            - --auto-instrumentation-nodejs-image={{ .Values.manager.autoInstrumentationImage.nodejs.repository }}:{{ $nodejsTag }}
+            {{- end }}
+            {{- end }}
+            {{- if .Values.manager.autoInstrumentationImage.python.repository }}
+            {{- $pythonTag := .Values.manager.autoInstrumentationImage.python.tag }}
+            {{- if and .Values.env.PYTHON_INSTR_VERSION (ne .Values.env.PYTHON_INSTR_VERSION "latest") }}
+            {{- $pythonTag = .Values.env.PYTHON_INSTR_VERSION }}
+            {{- end }}
+            {{- if $pythonTag }}
+            - --auto-instrumentation-python-image={{ .Values.manager.autoInstrumentationImage.python.repository }}:{{ $pythonTag }}
+            {{- end }}
+            {{- end }}
+            {{- if .Values.manager.autoInstrumentationImage.dotnet.repository }}
+            {{- $dotnetTag := .Values.manager.autoInstrumentationImage.dotnet.tag }}
+            {{- if and .Values.env.DOTNET_INSTR_VERSION (ne .Values.env.DOTNET_INSTR_VERSION "latest") }}
+            {{- $dotnetTag = .Values.env.DOTNET_INSTR_VERSION }}
+            {{- end }}
+            {{- if $dotnetTag }}
+            - --auto-instrumentation-dotnet-image={{ .Values.manager.autoInstrumentationImage.dotnet.repository }}:{{ $dotnetTag }}
+            {{- end }}
             {{- end }}
             {{- if .Values.manager.featureGates }}
             - --feature-gates={{ .Values.manager.featureGates }}
