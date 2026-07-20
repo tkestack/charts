@@ -202,6 +202,31 @@ Modify kubeRBACProxy image repository by region.
 {{- end -}}
 {{- end -}}
 
+
+{{/*
+计算 autoInstrumentationImage 的仓库地址。
+使用 IMAGE_REPOSITORY（根据 INSTR_IMAGE_REPOSITORY 或区域映射）和 IMAGE_NAMESPACE（默认 tapm）组合镜像名称。
+参数：镜像原始 repository 值（如 ccr.ccs.tencentyun.com/tapm/opentelemetry-java-agent）
+*/}}
+{{- define "opentelemetry-operator.autoInstrImageRepository" -}}
+{{- $repo := . -}}
+{{- $parts := regexSplit "/" $repo -1 -}}
+{{- /* 取最后一段作为镜像名称 */ -}}
+{{- index $parts (sub (len $parts) 1) -}}
+{{- end -}}
+
+{{- define "opentelemetry-operator.instrImageRegistry" -}}
+{{- if or (eq (toString .Values.env.INSTR_IMAGE_REPOSITORY) "") (eq (toString .Values.env.INSTR_IMAGE_REPOSITORY) "ccr.ccs.tencentyun.com") -}}
+{{- include "regionRepositoryMap" .Values.env.TKE_REGION | default (include "regionRepositoryMap" "ap-guangzhou") -}}
+{{- else -}}
+{{- .Values.env.INSTR_IMAGE_REPOSITORY -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "opentelemetry-operator.instrImageNamespace" -}}
+{{- .Values.env.INSTR_IMAGE_NAMESPACE | default "tapm" -}}
+{{- end -}}
+
 {{/*
 自动检测集群是否为 cilium-overlay 网络模式。
 通过 lookup 函数查询 kube-system 命名空间下的 cilium-config ConfigMap，
@@ -357,16 +382,12 @@ spec:
     resourceAttributes:
       token: {{ .Values.env.APM_TOKEN }}
   java:
-    image: ""
   nodejs:
-    image: ""
   python:
-    image: ""
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: {{ printf "%s/otlp" (include "opentelemetry-operator.host" . ) | quote | trim }}
   dotnet:
-    image: ""
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: {{ printf "%s/otlp" (include "opentelemetry-operator.host" . ) | quote | trim }}

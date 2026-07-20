@@ -22,6 +22,9 @@ spec:
     spec:
       restartPolicy: OnFailure
       serviceAccountName: {{ template "opentelemetry-operator.serviceAccountName" . }}
+      {{- with .Values.waitForManager.podSecurityContext }}
+      securityContext: {{ toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: wait-for-manager
           image: "{{ include "opentelemetry-operator.jobImageRepository" . }}:{{ .Values.waitForManager.image.tag }}"
@@ -160,12 +163,9 @@ spec:
                 kubectl get pods -n "${NAMESPACE}" -l app.kubernetes.io/name={{ include "opentelemetry-operator.name" . }} -o wide || true
                 exit 1
               fi
-          securityContext:
-            runAsNonRoot: false
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
+          {{- with .Values.waitForManager.securityContext }}
+          securityContext: {{ toYaml . | nindent 12 }}
+          {{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
