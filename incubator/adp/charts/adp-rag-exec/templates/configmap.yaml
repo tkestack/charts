@@ -84,7 +84,7 @@ data:
       whitelist: ${HUNYUAN_CONFIG_WHITELIST}
       enable_instruction_list: ${HUNYUAN_CONFIG_ENABLE_INSTRUCTION_LIST}
     workflow_config:
-      model_name: {{ .Values.global.RagServer.workflow_config_model_name }}
+      model_name: {{ (.Values.global.RagServer).workflow_config_model_name | default "" }}
       close_token_report: ${WORKFLOW_CONFIG_CLOSE_TOKEN_REPORT}
     model:
       prompt_length: ${MODEL_PROMPT_LENGHT}
