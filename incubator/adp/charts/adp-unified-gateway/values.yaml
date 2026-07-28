@@ -1,0 +1,11 @@
+images:
+  adp-unified-gateway:
+    url: "{{ .Values.global.imageRegistry }}/tke-market/unified-gateway:3_2607171601_stable_iaas_v4.0.3.0_d2df8ee8_private"
+resources:
+  limits:
+    cpu: 2
+    memory: 4Gi
+  requests:
+    cpu: 1
+    memory: 1Gi
+replicas: 1

@@ -1,0 +1,209 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    ti.cloud.tencent.com/resource-quota: unlimited
+    configmap.reloader.stakater.com/reload: {{ .Release.Name }}-agent-file-system
+    {{- if .Values.global.customAnnotations }}
+    {{- range $key, $value := .Values.global.customAnnotations }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
+  labels:
+    app: adp-agent-file-system
+    app.kubernetes.io/name: adp-agent-file-system
+    {{- if .Values.global.customLabels }}
+    {{- range $key, $value := .Values.global.customLabels }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
+  name: adp-agent-file-system
+  namespace: {{ .Release.Namespace }}
+spec:
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  selector:
+    matchLabels:
+      app: adp-agent-file-system
+  template:
+    metadata:
+      labels:
+        app: adp-agent-file-system
+        {{- if .Values.global.customLabels }}
+        {{- range $key, $value := .Values.global.customLabels }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+        {{- end }}
+      {{- if .Values.global.customAnnotations }}
+      annotations:
+        {{- range $key, $value := .Values.global.customAnnotations }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+      {{- end }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - adp-agent-file-system
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: GPUName
+                    operator: DoesNotExist
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: product
+                    operator: In
+                    values:
+                      - lke
+      terminationGracePeriodSeconds: 30
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - name: adp-agent-file-system
+          command:
+            - '/bin/sh'
+          args:
+            - '/usr/local/bin/entrypoint.sh'
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-agent-file-system").url "context" .) }}
+          imagePullPolicy: Always
+          env:
+            - name: PATH
+              value: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            - name: PORT
+              value: "8080"
+            - name: ENVD_PORT
+              value: "49983"
+            - name: ENVD_URL
+              value: "http://127.0.0.1:49983"
+            - name: MANAGE_ENVD
+              value: "true"
+            - name: ENVD_RESTART_DELAY
+              value: "2s"
+            - name: FILE_SYSTEM_RESTART_DELAY
+              value: "2"
+            - name: FILE_SYSTEM_REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_REDIS_0_HOSTS
+            - name: FILE_SYSTEM_REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_REDIS_0_PORT
+            - name: FILE_SYSTEM_REDIS_ADDR
+              value: "$(FILE_SYSTEM_REDIS_HOST):$(FILE_SYSTEM_REDIS_PORT)"
+            - name: FILE_SYSTEM_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_REDIS_0_PASSWORD
+            - name: FILE_SYSTEM_TOKEN_REQUEST_SIGNATURE_KEY
+              value: {{ .Values.fileSystem.tokenRequestSignatureKey | default "" | quote }}
+            - name: FILE_SYSTEM_TOKEN_SECRET
+              value: {{ .Values.fileSystem.tokenSecret | default "" | quote }}
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 2
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 2
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "125m"
+              memory: "512Mi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+          {{- end }}
+          volumeMounts:
+            - mountPath: /etc/localtime
+              name: localtime
+            {{- if and .Values.global.agentRuntime (not .Values.global.agentRuntime.disabled) .Values.global.agentRuntime.cfs }}
+            - mountPath: /users
+              name: nfs-user-data
+            {{- end }}
+            - mountPath: /app/conf/infrastructure.yaml
+              name: infrastructure
+              subPath: infrastructure.yaml
+      restartPolicy: Always
+      volumes:
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - hostPath:
+            path: /etc/localtime
+          name: localtime
+        {{- if and .Values.global.agentRuntime (not .Values.global.agentRuntime.disabled) .Values.global.agentRuntime.cfs }}
+        - name: nfs-user-data
+          nfs:
+            server: {{ .Values.global.agentRuntime.cfs.ip }}
+            path: {{ .Values.global.agentRuntime.cfs.path }}
+        {{- end }}
+        - configMap:
+            defaultMode: 420
+            name: infrastructure
+          name: infrastructure

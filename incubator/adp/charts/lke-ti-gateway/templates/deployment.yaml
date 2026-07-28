@@ -86,7 +86,10 @@ spec:
       initContainers:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       containers:
-        - env:
+        - envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
             - name: TZ
               value: Asia/Shanghai
             - name: HOSTNAME
@@ -114,9 +117,15 @@ spec:
             - name: FORCE
               value: "true"
             - name: REDIS_PASSWORD
-              value: {{ .Values.global.components.redis.password | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_REDIS_0_PASSWORD
             - name: REDIS_PORT
-              value: {{ .Values.global.components.redis.port | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_REDIS_0_PORT
             - name: REDIS_SENTINEL
               value: master://{{- range $host := .Values.global.components.redis.hosts -}} {{- $host}}:{{$.Values.global.components.redis.port -}} {{- end }}
             - name: REDIS_SENTINEL_MASTER
@@ -138,7 +147,7 @@ spec:
           {{- if eq .Values.global.clusterSize "minimal" }}
           resources:
             limits:
-              cpu: "500m"
+              cpu: "1"
               memory: "1Gi"
             requests:
               cpu: "125m"
@@ -146,10 +155,10 @@ spec:
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
             limits:
-              cpu: "500m"
+              cpu: "1"
               memory: "2Gi"
             requests:
-              cpu: "250m"
+              cpu: "500m"
               memory: "1Gi"
           {{- else }}
           resources:
@@ -190,30 +199,18 @@ spec:
             - mountPath: /usr/local/apisix/conf/config-default.yaml
               name: ti-gateway-config
               subPath: config-default.yaml
-            - mountPath: /usr/local/apisix/utils/init-route-crd.sh
-              name: ti-gateway-route-crd
-              subPath: init-route-crd.sh
-            - mountPath: /usr/local/apisix/utils/register_crd_tool/register_const_third_platform.py
-              name: ti-gateway-route-crd
-              subPath: register_const_third_platform.py
-            - mountPath: /usr/local/apisix/utils/register_crd_tool/upstream_route.py
-              name: ti-gateway-route-crd
-              subPath: upstream_route.py
-            - mountPath: /usr/local/apisix/utils/register_crd_tool/register_from_xls.py
-              name: ti-gateway-route-crd
-              subPath: register_from_xls.py
             - mountPath: /usr/local/apisix/utils/csv_file_third_platform/upstream_platform.csv
               name: ti-gateway-route-crd
               subPath: upstream_platform.csv
             - mountPath: /usr/local/apisix/utils/csv_file_third_platform/ti-apex.csv
               name: ti-gateway-route-crd
               subPath: ti-apex.csv
-            - mountPath: /usr/local/apisix/utils/csv_file_third_platform/ti-ivh.csv
-              name: ti-gateway-route-crd
-              subPath: ti-ivh.csv
             - mountPath: /usr/local/apisix/utils/csv_file_third_platform/ti-perm-auth.csv
               name: ti-gateway-route-crd
               subPath: ti-perm-auth.csv
+            - mountPath: /usr/local/apisix/utils/csv_file_third_platform/adp-unified-gateway.csv
+              name: ti-gateway-route-crd
+              subPath: adp-unified-gateway.csv
             - mountPath: /usr/local/apisix/logs/
               name: ti-gateway-log
             - mountPath: /app/conf/infrastructure.yaml
@@ -225,9 +222,15 @@ spec:
             - name: ES_URL_LIST
               value: {{ join "," .Values.global.components.es.hosts | quote }}
             - name: ELASTICSEARCH_USERNAME
-              value: {{ .Values.global.components.es.user | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_ES_0_USER
             - name: ELASTICSEARCH_PASSWORD
-              value: {{ .Values.global.components.es.password | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_ES_0_PASSWORD
             - name: LOG_LEVEL
               value: "error"
             - name: KEEP_LOG_FILE
@@ -238,7 +241,7 @@ spec:
           {{- if eq .Values.global.clusterSize "minimal" }}
           resources:
             limits:
-              cpu: "500m"
+              cpu: "1"
               memory: "1Gi"
             requests:
               cpu: "125m"
@@ -246,10 +249,10 @@ spec:
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
             limits:
-              cpu: "500m"
+              cpu: "1"
               memory: "2Gi"
             requests:
-              cpu: "250m"
+              cpu: "500m"
               memory: "1Gi"
           {{- else }}
           resources:

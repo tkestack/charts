@@ -4,171 +4,6 @@ metadata:
   name: {{ .Release.Name }}-aiconf-manager
   namespace: {{ .Release.Namespace }}
 data:
-  aiconf_en-US.json: |
-    {
-      "主账号不能被操作": "the main account cannot be operated",
-      "角色不存在": "role does not exist",
-      "SpaceId不能为空": "SpaceId cannot be empty",
-      "RoleName不能为空": "RoleName cannot be empty",
-      "AccountUins不能为空": "AccountUins cannot be empty",
-      "缺少查询参数RoleID/AccountUin": "missing query parameter: RoleID/AccountUin",
-      "角色已存在": "the role already exists",
-      "permissionIds不存在": "permissionIds not found",
-      "权限id为空": "the permissionId is empty",
-      "无效的资源id":"Invalid resourceId",
-      "不存在": "not exist",
-      "AttachType参数有误": "AttachType parameter error",
-      "角色名不能为空": "role name cannot be empty",
-      "生成roleID失败": "roleID generation failed",
-      "无效的空间id": "invalid space ID",
-      "绑定个人资源权限失败": "failed to bind personal resource permissions",
-      "只能创建绑定空间角色": "only space role can be created and attched",
-      "创建绑定空间角色失败": "create and attach space role failed",
-      "创建绑定个人角色失败": "create and attach personal role failed",
-      "账号不存在或者没有实名认证": "account does not exist or is not authenticated",
-      "添加主账号失败": "failed to add main account",
-      "绑定企业超级管理员角色失败": "failed to attach corp super admin role",
-      "高级自定义": "Advanced Customization",
-      "应用配置": "Application Configuration",
-      "高级配置": "Advanced Configuration",
-      "应用端用户权限": "Application-side User Permissions",
-      "上下文改写": "Context Rewriting",
-      "检索知识库回答图片问题": "Retrieve Knowledge Base to Answer Image Questions",
-      "意图达成优先级": "Intent Fulfillment Priority",
-      "同义词": "Synonyms",
-      "Agent协同方式": "Agent Collaboration Mode",
-      "对话体验": "Conversation Experience",
-      "编辑应用": "Edit Application",
-      "应用模式": "Application Mode",
-      "欢迎语": "Welcome Message",
-      "知识": "Knowledge",
-      "数据库开关": "Database Toggle",
-      "文档检索匹配度": "Document Retrieval Match Score",
-      "文档开关": "Document Toggle",
-      "文档召回数量": "Document Recall Count",
-      "向量模型": "Vector Model",
-      "Excel检索增强": "Excel Retrieval Enhancement",
-      "问答库答案回复": "Q&A Library Answer Response",
-      "问答检索匹配度": "Q&A Retrieval Match Score",
-      "问答开关": "Q&A Toggle",
-      "问答召回数量": "Q&A Recall Count",
-      "结果重排序": "Result Re-ranking",
-      "检索策略": "Retrieval Strategy",
-      "任务流程配置": "Task Flow Configuration",
-      "模型配置": "Model Configuration",
-      "生成模型": "Generation Model",
-      "上下文轮数": "Context Turn Count",
-      "思考模型": "Reasoning Model",
-      "输出设置": "Output Settings",
-      "输出方式": "Output Method",
-      "回复设置": "Reply Settings",
-      "角色指令": "Role Instructions",
-      "联网搜索": "Web Search",
-      "变量与记忆": "Variables & Memory",
-      "应用评测": "Application Evaluation",
-      "应用运营": "Application Operations",
-      "删除应用/复制应用": "Delete Application / Copy Application",
-      "复制应用": "Copy Application",
-      "删除应用": "Delete Application",
-      "知识管理": "Knowledge Management",
-      "添加共享知识": "Add Shared Knowledge",
-      "数据库": "Database",
-      "文档": "Documents",
-      "下载": "Download",
-      "知识库设置": "Knowledge Base Settings",
-      "标签管理": "Tag Management",
-      "问答": "Q&A",
-      "导出": "Export",
-      "任务流程": "Task Flow",
-      "应用发布": "Application Publishing",
-      "发布按钮": "Publish Button",
-      "发布渠道": "Publishing Channels",
-      "服务状态": "Service Status",
-      "获取appkey": "Get App Key",
-      "体验链接获取": "Get Experience Link",
-      "工作流管理": "Workflow Management",
-      "可编辑": "Editable",
-      "无权限": "No Permission",
-      "可查看": "Viewable",
-      "知识库": "Knowledge Base",
-      "删除知识库": "Delete Knowledge Base",
-      "编辑知识库": "Edit Knowledge Base",
-      "插件广场": "Plugin Marketplace",
-      "删除插件": "Delete Plugin",
-      "编辑插件": "Edit Plugin",
-      "提示词模板": "Prompt Template",
-      "删除提示词模板": "Delete Prompt Template",
-      "编辑提示词模板": "Edit Prompt Template",
-      "模型广场": "Model Marketplace",
-      "添加模型": "Add Model",
-      "删除模型": "Delete Model",
-      "新建提示词模板": "New Prompt Template",
-      "工作空间": "Workspace",
-      "删除工作空间": "Delete Workspace",
-      "修改工作空间": "Modify Workspace",
-      "应用开发": "Application Development",
-      "新建应用": "New Application",
-      "原子能力": "Atomic Capability",
-      "应用模版": "Application Template",
-      "清空会话": "Clear Conversation",
-      "复制": "Copy",
-      "应用体验": "Application Experience",
-      "接入mcp插件": "Integrate MCP Plugin",
-      "创建插件": "Create Plugin",
-      "新建知识库": "New Knowledge Base",
-      "平台管理": "Platform Management",
-      "计费资源清单": "Billing Resource List",
-      "并发资源": "Concurrency Resources",
-      "知识库容量": "Knowledge Base Capacity",
-      "按量资源": "Pay-as-you-go Resources",
-      "后付费设置": "Postpaid Settings",
-      "计费资源使用明细": "Billing Resource Usage Details",
-      "并发统计": "Concurrency Statistics",
-      "知识库容量统计": "Knowledge Base Capacity Statistics",
-      "插件用量统计": "Plugin Usage Statistics",
-      "模型用量统计": "Model Usage Statistics",
-      "平台端用户权限": "Platform-side User Permissions",
-      "权限管理": "Permission Management",
-      "角色管理": "Role Management",
-      "用户管理": "User Management",
-      "主账号管理员角色": "Main Account Administrator Role",
-      "管理员": "Administrator",
-      "空间创建员": "Space Creator",
-      "超级管理员": "Super Administrator",
-      "空间管理员角色": "Space Administrator Role",
-      "普通用户": "Regular User",
-      "内容安全": "Content Security",
-      "应用安全设置": "Application Security Settings",
-      "关键词库": "Keyword Library",
-      "安全策略": "Security Policy",
-      "风险识别明细": "Risk Identification Details",
-      "风险识别统计": "Risk Identification Statistics",
-      "运维管理": "Operations Management",
-      "操作日志": "Operation Logs",
-      "Widget开发": "Widget",
-      "新建Widget": "Create Widget",
-      "复制Widget": "Copy Widget",
-      "删除Widget": "Delete Widget",
-      "导出Widget": "Export Widget",
-      "编辑Widget": "Edit Widget", 
-      "对话内容审核": "Conversation content review",
-      "数据报表": "Data Reports",
-      "业务看板": "Business Dashboard",
-      "资源看板": "Resource Dashboard",
-      "创建AppKey": "Create AppKey",
-      "删除AppKey": "Delete AppKey",
-      "修改AppKey状态": "Modify AppKey",
-      "计费资源": "Billing Resources",
-      "输入框按钮": "InputBox Button",
-      "推荐问题": "Recommended Question",
-      "导入应用": "Import App",
-      "导出应用": "Export App",
-      "知识图谱检索": "Knowledge Graph Search",
-      "告警历史": "Alarm History",
-      "告警管理": "Alarm Manage",
-      "资源管控": "Resource management",
-      "联网搜索设置": "Internet search settings"
-    }
   aiconf_zh-CN.json: |
     {
       "主账号不能被操作": "主账号不能被操作",
@@ -311,380 +146,847 @@ data:
       "操作日志": "操作日志",
       "普通用户": "普通用户"
     }
-  error_en-US.json: |
+  application.json: |
     {
-      "ResultOK": "Success",
-      "Fail": "Failure",
-      "InvalidParams": "Invalid parameters",
-      "InvalidParamsEmptyConditions": "Invalid parameters: empty conditions",
-      "InvalidParamsEmptyVerifyCondition": "Invalid parameters: empty verify condition",
-      "InvalidParamsEmptySubAccountUin": "Invalid parameters: empty sub_account_uin",
-      "InvalidParamsEmptyProductType": "Invalid parameters: empty product_type",
-      "InternalError": "Internal error",
-      "FailedOperation": "Operation failed",
-      "InvalidParameter": "Invalid parameter",
-      "ResourceNotFound": "Resource not found",
-      "UnauthorizedOperation": "Unauthorized operation",
-      "WritePermissionDataFailed": "Failed to write permission data",
-      "CheckParamFailed": "Parameter check failed",
-      "InternalErrorAPIV3": "Internal error",
-      "AuthFailure": "Authentication failure",
-      "DataAccessError": "Data access error",
-      "VerifyPermissionError": "Permission verification error",
-      "GetUserInfoError": "Failed to get user info",
-      "GetUinRolesError": "Failed to get user roles",
-      "GetPermissionInfosError": "Failed to get permission info",
-      "GetUserDeptError": "Failed to get user department",
-      "GetUserPermissionError": "Failed to get user permission",
-      "GetRolePermissionError": "Failed to get role permission",
-      "GetDeptPermissionError": "Failed to get department permission",
-      "GetResourcePermissionInfosError": "Failed to get resource permission info",
-      "GetOwnUinPermissionsError": "Failed to get owner uin permissions",
-      "ListUserResourcesError": "Failed to list user resources",
-      "GetUinRolesWithUinError": "Failed to get roles for user [%s]: %v",
-      "VerifyPermissionDetailError": "Permission verification failed productType=%s uin=%s action=%s resource=%s: %v",
-      "GetPermissionInfosDetailError": "Failed to get permission info permissionIDs=%s: %v",
-      "GetUserInfoDetailError": "Failed to get user info: %v",
-      "GetCompanyRolePermissionError": "Failed to get company role permission: %v",
-      "GetUserDeptDetailError": "Failed to get user department: %v",
-      "GetUserPermissionDetailError": "Failed to get user permission: %v",
-      "GetRolePermissionDetailError": "Failed to get role permission: %v",
-      "GetDeptPermissionDetailError": "Failed to get department permission: %v",
-      "VerifyResourcePermissionDetailError": "Resource permission verification failed productType=%s uin=%s resourceType=%s action=%s: %v",
-      "GetOwnUinPermissionsDetailError": "Failed to get owner uin permissions: %v",
-      "ListUserResourcesDetailError": "Failed to list user resources: %v",
-      "GetAllPermissionInfosError": "Failed to get all permission info: %v",
-      "DaoNoPermissionsError": "DAO: no permission data",
-      "DaoNoRoleIDsError": "DAO: role IDs are empty",
-      "DaoNoUinsError": "DAO: UIN list is empty",
-      "DaoMissingProductTypeError": "DAO: missing product type",
-      "DaoNoAdminRoleIDError": "DAO: admin role ID is empty",
-      "DaoBotLimitEmptyError": "DAO: bot limit value is empty",
-      "DaoUserDefaultRoleNotFoundError": "User default role not found",
-      "DaoOwnerRoleNotFoundError": "Owner role not found",
-      "DaoGetRoleResourcesError": "Failed to get role resources: %v",
-      "DaoGetUinRolesError": "Failed to get UIN roles: %v",
-      "DaoGetRoleInfosError": "Failed to get role info: %v",
-      "DaoGetSpaceManagerRoleInfoError": "Failed to get space manager role info: %v",
-      "DaoSelectRoleListError": "Failed to select role list: %v",
-      "DaoBatchSelectUinRolesError": "Failed to batch select UIN roles: %v",
-      "DaoSelectUinsCountError": "Failed to select UINs count: %v",
-      "DaoBatchSelectSubjectResourcesError": "Failed to batch select subject resources: %v",
-      "DaoSelectSubjectResourcePermError": "Failed to select subject resource permission: %v",
-      "DaoDeleteResourcePermissionsError": "Failed to delete resource permissions: %v",
-      "DaoUpdateSubjectResourceAuthPermsError": "Failed to update subject resource auth permissions: %v",
-      "DaoInsertSubjectResourcePermsError": "Failed to insert subject resource permissions, products: %s",
-      "DaoGetResourceInfosError": "Failed to get resource info: %v",
-      "DaoNormalizeSubjectResourcePermRulesError": "Failed to normalize subject resource permission rules: %v",
-      "DaoGetPermissionInfosError": "Failed to get permission info: %v",
-      "DaoNormalizeSubjectPermRulesError": "Failed to normalize subject permission rules: %v",
-      "DaoNormalizePermRulesError": "Failed to normalize permission rules: %v",
-      "DaoParallelUpdateFailedError": "Parallel update failed, products: %s",
-      "DaoDeleteSubjectResourcePermsError": "Failed to delete subject resource permissions: %v",
-      "DaoBatchSelectRoleProductsError": "Failed to batch select role products: %v",
-      "DaoAttachUserRolesNormalizeError": "Failed to normalize attach user roles: %v",
-      "DaoGetRoleCountError": "Failed to get role count: %v",
-      "DaoBatchSelectPermInfosError": "Failed to batch select permission info: %v",
-      "DaoBatchSelectResourcePermInfosError": "Failed to batch select resource permission info: %v",
-      "DaoGetSubjectProductsError": "Failed to get subject products: %v",
-      "DaoBatchSelectSubjectProductsError": "Failed to batch select subject products: %v",
-      "DaoSelectUinsCountByRoleIDsError": "Failed to select UINs count by role IDs: %v",
-      "DaoSelectUinsCountMapByRoleIDsError": "Failed to select UINs count map by role IDs: %v",
-      "ClientDescribeUserDeptListError": "Failed to get user dept list code=%s message=%s",
-      "ClientDescribeSelfInfoError": "Failed to get self info code=%s message=%s",
-      "FailedOperationWithDetail": "Operation failed: %s",
-      "InvalidParameterAccountIllegal": "Invalid parameter: operated account is illegal",
-      "InvalidParameterRoleNotExist": "Invalid parameter: roleID %s does not exist",
-      "InvalidParameterEmptyAppKey": "Invalid parameter: empty appKey",
-      "InvalidParameterInvalidFromProd": "Invalid parameter: invalid fromProd: %d",
-      "InvalidParameterInvalidSource": "Invalid parameter: invalid source: %s",
-      "InvalidParameterWithDetail": "Invalid parameter: %s",
-      "ResourceNotFoundUserNotFound": "Resource not found: user not found",
-      "ResourceNotFoundUserTypeNotSupported": "Resource not found: user type not supported",
-      "ResourceNotFoundResourceNotFound": "Resource not found: resource not found",
-      "ResourceNotFoundSpaceManagerRoleNotFound": "Resource not found: space manager role not found",
-      "ResourceNotFoundResource": "Resource not found",
-      "ResourceNotFoundSpaceManagerRole": "Resource not found: space manager role not found",
-      "ResourceNotFoundDBError": "Resource query database error",
-      "WritePermissionDataFailedWithDetail": "Failed to write permission data: %s",
-      "CheckParamNoPermission": "Parameter check failed: no permission",
-      "InvalidParameterEmptyResourceType": "Invalid parameter: empty resource type",
-      "InvalidParameterInvalidResourceType": "Invalid parameter: invalid resource type",
-      "InvalidParameterEmptyResourceTypeOrId": "Invalid parameter: empty resource type or resource id",
-      "InvalidParameterEmptyUinOrResourceId": "Invalid parameters: empty uin or resource id",
-      "InvalidParameterInvalidSpaceId": "Invalid parameter: invalid space id",
-      "GetDomainsError": "Failed to get domains",
-      "GetQuestionsError": "Failed to get questions",
-      "GetRepliesError": "Failed to get replies",
-      "CreateAppInfoError": "Failed to create app info",
-      "SaveAppInfoError": "Failed to save app info",
-      "GetAppSecretInfoError": "Failed to get app secret info",
-      "InvalidResourceType": "Invalid resource type",
-      "EmptyPermissionData": "Permission data is empty",
-      "BotCountExceedLimit": "Bot count exceeds limit, cannot exceed main role count",
-      "ProductResourceProxyNotConfigured": "Product resource proxy not configured",
-      "GetCustomResourceFailed": "Failed to get custom resource",
-      "ProcessUnderRolePermSelectSubjectPermsError": "ProcessUnderRolePermissions: select subject permissions failed: %v",
-      "ProcessUnderRolePermSelectSubjectResourcePermError": "ProcessUnderRolePermissions: select subject resource permission failed: %v",
-      "ProcessUnderRolePermDeletePermsError": "ProcessUnderRolePermissions: delete permissions failed: %v",
-      "ProcessUnderRolePermDeleteResourcePermsError": "ProcessUnderRolePermissions: delete resource permissions failed: %v",
-      "ProcessUnderRolePermAppendRulesError": "ProcessUnderRolePermissions: append rules failed: %v",
-      "ProcessRolePermSelectBusinessError": "ProcessRolePermissions: select business list failed: %v",
-      "ProcessRolePermSelectRoleIDError": "ProcessRolePermissions: select role ID failed: %v",
-      "ProcessRolePermSelectSubjectPermsError": "ProcessRolePermissions: select subject permissions failed: %v",
-      "ProcessRolePermSelectSubjectResourcePermError": "ProcessRolePermissions: select subject resource permission failed: %v",
-      "ProcessRolePermDeletePermsError": "ProcessRolePermissions: delete permissions failed: %v",
-      "ProcessRolePermResourceWithMsgError": "ProcessRolePermissionResource failed: %s",
-      "GenRoleIDError": "Failed to generate role ID: %v",
-      "AddRolesError": "Failed to add roles: %v",
-      "AttachRoleUsersError": "Failed to attach role users: %v",
-      "UpsertPermissionsGetPermsError": "UpsertPermissions: failed to get permission info: %v",
-      "UpsertPermissionsSelectResourcePermsError": "UpsertPermissions: failed to select resource permissions: %v",
-      "UpdateSubjectPermissionsError": "Failed to update subject permissions: %v",
-      "DeleteSubjectResourcePermissionsError": "Failed to delete subject resource permissions: %v",
-      "UpdateSubjectResourcePermissionsError": "Failed to update subject resource permissions: %v",
-      "ActivateProductError": "Failed to activate product: %v",
-      "ActivateProductFailedCode": "Failed to activate product, error code: %d",
-      "GenericUpdateProductNickNameError": "Failed to update product [%s] nickname: %s",
-      "GenericActivateProductError": "Failed to activate product [%s]: %s",
-      "GenericActivateProductFailed": "Failed to activate product [%s]: %s",
-      "ResourceCheckFailed": "Resource [%s] check failed: %s",
-      "FetchPermissionsError": "Failed to fetch permissions: %v",
-      "FetchDataPermissionsError": "Failed to fetch data permissions: %v",
-      "TransBusinessProductTypeFailed": "Failed to translate [%s] to business product type",
-      "GetProductBotListError": "Failed to get product bot list: %v",
-      "GetProductBotListRetCode": "Get product bot list returned error code: %d",
-      "ServiceProxyNotFound": "Service [%s] proxy config not found",
-      "GetCustomResourceError": "Failed to get custom resource: %v",
-      "AssignPermissionsUpsertError": "AssignPermissions: upsert failed: %s",
-      "CreateSpaceAdminRoleOnly": "Can only create and attach space admin role",
-      "CannotCreateDefaultSpaceRole": "Cannot create and attach default space role",
-      "GetOwnerDefaultSpacePermFailed": "Failed to get owner default space permissions: %s",
-      "AssignSpacePermFailed": "Failed to assign space permissions: %s",
-      "RefreshCasbinDataFailed": "Failed to refresh casbin permission data: %s",
-      "CreateSpaceAdminRoleFailed": "Failed to create space admin role: %s",
-      "CreateSpaceDefaultPermFailed": "Failed to create space default permissions: %s",
-      "AttachRoleFailed": "Failed to attach role: %s",
-      "SendMsgFailed": "Failed to send message, code: %d",
-      "UnmarshalDescribeUserInfoError": "Failed to unmarshal user info: %v",
-      "ServantFormatInvalid": "Servant format invalid: %s",
-      "InvalidSubjectInfo": "Invalid subject information",
-      "RoleNameFormatInvalid": "Role name format is invalid or exceeds 100 characters",
-      "RoleDescriptionTooLong": "Role description exceeds 500 characters",
-      "SubAccountConcurrencyExceed": "Sub-account concurrency cannot exceed main account, current max: %d",
-      "TimeExceedLimit": "Time exceeds limit, max validity: %s",
-      "ErrParams": "Parameter error",
-      "ErrCorpNotFound": "Corporation not found",
-      "ErrCorpAppNotEqual": "Corporation app mismatch",
-      "AuthFailureNotInWhitelist": "Authentication failure: not in whitelist",
-      "AuthFailureNotSuperAdmin": "Authentication failure: operator is not super admin",
-      "InternalErrorDBError": "Internal error: database error",
-      "InternalErrorWithDetail": "Internal error: %s",
-      "InternalErrorGetRoleUsers": "Internal error: failed to get role associated user info",
-      "FailedOperationOperatingData": "Operation failed: operating data",
-      "FailedOperationGetUinInfo": "Operation failed: get user info error",
-      "FailedOperationGenRoleID": "Operation failed: generate role ID",
-      "FailedOperationDuplicateRoleName": "Operation failed: duplicate role name, please re-enter",
-      "FailedOperationUpdateRoleFailed": "Operation failed: update role failed, role name may already exist",
-      "FailedOperationGetSubscribeInfo": "Operation failed: failed to get subscription info",
-      "FailedOperationGetRoleProducts": "Operation failed: failed to get role products info",
-      "FailedOperationAppendRolePerm": "Operation failed: failed to append role product permissions",
-      "FailedOperationDescribeSelfInfo": "Operation failed: describe self info error",
-      "FailedOperationActivateProductFailed": "Operation failed: activate product failed",
-      "FailedOperationActivateOtherProductFailed": "Operation failed: activate other products failed",
-      "FailedOperationActivateProductWithTypes": "Operation failed: activate products [%s] failed",
-      "FailedOperationNoPermission": "Operation failed: %s no permission",
-      "AddUserExist": "User already exists",
-      "AddUserExistWithAccount": "User already exists: %s",
-      "OperationDenied": "Operation denied",
-      "OperationDeniedEmptyRoleIDs": "Operation denied: empty role IDs",
-      "OperationDeniedGetRoleInfoFailed": "Operation denied: failed to get role info",
-      "OperationDeniedOnlyCustomRole": "Operation denied: can only delete custom roles",
-      "OperationDeniedOperatingData": "Operation denied: operating data",
-      "OperationDeniedRoleBindingUsers": "Operation denied: role is bound to users [%s], deletion will affect user permissions and cannot be recovered",
-      "OperationDeniedRoleCountMustBeOne": "Operation denied: role count must be 1",
-      "OperationDeniedSpaceCreatorCantModify": "Operation denied: space creator cannot be modified",
-      "ResourceNotFoundRoleNotFound": "Resource not found: role not found",
-      "SignatureExpire": "Signature expired",
-      "SignatureFailure": "Signature verification failed",
-      "InvalidParameterInvalidPlatformCode": "Invalid parameter: invalid platform code",
-      "InvalidParamsEmptyPermissionIds": "Invalid parameters: empty permission IDs",
-      "InvalidParamsEmptyUin": "Invalid parameters: empty UIN",
-      "ProductSubscribeExpired": "Product subscription [%s] has expired, cannot edit permissions",
-      "RedisHGetError": "Redis HGet error: %v",
-      "RedisHSetError": "Redis HSet error: %v",
-      "RedisSetExpireError": "Redis SetExpire error: %v",
-      "RedisGetError": "Redis Get error: %v",
-      "RedisSetNxError": "Redis SetNx error: %v",
-      "RedisGetLockFailed": "Failed to get Redis lock",
-      "RedisReleaseLockError": "Redis release lock error: %v",
-      "RedisLockNotHeld": "Lock not held by identity or already released",
-      "DaoClearCasbinRulesError": "ClearCasbinRules: batch delete rules failed: %v",
-      "DaoResetCasbinRulesSelectPermError": "ResetCasbinRules: batch select permission info failed: %v",
-      "DaoResetCasbinRulesGetResourceError": "ResetCasbinRules: get role resources failed: %v",
-      "DaoResetCasbinRulesUpsertError": "ResetCasbinRules: batch upsert role permissions failed: %v",
-      "DaoAppendRoleCasbinRulesError": "AppendRoleCasbinRules: normalize permission rules failed: %v",
-      "DaoAppendSubjectCasbinGRulesError": "AppendSubjectCasbinGRules: normalize subject G rules failed: %v",
-      "DaoGetTotalCountError": "Failed to get total count: %v",
-      "DaoGetQuestionsError": "Failed to get questions: %v",
-      "DaoGetRepliesError": "Failed to get replies: %v",
-      "DaoDeleteAllSpaceDataDeletePermError": "DeleteAllSpaceData: delete role permissions failed: %v",
-      "DaoDeleteAllSpaceDataDeleteResPermError": "DeleteAllSpaceData: delete subject resource permissions failed: %v",
-      "DaoDeleteAllSpaceDataDeleteRulesError": "DeleteAllSpaceData: batch delete rules failed: %v",
-      "DaoDeleteAllSpaceDataDeleteUinRoleError": "DeleteAllSpaceData: delete uin role failed: %v",
-      "DaoDeleteAllSpaceDataDeleteRoleInfoError": "DeleteAllSpaceData: delete role info failed: %v",
-      "DaoBatchDeleteRolesError": "BatchDeleteRoles: delete roles failed: %v",
-      "DaoBatchDeleteSubjectsDeletePermError": "BatchDeleteSubjects: delete subject permissions failed: %v",
-      "DaoBatchDeleteSubjectsDeleteResPermError": "BatchDeleteSubjects: delete subject resource permissions failed: %v",
-      "DaoBatchDeleteSubjectsDeleteRulesV0Error": "BatchDeleteSubjects: batch delete rules V0 failed: %v",
-      "DaoBatchDeleteSubjectsDeleteRulesV1Error": "BatchDeleteSubjects: batch delete rules V1 failed: %v",
-      "DaoBatchDeleteSubjectsCommitError": "BatchDeleteSubjects: commit transaction failed: %v",
-      "DaoDelUinRoleInTxError": "Failed to delete uin role in transaction: %v",
-      "DaoDeleteRolesInTxError": "Failed to delete roles in transaction: %v",
-      "DaoGetLkePermResourceByTypeError": "Failed to get LKE permission resource by type",
-      "DaoGetProjectInfoError": "Failed to get project info: %v",
-      "DaoGetAppConfigError": "Failed to get app config: %v",
-      "DaoGetDomainInfoError": "Failed to get domain info: %v",
-      "DaoGetIntentInfoError": "Failed to get intent info: %v",
-      "DaoSelectDBInstanceError": "Failed to select DB instance: %v",
-      "DaoGetGroupIDError": "Failed to get group ID: %v",
-      "DaoGetQuestionTotalCountError": "Failed to get question total count: %v",
-      "DaoGetChatQuestionsError": "Failed to get chat questions: %v",
-      "DaoGetChatRepliesError": "Failed to get chat replies: %v",
-      "DaoGetReplyTotalCountError": "Failed to get reply total count: %v",
-      "DaoGetChatInfosError": "Failed to get chat infos: %v",
-      "FailedOperationDelUsersNoPermission": "Operation failed: delete users no permission",
-      "FailedOperationAddUsersNoPermission": "Operation failed: add users no permission",
-      "FailedOperationModifyUserNoPermission": "Operation failed: modify user info no permission",
-      "FailedOperationDBError": "Operation failed: database error",
-      "ResourceNotFoundUserNotFoundWithDetail": "Resource not found: user not found",
-      "FailedOperationCannotModifyPlatformAdmin": "Operation failed: cannot modify platform admin status",
-      "FailedOperationNotAdminCannotModify": "Operation failed: non-admin cannot modify main account status",
-      "FailedOperationNotAddedAccountCannotModify": "Operation failed: non-added main account cannot modify status",
-      "FailedOperationInvalidStatus": "Operation failed: invalid status",
-      "InternalErrorAccountNotSuperCorp": "Internal error: account is not super corp",
-      "InvalidParameterEmptyUin": "Invalid parameter: empty UIN",
-      "InvalidParameterEmptyAccount": "Invalid parameter: empty account",
-      "InvalidParameterEmptyAccountOrDesc": "Invalid parameter: empty account or description",
-      "InvalidParameterEmptyAccounts": "Invalid parameter: empty accounts",
-      "InvalidParameterEmptySubjectType": "Invalid parameter: empty subject type",
-      "InvalidParameterSpaceIdRequired": "Invalid parameter: spaceId is required when ExcludeDeptId is set",
-      "InvalidParameterInvalidSubjectType": "Invalid parameter: invalid subject type",
-      "InvalidParameterInvalidLimitOffset": "Invalid parameter: invalid limit or offset",
-      "DataAccessErrorAPIV3": "Data access error",
-      "InvalidParamsEmptyUinOrSubAccountUin": "Invalid parameters: empty UIN or sub account UIN",
-      "DaoSelectUinRolesByRoleIDsError": "Failed to select UIN roles by role IDs: %v",
-      "DaoSelectRoleListWithLimitError": "Failed to select role list with limit: %v",
-      "FailedOperationGetUinInfoError": "Operation failed: get user info error",
-      "OperationDeniedQueryRoleInfoFailed": "Operation denied: failed to get role info",
-      "OperationDeniedOnlyDeleteCustomRole": "Operation denied: can only delete custom roles",
-      "InternalErrorGetRoleUsersInfoFailed": "Internal error: failed to get role associated user info",
-      "InvalidParameterInvalidAccount": "Invalid parameter: operated account is invalid",
-      "InvalidParameterInvalidSpaceID": "Invalid parameter: invalid space ID",
-      "CheckParamFailedNoPermission": "Parameter check failed: no permission",
-      "InvalidParameterEmptyResourceTypeOrID": "Invalid parameter: empty resource type or resource ID",
-      "InvalidParamsEmptyUinOrResourceID": "Invalid parameters: empty UIN or resource ID",
-      "InvalidParameterIncorrectSubjectInfo": "Invalid parameter: incorrect subject information",
-      "FailedOperationGetSubscribeInfoFailed": "Operation failed: failed to get subscription info",
-      "FailedOperationGetRoleProductsFailed": "Operation failed: failed to get role products info",
-      "FailedOperationAddRoleProductPermFailed": "Operation failed: failed to append role product permissions",
-      "InvalidParameterOnlySpaceRoleAllowed": "Invalid parameter: only space admin role can be created and bound",
-      "InvalidParameterCannotBindDefaultSpaceRole": "Invalid parameter: cannot create and bind default space role",
-      "FailedOperationCreateSpaceRoleFailed": "Operation failed: create space role failed: %s",
-      "FailedOperationCreateDefaultPermFailed": "Operation failed: create space default permissions failed: %s",
-      "FailedOperationAttachRoleFailed": "Operation failed: attach role failed: %s",
-      "InvalidParameterPermIDsExceedLimit": "Invalid parameter: permissionIDs length cannot exceed 10",
-      "InternalErrorRequestTencentCloudFailed": "Internal error: request TencentCloud error",
-      "FailedOperationGetEnterpriseSettingFailed": "Operation failed: get enterprise setting failed",
-      "FailedOperationUpdateEnterpriseSettingFailed": "Operation failed: update enterprise setting failed",
-      "ResourceNotFoundRoleNotExist": "Resource not found: the selected role does not exist",
-      "DaoDescribeDeptsError": "describeDepts error: %s",
-      "InvalidParameterEmptyRoleName": "Invalid parameter: role name cannot be empty",
-      "InvalidParameterEmptyRoleID": "Invalid parameter: role ID cannot be empty",
-      "InvalidParameterEmptyAddRemoveAccounts": "Invalid parameter: AddAccounts and RemoveAccounts cannot both be empty",
-      "InvalidParamsEmptyPermissionIDs": "Invalid parameters: empty permissionIDs",
-      "DaoNoTableToInsert": "No table to insert",
-      "DaoPrepareInsertSQLFailed": "Prepare insert SQL for table %s failed: %v",
-      "DaoExecInsertSQLFailed": "Execute insert SQL for table %s failed: %v",
-      "DaoNoTableToDelete": "No table to delete",
-      "DaoPrepareDeleteSQLFailed": "Prepare delete SQL for table %s failed: %v",
-      "DaoExecDeleteSQLFailed": "Execute delete SQL for table %s failed: %v",
-      "DaoBatchDeleteUinRoleError": "Batch delete uin role error: %v",
-      "DaoBatchDeleteProductSubscriptionError": "Batch delete product subscription error: %v",
-      "DaoPrepareDeleteResSQLFailed": "Prepare delete resource SQL for table %s failed: %v",
-      "DaoExecDeleteResSQLFailed": "Execute delete resource SQL for table %s failed: %v",
-      "DaoSelectProductInfosError": "Select product infos error: %v",
-      "DaoBatchSelectProductPermissionsError": "Batch select product permissions error: %v",
-      "DaoBatchSelectResourcePermissionsError": "Batch select resource permissions error: %v",
-      "DaoBatchSelectPermissionInfosError": "Batch select permission infos error: %v",
-      "DaoSelectRolePermissionsError": "Select role permissions error: %v",
-      "DaoSelectSubjectPermissionsError": "Select subject permissions error: %v",
-      "DaoSelectUinRoleError": "Select uin role error: %v",
-      "DaoSelectRolePermissionError": "Select role permission error: %v",
-      "ServiceSelectAllProductsError": "Select all products error: %v",
-      "ServiceSelectProductCategoryError": "Select product category error: %v",
-      "ServiceDescribeSelfInfoError": "Describe self info error: %v",
-      "ServiceSelectProductListByTypesError": "Select product list by types error: %v",
-      "ServiceGetBusinessAccountUinError": "Get business account uin error: %v",
-      "ServiceSelectSubscribedProductsError": "Select subscribed products error: %v",
-      "ServiceDescribeSubjectPermError": "Describe subject permission error: %s",
-      "ServiceDescribeAccountDeptError": "Describe account dept error: %s",
-      "ServiceSubscribeDateParseError": "Product %s subscribe date parse error: %s",
-      "ServiceExpireDateParseError": "Product %s expire date parse error: %s",
-      "ServiceExpireDateBeforeSubscribeDate": "Product %s expire date is before subscribe date",
-      "ServiceFetchPermissionsFailed": "Failed to fetch permissions: %v",
-      "ServiceFetchDataPermissionsFailed": "Failed to fetch data permissions: %v",
-      "ServiceTransProductTypeFailed": "Trans [%s] to business product type failed",
-      "ServiceGetProductBotListFailed": "Get product bot list failed: %v",
-      "ServiceGetProductBotListErrCode": "Get product bot list returned error code: %d",
-      "ServiceProxyConfigNotFound": "Service: %s, proxy config not found",
-      "ServiceGetCustomResourceFailed": "Get custom resource error: %v",
-      "ClientUnmarshalError": "Unmarshal %s error: %v",
-      "ClientNewRequestError": "New request error: %v",
-      "ClientDoRequestError": "Do request error: %v",
-      "ClientReadBodyError": "Read body error: %v",
-      "ClientRemoteAPIError": "%s",
-      "ClientDecodeJsonError": "Decode json error: %v",
-      "ClientGetUserBasicInfoError": "GetUserBasicInfo error code: %d, message: %s",
-      "ClientGetUserNicknameError": "GetUserNickname error, code: %d, message: %s",
-      "InvalidParameterValue": "Invalid parameter value",
-      "InvalidParameterEmptyDeptName": "Invalid parameter: department name cannot be empty",
-      "InvalidParameterEmptyDeptId": "Invalid parameter: department ID cannot be empty",
-      "InvalidParameterEmptyAccountsList": "Invalid parameter: Accounts list cannot be empty",
-      "InvalidParameterEmptyAccountUins": "Invalid parameter: AccountUins list cannot be empty",
-      "InvalidParameterRoleNotExistOrInvalid": "Invalid parameter: the selected role does not exist or is invalid",
-      "InvalidParameterEmptyKeyword": "Invalid parameter: keyword cannot be empty",
-      "InvalidParameterInvalidType": "Invalid parameter: invalid type",
-      "NilImp": "Internal error: service instance is nil",
-      "DaoNilStore": "DAO: store instance is nil",
-      "DaoUnknownEnv": "DAO: unknown environment type",
-      "DaoDBInstanceNil": "DAO: database instance is nil",
-      "DaoNoSelectedTable": "DAO: no table selected",
-      "DaoInvalidArgs": "DAO: invalid arguments",
-      "DaoRowsAffectedZero": "DAO: rows affected is 0",
-      "DaoInsertAccountFailed": "DAO: insert account failed",
-      "DaoProductsNotFound": "DAO: products not found",
-      "DaoSubscribeDateInvalid": "DAO: subscribe date is invalid",
-      "DaoDefaultExpireTimeParseFail": "DAO: default expire time parse failed",
-      "UtilGetMacAddrFail": "Failed to get MAC address",
-      "UtilSha1LengthError": "SHA1 length error",
-      "CheckResourceNeedIntValue": "Integer value must be specified",
-      "CheckResourceValueMustGTE1": "Value must be greater than or equal to 1",
-      "CheckResourceOwnerNoIntValue": "Main account has not set an integer value",
-      "CheckResourceNeedValidTime": "A valid time must be specified",
-      "CheckResourceOwnerNoTime": "Main account has not set a time",
-      "CheckResourceOwnerEmpty": "Main account resources are empty",
-      "CheckResourceContainsUnowned": "Request contains resources not owned by main account",
-      "InvalidRequestType": "Invalid parameter: invalid request type",
-      "NilRequest": "Internal error: request is nil",
-      "InvalidEnvSource": "Invalid parameter: invalid environment source",
-      "InvalidPlatformCodeService": "Invalid parameter: invalid platform code",
-      "NotMainAccount": "Validation failed: not a main account",
-      "NotAuthenticated": "Validation failed: not authenticated",
-      "LkePermissionResourceMapNil": "Internal error: LKE permission resource map is nil",
-      "NotifyPermissionFailed": "Notify permission change failed: %s",
-      "ServiceDynamicMessage": "%s"
+      "DB": {
+        "OpenPlatformDB": {
+          "Host": "dop.mdb.mig",
+          "Port": 17782,
+          "User": "torrestan",
+          "PassWd": "",
+          "Charset": "utf8mb4",
+          "DataBase": "openplatform",
+          "MaxConn": 200,
+          "MaxIdle": 100,
+          "ConnTimeout": 1000,
+          "RTimeout": 2000,
+          "WTimeout": 0,
+          "ConnLifeTime": 3600,
+          "ParseTime": true,
+          "Local": "Local"
+        },
+        "PermissionDB": {
+          "Host": "9.137.254.251",
+          "Port": 3306,
+          "User": "permission_base",
+          "PassWd": "",
+          "Charset": "utf8mb4",
+          "DataBase": "openplatform_conf_data",
+          "MaxConn": 200,
+          "MaxIdle": 100,
+          "ConnTimeout": 1000,
+          "RTimeout": 2000,
+          "WTimeout": 0,
+          "ConnLifeTime": 3600,
+          "ParseTime": true,
+          "Local": "Local"
+        },
+        "ChatDBName": "dobby_chitchat",
+        "OpenPlatformDBName": "openplatform_prod",
+        "SandboxOpenPlatformDBName": "openplatform"
+      },
+      "RedisConf": {
+        "Host": "10.101.199.253",
+        "Port": 6379,
+        "Password": "",
+        "RedisID": "crs-f4svqq8y",
+        "MaxRetries": 3
+      },
+      "SuperUinNameCycleTime":"@every 1800s",
+      "SuperUinNameCycleExpire":  2400,
+      "LoadBusinessAccountLimit": 3000,
+      "GetUserNicknameConcLimit": 100,
+
+      "AIHomeConf": {
+        "TblNameProduct": "dop_product_info",
+        "TblNameSubscribedProduct": "dop_product_subscription",
+        "TblNameProductCategory": "dop_product_category"
+      },
+      "VirtualManConf": {
+        "TblNameCharacterVirtualMan": "dop_character_virtualman",
+        "PlatformCode": "voice_helper",
+        "VirtualManAESKey": "a96e516ed8d74a02a23c5ea06c484dd8"
+      },
+      "AppKeyConf": {
+        "DBName": "openplatform_conf_data",
+        "TblPlatformCode": "platform_code_config",
+        "TblAppSecretInfo": "app_secret_info"
+      },
+      "OpenPlatformConfDataConf":{
+        "TblBusinessAccount": "openplatform_conf_data.business_account_info",
+        "TblProductSubscription": "openplatform_conf_data.dop_product_subscription",
+        "TblProductInfo": "openplatform_conf_data.dop_product_info"
+      },
+      "PermissionConf": {
+        "DBName": "openplatform_permission_data",
+        "UserManagerPermissionType": "ihava",
+        "UserManagerPermissionName": "UserManagement",
+        "CommonPlateFormExcludeProductType":["lke"],
+        "DefaultGrantedPermissionIDs":["lkeCorpAssistant"],
+        "DisablePermissionIDs": [
+          "lkeApp.basic",
+          "lkeApp.copyApp",
+          "lkeApp.deleteApp",
+          "lkeApp.listApp",
+          "lkeApp.modifyAppQuota",
+          "lkeClassify",
+          "lkeClassify.config",
+          "lkeClassify.config.basic",
+          "lkeClassify.config.chat",
+          "lkeClassify.config.model",
+          "lkeClassify.config.model.version",
+          "lkeClassify.config.tag",
+          "lkeClassify.release",
+          "lkeClassify.release.call",
+          "lkeClassify.release.call.reception",
+          "lkeClassify.release.call.secret",
+          "lkeClassify.release.do",
+          "lkeRepository",
+          "lkeRepository.config",
+          "lkeRepository.config.AdvancedSettings",
+          "lkeRepository.config.AdvancedSettings.synonyms",
+          "lkeRepository.config.basic",
+          "lkeRepository.config.chat",
+          "lkeRepository.config.knowledge",
+          "lkeRepository.config.knowledge.db",
+          "lkeRepository.config.knowledge.doc",
+          "lkeRepository.config.knowledge.qa",
+          "lkeRepository.config.knowledge.qaTopN",
+          "lkeRepository.config.knowledge.replyFlexibility",
+          "lkeRepository.config.knowledge.searchEngine",
+          "lkeRepository.config.knowledge.searchStrategy",
+          "lkeRepository.config.knowledge.tableEnhancement",
+          "lkeRepository.config.knowledge.taskFlow",
+          "lkeRepository.config.model",
+          "lkeRepository.config.model.historyLimit",
+          "lkeRepository.config.model.historyRecordLimit",
+          "lkeRepository.config.model.version",
+          "lkeRepository.config.output",
+          "lkeRepository.config.output.generalKnowledge",
+          "lkeRepository.config.output.method",
+          "lkeRepository.config.pattern",
+          "lkeRepository.config.plugin",
+          "lkeRepository.evaluateBatch",
+          "lkeRepository.manage",
+          "lkeRepository.manage.db",
+          "lkeRepository.manage.doc",
+          "lkeRepository.manage.doc.download",
+          "lkeRepository.manage.knowledgeTag",
+          "lkeRepository.manage.qa",
+          "lkeRepository.manage.qa.export",
+          "lkeRepository.manage.taskFlow",
+          "lkeRepository.release",
+          "lkeRepository.release.call",
+          "lkeRepository.release.call.reception",
+          "lkeRepository.release.call.secret",
+          "lkeRepository.release.channel",
+          "lkeRepository.release.do",
+          "lkeRepository.release.do.create",
+          "lkeRepository.test",
+          "lkeRepository.unsatisfied",
+          "lkeRepository.workflow",
+          "lkeRepository.workflow.manage",
+          "lkeShareKG.listShareKG",
+          "lkeShareKG.manager",
+          "lkeSummary",
+          "lkeSummary.config",
+          "lkeSummary.config.basic",
+          "lkeSummary.config.chat",
+          "lkeSummary.config.model",
+          "lkeSummary.config.model.version",
+          "lkeSummary.config.output",
+          "lkeSummary.config.output.method",
+          "lkeSummary.config.output.requirement",
+          "lkeSummary.release",
+          "lkeSummary.release.call",
+          "lkeSummary.release.call.reception",
+          "lkeSummary.release.call.secret",
+          "lkeSummary.release.do"
+        ],
+        "LkeSubUinDefaultBasePermissionIDs": [
+          "lkeApp",
+          "lkeApp.createApp",
+          "lkeAtomic",
+          "lkeExperienceCenter",
+          "lkeExperienceCenter.clean",
+          "lkeExperienceCenter.create",
+          "lkeExperienceCenter.exp",
+          "lkeShareKG",
+          "lkeShareKG.createShareKG",
+          "adpModelHub",
+          "adpModelHub.addModel",
+          "adpModelHub.deleteModel",
+          "lkePluginCenter",
+          "lkePluginCenter.CreateMCPPlugin",
+          "lkePluginCenter.CreatePlugin",
+          "adpPromptTemplate",
+          "adpPromptTemplate.Create",
+          "adpWidgetCenter",
+          "adpWidgetCenter.Create",
+          "lkeSkillsCenter",
+          "lkeSkillsCenter.ImportSkill"
+        ],
+        "LkeResourceViewPermissionIDs":{
+          "app": ["adpAppView"],
+          "knowledge":["adpKnowledgeBaseView"],
+          "plugin": ["adpPluginCenterView"],
+          "prompt_template": ["adpPromptTemplateView"],
+          "widget": ["adpWidgetCenterView"],
+          "skill": ["adpSkillsCenterView"]
+        },
+        "LkeResourceEditPermissionIDs":{
+          "app": ["adpAppEdit"],
+          "knowledge":["adpKnowledgeBaseEdit"],
+          "plugin": ["adpPluginCenterEdit"],
+          "prompt_template": ["adpPromptTemplateEdit"],
+          "widget": ["adpWidgetCenterEdit"],
+          "openclaw": ["adpOpenClawEdit"],
+          "skill": ["adpSkillsCenterEdit"]
+        },
+        "LkeResourceNoPermissionIDMap": {
+          "app": "adpAppNoPermission",
+          "knowledge": "adpKnowledgeBaseNoPermission",
+          "plugin": "adpPluginCenterNoPermission",
+          "prompt_template": "adpPromptTemplateNoPermission",
+          "widget": "adpWidgetCenterNoPermission",
+          "openclaw": "adpOpenClawNoPermission",
+          "skill": "adpSkillsCenterNoPermission"
+        },
+        "UserManagerPermissionIDs": [
+          "UserManagement",
+          "UserManagement.UserManagement",
+          "UserManagement.RoleManagement"
+        ],
+        "ResourceSchemaMap": {
+          "BotLimit": {
+            "ResourceValueType": 2,
+            "ResourceEffectRangeLevel": 0,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "AppKey": {
+            "ResourceValueType": 3,
+            "ResourceEffectRangeLevel": 1,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              "*"
+            ]
+          },
+          "LkeShareKGAppKey": {
+            "ResourceValueType": 3,
+            "ResourceEffectRangeLevel": 1,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              "*"
+            ]
+          },
+          "RT_Realman2DResourceChose": {
+            "ResourceValueType": 3,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "RT_Realman2DConcurrent": {
+            "ResourceValueType": 2,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "RT_Realman2DPeriodOfValidity": {
+            "ResourceValueType": 3,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "RT_Cartoon2DResourceChose": {
+            "ResourceValueType": 3,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "RT_Cartoon2DConcurrent": {
+            "ResourceValueType": 2,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "RT_Cartoon2DPeriodOfValidity": {
+            "ResourceValueType": 3,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "RT_Realistic3DResourceChose": {
+            "ResourceValueType": 3,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "RT_Realistic3DConcurrent": {
+            "ResourceValueType": 2,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "RT_Realistic3DPeriodOfValidity": {
+            "ResourceValueType": 3,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "RTScene_Realistic3DResourceChose": {
+            "ResourceValueType": 3,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "RTScene_Realistic3DPeriodOfValidity": {
+            "ResourceValueType": 3,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "RTScene_SpaceSceneResourceChose": {
+            "ResourceValueType": 3,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "IndustryPackage": {
+            "ResourceValueType": 3,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "RT_Realman2DProperties": {
+            "ResourceValueType": 5,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "RT_IVHResourceRealistic3DProperties": {
+            "ResourceValueType": 5,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "RT_Cartoon2DProperties": {
+            "ResourceValueType": 5,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "RT_IVHSpaceServiceSceneRealistic3DProperties": {
+            "ResourceValueType": 5,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "RT_ICRIVHResourceRealman2DProperties": {
+            "ResourceValueType": 5,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              ""
+            ]
+          },
+          "RT_BVHRealman2DProperties": {
+            "ResourceValueType": 5,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+            ""
+            ],
+            "ResourceEffectPermissionIDs": [
+            ""
+            ]
+          },
+          "RT_BVHResourceRealistic3DProperties": {
+            "ResourceValueType": 5,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+            ""
+            ],
+            "ResourceEffectPermissionIDs": [
+            ""
+            ]
+          },
+          "RT_BVHCartoon2DProperties": {
+            "ResourceValueType": 5,
+            "ResourceEffectRangeLevel": 2,
+            "ResourceEffectPermissionIDWhiteList": [
+            ""
+            ],
+            "ResourceEffectPermissionIDs": [
+            ""
+            ]
+          }
+        },
+        "PermissionResourceMap": {
+          "BotLimit": "BotLimit",
+          "IABotLimit": "BotLimit",
+          "IQIBotLimit": "BotLimit",
+          "IVHBotLimit": "BotLimit",
+          "TCCIBotLimit": "BotLimit",
+          "KBBotLimit": "BotLimit",
+          "lkeApp.modifyAppQuota": "BotLimit",
+          "BotManagement.BotFields": "AppKey",
+          "IABotManagement.BotFields": "AppKey",
+          "IQIBotManagement.BotFields": "AppKey",
+          "IVHBotManagement.BotFields": "AppKey",
+          "TCCIBotManagement.BotFields": "AppKey",
+          "KBBotManagement.BotFields": "AppKey",
+          "BotManagement.BotFields.All": "AppKey",
+          "BotManagement.BotFields.Assignment": "AppKey",
+          "IVHResource.Realman2D.ResourceChose": "RT_Realman2DResourceChose",
+          "IVHResource.Realman2D.Concurrent": "RT_Realman2DConcurrent",
+          "IVHResource.Realman2D.PeriodOfValidity": "RT_Realman2DPeriodOfValidity",
+          "IVHResource.Cartoon2D.ResourceChose": "RT_Cartoon2DResourceChose",
+          "IVHResource.Cartoon2D.Concurrent": "RT_Cartoon2DConcurrent",
+          "IVHResource.Cartoon2D.PeriodOfValidity": "RT_Cartoon2DPeriodOfValidity",
+          "IVHResource.Realistic3D.ResourceChose": "RT_Realistic3DResourceChose",
+          "IVHResource.Realistic3D.Concurrent": "RT_Realistic3DConcurrent",
+          "IVHResource.Realistic3D.PeriodOfValidity": "RT_Realistic3DPeriodOfValidity",
+          "IVHSpaceServiceScene.Resource.Realistic3D.ResourceChose": "RTScene_Realistic3DResourceChose",
+          "IVHSpaceServiceScene.Resource.Realistic3D.PeriodOfValidity": "RTScene_Realistic3DPeriodOfValidity",
+          "IVHSpaceServiceScene.SpaceScene.Scene.ResourceChose": "RTScene_SpaceSceneResourceChose",
+          "TCCIIndustryPackage": "IndustryPackage",
+          "ICRIVHResource.Realman2D.ResourceChose": "RT_Realman2DResourceChose",
+          "ICRIVHResource.Realman2D.Concurrent": "RT_Realman2DConcurrent",
+          "ICRIVHResource.Realman2D.PeriodOfValidity": "RT_Realman2DPeriodOfValidity",
+          "IQIIIndustryPackage": "IndustryPackage",
+          "IVHResource.Realman2D": "RT_Realman2DProperties",
+          "IVHResource.Realistic3D": "RT_IVHResourceRealistic3DProperties",
+          "IVHResource.Cartoon2D": "RT_Cartoon2DProperties",
+          "IVHSpaceServiceScene.Resource.Realistic3D": "RT_IVHSpaceServiceSceneRealistic3DProperties",
+          "ICRIVHResource.Realman2D": "RT_ICRIVHResourceRealman2DProperties",
+          "BVHResource.Realman2D": "RT_BVHRealman2DProperties",
+          "BVHResource.Realistic3D": "RT_BVHResourceRealistic3DProperties",
+          "BVHResource.Cartoon2D": "RT_BVHCartoon2DProperties",
+          "lkeApp.listApp": "AppKey",
+          "lkeShareKG.listShareKG": "LkeShareKGAppKey"
+        },
+        "TblNamePermissionInfo": "openplatform_permission_data.permission_info",
+        "TblNameRoleInfo": "openplatform_permission_data.role_info",
+        "TblNameRolePermission": "openplatform_permission_data.role_permission",
+        "TblNameRoleResource": "openplatform_permission_data.role_resource",
+        "TblNameProductPermission": "openplatform_permission_data.product_permission",
+        "TblNameCasbinRule": "openplatform_permission_data.casbin_rule",
+        "TblNameUinRole": "openplatform_permission_data.uin_role",
+        "TblNamePresetRoleSchema": "openplatform_permission_data.preset_role_schema",
+        "TblNamePermissionResourceService":"openplatform_permission_data.permission_resource_service",
+        "TblNameOperateRecord": "openplatform_permission_data.super_admin_operate_record",
+        "TblNameResourcePermissionInfo":"openplatform_permission_data.resource_permission_info",
+        "TblNameRoleResourcePermission":"openplatform_permission_data.role_resource_permission",
+        "TblNameResourceCasbinRule":"openplatform_permission_data.resource_casbin_rule",
+        "NecessaryPermissions": {
+          "icr": [
+            "BotManagement.BotFields"
+          ],
+          "asst": [
+            "IABotManagement",
+            "IABotManagement.Add",
+            "IABotManagement.BotFields",
+            "IABotManagement.Delete",
+            "IABotManagement.FunctionManage"
+          ],
+          "tqi": [
+            "IQIBotManagement",
+            "IQIBotManagement.Add",
+            "IQIBotManagement.BotFields",
+            "IQIBotManagement.Delete",
+            "IQIBotManagement.FunctionManage"
+          ],
+          "ivh": [
+            "IVHBotManagement",
+            "IVHBotManagement.Add",
+            "IVHBotManagement.BotFields",
+            "IVHBotManagement.Delete",
+            "IVHBotManagement.FunctionManage"
+          ],
+          "tcci": [
+            "TCCIBotManagement",
+            "TCCIBotManagement.Add",
+            "TCCIBotManagement.BotFields",
+            "TCCIBotManagement.Delete",
+            "TCCIBotManagement.FunctionManage"
+          ],
+          "ikb": [
+            "KBBotManagement",
+            "KBBotManagement.Add",
+            "KBBotManagement.BotFields",
+            "KBBotManagement.Delete",
+            "KBBotManagement.FunctionManage"
+          ],
+          "lke": [
+            "lkeApp.listApp",
+            "lkeApp.basic",
+            "lkeShareKG.listShareKG"
+          ]
+        },
+        "RoleNecessaryPermissions": {
+          "lke": [
+            "lkeApp.basic"
+          ]
+        },
+        "NonSuperAdminBlacklist": [
+          "BotLimit",
+          "IABotLimit",
+          "IQIBotLimit",
+          "IVHBotLimit",
+          "TCCIBotLimit",
+          "KBBotLimit",
+          "lkeApp.modifyAppQuota",
+          "IVHResource.Realman2D.Concurrent",
+          "IVHResource.Realman2D.PeriodOfValidity",
+          "IVHResource.Cartoon2D.Concurrent",
+          "IVHResource.Cartoon2D.PeriodOfValidity",
+          "IVHResource.Realistic3D.Concurrent",
+          "IVHResource.Realistic3D.PeriodOfValidity",
+          "IHAVAMaster",
+          "IHAVADeveloper",
+          "IHAVAGuest",
+          "IVHSpaceServiceScene.Resource.Realistic3D.PeriodOfValidity",
+          "lkeApp.basic"
+        ],
+        "SuperAdminBlacklist": [
+          "BotManagement.BotFields",
+          "IABotManagement",
+          "IABotManagement.Add",
+          "IABotManagement.BotFields",
+          "IABotManagement.Delete",
+          "IABotManagement.FunctionManage",
+          "IQIBotManagement",
+          "IQIBotManagement.Add",
+          "IQIBotManagement.BotFields",
+          "IQIBotManagement.Delete",
+          "IQIBotManagement.FunctionManage",
+          "IVHBotManagement",
+          "IVHBotManagement.Add",
+          "IVHBotManagement.BotFields",
+          "IVHBotManagement.Delete",
+          "IVHBotManagement.FunctionManage",
+          "TCCIBotManagement",
+          "TCCIBotManagement.Add",
+          "TCCIBotManagement.BotFields",
+          "TCCIBotManagement.Delete",
+          "TCCIBotManagement.FunctionManage",
+          "KBBotManagement",
+          "KBBotManagement.Add",
+          "KBBotManagement.BotFields",
+          "KBBotManagement.Delete",
+          "KBBotManagement.FunctionManage",
+          "IHAVAMaster",
+          "IHAVADeveloper",
+          "IHAVAGuest",
+          "lkeApp.listApp",
+          "lkeShareKG.listShareKG",
+          "lkeApp.basic"
+        ],
+        "NeedSpecialHandlePermission": {
+          "lke": [
+            "lkeSummary",
+            "lkeSummary.config",
+            "lkeSummary.config.basic",
+            "lkeSummary.config.chat",
+            "lkeSummary.config.model",
+            "lkeSummary.config.model.version",
+            "lkeSummary.config.output",
+            "lkeSummary.config.output.method",
+            "lkeSummary.config.output.requirement",
+            "lkeSummary.release",
+            "lkeSummary.release.call",
+            "lkeSummary.release.call.reception",
+            "lkeSummary.release.call.secret",
+            "lkeSummary.release.do",
+            "lkeClassify",
+            "lkeClassify.config",
+            "lkeClassify.config.basic",
+            "lkeClassify.config.chat",
+            "lkeClassify.config.model",
+            "lkeClassify.config.model.version",
+            "lkeClassify.config.tag",
+            "lkeClassify.release",
+            "lkeClassify.release.call",
+            "lkeClassify.release.call.reception",
+            "lkeClassify.release.call.secret",
+            "lkeClassify.release.do"
+          ]
+        }
+      },
+      "TblNameProduct": "dop_product_info",
+      "TblNameSubscribedProduct": "dop_product_subscription",
+      "TblNameProductCategory": "dop_product_category",
+      "AccountConf": {
+        "AccountHost": "http://account.tencentyun.com:50001",
+        "StsHost": "http://sts.tencentyun.com:50020",
+        "MaxIdleConns": 100,
+        "MaxIdleConnsPerHost": 50
+      },
+      "SuperAdminUins": [
+        "BillingCenterServer",
+        "lke_online_superadmin_uin",
+        "100010991360",
+        "100025179097",
+        "100025193459",
+        "100025249279",
+        "100025502085",
+        "100026230651",
+        "100026577356",
+        "100030945189",
+        "100031323785",
+        "100025239979",
+        "100030937342",
+        "100015663765",
+        "100032218246",
+        "100016370048",
+        "100028241414",
+        "100032870888",
+        "100032986256",
+        "100033102569",
+        "100033722252",
+        "100034740221",
+        "100029709928",
+        "530873954",
+        "100034705915",
+        "100033904297",
+        "100035168121",
+        "100035192433",
+        "100035198172",
+        "100036008572",
+        "100034751079",
+        "100030636424",
+        "100031793256"
+      ],
+      "NotCheckUins": [
+
+      ],
+      "RoleConf": {
+        "BusinessRoleName": "主账号管理员角色",
+        "BusinessRoleDescription": "主账号管理员角色",
+        "RoleIDSalt": "Qh1sdf12hiOm1LMn"
+      },
+      "UserManagePermissionIDs": [
+        "UserManagement",
+        "UserManagement.RoleManagement",
+        "UserManagement.UserManagement"
+      ],
+      "OwnerUinMustPermissions": [
+        "BotManagement.BotFields",
+        "IABotManagement.BotFields",
+        "IQIBotManagement.BotFields",
+        "IVHBotManagement.BotFields",
+        "TCCIBotManagement.BotFields",
+        "KBBotManagement.BotFields",
+        "lkeApp.listApp",
+        "lkeShareKG.listShareKG"
+      ],
+      "ProductTypeMap": {
+        "icr": "robot",
+        "tqi": "quality",
+        "asst": "sales",
+        "tcci": "tcci"
+      },
+      "BotFieldsPermissionIDList": [
+        "BotManagement.BotFields",
+        "IABotManagement.BotFields",
+        "IQIBotManagement.BotFields",
+        "TCCIBotManagement.BotFields",
+        "KBBotManagement.BotFields"
+      ],
+      "CustomResourceProxyConfig": {
+        "ivh": {
+          "ProtoService": "trpc.VirtualHuman.virtualmanconfig.VirtualmanInstance",
+          "ServiceName": "trpc.VirtualHuman.virtualmanconfig.VirtualmanInstance",
+          "Function": "GetCustomResource",
+          "Timeout": 10000
+        },
+        "tcci": {
+          "ServiceName": "trpc.CEM.robot-member-server.robot-member",
+          "Function": "GetCustomResource",
+          "Timeout": 1500,
+          "ServiceType": 1
+        },
+        "tqi": {
+          "ServiceName": "trpc.CEM.robot-member-server.robot-member",
+          "Function": "GetCustomResource",
+          "Timeout": 1500,
+          "ServiceType": 1
+        },
+        "bvh": {
+          "ProtoService": "trpc.VirtualHuman.customer.BroadcastResourceService",
+          "ServiceName": "trpc.VirtualHuman.customer.BroadcastResourceService",
+          "Function": "GetBvhCustomResource",
+          "Timeout": 10000
+        },
+        "lke": {
+          "ProtoService": "trpc.KEP.bot_admin_config_server.Api",
+          "ServiceName": "trpc.KEP.bot-admin-config-server.Api",
+          "Function": "GetCustomResource",
+          "NameSpace": "Production",
+          "NotEnableEnv":true,
+          "Timeout": 1500
+        }
+      },
+      "ActivateProductProxyConfig": {
+        "lke": {
+          "ProtoService": "trpc.KEP.bot_admin_config_server.Api",
+          "ServiceName": "trpc.KEP.bot-admin-config-server.Api",
+          "Function": "ActivateProduct",
+          "NameSpace": "Production",
+          "NotEnableEnv":true,
+          "Timeout": 1500
+        }
+      },
+      "CustomAccountPrefix": "wecom_",
+      "EnableToCustomCategory": true,
+      "NeedCompatibleHistoryPermissionResources": {
+        "ICRIVHResource.Realman2D": {
+          "PermissionId": "ICRIVHResource.Realman2D.ResourceChose",
+          "PermissionName": "资源选择",
+          "ParentId": "ICRIVHResource.Realman2D",
+          "Category": 3,
+          "ConcurrentPermissionId": "ICRIVHResource.Realman2D.Concurrent",
+          "PeriodOfValidityPermissionId": "ICRIVHResource.Realman2D.PeriodOfValidity"
+        },
+        "IVHResource.Cartoon2D": {
+          "PermissionId": "IVHResource.Cartoon2D.ResourceChose",
+          "PermissionName": "资源选择",
+          "ParentId": "IVHResource.Cartoon2D",
+          "Category": 3,
+          "ConcurrentPermissionId": "IVHResource.Cartoon2D.Concurrent",
+          "PeriodOfValidityPermissionId": "IVHResource.Cartoon2D.PeriodOfValidity"
+        },
+        "IVHResource.Realistic3D": {
+          "PermissionId": "IVHResource.Realistic3D.ResourceChose",
+          "PermissionName": "资源选择",
+          "ParentId": "IVHResource.Realistic3D",
+          "Category": 3,
+          "ConcurrentPermissionId": "IVHResource.Realistic3D.Concurrent",
+          "PeriodOfValidityPermissionId": "IVHResource.Realistic3D.PeriodOfValidity"
+        },
+        "IVHResource.Realman2D": {
+          "PermissionId": "IVHResource.Realman2D.ResourceChose",
+          "PermissionName": "资源选择",
+          "ParentId": "IVHResource.Realman2D",
+          "Category": 3,
+          "ConcurrentPermissionId": "IVHResource.Realman2D.Concurrent",
+          "PeriodOfValidityPermissionId": "IVHResource.Realman2D.PeriodOfValidity"
+        },
+        "IVHSpaceServiceScene.Resource.Realistic3D": {
+          "PermissionId": "IVHSpaceServiceScene.Resource.Realistic3D.ResourceChose",
+          "PermissionName": "资源选择",
+          "ParentId": "IVHSpaceServiceScene.Resource.Realistic3D",
+          "Category": 3,
+          "ConcurrentPermissionId": "IVHSpaceServiceScene.Resource.Realistic3D.Concurrent",
+          "PeriodOfValidityPermissionId": "IVHSpaceServiceScene.Resource.Realistic3D.PeriodOfValidity"
+        }
+      },
+      "NeedActivatePermission":{
+        "lke":{
+          "lkeApp.modifyAppQuota": {
+            "ValueType":0
+          }
+        }
+      },
+      "ProductTypesForAdminGetAllPermission": [
+        "lke"
+      ]
     }
+  client.yaml: |
+    client:                                            #客户端调用的后端配置
+      namespace: default
+      filter:
+        - tpstelemetry
+      timeout: 5000                                    #针对所有后端的请求最长处理时间
+      service:                                         #针对单个后端的配置，默认都有默认值，可以完全不用配置
+        - callee: trpc.VirtualHuman.virtualmanconfig.virtualmanInstance
+          name:  trpc.VirtualHuman.access.AccessService
+          env_name: tcs
+        - name: trpc.KEP.bot_admin_config_server.Api
+          callee: trpc.KEP.bot_admin_config_server.Api
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+
 
   error_zh-CN.json: |
     {
@@ -1437,35 +1739,39 @@ data:
           timeout: 5000                                #请求最长处理时间 单位 毫秒
           ip: ${POD_IP}                                #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
           port: 10002                                  #服务监听端口
-    client:                                            #客户端调用的后端配置
-      namespace: default
-      filter:
-        - tpstelemetry
-      timeout: 5000                                    #针对所有后端的请求最长处理时间
-      service:                                         #针对单个后端的配置，默认都有默认值，可以完全不用配置
-        - callee: trpc.VirtualHuman.virtualmanconfig.virtualmanInstance
-          name:  trpc.VirtualHuman.access.AccessService
-          env_name: tcs
-        - name: trpc.KEP.bot_admin_config_server.Api
-          callee: trpc.KEP.bot_admin_config_server.Api
-          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
-          protocol: trpc
-          network: tcp
-          timeout: 4000
     plugins:                                           #插件配置
-      log:                                            #日志配置
-        default:                                      #默认日志的配置，可支持多输出
-          - writer: file                              #本地文件日志
-            level: debug                               #本地文件滚动日志的级别
-            caller_skip: 2                            #用于定位日志的调用处
+      log:
+        default:
+          - writer: file
+            level: info
+            caller_skip: 2
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
             writer_config:
-              filename: /app/logs/trpc.log                 #本地文件滚动日志存放的路径
-              max_size: 100                             #本地文件滚动日志的大小 单位 MB
-              max_backups: 10                           #最大日志文件数
-              max_age: 7                                #最大日志保留天数
-              compress:  false                          #日志文件是否压缩
-          - writer: console                             #本地文件日志
-            level: error                                #本地文件滚动日志的级别
+              filename: /app/logs/trpc.log
+              write_mode: 2
+              roll_type: size
+              max_size: 200
+              max_backups: 10
+              compress: false
+          - writer: console
+            level: info
+            caller_skip: 2
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
       telemetry:
         tpstelemetry:  # 或者tpstelemetry
           addr: {{ .Values.global.observability.apm.otlp}}
@@ -1489,3 +1795,20 @@ data:
               value: {{ $value }}
               {{- end }}
           {{- end }}
+
+
+    client:                                            #客户端调用的后端配置
+      namespace: default
+      filter:
+        - tpstelemetry
+      timeout: 5000                                    #针对所有后端的请求最长处理时间
+      service:                                         #针对单个后端的配置，默认都有默认值，可以完全不用配置
+        - callee: trpc.VirtualHuman.virtualmanconfig.virtualmanInstance
+          name:  trpc.VirtualHuman.access.AccessService
+          env_name: tcs
+        - name: trpc.KEP.bot_admin_config_server.Api
+          callee: trpc.KEP.bot_admin_config_server.Api
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          network: tcp
+          timeout: 4000

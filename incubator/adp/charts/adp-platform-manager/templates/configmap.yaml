@@ -6,12 +6,13 @@ metadata:
 data:
   application.yaml: |
     login_default:
-      type: [0,4,5]
+      type: ${LOGIN_TYPE}
       cqq_kf_uin: 2854099021
-      session_expr: 720h
-      ahead_renew_time: 6h
+      session_expr: ${SESSION_EXPR}
+      ahead_renew_time: ${AHEAD_RENEW_TIME}
       cookie_domain: {{ .Values.global.clb }}
-      exp_cookie_domain: {{ .Values.global.clb }}
+      # RESOLVE: keep-public
+      exp_cookie_domain: ${EXP_COOKIE_DOMAIN}
       exp_cookie_path: /cgi/apex
       secure: true
       verify_code:
@@ -19,41 +20,15 @@ data:
         max_try: 5
         max_try_expire: 3600s
         day_send_limit: 10
-        max_try_half_hour: 3  
+        max_try_half_hour: 3
         max_try_half_hour_expire: 1800s
     demo_mode:
       enable: false
-    account:
-      type: ti
-      apis:
-        account_host: adp-aiconf-manager.{{ .Release.Namespace }}:10001
-    trial:
-      app_max_char_size: 1000000
-      corp_app_quota: 1000
-      corp_max_token_usage: 500000
-      corp_max_char_size: 3000000
-      corp_period: 1440h
-      enable_white_list: false
-      white_list_key: LKE_INNER_USER
-      ban_permission_list:
-        - lkeRepository.config.output.questionClarify
-        - lkeClassify
-        - lkeClassify.config.tag
-        - lkeClassify.config.chat
-        - lkeClassify.config.basic
-        - lkeClassify.config.model.version
-        - lkeClassify.release.call.secret
-        - lkeClassify.release.call.reception
-        - lkeClassify.release.do
-        - lkeSummary
-        - lkeSummary.config.chat
-        - lkeSummary.config.basic
-        - lkeSummary.config.model.version
-        - lkeSummary.config.output.requirement
-        - lkeSummary.config.output.method
-        - lkeSummary.release.call.secret
-        - lkeSummary.release.call.reception
-        - lkeSummary.release.do
+      white_list_telephone: ${WHITE_LIST_TELEPHONE}
+      white_list_user_id: ${WHITE_LIST_USER_ID}
+    # RESOLVE: keep-public
+    account: ${ACCOUNT}
+    trial: ${TRIAL}
     normal:
       app_max_char_size: 1000000
       corp_app_quota: 1000
@@ -99,9 +74,8 @@ data:
       - /qbot/public/avatar_seal01.png
       - /qbot/public/avatar_sheep01.png
       - /qbot/public/avatar_squirrel01.png
-
     audit_switch: false
-    infosec_biz_type_default: QD_DS
+    infosec_biz_type_default: ${INFOSEC_BIZ_TYPE_DEFAULT}
     corp_max_char_size: 5000000
     corp_max_token_usage: 5000000
     img_captcha_cfg:
@@ -109,10 +83,10 @@ data:
       secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
       captcha_type: 9
       app_id: 197595422
-      app_secret_key:  #登录图片验证码，专有云无需
+      app_secret_key: xxxx
       host: captcha.tencentcloudapi.com
       assume_role:
-        role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+        role_arn: "{{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}"
         duration_seconds: 43200
         refresh_ahead_seconds: 300
     sms:
@@ -124,13 +98,13 @@ data:
         record_flag: 1
         is_verify: 1
       cloud:
-        biz_name:
-        template_id: "2163664"
+        biz_name: ""
+        template_id: '2163664'
         sign: 腾讯云
-        sdk_appid: "1400912600"
-        secret_id:  #短信验证，专有云无需
-        secret_key: #短信验证，专有云无需
-        validity: "5"
+        sdk_appid: '1400912600'
+        secret_id: xxxx
+        secret_key: xxxx
+        validity: '5'
         end_point: sms.internal.tencentcloudapi.com
     cache_limit:
       corp_expire: 720h
@@ -138,7 +112,6 @@ data:
       intent_expire: 120h
       app_expire: 120h
       model_expire: 120h
-
     only_check_data_perm_action:
       - ListSpace
       - DescribeSpaceList
@@ -161,7 +134,7 @@ data:
       - GetUserGuideViewInfos
       - ModifyConcurrencyRule
       - DescribeConcurrencyRule
-      - CheckTool 
+      - CheckTool
       - GetWxKFDefaultInfo
       - GetAppInfoByWeChat
       - DescribeWxAuthorizeUrl
@@ -178,8 +151,8 @@ data:
       - DeleteAgentFeedback
       - ListAgentFeedback
       - GetAgentFeedback
-      - AddWorkflowFeedback 
-      - UpdateWorkflowFeedback 
+      - AddWorkflowFeedback
+      - UpdateWorkflowFeedback
       - DescribeWorkflowFeedback
       - DeleteWorkflowFeedback
       - ListWorkflowFeedback
@@ -235,11 +208,6 @@ data:
       - DescribeAppBaseList
       - ListGraphSchemaTemplate
       - DescribeSkillTemplateList
-      - DescribeApiKeyList
-      - CreateApiKey
-      - ModifyApiKey
-      - ModifyApiKeyStatus
-      - DeleteApiKey
       - SaveOpenClawSession
       - DescribeOpenClawSession
       - DescribeSkillCategoryList
@@ -249,7 +217,27 @@ data:
       - GetAnswerTypeDataCount
       - GetLikeDataCount
       - CreateOpenClawSkill
-    # 跳过越权校验的动作
+      - CheckSearchWhiteList
+      - GetAuthEndpoint
+      - CheckAuthStatus
+      - CallBackMicrosoft
+      - RevokeAuth
+      - DescribeUserCorpPermissions
+      - DescribeESInstanceList
+      - DescribePublicKey
+      - ModifyPrepaidResource
+      - DescribeVisitorIdList
+      - DescribeAnnouncementList
+      - DescribeApprovalSkillDetail
+      - DescribePromptSuggestionList
+      - FavoriteSkill
+      - UnfavoriteSkill
+      - DescribeSkillDetail
+      - ReportFrontEvent
+      - DescribeCorpPermissionUserList
+      - DescribeSubjectCorpPermissionList
+      - DescribeModelList
+      - DescribeDocSourceList
     skip_corp_app_equal:
       - GetDisplayDocs
       - GetAppShareURL
@@ -267,6 +255,7 @@ data:
       space_name_length: 30
       space_desc_length: 150
       is_check_space_valid: true
+      corp_limit: ${CORP_LIMIT}
     mongo_database: lke-data-statistics
     msg_log_category:
       name_max_len: 50
@@ -276,26 +265,28 @@ data:
       max: 2000
       embedding_chunk: 100
       smart_max_msg_cnt: 3000
-      unknown_cate_mark: "未分类"
+      unknown_cate_mark: ${UNKNOWN_CATE_MARK}
     embedding:
       model_name: sn-large-multi-language-v0.2.5
-      max_len: 4090
+      max_len: ${EMBEDDING_MAX_LEN}
       dimension: 1024
       max_retry: 1
       prefix: "问题:"
       content_prefix: "问题:"
+    # RESOLVE: keep-private
     object_storage:
       {{ include "qbot.s3_storage" . }}
     max_export_count: 100000
     max_export_batch_size: 2000
-    whitelist_full_enable_map:
+    whitelist_full_enable_map: ${WHITELIST_FULL_ENABLE_MAP}
     sec_api:
       enable: {{ default "" .Values.global.secapi_enable }}
       allow_outer: true
+      unsafe_domains: ${UNSAFE_DOMAINS}
     hun_yuan_api_key: {{ dig "modelServices" "hunyuan" "apiKey" "" .Values.global }}
     account_operation_log:
       log_cleanup_interval: 8760h
-      white_list_uin: 
+      white_list_uin:
         700000306554: true
       apis:
         CreateApp: add
@@ -315,36 +306,36 @@ data:
         SaveAppDebugCustomVariables: modify
         SaveAgentWorkflow: modify
         DeleteWorkflow: delete
-        DeleteWorkflowExample: delete 
-        ExportWorkflow: download  
-        SaveDoc: add 
-        CreateQA: add 
-        CreateSharedKnowledge: add 
-        AddDbSource: add 
-        ModifyDoc: modify 
-        CreateDocParsingIntervention: modify 
-        ModifyDocSegment: modify 
-        RenameDoc: modify 
-        BatchModifyDoc: modify 
-        ResumeDoc: modify 
-        ModifyDocStatus: modify 
-        ModifyDocAttrRange: modify 
-        RetryDocParse: modify 
-        RetryDocAudit: modify 
-        ModifyQA: modify 
-        VerifyQA: modify 
-        ModifyQAAttrRange: modify 
-        BatchModifyQaExpire: modify 
-        BatchModifyQaDoc: modify 
-        ModifyQAStatus: modify 
-        ResumeQA: modify 
-        UpdateDbSource: modify 
-        UpdateDbTableAndColumns: modify 
+        DeleteWorkflowExample: delete
+        ExportWorkflow: download
+        SaveDoc: add
+        CreateQA: add
+        CreateSharedKnowledge: add
+        AddDbSource: add
+        ModifyDoc: modify
+        CreateDocParsingIntervention: modify
+        ModifyDocSegment: modify
+        RenameDoc: modify
+        BatchModifyDoc: modify
+        ResumeDoc: modify
+        ModifyDocStatus: modify
+        ModifyDocAttrRange: modify
+        RetryDocParse: modify
+        RetryDocAudit: modify
+        ModifyQA: modify
+        VerifyQA: modify
+        ModifyQAAttrRange: modify
+        BatchModifyQaExpire: modify
+        BatchModifyQaDoc: modify
+        ModifyQAStatus: modify
+        ResumeQA: modify
+        UpdateDbSource: modify
+        UpdateDbTableAndColumns: modify
         UpdateDbTableEnabled: modify
-        DeleteSharedKnowledge: delete 
-        DeleteDoc: delete 
-        DeleteQA: delete 
-        DeleteDbSource: delete 
+        DeleteSharedKnowledge: delete
+        DeleteDoc: delete
+        DeleteQA: delete
+        DeleteDbSource: delete
         DeleteDbTable: delete
         ExportQAList: download
         GetDocPreview: preview
@@ -354,32 +345,45 @@ data:
       max_unlock_retry: 3
       try_lock_interval: 50ms
       concurrency_key_expire: 1800
-      qpm: 50 
-      tpm: 200000 
-      ds_qpm: 50 
-      ds_tpm: 1000000
+      qpm: 50
+      tpm: 1000000
+      ds_qpm: 50
+      ds_tpm: ${LIMIT_CONFIG_INFO_DS_TPM}
       model_config:
-        "TCADP/glm-5":
+        TCADP/glm-5.1:
+          tpm: 2000000
           qpm: 50
-          tpm: 200000
-        "TCADP/kimi-k2.5":
-          qpm: 50
-          tpm: 200000
-        "TCADP/minimax-m2.5":
-          qpm: 50
-          tpm: 200000
-    finance: 
+        TCADP/claude-sonnet-4.6:
+          tpm: 2000000
+          qpm: 200
+        TCADP/claude-opus-4.6:
+          tpm: 2000000
+          qpm: 200
+        TCADP/claude-opus-4.7:
+          tpm: 2000000
+          qpm: 200
+        TCADP/claude-opus-4.7-1m:
+          tpm: 2000000
+          qpm: 200
+        TCADP/claude-opus-4.8:
+          tpm: 2000000
+          qpm: 200
+        TCADP/claude-opus-4.8-1m:
+          tpm: 2000000
+          qpm: 200
+    finance:
       disabled: {{ .Values.global.finance.disabled }}
       search_disabled: {{ .Values.global.finance.search_disabled }}
     default_model_name: cs-normal-70b
-    smart_cate_msg_prompt: "下面的聚类中包含了多个含义相似的问题，请为这个聚类生成一个简洁、准确的聚类名称。输出要求：1.聚类名称长度不超过50个字。2.仅返回结果，不包含解释。 问题: {{`{{.Questions}}`}}"
-    smart_existed_cate_prompt: "你是一个专业分类助手，负责将用户的咨询问题准确归类到指定的业务分类中。\nTask: 请阅读提供的【分类】，根据用户输入的【咨询问题】，输出对应的【分类】。\n# 分类:\n{{`{{.Categories}}`}}\n# 输出要求:\n请直接输出问题所属分类，不要输出多余文字。输出示例：{{`{{.Category}}`}}\n# 咨询问题: {{`{{.Question}}`}}\n# 分类输出:"
+    smart_cate_msg_prompt: {{`"下面的聚类中包含了多个含义相似的问题，请为这个聚类生成一个简洁、准确的聚类名称。输出要求：1.聚类名称长度不超过50个字。2.仅返回结果，不包含解释。 问题: {{.Questions}}"`}}
+    smart_existed_cate_prompt: {{`"你是一个专业分类助手，负责将用户的咨询问题准确归类到指定的业务分类中。\nTask: 请阅读提供的【分类】，根据用户输入的【咨询问题】，输出对应的【分类】。\n# 分类:\n{{.Categories}}\n# 输出要求:\n请直接输出问题所属分类，不要输出多余文字。输出示例：{{.Category}}\n# 咨询问题: {{.Question}}\n# 分类输出:"`}}
+    # RESOLVE: keep-private
     tianyu:
       disable_channel: false
       channel_uin:
-      secret_id: {{ (.Values.global.contentSecurity).secretId | default "" }}
-      secret_key: {{ (.Values.global.contentSecurity).secretKey | default "" }}
-      endpoint: "cms.internal.tencentcloudapi.com"
+      secret_id: ${INFRA_MIDDLEWARES_CONTENTSECURITY_SECRETID}
+      secret_key: ${INFRA_MIDDLEWARES_CONTENTSECURITY_SECRETKEY}
+      endpoint: cms.internal.tencentcloudapi.com
       region: {{ (.Values.global.contentSecurity).region | default "" }}
       keywords_lib_name_max_length: 20
       keywords_content_max_length: 20
@@ -423,26 +427,42 @@ data:
           - GeneratedContentRisk
         image:
           - 29999
-          - GeneratedContentRisk    
+          - GeneratedContentRisk
       risk_responses:
-       - risk_response_type: 1
-         risk_input_response: KeyRiskResponseTypeSeriousInput
-         risk_output_response: KeyRiskResponseTypeSeriousOutput
-         is_default: true
-       - risk_response_type: 2
-         risk_input_response: KeyRiskResponseTypeMildInput
-         risk_output_response: KeyRiskResponseTypeMildOutput
-       - risk_response_type: 3
-         risk_input_response: KeyRiskResponseTypeLivelyInput
-         risk_output_response: KeyRiskResponseTypeLivelyOutput
+        - risk_response_type: 1
+          risk_input_response: KeyRiskResponseTypeSeriousInput
+          risk_output_response: KeyRiskResponseTypeSeriousOutput
+          is_default: true
+        - risk_response_type: 2
+          risk_input_response: KeyRiskResponseTypeMildInput
+          risk_output_response: KeyRiskResponseTypeMildOutput
+        - risk_response_type: 3
+          risk_input_response: KeyRiskResponseTypeLivelyInput
+          risk_output_response: KeyRiskResponseTypeLivelyOutput
       default_category:
-        high: "81004"
-        middle: "81005"
-        low: "81006"
-      default_policies: ${DEFAULT_POLICIES}
+        high: '81004'
+        middle: '81005'
+        low: '81006'
+      default_policies:
+        - name: KeyDefaultContentSecurityHigh
+          desc: KeyDefaultContentSecurityHighDesc
+          type: 1
+          category: "81004"
+        - name: KeyDefaultContentSecurityMiddle
+          desc: KeyDefaultContentSecurityMiddleDesc
+          type: 1
+          category: "81005"
+          is_default: true
+        - name: KeyDefaultContentSecurityLow
+          desc: KeyDefaultContentSecurityLowDesc
+          type: 1
+          category: "81006"
+      target: https://oaatomicapi.adp.qq.com
+      atomic_api_key: test-01MLQS4kRmnhRLvQIH4SEqyKOdInV39hRb6D9Fkw9iWYdaWGQyFhzR5YL6fDdQnVB
+    # RESOLVE: keep-public
     es_config:
       name: trpc.elasticsearch.lke.admin
-      url: http://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}
+      url: "http://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}"
       user: ${INFRA_MIDDLEWARES_ES_0_USER}
       password: ${INFRA_MIDDLEWARES_ES_0_PASSWORD}
       timeout: 8000
@@ -453,9 +473,10 @@ data:
       index_name:
         content_recognition: content_recognition
         content_recognition_stats: content_recognition_stats
+    # RESOLVE: keep-public
     audit_log_es:
       name: trpc.elasticsearch.lke.audit_log
-      url: http://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}
+      url: "http://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}"
       user: ${INFRA_MIDDLEWARES_ES_0_USER}
       password: ${INFRA_MIDDLEWARES_ES_0_PASSWORD}
       timeout: 8000
@@ -473,624 +494,99 @@ data:
       search_limit: 100
       content_limit: 4096
     task_config:
-      task_prefix: platform:task
+      task_prefix: "platform:task"
       task_fetch_num: 400
       task_fetch_timeout: 2s
       task_fetch_period: 2s
       export:
         export:
-          runners: 2 #处理协程数，无法动态调整
-          retry_wait_time: 1m #重试等待时间
-          max_retry: 10 #最大重试次数
-          timeout: 10m #超时时间
-          fail_timeout: 3s # 失败回调超时
-          delay: 0s #启动延迟
-          batch:  3
+          runners: 2
+          retry_wait_time: 1m
+          max_retry: 10
+          timeout: 10m
+          fail_timeout: 3s
+          delay: 0s
+          batch: 3
           batch_size: 0
           stopped_resume_time: 720h
         delete_space:
-          runners: 3 #处理协程数，无法动态调整
-          retry_wait_time: 1m #重试等待时间
-          max_retry: 10 #最大重试次数
-          timeout: 180m #超时时间
-          fail_timeout: 3s # 失败回调超时
-          delay: 0s #启动延迟
-          batch:  1
+          runners: 3
+          retry_wait_time: 1m
+          max_retry: 10
+          timeout: 180m
+          fail_timeout: 3s
+          delay: 0s
+          batch: 1
           batch_size: 0
           stopped_resume_time: 720h
         msg_smart_cate:
-          runners: 3 #处理协程数，无法动态调整
-          retry_wait_time: 1m #重试等待时间
-          max_retry: 10 #最大重试次数
-          timeout: 180m #超时时间
-          fail_timeout: 3s # 失败回调超时
-          delay: 0s #启动延迟
-          batch:  1
+          runners: 3
+          retry_wait_time: 1m
+          max_retry: 10
+          timeout: 180m
+          fail_timeout: 3s
+          delay: 0s
+          batch: 1
           batch_size: 0
           stopped_resume_time: 720h
     third_party: ${THIRD_PARTY}
-
     user_token:
       secret: aGXYPxuVMyXlxyGCfSLqF8Jml1PJExmx
-      ttl: 3600 # 单位：s
-    reply_method_map:
-      1: 10  # ReplyMethodModel(大模型直接回复) -> APP_CALL_REPLY_METHOD_LLM_DIRECT
-      2: 11  # ReplyMethodBare(保守回复, 未知问题回复) -> APP_CALL_REPLY_METHOD_FALLBACK
-      3: 1   # ReplyMethodRejected(拒答问题回复) -> APP_CALL_REPLY_METHOD_REJECT
-      4: 3   # ReplyMethodEvil(敏感回复) -> APP_CALL_REPLY_METHOD_AUDIT_FAILED
-      5: 2   # ReplyMethodPriorityQA(问答对直接回复, 已采纳问答对优先回复) -> APP_CALL_REPLY_METHOD_QA_DIRECT
-      6: 0   # ReplyMethodGreeting(欢迎语回复) -> APP_CALL_REPLY_METHOD_UNKNOWN
-      7: 1   # ReplyMethodBusy(并发超限回复) -> APP_CALL_REPLY_METHOD_REJECT
-      8: 10  # ReplyGlobalKnowledge(全局干预知识) -> APP_CALL_REPLY_METHOD_LLM_DIRECT
-      9: 0   # ReplyMethodTaskFlow(任务流程过程回复) -> APP_CALL_REPLY_METHOD_UNKNOWN
-      10: 0  # ReplyMethodTaskAnswer(任务流程答案回复) -> APP_CALL_REPLY_METHOD_UNKNOWN
-      11: 9  # ReplyMethodSearch(搜索引擎回复) -> APP_CALL_REPLY_METHOD_SEARCH_ENGINE
-      12: 4  # ReplyMethodDecorator(知识润色后回复) -> APP_CALL_REPLY_METHOD_KNOWLEDGE_POLISH
-      13: 8  # ReplyMethodImage(图片理解回复) -> APP_CALL_REPLY_METHOD_IMAGE_UNDERSTAND
-      14: 7  # ReplyMethodFile(实时文档回复) -> APP_CALL_REPLY_METHOD_REALTIME_DOC
-      15: 10 # ReplyMethodClarifyConfirm(澄清确认回复) -> APP_CALL_REPLY_METHOD_LLM_DIRECT
-      16: 6  # ReplyMethodWorkflow(工作流回复) -> APP_CALL_REPLY_METHOD_WORKFLOW
-      17: 6  # ReplyMethodWorkflowAnswer(工作流运行结束) -> APP_CALL_REPLY_METHOD_WORKFLOW
-      18: 10 # ReplyMethodAgent(智能体回复) -> APP_CALL_REPLY_METHOD_LLM_DIRECT
-      19: 10 # ReplyMethodMultiIntent(多意图回复) -> APP_CALL_REPLY_METHOD_LLM_DIRECT
-      20: 0  # ReplyMethodInterrupt(中断回复) -> APP_CALL_REPLY_METHOD_UNKNOWN
+      ttl: 3600
+    reply_method_map: ${REPLY_METHOD}
     coroutine_limit: 100
     count_category_limit: 10000
     coroutine_sleep: 5
-    approval:
-      max_rule_count: 20
-      max_rule_name_length: 50
-      max_rule_desc_length: 300
-      max_scene_group_count: 10
-      max_scene_resource_count: 100
-      max_approver_count: 3
-      max_comment_length: 500
-      app_publish_approval_url: ${APP_PUBLISH_APPROVAL_URL}
-      skip_approving_actions:
-        - DescribeReleaseInfo
-        - ListReleaseConfigPreview
-        - ListTaskFlowPreview
-        - ListAppAgentReleasePreview
-        - ListRejectedQuestionPreview
-        - ListReleaseSynonymsPreview
-        - ListReleaseLabelPreview
-        - ListReleaseDb
-        - ListReleaseDbTable
-    notify_config:
-      sink_enabled:
-        tencent_sms: 0
-        tencent_email: 0
-        webhook: 0
-        ding_talk: 0
-        feishu: 0
-        wecom: 0
-    ioa_login:
-      enable_check_inner: false
-      tof_token: ${IOA_TOF_TOKEN}
-      tof_expiration_gap: 3m
-      white_list: []
+    approval: ${APPROVAL}
+    # RESOLVE: keep-public
+    notify_config: ${NOTIFY_CONFIG}
+    ioa_login: ${IOA_LOGIN}
     notice_config:
       max_create_num: 500
+      announcement_list_limit: 20
+      announcement_delete_limit: 100
+      announcement_title_len: 200
+      announcement_summary_len: 500
     function_permission: ${FUNCTION_PERMISSION}
+    msg_log_es_white_list: ${MSG_LOG_ES_WHITE_LIST}
+    # RESOLVE: keep-public
+    is_private: ${IS_PRIVATE}
+    # RESOLVE: keep-public
+    is_tke: ${IS_TKE}
+    # RESOLVE: keep-public
+    license: ${LICENSE}
+    # RESOLVE: keep-public
+    license_host: ${LICENSE_HOST}
+    # RESOLVE: keep-public
+    public_key: ${PUBLIC_KEY}
+    # RESOLVE: keep-public
+    admin_bypass: ${ADMIN_BYPASS}
+    is_intl_tke: ${IS_INTL_TKE}
+    ses: ${SES}
+    skip_perm_action: ${SKIP_PERM_ACTION}
+    msg_log_es_white_all_open: ${MSG_LOG_ES_WHITE_ALL_OPEN}
+    agent_background: ${AGENT_BACKGROUND}
+    table_field_conf:
+    - source_type: MsgRecordFileds
+      sort_filed: "[\"Question\",\"Answer\",\"Intent\",\"ChannelType\",\"ReplyMethod\",\"CallResult\",\"FailReason\",\"Score\",\"CategoryBizId\",\"UserBizNickname\",\"SessionId\",\"FirstTokenLatency\",\"TotalTokenLatency\",\"TotalToken\",\"InputToken\",\"OutputToken\",\"TraceId\",\"CustomerVariable\",\"CreateTime\"]"
+      column_map: "{\"Question\":\"问题\",\"Answer\":\"回复\",\"Intent\":\"意图\",\"ChannelType\":\"调用方式\",\"ReplyMethod\":\"回复类型\",\"CallResult\":\"调用结果\",\"FailReason\":\"失败原因\",\"Score\":\"消息评价\",\"CategoryBizId\":\"分类方式\",\"UserBizNickname\":\"用户\",\"SessionId\":\"sessionID\",\"FirstTokenLatency\":\"首次token耗时\",\"TotalTokenLatency\":\"总token耗时\",\"TotalToken\":\"token消耗\",\"InputToken\":\"输入token数\",\"OutputToken\":\"输出token数\",\"TraceId\":\"traceID\",\"CustomerVariable\":\"customer_variable\",\"CreateTime\":\"创建时间\"}"
+    msg_record_fail_reason:
+      "460049": "1"
+      "460301": "2"
+      "460722": "2"
+      "460712": "2"
+      "460721": "3"
+      "460711": "3"
+      "460723": "3"
+      "460713": "3"
+      "460011": "4"
+      "460701": "4"
+      "460032": "5"
+      "460702": "5"
+      "500": "5"
+    instance_id: "${INSTANCE_ID}"
 
-    msg_log_es_white_list:
-      - 100034812856
-      - 100038737751
-    is_private: true
-    is_tke: true
 
-    license:
-      type: youtu
-      apis:
-        host: ti-license.ti-base.svc.cluster.local:8081
-        version: 2021-02-05
-        server: ti-auth
-        secret_id: "{{ .Values.global.ti_license.appId }}"
-        secret_key: "{{ .Values.global.ti_license.secretKey }}"
-      app_license_ids:
-        knowledge_qa: 258
-        summary: 259
-        classify: 260
-      atomic_license_ids:
-        document_parsing: 261
-        embedding: 262
-        context_rewriting: 263
-      model_license_ids:
-        cs-normal-70b: 252
-        lke-deepseek-r1-0528: 270
-        lke-deepseek-v3-0324: 271
-        cs-normal-merge: 285
-      model_license_map:
-        cs-normal-70b: 252
-        lke-deepseek-r1-0528: 270
-        lke-deepseek-v3-0324: 271
-        cs-normal-merge: 285
-      timeout: 30
-      expire_time: 60
-    {{- if eq .Values.global.free_preview true}}
-    skip_perm_action: ["GetDocPreview","DescribeRefer"]
-    {{- end}}
-
-    license_host:
-      adp: "https://adp.cloud.tencent.com/cgi/apex/adp/platform/CheckLicense" 
-    # RSA公钥 - 用于加密和验签
-    public_key: |
-      -----BEGIN PUBLIC KEY-----
-      MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAurReoU7qNrUu+hVIiCLM
-      yXfOUZIODPMuR9xphD8S+/Df8DDj40lVOgU3sh0sghFmkhva71fji+N+a279wsjd
-      MDBd5ZO7hBApxOdm82TUVnx1be+PhvIkChDKIbOlZJ+GG/gbZsrbCzR+1yHI6h5u
-      DmumU4WRGpBg28/6quJ2nl1GUWJAjNCtGdPozJ0Q2Gm0nq1MrQPf5fjBzxJ2GI83
-      iM8We8MyeNQO/iAbr+iUqG1XsjD4QqDUUqcgBYRGexS0HHuGYrDWEUvkBnsgqdpR
-      zVgqxxJhsDCz7IiqFaTugJJDIoH2/uPJ4rAwSxko481Li1VCKpQQ6KN2mM7cMEeK
-      nGakkgkI0OI5znUgC5vBoprUkEO0pk1JcaIrEnEZm5pZCrBJsSbCLQLbiDReSe7q
-      XTO54hyFiHv1huweQB5psL/2O0WvKcSM4H4zgAWSSEatxZ/MKD8ESmjgLcUg6KFo
-      8aGyRNJLv3+nE7qMLagJDtt0Gqinutu/SXwurj75+Xb2DQWD5JGvkwvvlt5Muvcd
-      2HjdhWqwM5sR37a58YK3Rd/M+XqFpOjgXQ1si3m1CyXGAOscgm4/p5pFBgUOjmfI
-      tyqsHyMMdAugX6Duo20FkKZwC/gPtAeNYso/Vxt0wRifIrJZPUkdTTOPcmtx+a+6
-      +8Dhq8soyKlm51Dc6ia0cUECAwEAAQ==
-      -----END PUBLIC KEY-----
-    admin_bypass:
-      enable: true
-      default_staff_id: 1
-      default_staff_biz_id: 1781137320049901568
-      default_corp_id: 2
-      default_corp_biz_id: 1781137320016347136 
-
-  biz_en-US.json: |
-    {
-        "KeyDefaultSpaceName": "Default Space",
-        "KeyStatusInvalid": "Invalid",
-        "KeyStatusValid": "Valid",
-        "KeyStatusInAudit": "Auditing",
-        "KeyStatusAuditFail": "Audit Failed",
-        "KeyMsgLogNoCategory": "No Category",
-        "KeyMsgLogCategoryAll": "All Category",
-        "KeyQuestionFeedbackSubmitted": "Your feedback on issue \"%s\" has been submitted, feedback id is %d",
-        "KeyQuestionFeedbackProcessed": "The feedback for issue \"%s\" with feedback id %d has been processed",
-        "KeyQuestionFeedbackRejected": "Your feedback for issue \"%s\" (id: %d) has been rejected by the technical team",
-        "KeyFeedbackInfo": "Feedback information",
-        "KeyAgentFeedbackInfo": "Agent feedback information",
-        "KeyExportContent": "Export %s",
-        "KeyExportSuccess": "Export Success",
-        "KeyExportFailed": "Export Failed",
-        "KeyDataSuccess": "Success",
-        "KeyDataFailed": "Failed",
-        "KeyMsgLogContent": "Message log export %s.",
-        "KeyMsgLogContentIng": "Message log exporting in progress.",
-        "KeyMsgLogStatsContent": "Message statistics export as %s.",
-        "KeyMsgLogStatsContentIng": "Message statistics exporting in progress.",
-        "KeyApprovalRepeated": "Resources are under approval, cannot be approved repeatedly",
-        "KeyCopyContentSecurity": " Copy",
-        "KeySmartCateMsgSuccess": "Message classification success",
-        "KeySmartCateMsgSuccessContent": "Process a total of %d records",
-        "KeySmartCateMsgFailed": "Message classification failed",
-        "KeyExperiencePageWithTencentCloud": "Experience Page (Tencent Cloud)",
-        "KeyExperiencePageWithPhoneNumber": "Experience Page (Phone Number)",
-        "KeyDialogAPIAccess": "Dialogue End API Access",
-        "KeyWeChatServiceAccount": "WeChat Service Account",
-        "KeyWeChatSubscriptionAccount": "WeChat Subscription Account",
-        "KeyWeChatWorkApp": "WeChat Work App",
-        "KeyWebComponent": "Web Component",
-        "KeyWeChatCustomerService": "WeChat Customer Service",
-        "KeyMiniProgram": "Mini Program",
-        "KeyLike": "Like",
-        "KeyDislike": "Dislike",
-        "KeyQuestion": "Question",
-        "KeyAnswer": "Answer",
-        "KeyReply": "Reply",
-        "KeyUser": "User",
-        "KeyPublishingChannel": "Publishing Channel",
-        "KeyIntent": "Intent",
-        "KeyEvaluation": "Evaluation",
-        "KeyCreationTime": "Creation Time",
-        "KeyDate": "Date",
-        "KeyMessageCount": "Number of messages",
-        "KeyInteractiveUserCount": "Number of interacting users",
-        "KeyLikeCount": "Number of likes",
-        "KeyDislikeCount": "Number of dislikes",
-        "KeyLikeRate": "Like rate",
-        "KeyStatAccount": "Statistical account",
-        "KeyDefaultContentSecurityHigh": "High Sensitivity System Policy",
-        "KeyDefaultContentSecurityMiddle": "Medium Sensitivity System Policy",
-        "KeyDefaultContentSecurityLow": "Low Sensitivity System Policy",
-        "KeyDefaultContentSecurityHighDesc": "Policy for use on special dates, high recall may come with some false positives, not recommended for daily use",
-        "KeyDefaultContentSecurityMiddleDesc": "Default policy for new applications: Standard configuration for routine periods, recommended for daily use",
-        "KeyDefaultContentSecurityLowDesc": "Only identifies baseline risks, suitable for application scenarios with low risk probability",
-        "KeyRiskResponseTypeSeriousInput": "I can't answer this question. You can try asking me something else.",
-        "KeyRiskResponseTypeSeriousOutput": "Sorry, I can't answer this question at the moment. Please try asking a different one.",
-        "KeyRiskResponseTypeMildInput": "I haven't learned how to answer this yet. Let's change the topic and continue our chat.",
-        "KeyRiskResponseTypeMildOutput": "This question is beyond my current knowledge. Please try asking a different one, and I'll do my best to help.",
-        "KeyRiskResponseTypeLivelyInput": "I don't know this one yet. How about testing me with a different question~",
-        "KeyRiskResponseTypeLivelyOutput": "Oops, this one's got me stumped. Let's talk about something else~",
-        "KeyInvalidParam": "Invalid param:%s",
-        "Normal": "Normal",
-        "Polity": "Polity",
-        "Ad": "Advertise",
-        "Abuse": "Abuse",
-        "Illegal": "Illegal",
-        "Spam": "Spam",
-        "Terror": "Terror",
-        "Porn": "Porn",
-        "29999": "Participle",
-        "Value": "Value",
-        "GeneratedContentRisk": "GeneratedContentRisk",
-        "Copyright": "Copyright",
-        "Teenager": "Teenager",
-        "Religion": "Religion",
-        "Sexy": "Sexy",
-        "广告": "Ad",
-        "谩骂": "Abuse",
-        "不文明用语": "Uncivilized",
-        "口头禅": "Uncivilized",
-        "非攻击性的不文明用语，如我靠、尼玛": "Non-aggressive uncivilized language, such as 'Wokao', 'Nima'",
-        "人身攻击": "Personal Attack",
-        "重度人身攻击": "Severe personal assault",
-        "直接辱骂攻击他人的用词，如傻逼、婊子": "Direct abusive and attacking language towards others, such as 'Shabi', 'Biaoz'",
-        "轻度人身攻击": "Slight personal assault",
-        "辱骂攻击他人的用词，但也可能用于调侃，如傻子、你奶奶个熊": "Abusive words attacking others, but may also be used for teasing, such as 'Shazi', 'Your grandma is a bear'",
-        "色情粗口": "Pornographic Abuse",
-        "色情粗口用语": "Pornographic Abuse",
-        "含有性行为或者性器官相关粗口词汇": "Vulgar expressions related to sexual behaviors or organs",
-        "违法": "Illegal",
-        "毒品": "Drug",
-        "制毒贩毒管控内容": "Promote drug use and trafficking",
-        "涉及制毒贩毒的教程方法、宣扬制度贩毒、营销导流等违法行为": "Content involving illegal activities such as tutorials on drug manufacturing and trafficking, advocacy of drug manufacturing and trafficking, and marketing diversion for such crimes.",
-        "毒品成品管控内容": "Mention of drugs",
-        "提及毒品成品并对其宣扬": "Mentioning finished drug products and advocating them",
-        "赌博": "Gamble",
-        "赌博平台管控内容": "Gambling sites",
-        "涉及赌博平台机构/组织的名称，且进行营销推广导流、询问如何参与等": "Involving the name of gambling platforms/institutions, including marketing, promotion, inquiry about participation, etc.",
-        "合法赌博场所宣传管控": "Casino",
-        "符合当地法律法规的赌博场所，但进行宣扬或营销行为": "Legal casino promotion, but includes advocacy or marketing actions",
-        "棋牌游戏": "Board game",
-        "以赌博为目的的网络联机棋牌游戏": "Online board games for the purpose of gambling",
-        "博彩游戏": "Betting games",
-        "包括赌博性质的博彩游戏内容": "Content related to betting games of a gambling nature",
-        "赌博行为": "Gambling",
-        "以营利为目的，聚众赌博或者以赌博为业的行为": "Acts of gambling for profit, gathering for gambling or making a living from gambling",
-        "赌博器具管控内容": "Gambling equipment",
-        "涉及赌博相关器具的营销推广": "Marketing or promotion of gambling equipment",
-        "违禁品": "Contraband",
-        "有害药品": "Illegal Medicines",
-        "与医疗、预防和保健目的无关的危害药品": "Hazardous medicines unrelated to medical, preventive or health purposes",
-        "有害化学品": "Prohibited chemicals",
-        "具有毒害、腐蚀等性质，对人体、设施、环境具有危害的剧毒化学品": "Highly toxic chemicals harmful to humans, facilities, and the environment",
-        "危爆物品": "Flammables and Explosives Goods",
-        "具有爆炸、易燃、放射性等危险性质": "Explosive, flammable, or radioactive danger items",
-        "野生动物危害言论": "Wild animals",
-        "非法贩卖、捕杀、食用野生动物言论": "Statements about illegal trading, hunting, or eating wild animals",
-        "非法翻墙工具": "VPN",
-        "非法VPN展示或推广营销": "Displaying or promoting illegal VPN tools",
-        "黑灰产管控工具": "Other",
-        "禁止市场随意流通的违禁品，如开锁工具、遥控干扰器、出售黑车、遥控车牌架": "Prohibited tools and goods such as lock-picking tools, remote interference devices, selling illegal vehicles, or remote license plate holders",
-        "违禁行为": "Prohibited Behavior",
-        "造假作弊": "Fraud cheating",
-        "编造捏造、以假乱真，利用不存在的事物来谋取利益": "Fabrication, falsification, using fictitious things for profit",
-        "人体贩卖": "Human trafficking",
-        "人体器官贩卖相关危害言论": "Statements related to human organ trafficking",
-        "侵犯个人隐私": "Invasion of personal privacy",
-        "涉及侵犯个人隐私的言论或工具售卖": "Statements or tools related to invasion of personal privacy",
-        "雇凶杀人": "Hire a murderer",
-        "雇佣他人进行犯罪活动": "Hiring others to commit crimes",
-        "付费删帖": "Pay to delete posts",
-        "通过信息网络有偿提供删除信息服务": "Paid online services for deleting information",
-        "封建迷信": "Feudal superstition",
-        "提及封建迷信的言论，或意图开展封建迷信活动": "Statements or intentions related to feudal superstition activity",
-        "金融违法行为": "Financial Prohibitions",
-        "实施洗钱、逃税漏税的言论，包括咨询如何洗钱、逃税漏税相关规则方式介绍": "Statements involving money laundering, tax evasion, including consulting or introducing how to launder money or evade taxes",
-        "非法团体": "Illegal Group",
-        "黑社会": "Mafia",
-        "涉及黑社会的不良言论": "Negative statements involving mafia",
-        "传销组织": "MLM Organization",
-        "涉及传销组织的不良导向言论": "Negative guidance involving pyramid schemes (MLM)",
-        "非法社会组织": "Illegal social organization",
-        "未在民政部门登记的涉嫌非法社会组织": "Suspected illegal social organizations not registered with civil affairs departments",
-        "灌水": "Spam",
-        "暴恐": "Terror",
-        "恐怖组织人物": "Horror Characters",
-        "涉及联合国认定的恐怖组织相关人物": "Involving UN-designated terrorist group members",
-        "恐怖组织": "Terrorist Organization",
-        "涉及联合国认定的恐怖组织": "Involving UN-designated terrorist organizations",
-        "恐怖事件": "Terrorist Incident",
-        "恐怖分子制造的危害社会稳定、人民生命与财产安全的行为活动": "Terrorist acts endangering social stability, people's lives and properties",
-        "暴力血腥描述": "Violent",
-        "暴力用词": "Violent and bloody",
-        "各类提及到暴力的用词用语，范围较广": "Various language referring to violence, broad scope",
-        "血腥行为描述": "Bloody Scene",
-        "描述或教授极端血腥行为（如碎尸、肢解、食尸、虐杀）及尸体处置的可操作细节的内容": "Describing or teaching extreme bloody acts such as dismemberment, cannibalism, torture and details of body disposal",
-        "武器相关描述": "Arms",
-        "杀伤性武器": "Arms",
-        "枪支弹药名称、管制刀具、大杀伤性武器等": "Names of firearms, controlled knives, large-scale killing weapons, etc.",
-        "色情": "Porn",
-        "性行为描述": "Sexual Behavior",
-        "低俗描述性行为": "Vulgar description of sexual behavior",
-        "使用低俗下流的语言描述性相关的动作、行为和意图": "Using vulgar or obscene language to describe sexual acts, behaviors, or intentions",
-        "客观陈述性行为": "Objective statement of behavior",
-        "性行为相关的客观描述，但是整句话没有低俗性行为的联想": "Objective description of sexual behavior without vulgar implications",
-        "性行为影射": "Sexual innuendo",
-        "通过暗示、比喻、联想或描述行为反应，而非直接描述，来指代或影射性交、自慰等核心性行为的文本": "Implied or metaphorical references to sexual acts, rather than direct descriptions",
-        "性暗示与软色情": "Ambiguous expression of foreplay",
-        "通过双关、歧义性语言或模糊的行为描述，营造色情氛围、进行性挑逗，但未明确描述色情动作或性行为": "Using puns, ambiguous language, or vague behavior to create a sexual atmosphere, tease, but not explicitly describe sexual acts",
-        "低俗描述性活动": "Vulgar descriptive activity",
-        "使用低俗下流的语言或低俗称谓，描述性活动时的动作、行为和对话": "Using vulgar or obscene language or terms to describe actions, behaviors, and conversations during sexual activity",
-        "性行为前戏": "Vulgar description of foreplay",
-        "明确描述以激发性欲为目的、但未及核心性行为的身体接触与挑逗动作": "Explicitly describing physical contact and teasing acts meant to excite sexual desire, not reaching core sexual acts",
-        "性器官描述": "Sex Organ",
-        "低俗描述性器官": "Vulgar description of sexual organs",
-        "使用低俗下流的语言描述性器官": "Using vulgar or obscene language to describe sexual organs",
-        "客观陈述性器官": "Objective statement of sexual organs",
-        "性器官相关的客观描述，但是整句话没有低俗性行为的联想\n不包含案件描述、新闻报道、生理科普类型的内容": "Objective description of sexual organs, without vulgar sexual connotations, excluding cases, news, physiological science",
-        "情色三级资源": "Pornography",
-        "情色人物提及": "Erotic figures",
-        "提及成人色情行业从业者": "Mentioning workers in the adult industry",
-        "情色作品提及": "Pornography",
-        "情色类的AV、歌曲、小说、漫画、游戏、场所、网站名等": "Mentions of pornography, AV, songs, novels, comics, games, places, or websites",
-        "SM内容": "SM",
-        "低俗描述SM": "SM",
-        "描述 SM 行为、道具等包含色情语义的描述": "Describing SM acts, tools with sexual implications",
-        "提及SM": "Objective SM",
-        "对SM相关词汇的提问或科普，不涉及色情内容": "Questions or science popularization about SM terms without sexual implication",
-        "同性恋": "Homosexual",
-        "男同言论": "Gay",
-        "女同言论": "Lesbian",
-        "特殊性癖": "Perverted Porn",
-        "色情特殊性癖": "Perverted Porn",
-        "通过文字描绘、角色扮演或对话，色情化地展现特殊性癖好行为或场景的文本": "Describing special sexual fetishes or scenarios in a pornographic manner via text, roleplay or dialogue",
-        "生理科普": "Physiology Popularization",
-        "生理科普知识": "Physiology Popularization",
-        "仅包含真正的知识科普内容，对于描述性的内容、或提问性质的内容不包含": "Only includes genuine scientific and educational content, excludes descriptive or question-based content",
-        "性爱科普": "Sexual Popularization",
-        "性爱相关的客观科普内容，无色情语义": "Objective scientific content about sex, without pornographic meaning",
-        "未成年色情": "Minor Porn",
-        "价值观": "Value",
-        "自杀自残": "Self Harm",
-        "自杀自残言论": "Self Harm",
-        "描述自杀自残以及倾向的言论": "Statements describing or showing tendencies of suicide/self-harm",
-        "消极情绪": "Negative Emotions",
-        "语义上趋向于自我否定、自我放弃等负面影响的内容": "Content semantically expressing self-denial, abandonment, or other negative influence",
-        "自毁倾向": "Self-destructive Tendencies",
-        "语义上趋向于展示自毁自虐意图与行为，鼓吹自毁情绪和行为的内容": "Content showing intent or acts of self-destruction, or promoting these emotions and behaviors",
-        "自杀倾向": "Suicidal Tendencies",
-        "语义上趋向于展示自杀意图与自杀行为，鼓吹自杀的内容": "Content showing suicidal intentions or acts, or promoting suicide",
-        "指令攻击": "Prompt Attack",
-        "优先使用大模型自带的防攻击机制，需额外加强才开启": "Use built-in model anti-attack mechanisms first, strengthen if necessary",
-        "Prompt泄露": "Prompt Leak",
-        "诱导模型泄露其系统提示词": "Inducing the model to leak its system prompts",
-        "目标劫持": "Prompt Hijack",
-        "通过指令语句，诱导大模型绕过安全机制，输出预设答案": "Trying to bypass model safety by prompt hijacking to output preset answers",
-        "信息安全": "Prompt Security Risk",
-        "系统攻击": "Prompt Information Security Risk",
-        "攻击计算机、网络、系统等相关言论，如“如何侵入政府数据库”": "Statements related to attacking computers, networks, systems, e.g., 'how to hack government database'",
-        "军警制服": "Uniform",
-        "迷彩服": "Camouflage",
-        "消防服": "Fire Uniform",
-        "ACG警服": "ACG Police",
-        "ACG军服": "ACG Military Uniform",
-        "热武器": "Gun",
-        "真实枪支": "Real Gun",
-        "游戏枪支": "Game Gun",
-        "ACG枪支": "ACG Gun",
-        "玩具枪": "Toy Gun",
-        "大型武器": "Big Weapon",
-        "军事武器": "Military weapons",
-        "24001010001": "Military weapons",
-        "坦克、军用飞机、军用舰艇、军用导弹等常见大型武器": "Common large-scale military weapons such as tanks, military airplanes, warships, missiles, etc.",
-        "坦克": "Tank",
-        "更泛化的坦克，例如只要有履带出现都算": "Generalized tank, such as anything with tracks is considered a tank",
-        "冷兵器": "Knife",
-        "真实刀具": "Real Knife",
-        "游戏刀具": "Game Knife",
-        "ACG刀具": "ACG Knife",
-        "管制刀具": "Illegal Knife",
-        "血腥画面": "Blood",
-        "ACG血腥画面": "ACG Blood",
-        "漫画或动漫场景中出现的血腥画面": "Bloody scenes in manga or anime",
-        "真实血腥画面": "Real Blood",
-        "真实场景中的血腥画面，如虐杀": "Bloody scenes in real life, such as abuse or murder",
-        "惊悚血腥画面": "Horror Blood",
-        "极度血腥，带有惊悚感的画面": "Extremely bloody and horrifying scenes",
-        "性感": "Sexy",
-        "女性性感胸部": "Women Sexy Chest",
-        "ACG女重度露沟": "ACG Women Heavy Chest",
-        "ACG女性胸部露出中间乳沟（大于50%），或胸部露出下沿（大于50%）": "ACG woman’s cleavage exposed over 50%, or underbust exposed over 50%",
-        "真人女重度露沟": "Real Women Heavy Chest",
-        "真人女性胸部露出中间乳沟（大于50%），或胸部露出下沿（大于50%）": "Real woman’s cleavage exposed over 50%, or underbust exposed over 50%",
-        "亲吻画面": "Kiss",
-        "异性亲吻": "Men Women Kiss",
-        "男女之间，嘴对嘴的亲吻，嘴要互相接触": "Kissing between man and woman, mouth-to-mouth, lips touch",
-        "女女亲吻": "Women Kiss",
-        "女女之间，嘴对嘴的亲吻，嘴要互相接触": "Kissing between women, mouth-to-mouth",
-        "男男亲吻": "Men Kiss",
-        "男男之间，嘴对嘴的亲吻，嘴要互相接触": "Kissing between men, mouth-to-mouth",
-        "亲密行为": "Intimate Behavior",
-        "男男亲密": "Men Close",
-        "男性之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为": "Intimate physical behavior between men such as hugging, resting heads together, etc.",
-        "男女亲密": "Men Women Close",
-        "男女之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为": "Intimate physical behavior between man and woman such as hugging, resting heads together, etc.",
-        "女女亲密": "Women Close",
-        "女性之间的搂抱、面对面头贴近、头靠肩等明显暧昧的行为": "Intimate physical behavior between women such as hugging, resting heads together, etc.",
-        "男下激凸": "Crotch Close Up",
-        "三角区": "Male lower body (crotch area)",
-        "20103036301": "Male lower body (crotch area)",
-        "视觉聚焦男性下体的图片，包括马赛克跟动漫场景": "Images focused on male genital area, including censored and anime scenes",
-        "诱惑姿势": "Seductive Pose",
-        "张腿": "Open Leg",
-        "腿和裆部呈M或者W形状，且下体穿着少": "Legs and crotch in M or W shape, dressed scantily below",
-        "撅臀": "Pout Hip",
-        "明显甚至夸张地撅起屁股，无论是不是穿着衣服": "Prominently sticking out buttocks, exaggeratedly, with or without clothes",
-        "性表情": "O Face",
-        "带有性暗示的猥琐表情": "Lewd facial expressions with sexual implication",
-        "性行为画面": "Sexy Behavior",
-        "各种性爱的画面，包括真人、动漫、手绘等场景": "Various scenes of sexual acts, including real, animated or hand-drawn scenes",
-        "女性下体裸露": "Women Private Part",
-        "包括有马赛克或非常少的衣物，但可以明确判断的图片": "Visible female genital area, including pixelated or very scantily dressed images",
-        "女性胸部裸露": "Women Chest",
-        "包含虽有衣物遮挡，但胸部整体裸露较多的画面": "Images with mostly exposed female chest, even if partly covered",
-        "男性下体裸露": "Men Private Part",
-        "包含虽有衣物遮挡，但下体整体裸露较多或非常明显的画面": "Images with mostly exposed male genital area, even if partly covered",
-        "臀部裸露": "Buttocks Exposed",
-        "不区分男女，臀部大面积裸露": "Large area of buttocks exposed, no gender distinction",
-        "儿童裸露": "Naked Child",
-        "儿童裸露下体和臀部": "Child with exposed genital and butt area",
-        "动物性行为": "Animal Sex",
-        "性分泌物": "Sex Secretion",
-        "画面中包含较明显的性分泌物": "Images containing prominent sexual secretions",
-        "裸体": "Naked",
-        "全裸或几乎全裸": "Completely or almost completely naked",
-        "女性下体内窥镜": "Endoscope",
-        "女性下体内窥画面，属于特殊性癖": "Endoscopic images of female genital area, considered a special fetish",
-        "医学性器官": "Medical Porn",
-        "可以看到性器官、敏感部位医学人体图（含解剖图、剖面图等）": "Medical diagrams showing sexual organs and sensitive areas (including anatomy, cross-sections)",
-        "ACG孕妇": "ACG Pregnancy",
-        "动漫、3D 、仿真等ACG画风的孕妇图片，属于特殊性癖": "Anime, 3D, or simulated ACG-styled pregnant women images, special fetish",
-        "二维码": "Qr Code",
-        "常见二维码": "QRCODE",
-        "包括但不限于微信、支付宝、网址、淘宝、QQ等常见的二维码": "Common QR codes, including WeChat, Alipay, websites, Taobao, QQ, etc.",
-        "淘宝二维码": "Taobao QR Code",
-        "微信二维码": "Wechat QR Code",
-        "支付宝二维码": "Alipay QR Code",
-        "小程序码": "WXCODE",
-        "条形码": "BARCODE",
-        "PDF417条码": "PDF417",
-        "DM码": "DATAMATRIX",
-        "政治": "Polity",
-        "劣迹明星": "Bad Star",
-        "劣迹网红": "Inferior",
-        "纳粹战犯": "Nazi Criminal",
-        "侵华战犯": "War Criminal",
-        "国旗营销": "Guo Qi Ying Xiao",
-        "侮辱国旗": "Wu Ru Guo Qi",
-        "焚烧、践踏、涂鸦等恶搞国旗行为": "Behaviors insulting the national flag, such as burning, trampling, graffiti, parody",
-        "恶搞人民币": "EGao RMB",
-        "对人民币PS、恶意折叠等行为": "Photoshopping or maliciously folding RMB",
-        "恶搞国徽": "EGao Guo Hui",
-        "在国徽上添加其它恶意元素": "Adding malicious elements to the national emblem",
-        "吸烟": "Smoking",
-        "吸毒": "Drug",
-        "喝酒": "Drink",
-        "打斗": "Fight",
-        "恶心画面": "Nausea",
-        "未成年识别": "Teenager",
-        "未成年人出镜": "Minors",
-        "画面中出现未成年人，适用于真人、且需要露脸": "Minors appearing on screen, applies to real people and must show face",
-        "未成年人色情": "Minors Porn",
-        "真人形象的未成年色情及擦边画面": "Real-life minor pornography or borderline content",
-        "未成年人违禁行为": "Minors Illegal",
-        "未成年人吸烟": "Minors Smoking",
-        "未成年人喝酒": "Minors Drink",
-        "未成年人纹身": "Minors Tattoo",
-        "儿童邪典": "Elsagate",
-        "以儿童熟悉的卡通人物包装成为血腥暴力或软色情的图片": "Images with familiar children's cartoon characters but containing bloody, violent or soft porn elements",
-        "ACG未成年人": "ACG Minors",
-        "漫画风格、或AIGC生成的未成年形象": "Manga style or AI-generated minor images",
-        "未成年形象": "Minors New",
-        "适用于真人，不一定要求露脸，外形像未成年人即会识别": "For real people, not necessarily showing face, as long as shape looks like minor",
-        "宗教识别": "Religion",
-        "生成式风险": "Generated Content Risk",
-        "KeyCategory": "record category ",
-        "KeyMoveCate": " to category ",
-        "AuditLogAction_login": "login",
-        "AuditLogAction_logout": "logout",
-        "AuditLogAction_create": "create",
-        "AuditLogAction_modify": "modify",
-        "AuditLogAction_delete": "delete",
-        "AuditLogAction_copy": "copy",
-        "AuditLogAction_download": "download",
-        "AuditLogAction_move": "move",
-        "AuditLogAction_enable": "enable",
-        "AuditLogAction_disable": "disable",
-        "AuditLogAction_import": "import",
-        "AuditLogAction_export": "export",
-        "AuditLogAction_release": "release",
-        "AuditLogAction_debug": "debug",
-        "AuditLogAction_recover": "recover",
-        "AuditLogAction_collect": "collect",
-        "AuditLogAction_uncollect": "uncollect",
-        "AuditLogAction_approve": "approve",
-        "AuditLogAction_reject": "reject",
-        "AuditLogAction_cancel": "cancel",
-        "AuditLogBiz_app": "app",
-        "AuditLogBiz_kb": "knowledge",
-        "AuditLogBiz_document": "document",
-        "AuditLogBiz_qa": "QA",
-        "AuditLogBiz_database": "database",
-        "AuditLogBiz_database_table": "database table",
-        "AuditLogBiz_workflow": "workflow",
-        "AuditLogBiz_provider_model": "provider model",
-        "AuditLogBiz_prompt": "prompt",
-        "AuditLogBiz_prompt_template": "prompt template",
-        "AuditLogBiz_evaluate_task": "evaluate task",
-        "AuditLogBiz_evaluate_set": "evaluate set",
-        "AuditLogBiz_publish_channel": "publish channel",
-        "AuditLogBiz_user": "user",
-        "AuditLogBiz_permission": "permission",
-        "AuditLogBiz_plugin": "plugin",
-        "AuditLogBiz_data_analysis": "data analysis",
-        "AuditLogBiz_chat_logs": "chat logs",
-        "AuditLogBiz_reject_question": "reject question",
-        "AuditLogBiz_unsatisfactory_question": "unsatisfactory question",
-        "AuditLogBiz_finance": "finance",
-        "AuditLogBiz_operation": "operation",
-        "AuditLogBiz_resource_rule": "resource manager",
-        "AuditLogBiz_approval_rule": "approval rule",
-        "AuditLogBiz_approval_list": "approval list",
-        "AuditLogBiz_openclaw": "ClawPro",
-        "AuditLogBiz_api_key": "api key",
-        "KeyMsgLogAsEvalSetContent": "Message log export as evaluation set %s.",
-        "KeyMsgLogAsEvalSetContentIng": "Message log exporting  as evaluation in progress.",
-        "KeyEdit": " Modified to ",
-        "KeyExportAuditLogContent": "Export operation audit log %s.",
-        "KeyExportAuditLogContentIng": "Exporting operation audit log",
-        "KeyOperationObjects": "operation object",
-        "KeyOperationType": "operation type",
-        "KeyOperationContent": "operation content",
-        "KeyAppName": "app name",
-        "KeyAppID": "app id",
-        "KeySpaceName": "sapce name",
-        "KeyOperationTime": "operation time",
-        "KeyOperationStaff": "operation staff",
-        "KeyOperationStaffID": "operation staffID",
-        "KeyOperationUniqueID": "operation uniqueID",
-        "ErrVerifyCodeHalfHourLimit": "More than 3 verification-code login attempts within half an hour.",
-        "KeyCorpRoleAdmin": "Super Administrator",
-        "KeyCorpRoleMember": "Space Creator",
-        "KeyCorpRoleRegularUser": "Regular User",
-        "KeyApprovalTypeAppRelease": "App Release",
-        "KeyApprovalTypePluginOnline": "Custom Plugin Online",
-        "KeyApprovalAutoApproved": "Auto-approved by system",
-        "KeyApprovalRejectSubject": "Application Release Approval Rejected",
-        "KeyApprovalRejectContent": "Application [%s] release approval has been rejected. Please modify the settings and try again",
-        "KeyApprovalPendingSubject": "New Approval Task",
-        "KeyApprovalPendingContent": "New approval task received: Application Release [%s]",
-        "KeyApplicant": "Applicant",
-        "KeyApplyTime": "Application Time",
-        "KeyApprovalID": "Approval ID",
-        "KeyApprovalPendingTitle": "[Pending Approval] Tencent Cloud Intelligent Agent Platform",
-        "KeyApprovalItem": "Approval Item",
-        "KeyApprovalPendingPrompt": "Please go to the approval list to review and process in time.",
-        "KeyApprovalRuleName": "Approval Rule Name",
-        "KeyApprovalScope": "Approval Scope",
-        "KeyApprovalApprover": "Approver",
-        "KeyApprovalNotifyMethod": "Notification Method",
-        "KeyModifyTo": " to ",
-        "KeyApproverTypeCorpRole": "Corporate Role",
-        "KeyApproverTypeSpRole": "Space Role",
-        "KeyApproverTypeStaff": "Designated Staff",
-        "KeyApprovalModeAll": "All Approval",
-        "KeyApprovalModeAny": "Any Approval",
-        "KeyNotifyEnabled": " Enabled",
-        "KeyNotifyDisabled": " Disabled",
-        "KeyNotifyCenter": "Notification Center",
-        "KeyNotifySMS": "SMS",
-        "KeyNotifyEmail": "Email",
-        "KeyNotifyWebhook": "Webhook",
-        "KeyNotifyWecom": "WeCom",
-        "KeyNotifyDingTalk": "DingTalk",
-        "KeyNotifyLark": "Lark",
-        "KeySmartExistedCatePrompt": "The following categories contain multiple similar questions. Please generate a concise and accurate category name for this category. Output requirements: 1. The category name should be no more than 50 characters. 2. Only return the result, no explanation. Questions: {{"{{"}}.Question}}",
-        "KeyLineChannel": "LINE",
-        "KeyTelegramChannel": "Telegram"
-    }
   biz_zh-CN.json: |
     {
         "KeyDefaultSpaceName": "默认工作空间",
@@ -1541,176 +1037,330 @@ data:
         "KeyNotifyDingTalk": "钉钉",
         "KeyNotifyLark": "飞书",
         "Uncategorized": "未分类",
-        "KeySmartExistedCatePrompt": "下面的聚类中包含了多个含义相似的问题，请为这个聚类生成一个简洁、准确的聚类名称。输出要求：1.聚类名称长度不超过50个字。2.仅返回结果，不包含解释。 问题: {{"{{"}}.Question}}",
+        "KeySmartExistedCatePrompt": "你是一个专业分类助手，负责将用户的咨询问题准确归类到指定的业务分类中。\nTask: 请阅读提供的【分类】，根据用户输入的【咨询问题】，输出对应的【分类】。\n# 分类:\n{{"{{"}}.Categories}}\n# 输出要求:\n请直接输出问题所属分类，不要输出多余文字。输出示例：{{"{{"}}.Category}}\n# 咨询问题: {{"{{"}}.Question}}\n# 分类输出:\n",
         "KeyLineChannel": "LINE",
-        "KeyTelegramChannel": "Telegram"
+        "KeyTelegramChannel": "Telegram",
+        "ACG色情孕妇": "ACG色情孕妇",
+        "ApprovalInfoTypeSkillOffline": "skill下架",
+        "AuditLogBiz_assistant": "智能工作台",
+        "AuditLogBiz_favorite_app": "常用应用",
+        "AuditLogBiz_skill": "Skills",
+        "KeyAppDeleteApprovalRejectContent": "应用【%s】删除审批被驳回,请修改后重新提交",
+        "KeyAppDeleteApprovalRejectSubject": "应用删除审批被驳回",
+        "KeyApprovalDeleteContent": "收到审批任务: 应用删除【%s】",
+        "KeyApprovalTypeAppDelete": "应用删除",
+        "KeyApprovalTypePluginDelete": "插件删除",
+        "KeyApprovalTypeSkillRelease": "skill发布",
+        "KeyChannelEvaluate": "评测任务对话",
+        "KeyChannelExperience": "页面-评测端对话",
+        "KeyChannelGuanjia": "电脑管家",
+        "KeyChannelRongyao": "荣耀智能体平台",
+        "KeyChannelSeat": "坐席",
+        "KeyChannelWorkflow": "工作流调试对话",
+        "KeyChannelXiaomi": "小米应用商店",
+        "KeyChannelYingyongbao": "应用宝",
+        "KeyChannelYuanbao": "元宝",
+        "KeyChannelYuanbaoWecomRobot": "企微智能机器人",
+        "KeyChannelYuanqi": "元器",
+        "KeyChannelYuanqiAPI": "元器API",
+        "KeyDefaultContentSecurity": "系统默认策略",
+        "KeyDefaultContentSecurityDesc": "新建应用的默认安全策略",
+        "KeyDefaultContentSecurityDisable": "免除审核",
+        "KeyDefaultContentSecurityDisableDesc": "不进行内容审核",
+        "KeyMsgLogCallResultFailed": "失败",
+        "KeyMsgLogCallResultSuccess": "成功",
+        "KeyMsgLogCallResultUnknown": "未知",
+        "KeyMsgLogExportCallResult": "调用结果",
+        "KeyMsgLogExportCategoryBizId": "分类ID",
+        "KeyMsgLogExportCustomerVariable": "客户变量",
+        "KeyMsgLogExportFailReason": "失败原因",
+        "KeyMsgLogExportFirstTokenLatency": "首Token耗时",
+        "KeyMsgLogExportInputToken": "输入Token",
+        "KeyMsgLogExportIntentCategory": "意图分类",
+        "KeyMsgLogExportIsSmart": "是否智能分类",
+        "KeyMsgLogExportOutputToken": "输出Token",
+        "KeyMsgLogExportRecordId": "记录ID",
+        "KeyMsgLogExportRelatedRecordId": "关联记录ID",
+        "KeyMsgLogExportReplyMethod": "回复方式",
+        "KeyMsgLogExportSessionId": "会话ID",
+        "KeyMsgLogExportTotalToken": "总Token消耗",
+        "KeyMsgLogExportTotalTokenLatency": "总Token耗时",
+        "KeyMsgLogExportTraceId": "Trace ID",
+        "KeyMsgLogFailReasonAudit": "审核失败",
+        "KeyMsgLogFailReasonConcurrencyLimit": "达到并发上限",
+        "KeyMsgLogFailReasonQPMLimit": "达到QPM上限",
+        "KeyMsgLogFailReasonSystem": "系统异常",
+        "KeyMsgLogFailReasonTPMLimit": "达到TPM上限",
+        "KeyMsgLogReplyMethodAuditFailed": "审核失败回复",
+        "KeyMsgLogReplyMethodFallback": "兜底回复",
+        "KeyMsgLogReplyMethodImageUnderstand": "图片理解回复",
+        "KeyMsgLogReplyMethodKnowledgePolish": "知识润色回复",
+        "KeyMsgLogReplyMethodLLMDirect": "大模型直接回复",
+        "KeyMsgLogReplyMethodQADirect": "问答直接回复",
+        "KeyMsgLogReplyMethodRealtimeDoc": "实时文档回复",
+        "KeyMsgLogReplyMethodReject": "拒答问题回复",
+        "KeyMsgLogReplyMethodSearchEngine": "搜索引擎回复",
+        "KeyMsgLogReplyMethodUnknown": "未知",
+        "KeyMsgLogReplyMethodWorkflow": "工作流回复",
+        "KeyNo": "否",
+        "KeyPluginApprovalRejectContent": "插件【%s】上架审批被驳回，请修改后重新提交",
+        "KeyPluginApprovalRejectSubject": "插件上架审批被驳回",
+        "KeyPluginApprovalPendingContent": "收到审批任务: 共享插件【%s】",
+        "KeyPluginApprovalApprovedSubject": "插件共享审批已通过",
+        "KeyPluginApprovalApprovedContent": "已共享到 %d 个空间。后续插件更新自动同步已共享的空间",
+        "KeyPluginApprovalApprovedContentClosed": "关闭企业共享成功，其他空间不可引用，仅当前空间展示。如需共享可再次申请",
+        "KeyPluginDeleteApprovalRejectContent": "插件【%s】删除审批被驳回，请修改后重新提交",
+        "KeyPluginDeleteApprovalRejectSubject": "插件删除审批被驳回",
+        "KeySkillApprovalOfflineContent": "收到审批任务: skill下架 【%s】",
+        "KeySkillApprovalPendingContent": "收到审批任务: skill发布【%s】",
+        "KeySkillApprovalRejectContent": "skill【%s】上架审批被驳回，请修改后重新提交",
+        "KeySkillApprovalRejectSubject": "skill上架审批被驳回",
+        "KeySmartCateMsgStart": "智能分类开始",
+        "KeyYes": "是",
+        "QQ二维码": "QQ二维码",
+        "亲吻": "亲吻",
+        "代码": "代码",
+        "代码问题": "代码问题",
+        "低俗手势": "低俗手势",
+        "全文处理": "全文处理",
+        "其他": "其他",
+        "其他问题": "其他问题",
+        "写作": "写作",
+        "刀等冷兵器": "刀等冷兵器",
+        "古诗词": "古诗词",
+        "号码归属": "号码归属",
+        "地理": "地理",
+        "垃圾分类": "垃圾分类",
+        "多模态阅读理解": "多模态阅读理解",
+        "天文": "天文",
+        "天气": "天气",
+        "女性下体": "女性下体",
+        "女性性感-胸部": "女性性感-胸部",
+        "女性胸部": "女性胸部",
+        "广告二维码": "广告二维码",
+        "性行为": "性行为",
+        "恶心": "恶心",
+        "成语": "成语",
+        "指令跟随回答": "指令跟随回答",
+        "摘要": "摘要",
+        "数学计算": "数学计算",
+        "文件": "文件",
+        "文件查找": "文件查找",
+        "新闻": "新闻",
+        "星座": "星座",
+        "未成年人违禁": "未成年人违禁",
+        "枪等热武器": "枪等热武器",
+        "模型信息": "模型信息",
+        "模型关系": "模型关系",
+        "模型原理": "模型原理",
+        "模型知识": "模型知识",
+        "段落处理": "段落处理",
+        "汽车知识": "汽车知识",
+        "烟盒": "烟盒",
+        "现代诗词": "现代诗词",
+        "男性下体": "男性下体",
+        "知识问答": "知识问答",
+        "税务知识": "税务知识",
+        "筛选推荐": "筛选推荐",
+        "线下投注场所": "线下投注场所",
+        "翻译": "翻译",
+        "聊天": "聊天",
+        "股票": "股票",
+        "臀部": "臀部",
+        "自我认知": "自我认知",
+        "节日和时间": "节日和时间",
+        "表格问题": "表格问题",
+        "角色扮演": "角色扮演",
+        "赛事": "赛事",
+        "转人工": "转人工",
+        "逻辑推理": "逻辑推理",
+        "金融知识": "金融知识",
+        "阅读回答": "阅读回答",
+        "音乐": "音乐",
+        "魔法修炼": "魔法修炼",
+        "黄历": "黄历"
     }
-  errors_en-US.json: |
-    {
-        "ErrPermissionDenied": "Insufficient permissions",
-        "ErrUserNotFound": "User does not exist",
-        "ErrStaffNotFound": "Employee does not exist",
-        "ErrSessionNotFound": "User is not logged in",
-        "ErrCodeSendFailed": "Verification code failed to send",
-        "ErrVerifyCode": "Incorrect verification code",
-        "ErrCodeSendLimit": "Verification code sent too frequently",
-        "ErrVerifyFailedTooManyTimes": "Verification code entered incorrectly more than 5 times, account has been restricted, please try again after 1 hour",
-        "ErrAppNotFound": "Application does not exist",
-        "ErrSystem": "System error",
-        "ErrCorpNotFound": "Enterprise does not exist",
-        "ErrCorpInValid": "Enterprise expired",
-        "ErrLoginTimesLimit": "This phone number has reached the maximum login limit, please try again tomorrow",
-        "ErrEmailLoginTimesLimit": "This email has reached the maximum login limit, please try again tomorrow",
-        "ErrParams": "Parameter error, please retry",
-        "ErrVerifyCodeNotFound": "Verification code not sent or expired",
-        "ErrAccNotExistORUnAuth": "尊敬的用户: 根据国家互联网用户实名制相关要求，同时为保障您的账号资产安全，购买或使用该产品之前，需先完成实名认证。3s后自动跳转实名认证页面。 【腾讯云】",
-        "ErrUserHasNoCorp": "This account is not registered or does not belong to an enterprise",
-        "ErrCorpIsNotInAudit": "Enterprise is not under review",
-        "ErrStaffCorpNotMatch": "Employee does not match the enterprise",
-        "ErrOperateDoing": "Request processing, please wait",
-        "ErrStaffInValid": "Invalid employee information",
-        "ErrTelephone": "Incorrect phone number",
-        "ErrDisableLogin": "Due to product upgrade, the original domain of the current platform will no longer be available for login",
-        "ErrEmail": "Incorrect email",
-        "ErrMessageTypeInvalid": "Message type not supported",
-        "ErrUserHasJoinCorp": "You are in enterprise「%s」and must exit the current enterprise before joining",
-        "ErrLoginTypeInvalid": "Invalid login type",
-        "ErrLoginAccountPassword": "Account and password mismatch",
-        "ErrLoginAccountFormat": "Incorrect account format",
-        "ErrLoginAccountExist": "Account already exists",
-        "ErrUinNotMatch": "Master UIN and sub-account UIN mismatch",
-        "ErrSystemIntegratorNotFound": "Integrator does not exist",
-        "ErrSystemIntegratorUserParams": "Integrator login user parameter error",
-        "ErrActivateProduct": "Product activation failed",
-        "ErrTrialProductFail": "Failed to activate trial product",
-        "ErrNotInWhiteList": "Not in the whitelist",
-        "ErrCorpTokenUsage": "Enterprise token count cannot be lower than the used amount",
-        "ErrCorpAppNotEqual": "Enterprise and application ownership do not match",
-        "ErrAvatarURLValid": "Invalid avatar URL",
-        "ErrImageSize": "Image size exceeds the limit",
-        "ErrCorpModelQpmTpmNotFound": "Account model QPM/TPM configuration does not exist",
-        "ErrCorpModelIsExclusive": "The account model is an exclusive concurrency model, please use the shared concurrency model configuration",
-        "ErrConcurrencyRuleRepeated": "Under one model, the same application only supports one rule assignment",
-        "ErrConcurrencyRuleOverLimit": "The maximum concurrency of the model rule exceeds the purchased limit",
-        "ErrCorpModelIsNotExclusive": "Please use the exclusive concurrency model to configure rules",
-        "ErrGetBilling": "Billing items retrieval error",
-        "ErrTencentSms": "Message sending failed",
-        "ErrTencentSmsException": "SMS sending exception",
-        "ErrSmsClientNotConfig": "SMS is not configured",
-        "ErrNotSupportSmsClient": "SMS type not supported",
-        "ErrVerifyCaptchaTicket": "Failed to verify image verification code",
-        "ErrVerifyCaptchaNotMatch": "Invalid Randstr provided",
-        "ErrVerifyCaptchaTicketExpired": "The provided Ticket has expired (Ticket is valid for 5 minutes), please regenerate Ticket and Randstr for verification",
-        "ErrVerifyCaptchaTicketReused": "The provided ticket has been reused, please regenerate ticket and randstr for validation",
-        "ErrVerifyCaptchaDecryptFail": "Invalid ticket provided, please check the ticket",
-        "ErrVerifyCaptchaTicketDiff": "Ticket validation exception",
-        "ErrVerifyCaptchaMismatch": "Parameter validation error",
-        "ErrIOAIdentity": "IOA identity verification failed",
-        "ErrExpireIOAIdentity": "IOA identity verification expired",
-        "ErrRefreshInnerUin": "Internal user identification refresh failed",
-        "ErrCheckInnerUin": "Internal user identification verification failed",
-        "ErrCreateSpace": "Failed to create workspace",
-        "ErrCorpSpaceLimit": "The number of created spaces exceeds the limit",
-        "ErrCorpSpaceNameExist": "Workspace name already exists",
-        "ErrCorpSpaceNotFound": "Workspace information does not exist",
-        "ErrDefaultSpaceNoDoing": "Operations not allowed on the default workspace",
-        "ErrSpaceNameLength": "Workspace name exceeds the limit",
-        "ErrSpaceNameEmpty": "Workspace name is empty",
-        "ErrMsgLogCateExist": "Category name already exists",
-        "ErrMsgLogCateCreate": "Failed to create category",
-        "ErrMsgLogCateDelete": "Failed to delete category",
-        "ErrMsgLogCateUpdate": "Failed to update category",
-        "ErrMsgLogCateName": "Category name does not meet the requirements",
-        "ErrMsgLogCateNotExist": "Category name does not exist",
-        "ErrMsgLogUnmatchedLess": "Insufficient uncategorized records to support intelligent categorization",
-        "ErrMsgLogCateCanntDel": "The category contains records and cannot be deleted",
-        "ErrMsgLogCateMax": "The number of categories has reached the limit",
-        "ErrMsgLogTrans": "Failed to move message records",
-        "ErrMsgLogDeleteChild": "Please delete subcategories first",
-        "ErrParamsNotExpected": "Parameter validation failed, check requirements",
-        "ErrTermsUnaccepted": "Terms of service not accepted, please review and agree to the terms of service",
-        "ErrApprovalNotFound": "Approval Not Found",
-        "ErrApprovalPassed": "Approval Already Approved",
-        "ErrApprovalFinished": "Approval Already Completed",
-        "ErrTraceIDEmpty": "Trace Id Cannot Be Empty",
-        "ErrImageRetrievalOverLimit": "Image Retrieval Exceeds Limit",
-        "ErrImageExpandRation": "Image expansion ratio must be: 1:1, 3:4, 4:3, or 16:9",
-        "ErrImageImageHeightWidth": "Invalid Image Dimensions",
-        "ErrImageExpandFormatNorSupport": "The current image type does not support image expansion",
-        "ErrImageExpandSameRatio": "The image expand ratio is the same with original one, no need to expand!",
-        "ErrHunYuanBadParams": "Request params invalid",
-        "ErrHunYuanUnauthorized": "Unauthorized",
-        "ErrHunYuanUnprocessableEntity": "Input/output audit unpassed",
-        "ErrHunYuanTooManyRequests": "Concurrenct requests exceed limit, please retry again later",
-        "ErrHunYuanInternalError": "Internal error",
-        "ErrMicrosoftAuthFailed": "Microsoft authentication failed, please try again later",
-        "ErrInvalidGrant": "Authorization code is invalid or expired, please reauthorize",
-        "ErrInvalidClient": "Client authentication failed, please contact administrator to check configuration",
-        "ErrUnauthorizedClient": "Client is not authorized, please contact administrator",
-        "ErrInvalidRequest": "Request parameter error, please check and retry",
-        "ErrUnsupportedGrantType": "Unsupported grant type, please contact administrator",
-        "ErrInvalidResource": "Target resource is invalid, please contact administrator to check configuration",
-        "ErrInteractionRequired": "User interaction required, please reauthorize",
-        "ErrTemporarilyUnavailable": "Service temporarily unavailable, please try again later",
-        "ErrNetworkError": "Network connection error, please check network and retry",
-        "ErrGraphAPIInvalidAuthToken": "Graph API authentication token is invalid or expired, please reauthorize",
-        "ErrGraphAPIAccessDenied": "Graph API access denied, insufficient permissions, please contact administrator",
-        "ErrGraphAPIRequestFailed": "Graph API request failed, please try again later",
-        "ErrPlatformTypeNotSupported": "Platform type not supported, please check configuration",
-        "ErrGetAuthEndpoint": "Failed to get authentication endpoint, please try again later",
-        "ErrStateMismatch": "Login parameters are abnormal, please log in again",
-        "ErrGetAccessToken": "Failed to get authorization token, please try again later",
-        "ErrRevokeAuth": "Failed to revoke authorization, please try again later",
-        "ErrAuthCallBack": "Authentication failed, please try again later",
-        "ErrRefreshToken": "Token refresh failed",
-        "ErrSpaceDescLength": "Spatial description length exceeded limit",
-        "ErrGetPromptTemplate": "Failed to get prompt templates",
-        "ErrQuotaSpaceLimit": "Number of spaces has reached the plan quota",
-        "ErrQuotaSpaceStaffLimit": "Number of staff in the space has reached the plan quota",
-        "ErrQuotaContentReview": "Custom review policies are not allowed under the plan quota",
-        "ErrQuotaModel": "Third-party model usage is not allowed under this plan",
-        "ErrNoTokenBalance": "Insufficient balance for current models",
-        "ErrNoTokenExclusive": "Insufficient balance for dedicated models",
-        "ErrTaskIsRunning": "The task is in progress",
-        "ErrAssumeServiceRoleFailed": "Assume service role Failed",
-        "ErrServiceRoleUnavailable": "Service role unavailable",
-        "ErrTooManyRecipients": "Too many recipients",
-        "ErrApprovalRuleNameEmpty": "Approval rule name cannot be empty",
-        "ErrApprovalRuleNameOverLimit": "Approval rule name exceeds character limit",
-        "ErrApprovalRuleDescOverLimit": "Approval rule description exceeds character limit",
-        "ErrApprovalSceneGroupOverLimit": "Approval scope group count exceeds limit",
-        "ErrApprovalSceneResourceEmpty": "Approval scope resource cannot be empty",
-        "ErrApprovalSceneResourceOverLimit": "Approval scope resource count exceeds limit",
-        "ErrApprovalApproverEmpty": "Approver cannot be empty",
-        "ErrApprovalApproverOverLimit": "Approver count exceeds limit",
-        "ErrApprovalSceneConflict": "Approval scope conflicts with existing rule [%s]",
-        "ErrApprovalSceneInternalConflict": "Internal conflict in approval scope configuration",
-        "ErrApprovalInvalidType": "Unsupported approval type",
-        "ErrApprovalSceneSpaceNotFound": "Space in approval scope not found",
-        "ErrApprovalSceneAppNotFound": "Application in approval scope not found",
-        "ErrApprovalInvalidApproverType": "Unsupported approver type",
-        "ErrApprovalInvalidCorpRole": "Invalid corporate role, only super admin and member are supported",
-        "ErrApprovalSpaceRoleNotFound": "Space role not found",
-        "ErrApprovalSpaceRoleSpaceMismatch": "Space role does not match the space in approval scope",
-        "ErrApprovalStaffNotFound": "Specified approver not found",
-        "ErrApprovalPluginCreatorEmpty": "Plugin online approval scope creator role cannot be empty",
-        "ErrApprovalPluginInvalidCreator": "Invalid creator role for plugin online approval scope, only space creator and user are supported",
-        "ErrApprovalRuleNotFound": "Approval rule not found",
-        "ErrApprovalRuleHasPendingApprovals": "Cannot modify or delete approval rule with pending approvals",
-        "ErrApprovalStatusInvalid": "Invalid approval status, only approving status can be cancelled",
-        "ErrApprovalTypeInvalid": "Invalid approval type",
-        "ErrApprovalNoPermission": "No permission to approve this request",
-        "ErrApprovalInvalidAction": "Invalid approval action",
-        "ErrApprovalCommentOverLimit": "Approval comment exceeds character limit",
-        "ErrNotFoundOpenClaw": "OpenClaw not found",
-        "ErrDefaultPolicyNotFound": "default policy not found"
-    }
+
+  client.yaml: |
+    client:
+      filter:
+        - cle-route-propagator
+        - opentelemetry
+      service:
+        - name: mysql.qbot.admin
+          # RESOLVE: keep-public
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: tdsql.qbot.admin
+          # RESOLVE: keep-public
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local"
+        - name: redis.qbot.admin
+          # RESOLVE: keep-public
+          target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379"
+          timeout: 800
+        - name: redis.lke.limiter
+          # RESOLVE: keep-public
+          target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/4"
+          timeout: 800
+        - name: trpc.adp.platform_charger.Finance
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          network: tcp
+          protocol: trpc
+          timeout: 20000
+        - callee: qbot.finance.finance.Finance
+          name: qbot.finance.finance.Finance
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: ${CLIENT_NAMESPACE}
+          network: tcp
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.adp.ai_gateway.Admin
+          namespace: ${CLIENT_NAMESPACE}
+          network: tcp
+          protocol: trpc
+          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
+          timeout: 2000
+        - name: trpc.adp.ai-gateway.api
+          namespace: ${CLIENT_NAMESPACE}
+          network: tcp
+          timeout: 4500000
+          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: http
+        - name: basic.interface.trpc_to_inner.Cloudcc
+          target: "ip://trpc-to-inner-fake-nonexist.{{ .Release.Namespace }}.svc.cluster.local:9090"  # TODO: 待人工确认，私有化环境无外部Cloudcc服务，写个假的避免Panic
+          protocol: trpc
+          timeout: 5000
+          namespace: ${CLIENT_NAMESPACE}
+        - name: trpc.http.cos.Access
+          namespace: Production
+          network: tcp
+          protocol: http
+          target: {{ if eq .Values.global.components.s3.providerType "minio" }}{{ printf "ip://minio.%s.svc.cluster.local:80" .Release.Namespace }}{{- else if eq .Values.global.components.s3.providerType "obs" }}ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}{{- else }}dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn{{- end }}
+          timeout: 5000
+        - name: trpc.SmartAssistant.LLMManagerServer.Chat
+          namespace: ${CLIENT_NAMESPACE}
+          target: "ip://llm-manager-server.{{ .Release.Namespace }}.svc.cluster.local:10001"
+          service_name: trpc.SmartAssistant.LLMManagerServer.Chat
+          timeout: 20000
+        - callee: trpc.smartservice.accessmanager.AccessManager
+          namespace: Production
+          name: trpc.SmartService.AccessManagerServer.AccessManager
+          target: ip://adp-access-manager.{{ .Release.Namespace }}.svc.cluster.local:10001
+        - name: trpc.adp.platform_authenticator.Authenticator
+          target: ip://adp-platform-authenticator.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          timeout: 3000
+        - name: trpc.SmartService.AIConfManagerServer.AIConfManager
+          namespace: Production
+          target: ip://adp-aiconf-manager.{{ .Release.Namespace }}.svc.cluster.local:10002
+          timeout: 3000
+        - name: trpc.adp.platform_permission_config.Api
+          target: ip://adp-platform-permission-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: Production
+          timeout: 3000
+        - name: trpc.adp.platform_permission_config.Admin
+          target: ip://adp-platform-permission-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          timeout: 3000
+        - name: trpc.SmartAssistant.FileManagerServer.ManagerObj
+          namespace: Production
+          target: "ip://adp-kb-file-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          timeout: 3000
+        - name: trpc.KEP.bot-task-config-server.task-config
+          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+          namespace: ${CLIENT_NAMESPACE}
+          env_name: formal
+          callee: trpc.KEP.bot_task_config_server.TaskConfig
+          timeout: 3000
+        - callee: trpc.adp.resource_gallery.Admin
+          namespace: ${CLIENT_NAMESPACE}
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 2000
+          env_name: formal
+        - name: trpc.adp.app_config.Admin
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: ${CLIENT_NAMESPACE}
+          timeout: 5000
+        - name: trpc.adp.app_config.Api
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
+          namespace: ${CLIENT_NAMESPACE}
+          timeout: 5000
+        - callee: trpc.KEP.plugin_config_server.PluginConfigApi
+          name: trpc.KEP.plugin-config-server.PluginConfigApi
+          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: ${CLIENT_NAMESPACE}
+          protocol: trpc
+          # RESOLVE: keep-private
+          timeout: 60000
+        - name: trpc.adp.kb_config.Api
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: ${CLIENT_NAMESPACE}
+          timeout: 5000
+        - callee: trpc.adp.platform_metrology.Api
+          namespace: ${CLIENT_NAMESPACE}
+          target: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
+          protocol: trpc
+          timeout: 20000
+          env_name: formal
+        - name: trpc.adp.platform_manager.audit_log_producer
+          # RESOLVE: keep-private
+          target: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_audit_log_prod&clientid=platform-manager-prod&compression=none&trpcMeta=true"
+          timeout: 1000
+        - callee: trpc.adp.widget_config.WidgetConfigInner
+          namespace: ${CLIENT_NAMESPACE}
+          target: ip://adp-widget-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 5000
+        - callee: trpc.adp.platform_manager.Login
+          namespace: ${CLIENT_NAMESPACE}
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 3000
+        - callee: trpc.adp.platform_charger.Finance
+          namespace: ${CLIENT_NAMESPACE}
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          network: tcp
+          protocol: trpc
+          timeout: 20000
+        - name: elastic.data.statistics
+          namespace: Production
+          # RESOLVE: keep-private
+          target: "ip://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}"
+          password: "${INFRA_MIDDLEWARES_ES_0_USER}:${INFRA_MIDDLEWARES_ES_0_PASSWORD}"
+          protocol: http
+          timeout: 3000
+        - callee: trpc.smartservice.accessmanager.AccessManager
+          namespace: ${CLIENT_NAMESPACE}
+          target: ip://adp-access-manager.{{ .Release.Namespace }}.svc.cluster.local:10001
+          timeout: 10000
+        - callee: trpc.SmartService.AIConfManagerServer.AIConfManager
+          namespace: ${CLIENT_NAMESPACE}
+          target: ip://adp-aiconf-manager.{{ .Release.Namespace }}.svc.cluster.local:10002
+          timeout: 3000
+        - callee: trpc.adp.skill_config.SkillConfigInner
+          namespace: ${CLIENT_NAMESPACE}
+          target: "ip://adp-skill-config.{{ .Release.Namespace }}.svc.cluster.local:8001"  # TODO: 待人工确认
+          protocol: trpc
+          timeout: 5000
+        - callee: trpc.adp.plugin_config.PluginConfigApi
+          namespace: ${CLIENT_NAMESPACE}
+          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 5000
+        - callee: trpc.adp.platform_account.Internal
+          namespace: ${CLIENT_NAMESPACE}
+          target: "ip://adp-platform-account.{{ .Release.Namespace }}.svc.cluster.local:9092"  # TODO: 待人工确认
+          protocol: trpc
+          timeout: 5000
+      namespace: ${CLIENT_NAMESPACE}
+
   errors_zh-CN.json: |
     {
       "ErrPermissionDenied": "权限不足",
       "ErrUserNotFound": "用户不存在",
       "ErrStaffNotFound": "员工不存在",
-      "ErrSessionNotFound": "用户未登录",
+      "ErrSessionNotFound": "用户未登录或者未注册",
       "ErrCodeSendFailed": "验证码发送失败",
       "ErrVerifyCode": "验证码错误",
       "ErrCodeSendLimit": "验证码发送过于频繁",
@@ -1730,7 +1380,7 @@ data:
       "ErrOperateDoing": "请求处理中，请稍候",
       "ErrStaffInValid": "员工信息无效",
       "ErrTelephone": "手机号码不正确",
-      "ErrDisableLogin": "因产品升级，当前平台原域名将不可登录使用",
+      "ErrDisableLogin": "登录状态异常,请登出后重试",
       "ErrEmail": "邮箱地址不正确",
       "ErrMessageTypeInvalid": "消息通道不支持",
       "ErrUserHasJoinCorp": "已在企业「%s」中，请先退出当前企业，再注册或加入新的企业",
@@ -1863,57 +1513,48 @@ data:
       "ErrApprovalInvalidAction": "无效的审批操作",
       "ErrApprovalCommentOverLimit": "审批评论字符数量超限",
       "ErrNotFoundOpenClaw": "未找到openClaw",
-      "ErrDefaultPolicyNotFound": "默认策略不存在"
+      "ErrDefaultPolicyNotFound": "默认策略不存在",
+      "ErrAnnouncementExpired": "公告已过期，无法发布",
+      "ErrAnnouncementTimeInvalid": "公告开始时间不能大于结束时间",
+      "ErrFileTypeInvalid": "文件类型无效",
+      "ErrLicenseExpired": "License 已过期",
+      "ErrLicenseQuotaExceeded": "License 配额已用完",
+      "ErrStorageFileLimit": "请上传指定类型的文件",
+      "ErrThirdPartyEndpointUnavailable": "第三方审核接口不可用，请检查接口地址和密钥是否正确"
     }
-  placeholder.yaml: |
-    APP_PUBLISH_APPROVAL_URL: "https://adp.cloud.tencent.com/webim_exp/?type=dev#/chat"
-    SKILL_CONFIG_INNER_TARGET: polaris://trpc.adp.skill_config.SkillConfigInner
-    IOA_TOF_TOKEN: "" 
-    DEFAULT_POLICIES: 
-      - name: KeyDefaultContentSecurityHigh
-        desc: "KeyDefaultContentSecurityHighDesc"
-        type: 1
-        category: "81004"
-      - name: KeyDefaultContentSecurityMiddle
-        desc: "KeyDefaultContentSecurityMiddleDesc"
-        type: 1
-        category: "81005"
-        is_default: true
-      - name: KeyDefaultContentSecurityLow
-        desc: "KeyDefaultContentSecurityLowDesc"
-        type: 1
-        category: "81006"
 
+  placeholder.yaml: |
+    SKILL_CONFIG_INNER_TARGET: "ip://adp-skill-config.{{ .Release.Namespace }}.svc.cluster.local:8001"  # TODO: 待人工确认
     FUNCTION_PERMISSION:
       deny_modules:
         openclaw:
-          - "trpc.KEP.bot-admin-config-server.Admin"
-          - "trpc.adp.app_config.Admin"
-          - "trpc.adp.kb_config.Admin"
-          - "trpc.adp.app_config.AppConfigExternal"
-          - "trpc.adp.workflow_config.WorkflowConfig"
-          - "trpc.adp.widget_config.WidgetConfig"
-          - "trpc.KEP.bot-evaluate-config-server.Admin"
+          - trpc.KEP.bot-admin-config-server.Admin
+          - trpc.adp.app_config.Admin
+          - trpc.adp.kb_config.Admin
+          - trpc.adp.app_config.AppConfigExternal
+          - trpc.adp.workflow_config.WorkflowConfig
+          - trpc.adp.widget_config.WidgetConfig
+          - trpc.KEP.bot-evaluate-config-server.Admin
       deny_functions:
         openclaw:
-          - "DescribeExperienceCenterAppList"
-          - "DescribeExpInfo"
-          - "DescribePromptTemplateList"
-          - "CreatePromptTemplate"
-          - "ModifyPromptTemplate"
-          - "DeletePromptTemplate"
-          - "AddFavoritePromptTemplate"
-          - "DeleteFavoritePromptTemplate"
-          - "CreatePromptTemplateLabel"
-          - "DeletePromptTemplateLabel"
-          - "ModifyResourceRule"
-          - "CreateSmartMsgLogCategory"
-          - "CreateAlarmStrategy"
-          - "ModifyAlarmStrategy"
-          - "DeleteAlarmStrategy"
-          - "EnableAlarmStrategy"
-          - "ExportAlarmStrategyHistory"
-          - "ModifyConcurrencyRule"
+          - DescribeExperienceCenterAppList
+          - DescribeExpInfo
+          - DescribePromptTemplateList
+          - CreatePromptTemplate
+          - ModifyPromptTemplate
+          - DeletePromptTemplate
+          - AddFavoritePromptTemplate
+          - DeleteFavoritePromptTemplate
+          - CreatePromptTemplateLabel
+          - DeletePromptTemplateLabel
+          - ModifyResourceRule
+          - CreateSmartMsgLogCategory
+          - CreateAlarmStrategy
+          - ModifyAlarmStrategy
+          - DeleteAlarmStrategy
+          - EnableAlarmStrategy
+          - ExportAlarmStrategyHistory
+          - ModifyConcurrencyRule
       whitelist_functions:
         openclaw:
           - "ListModelProvider"
@@ -1938,7 +1579,6 @@ data:
     WIDGET_CONFIG_TARGET: ip://adp-widget-config.{{ .Release.Namespace }}.svc.cluster.local:8001
     PLATFORM_MANAGER_LOGIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
     PLATFORM_MEREOLOGY_API_TARGET: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
-
     THIRD_PARTY:
       query_limit: 1000
       pool_size: 100
@@ -1986,11 +1626,509 @@ data:
         access_token_url: /qbot/public/sns/oauth2/access_token
         user_info_url: /qbot/public/sns/userinfo
         scope: snsapi_userinfo
+    JOINPOINT: default
+    ACCESS_POINT: 4
+    OCP_ADDR: "http://gocp.woa.com/ocp/api/v1/get_config"
+    DEFAULT_LANG: zh-CN
+    CLIENT_NAMESPACE: Production
+    MYSQL_ADMIN_TARGET: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+    TDSQL_ADMIN_TARGET: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local"
+    REDIS_ADMIN_TARGET: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379"
+    REDIS_LIMITER_TARGET: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/4"
+    MONGO_DATA_STATISTICS_TARGET: "mongodb://admin-config-server:v5F_1agqqmchufaJedzn@11.145.58.189:27017/lke-data-statistics?authSource=admin"
+    INNER_CLOUDCC_TARGET: "polaris://basic.interface.trpc_to_inner.Proxy"  # TODO: 待人工确认 无引用
+    COS_ACCESS_TARGET:
+      {{- if eq .Values.global.components.s3.providerType "minio" }}
+      {{ printf "ip://minio.%s.svc.cluster.local:80" .Release.Namespace }}
+      {{- else if eq .Values.global.components.s3.providerType "obs" }}
+      ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}
+      {{- else }}
+      dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn
+      {{- end }}
+    LLM_CHAT_TARGET: "ip://llm-manager-server.{{ .Release.Namespace }}.svc.cluster.local:10001"  # TODO: 待人工确认
+    LLM_MANAGER_TARGET: "ip://llm-manager-server.{{ .Release.Namespace }}.svc.cluster.local:10001"
+    FILE_MANAGER_TARGET: "ip://adp-kb-file-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
+    TRPC_TO_INNER_TARGET: "ip://trpc-to-inner-fake-nonexist.{{ .Release.Namespace }}.svc.cluster.local:9090"  # TODO: 待人工确认，私有化环境无外部Cloudcc服务，写个假的避免Panic
+    AUTHENTICATOR_TARGET: "ip://adp-platform-authenticator.{{ .Release.Namespace }}.svc.cluster.local:9090"  # TODO: 待人工确认
+    AUDIT_LOG_PRODUCER: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_audit_log_prod&clientid=platform-manager-prod&compression=none&trpcMeta=true"
+    MSG_RECORD_ES_ADDR: "ip://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}"
+    PLATFORM_ACCOUNT_API_TARGET: "ip://adp-platform-account.{{ .Release.Namespace }}.svc.cluster.local:9092"  # TODO: 待人工确认
+    IS_PRIVATE: true
+    IS_TKE: true
+    IS_INTL_TKE: false
+    LOGIN_TYPE:
+    - 0
+    - 4
+    - 5
+    - 6
+    SESSION_EXPR: 720h
+    AHEAD_RENEW_TIME: 6h
+    EXP_COOKIE_DOMAIN: {{ .Values.global.clb }}
+    WHITE_LIST_TELEPHONE:
+    - 15750973379
+    - 18611669256
+    - 17875428193
+    WHITE_LIST_USER_ID:
+    - 2
+    - 12
+    - 23
+    ACCOUNT:
+      type: ti
+      apis:
+        account_host: adp-aiconf-manager.{{ .Release.Namespace }}:10001
+    TRIAL:
+      app_max_char_size: 1000000
+      corp_app_quota: 1000
+      corp_max_token_usage: 500000
+      corp_max_char_size: 3000000
+      corp_period: 1440h
+      enable_white_list: false
+      white_list_key: LKE_INNER_USER
+      ban_permission_list:
+      - lkeRepository.config.output.questionClarify
+      - lkeClassify
+      - lkeClassify.config.tag
+      - lkeClassify.config.chat
+      - lkeClassify.config.basic
+      - lkeClassify.config.model.version
+      - lkeClassify.release.call.secret
+      - lkeClassify.release.call.reception
+      - lkeClassify.release.do
+      - lkeSummary
+      - lkeSummary.config.chat
+      - lkeSummary.config.basic
+      - lkeSummary.config.model.version
+      - lkeSummary.config.output.requirement
+      - lkeSummary.config.output.method
+      - lkeSummary.release.call.secret
+      - lkeSummary.release.call.reception
+      - lkeSummary.release.do
+    INFOSEC_BIZ_TYPE_DEFAULT: QD_DS
+    SES:
+    SKIP_PERM_ACTION: []
+    CORP_LIMIT:
+      1864611313395171328: 1000
+      1971385463555073664: 30
+      1904898754515304448: 100
+      1965601435483138880: 100
+      1978697088003381248: 30
+      1980187115816151296: 1000
+      1965969339800397952: 500
+    UNKNOWN_CATE_MARK: 未分类
+    EMBEDDING_MAX_LEN: 4090
+    WHITELIST_FULL_ENABLE_MAP:
+    UNSAFE_DOMAINS:
+    - qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com
+    - hunyuanapi.woa.com
+    LIMIT_CONFIG_INFO_DS_TPM: 1000000
+    TIAN_YU:
+      disable_channel: false
+      channel_uin:
+      secret_id: ${INFRA_MIDDLEWARES_CONTENTSECURITY_SECRETID}
+      secret_key: ${INFRA_MIDDLEWARES_CONTENTSECURITY_SECRETKEY}
+      endpoint: cms.internal.tencentcloudapi.com
+      region: {{ (.Values.global.contentSecurity).region | default "" }}
+      keywords_lib_name_max_length: 20
+      keywords_content_max_length: 20
+      label_white_list:
+        text:
+          - Polity
+          - Porn
+          - Illegal
+          - Abuse
+          - Terror
+          - Value
+        image:
+          - Polity
+          - Porn
+          - Illegal
+          - Abuse
+          - Terror
+          - Sexy
+          - Teenager
+          - Value
+          - Ad
+      label_order:
+        - Illegal
+        - 20006
+        - Terror
+        - 24001
+        - Porn
+        - 20002
+        - Sexy
+        - Abuse
+        - 20007
+        - Polity
+        - Teenager
+        - Value
+        - 28001
+        - Ad
+        - 20105
+      label_black_list:
+        text:
+          - 29999
+          - GeneratedContentRisk
+        image:
+          - 29999
+          - GeneratedContentRisk
+      risk_responses:
+      - risk_response_type: 1
+        risk_input_response: KeyRiskResponseTypeSeriousInput
+        risk_output_response: KeyRiskResponseTypeSeriousOutput
+        is_default: true
+      - risk_response_type: 2
+        risk_input_response: KeyRiskResponseTypeMildInput
+        risk_output_response: KeyRiskResponseTypeMildOutput
+      - risk_response_type: 3
+        risk_input_response: KeyRiskResponseTypeLivelyInput
+        risk_output_response: KeyRiskResponseTypeLivelyOutput
+      default_category:
+        high: '81004'
+        middle: '81005'
+        low: '81006'
+      default_policies:
+        - name: KeyDefaultContentSecurityHigh
+          desc: KeyDefaultContentSecurityHighDesc
+          type: 1
+          category: "81004"
+        - name: KeyDefaultContentSecurityMiddle
+          desc: KeyDefaultContentSecurityMiddleDesc
+          type: 1
+          category: "81005"
+          is_default: true
+        - name: KeyDefaultContentSecurityLow
+          desc: KeyDefaultContentSecurityLowDesc
+          type: 1
+          category: "81006"
+    ES_CONFIG:
+      name: trpc.elasticsearch.lke.admin
+      url: "http://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}"
+      user: ${INFRA_MIDDLEWARES_ES_0_USER}
+      password: ${INFRA_MIDDLEWARES_ES_0_PASSWORD}
+      timeout: 8000
+      log:
+        enabled: true
+        request_enabled: true
+        request_body: true
+      index_name:
+        content_recognition: content_recognition
+        content_recognition_stats: content_recognition_stats
+    AUDIT_LOG_ES:
+      name: trpc.elasticsearch.lke.audit_log
+      url: "http://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}"
+      user: ${INFRA_MIDDLEWARES_ES_0_USER}
+      password: ${INFRA_MIDDLEWARES_ES_0_PASSWORD}
+      timeout: 8000
+      log:
+        enabled: true
+        request_enabled: true
+        request_body: true
+      index_name:
+        audit_log: audit_log
+    REPLY_METHOD:
+      1: 10
+      2: 11
+      3: 1
+      4: 3
+      5: 2
+      6: 0
+      7: 1
+      8: 10
+      9: 0
+      10: 0
+      11: 9
+      12: 4
+      13: 8
+      14: 7
+      15: 10
+      16: 6
+      17: 6
+      18: 10
+      19: 10
+      20: 0
+    APPROVAL:
+      max_rule_count: 20
+      max_rule_name_length: 50
+      max_rule_desc_length: 300
+      max_scene_group_count: 10
+      max_scene_resource_count: 100
+      max_approver_count: 3
+      max_comment_length: 500
+      app_publish_approval_url: "https://adp.cloud.tencent.com/webim_exp/?type=dev#/chat"
+      skip_approving_actions:
+      - DescribeReleaseInfo
+      - ListReleaseConfigPreview
+      - ListTaskFlowPreview
+      - ListAppAgentReleasePreview
+      - ListRejectedQuestionPreview
+      - ListReleaseSynonymsPreview
+      - ListReleaseLabelPreview
+      - ListReleaseDb
+      - ListReleaseDbTable
+    NOTIFY_CONFIG:
+      sink_enabled:
+        tencent_sms: 0
+        tencent_email: 0
+        webhook: 0
+        ding_talk: 0
+        feishu: 0
+        wecom: 0
+    IOA_LOGIN:
+      enable_ioa_login: false
+      enable_check_inner: false
+      tof_token: xxxx  # IOA登录，专有云可忽略
+      tof_expiration_gap: 3m
+      white_list: []
+    MSG_LOG_ES_WHITE_LIST:
+    - 100034812856
+    - 100038737751
+    - 100021406304
+    - 100027977822
+    - 91000000003
+    - 3045335642
+    - 100039384462
+    - 100013620161
+    - 100036047764
+    - 100042573848
+    - 100041566819
+    - 100001556918
+    - 100011268724
+    - 100041121653
+    - 100044078473
+    - 100028448903
+    - 100009128758
+    - 100004528167
+    - 3369900897
+    - 100006623454
+    - 770967167
+    - 100018381202
+    - 100041133456
+    - 100007045414
+    - 100018021932
+    - 100009327165
+    - 100040729858
+    - 100002840660
+    - 100034032793
+    - 3034334170
+    - 100044160085
+    - 100043950747
+    - 100025633213
+    - 100012301793
+    - 100018930774
+    - 100008634787
+    - 278408910
+    - 100042040627
+    - 100011600512
+    - 100043656306
+    - 100043747429
+    - 100006491589
+    - 100001001014
+    - 100037980417
+    - 100030513581
+    - 100043020912
+    - 100044088176
+    - 100021969964
+    - 100025601703
+    - 82091188
+    - 100033725386
+    - 100041498772
+    - 100019970872
+    - 100042924071
+    - 100009510649
+    - 100039928546
+    - 2159973417
+    - 100036153435
+    - 3025264800
+    - 100039538871
+    - 100029914462
+    - 100016010414
+    - 100014906661
+    - 100044376699
+    - 100040599573
+    - 100009128625
+    - 3471874057
+    - 100023403515
+    - 100025168225
+    - 100034859488
+    - 100001127589
+    - 100007022265
+    - 100035988884
+    - 3105307924
+    - 480307326
+    - 100006447818
+    - 100011104664
+    - 100043719022
+    - 3205597606
+    - 100007258682
+    - 100031385875
+    - 100015594159
+    - 100014556879
+    - 100031104408
+    - 909619400
+    - 100008846850
+    - 100041269865
+    - 100000016354
+    - 100000059916
+    - 100000060301
+    - 100000061166
+    - 100000062750
+    - 100000083924
+    - 100000092040
+    - 100000190094
+    - 100000270433
+    - 100000287663
+    - 100000296224
+    - 100000344080
+    - 100000430775
+    - 100000431824
+    - 100000445247
+    - 100000459674
+    - 100000467840
+    - 100000483613
+    - 100000489186
+    - 100000491268
+    - 100000523387
+    - 100000532373
+    - 100000558463
+    - 100000563302
+    - 100000581785
+    - 100000609289
+    - 100000619298
+    - 100000658963
+    - 100000670170
+    - 100000672710
+    - 100000674481
+    - 100000784486
+    - 100000794430
+    - 100000795753
+    - 100000823335
+    - 100000849340
+    - 100000911449
+    - 100000943346
+    - 100000949692
+    - 100000975888
+    - 100001051232
+    - 100001068199
+    - 100001125673
+    - 100001129056
+    - 100001140404
+    - 100001141670
+    - 100001166104
+    - 100001173849
+    - 100001211216
+    - 100001244088
+    - 100001254147
+    - 100001264917
+    - 100001310031
+    - 100001310080
+    - 100001426576
+    - 100001453215
+    - 100001475120
+    - 100001475605
+    - 100001528951
+    - 100001540382
+    - 100001566778
+    - 100001626128
+    - 100002305996
+    - 100002594429
+    - 100002643314
+    - 100002662104
+    - 100002724801
+    - 100002732125
+    - 100002826127
+    - 100002864904
+    - 100002871816
+    - 100002981078
+    - 100003000840
+    - 100003054009
+    - 100003083491
+    - 100003108669
+    - 100003156082
+    - 100003171760
+    - 100003181791
+    - 100003284990
+    - 100003301239
+    - 100003381896
+    - 100003401887
+    - 100003405565
+    - 100003435751
+    - 100003462750
+    - 100003568146
+    - 100003570297
+    - 100003583482
+    - 100003648037
+    - 100003888170
+    - 100004014189
+    - 100004029373
+    - 100004041703
+    - 100004117156
+    - 100004247813
+    - 100004263313
+    - 100004272312
+    - 100004332246
+    - 100004336019
+    LICENSE:
+      type: youtu
+      apis:
+        host: "ti-license.ti-base.svc.cluster.local:8081"
+        version: 2021-02-05
+        server: ti-auth
+        secret_id: {{ .Values.global.ti_license.appId }}
+        secret_key: {{ .Values.global.ti_license.secretKey }}
+      app_license_ids:
+        knowledge_qa: 258
+        summary: 259
+        classify: 260
+      atomic_license_ids:
+        document_parsing: 261
+        embedding: 262
+        context_rewriting: 263
+      model_license_ids:
+        cs-normal-70b: 252
+        lke-deepseek-r1-0528: 270
+        lke-deepseek-v3-0324: 271
+        cs-normal-merge: 285
+      model_license_map:
+        cs-normal-70b: 252
+        lke-deepseek-r1-0528: 270
+        lke-deepseek-v3-0324: 271
+        cs-normal-merge: 285
+      timeout: 30
+      expire_time: 60
+    AGENT_BACKGROUND:
+    MSG_LOG_ES_WHITE_ALL_OPEN: true
+    LICENSE_HOST:
+      adp: "https://adp.cloud.tencent.com/cgi/apex/test/adp/platform/CheckLicense"
+    PUBLIC_KEY: |
+      -----BEGIN PUBLIC KEY-----
+      MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAurReoU7qNrUu+hVIiCLM
+      yXfOUZIODPMuR9xphD8S+/Df8DDj40lVOgU3sh0sghFmkhva71fji+N+a279wsjd
+      MDBd5ZO7hBApxOdm82TUVnx1be+PhvIkChDKIbOlZJ+GG/gbZsrbCzR+1yHI6h5u
+      DmumU4WRGpBg28/6quJ2nl1GUWJAjNCtGdPozJ0Q2Gm0nq1MrQPf5fjBzxJ2GI83
+      iM8We8MyeNQO/iAbr+iUqG1XsjD4QqDUUqcgBYRGexS0HHuGYrDWEUvkBnsgqdpR
+      zVgqxxJhsDCz7IiqFaTugJJDIoH2/uPJ4rAwSxko481Li1VCKpQQ6KN2mM7cMEeK
+      nGakkgkI0OI5znUgC5vBoprUkEO0pk1JcaIrEnEZm5pZCrBJsSbCLQLbiDReSe7q
+      XTO54hyFiHv1huweQB5psL/2O0WvKcSM4H4zgAWSSEatxZ/MKD8ESmjgLcUg6KFo
+      8aGyRNJLv3+nE7qMLagJDtt0Gqinutu/SXwurj75+Xb2DQWD5JGvkwvvlt5Muvcd
+      2HjdhWqwM5sR37a58YK3Rd/M+XqFpOjgXQ1si3m1CyXGAOscgm4/p5pFBgUOjmfI
+      tyqsHyMMdAugX6Duo20FkKZwC/gPtAeNYso/Vxt0wRifIrJZPUkdTTOPcmtx+a+6
+      +8Dhq8soyKlm51Dc6ia0cUECAwEAAQ==
+      -----END PUBLIC KEY-----
+    INSTANCE_ID: ''
+    ADMIN_BYPASS:
+      enable: true
+      default_staff_id: 1
+      default_staff_biz_id: 1781137320049901568
+      default_corp_id: 2
+      default_corp_biz_id: 1781137320016347136
 
 
   trpc_go.yaml: |
     global:
-      namespace: Production
+      namespace: ${NAMESPACE}
+      serverConnector:
+        joinPoint: ${JOINPOINT}
+      env_name: ${ENV_NAME}
     server:
       app: adp
       server: platform-manager
@@ -2004,13 +2142,12 @@ data:
         write_timeout: 60000
       filter:
         - recovery
-        - i18n
         - validation
-        - accesslog
         - debuglog
         - cle-route-propagator
         - opentelemetry
         - cos_rewrite
+        - i18n-adp
       service:
         - name: trpc.adp.platform_manager.Admin
           ip: ${POD_IP}
@@ -2040,7 +2177,7 @@ data:
             - session
             - permission
         - name: trpc.adp.platform_manager.audit_log_consumer
-          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=adp_audit_log_prod&group=platform-manager-prod&batch=5&batchFlush=1000
+          address: "${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=adp_audit_log_prod&group=platform-manager-prod&batch=5&batchFlush=1000"
           protocol: kafka
           timeout: 30000
         - name: trpc.adp.platform_manager.AutoRefreshTokenTask
@@ -2058,16 +2195,36 @@ data:
         - name: trpc.adp.platform_manager.RefreshInnerUinTask
           ip: ${POD_IP}
           port: 9096
-          network: "*/10 * * * * *?disable=0&scheduler=RefreshInnerUinTask&holdTime=5"
+          network: "0 * * * * *?disable=0&scheduler=RefreshInnerUinTask&holdTime=5"
           protocol: timer
           timeout: 3600000
         - name: trpc.adp.platform_manager.CheckLicense
           ip: 0.0.0.0
           port: 9095
-          network: 5 */1 * * * *?disable=0&startAtOnce=1&holdTime=5
+          network: "5 */1 * * * *?disable=0&startAtOnce=0&holdTime=5"
           protocol: timer
           timeout: 60000
-
+        - name: trpc.adp.platform_manager.Http
+          ip: ${POD_IP}
+          port: 9097
+          network: tcp
+          protocol: http
+          timeout: 5000
+        - name: trpc.adp.platform_manager.v2.External
+          ip: ${POD_IP}
+          port: 9098
+          network: tcp
+          protocol: adp-capi
+          timeout: 5000
+          filter:
+            - session
+            - permission
+        - name: trpc.adp.platform_manager.v2.Internal
+          ip: ${POD_IP}
+          port: 9099
+          network: tcp
+          protocol: trpc
+          timeout: 30000
     plugins:
       telemetry:
         opentelemetry:
@@ -2095,14 +2252,32 @@ data:
       log:
         default:
           - writer: console
-            level: error
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
           - writer: file
-            level: debug
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
             writer_config:
               filename: /app/logs/trpc.log
-              max_size: 100
+              write_mode: 2
+              roll_type: size
+              max_size: 200
               max_backups: 10
-              max_age: 7
               compress: false
       config:
         file:
@@ -2110,18 +2285,18 @@ data:
             - name: rainbow
               path: /app/conf/
             - name: global
-              appid: ${RAINBOW_APP_ID}  # appid
-              group: global # 配置所属组
-              type: kv   # 七彩石数据格式, kv(默认), table
+              appid: ${RAINBOW_APP_ID}
+              group: global
+              type: kv
               env_name: ${RAINBOW_ENV_NAME}
               timeout: 2000
               enable_client_provider: true
       i18n:
-        i18n:
-          default_lang: zh-CN
+        i18n-adp:
+          default_lang: ${DEFAULT_LANG}
           supported_languages:
-            - zh-CN
-            - en-US
+          - zh-CN
+          - en-US
           data_provider:
             type: rainbow
             prefix: biz
@@ -2130,29 +2305,30 @@ data:
               zh-CN: 1
               en-US: 3
       registry:
-        polaris:
       selector:
         polaris:
-          enable_servicerouter: true
-      filter:
-        cos_rewrite:
-          path_prefixes:
-            - /public
-            - /qbot
+          enable_servicerouter: true # 注意这里一定要使用 true
+          join_point: ${JOINPOINT}
+
+
     client:
       filter:
         - cle-route-propagator
         - opentelemetry
       service:
         - name: mysql.qbot.admin
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+          # RESOLVE: keep-public
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: tdsql.qbot.admin
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local
+          # RESOLVE: keep-public
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local"
         - name: redis.qbot.admin
-          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379
+          # RESOLVE: keep-public
+          target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379"
           timeout: 800
         - name: redis.lke.limiter
-          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/4
+          # RESOLVE: keep-public
+          target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/4"
           timeout: 800
         - name: trpc.adp.platform_charger.Finance
           target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
@@ -2163,27 +2339,27 @@ data:
         - callee: qbot.finance.finance.Finance
           name: qbot.finance.finance.Finance
           target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
-          namespace: Production
+          namespace: ${CLIENT_NAMESPACE}
           network: tcp
           protocol: trpc
           timeout: 20000
         - name: trpc.adp.ai_gateway.Admin
-          namespace: Production
+          namespace: ${CLIENT_NAMESPACE}
           network: tcp
           protocol: trpc
           target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
-          timeout: 2000 
+          timeout: 2000
         - name: trpc.adp.ai-gateway.api
-          namespace: Production
-          network: tcp    
+          namespace: ${CLIENT_NAMESPACE}
+          network: tcp
           timeout: 4500000
           target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
           protocol: http
         - name: basic.interface.trpc_to_inner.Cloudcc
-          target: ${TRPC_TO_INNER_TARGET}
+          target: "ip://trpc-to-inner-fake-nonexist.{{ .Release.Namespace }}.svc.cluster.local:9090"  # TODO: 待人工确认，私有化环境无外部Cloudcc服务，写个假的避免Panic
           protocol: trpc
           timeout: 5000
-          namespace: Production
+          namespace: ${CLIENT_NAMESPACE}
         - name: trpc.http.cos.Access
           namespace: Production
           network: tcp
@@ -2191,8 +2367,8 @@ data:
           target: {{ if eq .Values.global.components.s3.providerType "minio" }}{{ printf "ip://minio.%s.svc.cluster.local:80" .Release.Namespace }}{{- else if eq .Values.global.components.s3.providerType "obs" }}ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}{{- else }}dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn{{- end }}
           timeout: 5000
         - name: trpc.SmartAssistant.LLMManagerServer.Chat
-          namespace: Production
-          target: ${LLM_MANAGER_TARGET}
+          namespace: ${CLIENT_NAMESPACE}
+          target: "ip://llm-manager-server.{{ .Release.Namespace }}.svc.cluster.local:10001"
           service_name: trpc.SmartAssistant.LLMManagerServer.Chat
           timeout: 20000
         - callee: trpc.smartservice.accessmanager.AccessManager
@@ -2203,7 +2379,7 @@ data:
           target: ip://adp-platform-authenticator.{{ .Release.Namespace }}.svc.cluster.local:9090
           namespace: Production
           timeout: 3000
-        - name:  trpc.SmartService.AIConfManagerServer.AIConfManager
+        - name: trpc.SmartService.AIConfManagerServer.AIConfManager
           namespace: Production
           target: ip://adp-aiconf-manager.{{ .Release.Namespace }}.svc.cluster.local:10002
           timeout: 3000
@@ -2211,68 +2387,99 @@ data:
           target: ip://adp-platform-permission-config.{{ .Release.Namespace }}.svc.cluster.local:9092
           namespace: Production
           timeout: 3000
+        - name: trpc.adp.platform_permission_config.Admin
+          target: ip://adp-platform-permission-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          timeout: 3000
         - name: trpc.SmartAssistant.FileManagerServer.ManagerObj
           namespace: Production
-          target: ${FILE_MANAGER_TARGET}
+          target: "ip://adp-kb-file-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
           timeout: 3000
         - name: trpc.KEP.bot-task-config-server.task-config
           target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
-          namespace: Production
+          namespace: ${CLIENT_NAMESPACE}
           env_name: formal
           callee: trpc.KEP.bot_task_config_server.TaskConfig
           timeout: 3000
         - callee: trpc.adp.resource_gallery.Admin
-          namespace: Production
+          namespace: ${CLIENT_NAMESPACE}
           target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
           protocol: trpc
-          timeout: 20000
+          timeout: 2000
           env_name: formal
         - name: trpc.adp.app_config.Admin
           target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
-          namespace: Production
-          timeout: 20000
+          namespace: ${CLIENT_NAMESPACE}
+          timeout: 5000
         - name: trpc.adp.app_config.Api
           target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
-          namespace: Production
-          timeout: 20000
+          namespace: ${CLIENT_NAMESPACE}
+          timeout: 5000
         - callee: trpc.KEP.plugin_config_server.PluginConfigApi
           name: trpc.KEP.plugin-config-server.PluginConfigApi
           target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
-          namespace: Production
+          namespace: ${CLIENT_NAMESPACE}
           protocol: trpc
+          # RESOLVE: keep-private
           timeout: 60000
         - name: trpc.adp.kb_config.Api
           target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
-          namespace: Production
+          namespace: ${CLIENT_NAMESPACE}
           timeout: 5000
         - callee: trpc.adp.platform_metrology.Api
-          namespace: Production
+          namespace: ${CLIENT_NAMESPACE}
           target: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
           protocol: trpc
           timeout: 20000
           env_name: formal
         - name: trpc.adp.platform_manager.audit_log_producer
-          target: kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_audit_log_prod&clientid=platform-manager-prod&compression=none&trpcMeta=true
+          # RESOLVE: keep-private
+          target: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_audit_log_prod&clientid=platform-manager-prod&compression=none&trpcMeta=true"
           timeout: 1000
         - callee: trpc.adp.widget_config.WidgetConfigInner
-          namespace: Production
+          namespace: ${CLIENT_NAMESPACE}
           target: ip://adp-widget-config.{{ .Release.Namespace }}.svc.cluster.local:8001
           protocol: trpc
-          timeout: 60000
+          timeout: 5000
         - callee: trpc.adp.platform_manager.Login
-          namespace: Production
+          namespace: ${CLIENT_NAMESPACE}
           target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
           protocol: trpc
-          timeout: 6000
+          timeout: 3000
         - callee: trpc.adp.platform_charger.Finance
-          namespace: Production
+          namespace: ${CLIENT_NAMESPACE}
           target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
           network: tcp
           protocol: trpc
           timeout: 20000
         - name: elastic.data.statistics
-          namespace: Production                         
-          target: ip://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}
-          password: ${INFRA_MIDDLEWARES_ES_0_USER}:${INFRA_MIDDLEWARES_ES_0_PASSWORD}
+          namespace: Production
+          # RESOLVE: keep-private
+          target: "ip://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}"
+          password: "${INFRA_MIDDLEWARES_ES_0_USER}:${INFRA_MIDDLEWARES_ES_0_PASSWORD}"
           protocol: http
           timeout: 3000
+        - callee: trpc.smartservice.accessmanager.AccessManager
+          namespace: ${CLIENT_NAMESPACE}
+          target: ip://adp-access-manager.{{ .Release.Namespace }}.svc.cluster.local:10001
+          timeout: 10000
+        - callee: trpc.SmartService.AIConfManagerServer.AIConfManager
+          namespace: ${CLIENT_NAMESPACE}
+          target: ip://adp-aiconf-manager.{{ .Release.Namespace }}.svc.cluster.local:10002
+          timeout: 3000
+        - callee: trpc.adp.skill_config.SkillConfigInner
+          namespace: ${CLIENT_NAMESPACE}
+          target: "ip://adp-skill-config.{{ .Release.Namespace }}.svc.cluster.local:8001"  # TODO: 待人工确认
+          protocol: trpc
+          timeout: 5000
+        - callee: trpc.adp.plugin_config.PluginConfigApi
+          namespace: ${CLIENT_NAMESPACE}
+          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 5000
+        - callee: trpc.adp.platform_account.Internal
+          namespace: ${CLIENT_NAMESPACE}
+          target: "ip://adp-platform-account.{{ .Release.Namespace }}.svc.cluster.local:9092"  # TODO: 待人工确认
+          protocol: trpc
+          timeout: 5000
+      namespace: ${CLIENT_NAMESPACE}

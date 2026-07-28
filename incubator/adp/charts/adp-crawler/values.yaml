@@ -1,6 +1,6 @@
 images:
   adp-crawler:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:crawl-59d89d1-147"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:crawl-stable_iaas_v4.0.3.0-5a93e75-170"
 resources:
   limits:
     cpu: 1

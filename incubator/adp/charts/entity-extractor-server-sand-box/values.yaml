@@ -1,4 +1,4 @@
 images:
   entity-extractor-server-sand-box:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/smartassistant.entityextractorserversandbox:default-b-13-f_2.0.0.32_20260503183022_Tag_EntityExtractorServer_20250708_01_iaas"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/smartassistant.entityextractorserversandbox:default-b-14-f_2.0.0.35_20260723112946_Tag_EntityExtractorServer_20250708_01_iaas"
 replicas: 1

@@ -9,10 +9,10 @@ data:
   config.json: |
     {
           "cos": {
-            "secret_id": {{ .Values.global.components.s3.cos.secretId | quote }},
-            "secret_key": {{ .Values.global.components.s3.cos.secretKey | quote }},
-            "region": {{ .Values.global.components.s3.cos.region | quote }},
-            "bucket": {{ .Values.global.components.s3.cos.bucket | quote }},
+            "secret_id": "${INFRA_MIDDLEWARES_S3_COS_SECRETID}",
+            "secret_key": "${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}",
+            "region": "${INFRA_MIDDLEWARES_S3_COS_REGION}",
+            "bucket": "${INFRA_MIDDLEWARES_S3_COS_BUCKET}",
             "key_prefix": {{ .Values.plugincosutil.env.LKE_COS_KEY_PREFIX | quote }},
             "expire_time": {{ .Values.plugincosutil.env.LKE_COS_EXPIRE_TIME | quote }}
           },

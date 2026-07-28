@@ -1,3 +1,4 @@
+{{- if and .Values.enabled .Values.init.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -45,6 +46,7 @@ spec:
         {{- end }}
         {{- end }}
     spec:
+      serviceAccountName: {{ .Release.Name }}-data-init-sa
       restartPolicy: Never
       containers:
       - name: data-init
@@ -55,151 +57,54 @@ spec:
           - "/bin/sh"
           - "-c"
           - |
-            /app/bin/cross-up --config /app/conf/trpc_go.yaml init --target v3.4.1
-            EXIT_CODE=$?
+            TARGET_VERSION="{{ .Values.targetVersion }}"
+
+            # 版本比较函数：version_lt A B 返回 0 表示 A < B
+            version_lt() {
+              [ "$1" = "$2" ] && return 1
+              printf '%s\n%s\n' "$1" "$2" | sort -V -C 2>/dev/null
+            }
+
+            echo "=== Querying cluster data version ==="
+            VERSION_OUTPUT=$(/app/bin/cross-up --config /app/conf/trpc_go.yaml version 2>&1) || VERSION_OUTPUT=""
+
+            if [ -z "$VERSION_OUTPUT" ]; then
+              # 无版本数据 → 首次安装
+              echo "=== No version data found, running init ==="
+              /app/bin/cross-up --config /app/conf/trpc_go.yaml init --target ${TARGET_VERSION}
+              EXIT_CODE=$?
+            else
+              echo "$VERSION_OUTPUT"
+              # 仅提取形如 vX.Y.Z 或 vX.Y.Z.W 的有效版本号，未设置或占位符（如 "(未设置)"）会被视为空
+              # 精确匹配行，避免 "(upgrade)" 误命中 "(post_upgrade)"
+              VERSION_REGEX='v[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?'
+              INIT_VERSION=$(echo "$VERSION_OUTPUT" | awk '/\(init\)/'    | grep -oE "$VERSION_REGEX" | head -n1)
+              UPGRADE_VERSION=$(echo "$VERSION_OUTPUT" | awk '/\(upgrade\)/' | grep -oE "$VERSION_REGEX" | head -n1)
+
+              if [ -z "$INIT_VERSION" ]; then
+                # init 版本不存在 → 首次安装
+                echo "=== No init version found, running init ==="
+                /app/bin/cross-up --config /app/conf/trpc_go.yaml init --target ${TARGET_VERSION}
+                EXIT_CODE=$?
+              elif [ -z "$UPGRADE_VERSION" ] || version_lt "$UPGRADE_VERSION" "$TARGET_VERSION"; then
+                # init 已执行，但 upgrade 版本不存在或 < target → 执行 upgrade
+                echo "=== Upgrading (init=${INIT_VERSION}, upgrade=${UPGRADE_VERSION:-none}) to ${TARGET_VERSION} ==="
+                /app/bin/cross-up --config /app/conf/trpc_go.yaml upgrade --target ${TARGET_VERSION}
+                EXIT_CODE=$?
+              else
+                # init 已执行且 upgrade >= target → 跳过
+                echo "=== Already upgraded (init=${INIT_VERSION}, upgrade=${UPGRADE_VERSION}), target=${TARGET_VERSION}, skipping ==="
+                EXIT_CODE=0
+              fi
+            fi
+
             if [ $EXIT_CODE -ne 0 ]; then
-              echo "=== FAILED with exit code $EXIT_CODE, sleeping 10min for debug ==="
-              sleep 600
+              echo "=== FAILED with exit code $EXIT_CODE, sleeping forever for debug ==="
+              sleep infinity
             fi
             exit $EXIT_CODE
         env:
-          # 部署的地域，国内版(public)还是海外版(intl)，默认public。数据初始化时有差异的情况下基于此变量做差异处理
-          - name: DEPLOY_REGION
-            value: _public
-          - name: INSTALL_NS
-            value: {{ .Release.Namespace }}
-          # ============================================================
-          # 应用基础URL 用于替换第三方插件mcp服务器的地址
-          # ============================================================
-          - name: APP_BASE_URL
-            value: {{ printf "%s://%s" (.Values.global.scheme | default "http") (.Values.global.clb | default "") | quote }}
-          # ============================================================
-          # ADP apikey替换
-          # ============================================================
-          - name: ADP_API_KEY
-            value: "{{ dig "modelServices" "adp" "apiKey" "" .Values.global }}"
-          - name: HUNYUAN_API_KEY
-            value: "{{ dig "modelServices" "hunyuan" "apiKey" "" .Values.global }}"
-          # ============================================================
-          # MySQL 数据库连接（cross-up 核心 + 各初始化步骤共用）
-          # 用于: config.go applyEnvOverrides, initialize_db_schema,
-          #       initialize_db_configs, initialize_vector_db
-          # ============================================================
-          - name: DB_HOST
-            value: "{{ .Values.global.components.db.host }}"
-          - name: DB_PORT
-            value: "{{ .Values.global.components.db.port | default "3306" }}"
-          - name: DB_USER
-            value: "{{ .Values.global.components.db.user }}"
-          - name: DB_PASSWORD
-            value: "{{ .Values.global.components.db.password }}"
-          - name: DISABLE_SHARDKEY
-            value: "{{ eq .Values.global.components.db.providerType "tdsql" | ternary "false" "true" }}"
-          # ============================================================
-          # Elasticsearch 连接
-          # ============================================================
-          - name: ES_HOST
-            value: "{{ (index .Values.global.components.es.hosts 0) }}"
-          - name: ES_PORT
-            value: "{{ .Values.global.components.es.port | default "9200" }}"
-          - name: ES_USERNAME
-            value: "{{ .Values.global.components.es.user | default "" }}"
-          - name: ES_PASSWORD
-            value: "{{ .Values.global.components.es.password | default "" }}"
-          - name: ES_SCHEME
-            value: "http"
-
-          # ============================================================
-          # s3 对象存储
-          # ============================================================
-          - name: S3_PROVIDER
-            value: "{{ .Values.global.components.s3.providerType }}"
-          - name: S3_HOST
-            value: {{ include "ex.s3_host" . | trim | quote }}
-          - name: S3_RESOURCE_URL
-            value: {{ include "ex.s3_resource_url" . | trim | quote }}
-          {{- if .Values.global.components.s3.cos.stsKey }}
-          - name: S3_ACCESS_KEY
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.global.components.s3.cos.stsKey }}
-                key: ADP_ASSUME_ROLE_SECRET_ID
-          - name: S3_SECRET_KEY
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.global.components.s3.cos.stsKey }}
-                key: ADP_ASSUME_ROLE_SECRET_KEY
-          {{- else }}
-          - name: S3_ACCESS_KEY
-            value: {{ include "ex.s3_AK" . | trim | quote }}
-          - name: S3_SECRET_KEY
-            value: {{ include "ex.s3_SK" . | trim | quote }}
-          {{- end }}
-          - name: S3_BUCKET_NAME
-            value: {{ include "ex.s3_bucket" . | trim | quote }}
-          - name: S3_RESOURCE_DIR
-            value: "{{ .Values.resourcesDir }}"
-          - name: S3_ENABLE_PROXY
-            value: "{{ .Values.global.components.s3.enableProxy | default false }}"
-
-          # ============================================================
-          # 向量数据库 (VDB)
-          # ============================================================
-          {{- $vdbList := dig "vdb" (list) .Values.global.components | default (list) }}
-          {{- if gt (len $vdbList) 0 }}
-          {{- $vdb0 := index $vdbList 0 }}
-          - name: ENABLE_VDB
-            value: {{ $vdb0.enabled | default true | toString | quote }}
-          {{- if ne ($vdb0.enabled | default true | toString) "false" }}
-          - name: VDB_ADDR
-            value: {{ $vdb0.addr | quote }}
-          - name: VDB_ACCOUNT
-            value: {{ $vdb0.account | quote }}
-          - name: VDB_APIKEY
-            value: {{ $vdb0.apiKey | quote }}
-          - name: VDB_DATABASES
-            value: "db-vdb-0,db-vdb-1,db-vdb-2,db-vdb-3,db-vdb-4"
-          {{- end }}
-          {{- else }}
-          - name: ENABLE_VDB
-            value: "false"
-          {{- end }}
-
-          # ============================================================
-          # CLICKHOUSE CH_CLUSTER
-          # ENABLE_CLICKHOUSE 由 cross-up 的 initialize_clickhouse.yaml file when 条件读取
-          # 置为 "false" 时跳过整个 ClickHouse 初始化，适用于客户暂未部署 CH 的场景
-          # 由 global.components.clickhouse.disabled 控制（默认 false=启用），老客户未填写时保持启用，向后兼容
-          # ============================================================
-          {{- if eq (dig "clickhouse" "disabled" false .Values.global.components | toString) "true" }}
-          - name: ENABLE_CLICKHOUSE
-            value: "false"
-          {{- else }}
-          - name: ENABLE_CLICKHOUSE
-            value: "true"
-          - name: CH_HOST
-            value: {{ index .Values.global.components.clickhouse.hosts 0 | quote }}
-          - name: CH_PORT
-            value: {{ .Values.global.components.clickhouse.port | quote }}
-          - name: CH_USER
-            value: {{ .Values.global.components.clickhouse.user | quote }}
-          - name: CH_PASSWORD
-            value: {{ .Values.global.components.clickhouse.password | quote }}
-          - name: CH_CLUSTER
-            value: "{{ .Values.global.components.clickhouse.cluster | default "default_cluster" }}"
-          {{- end }}
-
-          # ============================================================
-          # 微信第三方平台信息
-          # ============================================================
-          - name: WECHAT_COMPONENT_APP_ID
-            value: {{ index .Values.global.wechat.componentAppId | quote }}
-          - name: WECHAT_COMPONENT_APP_SECRET
-            value: {{ index .Values.global.wechat.componentAppSecret | quote }}
-          - name: WECHAT_COMPONENT_TOKEN
-            value: {{ index .Values.global.wechat.componentToken | quote }}
-          - name: WECHAT_COMPONENT_AES_KEY
-            value: {{ index .Values.global.wechat.componentAesKey | quote }}
+          {{- include "dataInit.commonEnv" . | nindent 10 }}
         resources:
           limits:
             cpu: "2"
@@ -207,3 +112,4 @@ spec:
           requests:
             cpu: "2"
             memory: 2G
+{{- end }}

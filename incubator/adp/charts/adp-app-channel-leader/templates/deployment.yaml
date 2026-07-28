@@ -1,0 +1,195 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    ti.cloud.tencent.com/resource-quota: unlimited
+    configmap.reloader.stakater.com/reload: {{ .Release.Name }}-app-channel-leader
+    {{- if .Values.global.customAnnotations }}
+    {{- range $key, $value := .Values.global.customAnnotations }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
+  labels:
+    app: adp-app-channel-leader
+    app.kubernetes.io/name: adp-app-channel-leader
+    {{- if .Values.global.customLabels }}
+    {{- range $key, $value := .Values.global.customLabels }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
+  name: adp-app-channel-leader
+  namespace: {{ .Release.Namespace }}
+spec:
+  # serviceName: adp-app-channel-leader
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  selector:
+    matchLabels:
+      app: adp-app-channel-leader
+  strategy : {}
+  template:
+    metadata:
+      labels:
+        app: adp-app-channel-leader
+        {{- if .Values.global.customLabels }}
+        {{- range $key, $value := .Values.global.customLabels }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+        {{- end }}
+      {{- if .Values.global.customAnnotations }}
+      annotations:
+        {{- range $key, $value := .Values.global.customAnnotations }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+      {{- end }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - adp-app-channel-leader
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: GPUName
+                    operator: DoesNotExist
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: product
+                    operator: In
+                    values:
+                      - lke
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
+            - name: MKL_NUM_THREADS
+              value: "2"
+            - name: LOG_SPACES
+              value: "2097152"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: DEPLOYMENT_ENVIRONMENT
+              value: TKE
+            - name: NAME_SPACE
+              value: default
+            - name: ENV
+              value: tcs
+            - name: SERVER_LOG_LEVEL
+              value: info
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-app-channel-leader").url "context" .) }}
+          imagePullPolicy: Always
+          name: adp-app-channel-leader
+          command: ["/app/bin/app-channel-leader", "-conf", "/app/conf/trpc_go.yaml"]
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "125m"
+              memory: "512Mi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+          {{- end }}
+          readinessProbe:
+            tcpSocket:
+              port: 9300
+            initialDelaySeconds: 2
+            periodSeconds: 3
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 2
+          livenessProbe:
+            tcpSocket:
+              port: 9300
+            initialDelaySeconds: 20
+            periodSeconds: 3
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 2
+          volumeMounts:
+            - mountPath: /etc/localtime
+              name: localtime
+            - mountPath: /app/logs
+              name: logdata
+              subPathExpr: $(POD_NAME)
+            - mountPath: /app/conf/trpc_go.yaml
+              name: config
+              subPath: trpc_go.yaml
+            - mountPath: /app/conf/application.yaml
+              name: config
+              subPath: application.yaml
+            - mountPath: /app/conf/placeholder.yaml
+              name: config
+              subPath: placeholder.yaml
+            - mountPath: /app/conf/infrastructure.yaml
+              name: infrastructure
+              subPath: infrastructure.yaml
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 90
+      volumes:
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - hostPath:
+            path: /etc/localtime
+          name: localtime
+        - hostPath:
+            path: /data/ti-platform/log/adp-app-channel-leader
+            type: DirectoryOrCreate
+          name: logdata
+        - configMap:
+            defaultMode: 420
+            name: {{ .Release.Name }}-app-channel-leader
+          name: config
+
+        - configMap:
+            defaultMode: 420
+            name: infrastructure
+          name: infrastructure

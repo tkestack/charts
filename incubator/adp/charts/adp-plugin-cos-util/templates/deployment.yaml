@@ -82,6 +82,9 @@ spec:
         - name: {{ .Chart.Name }}
           image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-plugin-cos-util").url "context" .) }}
           imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: infra-credentials
           env:
             - name: MKL_NUM_THREADS
               value: "2"
@@ -108,13 +111,19 @@ spec:
             - name: SERVER_LOG_LEVEL
               value: info
             - name: LKE_COS_SECRET_ID
-              value: {{ .Values.plugincosutil.env.LKE_COS_SECRET_ID | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_S3_COS_SECRETID
             - name: LKE_COS_SECRET_KEY
-              value: {{ .Values.plugincosutil.env.LKE_COS_SECRET_KEY | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_S3_COS_SECRETKEY
             - name: LKE_COS_REGION
-              value: {{ .Values.plugincosutil.env.LKE_COS_REGION | quote }}
+              value: {{ .Values.global.components.s3.cos.region | quote }}
             - name: LKE_COS_BUCKET
-              value: {{ .Values.plugincosutil.env.LKE_COS_BUCKET | quote }}
+              value: {{ .Values.global.components.s3.cos.bucket | quote }}
             - name: LKE_COS_KEY_PREFIX
               value: {{ .Values.plugincosutil.env.LKE_COS_KEY_PREFIX | quote }}
             - name: LKE_COS_EXPIRE_TIME

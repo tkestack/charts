@@ -238,430 +238,7 @@ data:
     fetch_check_task_batch_size: 10               # 审核任务 ETL 配置 每次从 t_check_task 表中取数据的>数量
     fetch_check_task_workers: 5                    # 审核任务 ETL 配置 从 t_check_task 表中取数据的并发数量
     clean_expired_content_recognition_period_days: 366  # 清理审核数据时，清理多久前的数据
-
-  bot-data-statistics-server_en-US.json: |
-    {
-      "KeyExportWithParam": "Export %s",
-      "KeyExporting": "Exporting",
-      "KeySuccess": "Success",
-      "KeyFail": "Failed",
-      "KeyExportSuccess": "Export Success",
-      "KeyExportFail": "Export Failed",
-      "KeyExportModelUsageWithParam": "Model Usage Export %s",
-      "KeyExportPlatformUsageWithParam": "Platform Usage Export %s",
-      "KeyExportUsageDetailsWithParam": "Usage Details Export %s",
-      "KeyExportModelConcurrencyWithParam": "Model Concurrency Export %s",
-      "KeyExportDedicatedConcurrencyWithParam": "Dedicated Concurrency Export %s",
-      "KeyExportKnowledgeBaseCapacityWithParam": "Knowledge Base Capacity Export %s",
-      "KeyExportAppCallStatisticsWithParam": "App Call Statistics Export %s",
-      "KeyExportAppUserStatisticsWithParam": "App User Statistics Export %s",
-      "KeyExportBizDetailsWithParam": "Business Dashboard Data Export %s",
-      "KeyExportAppDashboardWithParam": "App Dashboard Data Export %s",
-      "KeyExportKnowledgeBaseMaintenanceWithParam": "Knowledge Base Maintenance Export %s",
-      "KeySpaceDeleted": "Space Deleted",
-      "KeyAppDeleted": "App Deleted",
-      "KeyKnowledgeDeleted": "Knowledge Base Deleted",
-      "KeyToolDeleted": "Tool Deleted",
-      "KeyPluginDeleted": "Plugin Deleted",
-      "KeyFileNameCorpModelUsage": "Corp-Resource-ModelUsage",
-      "KeyFileNameSpaceModelUsage": "Platform-Resource-ModelUsage",
-      "KeyFileNameCorpModelConcurrency": "Corp-Resource-ModelConcurrency",
-      "KeyFileNameSpaceModelConcurrency": "Platform-Resource-ModelConcurrency",
-      "KeyFileNameCorpDedicatedConcurrency": "Corp-Resource-DedicatedConcurrency",
-      "KeyFileNameSpaceDedicatedConcurrency": "Platform-Resource-DedicatedConcurrency",
-      "KeyFileNameCorpPlatformUsage": "Corp-Resource-PlatformUsage",
-      "KeyFileNameSpacePlatformUsage": "Space-Resource-PlatformUsage",
-      "KeyFileNameCorpUsageDetails": "Corp-Resource-UsageDetails",
-      "KeyFileNameSpaceUsageDetails": "Space-Resource-UsageDetails",
-      "KeyFileNameCorpKBCapacity": "Corp-Resource-KnowledgeBaseCapacity",
-      "KeyFileNameSpaceKBCapacity": "Platform-Resource-KnowledgeBaseCapacity",
-      "KeyFileNameAppCallStatistics": "App Call Statistics",
-      "KeyFileNameCorpAppCallStatistics": "Corp-Business-AppCallStatistics",
-      "KeyFileNameSpaceAppCallStatistics": "Platform-Business-AppCallStatistics",
-      "KeyFileNameAppUserStatistics": "App User Statistics",
-      "KeyFileNameCorpBizDetails": "Corp-Business-Dashboard",
-      "KeyFileNameSpaceBizDetails": "Platform-Business-Dashboard",
-      "KeyFileNameKnowledgeBaseMaintenance": "Business-App-KnowledgeBaseMaintenance",
-      "KeyFileNameCorpPluginUsage": "Corp-Resource-PluginUsage",
-      "KeyFileNameSpacePluginUsage": "Platform-Resource-PluginUsage",
-      "KeyFileNameCorpResourceConsume": "Corp-Resource-ResourceConsume",
-      "KeyFileNameSpaceResourceConsume": "Platform-Resource-ResourceConsume",
-      "KeySheetResourceOverview": "Overview",
-      "KeySheetModelCallGraph": "Call Count Chart",
-      "KeySheetModelTokenGraph": "Token Consumption Chart",
-      "KeySheetModelPageCountGraph": "Page Count Chart",
-      "KeySheetTopTokenByModel": "Top Token - By Model",
-      "KeySheetTopTokenByApp": "Top Token - By App",
-      "KeySheetTopTokenByKnowledge": "Top Token - By Knowledge",
-      "KeySheetTopTokenBySpace": "Top Token - By Space",
-      "KeySheetModelUsageDetails": "Usage Details",
-      "KeySheetModelCallDetails": "Call Details",
-      "KeySheetConcurrencyOverview": "Concurrency Overview",
-      "KeySheetQPMTPMGraph": "QPM_TPM Chart",
-      "KeySheetConcurrencyOverLimit": "TPM_QPM Over Limit Call Details",
-      "KeySheetDedicatedOverview": "Dedicated Overview",
-      "KeySheetDedicatedGraph": "Call Concurrency Trend",
-      "KeySheetDedicatedOverLimit": "Call Over Available Concurrency Details",
-      "KeySheetPlatformOverview": "Resource Board-Platform Usage-Overview",
-      "KeySheetPlatformUsageDetailData": "Resource Board-Platform Usage-Detail Data",
-      "KeySheetLongTermMemoryGraph": "Long-Term Memory Storage Count Chart",
-      "KeySheetSecurityAuditGraph": "Security Audit Call Count Chart",
-      "KeySheetWebSearchGraph": "Web Search Count Chart",
-      "KeySheetLongTermMemoryDetails": "Long-Term Memory Storage Details",
-      "KeySheetSecurityAuditDetails": "Security Audit Call Details",
-      "KeySheetWebSearchDetails": "Web Search Count Details",
-      "KeySheetUsageDetails": "Usage Details",
-      "KeySheetKBCapacityOverview": "Resource Overview",
-      "KeySheetKBOverUsageGraph": "Over Usage Trend",
-      "KeySheetKBUsageProportionByKB": "Knowledge Base Usage Proportion",
-      "KeySheetKBUsageProportionBySpace": "Space Usage Proportion",
-      "KeySheetKBCapacityDetailByKB": "Knowledge Base Capacity Details",
-      "KeySheetKBCapacityDetailBySpace": "Space Capacity Details",
-      "KeySheetKBMainOverview": "Knowledge Base Summary Overview",
-      "KeySheetKBContentOverview": "Knowledge Base Content Overview",
-      "KeySheetKBDocScopeDistribution": "Document Scope Distribution",
-      "KeySheetKBQaScopeDistribution": "QA Scope Distribution",
-      "KeySheetKBDbScopeDistribution": "Database table Scope Distribution",
-      "KeyMetricReferKnowledgeBaseCount": "Referenced Knowledge Base Count",
-      "KeyMetricDocCount": "Document Count",
-      "KeyMetricDocPendingDiffCount": "Pending Diff Count",
-      "KeyMetricQaCount": "QA Count",
-      "KeyMetricQaPendingVerificationCount": "Pending Verification QA Count",
-      "KeyMetricQaPendingConflictCount": "Pending Conflict QA Count",
-      "KeyMetricDatabaseCount": "Database Count",
-      "KeyMetricTableCount": "Table Count",
-      "KeyColumnEnableScope": "Enable Scope",
-      "KeyColumnCount": "Count",
-      "KeySheetPluginUsageTrend": "Plugin Usage Trend",
-      "KeySheetPluginUsageDetails": "Plugin Usage Details",
-      "KeySheetPluginCallDetails": "Plugin Call Details",
-      "KeySheetResourceConsumeDetails": "Resource Consumption Details",
-      "KeyColumnMetric": "Metric",
-      "KeyColumnCurrentValue": "Current Value",
-      "KeyColumnMomPercent": "MoM (%)",
-      "KeyColumnTime": "Time",
-      "KeyColumnRank": "Rank",
-      "KeyColumnName": "Name",
-      "KeyColumnLimitValue": "Limit Value",
-      "KeyColumnValue": "Value",
-      "KeyMetricTotalCalls": "Model Call Count",
-      "KeyMetricTotalTokens": "Model Token Consumption",
-      "KeyMetricTotalInputTokens": "Model Input Tokens",
-      "KeyMetricTotalOutputTokens": "Model Output Tokens",
-      "KeyMetricAvgTotalTokens": "Avg Tokens Per Call",
-      "KeyMetricAvgInputTokens": "Avg Input Tokens Per Call",
-      "KeyMetricAvgOutputTokens": "Avg Output Tokens Per Call",
-      "KeyMetricPageCount": "Model Page Consumption",
-      "KeyMetricTotalUsage": "Total Usage (Byte)",
-      "KeyMetricPackageTotalCapacity": "Package Total Capacity (GB)",
-      "KeyMetricPackageUsedCapacity": "Package Used Capacity (Byte)",
-      "KeyMetricOverUsage": "Over Usage (Byte)",
-      "KeyMetricOverExpiredCapacity": "Over Expired Capacity (Byte)",
-      "KeyColumnCallCount": "Model Call Count",
-      "KeyColumnInputTokens": "Model Input Tokens",
-      "KeyColumnOutputTokens": "Model Output Tokens",
-      "KeyColumnTotalTokens": "Model Token Consumption",
-      "KeyColumnAvgInputTokens": "Avg Input Tokens Per Call",
-      "KeyColumnAvgOutputTokens": "Avg Output Tokens Per Call",
-      "KeyColumnAvgTotalTokens": "Avg Tokens Per Call",
-      "KeyColumnConsumeTokens": "Model Token Consumption",
-      "KeyColumnSpaceID": "Space ID",
-      "KeyColumnSpaceName": "Space Name",
-      "KeyColumnAppID": "App ID",
-      "KeyColumnAppName": "App Name",
-      "KeyColumnKnowledgeID": "Knowledge ID",
-      "KeyColumnKnowledgeName": "Knowledge Name",
-      "KeyColumnModelName": "Model Name",
-      "KeyColumnCallType": "Call Type",
-      "KeyColumnUsedCapacity": "Used Capacity (Byte)",
-      "KeyColumnUsedPercentage": "Usage Percentage (%)",
-      "KeyColumnPercentage": "Percentage (%)",
-      "KeyColumnIsDefaultKnowledge": "Is Default Knowledge",
-      "KeyColumnActiveUsers": "Active Users",
-      "KeyColumnNewUsers": "New Users",
-      "KeyColumnReturningUsers": "Returning Users",
-      "KeyColumnTotalRatings": "Total Ratings",
-      "KeyColumnLikeCount": "User Rating Like Count",
-      "KeyColumnDislikeCount": "User Rating Dislike Count",
-      "KeyMetricMaxQPM": "Peak QPM",
-      "KeyMetricMaxTPM": "Peak TPM",
-      "KeyMetricOverLimit": "TPM/QPM Over Limit Count",
-      "KeyColumnQPM": "Call QPM",
-      "KeyColumnQPMLimit": "Call QPM Limit",
-      "KeyColumnTPM": "Call TPM",
-      "KeyColumnTPMLimit": "Call TPM Limit",
-      "KeyColumnOverLimitType": "Over Limit Type",
-      "KeyColumnQuery": "Query",
-      "KeyOverLimitTypeConcurrency": "Over Concurrency",
-      "KeyOverLimitTypeQPMTPM": "Over QPM/TPM",
-      "KeyMetricConcurrencyLimit": "Call Concurrency Limit",
-      "KeyMetricSuccessConcurrency": "Success Call Concurrency Peak",
-      "KeyMetricConcurrencyOverLimit": "Concurrency Over Limit Count",
-      "KeyColumnConcurrency": "Concurrency",
-      "KeyColumnConcurrencyLimit": "Concurrency Limit",
-      "KeyMetricLongTermMemoryItems": "Long-Term Memory Items",
-      "KeyMetricSecurityAuditCalls": "Security Audit Calls",
-      "KeyMetricWebSearchCalls": "Web Search Calls",
-      "KeyColumnLongTermMemoryItems": "Long-Term Memory Items",
-      "KeyColumnSecurityAuditCalls": "Security Audit Calls",
-      "KeyColumnWebSearchCalls": "Web Search Calls",
-      "KeyColumnPluginTotalTokens": "Plugin Total Tokens",
-      "KeyColumnPluginCallCount": "Plugin Call Count",
-      "KeyColumnPluginPageCount": "Plugin Page Count",
-      "KeyColumnPluginInputTokens": "Plugin Input Tokens",
-      "KeyColumnPluginOutputTokens": "Plugin Output Tokens",
-      "KeyColumnPluginConsumeCount": "Plugin Consume Count",
-      "KeyColumnPluginConsumePage": "Plugin Consume Pages",
-      "KeyColumnPluginConsumeSheet": "Plugin consumption sheet",
-      "KeyColumnPluginConsumeSecond": "Plugin consumption second",
-      "KeyColumnPluginConsumeCharacter": "Plugin consumption character",
-      "KeyColumnPluginName": "Plugin Name",
-      "KeyColumnToolName": "Tool Name",
-      "KeyColumnConsumeType": "Charge Type",
-      "KeyColumnConsumeTarget": "Charge Target",
-      "KeyColumnConsumeScene": "Charge Scene",
-      "KeyColumnPackageName": "Package Name",
-      "KeyColumnUsage": "Usage",
-      "KeyColumnConsumePu": "Consumed Resources(PU)",
-      "KeyColumnAppOrKBName": "App Name/Knowledge Base Name",
-      "KeySuffixByApp": "(By App)",
-      "KeySuffixBySpace": "(By Space)",
-      "KeyColumnModelTotalTokens": "Model Total Tokens",
-      "KeyColumnModelInputTokens": "Model Input Tokens",
-      "KeyColumnModelOutputTokens": "Model Output Tokens",
-      "KeyColumnModelUsage": "Model Usage (tokens)",
-      "KeyColumnPluginUsage": "Plugin Usage",
-      "KeyColumnPlatformUsage": "Platform Usage",
-      "KeyConsumeTypeModel": "Model Usage",
-      "KeyConsumeTypePlugin": "Plugin Usage",
-      "KeyConsumeTypeKnowledgeExcess": "Knowledge Base Excess",
-      "KeyConsumeTypePlatform": "Platform Usage",
-      "KeyMetricAgentThinkingRounds": "Average Thinking Rounds per Conversation",
-      "KeyMetricAgentTransferTimes": "Average Agent Transfers per Conversation",
-      "KeyMetricAppCallTotalCalls": "App Call Count",
-      "KeyMetricAppCallSuccessRate": "App Call Success Rate",
-      "KeyMetricAppAvgTotalTokenCost": "Average Total Token Time (ms)",
-      "KeyMetricAppAvgFirstTokenCost": "Average First Token Time (ms)",
-      "KeyMetricKnowledgeBaseCallCount": "Knowledge Base Call Count",
-      "KeyMetricWorkflowCallCount": "Workflow Call Count",
-      "KeyMetricPluginCallCount": "Custom Plugin Call Count",
-      "KeyMetricAvgPluginCallCount": "Avg Plugin Calls Per Dialogue",
-      "KeyReplyMethodUnknown": "Unknown",
-      "KeyReplyMethodReject": "Rejected Reply",
-      "KeyReplyMethodQADirect": "Direct Q&A Reply",
-      "KeyReplyMethodAuditFailed": "Moderation Failure",
-      "KeyReplyMethodKnowledgePolish": "Knowledge Polished Reply",
-      "KeyReplyMethodWorkflow": "Workflow Reply",
-      "KeyReplyMethodRealtimeDoc": "Realtime Document Reply",
-      "KeyReplyMethodImageUnderstand": "Image Understanding Reply",
-      "KeyReplyMethodSearchEngine": "Search Engine Reply",
-      "KeyReplyMethodLLMDirect": "Direct LLM Reply",
-      "KeyReplyMethodFallback": "Fallback Reply",
-      "KeySuffixTimes": " Times",
-      "KeyColumnAvgLatency": "Avg Latency (ms)",
-      "KeyColumnP50Latency": "P50 Latency (ms)",
-      "KeyColumnP75Latency": "P75 Latency (ms)",
-      "KeyColumnP90Latency": "P90 Latency (ms)",
-      "KeyColumnP95Latency": "P95 Latency (ms)",
-      "KeyColumnP99Latency": "P99 Latency (ms)",
-      "KeySheetAppCallOverview": "Call Statistics-Overview",
-      "KeySheetAppReplyTypeDistrib": "App Reply Type Distribution",
-      "KeySheetAppReplyTypeTrend": "App Reply Type Trend",
-      "KeySheetComponentCallTrend": "Component Call Trend",
-      "KeySheetAppCallTrend": "Application Call Trend",
-      "KeySheetPerformanceTrend": "Performance Trend",
-      "KeySheetTotalTokenLatencyTrend": "Total Token Latency Trend",
-      "KeySheetFirstTokenLatencyTrend": "First Token Latency Trend",
-      "KeySheetAgentDialogueTrend": "Agent Dialogue Trend",
-      "KeySheetUserOverview": "User Statistics Overview",
-      "KeySheetUserTrend": "User Trend",
-      "KeySheetRatingTrend": "Rating Trend",
-      "KeySheetBizOverview": "Business Dashboard-Overview",
-      "KeySheetTopCallBySpace": "Top App Calls-By Space",
-      "KeySheetTopCallByApp": "Top App Calls-By App",
-      "KeySheetUserTrendBiz": "App User Trend",
-      "KeySheetSpaceDetails": "Space Dimension Details",
-      "KeySheetAppDetails": "App Dimension Details",
-      "KeySheetCustomPluginDetails": "Custom Plugin Details",
-      "KeySheetPerformanceAnalysisDetails": "Performance Analysis Details",
-      "KeyRowOverallAverage": "Overall Average",
-      "KeyYes": "Yes",
-      "KeyNo": "No",
-      "KeyMetricTotalSpaceCount": "Total Space Count",
-      "KeyMetricEffectiveSpaceCount": "Effective Space Count",
-      "KeyMetricCorpUserCount": "Corporation User Count",
-      "KeyMetricTotalAppCount": "Total App Count",
-      "KeyMetricActiveAppCount": "Active App Count",
-      "KeyMetricAppCallCount": "App Call Count",
-      "KeyMetricCallSuccessCount": "Call Success Count",
-      "KeyMetricCallSuccessRate": "Call Success Rate",
-      "KeyMetricCallFailedCount": "Call Failed Count",
-      "KeyMetricCallFailedRate": "Call Failed Rate",
-      "KeyMetricActiveUserCount": "Active User Count",
-      "KeyMetricNewUserCount": "New User Count",
-      "KeyMetricNewUserRate": "New User Rate",
-      "KeyMetricReturningUserCount": "Returning User Count",
-      "KeyMetricReturningUserRate": "Returning User Rate",
-      "KeyMetricAvgUserDialogueRounds": "Avg User Dialogue Rounds",
-      "KeyMetricKnowledgeBaseCount": "Knowledge Base Count",
-      "KeyMetricWorkflowCount": "Workflow Count",
-      "KeyMetricCustomPluginCount": "Custom Plugin Count",
-      "KeyMetricCustomPluginCallCount": "Custom Plugin Call Count",
-      "KeyMetricAvgTotalTokenLatency": "Avg Total Token Latency (ms)",
-      "KeyMetricAvgFirstTokenLatency": "Avg First Token Latency (ms)",
-      "KeyColumnCallCountBiz": "Call Count",
-      "KeyColumnSuccessCount": "Success Count",
-      "KeyColumnFailCount": "Fail Count",
-      "KeyColumnKnowledgeBaseCallCount": "Knowledge Base Call Count",
-      "KeyColumnWorkflowCallCount": "Workflow Call Count",
-      "KeyColumnActiveUserCount": "Active User Count",
-      "KeyColumnNewUserCount": "New User Count",
-      "KeyColumnReturningUserCount": "Returning User Count",
-      "KeyColumnAvgLatencyMs": "Avg Latency (ms)",
-      "KeyColumnP95LatencyMs": "P95 Latency (ms)",
-      "KeyColumnP99LatencyMs": "P99 Latency (ms)",
-      "KeyColumnTotalAppCount": "Total App Count",
-      "KeyColumnActiveAppCount": "Active App Count",
-      "KeyColumnAppMode": "App Mode",
-      "KeyColumnAppCallSuccessRate": "Call Success Rate (%)",
-      "KeyColumnCustomPluginCallCount": "Custom Plugin Call Count",
-      "KeyColumnAvgTotalTokenLatencyMs": "Avg Total Token Latency (ms)",
-      "KeyColumnAvgFirstTokenLatencyMs": "Avg First Token Latency (ms)",
-      "KeyColumnPluginCallSuccessRate": "Call Success Rate (%)",
-      "KeyAlarmTime": "Alarm Time",
-      "KeyLevel": "Alarm Level",
-      "KeyAlarmContentKey": "Alarm Content",
-      "KeyAlarmContent": "Tencent Cloud Intelligent Agent Development Platform Alert: %s, Triggering %s level alert, Alert Metric: %s.",
-      "KeyAlarmLevelInfo": "Info",
-      "KeyAlarmLevelWarn": "Warning",
-      "KeyAlarmLevelError": "Critical",
-      "KeyAlarmTitle": "Tencent Cloud Intelligent Agent Platform Alert",
-      "KeyAlarmStrategyName": "Alarm Strategy Name",
-      "KeyAlarmTypeAppQPMMsg": "App [%s] QPM Alert:",
-      "KeyAlarmTypeAppSuccessCallRateMsg": "App [%s] Success Call Rate Alert:",
-      "KeyExportAlarmHistory": "Alarm History Export %s",
-      "KeyAlarmTypeTokenUsagePerDayMsg": "LLM [%s] Tokens Consumption Alert:",
-      "KeyAlarmTypeTPMMsg": "LLM [%s] TPM Alert:",
-      "KeyAlarmTypeKbRemainCapacityMsg": "Remain capacity of knowledge Alert:",
-      "KeyTokenUsagePerDayUnitKey": "tokens",
-      "KeyAppQPMUnitKey": "requests/Min",
-      "KeyAppSuccessCallRateUnitKey": "%",
-      "KeyKbRemainCapacityUnitKey": "B",
-      "KeyTPMUnitKey": "tokens/Min",
-      "KeyOpenClawDeleted": "ClawPro Deleted",
-      "KeyMetricOpenClawCalls": "ClawPro Calls",
-      "KeyColumnOpenClawCalls": "ClawPro Calls",
-      "KeySheetOpenClawCalls": "ClawPro Calls Graph",
-      "KeySheetOpenClawDetails": "ClawPro Calls Detail",
-      "KeyColumnOpenClawId": "ClawPro ID",
-      "KeyColumnOpenClawName": "ClawPro Name",
-      "KeyColumnOpenClaw": "ClawPro",
-      "KeyColumnPluginConsumeNumber": "Plugin consumption Number",
-      "KeyExportPluginUsageWithParam": "Plugin Usage Export %s",
-      "KeyExportResourceConsumeWithParam": "Resource Consumption Export %s",
-      "KeyReplyMethodDocument": "Document-based Reply",
-      "KeyReplyMethodQAPolish": "Polished Q&A Reply",
-      "对话API-prompt改写": "DialogApiPromptRewrite",
-      "对话API-大模型生成": "DialogApiModelGen",
-      "对话API-大模型思考": "DialogApiModelThink",
-      "对话API-知识库问答调用": "DialogApiKbQaCall",
-      "对话API-工作流节点": "DialogApiWorkflowNode",
-      "对话API-插件调用": "DialogApiPluginCall",
-      "对话API-Excel检索增强": "DialogApiExcelRetrieval",
-      "对话测试-prompt改写": "DialogTestPromptRewrite",
-      "对话测试-大模型生成": "DialogTestModelGen",
-      "对话测试-大模型思考": "DialogTestModelThink",
-      "对话测试-知识库问答调用": "DialogTestKbQaCall",
-      "对话测试-工作流节点": "DialogTestWorkflowNode",
-      "对话测试-插件调用": "DialogTestPluginCall",
-      "对话测试-Excel检索增强": "DialogTestExcelRetrieval",
-      "应用评测-prompt改写": "AppEvalPromptRewrite",
-      "应用评测-大模型生成": "AppEvalModelGen",
-      "应用评测-大模型思考": "AppEvalModelThink",
-      "应用评测-知识库问答调用": "DialogEvalKbQaCall",
-      "应用评测-工作流节点": "AppEvalWorkflowNode",
-      "应用评测-插件调用": "AppEvalPluginCall",
-      "应用评测-Excel检索增强": "AppEvalExcelRetrieval",
-      "渠道/体验用户端-prompt改写": "ChannelExpPromptRewrite",
-      "渠道/体验用户端-大模型生成": "ChannelExpModelGen",
-      "渠道/体验用户端-大模型思考": "ChannelExpModelThink",
-      "渠道/体验用户端-知识库问答调用": "ChannelExpKbQaCall",
-      "渠道/体验用户端-工作流": "ChannelExpWorkflowNode",
-      "渠道/体验用户端-插件调用": "ChannelExpPluginCall",
-      "渠道/体验用户端-Excel检索增强": "ChannelExpExcelRetrieval",
-      "长期记忆": "LongTermMemory",
-      "知识检索API": "KnowledgeRetrievalApi",
-      "对话记录-智能分类": "ConvSmartClassify",
-      "实时文档解析": "RealTimeDocParse",
-      "安全审核": "SecurityAuditing",
-      "生成Widget": "Widget",
-      "网页解析问答": "WebPagePluginParsingQA",
-      "文档解析问答": "DocParsePluginParsingQA",
-      "AI搜索": "AiSearchPluginTimes",
-      "图片理解": "ImagePluginUnderstandQA",
-      "图片测验": "ImagePluginQuizQA",
-      "文档解析": "DocParsePluginParsePage",
-      "视频剪辑": "MediaPluginVideoCut",
-      "视频封面生成": "MediaPluginCover",
-      "视频场景分析": "MediaPluginSceneAnalysis",
-      "视频音频抽取": "MediaPluginExtractAudio",
-      "视频图片抽取": "MediaPluginImageExtract",
-      "视频大图抽取": "MediaPluginLargeExtractImage",
-      "图像旗帜标志检测": "MediaImagePluginFlagDetectTimes",
-      "图像标签识别": "MediaImagePluginTagTimes",
-      "图像TV台标检测": "MediaImagePluginTvLogoTimes",
-      "视频编解码处理": "VideoCodecPluginDuration",
-      "综艺分段剪辑处理": "VarietySegcutPluginDuration",
-      "BangBox MCP服务": "BangBoxMcpServerPluginDuration",
-      "语音识别处理": "AsrRecognitionPluginDuration",
-      "句子级语音识别处理": "SentenceRecognitionPluginDuration",
-      "文本转语音": "TextToVoicePluginCharCount",
-      "医疗搜索调用": "MedicalSearchPluginTimes",
-      "文本审核调用": "TextModerationPluginTimes",
-      "多文档内容抽取调用": "ExtractDocMultiPluginTimes",
-      "事实核查调用": "FactcheckTimesPluginTimes",
-      "PDF转Word": "PdfToWordPluginTimes",
-      "查询PDF转Word": "QueryPdfToWordPluginTimes",
-      "PDF转Excel调用次数": "PdfToExcelPluginTimes",
-      "查询PDF转Excel 任务调用": "QueryPdfToExcelPluginTimes",
-      "Word转PDF调用次数": "WordToPdfPluginTimes",
-      "查询Word转PDF任务调用": "QueryWordToPdfPluginTimes",
-      "Excel转PDF调用": "ExcelToPdfPluginTimes",
-      "查询Excel转PDF任务": "QueryExcelToPdfPluginTimes",
-      "图片转Word调用": "ImageToWordPluginTimes",
-      "图片转Excel调用": "ImageToExcelPluginTimes",
-      "PDF文档翻译调用": "PdfTranslationPluginTimes",
-      "查询PDF文档翻译任务": "QPdfTranslationPluginTimes",
-      "Word文档翻译调用": "WordTranslationPluginTimes",
-      "查询 Word 文档翻译任务调用": "QWordTranslationPluginTimes",
-      "医学检查报告解读调用": "MedicalReportInterpretationPluginTimes",
-      "AI药品咨询调用": "AiMedicineInquiryPluginTimes",
-      "AI药盒拍照识别调用": "AiMedicinePhotoDrugBoxPluginTimes",
-      "药品说明书查询": "DrugManualQueryPluginTimes",
-      "AI症状自查调用": "AiSymptomSelfCheckPluginTimes",
-      "文生图任务提交": "SubmitTextToImageJobPluginCount",
-      "文生图任务查询": "QueryTextToImageJobPluginCount",
-      "工作流异步调用": "Workflow asynchronous invocation",
-      "知识库Schema生成": "Knowledge base Schema generation",
-      "对话调用-API调用": "Dialog invocation - API call",
-      "对话调用-分享用户端对话": "Conversation called - shared client conversation",
-      "对话调用-对话测试": "Conversation call - Conversation test",
-      "文档生成问答": "Document generation Q&A",
-      "应用评测": "Application evaluation",
-      "角色指令一键优化": "One-click role command optimization",
-      "任务流程话术预览": "Task flow script preview",
-      "相似问生成": "Similar question generation",
-      "KeyColumnAppInvokeStatus": "Application call status",
-      "KeySheetAppInvokeDetails": "Application call details",
-      "KeyFormatPluginUsage": "%.0f tokens,\n%.0f calls,\n%.0f pages",
-      "KeyFormatPlatformUsageV2": "%.0f tokens,\n%.0f calls，\n%.0f pages, \n%.0f sheets, \n%.0f seconds, \n%.0f characters, \n%.0f numbers",
-      "KeyFormatPluginUsageEmpty": "0 tokens,\n0 calls,\n0 pages",
-      "KeyFormatPlatformUsage": "Long-Term Memory %.0f items,\nSecurity Audit %.0f calls,\nWeb Search %.0f calls",
-      "KeyFormatPlatformUsageEmpty": "Long-Term Memory 0 items,\nSecurity Audit 0 calls,\nWeb Search 0 calls",
-      "KeyOtherKnowledgeBase": "Other Knowledge Bases",
-      "KeyOtherSpace": "Other Spaces"
-    }
-
+    use_describe_dedicated_concurrency_graph_logic_v2: true
   bot-data-statistics-server_zh-CN.json: |
     {
       "KeyExportWithParam": "导出%s",
@@ -996,80 +573,120 @@ data:
       "KeyOtherKnowledgeBase": "其他知识库",
       "KeyOtherSpace": "其他空间"
     }
-  errors_en-US.json: |
-    {
-      "ErrParams": "Invalid parameters",
-      "ErrIndexNotAcknowledged": "Index not acknowledged",
-      "ErrInvalidUin": "Invalid UIN",
-      "ErrTimeRangeExceeded": "Time range cannot exceed 31 days",
-      "ErrInvalidTimeRange": "Start time cannot be later than end time",
-      "ErrQueryFailed": "Query failed",
-      "ErrSystem": "System error",
-      "ErrStorageUploadFailed": "File upload failed",
-      "ErrGenerateURLFailed": "Failed to generate download URL",
-      "ErrStorageFileLimit": "File type not supported",
-      "ErrAppBizIdsExceedLimit": "AppBizIds length exceeds limit",
-      "ErrUnexpectedResultType": "Unexpected query result type",
-      "ErrUnsupportedDimension": "Unsupported dimension",
-      "ErrExportOverviewSheet": "Failed to export overview sheet",
-      "ErrExportCallGraphSheet": "Failed to export call graph sheet",
-      "ErrExportTokenGraphSheet": "Failed to export token graph sheet",
-      "ErrExportPageCountGraphSheet": "Failed to export page count graph sheet",
-      "ErrExportTopTokenSheet": "Failed to export top token sheet",
-      "ErrExportUsageDetailsSheet": "Failed to export usage details sheet",
-      "ErrWriteExcel": "Failed to write Excel",
-      "ErrQueryOverviewData": "Failed to query overview data",
-      "ErrQueryCallGraph": "Failed to query call graph",
-      "ErrQueryTokenGraph": "Failed to query token graph",
-      "ErrQueryPageCountGraph": "Failed to query page count graph",
-      "ErrQueryUsageBySpace": "Failed to query usage by space",
-      "ErrQueryUsageByApp": "Failed to query usage by app",
-      "ErrQueryCurrentPeriod": "Failed to query current period",
-      "ErrQueryPreviousPeriod": "Failed to query previous period",
-      "ErrQueryTotalTokens": "Failed to query total tokens",
-      "ErrExportConcurrencyOverviewSheet": "Failed to export concurrency overview sheet",
-      "ErrExportConcurrencyGraphSheet": "Failed to export concurrency graph sheet",
-      "ErrExportOverLimitDetailsSheet": "Failed to export over-limit details sheet",
-      "ErrQueryConcurrencyGraph": "Failed to query concurrency graph",
-      "ErrListOverLimitRecords": "Failed to list over-limit records",
-      "ErrExportDedicatedOverviewSheet": "Failed to export dedicated concurrency overview sheet",
-      "ErrExportDedicatedGraphSheet": "Failed to export dedicated concurrency graph sheet",
-      "ErrExportDedicatedOverLimitSheet": "Failed to export dedicated concurrency over-limit sheet",
-      "ErrQueryDedicatedConcurrencyGraph": "Failed to query dedicated concurrency graph",
-      "ErrTimeRangeRequired": "Start time and end time are required",
-      "ErrMarshalExportParams": "Failed to marshal export parameters",
-      "ErrCreateExportTask": "Failed to create export task",
-      "ErrInvalidStartTimeFormat": "Invalid start time format",
-      "ErrInvalidEndTimeFormat": "Invalid end time format",
-      "ErrEndTimeBeforeStartTime": "End time must be later than start time",
-      "ErrExpireTimeEmpty": "Effective time is empty",
-      "ErrExpireTime": "Effective time format is incorrect",
-      "ErrExpireTimeRange": "Effective start time cannot be later than end time",
-      "ErrAlarmItem": "Trigger condition cannot be empty",
-      "ErrAlarmItemCount": "Number of trigger conditions exceeds the limit",
-      "ErrAlarmItemRight": "Right value of trigger condition cannot be empty",
-      "ErrAlarmItemRange": "Trigger condition range cannot be empty",
-      "ErrAlarmItemOp": "Trigger condition operator cannot be empty",
-      "ErrAlarmNameLength": "Alarm name length is incorrect",
-      "ErrAlarmNameExist": "Alarm name already exists",
-      "ErrAlarmStrategyEmpty": "Alarm strategy is empty",
-      "ErrContextInvalid"      :"Context Invalid",
-      "ErrAssumeServiceRoleFailed" :"Assume Service Role Failed",
-      "ErrServiceRoleUnavailable" :  "Service Role Unavailable",
-      "ErrAlarmHistortIDLength": "The alarm history ID array exceeds the limit",
-      "ErrFailedOperationNotEnterpriseCertification":"Enterprise-verified accounts cannot use signature and template-related APIs. You can change your real-name authentication method to enterprise verification; the change will take effect in approximately one hour.",
-      "ErrInvalidAlarmURL": "Invalid alert URL",
-      "ErrInvalidWecomURL": "Invalid WeCom URL address", 
-      "ErrInvalidFeishuURL": "Invalid Feishu URL address",
-      "ErrInvalidDingtalkURL": "Invalid DingTalk URL address",
-      "ErrInvalidAlarmItemRange": "Invalid alert threshold range",
-      "ErrInvalidAlarmItemRight": "Invalid alert condition value",
-      "ErrInvalidAlarmTriggerCount": "Invalid alert frequency, must be greater than 0",
-      "ErrInvalidAppBizID": "Invalid application",
-      "应用评测-大模型生成": "Application Evaluation - Large Model Generation",
-      "应用评测-知识库问答调用": "Application Evaluation - Knowledge Base Question Answering Invocation",
-      "应用评测-大模型思考": "Application Evaluation - Big Model Thinking"
-    }
+  client.yaml: |
+    client:
+      namespace: Test
+      filter:
+        - opentelemetry
+      service:
+        - name: mysql.data.statistics
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: tdsql.qbot.qbot
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: redis.data.statistics
+          target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/5"
+          timeout: 8000
+        - name: mongo.data.statistics
+          target: "mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/lke-data-statistics?authSource=admin"
+          timeout: 30000
+        - name: trpc.KEP.msg-log-kafka.toyota
+          target: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=tcadp_log2cls_toyota"
+        - name: trpc.KEP.msg-log-kafka.joezhuang
+          target: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=msg-log-joezhuang"
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          namespace: Production
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          namespace: Production
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.adp.app_config.Api
+          namespace: Production
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
+          timeout: 30000
+        - name: trpc.adp.app_config.Admin
+          namespace: Production
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 5000
+        - name: trpc.adp.platform_manager.Admin
+          namespace: Production
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 30000
+        - name: trpc.adp.platform_manager.Api
+          namespace: Production
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
+          timeout: 30000
+        - callee: trpc.adp.platform_manager.Login
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          namespace: Production
+          protocol: trpc
+          timeout: 5000
+        - callee: trpc.adp.resource_gallery.Admin
+          namespace: Production
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_charger.Finance
+          namespace: Production
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          network: tcp
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_charger.Api
+          namespace: Production
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9091
+          network: tcp
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.kb_config.Api
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: Production
+          network: tcp
+          protocol: trpc
+          timeout: 60000
+        - name: trpc.kafka.producer.platform_metrology.finance_pay
+          target: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_pack_pay&compression=none&partitioner=random&requiredAcks=-1"
+        - name: trpc.kafka.producer.platform_metrology.report
+          # RESOLVE: keep-public
+          target: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_platform_metrology_report"
+        - name: trpc.http.cos.Access
+          network: tcp
+          protocol: http
+          target: "dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn"
+          timeout: 5000
+        - callee: trpc.adp.plugin_config.PluginConfigApi
+          name: trpc.adp.plugin_config.PluginConfigApi
+          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: Production
+        - name: trpc.clickhouse.adp
+          target: "clickhouse://${INFRA_MIDDLEWARES_CLICKHOUSE_0_HOSTS}:${INFRA_MIDDLEWARES_CLICKHOUSE_0_PORT}?username=${INFRA_MIDDLEWARES_CLICKHOUSE_0_USER}&password=${INFRA_MIDDLEWARES_CLICKHOUSE_0_PASSWORD}&database=db_adp"
+          timeout: 3000
+        - name: elastic.data.statistics
+          namespace: Production
+          target: "ip://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}"
+          password: ${INFRA_MIDDLEWARES_ES_0_PASSWORD}
+          protocol: http
+          timeout: 3000
+        - name: adp.atomic.gateway
+          network: tcp
+          protocol: http
+          target: "dns://api.adp.cloud.tencent.com:443"
+          timeout: 600000
+        - name: trpc.adp.ai_gateway.Admin
+          network: tcp
+          protocol: trpc
+          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
+          timeout: 2000
+        - name: trpc.kafka.producer.platform_metrology.event_report
+          target: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_platform_metrology_event_report"
+        - callee: trpc.adp.platform_account.Internal
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-account.{{ .Release.Namespace }}.svc.cluster.local:9092"  # TODO: 待人工确认
+          protocol: trpc
+          timeout: 5000
 
   errors_zh-CN.json: |
     {
@@ -1128,11 +745,11 @@ data:
       "ErrAlarmNameLength": "告警名称长度错误",
       "ErrAlarmNameExist": "告警名称已存在",
       "ErrAlarmStrategyEmpty": "告警策略为空",
-      "ErrContextInvalid"     : "context 无效" ,
-      "ErrAssumeServiceRoleFailed" : "扮演服务角色失败",
-      "ErrServiceRoleUnavailable" :  "角色不可用",
+      "ErrContextInvalid": "context 无效",
+      "ErrAssumeServiceRoleFailed": "扮演服务角色失败",
+      "ErrServiceRoleUnavailable": "角色不可用",
       "ErrAlarmHistortIDLength": "告警历史id数组超限",
-      "ErrFailedOperationNotEnterpriseCertification":"非企业认证无法使用签名及模板相关接口，您可以 变更实名认证模式，变更为企业认证用户后，约1小时左右生效。",
+      "ErrFailedOperationNotEnterpriseCertification": "非企业认证无法使用签名及模板相关接口，您可以 变更实名认证模式，变更为企业认证用户后，约1小时左右生效。",
       "ErrInvalidAlarmURL": "无效的告警地址",
       "ErrInvalidWecomURL": "无效的企业微信URL地址",
       "ErrInvalidFeishuURL": "无效的飞书URL地址",
@@ -1143,12 +760,11 @@ data:
       "ErrInvalidAppBizID": "无效的应用",
       "应用评测-大模型生成": "应用评测-大模型生成",
       "应用评测-知识库问答调用": "应用评测-知识库问答调用",
-      "应用评测-大模型思考": "应用评测-大模型思考"
-
+      "应用评测-大模型思考": "应用评测-大模型思考",
+      "ErrAlarmAppBizIdRequired": "告警应用ID不能为空"
     }
 
   placeholder.yaml: |
-
     NAMESPACE: Production
     ENV_NAME: formal
 
@@ -1160,10 +776,9 @@ data:
     MONGO_HOST:
     MONGO_PORT: 27017
 
-    #没有引用，清理敏感内容
-    MSG_RECORD_ES_HOST: 
+    MSG_RECORD_ES_HOST:
     MSG_RECORD_ES_PORT: 9200
-    MSG_RECORD_ES_PWD: 
+    MSG_RECORD_ES_PWD:
 
 
     ADMIN_CONFIG_LOGIN_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
@@ -1173,19 +788,19 @@ data:
     PLATFORM_MANAGER_ADMIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
     PLATFORM_MANAGER_API_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
     PLATFORM_MANAGER_LOGIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+    #PLATFORM_MANAGER_API_TARGET: ip://21.0.181.215:9093
     KB_CONFIG_API_TARGET: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
 
     RESOURCE_GALLERY_ADMIN_TARGET: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
     PLATFORM_CHARGER_FINANCE_TARGET: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
     PLATFORM_CHARGER_API_TARGET: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9091
-
     PLUGIN_CONFIG_TARGET: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
 
-    # --- trpc.adp.ai_gateway.Admin ---
+    # Kafka 地址配置
+    KAFKA_ADDR: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}
+
     AI_GATEWAY_ADMIN_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
-    ATOMIC_GATEWAY_TARGET: dns://api.adp.cloud.tencent.com:443
-
-
+    ATOMIC_GATEWAY_TARGET: "dns://api.adp.cloud.tencent.com:443"
     KAFKA_MSG_LOG_TOPIC: adp_msg_record_binlog
     KAFKA_MSG_LOG_GROUP: bot-data-statistics-msg-log
     KAFKA_USER_STAT_TOPIC: adp_msg_record_binlog
@@ -1198,9 +813,7 @@ data:
     KAFKA_PLATFORM_METROLOY_GROUP: bot-data-statistics-report
 
     MSG_LOG_TO_KAFKA_SERVER1: trpc.KEP.msg-log-kafka.toyota
-
     MSG_LOG_TO_KAFKA_SERVER2: trpc.KEP.msg-log-kafka.joezhuang
-
     MSG_LOG_TO_KAFKA:
     - name: toyota
       uin: 100037631824
@@ -1208,45 +821,49 @@ data:
     - name: joezhuang-test
       uin: 64385328
       kafka_client: trpc.KEP.msg-log-kafka.joezhuang
-
-
     TC_STS_ENDPOINT: sts.tencentcloudapi.com
     TC_STS_REGION: ap-guangzhou
-    TC_SMS_SECRET_ID: ""
-    TC_SMS_SECRET_KEY: ""
+    TC_SMS_SECRET_ID: ''
+    TC_SMS_SECRET_KEY: ''
     TC_SMS_SERVICE_ROLE: ADP_QCSLinkedRoleInSMSSendMessages
     TC_SMS_ENDPOINT: sms.tencentcloudapi.com
     TC_SMS_REGION: ap-guangzhou
     TC_SMS_UIN_MAP:
       100034032793: 2252646423
       100038737751: 2252646423
+      187847134637060096: 320000089746
 
-    TC_SES_SECRET_ID: ""
-    TC_SES_SECRET_KEY: ""
+    TC_SES_SECRET_ID: ''
+    TC_SES_SECRET_KEY: ''
     TC_SES_SERVICE_ROLE: ADP_QCSLinkedRoleInSESSendMessage
     TC_SES_ENDPOINT: ses.tencentcloudapi.com
     TC_SES_REGION: ap-guangzhou
     TC_SES_UIN_MAP:
       100034032793: 2414531260
       100038737751: 2414531260
-
+      187847134637060096: 320000089746
     is_private: true
     is_dedicated_cloud: true
     elasticsearch_name: trpc.elasticsearch.lke.admin
-
     msg_log_to_kafka:
-      - name:  test
-        uin:  700000963993
+      - name: test
+        uin: 700000963993
         kafka_client: trpc.KEP.msg-log-kafka.700000963993-test
-      - name:  test
-        uin:  700001751666
+      - name: test
+        uin: 700001751666
         kafka_client: trpc.KEP.msg-log-kafka.700001751666-test
+    PLATFORM_ACCOUNT_API_TARGET: "ip://adp-platform-account.{{ .Release.Namespace }}.svc.cluster.local:9092"  # TODO: 待人工确认
+
+    # 插件
+    KAFKA_EVENT_REPORT_TOPIC: platform_metrology_event_report
+    KAFKA_REPORT_GROUP: bot-data-statistic-event-report
+
   trpc_go.yaml: |
     global:                             #全局配置
-      namespace: Test          #环境类型，分正式production和非正式development两种类型
-      env_name: test                 #环境名称，非正式环境下多环境的名称
-      enable_set: false         #是否启用set
-      full_set_name: adp   #set名
+      namespace: Test                  #环境类型，分正式production和非正式development两种类型
+      env_name: test                        #环境名称，非正式环境下多环境的名称
+      enable_set: false                 #是否启用set
+      full_set_name: adp                #set名
       local_ip: ${POD_IP}
       container_name: ${POD_NAME}
 
@@ -1257,116 +874,125 @@ data:
       conf_path: /usr/local/trpc/conf/                 #业务配置文件所在路径
       data_path: /usr/local/trpc/data/                 #业务数据文件所在路径
       filter:                                          #针对所有service处理函数前后的拦截器列表
-        - recovery                                       #拦截框架创建的业务处理协程panic
+        - recovery
         - i18n-adp
         - opentelemetry
       admin:
         ip: ${POD_IP}
         port: 8081
       service:                                         #业务服务提供的service，可以有多个
-        - name: trpc.KEP.bot-data-statistics-server.Api        #service的路由名称
-          ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
-          port: 8000                  #服务监听端口 可使用占位符 ${port}
-          network: tcp                               #网络监听类型  tcp udp
-          protocol: trpc                 #应用层协议 trpc http
-          timeout: 50000                              #请求最长处理时间 单位 毫秒
-          server_async: true                             #开启异步处理
-          idletime: 600000                               # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
-        - name: trpc.KEP.bot-data-statistics-server.Admin        #service的路由名称
-          ip: ${POD_IP}                              #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
-          port: 8001                  #服务监听端口 可使用占位符 ${port}
-          network: tcp                               #网络监听类型  tcp udp
-          protocol: trpc                 #应用层协议 trpc http
-          timeout: 0                              #请求最长处理时间 单位 毫秒
-          server_async: true                             #开启异步处理
-          idletime: 600000                               # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+        - name: trpc.KEP.bot-data-statistics-server.Api
+          ip: ${POD_IP}
+          port: 8000
+          network: tcp
+          protocol: trpc
+          timeout: 50000
+          server_async: true
+          idletime: 600000
+        - name: trpc.KEP.bot-data-statistics-server.Admin
+          ip: ${POD_IP}
+          port: 8001
+          network: tcp
+          protocol: trpc
+          timeout: 0
+          server_async: true
+          idletime: 600000
           filter:
             - session
             - permission
         - name: trpc.kafka.consumer.service.msg_log
-          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=adp_msg_record_binlog&group=bot-data-statistics-msg-log&batch=20&batchFlush=2000
+          address: "${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=adp_msg_record_binlog&group=bot-data-statistics-msg-log&batch=20&batchFlush=2000"
           protocol: kafka
         - name: trpc.kafka.consumer.service.user_stat
-          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=adp_msg_record_binlog&group=bot-data-statistics-msg-user&batch=20&batchFlush=2000
+          address: "${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=adp_msg_record_binlog&group=bot-data-statistics-msg-user&batch=20&batchFlush=2000"
           protocol: kafka
         - name: trpc.kafka.consumer.service.check_task
-          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=adp_t_check_task-formal&group=bot-data-statistics-check-task&batch=50&batchFlush=2000
+          address: "${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=adp_t_check_task-formal&group=bot-data-statistics-check-task&batch=50&batchFlush=2000"
           protocol: kafka
-        - name: trpc.KEP.bot-data-statistics-server.TriggerHistoryTask   #service的路由名称,
-          ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
-          port: 9095   #服务监听端口 可使用占位符 ${port}
-          network: 0 * * * * *?holdTime=5     # 该定时器同时在所有机器运行
-          protocol: timer   #应用层协议
-          timeout: 5000   # 异步处理不会超时
-        - name: trpc.KEP.bot-data-statistics-server.TriggerMsgLogCountTask   #service的路由名称,
-          ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
-          port: 9096   #服务监听端口 可使用占位符 ${port}
-          network: 5 2-59/5 * * * *?scheduler=statistics&holdTime=240
-          protocol: timer   #应用层协议
+        - name: trpc.KEP.bot-data-statistics-server.TriggerHistoryTask
+          ip: ${POD_IP}
+          port: 9095
+          network: "0 * * * * *?holdTime=5"
+          protocol: timer
+          timeout: 5000
+        - name: trpc.KEP.bot-data-statistics-server.TriggerMsgLogCountTask
+          ip: ${POD_IP}
+          port: 9096
+          network: "5 2-59/5 * * * *?scheduler=statistics&holdTime=240"
+          protocol: timer
           timeout: 240000
-        - name: trpc.KEP.bot-data-statistics-server.TriggerMsgUserCountTask   #service的路由名称,
-          ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
-          port: 9097   #服务监听端口 可使用占位符 ${port}
-          network: 5 2-59/5 * * * *?scheduler=statistics&holdTime=240
-          protocol: timer   #应用层协议
+        - name: trpc.KEP.bot-data-statistics-server.TriggerMsgUserCountTask
+          ip: ${POD_IP}
+          port: 9097
+          network: "5 2-59/5 * * * *?scheduler=statistics&holdTime=240"
+          protocol: timer
           timeout: 240000
-        - name: trpc.KEP.bot-data-statistics-server.TriggerMsgFeedbackCountTask   #service的路由名称,
-          ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
-          port: 9098   #服务监听端口 可使用占位符 ${port}
-          network: 5 2-59/5 * * * *?scheduler=statistics&holdTime=240
-          protocol: timer   #应用层协议
+        - name: trpc.KEP.bot-data-statistics-server.TriggerMsgFeedbackCountTask
+          ip: ${POD_IP}
+          port: 9098
+          network: "5 2-59/5 * * * *?scheduler=statistics&holdTime=240"
+          protocol: timer
           timeout: 240000
-        - name: trpc.KEP.bot-data-statistics-server.TriggerCleanExpiredStaticalData   #service的路由名称,
-          ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
-          port: 9099   #服务监听端口 可使用占位符 ${port}
-          network: 0 5 0 * * *?scheduler=statistics&holdTime=3600
-          protocol: timer   #应用层协议
+        - name: trpc.KEP.bot-data-statistics-server.TriggerCleanExpiredStaticalData
+          ip: ${POD_IP}
+          port: 9099
+          network: "0 5 0 * * *?scheduler=statistics&holdTime=3600"
+          protocol: timer
           timeout: 3600000
-        - name: trpc.KEP.bot-data-statistics-server.TriggerCounterTask   #service的路由名称,
-          ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
-          port: 9105   #服务监听端口 可使用占位符 ${port}
-          network: 0 */5 * * * *?scheduler=statistics&holdTime=240
-          protocol: timer   #应用层协议
+        - name: trpc.KEP.bot-data-statistics-server.TriggerCounterTask
+          ip: ${POD_IP}
+          port: 9105
+          network: "0 */5 * * * *?scheduler=statistics&holdTime=240"
+          protocol: timer
           timeout: 3600000
-        - name: trpc.KEP.bot-data-statistics-server.TriggerCleanExpiredContentRecognition   #service的路由名称,
-          ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
-          port: 9101   #服务监听端口 可使用占位符 ${port}
-          network: 0 5 0 * * *?scheduler=statistics&holdTime=3600
-          protocol: timer   #应用层协议
+        - name: trpc.KEP.bot-data-statistics-server.TriggerCleanExpiredContentRecognition
+          ip: ${POD_IP}
+          port: 9101
+          network: "0 5 0 * * *?scheduler=statistics&holdTime=3600"
+          protocol: timer
           timeout: 3600000
-        - name: trpc.KEP.bot-data-statistics-server.TriggerCleanExpiredAlarmHistory #service的路由名称,
-          ip: ${POD_IP}   #网卡 ipport配置二选一，主要用于分布式定时器的互斥
-          port: 9103 #服务监听端口 可使用占位符 ${port}
-          network: 0 */30 * * * *?scheduler=statistics&holdTime=120
-          protocol: timer #应用层协议
+        - name: trpc.KEP.bot-data-statistics-server.TriggerCleanExpiredAlarmHistory
+          ip: ${POD_IP}
+          port: 9103
+          network: "0 */30 * * * *?scheduler=statistics&holdTime=120"
+          protocol: timer
           timeout: 3600000
-        - name: trpc.KEP.bot-data-statistics-server.TriggerPrivateMsgRecordEtl #私有化专用，定时 ETL t_msg_record 至 t_msg_log 及 t_msg_daily_user
-          ip: localhost #网卡 ipport配置二选一，主要用于分布式定时器的互斥
-          port: 9100 #服务监听端口 可使用占位符 ${port}
-          network: "0/10 * * * * *?holdTime=5" # 每 10秒触发一次
-          protocol: timer #应用层协议
+        - name: trpc.KEP.bot-data-statistics-server.TriggerPrivateMsgRecordEtl
+          ip: localhost
+          port: 9100
+          network: "0/10 * * * * *?holdTime=5"
+          protocol: timer
           timeout: 3600000
-        - name: trpc.KEP.bot-data-statistics-server.TriggerCleanExpiredScheduleTask #私有化专用，定时清理 t_schedule_task 表
-          ip: localhost #网卡 ipport配置二选一，主要用于分布式定时器的互斥
-          port: 9101 #服务监听端口 可使用占位符 ${port}
-          network: "0 10 0 * * *?scheduler=statistics&holdTime=10" # 每天跑一次
-          protocol: timer #应用层协议
+        - name: trpc.KEP.bot-data-statistics-server.TriggerCleanExpiredScheduleTask
+          ip: localhost
+          port: 9101
+          network: "0 10 0 * * *?scheduler=statistics&holdTime=10"
+          protocol: timer
           timeout: 10000
-        - name: trpc.KEP.bot-data-statistics-server.TriggerCleanMsgLogTask #私有化专用，定时清理 t_msg_log 及 t_msg_daily_user 表数据
-          ip: localhost #网卡 ipport配置二选一，主要用于分布式定时器的互斥
-          port: 9102 #服务监听端口 可使用占位符 ${port}
-          network: "0 20 0 * * *?scheduler=statistics&holdTime=3600" # 每 10秒解发一次
-          protocol: timer #应用层协议
+        - name: trpc.KEP.bot-data-statistics-server.TriggerCleanMsgLogTask
+          ip: localhost
+          port: 9102
+          network: "0 20 0 * * *?scheduler=statistics&holdTime=3600"
+          protocol: timer
           timeout: 3600000
-        - name: trpc.KEP.bot-data-statistics-server.TriggerPrivateCheckTaskEtl # 私有化专用, 定时 ETL t_check_task 至 es
+        - name: trpc.KEP.bot-data-statistics-server.TriggerPrivateCheckTaskEtl
           ip: localhost
           port: 9103
-          network: "0/10 * * * * *?holdTime=5" # 每 10秒触发一次
-          protocol: timer #应用层协议
+          network: "0/10 * * * * *?holdTime=5"
+          protocol: timer
           timeout: 5000
         - name: trpc.kafka.consumer.platform_metrology.report
-          address: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=adp_platform_metrology_report&group=bot-data-statistics-report&batch=100&batchFlush=2000
+          address: "${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=adp_platform_metrology_report&group=bot-data-statistics-report&batch=100&batchFlush=2000"
           protocol: kafka
+        - name: trpc.kafka.consumer.service.event_report
+          address: "${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topics=adp_platform_metrology_event_report&group=bot-data-statistic-event-report&batch=50&batchFlush=2000"
+          protocol: kafka
+        - name: trpc.KEP.bot-data-statistics-server.TriggerMsgRecordSummaryTask
+          ip: ${POD_IP}
+          port: 9104
+          network: "0 */10 * * * *?scheduler=statistics&holdTime=600"
+          protocol: timer
+          timeout: 1200000
     plugins:                                          #插件配置
       telemetry:
         opentelemetry:
@@ -1391,23 +1017,23 @@ data:
             value: {{ $value }}
             {{- end }}
           {{- end }}
-      log:                                            #日志配置
-        default:                                  #默认日志的配置，可支持多输出
-          - writer: console                         #控制台标准输出 默认
-            level: info                            #标准输出日志的级别
+      log:
+        default:
+          - writer: console
+            level: info
             formatter: json
             formatter_config:
-              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
               time_key: time
               level_key: level
               name_key: name
               caller_key: caller
               message_key: message
-          - writer: file                            #本地文件日志
-            level: info                             #本地文件滚动日志的级别
+          - writer: file
+            level: info
             formatter: json
             formatter_config:
-              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
               time_key: time
               level_key: level
               name_key: name
@@ -1415,27 +1041,41 @@ data:
               message_key: message
               stacktrace_key: stackTrace
             writer_config:
-              filename: /app/logs/trpc.log  #本地文件滚动日志存放的路径
+              filename: /app/logs/trpc.log
               write_mode: 2
-              roll_type: time
-              max_age: 7
+              roll_type: size
+              max_size: 200
               max_backups: 10
               compress: false
-              time_unit: day
         clues:
-          - writer: console                         #控制台标准输出 默认
-            level: info                            #标准输出日志的级别
+          - writer: console
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
           - writer: file
             level: info
             formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
             writer_config:
               filename: /app/logs/clues.log
               write_mode: 2
-              roll_type: time
-              max_age: 7
+              roll_type: size
+              max_size: 200
               max_backups: 10
               compress: false
-              time_unit: day
       i18n:
         i18n-adp:
           default_lang: zh-CN
@@ -1455,43 +1095,37 @@ data:
             - name: rainbow
               path: /app/conf/
             - name: global
-              appid: ${RAINBOW_APP_ID}  # appid
-              group: global # 配置所属组
-              type: kv   # 七彩石数据格式, kv(默认), table
+              appid: ${RAINBOW_APP_ID}
+              group: global
+              type: kv
               env_name: ${RAINBOW_ENV_NAME}
               timeout: 2000
               enable_client_provider: true
-      registry: #服务注册配置
-        polaris: #北极星名字注册服务的配置
-          register_self: false
-          heartbeat_interval: 3000                    #名字注册服务心跳上报间隔
-          heartbeat_timeout: 1000                     #名字服务心跳超时
-          service:
-            - name: trpc.KEP.bot-data-statistics-server.Api      #service name 与上面的service配置一一对应
-              namespace: Test                #环境类型，分正式Production和非正式Development两种类型
-              token: e145f79eac6b4eeea2e89983691ccd46               #服务注册所需要的 token
-      selector: #针对用户自定义的selector的配置
-        polaris: #针对polaris整体api的内部配置
-          protocol: grpc                              #名字服务远程交互协议类型
+      registry:
+      selector:
+        polaris:
+          protocol: grpc
+
+
     client:
       namespace: Test
       filter:
         - opentelemetry
       service:
         - name: mysql.data.statistics
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: tdsql.qbot.qbot
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: redis.data.statistics
-          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/5
+          target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/5"
           timeout: 8000
         - name: mongo.data.statistics
-          target: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/lke-data-statistics?authSource=admin
+          target: "mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/lke-data-statistics?authSource=admin"
           timeout: 30000
         - name: trpc.KEP.msg-log-kafka.toyota
-          target: kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=tcadp_log2cls_toyota
+          target: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=tcadp_log2cls_toyota"
         - name: trpc.KEP.msg-log-kafka.joezhuang
-          target: kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=msg-log-joezhuang
+          target: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=msg-log-joezhuang"
         - callee: trpc.KEP.bot_admin_config_server.Login
           namespace: Production
           target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
@@ -1546,25 +1180,23 @@ data:
           network: tcp
           protocol: trpc
           timeout: 60000
-
         - name: trpc.kafka.producer.platform_metrology.finance_pay
-          target: kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_pack_pay&compression=none&partitioner=random&requiredAcks=-1
-
+          target: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_pack_pay&compression=none&partitioner=random&requiredAcks=-1"
         - name: trpc.kafka.producer.platform_metrology.report
-          target: kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_platform_metrology_report
+          # RESOLVE: keep-public
+          target: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_platform_metrology_report"
         - name: trpc.http.cos.Access
           network: tcp
           protocol: http
-          target: dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn
+          target: "dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn"
           timeout: 5000
         - callee: trpc.adp.plugin_config.PluginConfigApi
           name: trpc.adp.plugin_config.PluginConfigApi
           target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
           namespace: Production
         - name: trpc.clickhouse.adp
-          target: clickhouse://${INFRA_MIDDLEWARES_CLICKHOUSE_0_HOSTS}:${INFRA_MIDDLEWARES_CLICKHOUSE_0_PORT}?username=${INFRA_MIDDLEWARES_CLICKHOUSE_0_USER}&password=${INFRA_MIDDLEWARES_CLICKHOUSE_0_PASSWORD}&database=db_adp
+          target: "clickhouse://${INFRA_MIDDLEWARES_CLICKHOUSE_0_HOSTS}:${INFRA_MIDDLEWARES_CLICKHOUSE_0_PORT}?username=${INFRA_MIDDLEWARES_CLICKHOUSE_0_USER}&password=${INFRA_MIDDLEWARES_CLICKHOUSE_0_PASSWORD}&database=db_adp"
           timeout: 3000
-
         - name: elastic.data.statistics
           namespace: Production
           target: "ip://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}"
@@ -1574,10 +1206,17 @@ data:
         - name: adp.atomic.gateway
           network: tcp
           protocol: http
-          target: dns://api.adp.cloud.tencent.com:443
+          target: "dns://api.adp.cloud.tencent.com:443"
           timeout: 600000
         - name: trpc.adp.ai_gateway.Admin
           network: tcp
           protocol: trpc
           target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
           timeout: 2000
+        - name: trpc.kafka.producer.platform_metrology.event_report
+          target: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_platform_metrology_event_report"
+        - callee: trpc.adp.platform_account.Internal
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-account.{{ .Release.Namespace }}.svc.cluster.local:9092"  # TODO: 待人工确认
+          protocol: trpc
+          timeout: 5000

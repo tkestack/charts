@@ -1,0 +1,8 @@
+apiVersion: v2
+name: log-cleaner
+description: Cleanup old service logs on each node (DaemonSet + cron)
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+maintainers:
+  - name: ADP Team

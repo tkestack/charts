@@ -80,7 +80,10 @@ spec:
       initContainers:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       containers:
-        - env:
+        - envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
             - name: ADP-CHANNEL-ID
               value: "1"
             - name: POD_NAME

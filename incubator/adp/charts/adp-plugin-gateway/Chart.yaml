@@ -1,0 +1,16 @@
+apiVersion: v2
+name: adp-plugin-gateway
+description: A Helm chart for adp-plugin-gateway (插件统一网关，提供 MCP/HTTP 协议接入)
+
+# A chart can be either an 'application' or a 'library' chart.
+type: application
+
+# 当 chart 与模板内容发生变更时，需要同步递增此版本号
+version: 1.0.0
+
+# 应用版本号，与镜像版本对齐
+appVersion: 1.0.0
+
+maintainers:
+  - name: halelv
+  - name: v_iferen

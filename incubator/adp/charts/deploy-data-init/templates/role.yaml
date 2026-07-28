@@ -1,0 +1,26 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Release.Name }}-data-init-role
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-data-init-job
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-2"
+    "helm.sh/hook-delete-policy": before-hook-creation
+rules:
+  # Pod 查看（list/watch/get，用于按 selector 查找目标 Pod）
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+  # exec 进入容器（cross-up post_upgrade kubectl_exec 需要）
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+  # 查看日志（便于排查）
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get"]

@@ -64,7 +64,7 @@ data:
       timeout: 3000                                    #针对所有后端的请求最长处理时间
       service:
         - name: mysql_server
-          target: {{ dig "components" "db" "host" "" .Values.global }}:{{ dig "components" "db" "port" "" .Values.global }}  #被调的service路由名称,直连时为一组逗号隔开的ip:port 23.9.0.1:90,34.5.6.7:90
+          target: ${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT}  #被调的service路由名称,直连时为一组逗号隔开的ip:port 23.9.0.1:90,34.5.6.7:90
           namespace: Development #service路由名称所属的命名空间
           protocol: mysql #协议
           timeout: 10000000 #调用超时时间，ms
@@ -77,11 +77,11 @@ data:
           threadmodel_type: fiber
           mysql:
             db_name: db_llm_robot_task       #库名，不能为空
-            user_name: {{ dig "components" "db" "user" "" .Values.global }}    #用户名，不需要鉴权的时候可为空
-            password: {{ dig "components" "db" "password" "" .Values.global }}      #密码，不需要鉴权的时候可为空
+            user_name: ${INFRA_MIDDLEWARES_DB_0_USER}    #用户名，不需要鉴权的时候可为空
+            password: ${INFRA_MIDDLEWARES_DB_0_PASSWORD}      #密码，不需要鉴权的时候可为空
             character_set: utf8                  #字符集，默认值"utf8"
         - name: synonyms_mysql_server
-          target: {{ dig "components" "db" "host" "" .Values.global }}:{{ dig "components" "db" "port" "" .Values.global }}  #被调的service路由名称,直连时为一组逗号隔开的ip:port 23.9.0.1:90,34.5.6.7:90
+          target: ${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT}  #被调的service路由名称,直连时为一组逗号隔开的ip:port 23.9.0.1:90,34.5.6.7:90
           namespace: Development #service路由名称所属的命名空间
           protocol: mysql #协议
           timeout: 10000000 #调用超时时间，ms
@@ -94,8 +94,8 @@ data:
           threadmodel_type: fiber
           mysql:
             db_name: db_llm_robot       #库名，不能为空
-            user_name: {{ dig "components" "db" "user" "" .Values.global }}    #用户名，不需要鉴权的时候可为空
-            password: {{ dig "components" "db" "password" "" .Values.global }}      #密码，不需要鉴权的时候可为空
+            user_name: ${INFRA_MIDDLEWARES_DB_0_USER}    #用户名，不需要鉴权的时候可为空
+            password: ${INFRA_MIDDLEWARES_DB_0_PASSWORD}      #密码，不需要鉴权的时候可为空
             character_set: utf8                  #字符集，默认值"utf8"
     plugins:                                           #插件配置
       selector:

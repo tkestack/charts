@@ -1,4 +1,4 @@
 images:
   adp-app-shorturl:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/bot-shorturl-server:4_2606132004_stable_iaas_cos_371e2c62_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/bot-shorturl-server:6_2607161457_stable_iaas_v4.0.3.0_1f88ecf2_private"
 replicas: 1

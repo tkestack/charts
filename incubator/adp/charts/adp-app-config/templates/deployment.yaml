@@ -79,7 +79,10 @@ spec:
       initContainers:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       containers:
-        - env:
+        - envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -102,19 +105,17 @@ spec:
               value: info
             - name: ADP_HOST
               value: "{{ .Values.global.scheme }}://{{ .Values.global.clb }}"
-            {{- if .Values.global.components.s3.cos.stsKey }}
+            {{- if .Values.global.components.s3.cos.enableSts }}
             - name: ADP_ASSUME_ROLE_SECRET_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  name: infra-credentials
                   key: ADP_ASSUME_ROLE_SECRET_ID
-                  optional: true
             - name: ADP_ASSUME_ROLE_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  name: infra-credentials
                   key: ADP_ASSUME_ROLE_SECRET_KEY
-                  optional: true
             {{- end }}
           image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-app-config").url "context" .) }}
           imagePullPolicy: Always
@@ -124,27 +125,27 @@ spec:
           {{- if eq .Values.global.clusterSize "minimal" }}
           resources:
             limits:
-              cpu: "500m"
-              memory: "2Gi"
+              cpu: "2"
+              memory: "4Gi"
             requests:
-              cpu: "125m"
-              memory: "512Mi"
+              cpu: "1"
+              memory: "2Gi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
             limits:
+              cpu: "2"
+              memory: "4Gi"
+            requests:
               cpu: "1"
               memory: "2Gi"
-            requests:
-              cpu: "500m"
-              memory: "1Gi"
           {{- else }}
           resources:
             limits:
+              cpu: "2"
+              memory: "4Gi"
+            requests:
               cpu: "1"
               memory: "2Gi"
-            requests:
-              cpu: "500m"
-              memory: "1Gi"
           {{- end }}
           livenessProbe:
             failureThreshold: 3

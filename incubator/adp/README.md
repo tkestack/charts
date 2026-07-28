@@ -18,6 +18,7 @@
   - [对象存储配置](#对象存储配置)
   - [Kafka 消息队列配置](#kafka-消息队列配置)
   - [向量数据库配置](#向量数据库配置)
+- [Agent Runtime 配置 (agentRuntime)](#agent-runtime-配置-agentruntime)
 - [可观测性配置 (observability)](#可观测性配置-observability)
   - [CLS 日志收集配置](#cls-日志收集配置)
   - [Prometheus 监控配置](#prometheus-监控配置)
@@ -263,7 +264,7 @@ MySQL:
 |--------|------|------|-------|
 | `components.s3.vendor` | ✅ 必填 | 云厂商 | `tencent` |
 | `components.s3.providerType` | ✅ 必填 | 产品类型 | `cos` |
-| `components.s3.enableProxy` | ⚪ 选填 | 是否开启S3代理，false：默认关闭代理，直接访问S3资源，针对部分路径自动设置公有读。true：开启代理，S3资源默认设置私有读，资源访问由adp服务代理。 | `false` |
+| `components.s3.enableProxy` | ⚪ 选填 | 是否开启S3代理，true：默认开启代理，S3资源默认设置私有读，资源访问由adp服务代理。false：关闭代理，直接访问S3资源，针对部分路径自动设置公有读。 | `true` |
 
 **providerType 可选值：**
 
@@ -282,16 +283,16 @@ MySQL:
 | `components.s3.cos.subPath` | ✅ 必填| 子路径 | `adp-test(必须设置公有读权限)` |
 | `components.s3.cos.expireTime` | ⚪ 选填 | 签名过期时间 | `3600s` |
 | `components.s3.cos.credentialTime` | ⚪ 选填 | 临时凭证有效期                                               | `3600s`                                     |
-| `components.s3.cos.stsKey`         | ⚪ 选填 | sts模式下，保存cos访问秘钥的secret名称，需部署前主动创建。若配置该值，则仅支持通过sts模式访问cos资源，禁止使用永久secretId、secretKey | `sts-key`                                   |
-| `components.s3.cos.stsRoleArn`     | ⚪ 选填 | sts模式的角色标识，需要在腾讯云控制台创建CAM角色，并关联QcloudTsearchFullAccess、QcloudHunYuanFullAccess、QcloudOCRFullAccess、QcloudLKEAPFullAccess、QcloudCOSFullAccess权限策略 | `qcs::cam::uin/1234567890:roleName/CosFull` |
+| `components.s3.cos.enableSts`      | ⚪ 选填 | 是否启用 STS 临时凭证模式。为 `true` 时，仅通过 STS 模式访问 COS 资源，禁止使用永久 `secretId` / `secretKey`；此时 `stsRoleArn` 必填 | `true`                                      |
+| `components.s3.cos.stsRoleArn`     | ⚪ 选填 | STS 模式的角色标识，需要在腾讯云控制台创建 CAM 角色，并关联 QcloudTsearchFullAccess、QcloudHunYuanFullAccess、QcloudOCRFullAccess、QcloudLKEAPFullAccess、QcloudCOSFullAccess 权限策略。`enableSts=true` 时必填 | `qcs::cam::uin/1234567890:roleName/CosFull` |
 
 **注意**
 
 - 1、components.s3.cos.secretId及components.s3.cos.secretKey对应的uin账号，
 需要授予cos权限、知识引擎原子能力权限（**QcloudLKEAPFullAccess**），另外，同时需要在 https://console.cloud.tencent.com/lkeap/settings 中设置文档解析、文档拆分能力为后付费  
-<img src="https://adp-testing-1406902593.cos.ap-beijing.myqcloud.com/prod_files/%E6%96%87%E6%A1%A3%E8%A7%A3%E6%9E%90%E5%90%8E%E4%BB%98%E8%B4%B9.png" width="400">
+<img src="https://adp-iaas-aio-1406902593.cos.ap-beijing.myqcloud.com/agent-runtime/doc-parse-postpaid.png" width="400">
 
-- 2、cos桶中要针对使用的域名进行跨域设置，放开GET、PUT、OPTIONS、HEAD等Method。
+- 2、如果components.s3.enableProxy设置为false，cos桶中要针对使用的域名进行跨域设置，放开GET、PUT、OPTIONS、HEAD等Method。如果components.s3.enableProxy设置为默认值true则不需要配置。
 
 **购买链接：** https://cloud.tencent.com/product/cos 在页面中创建桶，并且创建一个目录给adp使用。
 
@@ -336,11 +337,13 @@ kafka是可选中间件，如果需要运维管理中的操作日志查询功能
 | `components.kafka.port` | ✅ 必填 | Kafka 端口 | `9092` |
 
 **providerType 可选值：**
+
 - tencent: `kafka`
 
 **购买链接：** https://console.cloud.tencent.com/ckafka/instance
 
 **要求：**
+
 - Kafka 2.x 或 3.x 版本
 - 支持标准版或专业版
 
@@ -364,8 +367,7 @@ kafka是可选中间件，如果需要运维管理中的操作日志查询功能
 
 **使用说明：**
 - 主要用于 审计及统计
-- Topic: `pack_pay`、`event_report_prod`、`msg_record_binlog`、`platform_metrology_report`、`t_check_task-formal`、`adp_audit_log_prod`
-- 需要提前创建 Topic 或者 开启Topic自动创建开关
+- Topic: `adp_platform_metrology_event_report`、`adp_topic_doc_convert_test`、`adp_pack_pay`、`adp_audit_log_prod`、`adp_msg_record_binlog`、`adp_t_check_task-formal`、`adp_platform_metrology_report`、`adp_event_report_prod`、`topic_doc_convert_test`
 - Topic创建参数：3分区2副本
 
 > **价格说明**：以上价格基于 1 个月购买周期预估，实际价格可能因地域、优惠活动等因素有所差异。长期使用建议购买更长周期以获取折扣。
@@ -444,6 +446,77 @@ components:
     user: default
     password: your-password
 ```
+
+## Agent Runtime 配置 (agentRuntime)
+
+Agent Runtime 是 ADP **智能工作台** 和 **Claw 模式** 的沙箱运行环境，**必须完成配置**。
+
+> 📘 **详细配置流程（含控制台截图）**：请参见 [AGENT-RUNTIME.md](AGENT-RUNTIME.md)
+
+### 前置依赖（均为必填）
+
+| 依赖 | 用途 | 控制台链接 |
+|------|------|-----------|
+| CFS 文件系统 | 沙箱之间共享用户工作目录 `/users` | <https://console.cloud.tencent.com/cfs/fs> |
+| COS 对象存储 | 存放系统与用户的 Skills 资源（复用 `components.s3.cos` 配置的 COS 桶） | 需初始化 `/skills/system`、`/skills/users` 目录 |
+| Agent Runtime 沙箱工具 | 需在腾讯云 Agent Runtime 控制台创建 3 个沙箱工具 | <https://console.cloud.tencent.com/ags/sandbox/sandbox> |
+| agent-sandbox 镜像 | 沙箱运行镜像，由 ADP 官方提供 | `adp-iaas.tencentcloudcr.com/adp-public/agent-sandbox` |
+
+### 沙箱工具概览
+
+Agent Runtime 需要创建 **3 个** 沙箱工具，具体创建流程见 [详细文档](AGENT-RUNTIME.md#4-agent-runtime-沙箱配置)：
+
+| 沙箱工具 | 资源建议 | 用途 | 生命周期 |
+|----------|----------|------|----------|
+| 公共沙箱 (commonAgs) | 2C 4Gi | 用于初始化智能工作台使用的工作目录 | **常驻沙箱** |
+| 智能工作台 (smartDeskAgs) | 4C 8Gi | 智能工作台功能下沙箱运行的环境 | 按需 |
+| Claw 模式 (clawAgs) | 2C 4Gi | Claw 模式下沙箱运行的环境 | 按需 |
+
+### 配置项说明
+
+| 配置项 | 必填 | 说明 | 示例值 |
+|--------|------|------|--------|
+| `agentRuntime.disabled` | ✅ 必填 | 是否禁用 Agent Runtime，默认 `false` 保持启用；禁用后智能工作台与 Claw 模式不可用 | `false` |
+| `agentRuntime.vendor` | ✅ 必填 | 云厂商 | `tencent` |
+| `agentRuntime.stsRoleArn` | ✅ 必填 | 申请沙箱时配置的角色 RoleArn，用于沙箱访问 COS、镜像仓库等云资源 | `qcs::cam::uin/100000000000:roleName/xxx` |
+| `agentRuntime.instances.clawAgs.toolID` | ✅ 必填 | Claw 模式沙箱工具 ID | `sdt-xxxxxxxx` |
+| `agentRuntime.instances.smartDeskAgs.toolID` | ✅ 必填 | 智能工作台沙箱工具 ID | `sdt-xxxxxxxx` |
+| `agentRuntime.instances.commonAgs.toolID` | ✅ 必填 | 公共沙箱工具 ID | `sdt-xxxxxxxx` |
+| `agentRuntime.instances.commonAgs.instanceID` | ✅ 必填 | 公共沙箱实例 ID | `cfaixxxxxxxxxxxxxxxxx` |
+| `agentRuntime.instances.commonAgs.token` | ✅ 必填 | 公共沙箱实例 Token | `sit_xxxxxxxxxxxxxxxxx` |
+| `agentRuntime.cfs.ip` | ✅ 必填 | 沙箱挂载的 CFS 文件系统 IP | `192.168.4.35` |
+| `agentRuntime.cfs.path` | ✅ 必填 | 沙箱挂载的 CFS 路径 | `/users` |
+
+### 配置示例
+
+```yaml
+global:
+  agentRuntime:
+    disabled: false
+    vendor: tencent
+    # 申请沙箱时配置的角色 RoleArn
+    stsRoleArn: "qcs::cam::uin/100000000000:roleName/xxx"
+    instances:
+      # Claw 模式沙箱
+      clawAgs:
+        toolID: "sdt-xxxxxxxx"
+      # 智能工作台沙箱
+      smartDeskAgs:
+        toolID: "sdt-xxxxxxxx"
+      # 公共沙箱（常驻实例）
+      commonAgs:
+        toolID: "sdt-xxxxxxxx"
+        instanceID: "cfaixxxxxxxxxxxxxxxxx"
+        token: "sit_xxxxxxxxxxxxxxxxx"
+    # 沙箱挂载的 CFS 配置
+    cfs:
+      ip: "192.168.4.35"
+      path: "/users"
+```
+
+> ⚠️ 上述沙箱 `toolID`、`instanceID`、`token` 需要在腾讯云 Agent Runtime 控制台创建对应沙箱后获取，详细创建流程与控制台截图请见 [AGENT-RUNTIME.md](AGENT-RUNTIME.md)。
+
+---
 
 ## 可观测性配置 (observability)
 
@@ -542,6 +615,7 @@ global:
 - [ ] `global.components.s3.*` - 对象存储配置
 - [ ] `global.components.kafka.*` - Kafka 消息队列配置
 - [ ] `global.components.clickhouse.*` - ClickHouse 配置
+- [ ] `global.agentRuntime.*` - Agent Runtime 沙箱配置（智能工作台 / Claw 模式的沙箱运行环境）
 
 ### 云产品购买清单
 
@@ -554,6 +628,8 @@ global:
 | COS 对象存储 | 文件存储 | https://cloud.tencent.com/product/cos |
 | CKafka 消息队列 | 审计日志消息队列 | https://console.cloud.tencent.com/ckafka/instance |
 | ClickHouse | 数据分析 | https://console.cloud.tencent.com/tchousec/instance |
+| CFS 文件存储 | Agent Runtime 沙箱共享目录 | https://console.cloud.tencent.com/cfs/fs |
+| Agent Runtime 沙箱 | 智能工作台 / Claw 模式沙箱运行环境 | https://console.cloud.tencent.com/ags/sandbox/sandbox |
 | CLS 日志服务 | 日志收集（可选） | https://console.cloud.tencent.com/cls/topic |
 | Prometheus | 监控（可选） | https://console.cloud.tencent.com/tke2/prometheus2 |
 | APM 应用性能监控 | 链路追踪（可选） | https://console.cloud.tencent.com/monitor/apm/system/list |
@@ -567,7 +643,7 @@ global:
 
 | 组件 | 月费用（元） |
 |------|-------------|
-| 服务器（3台 16c32G） | 3,000 |
+| 服务器（3台 16c32G） | 3000 |
 | CLB 负载均衡 | 按实际使用 |
 | TDSQL 数据库（最小配置） | 330 |
 | Redis（最小配置） | 35 |
@@ -575,19 +651,23 @@ global:
 | COS 对象存储 | 按实际使用 |
 | Kafka 消息队列（最小配置） | 600 |
 | ClickHouse （通用配置） | 4500 |
+| Agent Runtime（通用配置） | 按实际使用，参考https://cloud.tencent.com/document/product/1814/133249 |
+| CFS文件系统（通用配置） | 按实际使用 |
 
 ### 标准配置总费用
 
 | 组件 | 月费用（元）          |
 |------|-----------------|
-| 服务器（6台 16c32G） | 6,000           |
+| 服务器（6台 16c32G） | 6000           |
 | CLB 负载均衡 | 按实际使用           |
 | TDSQL 数据库（标准配置） | 700             |
 | Redis（标准配置） | 70              |
-| Elasticsearch（标准配置） | 1,950           |
+| Elasticsearch（标准配置） | 1950           |
 | COS 对象存储 | 按实际使用           |
-| Kafka 消息队列（标准配置） | 1,200           |
+| Kafka 消息队列（标准配置） | 1200           |
 | ClickHouse （通用配置） | 4500 |
+| Agent Runtime（通用配置） | 按实际使用，参考https://cloud.tencent.com/document/product/1814/133249 |
+| CFS文件系统（通用配置） | 按实际使用 |
 
 ### 推荐配置总费用
 
@@ -595,14 +675,17 @@ global:
 |------|-------------|
 | 服务器（10台 16c32G） | 10,000 |
 | CLB 负载均衡 | 按实际使用 |
-| TDSQL 数据库（推荐配置） | 3,000 |
+| TDSQL 数据库（推荐配置） | 3000 |
 | Redis（推荐配置） | 140 |
-| Elasticsearch（推荐配置） | 3,300 |
+| Elasticsearch（推荐配置） | 3300 |
 | COS 对象存储 | 按实际使用 |
-| Kafka 消息队列（推荐配置） | 2,400 |
+| Kafka 消息队列（推荐配置） | 2400 |
 | ClickHouse （通用配置） | 4500 |
+| Agent Runtime（通用配置） | 按实际使用，参考https://cloud.tencent.com/document/product/1814/133249 |
+| CFS文件系统（通用配置） | 按实际使用 |
 
 > **重要说明：**
+>
 > 1. 以上所有价格均为预估价格，实际费用以腾讯云账单价格为准
 > 2. CLB 和 COS 按实际使用量计费，费用因使用情况而异
 > 3. 长期使用建议购买包年套餐，可享受更多折扣

@@ -1,0 +1,344 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-unified-gateway
+  namespace: {{ .Release.Namespace }}
+data:
+  adp.yaml: |
+    # 私有化环境不需要灰度配置，留空即可
+    vips:
+    envs:
+    default_env: ""
+
+  placeholder.yaml: |
+    # 私有化环境占位符
+    NAMESPACE: Production
+
+  router.yaml: |
+    router:
+      - method: /capi/v2/kb_config/
+        target_service:
+          - service: trpc.adp.kb_config.v2.External
+        plugins:
+          - name: tc_action_route
+
+      - method: /capi/v2/app_config/
+        target_service:
+          - service: trpc.adp.app_config.v2.External
+        plugins:
+          - name: tc_action_route
+
+      - method: /capi/v2/agent_config/
+        target_service:
+          - service: trpc.adp.agent_config.v3.External
+        plugins:
+          - name: tc_action_route
+
+      - method: /capi/v2/platform_manager/
+        target_service:
+          - service: trpc.adp.platform_manager.v2.External
+        plugins:
+          - name: tc_action_route
+
+      - method: /capi/v2/resource_gallery/
+        target_service:
+          - service: trpc.adp.resource_gallery.v2.ApiExternal
+        plugins:
+          - name: tc_action_route
+
+      - method: /capi/v2/plugin_config/
+        target_service:
+          - service: trpc.adp.plugin_config.v2.External
+        plugins:
+          - name: tc_action_route
+
+      - method: /capi/v2/chat_manage/
+        target_service:
+          - service: trpc.adp.chat_manage.Chat
+        plugins:
+          - name: tc_action_route
+
+      - method: /adp/v2/chat
+        target_service:
+          - service: trpc.adp.chat_manage.ChatHttp
+
+      - method: /capi/v2/skill_config/
+        target_service:
+          - service: trpc.adp.skill_config.v2.External
+        plugins:
+          - name: tc_action_route
+
+      - method: /capi/v2/workflow_config/
+        target_service:
+          - service: trpc.adp.workflow_config.v2.External
+        plugins:
+          - name: tc_action_route
+
+      - method: /capi/v2/time_scheduler/
+        target_service:
+          - service: trpc.adp.time_scheduler.TimeScheduler
+        plugins:
+          - name: tc_action_route
+
+    plugins:
+      - name: req_lifecycle
+        type: gateway
+      - name: accesslog
+        type: gateway
+      - name: route_env
+        type: gateway
+        props:
+          uin_source: body
+          body_paths:
+            - uin
+            - Uin
+      - name: metadata_mapper
+        type: gateway
+
+    client:
+      - name: trpc.adp.kb_config.v2.External
+        callee: trpc.adp.kb_config.v2.External
+        target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+        network: tcp
+        protocol: http
+        namespace: Production
+        timeout: 60000
+
+      - name: trpc.adp.app_config.v2.External
+        callee: trpc.adp.app_config.v2.External
+        target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9001
+        network: tcp
+        protocol: http
+        namespace: Production
+        timeout: 60000
+
+      - name: trpc.adp.agent_config.v3.External
+        callee: trpc.adp.agent_config.v3.External
+        target: ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:9010
+        network: tcp
+        protocol: http
+        namespace: Production
+        timeout: 60000
+
+      - name: trpc.adp.platform_manager.v2.External
+        callee: trpc.adp.platform_manager.v2.External
+        target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9098
+        network: tcp
+        protocol: http
+        namespace: Production
+        timeout: 60000
+
+      - name: trpc.adp.resource_gallery.v2.ApiExternal
+        callee: trpc.adp.resource_gallery.v2.ApiExternal
+        target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9094
+        network: tcp
+        protocol: http
+        namespace: Production
+        timeout: 60000
+
+      - name: trpc.adp.plugin_config.v2.External
+        callee: trpc.adp.plugin_config.v2.External
+        target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8004
+        network: tcp
+        protocol: http
+        namespace: Production
+        timeout: 60000
+
+      - name: trpc.adp.skill_config.v2.External
+        callee: trpc.adp.skill_config.v2.External
+        target: ip://adp-skill-config.{{ .Release.Namespace }}.svc.cluster.local:9001
+        network: tcp
+        protocol: http
+        namespace: Production
+        timeout: 60000
+
+      - name: trpc.adp.chat_manage.Chat
+        callee: trpc.adp.chat_manage.Chat
+        target: ip://adp-chat-manage.{{ .Release.Namespace }}.svc.cluster.local:9094
+        network: tcp
+        protocol: http
+        namespace: Production
+        timeout: 60000
+
+      - name: trpc.adp.chat_manage.ChatHttp
+        callee: trpc.adp.chat_manage.ChatHttp
+        target: ip://adp-chat-manage.{{ .Release.Namespace }}.svc.cluster.local:9099
+        network: tcp
+        protocol: fasthttp
+        namespace: Production
+        timeout: 604800000
+
+      - name: trpc.adp.workflow_config.v2.External
+        callee: trpc.adp.workflow_config.v2.External
+        target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+        network: tcp
+        protocol: http
+        namespace: Production
+        timeout: 60000
+
+      - name: trpc.adp.time_scheduler.TimeScheduler
+        callee: trpc.adp.time_scheduler.External
+        target: ip://adp-time-scheduler.{{ .Release.Namespace }}.svc.cluster.local:9091
+        network: tcp
+        protocol: http
+        namespace: Production
+        timeout: 60000
+
+  trpc_go.yaml: |
+    global:
+      namespace: Production
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+    server:
+      app: adp
+      server: unified-gateway
+      bin_path: /app/bin/
+      conf_path: /app/conf/
+      log_path: /app/logs/
+      admin:
+        ip: 127.0.0.1
+        port: 9028
+        read_timeout: 3000
+        write_timeout: 60000
+      filter:
+        - recovery
+        - cle-route-propagator
+        - opentelemetry
+      service:
+        - name: trpc.adp.unified-gateway.capi
+          ip: ${POD_IP}
+          port: 8000
+          network: tcp
+          protocol: fasthttp
+          timeout: 0
+          max_request_body_size: 20M
+          read_buffer_size: 32k
+          filter:
+            - traceid
+            - req_lifecycle
+            - accesslog
+            - trpcerr2body
+            - metadata_mapper
+    client:
+      namespace: Production
+      filter:
+        - cle-route-propagator
+        - opentelemetry
+    plugins:
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      log:
+        default:
+          - writer: console
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+          - writer: file
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/trpc.log
+              write_mode: 2
+              roll_type: size
+              max_size: 200
+              max_backups: 10
+              compress: false
+        accesslog:
+          - writer: console
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+          - writer: file
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/access.log
+              write_mode: 2
+              roll_type: size
+              max_size: 200
+              max_backups: 10
+              compress: false
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+            - name: global
+              path: /app/conf/
+      gateway:
+        timeout:
+        traceid:
+        route_env:
+          adp_rainbow_provider: rainbow
+        tc_action_route:
+        metadata_mapper:
+          mappings:
+            proxy.metadata.action:             request.header.X-TC-Action
+            proxy.metadata.region:             request.header.X-TC-Region
+            proxy.metadata.version:            request.header.X-TC-Version
+            proxy.metadata.language:           request.header.X-TC-Language
+            proxy.metadata.timestamp:          request.header.X-TC-Timestamp
+            proxy.metadata.request_id:         request.header.X-TC-RequestId
+            proxy.metadata.uin:
+              - request.body.uin
+              - request.body.Uin
+            proxy.metadata.sub_account_uin:    request.body.SubAccountUin
+            proxy.metadata.client_ip:          request.header.X-TC-ClientIP
+            proxy.metadata.request_source:     request.header.X-TC-RequestSource
+            proxy.metadata.cam_context:        request.header.X-TC-CamContext
+            proxy.metadata.login_uin:          request.body.LoginUin
+            proxy.metadata.login_sub_account_uin: request.body.LoginSubAccountUin
+            proxy.metadata.login_user_type:    request.cookie.login_user_type
+        trpcerr2body:
+        req_lifecycle:
+          log_user_agent: false
+        accesslog:

@@ -40,8 +40,8 @@ scheme:
   obs: 1
 type: minio
 minio:
-  secret_id: {{ .Values.global.components.s3.cos.secretId }}
-  secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+  secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+  secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
   region: ""
   bucket: qbot
   sts_endpoint: http://{{ index .Values.global.objectstorage (.Values.global.components.s3.providerType) "host" }}
@@ -51,8 +51,8 @@ minio:
   expire_time: 30m
 minio_list:
   minio:
-    secret_id: {{ .Values.global.components.s3.cos.secretId }}
-    secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+    secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+    secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
     region: ""
     bucket: qbot
     sts_endpoint: http://{{ index .Values.global.objectstorage (.Values.global.components.s3.providerType) "host" }}
@@ -61,8 +61,8 @@ minio_list:
     use_https: {{ eq .Values.global.scheme "https" }}
     expire_time: 30m
   realtime:
-    secret_id: {{ .Values.global.components.s3.cos.secretId }}
-    secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+    secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+    secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
     region: ""
     bucket: qbot
     sts_endpoint: http://{{ index .Values.global.objectstorage (.Values.global.components.s3.providerType) "host" }}
@@ -126,8 +126,8 @@ scheme:
   adp_default: 1
 type: minio
 minio:
-  secret_id: {{ .Values.global.components.s3.cos.secretId }}
-  secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+  secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+  secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
   region: ""
   bucket: qbot
   sts_endpoint: http://{{ index .Values.global.objectstorage (.Values.global.components.s3.providerType) "host" }}
@@ -136,8 +136,8 @@ minio:
   expire_time: 30m
 min_io_map:
   adp_default:
-    secret_id: {{ .Values.global.components.s3.cos.secretId }}
-    secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+    secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+    secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
     region: ""
     bucket: qbot
     sts_endpoint: http://{{ index .Values.global.objectstorage (.Values.global.components.s3.providerType) "host" }}
@@ -145,8 +145,8 @@ min_io_map:
     use_https: {{ eq .Values.global.scheme "https" }}
     expire_time: 30m
   minio:
-    secret_id: {{ .Values.global.components.s3.cos.secretId }}
-    secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+    secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+    secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
     region: ""
     bucket: qbot
     sts_endpoint: http://{{ index .Values.global.objectstorage (.Values.global.components.s3.providerType) "host" }}
@@ -154,8 +154,8 @@ min_io_map:
     use_https: {{ eq .Values.global.scheme "https" }}
     expire_time: 30m
   realtime:
-    secret_id: {{ .Values.global.components.s3.cos.secretId }}
-    secret_key: {{ .Values.global.components.s3.cos.secretKey }}
+    secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+    secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
     region: ""
     bucket: qbot
     sts_endpoint: http://{{ index .Values.global.objectstorage (.Values.global.components.s3.providerType) "host" }}

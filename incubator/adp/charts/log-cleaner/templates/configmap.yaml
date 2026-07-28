@@ -1,0 +1,110 @@
+{{- if .Values.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-log-cleaner-scripts
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "log-cleaner.labels" . | nindent 4 }}
+data:
+  # ---------------------------------------------------------------------------
+  # entrypoint.sh - 容器主进程
+  # 生成 crontab、启动 crond 前台运行；crond 由 kubelet 保活。
+  # ---------------------------------------------------------------------------
+  entrypoint.sh: |
+    #!/bin/sh
+    set -eu
+
+    SCHEDULE="${SCHEDULE:-0 3 * * *}"
+    CRON_FILE=/var/spool/cron/crontabs/root
+
+    mkdir -p "$(dirname "$CRON_FILE")"
+
+    # 只允许 root 读写，符合 busybox crond 要求
+    cat > "$CRON_FILE" <<EOF
+    ${SCHEDULE} /scripts/cleanup.sh >> /proc/1/fd/1 2>> /proc/1/fd/2
+    EOF
+    chmod 600 "$CRON_FILE"
+
+    echo "[log-cleaner] start crond, schedule=\"${SCHEDULE}\", retain=${RETAIN_DAYS:-7}d, root=${HOST_LOG_ROOT:-/host/logs}"
+
+    # 启动即在 stdout 打印一次即将清理的路径，便于排查（不实际删除）
+    /scripts/cleanup.sh --preview || true
+
+    # crond 前台运行，日志级别 8（较详细）
+    exec crond -f -d 8
+
+  # ---------------------------------------------------------------------------
+  # cleanup.sh - 清理脚本
+  # 安全约束：
+  #   1. 允许清理的根路径通过环境变量 HOST_LOG_ROOT 传入，但必须以 /host/logs 前缀开头，
+  #      且必须存在、为目录，否则直接退出（防误删）。
+  #   2. RETAIN_DAYS 必须为正整数，否则退出（防命令注入）。
+  #   3. find 使用 -xdev -mindepth 2，保证不跨文件系统、不删根目录及一级服务目录。
+  #   4. 不使用 rm -rf，只用 find -delete。
+  # ---------------------------------------------------------------------------
+  cleanup.sh: |
+    #!/bin/sh
+    set -u
+
+    HOST_LOG_ROOT="${HOST_LOG_ROOT:-/host/logs}"
+    RETAIN_DAYS="${RETAIN_DAYS:-7}"
+    MODE="${1:-run}"
+
+    # ---- 安全校验 1: 根路径前缀白名单 ----
+    case "$HOST_LOG_ROOT" in
+      /host/logs|/host/logs/*) : ;;
+      *)
+        echo "[cleanup] refuse to run: HOST_LOG_ROOT must be under /host/logs, got=$HOST_LOG_ROOT" >&2
+        exit 1
+        ;;
+    esac
+
+    # ---- 安全校验 2: 根路径必须存在且是目录 ----
+    if [ ! -d "$HOST_LOG_ROOT" ]; then
+      echo "[cleanup] root not found or not a dir: $HOST_LOG_ROOT (skip)"
+      exit 0
+    fi
+
+    # ---- 安全校验 3: RETAIN_DAYS 必须是正整数 ----
+    case "$RETAIN_DAYS" in
+      ''|*[!0-9]*)
+        echo "[cleanup] invalid RETAIN_DAYS: $RETAIN_DAYS" >&2
+        exit 1
+        ;;
+    esac
+    if [ "$RETAIN_DAYS" -lt 1 ]; then
+      echo "[cleanup] RETAIN_DAYS must be >= 1, got=$RETAIN_DAYS" >&2
+      exit 1
+    fi
+
+    NODE_NAME="${NODE_NAME:-unknown}"
+    TS=$(date '+%Y-%m-%dT%H:%M:%S%z')
+
+    if [ "$MODE" = "--preview" ]; then
+      echo "[cleanup][preview] node=$NODE_NAME ts=$TS root=$HOST_LOG_ROOT retain=${RETAIN_DAYS}d"
+      # 只列出前 10 条将被删除的文件用于确认
+      find "$HOST_LOG_ROOT" -xdev -mindepth 2 -type f -mtime +"${RETAIN_DAYS}" 2>/dev/null | head -n 10 \
+        | while IFS= read -r f; do echo "  would-delete: $f"; done
+      exit 0
+    fi
+
+    echo "[cleanup] node=$NODE_NAME ts=$TS root=$HOST_LOG_ROOT retain=${RETAIN_DAYS}d start"
+
+    # 统计待删除文件数与总大小（分开一次 find；不影响正确性，仅用于观测）
+    PENDING_COUNT=$(find "$HOST_LOG_ROOT" -xdev -mindepth 2 -type f -mtime +"${RETAIN_DAYS}" 2>/dev/null | wc -l | tr -d ' ')
+    PENDING_BYTES=$(find "$HOST_LOG_ROOT" -xdev -mindepth 2 -type f -mtime +"${RETAIN_DAYS}" -printf '%s\n' 2>/dev/null \
+                    | awk '{s+=$1} END {print s+0}')
+    # busybox find 可能不支持 -printf；失败时把 PENDING_BYTES 置为 -
+    [ -z "$PENDING_BYTES" ] && PENDING_BYTES="-"
+
+    echo "[cleanup] pending files=$PENDING_COUNT bytes=$PENDING_BYTES"
+
+    # ---- 实际删除：文件 ----
+    find "$HOST_LOG_ROOT" -xdev -mindepth 2 -type f -mtime +"${RETAIN_DAYS}" -delete 2>/dev/null || true
+
+    # ---- 清理空目录（保留一级服务目录本身，故用 -mindepth 3）----
+    find "$HOST_LOG_ROOT" -xdev -mindepth 3 -type d -empty -delete 2>/dev/null || true
+
+    echo "[cleanup] node=$NODE_NAME ts=$(date '+%Y-%m-%dT%H:%M:%S%z') done"
+{{- end }}

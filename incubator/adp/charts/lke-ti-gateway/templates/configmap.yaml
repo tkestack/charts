@@ -241,6 +241,7 @@ data:
       - rewrite-lke
       - ti-perm-auth
       - public-api
+      - proxy-rewrite
 
     stream_plugins:
       - mqtt-proxy

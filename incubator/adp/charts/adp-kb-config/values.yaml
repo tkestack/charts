@@ -1,6 +1,6 @@
 images:
   adp-kb-config:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/kb-config:66_2606151729_stable_iaas_cos_64289625_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/kb-config:85_2607271713_stable_iaas_v4.0.3.0_f580e661_private"
 resources:
   limits:
     cpu: 2

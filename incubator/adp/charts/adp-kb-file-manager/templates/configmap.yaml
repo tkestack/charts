@@ -4,6 +4,18 @@ metadata:
   name: {{ .Release.Name }}-kb-file-manager
   namespace: {{ .Release.Namespace }}
 data:
+  FileManagerServer.yaml: |
+    #k: v     # 使用yaml做配置管理，可以写注释
+    base:                                         # 基础配置
+      is_manager_server: true
+      reload_interval: 30s                        # 路由表重载间隔
+      enable_kafka_queue: true
+      quota_cfg:
+         qps: 30
+         mllm_conc_num : 30
+         split_conc_num: 30
+    cut_config:
+       tmp_dir: /usr/local/trpc/data/tmp           # 临时文件目录
   application.yaml: |
     {{- if eq .Values.global.components.s3.providerType "minio" }}
     storage:
@@ -148,6 +160,10 @@ data:
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_APP_CONFIG_API_NAMESPACE}
           target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
           timeout: 30000
+        - name: trpc.adp.app_config.Admin
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_APP_CONFIG_ADMIN_NAMESPACE}
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 30000
         - name: trpc.adp.platform_manager.Api
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_PLATFORM_MANAGER_API_NAMESPACE}
           target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
@@ -173,6 +189,7 @@ data:
           target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
           protocol: trpc
           timeout: 6000
+
 
   main.yaml: |
     gorm_debug: true
@@ -221,6 +238,9 @@ data:
 
     CLIENT_CLIENT_SERVICE_TRPC_ADP_APP_CONFIG_API_NAMESPACE: Production
     CLIENT_CLIENT_SERVICE_TRPC_ADP_APP_CONFIG_API_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
+
+    CLIENT_CLIENT_SERVICE_TRPC_ADP_APP_CONFIG_ADMIN_NAMESPACE: Production
+    CLIENT_CLIENT_SERVICE_TRPC_ADP_APP_CONFIG_ADMIN_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
 
     CLIENT_CLIENT_SERVICE_TRPC_ADP_PLATFORM_MANAGER_API_NAMESPACE: Production
     CLIENT_CLIENT_SERVICE_TRPC_ADP_PLATFORM_MANAGER_API_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
@@ -466,65 +486,6 @@ data:
           network: tcp
           protocol: http
 
-    client:
-      namespace: ${CLIENT_CLIENT_NAMESPACE}
-      filter:
-        - cle-route-propagator
-      service:
-        - name: mysql.qbot.admin
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
-        - name: mysql.qbot.admin.read
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
-        - name: tdsql.qbot.qbot
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
-        - name: tdsql.qbot.qbot.read
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
-        - name: tdsql.qbot.qbot.delete
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
-        - name: redis.qbot.admin
-          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${INFRA_MIDDLEWARES_REDIS_0_PORT}/2
-          timeout: 5000
-        - name: basic.interface.trpc_to_inner.Cloudcc
-          target: ${CLIENT_CLIENT_SERVICE_BASIC_INTERFACE_TRPC_TO_INNER_CLOUDCC_TARGET}
-          protocol: trpc
-          timeout: 5000
-          namespace: ${CLIENT_CLIENT_SERVICE_BASIC_INTERFACE_TRPC_TO_INNER_CLOUDCC_NAMESPACE}
-        - name: trpc.http.cos.Access
-          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_HTTP_COS_ACCESS_NAMESPACE}
-          network: tcp
-          protocol: http
-          target: '{{ include "storage.Access" . }}'
-          timeout: 30000
-        - name: trpc.adp.app_config.Api
-          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_APP_CONFIG_API_NAMESPACE}
-          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
-          timeout: 30000
-        - name: trpc.adp.platform_manager.Api
-          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_PLATFORM_MANAGER_API_NAMESPACE}
-          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
-          timeout: 30000
-        - callee: trpc.adp.kb_config.Api
-          name: trpc.adp.kb-config.Api
-          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
-          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_KB_CONFIG_API_NAMESPACE}
-          timeout: 30000
-        - callee: trpc.adp.kb_config.Admin
-          name: trpc.adp.kb-config.Admin
-          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9090
-          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_KB_CONFIG_ADMIN_NAMESPACE}
-          protocol: trpc
-          timeout: 60000
-        - callee: trpc.adp.plugin_config.PluginConfigApi
-          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_PLUGIN_CONFIG_API_NAMESPACE}
-          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
-          env_name:
-          timeout: 60000
-        - callee: trpc.adp.platform_manager.Login
-          namespace: Production
-          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
-          protocol: trpc
-          timeout: 6000
-
     plugins:
       config:
         file:
@@ -545,7 +506,7 @@ data:
             level: info
             formatter: json
             formatter_config:
-              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
               time_key: time
               level_key: level
               name_key: name
@@ -555,7 +516,7 @@ data:
             level: info
             formatter: json
             formatter_config:
-              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
               time_key: time
               level_key: level
               name_key: name
@@ -564,11 +525,11 @@ data:
               stacktrace_key: stackTrace
             writer_config:
               filename: /app/logs/trpc.log
-              max_size: 100
+              write_mode: 2
+              roll_type: size
+              max_size: 200
               max_backups: 10
-              max_age: 7
               compress: false
-
       telemetry:
         opentelemetry:
           addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
@@ -605,3 +566,67 @@ data:
             char_scaling_factor:
               zh: 1
               en: 3
+
+
+    client:
+      namespace: ${CLIENT_CLIENT_NAMESPACE}
+      filter:
+        - cle-route-propagator
+      service:
+        - name: mysql.qbot.admin
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.qbot.admin.read
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.qbot
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.qbot.read
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.qbot.delete
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: redis.qbot.admin
+          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${INFRA_MIDDLEWARES_REDIS_0_PORT}/2
+          timeout: 5000
+        - name: basic.interface.trpc_to_inner.Cloudcc
+          target: ${CLIENT_CLIENT_SERVICE_BASIC_INTERFACE_TRPC_TO_INNER_CLOUDCC_TARGET}
+          protocol: trpc
+          timeout: 5000
+          namespace: ${CLIENT_CLIENT_SERVICE_BASIC_INTERFACE_TRPC_TO_INNER_CLOUDCC_NAMESPACE}
+        - name: trpc.http.cos.Access
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_HTTP_COS_ACCESS_NAMESPACE}
+          network: tcp
+          protocol: http
+          target: '{{ include "storage.Access" . }}'
+          timeout: 30000
+        - name: trpc.adp.app_config.Api
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_APP_CONFIG_API_NAMESPACE}
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
+          timeout: 30000
+        - name: trpc.adp.app_config.Admin
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_APP_CONFIG_ADMIN_NAMESPACE}
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 30000
+        - name: trpc.adp.platform_manager.Api
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_PLATFORM_MANAGER_API_NAMESPACE}
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
+          timeout: 30000
+        - callee: trpc.adp.kb_config.Api
+          name: trpc.adp.kb-config.Api
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_KB_CONFIG_API_NAMESPACE}
+          timeout: 30000
+        - callee: trpc.adp.kb_config.Admin
+          name: trpc.adp.kb-config.Admin
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_KB_CONFIG_ADMIN_NAMESPACE}
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.plugin_config.PluginConfigApi
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_PLUGIN_CONFIG_API_NAMESPACE}
+          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          env_name:
+          timeout: 60000
+        - callee: trpc.adp.platform_manager.Login
+          namespace: Production
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 6000

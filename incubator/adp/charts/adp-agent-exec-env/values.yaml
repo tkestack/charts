@@ -1,0 +1,11 @@
+images:
+  adp-agent-exec-env:
+    url: "{{ .Values.global.imageRegistry }}/tke-market/agent-exec-env:3_2607151712_stable_iaas_v4.0.3.0_db398f83_private"
+resources:
+  limits:
+    cpu: 4
+    memory: 16Gi
+  requests:
+    cpu: 2
+    memory: 8Gi
+replicas: 1

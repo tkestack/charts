@@ -86,7 +86,10 @@ spec:
       initContainers:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       containers:
-        - env:
+        - envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
             - name: MKL_NUM_THREADS
               value: "2"
             - name: LOG_SPACES
@@ -120,13 +123,25 @@ spec:
             - name: SERVER_NAME
               value: AccessManagerServer
             - name: MYSQL_HOST
-              value: {{ .Values.global.components.db.host | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_DB_0_HOST
             - name: MYSQL_PORT
-              value: {{ .Values.global.components.db.port | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_DB_0_PORT
             - name: MYSQL_PWD
-              value: {{ .Values.global.components.db.password | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_DB_0_PASSWORD
             - name: MYSQL_USER
-              value: {{ .Values.global.components.db.user | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_DB_0_USER
             - name: RedisMod
               value: sentine
             - name: RedisMasterName
@@ -134,9 +149,15 @@ spec:
             - name: RedisAddr
               value: master://{{- range $host := .Values.global.components.redis.hosts -}} {{- $host}}:{{$.Values.global.components.redis.port -}} {{- end }}
             - name: RedisPassword
-              value: {{ .Values.global.components.redis.password | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_REDIS_0_PASSWORD
             - name: RedisPort
-              value: {{ .Values.global.components.redis.port | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_REDIS_0_PORT
             - name: RedisUsername
               value: ""
             - name: RedisDB
@@ -191,16 +212,16 @@ spec:
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
             limits:
-              cpu: "500m"
-              memory: "512Mi"
+              cpu: "2"
+              memory: "4Gi"
             requests:
-              cpu: "250m"
+              cpu: "500m"
               memory: "512Mi"
           {{- else }}
           resources:
             limits:
-              cpu: "1"
-              memory: "1Gi"
+              cpu: "2"
+              memory: "4Gi"
             requests:
               cpu: "500m"
               memory: "512Mi"

@@ -4,123 +4,6 @@ metadata:
   name: {{ .Release.Name }}-agent-config
   namespace: {{ .Release.Namespace }}
 data:
-  agent-config_en-US.json: |
-    {
-      "应用ID为空": "Application ID cannot be empty",
-      "AgentID为空": "Agent ID cannot be empty",
-      "获取测试环境Agent失败": "Failed to retrieve test environment agent",
-      "获取发布环境Agent失败": "Failed to retrieve production environment agent",
-      "Agent": "Agent",
-      "名称": "Name",
-      "模型": "Model",
-      "模型选择": "Model Selection",
-      "温度": "Temperature",
-      "Top-P": "Top-P",
-      "最大推理轮数": "Max Reasoning Rounds",
-      "上下文记忆轮数": "History Limit",
-      "转交描述": "Handoff Description",
-      "转交关系": "Handoff Relationship",
-      "提示词": "Prompt",
-      "插件": "Plugin",
-      "新增": "Add",
-      "修改": "Modify",
-      "删除": "Delete",
-      "知识库问答": "Knowledge Base QA",
-      "是": "Yes",
-      "否": "No",
-      "；": ";",
-      ".": ".",
-      "/": "/",
-      "变更为": "Changed to",
-      "工具描述变更为": "Tool description changed to",
-      "值变更为": "Value changed to",
-      "必填属性变更为": "Required attribute changed to",
-      "模型名称变更为": "Model name changed to",
-      "配置": "Configuration",
-      "配置参数": "Configuration Parameters",
-      "头部参数": "Header Parameter",
-      "输入参数": "Input Parameter",
-      "输出参数": "Output Parameter",
-      "子参数": "Sub Parameter",
-      "单选参数": "Single-choice Parameter",
-      "多选参数": "Multiple-choice Parameter",
-      "知识库": "Knowledge Base",
-      "参数": "Parameter",
-      "新增参数": "Add Parameter",
-      "删除参数": "Delete Parameter",
-      "参数名称变更为": "Parameter name changed to",
-      "Input配置发生变更": "Input configuration changed",
-      "描述变更为": "Description changed to",
-      "类型变更为": "Type changed to",
-      "默认值变更为": "Default value changed to",
-      "模型是否可见变更为": "Model visibility changed to",
-      "分析方法变更为": "Analysis method changed to",
-      "新增转交Agent:": "Added handoff agent:",
-      "删除转交Agent:": "Removed handoff agent:",
-      "整体检索范围变更为": "Overall retrieval scope changed to",
-      "问答开关变更为": "QA toggle changed to",
-      "文档列表发生变更": "Document list changed",
-      "标签过滤操作符变更为": "Tag filter operator changed to",
-      "标签过滤标签发生变更": "Tag filter labels changed",
-      "知识库类型变更为：": "Knowledge base type changed to:",
-      "知识库检索范围变更为：": "Knowledge base retrieval scope changed to:",
-      "知识库文档列表发生变更": "Knowledge base document list changed",
-      "知识库问答开关变更为：": "Knowledge base QA toggle changed to:",
-      "知识库标签发生变更": "Knowledge base tags changed",
-      "全部知识": "All knowledge",
-      "按知识库": "By knowledge base",
-      "按特定知识": "By specific knowledge",
-      "按标签": "By tags",
-      "且": "AND",
-      "或": "OR",
-      "默认知识库": "Default Knowledge Base",
-      "共享知识库": "Shared Knowledge Base",
-      "高级设置": "Advanced Setting",
-      "开启": "Enable",
-      "关闭": "Disable",
-      "澄清询问": "Clarification",
-      "思考模式": "Thinking Mode",
-      "结构化输出": "Structured Output",
-      "效率优先": "Effect First",
-      "速度优先": "Speed First",
-      "工具": "Tool",
-      "转交高级设置": "Handoff Advanced Setting",
-      "上一轮回复用户的Agent": "The Agent Who Replied To The User Last",
-      "主Agent": "Main Agent",
-      "随机种子": "Random Seed",
-      "存在惩罚": "Presence Penalty",
-      "频率惩罚": "Frequency Penalty",
-      "重复惩罚": "Repetition Penalty",
-      "最大输出长度": "Maximum Output Length",
-      "停止序列": "Stop Sequence",
-      "输出格式": "Output Format",
-      "Multi-Agent模式-更新Agent插件列表-%s": "Multi-Agent mode – update agent plugin list – %s",
-      "Multi-Agent模式-批量删除Plan & Execute Agents": "Multi-Agent mode – batch delete Plan & Execute Agents",
-      "Multi-Agent模式-初始化Plan & Execute Agents": "Multi-Agent mode – initialize Plan & Execute Agents",
-      "Multi-Agent模式-Agent“%s”添加": "Multi-Agent mode – add agent “%s”",
-      "Multi-Agent模式-Agent“%s”删除": "Multi-Agent mode – delete agent “%s”",
-      "Multi-Agent模式-转交关系设置-转交方agent“%s”转交为接收方agent“%s”": "Multi-Agent mode – handoff setup – transfer agent “%s” to agent “%s”",
-      "Multi-Agent模式-Agent“%s”编辑Agent名称为“%s”": "Multi-Agent mode – agent “%s” renamed to “%s”",
-      "Multi-Agent模式-模型编辑--Agent“%s”编辑模型为模型“%s”": "Multi-Agent mode – agent “%s” switched to model “%s”",
-      "Multi-Agent模式-转交描述-Agent“%s”编辑转交描述为“%s”": "Multi-Agent mode – agent “%s” updated handoff description to “%s”",
-      "Multi-Agent模式-提示词-Agent“%s”编辑提示词为“%s”": "Multi-Agent mode – agent “%s” updated prompt to “%s”",
-      "Multi-Agent模式-Agent“%s”高级设置": "Multi-Agent mode – agent “%s” advanced settings",
-      "Multi-Agent模式-Agent“%s”添加工具“%s”": "Multi-Agent mode – agent “%s” added tool “%s”",
-      "Multi-Agent模式-Agent“%s”删除工具“%s”": "Multi-Agent mode – agent “%s” removed tool “%s”",
-      "Multi-Agent模式-Agent“%s”更新工具“%s”": "Multi-Agent mode – agent “%s” updated tool “%s”",
-      "工作流[%s]不可用或不存在": "Workflow [%s] is unavailable or missing",
-      "模型[%s]不可用或不存在": "Model [%s] is unavailable or does not exist",
-      "引用的工具不存在或不可用(工具ID:%s)": "Referenced tool does not exist or is unavailable (Tool ID: %s)",
-      "文本": "Text",
-      "Widget": "Widget",
-      "输出样式": "Output Style",
-      "澄清输出样式": "Clarification Output Style",
-      "澄清Widget数量": "Clarification Widget Count",
-      "澄清配置": "Clarification Config",
-      "Agent输出": "Agent Output",
-      "官方": "Official"
-    }
-
   agent-config_zh-CN.json: |
     {
       "应用ID为空": "应用ID为空",
@@ -238,44 +121,145 @@ data:
       "官方": "官方"
     }
 
-  error_en-US.json: |
-    {
-      "应用信息不存在": "Application information does not exist",
-      "资源权限不足": "Insufficient resource permissions",
-      "您的服务已到期，请联系架构师续费": "Your service has expired, please contact our SA to renew",
-      "系统内部错误": "Internal system error",
-      "参数异常，请重试": "Parameter error, please try again",
-      "当前用户无权限": "Current user has no permission",
-      "版本号异常，请检查是否为最新版本": "Version number error, please check if it is the latest version",
-      "数据不存在": "Data does not exist",
-      "调用api失败": "API call failed",
-      "agent_id已存在": "agent_id already exists",
-      "同一应用下agent名称重复": "Duplicate agent name under the same application",
-      "同一应用下启动agent已存在": "A startup agent already exists under the same application",
-      "图标不合法": "Invalid icon",
-      "头像尺寸不合法": "Invalid avatar size",
-      "Agent数量超出限制": "Number of agents exceeds the limit",
-      "发布中，不允许删除": "Cannot delete during publishing",
-      "发布中，不允许编辑": "Cannot edit during publishing",
-      "Agent加载失败": "Failed to load agent",
-      "发布任务加载失败": "Failed to load publishing task",
-      "发布任务记录加载失败": "Failed to load publishing task record",
-      "配置数据查询错误": "Configuration data query error",
-      "配置数据发布错误": "Configuration data publishing error",
-      "运行数据发布错误": "Runtime data publishing error",
-      "机器人不存在": "Bot does not exist",
-      "插件不存在": "Plugin does not exist",
-      "Agent插件数量超出限制": "Number of agent plugins exceeds the limit",
-      "工具不存在": "Tool does not exist",
-      "该插件工具已存在": "This plugin tool already exists",
-      "该插件工具未添加": "This plugin tool has not been added",
-      "没有可删除的工具": "No tools available for deletion",
-      "Agent(工具+转交)数量超出限制": "Number of agent (tools + handoff) exceeds the limit",
-      "Agent工具信息内容超出容量限制": "Agent tool information exceeds capacity limit",
-      "缺少必填信息，不允许添加该工具": "Required information is missing, cannot add this tool",
-      "请求参数错误: %s": "Request parameter error: %s",
-      "内部服务器错误: %s": "Internal server error: %s"
-    }
+  client.yaml: |
+    client:
+      filter:
+        - debuglog
+        - cle-route-propagator
+        - opentelemetry
+      service:
+        - name: redis.plugin-config-server
+          # RESOLVE: keep-private
+          target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${AGENT_REDIS_PORT}/${PLUGIN_CONFIG_REDIS_DB}"
+        - name: mysql.db_llm_plugin
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: mysql.db_llm_prod_plugin
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: trpc.redis.agent_config
+          # RESOLVE: keep-private
+          target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${AGENT_REDIS_PORT}/${AGENT_CONFIG_REDIS_DB}"
+        - name: trpc.mysql.agent_config
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: trpc.mysql.agent_config_prod
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: mysql.qbot.admin
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: trpc.tcadp.agent.tdsql
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - callee: trpc.KEP.plugin_config_server.PluginConfigApi
+          name: trpc.KEP.plugin-config-server.PluginConfigApi
+          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: Production
+          timeout: 30000
+        - callee: trpc.adp.plugin_config.PluginConfigApi
+          name: trpc.adp.plugin_config.PluginConfigApi
+          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: ${NAMESPACE}
+          timeout: 60000
+        - name: trpc.KEP.bot_task_config_server.TaskConfig
+          namespace: Production
+          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+          timeout: 3000
+        - callee: trpc.adp.workflow_config.WorkflowConfig
+          namespace: Production
+          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+          timeout: 60000
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          namespace: Production
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_admin_proxy.Login
+          namespace: ${NAMESPACE}
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          namespace: Production
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_admin_proxy.Api
+          namespace: ${NAMESPACE}
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_knowledge_config_server.Api
+          name: trpc.KEP.bot-knowledge-config-server.Api
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: Production
+          protocol: trpc
+          env_name: formal
+          timeout: 30000
+        - callee: trpc.adp.kb_config.Api
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.resource_gallery.Admin
+          namespace: ${NAMESPACE}
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.widget_config.WidgetConfigInner
+          namespace: ${NAMESPACE}
+          target: ip://adp-widget-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.platform_manager.Login
+          namespace: ${NAMESPACE}
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.platform_manager.Admin
+          namespace: Production
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.app_config.Admin
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 10000
+        - name: trpc.http.cos.Access
+          network: tcp
+          protocol: http
+          target: "dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn"
+          timeout: 5000
+        - name: trpc.mysql.cloud_agent
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_agent?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: trpc.mysql.cloud_agent_prod
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_agent_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - callee: trpc.adp.workflow_config.WorkflowConfigApi
+          target: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          namespace: ${NAMESPACE}
+          timeout: 60000
+        - callee: trpc.adp.platform_manager.v2.Internal
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9099"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.skill_config.SkillConfigInner
+          namespace: ${NAMESPACE}
+          target: ${SKILL_CONFIG_INNER}
+          protocol: trpc
+          timeout: 600000
+        - callee: trpc.adp.agent_exec_env.AgentExecEnv
+          namespace: ${NAMESPACE}
+          target: "ip://adp-agent-exec-env.{{ .Release.Namespace }}.svc.cluster.local:9000"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_manager.Api
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093"
+          protocol: trpc
+          timeout: 30000
+        - callee: trpc.adp.app_config.Api
+          target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 10000
+      namespace: ${NAMESPACE}
 
   error_zh-CN.json: |
     {
@@ -313,7 +297,10 @@ data:
       "Agent工具信息内容超出容量限制": "Agent工具信息内容超出容量限制",
       "缺少必填信息，不允许添加该工具": "缺少必填信息，不允许添加该工具",
       "请求参数错误: %s": "请求参数错误: %s",
-      "内部服务器错误: %s": "内部服务器错误: %s"
+      "内部服务器错误: %s": "内部服务器错误: %s",
+      "工具数量超出限制": "工具数量超出限制",
+      "插件数量超出限制，最多添加120个插件": "插件数量超出限制，最多添加120个插件",
+      "系统错误": "系统错误"
     }
 
   main.yaml: |
@@ -324,19 +311,85 @@ data:
       tool_name: KnowledgeRetrievalAnswer
       plugin_id: 3ad93aae-587e-4bcc-ae07-ad13bfb1aaca
       tool_id: 0ca8d482-1e77-462b-bc21-807c8f052f69
-      tool_id_map: 
+      tool_id_map:
         0ca8d482-1e77-462b-bc21-807c8f052f69: KnowledgeRetrievalAnswer
         080bbce6-b02b-466e-a152-967c1546eb05: BoundedKnowledgeQA
         cf5b121f-57d7-47c1-937a-2f9993ec0a63: Text2SQL
+      corp_default_rerank_model: Youtu/youtu-reranker-llm
+      corp_default_rerank_recall: 15
+
     kb_agent:
       agent_id: 27dbdeda-3cbc-461b-8f6e-4ea659f19a93
-      handoff_description: 负责 <典型场景> 的知识库问答 Agent，可回答该场景中的相关问题。
+      handoff_description: "负责 <典型场景> 的知识库问答 Agent，可回答该场景中的相关问题。"
     workflow_tool:
-      icon_url: "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/_adp_/qbot/public/workflow-tool.svg"
+      icon_url: "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/workflow-tool.svg"
     agent_config:
-      default_starting_agent_handoff_description: 
+      default_starting_agent_handoff_description:
       default_history_limit: 5
       import_icon_dir: {{ (.Values.global.components.s3.cos).subPath | default "" }}
+      claw_agent_default_instructions_len: 20000
+      claw_agent_instructions_len_by_model_name:
+        TCADP/kimi-k2.5: 20000
+        TCADP/gpt-5.5: 100000
+      claw_agent_default_instructions:
+      corp_assistant_preset_skills:
+      - skill_id: ed6cc7f7-b594-405f-8c86-9fe12fa796da
+        is_delete_protected: true
+      - skill_id: b30ab191-a8a2-44ab-9c51-171c06ea7c7a
+        is_delete_protected: true
+      - skill_id: f79b2f81-80b0-4d4b-be59-10531e3faf57
+        is_delete_protected: true
+      - skill_id: a549b91f-90e0-427c-ade2-77784a22de76
+        is_delete_protected: true
+      - skill_id: 65e3f418-1180-417e-b59d-8d20d327b1f3
+        is_delete_protected: true
+      - skill_id: f97b46bd-fb02-4449-af85-708f222bad58
+        is_delete_protected: true
+      - skill_id: 6ac695c7-4402-40fa-828f-88c3d8886300
+        is_delete_protected: true
+      - skill_id: 8e4f6dd1-ba91-4681-a453-040ab8dc8ef7
+        is_delete_protected: true
+      - skill_id: 8ca3b90f-dc08-4812-aec5-4bcfa137cfa5
+        is_delete_protected: true
+      - skill_id: b498aadd-92a1-4964-84b8-bfb7b8266b37
+        is_delete_protected: true
+      - skill_id: 50e49f61-8198-4001-a241-818f78625ae7
+        is_delete_protected: true
+      - skill_id: d85bd883-c5f1-48a1-8e03-e6ba7a8f0eb9
+        is_delete_protected: true
+      - skill_id: 6c7358b5-7d21-4ec2-8d77-d54c8c3a7431
+        is_delete_protected: true
+      - skill_id: 2cf44299-6e23-48d9-a853-7feec8190b13
+        is_delete_protected: true
+      - skill_id: f7888852-0f8e-4928-a360-36a67c0e5809
+        is_delete_protected: true
+      - skill_id: 5b09ea1f-d50d-4fd1-babf-d2300f5c0784
+        is_delete_protected: true
+      - skill_id: 6d80521b-0f5b-4cc7-9394-7c5c6d608265
+        is_delete_protected: true
+      - skill_id: f5fc841f-82fc-46ca-8152-d3bab786d52c
+        is_delete_protected: true
+      - skill_id: 4afcd580-5915-4276-bafe-f70b2b15a31f
+        is_delete_protected: true
+      corp_assistant_builtin_tools:
+      - plugin_id: 61a2635f-62f8-4e44-94fd-38cf07a9cc71
+        tool_id: 6f7a8b9c-0d1e-4f2a-3456-789abcdef01a
+      claw_preset_skill_ids:
+      - ed6cc7f7-b594-405f-8c86-9fe12fa796da
+      - b30ab191-a8a2-44ab-9c51-171c06ea7c7a
+      - a549b91f-90e0-427c-ade2-77784a22de76
+      - 65e3f418-1180-417e-b59d-8d20d327b1f3
+      - 8ca3b90f-dc08-4812-aec5-4bcfa137cfa5
+      - b498aadd-92a1-4964-84b8-bfb7b8266b37
+      - 50e49f61-8198-4001-a241-818f78625ae7
+      - d85bd883-c5f1-48a1-8e03-e6ba7a8f0eb9
+      - 6c7358b5-7d21-4ec2-8d77-d54c8c3a7431
+      - f7888852-0f8e-4928-a360-36a67c0e5809
+      claw_builtin_tools:
+      - plugin_id: 61a2635f-62f8-4e44-94fd-38cf07a9cc71
+        tool_id: 6f7a8b9c-0d1e-4f2a-3456-789abcdef01a
+      app_skill_sync_source_list: ${APP_SKILL_SYNC_SOURCE_LIST}
+      claw_agent_default_max_reasoning_round: 100 # ClawAgent 默认最大推理轮数（用户未显式设置时生效）
     clarification:
       widget_configs:
         - widget_id: 3b65b7ac63504c63855caff4ff872ce2
@@ -355,18 +408,21 @@ data:
       agent_instructions_min_len: 0
       agent_instructions_max_len: 20000 # 若动态拉取不到模型配置，则启用此处限制
       max_page_size: 200
-      default_icon: "/qbot/public/static/lke/agent-robot.png"
+      default_icon: /qbot/public/static/lke/agent-robot.png
       max_icon_size: 524288
       agent_limit: 10 # 同一应用下Agent数量限制
-      agent_tool_limit: 50 # 同一应用下Agent工具数量限制
+      agent_tool_limit: 120 # 同一应用下Agent工具数量限制
       tool_limit_whitelist: # 主要用于hank效果测试
-        "100034812856": 300  
+        '100034812856': 300
+      claw_agent_limit: 20 # Claw模式下同一应用Agent数量上限（主+子）
+      agent_skill_limit: 80 # Skill 数量限制
+      claw_agent_tool_limit: 1000 # ClawAgent 工具数量限制(与工作台共用)
     data_sync_task:
       release_queue_length: 200
       release_items_per_batch: 100
-
+    # 定时任务
     task_config:
-      task_prefix: agent-config-server:task
+      task_prefix: "agent-config-server:task"
       task_fetch_num: 400
       task_fetch_timeout: 10s
       task_fetch_period: 2s
@@ -379,7 +435,7 @@ data:
           timeout: 5m #超时时间
           fail_timeout: 3s # 失败回调超时
           delay: 0s #启动延迟
-          batch:  1
+          batch: 1
           batch_size: 0
           stopped_resume_time: 720h
     agent_app_delete_config:
@@ -388,8 +444,9 @@ data:
     pe_config:
       tool_info:
         read_file:
-          plugin_id: "3de4a6c6-e055-4d78-9e09-c4410aee79e4"
-          tool_id: "f546f2ff-6245-41a0-945d-cd710ec7e4db"
+          plugin_id: 3de4a6c6-e055-4d78-9e09-c4410aee79e4
+          tool_id: f546f2ff-6245-41a0-945d-cd710ec7e4db
+          # 参数可见性配置
           parameters:
             path:
               agent_hidden: false  # 文件路径对模型可见
@@ -401,8 +458,9 @@ data:
               agent_hidden: true   # sudo权限对模型不可见，由系统控制
 
         write_file:
-          plugin_id: "3de4a6c6-e055-4d78-9e09-c4410aee79e4"
-          tool_id: "be07cc91-4017-4a68-8168-c77c8e888921"
+          plugin_id: 3de4a6c6-e055-4d78-9e09-c4410aee79e4
+          tool_id: be07cc91-4017-4a68-8168-c77c8e888921
+          # 参数可见性配置
           parameters:
             path:
               agent_hidden: false  # 文件路径对模型可见
@@ -418,8 +476,9 @@ data:
               agent_hidden: true   # 尾随换行符对模型不可见，由系统控制
 
         shell_exec:
-          plugin_id: "3de4a6c6-e055-4d78-9e09-c4410aee79e4"
-          tool_id: "18d9f76b-ffcb-4b9f-881a-61b424bf056b"
+          plugin_id: 3de4a6c6-e055-4d78-9e09-c4410aee79e4
+          tool_id: 18d9f76b-ffcb-4b9f-881a-61b424bf056b
+          # 参数可见性配置
           parameters:
             command:
               agent_hidden: false  # 命令对模型可见
@@ -429,15 +488,17 @@ data:
               agent_hidden: true   # 会话ID对模型不可见，由系统控制
 
         code_interpreter:
-          plugin_id: "3de4a6c6-e055-4d78-9e09-c4410aee79e4"
-          tool_id: "b9cc0a1c-ab0c-4919-84d5-4d69e63d2b34"
+          plugin_id: 3de4a6c6-e055-4d78-9e09-c4410aee79e4
+          tool_id: b9cc0a1c-ab0c-4919-84d5-4d69e63d2b34
+          # 参数可见性配置
           parameters:
             Code:
               agent_hidden: false  # 代码对模型可见
 
         file_str_replace:
-          plugin_id: "3de4a6c6-e055-4d78-9e09-c4410aee79e4"
-          tool_id: "89993c80-c3f9-476e-bf3e-e8e460f8f83d"
+          plugin_id: 3de4a6c6-e055-4d78-9e09-c4410aee79e4
+          tool_id: 89993c80-c3f9-476e-bf3e-e8e460f8f83d
+          # 参数可见性配置
           parameters:
             path:
               agent_hidden: false  # 文件路径对模型可见
@@ -448,169 +509,200 @@ data:
             sudo:
               agent_hidden: true   # sudo权限对模型不可见，由系统控制
         DocParsingQA:
-          plugin_id: "7a8d9c0e-1f2a-4b3c-8d4e-5f6a7b8c9d0e"
-          tool_id: "8a8c9d0e-1f2a-4b3c-8d4e-5f6a7b8c9d0f"
+          plugin_id: 7a8d9c0e-1f2a-4b3c-8d4e-5f6a7b8c9d0e
+          tool_id: 8a8c9d0e-1f2a-4b3c-8d4e-5f6a7b8c9d0f
 
         ImageQuiz:
-          plugin_id: "61a2635f-62f8-4e44-94fd-38cf07a9cc71"
-          tool_id: "6f7a8b9c-0d1e-4f2a-3456-789abcdef01a"
+          plugin_id: 61a2635f-62f8-4e44-94fd-38cf07a9cc71
+          tool_id: 6f7a8b9c-0d1e-4f2a-3456-789abcdef01a
 
         WebpageParsingQA:
-          plugin_id: "d6dd384b-8eb3-43c0-8d10-68933b4ceaa8"
-          tool_id: "5c7d2f4a-2b5e-4f8c-9a7d-3b2c1d4e5f8c"
+          plugin_id: d6dd384b-8eb3-43c0-8d10-68933b4ceaa8
+          tool_id: 5c7d2f4a-2b5e-4f8c-9a7d-3b2c1d4e5f8c
       common_tools: []
-      model_name: "Deepseek/deepseek-v3.2"
-      filter_agent: Assigner Agent
+      model_name: Deepseek/deepseek-v3.2
+      filter_agent: "Assigner Agent"
       agents:
         planner:
           name: "Planner Agent"
-          instructions: ""
+          instructions: ''
           handoff_description: "Plan and execute complex tasks with detailed step-by-step planning and coordination."
           icon_url: /qbot/public/icon/pe_icon.png
-          action: "plan_task"
+          action: plan_task
           special_tools: []
           model_params:
             temperature: 0.3
             top_p: 0.9
-            deep_thinking: "disabled"
+            deep_thinking: disabled
 
         assigner:
           name: "Assigner Agent"
-          instructions: ""
+          instructions: ''
           handoff_description: "Can handoff to all executor agents for task distribution and coordination."
           icon_url: /qbot/public/icon/pe_icon.png
-          action: "assign_task"
+          action: assign_task
           special_tools: []
           model_params:
             temperature: 0.3
             top_p: 0.9
-            deep_thinking: "disabled"
+            deep_thinking: disabled
 
         search:
           name: "Search Agent"
-          instructions: ""
+          instructions: ''
           handoff_description: "Perform web search and information retrieval tasks."
           icon_url: /qbot/public/icon/pe_icon.png
-          action: "search_info"
+          action: search_info
           special_tools: []
           model_params:
             temperature: 0.3
-            top_p: 0.9 
-            deep_thinking: "disabled"
-          advanced_config: 
+            top_p: 0.9
+            deep_thinking: disabled
+          advanced_config:
             max_reasoning_round: 15
 
         code:
           name: "Code Agent"
-          instructions: ""
+          instructions: ''
           handoff_description: "Write and execute code in various programming languages."
           icon_url: /qbot/public/icon/pe_icon.png
-          action: "write_code"
+          action: write_code
           special_tools:
-            - "code_interpreter"
+            - code_interpreter
           model_params:
             temperature: 0.3
-            top_p: 0.9 
-            deep_thinking: "disabled"
+            top_p: 0.9
+            deep_thinking: disabled
 
         shell:
           name: "Shell Agent"
-          instructions: ""
+          instructions: ''
           handoff_description: "Execute shell commands and perform system operations."
           icon_url: /qbot/public/icon/pe_icon.png
-          action: "execute_shell"
+          action: execute_shell
           model_params:
             temperature: 0.3
-            top_p: 0.9 
-            deep_thinking: "disabled"
+            top_p: 0.9
+            deep_thinking: disabled
           special_tools:
-            - "shell_exec"
-            - "read_file"
-            - "write_file"
-            - "file_str_replace"
-
+            - shell_exec
+            - read_file
+            - write_file
+            - file_str_replace
         report:
           name: "Report Agent"
-          instructions: ""
+          instructions: ''
           handoff_description: "Generate professional reports and documentation."
           icon_url: /qbot/public/icon/pe_icon.png
-          action: "generate_report"
+          action: generate_report
           model_params:
             temperature: 0.6
             top_p: 0.95
             max_tokens: 32000
-            deep_thinking: "enabled"
+            deep_thinking: enabled
           special_tools:
-            - "write_file"
-
+            - write_file
         webpage:
           name: "Webpage Generation Agent"
-          instructions: ""
+          instructions: ''
           handoff_description: "Create and deploy web pages with HTML, CSS, and JavaScript."
           icon_url: /qbot/public/icon/pe_icon.png
-          action: "create_webpage"
+          action: create_webpage
           model_params:
             temperature: 0.6
-            top_p: 0.95 
+            top_p: 0.95
             max_tokens: 32000
-            deep_thinking: "enabled"
+            deep_thinking: enabled
           special_tools:
-            - "write_file"
-            - "deploy_html"
-
+            - write_file
+            - deploy_html
         assist:
           name: "Assist Agent"
-          instructions: ""
+          instructions: ''
           handoff_description: "You are a versatile assistant agent, serving as a general-purpose helper that can provide guidance and support across a wide range of tasks and domains."
           icon_url: /qbot/public/icon/pe_icon.png
-          action: "assist"
+          action: assist
           model_params:
             temperature: 0.3
             top_p: 0.9
             max_tokens: 16384
-            deep_thinking: "disabled"
-          special_tools: [] 
+            deep_thinking: disabled
+          special_tools: []
 
         attachment:
           name: "Attachment Agent"
-          instructions: ""
+          instructions: ''
           handoff_description: "Attachment parsing and extraction."
           icon_url: /qbot/public/icon/pe_icon.png
-          action: "attachment"
+          action: attachment
           model_params:
             temperature: 0.3
-            top_p: 0.9 
-            deep_thinking: "disabled"
-          special_tools: 
-            - "DocParsingQA"
-            - "ImageQuiz"
-            - "WebpageParsingQA"
+            top_p: 0.9
+            deep_thinking: disabled
+          special_tools:
+            - DocParsingQA
+            - ImageQuiz
+            - WebpageParsingQA
+    cloud_agent_db_migrate:
+      write_mode: 3          # 仅写新库，老库冻结
+      read_from_new: true    # 读新库
+    cloud_agent_subtable:
+      dual_write: 3          # 仅写子表，主表 JSON 停更
+      read_subtable: true    # 读子表
+
 
   placeholder.yaml: |
+    COS_TARGET: "dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn"
+    TRPC_LOG_FILE: ../log/trpc.log
 
-    COS_TARGET: dns://cos-internal.ap-guangzhou.tencentcos.cn
+    NAMESPACE: Production
+    RAINBOW_GROUP: agent-config-server
+
+    AGENT_REDIS_PORT: 6379
+    PLUGIN_CONFIG_REDIS_DB: 23
+    AGENT_CONFIG_REDIS_DB: 25
+
+    SKILL_CONFIG_INNER: "ip://adp-skill-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+    AGENT_EXEC_ENV_TARGET: "ip://adp-agent-exec-env.{{ .Release.Namespace }}.svc.cluster.local:9000"
+    WORKFLOW_CONFIG_API_TARGET: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+    PLATFORM_MANAGER_V2_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9099"
+
+    # platform-manager Admin（DescribeSkillReferenceList 装配 Owner 依赖）
+    PLATFORM_MANAGER_ADMIN_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
+
+    # platform-manager Api（DescribeSkillReferenceList 装配 SpaceName 依赖）
+    PLATFORM_MANAGER_API_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093"
+
+    # app_config Api（DescribeAgentSkillReferenceList 装配 cloud agent 引用名依赖 GetAppBaseInfoList）
+    APP_CONFIG_API_TARGET: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091"
+
+    APP_SKILL_SYNC_SOURCE_LIST:
+      - 1
+      - 6
+      - 3
   trpc_go.yaml: |
-    global:
-      namespace: Production
-    server:
-      app: adp
-      server: agent-config
-      bin_path: /app/bin/
-      conf_path: /app/conf/
+    global:                             #全局配置
+      namespace: ${NAMESPACE}            #环境类型，分正式production和非正式development两种类型
+      env_name: ${RAINBOW_ENV_NAME}                    #环境名称，非正式环境下多环境的名称
+    server:                                            #服务端配置
+      app: adp                                        #业务的应用名
+      server: agent-config                                    #进程服务名
+      bin_path: /app/bin/                              #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                            #业务配置文件所在路径
       log_path: /app/logs/
       admin:
-        ip: ${POD_IP}
-        port: 8081
+        ip: ${POD_IP}  # admin 的 ip，配置网卡 nic 也可以
+        port: 8081     # admin 的 port，必须同时配置这里的 ip port 才会启动 admin
         read_timeout: 3000
         write_timeout: 60000
-      filter:
+      filter:                                          #针对所有service处理函数前后的拦截器列表
         - recovery
         - debuglog
         - i18n-adp
         - cle-route-propagator
         - opentelemetry
         - cos_rewrite
-      service:
+      service:                                         #业务服务提供的service，可以有多个
         - name: trpc.KEP.agent-config-server.AgentConfig
           ip: ${POD_IP}
           port: 8000
@@ -645,109 +737,52 @@ data:
           network: "0 0 3 1 * *"
           protocol: timer
           timeout: 600000
-    client:
-      filter:
-        - debuglog
-        - cle-route-propagator
-        - opentelemetry
-      service:
-        - name: redis.plugin-config-server
-          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/23
-        - name: mysql.db_llm_plugin
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
-        - name: mysql.db_llm_prod_plugin
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
-        - name: trpc.redis.agent_config
-          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/25
-        - name: trpc.mysql.agent_config
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
-        - name: trpc.mysql.agent_config_prod
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
-        - name: mysql.qbot.admin
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
-        - name: trpc.tcadp.agent.tdsql
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
-        - callee: trpc.KEP.plugin_config_server.PluginConfigApi
-          name: trpc.KEP.plugin-config-server.PluginConfigApi
-          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
-          namespace: Production
-          timeout: 30000
-        - callee: trpc.adp.plugin_config.PluginConfigApi
-          name: trpc.adp.plugin_config.PluginConfigApi
-          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
-          namespace: Production
-          timeout: 60000
-        - name: trpc.KEP.bot_task_config_server.TaskConfig
-          namespace: Production
-          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
-          timeout: 3000
-        - callee: trpc.adp.workflow_config.WorkflowConfig
-          namespace: Production
-          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
-          timeout: 60000
-        - callee: trpc.KEP.bot_admin_config_server.Login
-          namespace: Production
-          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
-          protocol: trpc
-          timeout: 20000
-        - callee: trpc.adp.app_admin_proxy.Login
-          namespace: Production
-          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
-          protocol: trpc
-          timeout: 20000
-        - callee: trpc.KEP.bot_admin_config_server.Api
-          namespace: Production
-          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
-          protocol: trpc
-          timeout: 20000
-        - callee: trpc.adp.app_admin_proxy.Api
-          namespace: Production
-          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
-          protocol: trpc
-          timeout: 20000
-        - callee: trpc.KEP.bot_knowledge_config_server.Api
-          name: trpc.KEP.bot-knowledge-config-server.Api
-          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
-          namespace: Production
-          protocol: trpc
-          env_name: formal
-          timeout: 30000
-        - callee: trpc.adp.kb_config.Api
-          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
-          namespace: Production
-          protocol: trpc
-          timeout: 60000
-        - callee: trpc.adp.resource_gallery.Admin
-          namespace: Production
-          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
-          protocol: trpc
-          timeout: 20000
-        - callee: trpc.adp.widget_config.WidgetConfigInner
-          namespace: Production
-          target: ip://adp-widget-config.{{ .Release.Namespace }}.svc.cluster.local:8001
-          protocol: trpc
-          timeout: 60000
-        - callee: trpc.adp.platform_manager.Login
-          namespace: Production
-          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
-          protocol: trpc
-          timeout: 60000
-        - callee: trpc.adp.platform_manager.Admin
-          namespace: Production
-          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
-          protocol: trpc
-          timeout: 60000
-        - callee: trpc.adp.app_config.Admin
-          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
-          namespace: Production
-          protocol: trpc
-          timeout: 10000
-        - name: trpc.http.cos.Access
+        - name: trpc.adp.agent_config.v2.External
+          ip: ${POD_IP}
+          port: 9000
           network: tcp
-          protocol: http
-          target: dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn
-          timeout: 5000
-    plugins:
+          protocol: trpc
+          timeout: 0
+          server_async: true
+          idletime: 600000
+          filter:
+            - session
+        - name: trpc.adp.agent_config.v2.Api
+          ip: ${POD_IP}
+          port: 9001
+          network: tcp
+          protocol: trpc
+          timeout: 0
+          server_async: true
+          idletime: 600000
+        - name: trpc.adp.agent_config.v2.Mcp
+          ip: ${POD_IP}
+          port: 9002
+          network: tcp
+          protocol: trpc
+          timeout: 0
+          server_async: true
+          idletime: 600000
+          filter:
+            - session
+            - permission
+        - name: trpc.adp.agent_config.v3.External
+          ip: ${POD_IP}
+          port: 9010
+          network: tcp
+          protocol: adp-capi
+          timeout: 30000
+          filter:
+            - session
+        - name: trpc.adp.agent_config.v3.Internal
+          ip: ${POD_IP}
+          port: 9011
+          network: tcp
+          protocol: trpc
+          timeout: 0
+          server_async: true
+          idletime: 600000
+    plugins:                                          #插件配置
       telemetry:
         opentelemetry:
           addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
@@ -774,14 +809,32 @@ data:
       log:
         default:
           - writer: console
-            level: error
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
           - writer: file
-            level: debug
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
             writer_config:
               filename: /app/logs/trpc.log
-              max_size: 100
+              write_mode: 2
+              roll_type: size
+              max_size: 200
               max_backups: 10
-              max_age: 7
               compress: false
       config:
         file:
@@ -791,9 +844,9 @@ data:
             - name: rainbow-comm
               path: /app/conf/
             - name: global
-              appid: ${RAINBOW_APP_ID}  # appid
-              group: global # 配置所属组
-              type: kv   # 七彩石数据格式, kv(默认), table
+              appid: ${RAINBOW_APP_ID}
+              group: global
+              type: kv
               env_name: ${RAINBOW_ENV_NAME}
               timeout: 2000
               enable_client_provider: true
@@ -811,12 +864,147 @@ data:
               zh-CN: 1
               en-US: 3
       registry:
-        polaris:
-      selector:
-        polaris:
+      selector: #针对用户自定义的selector的配置
+        polaris: #针对polaris整体api的内部配置
           enable_servicerouter: true
+
+
+    client:
       filter:
-        cos_rewrite:
-          path_prefixes:
-            - /public
-            - /qbot
+        - debuglog
+        - cle-route-propagator
+        - opentelemetry
+      service:
+        - name: redis.plugin-config-server
+          # RESOLVE: keep-private
+          target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${AGENT_REDIS_PORT}/${PLUGIN_CONFIG_REDIS_DB}"
+        - name: mysql.db_llm_plugin
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: mysql.db_llm_prod_plugin
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: trpc.redis.agent_config
+          # RESOLVE: keep-private
+          target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${AGENT_REDIS_PORT}/${AGENT_CONFIG_REDIS_DB}"
+        - name: trpc.mysql.agent_config
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: trpc.mysql.agent_config_prod
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: mysql.qbot.admin
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: trpc.tcadp.agent.tdsql
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - callee: trpc.KEP.plugin_config_server.PluginConfigApi
+          name: trpc.KEP.plugin-config-server.PluginConfigApi
+          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: Production
+          timeout: 30000
+        - callee: trpc.adp.plugin_config.PluginConfigApi
+          name: trpc.adp.plugin_config.PluginConfigApi
+          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: ${NAMESPACE}
+          timeout: 60000
+        - name: trpc.KEP.bot_task_config_server.TaskConfig
+          namespace: Production
+          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+          timeout: 3000
+        - callee: trpc.adp.workflow_config.WorkflowConfig
+          namespace: Production
+          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+          timeout: 60000
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          namespace: Production
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_admin_proxy.Login
+          namespace: ${NAMESPACE}
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          namespace: Production
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_admin_proxy.Api
+          namespace: ${NAMESPACE}
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_knowledge_config_server.Api
+          name: trpc.KEP.bot-knowledge-config-server.Api
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: Production
+          protocol: trpc
+          env_name: formal
+          timeout: 30000
+        - callee: trpc.adp.kb_config.Api
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.resource_gallery.Admin
+          namespace: ${NAMESPACE}
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.widget_config.WidgetConfigInner
+          namespace: ${NAMESPACE}
+          target: ip://adp-widget-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.platform_manager.Login
+          namespace: ${NAMESPACE}
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.platform_manager.Admin
+          namespace: Production
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.app_config.Admin
+          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 10000
+        - name: trpc.http.cos.Access
+          network: tcp
+          protocol: http
+          target: "dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn"
+          timeout: 5000
+        - name: trpc.mysql.cloud_agent
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_agent?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: trpc.mysql.cloud_agent_prod
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_agent_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - callee: trpc.adp.workflow_config.WorkflowConfigApi
+          target: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          namespace: ${NAMESPACE}
+          timeout: 60000
+        - callee: trpc.adp.platform_manager.v2.Internal
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9099"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.skill_config.SkillConfigInner
+          namespace: ${NAMESPACE}
+          target: ${SKILL_CONFIG_INNER}
+          protocol: trpc
+          timeout: 600000
+        - callee: trpc.adp.agent_exec_env.AgentExecEnv
+          namespace: ${NAMESPACE}
+          target: "ip://adp-agent-exec-env.{{ .Release.Namespace }}.svc.cluster.local:9000"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_manager.Api
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093"
+          protocol: trpc
+          timeout: 30000
+        - callee: trpc.adp.app_config.Api
+          target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 10000
+      namespace: ${NAMESPACE}
+

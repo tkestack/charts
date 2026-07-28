@@ -76,7 +76,10 @@ spec:
       initContainers:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       containers:
-        - env:
+        - envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -91,9 +94,14 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
+            - name: RsaPublicKey
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_RSA_PUBLICKEY
           image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-web-app").url "context" .) }}
           imagePullPolicy: Always
-          command: ["nginx", "-c", "/web/nginx.conf", "-g", "daemon off;"]
+         # command: ["nginx", "-c", "/web/nginx.conf", "-g", "daemon off;"]
           ports:
             - containerPort: 30002
           livenessProbe:

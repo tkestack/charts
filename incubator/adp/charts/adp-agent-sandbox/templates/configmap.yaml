@@ -1,0 +1,8 @@
+{{- if .Values.deploy }}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-agent-sandbox
+  namespace: {{ .Release.Namespace }}
+data: {}
+{{- end }}

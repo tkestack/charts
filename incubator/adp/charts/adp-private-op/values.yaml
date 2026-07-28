@@ -1,0 +1,16 @@
+images:
+  adp-private-op:
+    url: "{{ .Values.global.imageRegistry }}/tke-market/private-op:1_2607162050_stable_iaas_v4.0.3.0_e170fe38_private"
+
+components:
+  adp-private-op:
+    replicas: 1
+    type: Deployment
+    resources:
+      adp-private-op:
+        limits:
+          cpu: "1"
+          memory: 1Gi
+        requests:
+          cpu: "1"
+          memory: 1Gi

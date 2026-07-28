@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-file-converter
+  name: adp-file-converter
   namespace: {{ .Release.Namespace }}
   labels:
     app: adp-file-converter
@@ -75,7 +75,44 @@ spec:
       initContainers:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       containers:
-        - env:
+        - envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
+            - name: FC_MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_DB_0_USER
+            - name: FC_MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_DB_0_PASSWORD
+            - name: FC_MYSQL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_DB_0_HOST
+            - name: FC_MYSQL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_DB_0_PORT
+            # enableSts=true 时使用 STS 主凭证（ADP_ASSUME_ROLE_SECRET_ID/KEY）换取临时凭证；
+            # enableSts=false 时使用长期 AK（INFRA_MIDDLEWARES_S3_COS_SECRETID/SECRETKEY）
+            - name: SECRET_ID
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: {{ if .Values.global.components.s3.cos.enableSts }}ADP_ASSUME_ROLE_SECRET_ID{{ else }}INFRA_MIDDLEWARES_S3_COS_SECRETID{{ end }}
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: {{ if .Values.global.components.s3.cos.enableSts }}ADP_ASSUME_ROLE_SECRET_KEY{{ else }}INFRA_MIDDLEWARES_S3_COS_SECRETKEY{{ end }}
+            - name: FC_LOG_KAFKA_ADDR
+              value: "$(INFRA_MIDDLEWARES_KAFKA_0_HOSTS):$(INFRA_MIDDLEWARES_KAFKA_0_PORT)"
             - name: POD_NAME
               valueFrom:
                 fieldRef:

@@ -84,7 +84,10 @@ spec:
       initContainers:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       containers:
-        - env:
+        - envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
             - name: MKL_NUM_THREADS
               value: "2"
             - name: LOG_SPACES
@@ -118,13 +121,25 @@ spec:
             - name: SERVER_NAME
               value: AIConfManagerServer
             - name: MYSQL_HOST
-              value: {{ .Values.global.components.db.host | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_DB_0_HOST
             - name: MYSQL_PORT
-              value: {{ .Values.global.components.db.port | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_DB_0_PORT
             - name: MYSQL_PWD
-              value: {{ .Values.global.components.db.password | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_DB_0_PASSWORD
             - name: MYSQL_USER
-              value: {{ .Values.global.components.db.user | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_DB_0_USER
             - name: RedisMod
               value: sentine
             - name: RedisMasterName
@@ -132,9 +147,15 @@ spec:
             - name: RedisAddr
               value: master://{{- range $host := .Values.global.components.redis.hosts -}} {{- $host}}:{{$.Values.global.components.redis.port -}} {{- end }}
             - name: RedisPassword
-              value: {{ .Values.global.components.redis.password | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_REDIS_0_PASSWORD
             - name: RedisPort
-              value: {{ .Values.global.components.redis.port | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_REDIS_0_PORT
             - name: RedisUsername
               value: ""
           image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-aiconf-manager").url "context" .) }}
@@ -178,14 +199,8 @@ spec:
               mountPath: /app/conf/AIConfManagerServer
               subPath: AIConfManagerServer
             - name: aiconfmanagerserverconfig
-              mountPath: /app/conf/aiconf_en-US.json
-              subPath: aiconf_en-US.json
-            - name: aiconfmanagerserverconfig
               mountPath: /app/conf/aiconf_zh-CN.json
               subPath: aiconf_zh-CN.json
-            - name: aiconfmanagerserverconfig
-              mountPath: /app/conf/error_en-US.json
-              subPath: error_en-US.json
             - name: aiconfmanagerserverconfig
               mountPath: /app/conf/error_zh-CN.json
               subPath: error_zh-CN.json
@@ -223,12 +238,8 @@ spec:
                 path: trpc_go.yaml
               - key: key-AIConfManagerServer
                 path: AIConfManagerServer
-              - key: aiconf_en-US.json
-                path: aiconf_en-US.json
               - key: aiconf_zh-CN.json
                 path: aiconf_zh-CN.json
-              - key: error_en-US.json
-                path: error_en-US.json
               - key: error_zh-CN.json
                 path: error_zh-CN.json
         - name: log

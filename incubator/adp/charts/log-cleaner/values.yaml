@@ -1,0 +1,47 @@
+# log-cleaner - 宿主机日志清理 DaemonSet
+# 每个节点上以 DaemonSet 方式运行 busybox crond，定时清理宿主机上的过期服务日志。
+# 主要用途：清理 Pod 重启/重建后遗留在宿主机 hostPath 目录的旧日志文件，避免磁盘被占满。
+
+enabled: true
+
+# 镜像配置（.image 文件会在构建时覆盖此值）
+images:
+  log-cleaner:
+    url: "{{ .Values.global.imageRegistry }}/tke-market/busybox:1.36.1"
+
+# 宿主机日志根路径
+# 说明：ADP 各服务通过 hostPath 将日志落到 /data/ti-platform/log/<service-name>/ 下，
+#      此路径为清理的根路径。清理脚本会用 -mindepth 2 保证根目录与一级服务目录本身不会被删除。
+hostLogPath: /data/ti-platform/log
+
+# 保留天数（find -mtime +N，只删修改时间早于 N 天的文件）
+retainDays: 7
+
+# 清理时间（cron 表达式，容器内以 UTC 或镜像内 TZ 为准；此处镜像不注入时区，按 UTC 计算）
+# 03:00 (Asia/Shanghai) = 19:00 UTC 前一日；如需按本地时间准确 03:00，请通过 timezone 配置注入。
+schedule: "0 3 * * *"
+
+# 容器时区（可选）。设为 "Asia/Shanghai" 后，会把节点 /etc/localtime、/etc/timezone 只读挂进容器，
+# 让 cron 表达式按节点本地时间生效。
+timezone: "Asia/Shanghai"
+
+# 是否容忍所有污点（默认 true：即使 master/特殊节点也参与清理）
+tolerateAllTaints: true
+
+# 资源限制（清理任务极轻量）
+resources:
+  requests:
+    cpu: 20m
+    memory: 32Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
+
+# 更新策略
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 100%
+
+# 镜像拉取凭证
+imagePullSecretName: qcloudregistrykey

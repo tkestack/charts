@@ -4,73 +4,212 @@ metadata:
   name: {{ .Release.Name }}-plugin-config
   namespace: {{ .Release.Namespace }}
 data:
-  error_en-US.json: |
-    {
-      "权限不足": "Insufficient permissions",
-      "应用信息不存在": "Application information does not exist",
-      "资源权限不足": "Insufficient resource permissions",
-      "您的服务已到期，请联系架构师续费": "Your service has expired, please contact the architect to renew",
-      "参数异常，请重试": "Parameter error, please try again",
-      "内部错误": "Internal error",
-      "当前用户无权限": "Current user has no permission",
-      "版本号异常，请检查是否为最新版本": "Version number error, please check if it is the latest version",
-      "数据不存在": "Data does not exist",
-      "调用api失败": "API call failed",
-      "图标不合法": "Invalid icon",
-      "头像尺寸不合法": "Invalid avatar size",
-      "MCP server连接失败": "Failed to connect to MCP server",
-      "插件不存在": "Plugin does not exist",
-      "插件名称重复": "Duplicate plugin name",
-      "插件名称已存在": "Plugin name already exists",
-      "工具不存在": "Tool does not exist",
-      "MCP server工具参数异常": "MCP server tool parameter error",
-      "插件类型不合法": "Invalid plugin type",
-      "非白名单插件": "Non-whitelisted plugin",
-      "插件已被禁用": "Plugin has been disabled",
-      "插件不支持腾讯云CAM角色授权": "This plugin does not support Tencent Cloud CAM role authorization",
-      "插件尚未授权": "This plugin has not been authorized",
-      "该插件工具已存在": "This plugin tool already exists",
-      "该插件工具未添加": "This plugin tool has not been added",
-      "发布中，不允许删除": "Cannot delete during release",
-      "发布中，不允许编辑": "Cannot edit during release",
-      "没有可删除的工具": "No tools available for deletion",
-      "应用工具数量超出限制": "Number of application tools exceeds the limit",
-      "缺少必填信息，不允许添加该工具": "Required information is missing, cannot add this tool",
-      "插件已收藏": "Plugin has been favorited",
-      "插件未收藏": "Plugin has not been favorited",
-      "非自有的自定义插件": "Non-owner custom plugin",
-      "非自定义插件": "Non-custom plugin",
-      "任务流程加载失败": "Failed to load task flow",
-      "发布任务加载失败": "Failed to load release task ",
-      "发布任务记录加载失败": "Failed to load release task record",
-      "配置数据查询错误": "Configuration data query error",
-      "配置数据发布错误": "Configuration data release error",
-      "运行数据发布错误": "Runtime data release error",
-      "请求参数错误: %s": "Request parameter error: %s",
-      "MCP server连接失败, url:%s": "MCP server connection failed, URL: %s",
-      "MCP server工具参数异常, 工具:%s": "MCP server tool parameter error, tool: %s",
-      "MCP server工具参数异常, url:%s": "MCP server tool parameter error, URL: %s",
-      "参数异常，请重试，插件名称长度不符合要求": "Parameter error, please try again. Plugin name length does not meet requirements.",
-      "参数异常，请重试，插件描述长度不符合要求": "Parameter error, please try again. Plugin description length does not meet requirements.",
-      "参数异常，请重试，插件图标不符合要求": "Parameter error, please try again. Plugin icon does not meet requirements.",
-      "参数异常，请重试，工具名称长度不符合要求": "Parameter error, please try again. Tool name length does not meet requirements.",
-      "参数异常，请重试，工具描述长度不符合要求": "Parameter error, please try again. Tool description length does not meet requirements.",
-      "参数异常，请重试，工具示例长度不符合要求": "Parameter error, please try again. Tool example length does not meet requirements.",
-      "参数异常，请重试，工具代码长度不符合要求": "Parameter error, please try again. Tool code length does not meet requirements.",
-      "参数异常，请重试，工具url不符合要求": "Parameter error, please try again. Tool URL does not meet requirements.",
-      "参数异常，请重试，工具请求方法不符合要求": "Parameter error, please try again. Tool request method does not meet requirements.",
-      "参数异常，请重试，mcp server url不符合要求": "Parameter error, please try again. MCP server URL does not meet requirements.",
-      "参数异常，请重试，mcp server url长度不符合要求": "Parameter error, please try again. MCP server URL length does not meet requirements.",
-      "参数异常，请重试，header变量名称长度不符合要求": "Parameter error, please try again. Header variable name length does not meet requirements.",
-      "参数异常，请重试，header变量值长度不符合要求": "Parameter error, please try again. Header variable value length does not meet requirements.",
-      "参数异常，请重试，查询数量超过上限": "Parameter error, please try again. Query count exceeds the limit.",
-      "工作流不支持代码插件": "Workflow does not support code plugins.",
-      "参数异常，请重试，基于已发布的应用创建的插件，应用ID不能为空": "Parameter error, please try again. When creating a plug-in based on a published application, the application ID cannot be empty.",
-      "对应发布应用的api参数:%s，存在问题": "The corresponding API parameter for publishing the application: %s, there is a problem",
-      "一个应用只能发布为一个插件": "An application can only be published as one plugin",
-      "%s:需要必填": "%s:Required",
-      "应用未发布": "Application not released"
-    }
+  client.yaml: |
+    client:
+      timeout: 60000000
+      namespace: ${NAMESPACE}
+      filter:
+        - opentelemetry
+      service:
+        - name: redis.plugin-config-server
+          target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/23"
+        - name: redis-cluster.plugin-config-server
+          target: "redis://${PLUGIN_REDIS_CLUSTER_USER}:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/23"
+        - name: redis-cluster-readonly.plugin-config-server
+          target: "redis://${PLUGIN_REDIS_CLUSTER_READONLY_USER}:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/23"
+        - name: mysql.db_llm_plugin
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: mysql.db_llm_prod_plugin
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_admin_proxy.Api
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_admin_proxy.Login
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_task_config_server.TaskConfig
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.workflow_config.WorkflowConfig
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.workflow_config.WorkflowConfigApi
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.http.cos.Access
+          namespace: Production
+          network: tcp
+          protocol: http
+          target: {{ if eq .Values.global.components.s3.providerType "minio" }}{{ printf "ip://minio.%s.svc.cluster.local:80" .Release.Namespace }}{{- else if eq .Values.global.components.s3.providerType "obs" }}ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}{{- else }}dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn{{- end }}
+        - callee: trpc.KEP.code_interpreter_dispatcher.CodeExec
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.plugin_code_interpret.CodeExec
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.smartservice.accessmanager.AccessManager
+          name: trpc.SmartService.AccessManagerServer.AccessManager
+          target: "ip://adp-access-manager.{{ .Release.Namespace }}.svc.cluster.local:10001"
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          # RESOLVE: keep-public
+          env_name: ${ACCESS_MANAGER_ENV_NAME}
+          set_name: commonset.sz.common1
+          timeout: 3000
+        - callee: trpc.KEP.agent_config_server.AgentConfigApi
+          name: trpc.KEP.agent-config-server.AgentConfigApi
+          target: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.agent_config.AgentConfigApi
+          name: trpc.KEP.agent-config-server.AgentConfigApi
+          target: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 60000
+        - name: qbot.finance.finance.Finance
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          protocol: trpc
+          network: tcp
+          timeout: 30000
+        - callee: trpc.SmartService.AIConfManagerServer.AIConfManager
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          name: trpc.SmartService.AIConfManagerServer.AIConfManager
+          target: "ip://adp-aiconf-manager.{{ .Release.Namespace }}.svc.cluster.local:10002"
+          timeout: 3000
+          # RESOLVE: keep-public
+          env_name: ${AI_CONF_MANAGER_ENV_NAME}
+        - callee: trpc.KEP.bot_data_statistics_server.Api
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_metrology.Api
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_manager.Admin
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_config.Api
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          timeout: 30000
+        - callee: trpc.adp.app_config.Admin
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          timeout: 30000
+        - callee: trpc.adp.platform_manager.Login
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          protocol: trpc
+          timeout: 6000
+        - callee: trpc.smartassistant.vectordbmanager.VectorObj
+          target: "ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001"
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          env_name: pre
+          set_name: commonset.sz.common1
+          timeout: 20000
+        - callee: trpc.adp.kb_vdb_proxy.VectorObj
+          target: "ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001"
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          env_name: pre
+          set_name: commonset.sz.common1
+          timeout: 20000
+        - name: trpc.adp.kb_retrieval.Retrieval
+          namespace: Test
+          target: "ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          timeout: 30000
+        - name: trpc.adp.kb_retrieval.DirectIndex
+          namespace: Test
+          target: "ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          timeout: 30000
+        - name: trpc.adp.ai_gateway.Admin
+          network: tcp
+          protocol: trpc
+          target: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092"
+        - name: trpc.adp.platform_charger.Finance
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          protocol: trpc
+          network: tcp
+          timeout: 30000
+        - callee: trpc.adp.kb_retrieval.DirectIndex
+          namespace: ${NAMESPACE}
+          target: "ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          timeout: 30000
+        - callee: trpc.adp.resource_gallery.Admin
+          target: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 30000
+        - name: trpc.adp.platform-account.Api
+          callee: trpc.adp.platform_account.Internal
+          target: "ip://adp-platform-account.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 5000
+        - name: trpc.adp.platform_manager.Api
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093"
+          protocol: trpc
+          timeout: 5000
+        - name: trpc.adp.platform_manager.v2.Internal
+          callee: trpc.adp.platform_manager.v2.Internal
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9099"
+          network: tcp
+          protocol: trpc
+          timeout: 30000
 
   error_zh-CN.json: |
     {
@@ -141,28 +280,23 @@ data:
     }
 
   llmsgw.yaml: |
-    create_open: true
-
-    invoke_open: true
-
+    create_open: false
+    invoke_open: false
     client:
-      secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID} # capi secret_id
-      secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY} # capi secret_key
-      endpoint: apis.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcloudapi.woa.com # capi endpoint
-      region: ap-nanjing # capi region
-
+      secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+      secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+      endpoint: apis.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcloudapi.woa.com
+      region: ap-nanjing
     instance:
-      instance_id: ins-fbdfd9be # llmsgw 实例ID
-      app_id: aga-a54ccc08 # llmsgw 应用ID
-      app_sse_url_format: ""
-      app_streamable_url_format: ""
-
+      instance_id: ins-fbdfd9be
+      app_id: aga-a54ccc08
+      app_sse_url_format: ''
+      app_streamable_url_format: ''
     scf_default:
       url_suffixes:
         - .in.ap-guangzhou.tencentscf.com
       scf_proxy: scf.ap-guangzhou-1.regioninvoke.oldhttpobj.production.polaris
       http_host_type: customHost
-
     create_default:
       Mode: proxy
       TargetSelect: random
@@ -181,56 +315,57 @@ data:
         TimeWindowInterval: 1
         Timeout: 0
       Timeout: 60
+      # RESOLVE: keep-private
       McpSecurityRules:
-        - ID: mr-eb6bc341 # 验证码
+        - ID: mr-eb6bc341
           Status: open
           Act: watch
-        - ID: mr-5c08d4bf # 密码凭证
+        - ID: mr-5c08d4bf
           Status: open
           Act: watch
-        - ID: mr-77c89b08 # 密钥
+        - ID: mr-77c89b08
           Status: open
           Act: watch
-        - ID: mr-f4887768 # 手机号
+        - ID: mr-f4887768
           Status: open
           Act: watch
-        - ID: mr-62abbac2 # 身份证
+        - ID: mr-62abbac2
           Status: open
           Act: watch
-        - ID: mr-f7333a4b # 电子邮箱
+        - ID: mr-f7333a4b
           Status: open
           Act: watch
-        - ID: mr-3e979564 # XSS注入检测
+        - ID: mr-3e979564
           Status: open
           Act: watch
-        - ID: mr-ce5d442a # 腾讯云内网禁止访问
+        - ID: mr-ce5d442a
           Status: open
           Act: watch
-        - ID: mr-f3425f9a # SQL注入检测
+        - ID: mr-f3425f9a
           Status: open
           Act: watch
-        - ID: mr-9b03f278 # 核心文件非法访问检测
+        - ID: mr-9b03f278
           Status: open
           Act: watch
-        - ID: mr-2f320f90 # mcpTool投毒攻击检测
+        - ID: mr-2f320f90
           Status: open
           Act: watch
-        - ID: mr-91024dce # 服务端模版注入检测
+        - ID: mr-91024dce
           Status: open
           Act: watch
-        - ID: mr-41edb942 # 服务器端请求伪造检测
+        - ID: mr-41edb942
           Status: open
           Act: watch
-        - ID: mr-45719d86 # 文件上传攻击检测
+        - ID: mr-45719d86
           Status: open
           Act: watch
-        - ID: mr-8d9969cd # 恶意机器人检测
+        - ID: mr-8d9969cd
           Status: open
           Act: watch
-        - ID: mr-a3cfd583 # XML注入攻击检测
+        - ID: mr-a3cfd583
           Status: open
           Act: watch
-        - ID: mr-3fc0f491 # 木马后门攻击检测
+        - ID: mr-3fc0f491
           Status: open
           Act: watch
       PluginConfigs:
@@ -241,28 +376,106 @@ data:
           Level: 1
           PluginFormValues:
             - Field: requestUrl
-              Value: https://testwss.testsite.woa.com/gateway/check
+              Value: "https://testwss.testsite.woa.com/gateway/check"
             - Field: responseUrl
-              Value: https://testwss.testsite.woa.com/gateway/report
+              Value: "https://testwss.testsite.woa.com/gateway/report"
             - Field: onErrorAction
               Value:
-
     mcp_type_version:
-      0: 2024-11-05 # sse(0)：2024-11-05
-      1: 2025-06-18 # streamable(1)：2025-06-18
+      0: 2024-11-05
+      1: 2025-06-18
+    instance_refresh_minutes: 5
+    max_mcp_per_instance: 10000
+    instances:
+    - instance_id: ins-177599c2
+      app_id: aga-16bc2d77
+      app_key: xxxxxxxxxxxxxxxxxx
+      secret_id:
+      secret_key:
+      endpoint: apis.ap-guangzhou.tencentcloudapi.woa.com
+      region: ap-nanjing
+      app_sse_url_format: "http://21.248.96.28/_llmsgw_/sse?llmsgw_server=%s&llmsgw_app=%s&llmsgw_key=%s"
+      app_streamable_url_format: "http://21.248.96.28/_llmsgw_/mcp?llmsgw_server=%s&llmsgw_app=%s&llmsgw_key=%s"
+      McpSecurityRules:
+      - ID: mr-9d5edd8b
+        Status: open
+        Act: watch
+      - ID: mr-53b1017c
+        Status: open
+        Act: watch
+      - ID: mr-7df50d2b
+        Status: open
+        Act: watch
+      - ID: mr-4171f83a
+        Status: open
+        Act: watch
+      - ID: mr-3eed5842
+        Status: open
+        Act: watch
+      - ID: mr-f5606593
+        Status: open
+        Act: watch
+      - ID: mr-1f99e085
+        Status: open
+        Act: watch
+      - ID: mr-18c602a7
+        Status: open
+        Act: watch
+      - ID: mr-d847502a
+        Status: open
+        Act: watch
+      - ID: mr-bf176f5a
+        Status: open
+        Act: watch
+      - ID: mr-095c4eed
+        Status: open
+        Act: watch
+      - ID: mr-5a454840
+        Status: open
+        Act: watch
+      - ID: mr-02707404
+        Status: open
+        Act: watch
+      - ID: mr-47953fcf
+        Status: open
+        Act: watch
+      - ID: mr-97418874
+        Status: open
+        Act: watch
+      - ID: mr-604cef24
+        Status: open
+        Act: watch
+      - ID: mr-039aa464
+        Status: open
+        Act: watch
+      PluginConfigs:
+      - PluginID: plg-7829fa01
+        PluginName: 知识引擎大模型安全网关mcp请求插件
+        Description: 知识引擎大模型安全网关mcp请求插件，针对请求进行权限校验、自定义限流等
+        Status: true
+        Level: 1
+        PluginFormValues:
+        - Field: requestUrl
+          Value: "https://lke.testsite.woa.com/gateway/check"
+        - Field: responseUrl
+          Value: "https://lke.testsite.woa.com/gateway/report"
+        - Field: onErrorAction
+          Value:
 
   main.yaml: |
     crypto: true
     official_config:
       user_name: 智能体开发平台
-      avatar_url: ""
-      uin: "10000000"
-      sub_uin: "10000000"
+      avatar_url: ''
+      uin: '10000000'
+      sub_uin: '10000000'
       permission_ids: ["adpPluginCenterView"]
     api_config:
       timeout: 30
-      white_urls: ["allow_all",]
-      ports: ["allow_all"]
+      # RESOLVE: keep-public
+      white_urls: ${API_CONFIG_WHITE_URLS}
+      # RESOLVE: keep-public
+      ports: ${API_CONFIG_PORTS}
     tool_ref_limit: 1000
     plugin_check:
       plugin_name_min_len: 1
@@ -277,41 +490,52 @@ data:
       tool_code_min_len: 1
       tool_code_max_len: 64000
       tool_example_max_len: 64000
-      default_icon: "/adp/static/%E6%8F%92%E4%BB%B6-%E9%BB%98%E8%AE%A4.png"
+      default_icon: /adp/static/%E6%8F%92%E4%BB%B6-%E9%BB%98%E8%AE%A4.png
       max_icon_size: 524288
       header_name_min_len: 1
       header_name_max_len: 50
       header_value_max_len: 5000
       mcp_url_max_len: 500
+      mcp_tool_desc_max_len: 8000
+      max_page_pos: 5000
     mcp:
       sync_tick_interval: 300
       sync_batch_size: 10
-      load_db_tick_interval: 24
-      mcp_sync_interval: 180
-      mcp_degrade_sync_interval: 600
+      load_db_tick_interval: ${MCP_LOAD_DB_TICK_INTERVAL}
+      mcp_sync_interval: ${MCP_SYNC_INTERVAL}
+      # RESOLVE: keep-public
+      mcp_degrade_sync_interval: ${MCP_DEGRADE_SYNC_INTERVAL}
       mcp_degrade_threshold: 3
       mcp_proxy_urls: ["https://{{ .Values.global.clb }}/v1/lke/mcp","http://{{ .Values.global.clb }}/v1/lke/mcp", "https://devwss.testsite.woa.com/v1/lke/mcp","https://testwss.testsite.woa.com/v1/lke/mcp"]
-      white_urls: ["allow_all", "{{ .Values.global.clb }}","devwss.testsite.woa.com","testwss.testsite.woa.com","prewss.testsite.woa.com","lke.testsite.woa.com","qbmanusmcp.woa.com","aitool.woa.com","qgamedevflow.woa.com","mcp.pubnet.woa.com","market-agent-mcp.testsite.woa.com"]
-      white_ports: ["allow_all", "9090","8081", "80","443","8080","18080"]
+      # RESOLVE: keep-public
+      white_urls: ${MCP_WHITE_URLS}
+      # RESOLVE: keep-public
+      white_ports: ${MCP_WHITE_PORTS}
       describe_plugin_refresh: false
-      # mcp插件对外地址
-      external_mcp_gateway: https://adp.cloud.tencent.com
-      # api插件对外地址
-      external_api_gateway: https://adp.cloud.tencent.com
+      external_mcp_gateway: ${EXTERNAL_GATEWAY}
+      external_api_gateway: ${EXTERNAL_GATEWAY}
+      enable_sync_task: true
+      enable_db_load: true
+      sync_fetch_timeout: 60
+      enable_internal_mcp_gateway: true
+      internal_mcp_gateway: ${INTERNAL_GATEWAY}
     storage_conf:
       type: cos
       cos_conf:
+        # RESOLVE: keep-private
         secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+        # RESOLVE: keep-private
         secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
         region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
         app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+        # RESOLVE: keep-private
         bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
         domain: myqcloud.com
         assume_role:
-          role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
+          role_arn: "{{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}"
           duration_seconds: 43200
           refresh_ahead_seconds: 300
-
+    # RESOLVE: keep-private
     storage:
       {{ include "qbot.s3_storage" . }}
     app_tool_limit: 30
@@ -333,24 +557,26 @@ data:
       - CheckMCPServer
       - DeleteFavoritePlugin
       - AddFavoritePlugin
-
-    privacy_env : true
-
+    # 是否开启自定义插件分享
+    custom_plugin_share_enable: true
+    # 自定义插件企业共享是否开启审核
+    plugin_audit_enable: true
+    # 是否为私有化环境部署
+    privacy_env: true
     cloud_api:
+      # RESOLVE: keep-private
       secret_id: xxx
+      # RESOLVE: keep-private
       secret_key: xxx
-      account_host: account.ap-guangzhou.tencentcloudapi.woa.com
-      version: "2018-12-25"
-
+      account_host: ${CLOUD_API_ACCOUNT_HOST}
+      version: '2018-12-25'
     white_list:
       enable: true
-      plugin_ids: ["3de4a6c6-e055-4d78-9e09-c4410aee79e4"]
-      key: BangBox_MCP
-      keys: ["BangBox_MCP","Plan_Execute_Agent"]
-
+      plugin_ids: ${WHITE_LIST_PLUGIN_IDS}
+      keys: ["BangBox_MCP", "Plan_Execute_Agent"]
     run_code:
       max_result_length: 2000000
-      result_separator: "_______ResultSeparator_______"
+      result_separator: _______ResultSeparator_______
       code_template: |-
         {{`
         import time
@@ -407,223 +633,161 @@ data:
               return super(SystemJsonEncoder, self).default(obj)
 
         print("{{ResultSeparator}}")
-        print(json.dumps(main_result, ensure_ascii=False, cls=SystemJsonEncoder))
-        `}}
+        print(json.dumps(main_result, ensure_ascii=False, cls=SystemJsonEncoder))`}}
+
 
     data_sync_task:
       release_queue_length: 200
       release_items_per_batch: 100
-
     plugin_sub_uin_batch: 100
-
     plugin_history_cleanup:
       enable: true
       cron_spec: "0 0 2 * * *"
       retention_days: 30
       batch_size: 1000
-
     cam:
-      sts_host: "sts.tencentcloudapi.com"
-      region: "ap-guangzhou"
+      sts_host: ${CAM_STS_HOST}
+      region: ap-guangzhou
       duration_seconds: 43200
       tmp_key_expire: 7195
       role_credential_concurrency: 2
       role_config:
         ADP_QCSLinkedRoleInSMS:
-          secret_id: ""
-          secret_key: ""
+          # RESOLVE: keep-private
+          secret_id: ''
+          # RESOLVE: keep-private
+          secret_key: ''
         ADP_QCSLinkedRoleInHCM:
-          secret_id: ""
-          secret_key: ""
+          # RESOLVE: keep-private
+          secret_id: ''
+          # RESOLVE: keep-private
+          secret_key: ''
         ADP_QCSLinkedRoleInSES:
-          secret_id: ""
-          secret_key: ""
+          # RESOLVE: keep-private
+          secret_id: ''
+          # RESOLVE: keep-private
+          secret_key: ''
         ADP_QCSLinkedRoleInIMS:
-          secret_id: ""
-          secret_key: ""
+          # RESOLVE: keep-private
+          secret_id: ''
+          # RESOLVE: keep-private
+          secret_key: ''
         ADP_QCSLinkedRoleInTMS:
-          secret_id: ""
-          secret_key: ""
+          # RESOLVE: keep-private
+          secret_id: ''
+          # RESOLVE: keep-private
+          secret_key: ''
         ADP_QCSLinkedRoleInIAI:
-          secret_id: ""
-          secret_key: ""
+          # RESOLVE: keep-private
+          secret_id: ''
+          # RESOLVE: keep-private
+          secret_key: ''
         ADP_QCSLinkedRoleInES:
-          secret_id: ""
-          secret_key: ""
+          # RESOLVE: keep-private
+          secret_id: ''
+          # RESOLVE: keep-private
+          secret_key: ''
         ADP_QCSLinkedRoleInAMS:
-          secret_id: ""
-          secret_key: ""
+          # RESOLVE: keep-private
+          secret_id: ''
+          # RESOLVE: keep-private
+          secret_key: ''
         ADP_QCSLinkedRoleInVM:
-          secret_id: ""
-          secret_key: ""
+          # RESOLVE: keep-private
+          secret_id: ''
+          # RESOLVE: keep-private
+          secret_key: ''
         ADP_QCSLinkedRoleInTTS:
-          secret_id: ""
-          secret_key: ""
+          # RESOLVE: keep-private
+          secret_id: ''
+          # RESOLVE: keep-private
+          secret_key: ''
         ADP_QCSLinkedRoleInTMT:
-          secret_id: ""
-          secret_key: ""
+          # RESOLVE: keep-private
+          secret_id: ''
+          # RESOLVE: keep-private
+          secret_key: ''
         ADP_QCSLinkedRoleInMRS:
-          secret_id: ""
-          secret_key: ""
+          # RESOLVE: keep-private
+          secret_id: ''
+          # RESOLVE: keep-private
+          secret_key: ''
         ADP_QCSLinkedRoleInAIART:
-          secret_id: ""
-          secret_key: ""
+          # RESOLVE: keep-private
+          secret_id: ''
+          # RESOLVE: keep-private
+          secret_key: ''
         ADP_QCSLinkedRoleInOCR:
-          secret_id: ""
-          secret_key: ""
+          # RESOLVE: keep-private
+          secret_id: ''
+          # RESOLVE: keep-private
+          secret_key: ''
         ADP_QCSLinkedRoleInVCLM:
-          secret_id: ""
-          secret_key: ""
+          # RESOLVE: keep-private
+          secret_id: ''
+          # RESOLVE: keep-private
+          secret_key: ''
         ADP_QCSLinkedRoleInASR:
-          secret_id: ""
-          secret_key: ""
+          # RESOLVE: keep-private
+          secret_id: ''
+          # RESOLVE: keep-private
+          secret_key: ''
         ADP_QCSLinkedRoleInAI3D:
-          secret_id: ""
-          secret_key: ""
+          # RESOLVE: keep-private
+          secret_id: ''
+          # RESOLVE: keep-private
+          secret_key: ''
         ADP_QCSLinkedRoleInFACEID:
-          secret_id: ""
-          secret_key: ""
-
-    finance:
-      plugins:
-
-    tool_render_type:
-      "07236926-7bd0-4ec5-80a5-6ca12237a6e1": 1
-      "14fdd51e-3957-4cf7-be6e-c6574951898c": 1
-      "0ca8d482-1e77-462b-bc21-807c8f052f69": 2
-      "080bbce6-b02b-466e-a152-967c1546eb05": 3
-      "cf5b121f-57d7-47c1-937a-2f9993ec0a63": 4
-
+          # RESOLVE: keep-private
+          secret_id: ''
+          # RESOLVE: keep-private
+          secret_key: ''
     category_keys:
-      - "ocr"
-      - "image_processing"
-      - "audio_video"
-      - "dev_tools"
-      - "search_fetch"
-      - "integration"
-      - "security"
-
-    third_api_author_name:
-      "8ae7f924-1abf-498c-b4d4-3b2167b17821": "腾讯新闻"
-
+      - ocr
+      - image_processing
+      - audio_video
+      - dev_tools
+      - search_fetch
+      - integration
+      - security
     get_plugins_batch_size: 100
-
     task_config:
-      task_prefix: plugin-config-server:task
+      task_prefix: "plugin-config-server:task"
       task_fetch_num: 400
       task_fetch_timeout: 2s
       task_fetch_period: 2s
       task_max_timeout: 1h
       tasks:
         export_plugin_component:
-          runners: 2 #处理协程数，无法动态调整
-          retry_wait_time: 1m #重试等待时间
-          max_retry: 2 #最大重试次数
-          timeout: 5m #超时时间
-          fail_timeout: 3s # 失败回调超时
-          delay: 0s #启动延迟
-          batch:  1
+          runners: 2
+          retry_wait_time: 1m
+          max_retry: 2
+          timeout: 5m
+          fail_timeout: 3s
+          delay: 0s
+          batch: 1
           batch_size: 0
           stopped_resume_time: 720h
         import_plugin_component:
-          runners: 2 #处理协程数，无法动态调整
-          retry_wait_time: 1m #重试等待时间
-          max_retry: 2 #最大重试次数
-          timeout: 5m #超时时间
-          fail_timeout: 3s # 失败回调超时
-          delay: 0s #启动延迟
-          batch:  1
+          runners: 2
+          retry_wait_time: 1m
+          max_retry: 2
+          timeout: 5m
+          fail_timeout: 3s
+          delay: 0s
+          batch: 1
           batch_size: 0
           stopped_resume_time: 720h
     saml:
       enable: true
-      entity_id: "adp.cloud.tencent.com"
-      sso_url: "https://adp.cloud.tencent.com/cloudapp"
-      certificate_pem: |
-        -----BEGIN CERTIFICATE-----
-        MIIH4TCCBcmgAwIBAgIQBl8WRLepseUWPSY3dLzG0jANBgkqhkiG9w0BAQsFADBq
-        MQswCQYDVQQGEwJVUzEXMBUGA1UEChMORGlnaUNlcnQsIEluYy4xQjBABgNVBAMT
-        OURpZ2lDZXJ0IFNlY3VyZSBTaXRlIE9WIEcyIFRMUyBDTiBSU0E0MDk2IFNIQTI1
-        NiAyMDIyIENBMTAeFw0yNTA3MTYwMDAwMDBaFw0yNjA3MTUyMzU5NTlaMIGVMQsw
-        CQYDVQQGEwJDTjEbMBkGA1UECBMSR3Vhbmdkb25nIFByb3ZpbmNlMREwDwYDVQQH
-        EwhTaGVuemhlbjE2MDQGA1UEChMtVGVuY2VudCBUZWNobm9sb2d5IChTaGVuemhl
-        bikgQ29tcGFueSBMaW1pdGVkMR4wHAYDVQQDExVhZHAuY2xvdWQudGVuY2VudC5j
-        b20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCeY1BgdSsfOwdvh8wS
-        m8+DzLpYqDOS3w9UxSVPASgA9iHNp1rdMzpJBqlaJxuGw75XFxQTDDathIeP1TnF
-        YT+EYUv7ujhGj2yoHjCBd5c4+sScIYPbquEqqH7BMIPxejCYT7IwBujDvSVFwbMU
-        BujRrS+BNrCrMulyYuj8zSmCGi8TDpXpuJgiWaEyQxiPs4xXb2nBkjVMI6ZDLdMq
-        W2xRGK+et5NORg2tC0uPdyUKhULrWRm45tfgzwFyRG5LSTXyCkqN8s5wARrNQ5Rr
-        vKByi1L++l/+thGwY7AJMJFlsDAEskNhuHyZWOZszlxrK0NpMBifQRg0vo14aVWp
-        5lHbAgMBAAGjggNVMIIDUTAfBgNVHSMEGDAWgBQrIxaBG0eJipB67Ogy1GyOcvnO
-        JTAdBgNVHQ4EFgQUc1PJ/xEyBZRBoMoTTpSW4w7RG04wIAYDVR0RBBkwF4IVYWRw
-        LmNsb3VkLnRlbmNlbnQuY29tMD4GA1UdIAQ3MDUwMwYGZ4EMAQICMCkwJwYIKwYB
-        BQUHAgEWG2h0dHA6Ly93d3cuZGlnaWNlcnQuY29tL0NQUzAOBgNVHQ8BAf8EBAMC
-        BaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMFsGA1UdHwRUMFIwUKBO
-        oEyGSmh0dHA6Ly9jcmwuZGlnaWNlcnQuY24vRGlnaUNlcnRTZWN1cmVTaXRlT1ZH
-        MlRMU0NOUlNBNDA5NlNIQTI1NjIwMjJDQTEuY3JsMIGRBggrBgEFBQcBAQSBhDCB
-        gTAjBggrBgEFBQcwAYYXaHR0cDovL29jc3AuZGlnaWNlcnQuY24wWgYIKwYBBQUH
-        MAKGTmh0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNuL0RpZ2lDZXJ0U2VjdXJlU2l0
-        ZU9WRzJUTFNDTlJTQTQwOTZTSEEyNTYyMDIyQ0ExLmNydDAMBgNVHRMBAf8EAjAA
-        MIIBfQYKKwYBBAHWeQIEAgSCAW0EggFpAWcAdgDXbX0Q0af1d8LH6V/XAL/5gskz
-        WmXh0LMBcxfAyMVpdwAAAZgRMcw2AAAEAwBHMEUCIQCIrRjFglgTj+7EkEhUxw1q
-        icGZfModc8LMVFYEI495OgIgJF7CGHVbwVwBaKIt6/coTws0kvBbi6Mt3/+3taRc
-        GzoAdgDCMX5XRRmjRe5/ON6ykEHrx8IhWiK/f9W1rXaa2Q5SzQAAAZgRMcxyAAAE
-        AwBHMEUCIDdiQGzcwGtOqyTnJXC85LLS+71DcUZqfw+Hvhi95HNfAiEArRa4KeZ9
-        3IH5E3IIobVEZzHWUKGvk0DBNvEDaf4TnpQAdQCUTkOH+uzB74HzGSQmqBhlAcfT
-        XzgCAT9yZ31VNy4Z2AAAAZgRMcyEAAAEAwBGMEQCIF7WCjPT4OAro+hqNyrJcOcm
-        brvnpIp3B0t8J9e7JyprAiBDAZpaPNeotxFzoYpaGpFZi707bgTDSjYnDxS4ydMO
-        ZzANBgkqhkiG9w0BAQsFAAOCAgEAmiNfQmDcffwW5HhRzpmpJ5rxV+1rVEzO7wDx
-        ddggN147q0H6H/v73+ckZFJqbwFD6M2RW1U1RSmqFqLJx1Dhp5reud84Fb4gwIAg
-        3FEsfZiN/WOTKuIoXDyOVF5FVRpvgrnIuRL/JDvxvCajOuDzJZX7JCG+ldVIMItv
-        aF0e5qaMntgl5FvzKuC6lRL5AtsMpcHO0IhB3DCnAqWFrtG3/FcFKHt7V075itiG
-        uY0yeqpQHdsmXeLBqGI5ER1EiFBiskeSE+gTwE5QkPRZ1J3xzWsMF8Mnhy28ZgAG
-        TXXxNCPCQsZzo4JM7U20tax7ht+dovi+yvu6LfLyPbvqRzhUsedPPMYbuzTGU8dV
-        NaGEfxm2st6XYPlEHPgSDfGhRTt1G6VzooXgPECZuUD0RNZ3GDteoZqMG2+fl57R
-        SVoy5jrCzuMIt+u92q5C/Uifrhvk6wJ4cUdLzckGwjcwD+UmgQPcmIDb6HEvvv2Z
-        ENqA54cgeuxYgFylBm5LxFXe5PumuqdCW3ZmHVSZ/ipkW5YybRyf954BPtbqd3oj
-        uV+XD1G7AJBgUZtGVQxkz+FkY+/oO+IoX+cX43SFHiDZf5vGswgfYCg3uazUp1Tz
-        bWLTjx0UNgaouRdnurOUp+W+MdcIiQ/jzK3QcaDX9WuB7G1MBPUsZ5vfijpjIbHt
-        ycA1jFs=
-        -----END CERTIFICATE-----
-        -----BEGIN CERTIFICATE-----
-        MIIF1TCCBL2gAwIBAgIQBMG5YBkfyr7c2pMBps14wzANBgkqhkiG9w0BAQsFADBh
-        MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
-        d3cuZGlnaWNlcnQuY29tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBH
-        MjAeFw0yMjEyMTUwMDAwMDBaFw0zMjEyMTQyMzU5NTlaMGoxCzAJBgNVBAYTAlVT
-        MRcwFQYDVQQKEw5EaWdpQ2VydCwgSW5jLjFCMEAGA1UEAxM5RGlnaUNlcnQgU2Vj
-        dXJlIFNpdGUgT1YgRzIgVExTIENOIFJTQTQwOTYgU0hBMjU2IDIwMjIgQ0ExMIIC
-        IjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAoqPBWLBJf1bGOdPpKg1poUIy
-        2T062PnFJq6TDc4LK8EBlCYpg1XpXjk8tsoSaGw5VIc4K4djyLlAGQXg9VKBbg+7
-        5i+8SomphCkVtIPwY+ZwQ0n2puNpVJ6ZgYDYNE9PTmBEYeRPvxpkxsMTivdXXA22
-        hAsXZVawlR1/iJXLqmf80UvShmzLXhkR6ymKK0edoJcXDzpgEK3g0cRVCAw8Ij8K
-        9nU72msIrhMrMBkAvgOAQEzLGGGWSk92FztzeUuYo4MGCgL0HDEJ0B5hf4V+h/Ct
-        Wuho/roYqUUeoHsVMUXPwwGspahGoDlWh9nZ4zRssCE/zXJRYtkplZaUc/5SAOzu
-        7F4UatHP1xVfRhkxHTOuCJ7iCyc5B/D1SLpUOFzZ7MfF0eANhB0ilFbFzJ/gXPA9
-        dWCYP0kqkkcLcn5hRHQxArGkP+VzZuayTVCbHK5tbZ/ZeQ3gnyEopwtq1Do77dLv
-        wZlfnOHA1tzTFYLkATE8VC/xtaSi2tyBoXX+kuvLd/552914gA8+Jw4gM+aYD3y5
-        LQCD/6c27beRta2DXC8y4nG1mC2jdyurw/+KxGMKLfuDAeGs9om+kqM5JdJXwUBW
-        L13+OQH8VO2omIsoZ2VijBoe6J6r8hzAvg2qz8yIdjG3c+K+clbwmtS0xSx3PHnx
-        Ab1dKZPfwGq+TiSx7XcCAwEAAaOCAX4wggF6MBIGA1UdEwEB/wQIMAYBAf8CAQAw
-        HQYDVR0OBBYEFCsjFoEbR4mKkHrs6DLUbI5y+c4lMB8GA1UdIwQYMBaAFE4iVCAY
-        lebjbuYP+vq5Eu0GF485MA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEF
-        BQcDAQYIKwYBBQUHAwIwdAYIKwYBBQUHAQEEaDBmMCMGCCsGAQUFBzABhhdodHRw
-        Oi8vb2NzcC5kaWdpY2VydC5jbjA/BggrBgEFBQcwAoYzaHR0cDovL2NhY2VydHMu
-        ZGlnaWNlcnQuY24vRGlnaUNlcnRHbG9iYWxSb290RzIuY3J0MEAGA1UdHwQ5MDcw
-        NaAzoDGGL2h0dHA6Ly9jcmwuZGlnaWNlcnQuY24vRGlnaUNlcnRHbG9iYWxSb290
-        RzIuY3JsMD0GA1UdIAQ2MDQwCwYJYIZIAYb9bAIBMAcGBWeBDAEBMAgGBmeBDAEC
-        ATAIBgZngQwBAgIwCAYGZ4EMAQIDMA0GCSqGSIb3DQEBCwUAA4IBAQCkniKR2clY
-        bEKTe5mh430LVsE62e+yNGFG286R0IW+nKjMEhC99U5ggtp1cjXAZpzsTF4Y7kcT
-        g3LsVVnbVWmEDm8yr3YHAg97s/JGnwcJNEg4NqmxAEY+hy7mGIyYVbKSEjWRSxjt
-        iiDfaBkwNzFb6fT16xlxEK5LpCpyWS6+2mRWsbNt7C/AaiTvhIizO8zJgiFf3k4S
-        SgRFj0nCrCKaakgxpm0EDTG3AV7linTSmQqN1Ca8LsP1umvA6SLk524bdCpT0KM0
-        CmAYLruY0BtvgEVLi8JrUWhUqi4lLnDUgqFNDExKmQ/OL60AJZxXKjZyFaceQEGH
-        iRipdqqMuIo5
-        -----END CERTIFICATE-----
-      private_key_pem: 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
+      entity_id: ${SAML_ENTITY_ID}
+      sso_url: ${SAML_SSO_URL}
+      certificate_pem: ${SAML_CERTIFICATE_PEM}
+      private_key_pem: ${SAML_PRIVATE_KEY_PEM}
       assertion_ttl_seconds: 3600
       max_issue_skew_seconds: 3600
       service_providers:
-        - entity_id: "cloudapp-c9jb9i1t.connectidp.tencentcloudapp.com"
+        - entity_id: cloudapp-c9jb9i1t.connectidp.tencentcloudapp.com
           metadata_xml: |
             <?xml version="1.0" encoding="UTF-8"?>
             <EntityDescriptor entityID="cloudapp-c9jb9i1t.connectidp.tencentcloudapp.com" xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
@@ -642,14 +806,15 @@ data:
                 <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://cloudapp-c9jb9i1t.connectwepayecom.tencentcloudapp.com/saml/response" index="0" isDefault="true"></AssertionConsumerService>
               </SPSSODescriptor>
             </EntityDescriptor>
-
     oauth2:
-      redirect_url: "{{ .Values.global.scheme }}://{{ .Values.global.clb }}/api/plugin/oauth/callback"
-      callback_result_url: "{{ .Values.global.scheme }}://{{ .Values.global.clb }}/workflow/cloudapp/"
-      state_expire: 10m                     # state过期时间：10分钟
-      temporary_cache_expire: 1h            # 校验工具临时授权缓存过期时间
-      visitor_cache_expire: 168h            # 使用者授权缓存过期时间：7天(168h)
-      developer_cache_expire: 720h          # 开发者授权缓存过期时间：30天(720h)，设为0表示永不过期
+      # RESOLVE: keep-public
+      redirect_url: ${OAUTH2_REDIRECT_URL}
+      # RESOLVE: keep-public
+      callback_result_url: ${OAUTH2_CALLBACK_RESULT_URL}
+      state_expire: 10m
+      temporary_cache_expire: 1h
+      visitor_cache_expire: 168h
+      developer_cache_expire: 720h
       refresh_token_invalid_keywords:
         - invalid_grant
         - invalid_grant_validate_token
@@ -659,14 +824,21 @@ data:
         - "refresh token invalid"
         - "refresh_token revoked"
         - "refresh_token expired"
+        - "client not found"
       refresh_token_cron_config:
         batch_size: 100
         max_update_count: 100000
-
+      independent_site_callback_result_url: ${INDEPENDENT_CALLBACK_RESULT_URL}
+      callback_timeout: 30s
+      discovery_request_timeout: 5s
+      discovery_probe_timeout: 5s
+      discovery_cache_expire: 12h
+      client_name: ${OAUTH2_CLIENT_NAME}
+      client_metadata_document_url: ${OAUTH2_CLIENT_METADATA_DOCUMENT_URL}
     plugin_embedding:
       current_version: v1
       vdb_biz: cs
-      vdb_secret: e1168c1b14e31acd512ddd566bbe4390
+      vdb_secret:
       batch_size: 4
       version_control:
         v1:
@@ -676,31 +848,46 @@ data:
           plugin_llm_prompt_version: v1
           tool_llm_prompt: plugin_tool_embedding
           tool_llm_prompt_version: v1
-          retrieve_template: "{{` .Query `}}"
+          retrieve_template: " .Query "
+      kb_id: 10000000
     db_type: {{ .Values.adppluginconfig.dbtype }}
-
     data_retention:
       physical_delete_cron_spec: "0 0 3 * * *"
       physical_delete_older_than_minutes: {{ .Values.global.delete_data.plugin_config_server_retention_minutes }}
-
-    private_plugins_offline: 
+    private_plugins_offline:
       - 751ec82b-dd2b-4969-8ca0-3db674d29b94
       - 4dcbd619-670c-403d-9f3f-8284880e2ffa
       - d6dd384b-8eb3-43c0-8d10-68933b4ceaa8
-      - 7a8d9c0e-1f2a-4b3c-8d4e-5f6a7b8c9d0e 
+      - 7a8d9c0e-1f2a-4b3c-8d4e-5f6a7b8c9d0e
       - 3ad93aae-587e-4bcc-ae07-ad13bfb1aaca
       - 80fbbf73-d074-4ad8-a537-3fa491a46829
       - 47c04693-1567-4751-a7d1-7e9048bd36bc
+    connector_category_keys:
+    - knowledge_management
+    - document_management
+    - project_collaboration
+    - business_operations
+    - productivity_tools
+    call_count_sync:
+      enable: true
+    ioa:
+      charged_plugin_whitelist: ${IOA_NOT_CHARGE_PLUGINS}
+      model_replace_list:
+      - source: Youtu/youtu-mrc-pro
+        target: TCADP/glm-5.1
+        alias_name: 智谱GLM-5.1
+        model_params:
+          Temperature: '1'
+          TopP: '0.95'
+      model_replace_tool_whitelist: ${IOA_REPLACE_TOOLS}
 
   placeholder.yaml: |
-
     PLUGIN_REDIS_CLUSTER_USER:
     PLUGIN_REDIS_CLUSTER_READONLY_USER:
-
-    ADMIN_API_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
-    ADMIN_LOGIN_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
-    TASK_CONFIG_TARGET: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
-    WORKFLOW_CONFIG_API_TARGET: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+    ADMIN_API_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+    ADMIN_LOGIN_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
+    TASK_CONFIG_TARGET: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
+    WORKFLOW_CONFIG_API_TARGET: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
     COS_ACCESS_TARGET:
       {{- if eq .Values.global.components.s3.providerType "minio" }}
       {{ printf "ip://minio.%s.svc.cluster.local:80" .Release.Namespace }}
@@ -709,31 +896,165 @@ data:
       {{- else }}
       dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn
       {{- end }}
-    CODE_EXEC_TARGET: ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001
-    ACCESS_MANAGER_TARGET: ip://adp-access-manager.{{ .Release.Namespace }}.svc.cluster.local:10001
-    AGENT_CONFIG_TARGET: ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001
-    FINANCE_TARGET: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
-    AI_CONF_MANAGER_TARGET: ip://adp-aiconf-manager.{{ .Release.Namespace }}.svc.cluster.local:10002
-    PLATFORM_METROLOGY_TARGET: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
-    PLATFORM_MANAGER_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
-    APP_CONFIG_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
-    APP_CONFIG_ADMIN_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
-    PLATFORM_MANAGER_LOGIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
-    VDB_MANAGER_TARGET: ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001
-    KB_RETRIEVAL_RETRIEVAL_TARGET: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9090
-    KB_RETRIEVAL_DIRECTINDEX_TARGET: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091
-    AI_GATEWAY_ADMIN_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
-  plugin_en-US.json: |
-    {
-      "ocr": "OCR",
-      "image_processing": "Image Processing",
-      "audio_video": "Media Processing",
-      "dev_tools": "Developer Tools",
-      "search_fetch": "Search & Retrieval",
-      "integration": "Connectivity & Integration",
-      "security": "Content Safety",
-      "%s 编辑插件名称为 %s": "%s edit plugin name to %s"
-    }
+    CODE_EXEC_TARGET: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
+    ACCESS_MANAGER_TARGET: "ip://adp-access-manager.{{ .Release.Namespace }}.svc.cluster.local:10001"
+    AGENT_CONFIG_TARGET: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+    FINANCE_TARGET: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
+    AI_CONF_MANAGER_TARGET: "ip://adp-aiconf-manager.{{ .Release.Namespace }}.svc.cluster.local:10002"
+    PLATFORM_METROLOGY_TARGET: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
+    PLATFORM_MANAGER_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
+    APP_CONFIG_TARGET: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091"
+    APP_CONFIG_ADMIN_TARGET: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
+    PLATFORM_MANAGER_LOGIN_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
+    VDB_MANAGER_TARGET: "ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001"
+    KB_RETRIEVAL_RETRIEVAL_TARGET: "ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9090"
+    KB_RETRIEVAL_DIRECTINDEX_TARGET: "ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091"
+    AI_GATEWAY_ADMIN_TARGET: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092"
+    TRPC_LOG_LEVEL: info
+    RAINBOW_GROUP: plugin-config-server
+    NAMESPACE: Production
+    ACCESS_MANAGER_ENV_NAME: formal
+    AI_CONF_MANAGER_ENV_NAME: formal
+    POLARIS_TOKEN_PLUGIN_CONFIG: c49014db159a4f01beb9c233f7ee00f3
+    POLARIS_TOKEN_PLUGIN_CONFIG_API: 5da4b88c5a2c403d97e790349e54cf11
+    MCP_LOAD_DB_TICK_INTERVAL: 24
+    MCP_SYNC_INTERVAL: 180
+    MCP_DEGRADE_SYNC_INTERVAL: 600
+    API_CONFIG_WHITE_URLS:
+    - allow_all
+    API_CONFIG_PORTS:
+    - allow_all
+    MCP_WHITE_URLS: ["allow_all", "{{ .Values.global.clb }}","devwss.testsite.woa.com","testwss.testsite.woa.com","prewss.testsite.woa.com","lke.testsite.woa.com","qbmanusmcp.woa.com","aitool.woa.com","qgamedevflow.woa.com","mcp.pubnet.woa.com","market-agent-mcp.testsite.woa.com"]
+    MCP_WHITE_PORTS: ["allow_all", "9090", "8081", "80", "443", "8080", "18080"]
+    INTERNAL_GATEWAY: "http://adp-plugin-gateway.{{ .Release.Namespace }}.svc.cluster.local:8002"
+    EXTERNAL_GATEWAY: "https://adp.cloud.tencent.com"
+    COS_BUCKET: qidian-qbot-1251316161
+    S3X_STORAGE_SSM_TAG:
+    CLOUD_API_SECRET_ID:
+    CLOUD_API_SECRET_KEY:
+    CLOUD_API_ACCOUNT_HOST: account.ap-guangzhou.tencentcloudapi.woa.com
+    WHITE_LIST_PLUGIN_IDS:
+    - 3de4a6c6-e055-4d78-9e09-c4410aee79e4
+    CAM_STS_HOST: sts.tencentcloudapi.com
+    SAML_ENTITY_ID: adp.cloud.tencent.com
+    SAML_SSO_URL: "https://adp.cloud.tencent.com/cloudapp"
+    SAML_CERTIFICATE_PEM: |
+      -----BEGIN CERTIFICATE-----
+      MIIH4TCCBcmgAwIBAgIQBl8WRLepseUWPSY3dLzG0jANBgkqhkiG9w0BAQsFADBq
+      MQswCQYDVQQGEwJVUzEXMBUGA1UEChMORGlnaUNlcnQsIEluYy4xQjBABgNVBAMT
+      OURpZ2lDZXJ0IFNlY3VyZSBTaXRlIE9WIEcyIFRMUyBDTiBSU0E0MDk2IFNIQTI1
+      NiAyMDIyIENBMTAeFw0yNTA3MTYwMDAwMDBaFw0yNjA3MTUyMzU5NTlaMIGVMQsw
+      CQYDVQQGEwJDTjEbMBkGA1UECBMSR3Vhbmdkb25nIFByb3ZpbmNlMREwDwYDVQQH
+      EwhTaGVuemhlbjE2MDQGA1UEChMtVGVuY2VudCBUZWNobm9sb2d5IChTaGVuemhl
+      bikgQ29tcGFueSBMaW1pdGVkMR4wHAYDVQQDExVhZHAuY2xvdWQudGVuY2VudC5j
+      b20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCeY1BgdSsfOwdvh8wS
+      m8+DzLpYqDOS3w9UxSVPASgA9iHNp1rdMzpJBqlaJxuGw75XFxQTDDathIeP1TnF
+      YT+EYUv7ujhGj2yoHjCBd5c4+sScIYPbquEqqH7BMIPxejCYT7IwBujDvSVFwbMU
+      BujRrS+BNrCrMulyYuj8zSmCGi8TDpXpuJgiWaEyQxiPs4xXb2nBkjVMI6ZDLdMq
+      W2xRGK+et5NORg2tC0uPdyUKhULrWRm45tfgzwFyRG5LSTXyCkqN8s5wARrNQ5Rr
+      vKByi1L++l/+thGwY7AJMJFlsDAEskNhuHyZWOZszlxrK0NpMBifQRg0vo14aVWp
+      5lHbAgMBAAGjggNVMIIDUTAfBgNVHSMEGDAWgBQrIxaBG0eJipB67Ogy1GyOcvnO
+      JTAdBgNVHQ4EFgQUc1PJ/xEyBZRBoMoTTpSW4w7RG04wIAYDVR0RBBkwF4IVYWRw
+      LmNsb3VkLnRlbmNlbnQuY29tMD4GA1UdIAQ3MDUwMwYGZ4EMAQICMCkwJwYIKwYB
+      BQUHAgEWG2h0dHA6Ly93d3cuZGlnaWNlcnQuY29tL0NQUzAOBgNVHQ8BAf8EBAMC
+      BaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMFsGA1UdHwRUMFIwUKBO
+      oEyGSmh0dHA6Ly9jcmwuZGlnaWNlcnQuY24vRGlnaUNlcnRTZWN1cmVTaXRlT1ZH
+      MlRMU0NOUlNBNDA5NlNIQTI1NjIwMjJDQTEuY3JsMIGRBggrBgEFBQcBAQSBhDCB
+      gTAjBggrBgEFBQcwAYYXaHR0cDovL29jc3AuZGlnaWNlcnQuY24wWgYIKwYBBQUH
+      MAKGTmh0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNuL0RpZ2lDZXJ0U2VjdXJlU2l0
+      ZU9WRzJUTFNDTlJTQTQwOTZTSEEyNTYyMDIyQ0ExLmNydDAMBgNVHRMBAf8EAjAA
+      MIIBfQYKKwYBBAHWeQIEAgSCAW0EggFpAWcAdgDXbX0Q0af1d8LH6V/XAL/5gskz
+      WmXh0LMBcxfAyMVpdwAAAZgRMcw2AAAEAwBHMEUCIQCIrRjFglgTj+7EkEhUxw1q
+      icGZfModc8LMVFYEI495OgIgJF7CGHVbwVwBaKIt6/coTws0kvBbi6Mt3/+3taRc
+      GzoAdgDCMX5XRRmjRe5/ON6ykEHrx8IhWiK/f9W1rXaa2Q5SzQAAAZgRMcxyAAAE
+      AwBHMEUCIDdiQGzcwGtOqyTnJXC85LLS+71DcUZqfw+Hvhi95HNfAiEArRa4KeZ9
+      3IH5E3IIobVEZzHWUKGvk0DBNvEDaf4TnpQAdQCUTkOH+uzB74HzGSQmqBhlAcfT
+      XzgCAT9yZ31VNy4Z2AAAAZgRMcyEAAAEAwBGMEQCIF7WCjPT4OAro+hqNyrJcOcm
+      brvnpIp3B0t8J9e7JyprAiBDAZpaPNeotxFzoYpaGpFZi707bgTDSjYnDxS4ydMO
+      ZzANBgkqhkiG9w0BAQsFAAOCAgEAmiNfQmDcffwW5HhRzpmpJ5rxV+1rVEzO7wDx
+      ddggN147q0H6H/v73+ckZFJqbwFD6M2RW1U1RSmqFqLJx1Dhp5reud84Fb4gwIAg
+      3FEsfZiN/WOTKuIoXDyOVF5FVRpvgrnIuRL/JDvxvCajOuDzJZX7JCG+ldVIMItv
+      aF0e5qaMntgl5FvzKuC6lRL5AtsMpcHO0IhB3DCnAqWFrtG3/FcFKHt7V075itiG
+      uY0yeqpQHdsmXeLBqGI5ER1EiFBiskeSE+gTwE5QkPRZ1J3xzWsMF8Mnhy28ZgAG
+      TXXxNCPCQsZzo4JM7U20tax7ht+dovi+yvu6LfLyPbvqRzhUsedPPMYbuzTGU8dV
+      NaGEfxm2st6XYPlEHPgSDfGhRTt1G6VzooXgPECZuUD0RNZ3GDteoZqMG2+fl57R
+      SVoy5jrCzuMIt+u92q5C/Uifrhvk6wJ4cUdLzckGwjcwD+UmgQPcmIDb6HEvvv2Z
+      ENqA54cgeuxYgFylBm5LxFXe5PumuqdCW3ZmHVSZ/ipkW5YybRyf954BPtbqd3oj
+      uV+XD1G7AJBgUZtGVQxkz+FkY+/oO+IoX+cX43SFHiDZf5vGswgfYCg3uazUp1Tz
+      bWLTjx0UNgaouRdnurOUp+W+MdcIiQ/jzK3QcaDX9WuB7G1MBPUsZ5vfijpjIbHt
+      ycA1jFs=
+      -----END CERTIFICATE-----
+      -----BEGIN CERTIFICATE-----
+      MIIF1TCCBL2gAwIBAgIQBMG5YBkfyr7c2pMBps14wzANBgkqhkiG9w0BAQsFADBh
+      MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
+      d3cuZGlnaWNlcnQuY29tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBH
+      MjAeFw0yMjEyMTUwMDAwMDBaFw0zMjEyMTQyMzU5NTlaMGoxCzAJBgNVBAYTAlVT
+      MRcwFQYDVQQKEw5EaWdpQ2VydCwgSW5jLjFCMEAGA1UEAxM5RGlnaUNlcnQgU2Vj
+      dXJlIFNpdGUgT1YgRzIgVExTIENOIFJTQTQwOTYgU0hBMjU2IDIwMjIgQ0ExMIIC
+      IjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAoqPBWLBJf1bGOdPpKg1poUIy
+      2T062PnFJq6TDc4LK8EBlCYpg1XpXjk8tsoSaGw5VIc4K4djyLlAGQXg9VKBbg+7
+      5i+8SomphCkVtIPwY+ZwQ0n2puNpVJ6ZgYDYNE9PTmBEYeRPvxpkxsMTivdXXA22
+      hAsXZVawlR1/iJXLqmf80UvShmzLXhkR6ymKK0edoJcXDzpgEK3g0cRVCAw8Ij8K
+      9nU72msIrhMrMBkAvgOAQEzLGGGWSk92FztzeUuYo4MGCgL0HDEJ0B5hf4V+h/Ct
+      Wuho/roYqUUeoHsVMUXPwwGspahGoDlWh9nZ4zRssCE/zXJRYtkplZaUc/5SAOzu
+      7F4UatHP1xVfRhkxHTOuCJ7iCyc5B/D1SLpUOFzZ7MfF0eANhB0ilFbFzJ/gXPA9
+      dWCYP0kqkkcLcn5hRHQxArGkP+VzZuayTVCbHK5tbZ/ZeQ3gnyEopwtq1Do77dLv
+      wZlfnOHA1tzTFYLkATE8VC/xtaSi2tyBoXX+kuvLd/552914gA8+Jw4gM+aYD3y5
+      LQCD/6c27beRta2DXC8y4nG1mC2jdyurw/+KxGMKLfuDAeGs9om+kqM5JdJXwUBW
+      L13+OQH8VO2omIsoZ2VijBoe6J6r8hzAvg2qz8yIdjG3c+K+clbwmtS0xSx3PHnx
+      Ab1dKZPfwGq+TiSx7XcCAwEAAaOCAX4wggF6MBIGA1UdEwEB/wQIMAYBAf8CAQAw
+      HQYDVR0OBBYEFCsjFoEbR4mKkHrs6DLUbI5y+c4lMB8GA1UdIwQYMBaAFE4iVCAY
+      lebjbuYP+vq5Eu0GF485MA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEF
+      BQcDAQYIKwYBBQUHAwIwdAYIKwYBBQUHAQEEaDBmMCMGCCsGAQUFBzABhhdodHRw
+      Oi8vb2NzcC5kaWdpY2VydC5jbjA/BggrBgEFBQcwAoYzaHR0cDovL2NhY2VydHMu
+      ZGlnaWNlcnQuY24vRGlnaUNlcnRHbG9iYWxSb290RzIuY3J0MEAGA1UdHwQ5MDcw
+      NaAzoDGGL2h0dHA6Ly9jcmwuZGlnaWNlcnQuY24vRGlnaUNlcnRHbG9iYWxSb290
+      RzIuY3JsMD0GA1UdIAQ2MDQwCwYJYIZIAYb9bAIBMAcGBWeBDAEBMAgGBmeBDAEC
+      ATAIBgZngQwBAgIwCAYGZ4EMAQIDMA0GCSqGSIb3DQEBCwUAA4IBAQCkniKR2clY
+      bEKTe5mh430LVsE62e+yNGFG286R0IW+nKjMEhC99U5ggtp1cjXAZpzsTF4Y7kcT
+      g3LsVVnbVWmEDm8yr3YHAg97s/JGnwcJNEg4NqmxAEY+hy7mGIyYVbKSEjWRSxjt
+      iiDfaBkwNzFb6fT16xlxEK5LpCpyWS6+2mRWsbNt7C/AaiTvhIizO8zJgiFf3k4S
+      SgRFj0nCrCKaakgxpm0EDTG3AV7linTSmQqN1Ca8LsP1umvA6SLk524bdCpT0KM0
+      CmAYLruY0BtvgEVLi8JrUWhUqi4lLnDUgqFNDExKmQ/OL60AJZxXKjZyFaceQEGH
+      iRipdqqMuIo5
+      -----END CERTIFICATE-----
+    SAML_PRIVATE_KEY_PEM: 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
+    SAML_SP_ENTITY_ID: cloudapp-c9jb9i1t.connectidp.tencentcloudapp.com
+    SAML_SP_METADATA_XML: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <EntityDescriptor entityID="cloudapp-c9jb9i1t.connectidp.tencentcloudapp.com" xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <SPSSODescriptor WantAssertionsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+          <KeyDescriptor use="signing">
+            <ds:KeyInfo>
+              <ds:X509Data>
+                <ds:X509Certificate>MIIDVTCCAj2gAwIBAgIBATANBgkqhkiG9w0BAQsFADBtMQswCQYDVQQGEwJDTjEQMA4GA1UEChMHVGVuY2VudDERMA8GA1UECxMIQ2xvdWRBcHAxOTA3BgNVBAMTMGNsb3VkYXBwLWM5amI5aTF0LmNvbm5lY3RpZHAudGVuY2VudGNsb3VkYXBwLmNvbTAgFw0yNTEyMzAxMDEyNDNaGA8yMTI1MTIzMDEwMTI0M1owbTELMAkGA1UEBhMCQ04xEDAOBgNVBAoTB1RlbmNlbnQxETAPBgNVBAsTCENsb3VkQXBwMTkwNwYDVQQDEzBjbG91ZGFwcC1jOWpiOWkxdC5jb25uZWN0aWRwLnRlbmNlbnRjbG91ZGFwcC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDalMGDX3Efi8KAvHUj9QeNNDuSbPzxs7c/6qwUIULf0hkWXJHFGJJ4+R/+oROZdidpR1riXr9K21qG0Es7g9hVh5ABhQZW7oCnLQRuxmE64Qcq0f+qrbuO31mb72cQFGqsJntBGExhqbk/7z53mzDvJHW0QkzyxvaLPLPQmzWDJw7JbJGytHeasF4M9eE4zBiGq5dEDguV5UIMpZZLzPGKOJNjVfJXeu7v77AdLFF8E68p954LlDa96z1Y+adHCZKd2h3WOesh/jwzMvUkdR0gST3iPqYK/isJtcISKPaET3qWMUF8Qnxk5o3XZO82y61nyyRcrXB5VotroAIeno7BAgMBAAEwDQYJKoZIhvcNAQELBQADggEBADoAd2hTElX2td62OjE0EJgrlqSqaRIrjA6kspjHnJACmx8VNRJSpHCemVftFcuNY1DaCZtN1T5rbsYO66ckAgI2J1jg5Xc/R53XxEfjkCslkX9j9EOaEp+GdW44CpnZZ+MMyZLBaUAOl9fx3WkHmj15+ckEMtY2COKamdbrmzuyPIzYcNWgNxNyhvqFicsyi7rsGeGLyBcFj1UpfXkiicOMHQm3bHAFVCgwRAOoqkvB/0U0leXi16RZSQlMDwaVR9dmb8Zvc8Q8MOWDtAA45/QyXqyC9fp+/z3TSw1KTqn2NtA0U9+pKKD3mal2YhzyXDsIqt4Z5QPlRL3cyxcZuJ8=</ds:X509Certificate>
+              </ds:X509Data>
+            </ds:KeyInfo>
+          </KeyDescriptor>
+          <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
+          <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+          <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</NameIDFormat>
+          <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</NameIDFormat>
+          <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://cloudapp-c9jb9i1t.connectwepayecom.tencentcloudapp.com/saml/response" index="0" isDefault="true"></AssertionConsumerService>
+        </SPSSODescriptor>
+      </EntityDescriptor>
+    OAUTH2_REDIRECT_URL: "{{ .Values.global.scheme }}://{{ .Values.global.clb }}/api/plugin/oauth/callback"
+    OAUTH2_CALLBACK_RESULT_URL: "{{ .Values.global.scheme }}://{{ .Values.global.clb }}/workflow/cloudapp/"
+    INDEPENDENT_CALLBACK_RESULT_URL: "https://adp.tencent.com/workflow/cloudapp"
+    OAUTH2_CLIENT_NAME: 腾讯云智能体开发平台
+    OAUTH2_CLIENT_METADATA_DOCUMENT_URL: "https://{{ .Values.global.components.s3.cos.bucket }}.cos.{{ .Values.global.components.s3.cos.region }}.myqcloud.com/qbot/public/plugin_files/oauth/client-metadata.json"
+    RESOURCE_GALLERY_TARGET: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
+    PLATFORM_ACCOUNT_API_TARGET: "ip://adp-platform-account.{{ .Release.Namespace }}.svc.cluster.local:9092"
+    PLATFORM_MANAGER_API_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093"
+    PLATFORM_MANAGER_V2_INTERNAL_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9099"
+    IOA_NOT_CHARGE_PLUGINS:
+    - 3ad93aae-587e-4bcc-ae07-ad13bfb1aaca
+    - 61a2635f-62f8-4e44-94fd-38cf07a9cc71
+    IOA_REPLACE_TOOLS:
+    - 0ca8d482-1e77-462b-bc21-807c8f052f69
+    - 080bbce6-b02b-466e-a152-967c1546eb05
+    - 17b9441a-dab6-446d-a156-7863e3834480
+    - 9f018d6e-5a6c-46eb-a028-aee42b247971
 
   plugin_zh-CN.json: |
     {
@@ -744,258 +1065,117 @@ data:
       "search_fetch": "搜索与获取",
       "integration": "连接与集成",
       "security": "内容安全",
-      "%s 编辑插件名称为 %s": "%s 编辑插件名称为 %s"
+      "%s 编辑插件名称为 %s": "%s 编辑插件名称为 %s",
+      "business_operations": "业务运营",
+      "document_management": "文档管理",
+      "knowledge_management": "知识管理",
+      "productivity_tools": "效率工具",
+      "project_collaboration": "项目协作"
     }
 
   trpc_go.yaml: |
-    global:                             #全局配置
-      namespace: ${POD_NAMESPACE}            #环境类型，分正式production和非正式development两种类型
-      env_name: formal                    #环境名称，非正式环境下多环境的名称
-      enable_set: false         #是否启用set
-      full_set_name: adp   #set名
+    global:
+      # RESOLVE: keep-public
+      namespace: ${NAMESPACE}
+      env_name: ${RAINBOW_ENV_NAME}
+      enable_set: false
+      full_set_name: adp
       local_ip: ${POD_IP}
       container_name: ${POD_NAME}
-
-    server:                                            #服务端配置
-      app: adp                                        #业务的应用名
-      server: plugin-config                             #进程服务名
-      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
-      conf_path: /app/conf/                 #业务配置文件所在路径
-      data_path: /app/data/                 #业务数据文件所在路径
-      filter:                                          #针对所有service处理函数前后的拦截器列表
-        - recovery                                     #拦截框架创建的业务处理协程panic
+    server:
+      app: adp
+      server: plugin-config
+      bin_path: /app/bin/
+      conf_path: /app/conf/
+      data_path: /app/data/
+      filter:
+        - recovery
         - i18n-adp
-        - opentelemetry                                # 天机阁
+        - opentelemetry
         - cos_rewrite
       stream_filter:
-        - recovery                                     #拦截框架创建的业务处理协程panic
+        - recovery
       admin:
         ip: ${POD_IP}
         port: 8081
-      service:                                         #业务服务提供的service，可以有多个
-        - name: trpc.KEP.plugin-config-server.PluginConfig      #service的路由名称
-          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
-          port: 8000                #服务监听端口 可使用占位符 ${port}
-          network: tcp                             #网络监听类型  tcp udp
-          protocol: trpc               #应用层协议 trpc http
-          timeout: 0                            #请求最长处理时间 单位 毫秒
-          server_async: true                           #开启异步处理
-          idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+      service:
+        - name: trpc.KEP.plugin-config-server.PluginConfig
+          ip: ${POD_IP}
+          port: 8000
+          network: tcp
+          protocol: trpc
+          timeout: 0
+          server_async: true
+          idletime: 600000
           filter:
             - session
             - permission
-        - name: trpc.KEP.plugin-config-server.PluginConfigApi      #service的路由名称
-          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
-          port: 8001                #服务监听端口 可使用占位符 ${port}
-          network: tcp                             #网络监听类型  tcp udp
-          protocol: trpc               #应用层协议 trpc http
-          timeout: 0                            #请求最长处理时间 单位 毫秒
-          server_async: true                           #开启异步处理
-          idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
-        - name: trpc.KEP.plugin-config-server.PluginConfigHttp      #service的路由名称
-          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
-          port: 8002                #服务监听端口 可使用占位符 ${port}
-          network: tcp                             #网络监听类型  tcp udp
-          protocol: http               #应用层协议 trpc http
-          timeout: 0                            #请求最长处理时间 单位 毫秒
-          server_async: true                           #开启异步处理
-          idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
-        - name: trpc.KEP.plugin-config-server.RefreshTokenCron                # service 的路由名称
-          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
-          port: 9001                                   # 服务监听端口 可使用占位符 ${port}
-          network: "0 */2 * * * *?startAtOnce=1&scheduler=refreshTokenCronService"                     # 定时器 Cron 表达式：[second minute hour day month weekday] 如 "0 */5 * * * *" 的含义是每隔 5 分钟触发一次定时任务
-          protocol: timer                              # 应用层协议
-    client:                                            #客户端调用的后端配置
-      timeout: 60000000                                    #针对所有后端的请求最长处理时间
-      namespace: ${POD_NAMESPACE}                              #针对所有后端的环境
-      filter:                                          #针对所有service处理函数前后的拦截器列表
-        - opentelemetry
-      service:
-        - name: redis.plugin-config-server
-          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/23
-
-        - name: redis-cluster.plugin-config-server
-          target: redis://${PLUGIN_REDIS_CLUSTER_USER}:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/23
-        - name: redis-cluster-readonly.plugin-config-server
-          target: redis://${PLUGIN_REDIS_CLUSTER_READONLY_USER}:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/23
-        - name: mysql.db_llm_plugin
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
-
-        - name: mysql.db_llm_prod_plugin
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
-
-        - callee: trpc.KEP.bot_admin_config_server.Api
-          namespace: Test
-          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+        - name: trpc.KEP.plugin-config-server.PluginConfigApi
+          ip: ${POD_IP}
+          port: 8001
+          network: tcp
           protocol: trpc
-          timeout: 20000
-
-        - callee: trpc.KEP.bot_admin_config_server.Login
-          namespace: Test
-          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
-          protocol: trpc
-          timeout: 20000
-
-        - callee: trpc.adp.app_admin_proxy.Api
-          namespace: Test
-          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
-          protocol: trpc
-          timeout: 20000
-
-        - callee: trpc.adp.app_admin_proxy.Login
-          namespace: Test
-          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
-          protocol: trpc
-          timeout: 20000
-
-        - callee: trpc.KEP.bot_task_config_server.TaskConfig
-          namespace: Test
-          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
-          protocol: trpc
-          timeout: 20000
-
-        - callee: trpc.adp.workflow_config.WorkflowConfig
-          namespace: Test
-          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
-          protocol: trpc
-          timeout: 20000
-
-        - callee: trpc.adp.workflow_config.WorkflowConfigApi
-          namespace: Test
-          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8001
-          protocol: trpc
-          timeout: 20000
-
-        - name: trpc.http.cos.Access
-          namespace: Production
+          timeout: 0
+          server_async: true
+          idletime: 600000
+        - name: trpc.KEP.plugin-config-server.PluginConfigHttp
+          ip: ${POD_IP}
+          port: 8002
           network: tcp
           protocol: http
-          target: {{ if eq .Values.global.components.s3.providerType "minio" }}{{ printf "ip://minio.%s.svc.cluster.local:80" .Release.Namespace }}{{- else if eq .Values.global.components.s3.providerType "obs" }}ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}{{- else }}dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn{{- end }}
-
-        - callee: trpc.KEP.code_interpreter_dispatcher.CodeExec
-          namespace: Test
-          target: ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001
-          protocol: trpc
-          timeout: 20000
-
-        - callee: trpc.adp.plugin_code_interpret.CodeExec
-          namespace: Test
-          target: ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001
-          protocol: trpc
-          timeout: 20000
-
-        - callee: trpc.smartservice.accessmanager.AccessManager 
-          name: trpc.SmartService.AccessManagerServer.AccessManager
-          target: ip://adp-access-manager.{{ .Release.Namespace }}.svc.cluster.local:10001
-          namespace: Development
-          env_name: pre
-          set_name: commonset.sz.common1
-          timeout: 3000
-
-        - callee: trpc.KEP.agent_config_server.AgentConfigApi
-          name: trpc.KEP.agent-config-server.AgentConfigApi
-          target: ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001
-          namespace: Test
-          protocol: trpc
-          timeout: 60000
-
-        - callee: trpc.adp.agent_config.AgentConfigApi
-          name: trpc.KEP.agent-config-server.AgentConfigApi
-          target: ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001
-          namespace: Test
-          protocol: trpc
-          timeout: 60000
-
-        - name: qbot.finance.finance.Finance
-          namespace: Test
-          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
-          protocol: trpc
-          network: tcp
-          timeout: 30000
-
-        - callee:  trpc.SmartService.AIConfManagerServer.AIConfManager
-          namespace: Development
-          name: trpc.SmartService.AIConfManagerServer.AIConfManager
-          target: ip://adp-aiconf-manager.{{ .Release.Namespace }}.svc.cluster.local:10002
-          timeout: 3000
-          env_name: pre
-
-        - callee: trpc.KEP.bot_data_statistics_server.Api
-          namespace: Test
-          target: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
-          protocol: trpc
-          timeout: 20000
-
-        - callee: trpc.adp.platform_metrology.Api
-          namespace: Test
-          target: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
-          protocol: trpc
-          timeout: 20000
-
-        - callee: trpc.adp.platform_manager.Admin
-          namespace: Test
-          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
-          protocol: trpc
-          timeout: 20000
-
-        - callee: trpc.adp.app_config.Api
-          namespace: Test
-          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091
-          timeout: 30000
-
-        - callee: trpc.adp.app_config.Admin
-          namespace: Test
-          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
-          timeout: 30000
-
-        - callee: trpc.adp.platform_manager.Login
-          namespace: Test
-          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
-          protocol: trpc
-          timeout: 6000
-
-        - callee: trpc.smartassistant.vectordbmanager.VectorObj
-          target: ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001
-          namespace: Development
-          env_name: pre
-          set_name: commonset.sz.common1
-          timeout: 20000
-        - callee: trpc.adp.kb_vdb_proxy.VectorObj
-          target: ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001
-          namespace: Development
-          env_name: pre
-          set_name: commonset.sz.common1
-          timeout: 20000
-        - name: trpc.adp.kb_retrieval.Retrieval
-          namespace: Test
-          target: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9090
-          timeout: 30000
-        - name: trpc.adp.kb_retrieval.DirectIndex
-          namespace: Test
-          target: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091
-          timeout: 30000
-        - name: trpc.adp.ai_gateway.Admin
+          timeout: 0
+          server_async: true
+          idletime: 600000
+        - name: trpc.KEP.plugin-config-server.RefreshTokenCron
+          ip: ${POD_IP}
+          port: 9001
+          network: "0 */2 * * * *?startAtOnce=1&scheduler=refreshTokenCronService&holdTime=120"
+          protocol: timer
+        - name: trpc.adp.plugin_config.Mcp
+          ip: ${POD_IP}
+          port: 8003
           network: tcp
           protocol: trpc
-          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
-
-    plugins:                                          #插件配置
-      log:                                            #日志配置
-        default:                                      #默认日志的配置，可支持多输出
-          - writer: console                           #控制台标准输出 默认
-            level: error                              #标准输出日志的级别
+          timeout: 0
+          server_async: true
+          idletime: 600000
+          filter:
+            - session
+            - permission
+        - name: trpc.adp.plugin_config.v2.External
+          ip: ${POD_IP}
+          port: 8004
+          network: tcp
+          protocol: adp-capi
+          timeout: 0
+          server_async: true
+          idletime: 600000
+          filter:
+            - session
+            - permission
+        - name: trpc.KEP.plugin-config-server.SyncCallCountCron
+          ip: ${POD_IP}
+          port: 9002
+          network: "0 30 0/4 * * *?startAtOnce=1&scheduler=syncCallCountCronService&holdTime=500"
+          protocol: timer
+    plugins:
+      log:
+        default:
+          - writer: console
+            level: info
             formatter: json
             formatter_config:
-              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
               time_key: time
               level_key: level
               name_key: name
               caller_key: caller
               message_key: message
-          - writer: file                              #本地文件日志
-            level: info                               #本地文件滚动日志的级别
+          - writer: file
+            level: info
+            formatter: json
             formatter_config:
-              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
               time_key: time
               level_key: level
               name_key: name
@@ -1003,11 +1183,12 @@ data:
               message_key: message
               stacktrace_key: stackTrace
             writer_config:
-              filename: /app/logs/trpc.log    #本地文件滚动日志存放的路径
-              max_size: 100                             #本地文件滚动日志的大小 单位 MB
-              max_backups: 10                           #最大日志文件数
-              max_age: 7                                #最大日志保留天数
-              compress:  false                          #日志文件是否压缩
+              filename: /app/logs/trpc.log
+              write_mode: 2
+              roll_type: size
+              max_size: 200
+              max_backups: 10
+              compress: false
       telemetry:
         opentelemetry:
           addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
@@ -1035,21 +1216,16 @@ data:
         file:
           providers:
             - name: rainbow
-              path: /app/conf/ 
+              path: /app/conf/
             - name: rainbow-comm
               path: /app/conf/
             - name: global
-              appid: ${RAINBOW_APP_ID}  # appid
-              group: global # 配置所属组
-              type: kv   # 七彩石数据格式, kv(默认), table
+              appid: ${RAINBOW_APP_ID}
+              group: global
+              type: kv
               env_name: ${RAINBOW_ENV_NAME}
               timeout: 2000
               enable_client_provider: true
-      filter:
-        cos_rewrite:
-          path_prefixes:
-            - /public
-            - /qbot
       i18n:
         i18n-adp:
           default_lang: zh-CN
@@ -1063,3 +1239,210 @@ data:
             char_scaling_factor:
               zh-CN: 1
               en-US: 3
+      registry:
+
+    client:
+      timeout: 60000000
+      namespace: ${NAMESPACE}
+      filter:
+        - opentelemetry
+      service:
+        - name: redis.plugin-config-server
+          target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/23"
+        - name: redis-cluster.plugin-config-server
+          target: "redis://${PLUGIN_REDIS_CLUSTER_USER}:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/23"
+        - name: redis-cluster-readonly.plugin-config-server
+          target: "redis://${PLUGIN_REDIS_CLUSTER_READONLY_USER}:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/23"
+        - name: mysql.db_llm_plugin
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: mysql.db_llm_prod_plugin
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_admin_proxy.Api
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_admin_proxy.Login
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_task_config_server.TaskConfig
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.workflow_config.WorkflowConfig
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.workflow_config.WorkflowConfigApi
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.http.cos.Access
+          namespace: Production
+          network: tcp
+          protocol: http
+          target: {{ if eq .Values.global.components.s3.providerType "minio" }}{{ printf "ip://minio.%s.svc.cluster.local:80" .Release.Namespace }}{{- else if eq .Values.global.components.s3.providerType "obs" }}ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}{{- else }}dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn{{- end }}
+        - callee: trpc.KEP.code_interpreter_dispatcher.CodeExec
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.plugin_code_interpret.CodeExec
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.smartservice.accessmanager.AccessManager
+          name: trpc.SmartService.AccessManagerServer.AccessManager
+          target: "ip://adp-access-manager.{{ .Release.Namespace }}.svc.cluster.local:10001"
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          # RESOLVE: keep-public
+          env_name: ${ACCESS_MANAGER_ENV_NAME}
+          set_name: commonset.sz.common1
+          timeout: 3000
+        - callee: trpc.KEP.agent_config_server.AgentConfigApi
+          name: trpc.KEP.agent-config-server.AgentConfigApi
+          target: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 60000
+        - callee: trpc.adp.agent_config.AgentConfigApi
+          name: trpc.KEP.agent-config-server.AgentConfigApi
+          target: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 60000
+        - name: qbot.finance.finance.Finance
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          protocol: trpc
+          network: tcp
+          timeout: 30000
+        - callee: trpc.SmartService.AIConfManagerServer.AIConfManager
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          name: trpc.SmartService.AIConfManagerServer.AIConfManager
+          target: "ip://adp-aiconf-manager.{{ .Release.Namespace }}.svc.cluster.local:10002"
+          timeout: 3000
+          # RESOLVE: keep-public
+          env_name: ${AI_CONF_MANAGER_ENV_NAME}
+        - callee: trpc.KEP.bot_data_statistics_server.Api
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_metrology.Api
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_manager.Admin
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_config.Api
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          timeout: 30000
+        - callee: trpc.adp.app_config.Admin
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          timeout: 30000
+        - callee: trpc.adp.platform_manager.Login
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          protocol: trpc
+          timeout: 6000
+        - callee: trpc.smartassistant.vectordbmanager.VectorObj
+          target: "ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001"
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          env_name: pre
+          set_name: commonset.sz.common1
+          timeout: 20000
+        - callee: trpc.adp.kb_vdb_proxy.VectorObj
+          target: "ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001"
+          # RESOLVE: keep-public
+          namespace: ${NAMESPACE}
+          env_name: pre
+          set_name: commonset.sz.common1
+          timeout: 20000
+        - name: trpc.adp.kb_retrieval.Retrieval
+          namespace: Test
+          target: "ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          timeout: 30000
+        - name: trpc.adp.kb_retrieval.DirectIndex
+          namespace: Test
+          target: "ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          timeout: 30000
+        - name: trpc.adp.ai_gateway.Admin
+          network: tcp
+          protocol: trpc
+          target: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092"
+        - name: trpc.adp.platform_charger.Finance
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          protocol: trpc
+          network: tcp
+          timeout: 30000
+        - callee: trpc.adp.kb_retrieval.DirectIndex
+          namespace: ${NAMESPACE}
+          target: "ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          timeout: 30000
+        - callee: trpc.adp.resource_gallery.Admin
+          target: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 30000
+        - name: trpc.adp.platform-account.Api
+          callee: trpc.adp.platform_account.Internal
+          target: "ip://adp-platform-account.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 5000
+        - name: trpc.adp.platform_manager.Api
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093"
+          protocol: trpc
+          timeout: 5000
+        - name: trpc.adp.platform_manager.v2.Internal
+          callee: trpc.adp.platform_manager.v2.Internal
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9099"
+          network: tcp
+          protocol: trpc
+          timeout: 30000

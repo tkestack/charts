@@ -23,6 +23,14 @@ spec:
       port: 8002
       protocol: TCP
       targetPort: 8002
+    - name: adp-plugin-config-8003
+      port: 8003
+      protocol: TCP
+      targetPort: 8003
+    - name: adp-plugin-config-8004
+      port: 8004
+      protocol: TCP
+      targetPort: 8004
   selector:
     app: adp-plugin-config
   sessionAffinity: None

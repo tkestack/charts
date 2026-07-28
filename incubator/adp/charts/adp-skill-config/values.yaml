@@ -1,0 +1,11 @@
+images:
+  adp-skill-config:
+    url: "{{ .Values.global.imageRegistry }}/tke-market/skill-config-server:6_2607271728_stable_iaas_v4.0.3.0_d4a653d7_private"
+resources:
+  limits:
+    cpu: 1
+    memory: 4Gi
+  requests:
+    cpu: 1
+    memory: 1Gi
+replicas: 1

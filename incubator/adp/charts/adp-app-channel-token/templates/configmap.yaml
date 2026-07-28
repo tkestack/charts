@@ -17,26 +17,48 @@ data:
       channelHost: {{ .Values.global.scheme }}://{{ .Values.global.clb }}  #专有云代理回调域名；若用户请求的 Host 与此一致，表示未配自有代理，Host 会被替换为 qyapi.weixin.qq.com 走公网
     domain_verify_rule : ^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?$
 
+  client.yaml: |
+    client:
+      namespace: ${POD_NAMESPACE}
+      filter:
+        - cle-route-propagator
+      service:
+        - name: tdsql.tcadp.channel
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: redis.qbot.admin
+          network: tcp
+          protocol: redis
+          target: "ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/2"
+          password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
+        - name: wx.nginx
+          # RESOLVE: keep-public
+          target: ip://adp-app-channel-proxy.{{ .Release.Namespace }}.svc.cluster.local:8000
+          network: tcp
+          protocol: http
+          timeout: 20000
+
   placeholder.yaml: |
     NAMESPACE: Production
     ENV_NAME: formal
     RAINBOW_GROUP: channel-token-svr
     RAINBOW_ENV_NAME: formal
-    #没有引用，清理
-    TRPC_KEP_CHANNEL_TOKEN_SVR_CHANNELTOKENSERVICE_TOKEN: 
-    #没有引用，清理
-    TRPC_KEP_CHANNEL_TOKEN_SVR_CHANNELTOKENSERVICE_HTTP_TOKEN: 
-    COMPONENT_APP_ID: {{ dig "wechat" "componentAppId" "" .Values.global }}
+    TRPC_KEP_CHANNEL_TOKEN_SVR_CHANNELTOKENSERVICE_TOKEN:
+    TRPC_KEP_CHANNEL_TOKEN_SVR_CHANNELTOKENSERVICE_HTTP_TOKEN:
+
+    COMPONENT_APP_ID: "{{ dig "wechat" "componentAppId" "" .Values.global }}"
+
     IS_PRIVATE: true
+    NGINX_FORWARD_PROXY_TARGET: ip://adp-app-channel-proxy.{{ .Release.Namespace }}.svc.cluster.local:8000
 
   trpc_go.yaml: |
     global:                             #全局配置
-      namespace: ${POD_NAMESPACE}            #环境类型，分正式production和非正式development两种类型
-      env_name: formal                    #环境名称，非正式环境下多环境的名称
-      enable_set: false         #是否启用set
-      full_set_name: adp   #set名
+      namespace: ${POD_NAMESPACE}        #环境类型，分正式production和非正式development两种类型
+      env_name: formal                        #环境名称，非正式环境下多环境的名称
+      enable_set: false                 #是否启用set
+      full_set_name: adp                #set名
       local_ip: ${POD_IP}
       container_name: ${POD_NAME}
+
     server:                                            #服务端配置
       app: adp                                        #业务的应用名
       server: app-channel-token                             #进程服务名
@@ -44,7 +66,7 @@ data:
       conf_path: /usr/local/trpc/conf/                 #业务配置文件所在路径
       data_path: /usr/local/trpc/data/                 #业务数据文件所在路径
       filter:                                          #针对所有service处理函数前后的拦截器列表
-        - recovery                                     #拦截框架创建的业务处理协程panic
+        - recovery
         - debuglog
         - i18n-adp
         - cle-route-propagator
@@ -52,28 +74,34 @@ data:
       admin:
         port: 8081
       service:                                         #业务服务提供的service，可以有多个
-        - name: trpc.KEP.channel-token-svr.ChannelTokenService      #service的路由名称
-          port: 8000                #服务监听端口 可使用占位符 ${port}
-          network: tcp                             #网络监听类型  tcp udp
-          protocol: trpc               #应用层协议 trpc http
-          timeout: 0                            #请求最长处理时间 单位 毫秒
-          server_async: true                           #开启异步处理
-          idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
-        - name: trpc.KEP.channel-token-svr.HTTP # service的路由名称，格式：`业务领域.功能模块.服务.Pb定义的服务名称.协议`
-          port: 8001 # 服务监听端口
-          network: tcp # 网络监听类型 tcp/udp
-          protocol: http_no_protocol # 应用层协议 trpc/http
-          timeout: 3000 # 请求最长处理时间，单位毫秒  
-        - name: trpc.KEP.channel-token-svr.wechat-app-timer   #定时更新AgentToken
-          port: 9001                                      #服务监听端口 可使用占位符 ${port}
-          network: "*/10 * * * *"           #网络监听类型  tcp udp
-          protocol: timer                                 #应用层协议 trpc http
-          timeout: 4000  
-        - name: trpc.KEP.channel-token-svr.wecom-agent-timer   #定时更新AgentToken
-          port: 9003                                      #服务监听端口 可使用占位符 ${port}
-          network: "*/10 * * * *"           #网络监听类型  tcp udp
-          protocol: timer                                 #应用层协议 trpc http
-          timeout: 4000     
+        - name: trpc.KEP.channel-token-svr.ChannelTokenService
+          port: 8000
+          network: tcp
+          protocol: trpc
+          timeout: 0
+          server_async: true
+          idletime: 600000
+        - name: trpc.KEP.channel-token-svr.HTTP
+          port: 8001
+          network: tcp
+          protocol: http_no_protocol
+          timeout: 3000
+        - name: trpc.KEP.channel-token-svr.wechat-app-timer
+          port: 9001
+          network: "*/10 * * * *"
+          protocol: timer
+          timeout: 4000
+        - name: trpc.KEP.channel-token-svr.wecom-agent-timer
+          port: 9003
+          network: "*/10 * * * *"
+          protocol: timer
+          timeout: 4000
+        - name: trpc.KEP.channel-token-svr.dingtalk-agent-timer
+          ip: ${POD_IP}
+          port: 9004
+          network: "*/10 * * * *"
+          protocol: timer
+          timeout: 4000
     plugins:                                          #插件配置
       telemetry:
         opentelemetry:
@@ -98,58 +126,68 @@ data:
             value: {{ $value }}
             {{- end }}
           {{- end }}
-      log:                                            #日志配置
-        default:                                      #默认日志的配置，可支持多输出
-          - writer: console                           #控制台标准输出 默认
-            level: debug                              #标准输出日志的级别
-          - writer: file                              #本地文件日志
-            level: debug                               #本地文件滚动日志的级别
+      log:
+        default:
+          - writer: console
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+          - writer: file
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
             writer_config:
-              filename: /app/log/trpc.log               #本地文件滚动日志存放的路径
-              max_size: 10                              #本地文件滚动日志的大小 单位 MB
-              max_backups: 10                           #最大日志文件数
-              max_age: 7                                #最大日志保留天数
-              compress:  false                          #日志文件是否压缩     
+              filename: /app/log/trpc.log
+              write_mode: 2
+              roll_type: size
+              max_size: 200
+              max_backups: 10
+              compress: false
       config:
         file:
           providers:
             - name: rainbow
               path: /app/conf/
             - name: global
-              appid: ${RAINBOW_APP_ID}  # appid
-              group: global # 配置所属组
-              type: kv   # 七彩石数据格式, kv(默认), table
+              appid: ${RAINBOW_APP_ID}
+              group: global
+              type: kv
               env_name: ${RAINBOW_ENV_NAME}
               timeout: 2000
               enable_client_provider: true
       registry: #服务注册配置
-        polaris: #北极星名字注册服务的配置
-          register_self: false
-          heartbeat_interval: 3000                    #名字注册服务心跳上报间隔
-          heartbeat_timeout: 1000                     #名字服务心跳超时
-          service:
-            - name: trpc.KEP.channel-token-svr.ChannelTokenService    #service name 与上面的service配置一一对应
-              namespace: ${POD_NAMESPACE}              #环境类型，分正式Production和非正式Development两种类型
-              token: fb61a702cbc64f9ba850a24a880e4e6b             #safe 服务注册所需要的 token
-            - name: trpc.KEP.channel-token-svr.ChannelTokenService.HTTP    #service name 与上面的service配置一一对应
-              namespace: ${POD_NAMESPACE}              #环境类型，分正式Production和非正式Development两种类型
-              token: 5fa822c08a314513b464061c91735baa             #safe 服务注册所需要的 token
       selector: #针对用户自定义的selector的配置
         polaris: #针对polaris整体api的内部配置
           protocol: grpc                              #名字服务远程交互协议类型
+
+
     client:
       namespace: ${POD_NAMESPACE}
       filter:
         - cle-route-propagator
       service:
         - name: tdsql.tcadp.channel
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: redis.qbot.admin
           network: tcp
           protocol: redis
-          target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/2
+          target: "ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/2"
           password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
-        - name: wx.nginx   #---------nginx出口-------------
+        - name: wx.nginx
+          # RESOLVE: keep-public
           target: ip://adp-app-channel-proxy.{{ .Release.Namespace }}.svc.cluster.local:8000
           network: tcp
           protocol: http

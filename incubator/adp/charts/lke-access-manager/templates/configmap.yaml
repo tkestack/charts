@@ -4,6 +4,299 @@ metadata:
   name: {{ .Release.Name }}-access-manager
   namespace: {{ .Release.Namespace }}
 data:
+  application.json: |
+    {
+      "DB": {
+        "PermissionDB": {
+          "Host": "9.137.254.251",
+          "Port": 3306,
+          "User": "permission_base",
+          "PassWd": "",
+          "Charset": "utf8mb4",
+          "DataBase": "openplatform_permission_data",
+          "MaxConn": 100,
+          "MaxIdle": 10,
+          "ConnTimeout": 1000,
+          "RTimeout": 1000,
+          "WTimeout": 0,
+          "ConnLifeTime": 100000,
+          "ParseTime": true,
+          "Local": "Local"
+        }
+      },
+      "OpenPlatformConfDataConf": {
+        "TblNameProduct": "openplatform_conf_data.dop_product_info",
+        "TblNameSubscribedProduct": "openplatform_conf_data.dop_product_subscription"
+      },
+      "CasbinConf": {
+        "CasbinModel": {
+          "RequestDefinition": "sub, dom, obj, act, app",
+          "PolicyDefinition": "sub, dom, obj, act, app",
+          "RoleDefinition": "_, _, _",
+          "PolicyEffect": "some(where (p.eft == allow))",
+          "Matchers": "r.sub==p.sub && r.dom == p.dom && r.app == p.app && regexMatch(r.obj, p.obj) && regexMatch(r.act,p.act)"
+        }
+      },
+      "RescCasbinConf": {
+       "CasbinModel": {
+          "RequestDefinition": "sub, res_t, res, act",
+          "PolicyDefinition": "sub, res_t, res, act",
+          "RoleDefinition": "_, _, _",
+          "PolicyEffect": "some(where (p.eft == allow))",
+          "Matchers": "r.sub==p.sub && r.res_t == p.res_t && regexMatch(r.res, p.res) && regexMatch(r.act,p.act)"
+        }
+      },
+      "RuleLoadCycleTime": "@every 3s",
+      "CommonLoadCycleTime": "@every 10s",
+      "CommonDelCycleTime": "0 0 2 * *",
+      "PermissionConf": {
+        "DBName": "openplatform_permission_data",
+        "TblNamePermissionInfo": "openplatform_permission_data.permission_info",
+        "TblNameRoleInfo": "openplatform_permission_data.role_info",
+        "TblNameRolePermission": "openplatform_permission_data.role_permission",
+        "TblNameRoleResource": "openplatform_permission_data.role_resource",
+        "TblNameProductPermission": "openplatform_permission_data.product_permission",
+        "TblNameCasbinRule": "openplatform_permission_data.casbin_rule",
+        "TblNameUinRole": "openplatform_permission_data.uin_role",
+        "TblNameRescPermissionInfo":"openplatform_permission_data.resource_permission_info",
+        "TblNameRescRolePermission":"openplatform_permission_data.role_resource_permission",
+        "TblNameRescCasbinRule":"openplatform_permission_data.resource_casbin_rule",
+        "DefaultAdminRoleName": "主账号管理员角色",
+        "LKESuperAdminRoleID": "lke-super-admin-role",
+        "LKESpaceAdminActionMap": {
+          "lke-space-admin-role": ["CreateSpace", "DeleteSpace", "ModifySpace", "ListSpace"]
+        },
+        "DisablePermissionIDs": [
+          "lkeApp.basic",
+          "lkeApp.copyApp",
+          "lkeApp.deleteApp",
+          "lkeApp.listApp",
+          "lkeApp.modifyAppQuota",
+          "lkeClassify",
+          "lkeClassify.config",
+          "lkeClassify.config.basic",
+          "lkeClassify.config.chat",
+          "lkeClassify.config.model",
+          "lkeClassify.config.model.version",
+          "lkeClassify.config.tag",
+          "lkeClassify.release",
+          "lkeClassify.release.call",
+          "lkeClassify.release.call.reception",
+          "lkeClassify.release.call.secret",
+          "lkeClassify.release.do",
+          "lkeRepository",
+          "lkeRepository.config",
+          "lkeRepository.config.AdvancedSettings",
+          "lkeRepository.config.AdvancedSettings.synonyms",
+          "lkeRepository.config.basic",
+          "lkeRepository.config.chat",
+          "lkeRepository.config.knowledge",
+          "lkeRepository.config.knowledge.db",
+          "lkeRepository.config.knowledge.doc",
+          "lkeRepository.config.knowledge.qa",
+          "lkeRepository.config.knowledge.qaTopN",
+          "lkeRepository.config.knowledge.replyFlexibility",
+          "lkeRepository.config.knowledge.searchEngine",
+          "lkeRepository.config.knowledge.searchStrategy",
+          "lkeRepository.config.knowledge.tableEnhancement",
+          "lkeRepository.config.knowledge.taskFlow",
+          "lkeRepository.config.model",
+          "lkeRepository.config.model.historyLimit",
+          "lkeRepository.config.model.historyRecordLimit",
+          "lkeRepository.config.model.version",
+          "lkeRepository.config.output",
+          "lkeRepository.config.output.generalKnowledge",
+          "lkeRepository.config.output.method",
+          "lkeRepository.config.pattern",
+          "lkeRepository.config.plugin",
+          "lkeRepository.evaluateBatch",
+          "lkeRepository.manage",
+          "lkeRepository.manage.db",
+          "lkeRepository.manage.doc",
+          "lkeRepository.manage.doc.download",
+          "lkeRepository.manage.knowledgeTag",
+          "lkeRepository.manage.qa",
+          "lkeRepository.manage.qa.export",
+          "lkeRepository.manage.taskFlow",
+          "lkeRepository.release",
+          "lkeRepository.release.call",
+          "lkeRepository.release.call.reception",
+          "lkeRepository.release.call.secret",
+          "lkeRepository.release.channel",
+          "lkeRepository.release.do",
+          "lkeRepository.release.do.create",
+          "lkeRepository.test",
+          "lkeRepository.unsatisfied",
+          "lkeRepository.workflow",
+          "lkeRepository.workflow.manage",
+          "lkeShareKG.listShareKG",
+          "lkeShareKG.manager",
+          "lkeSummary",
+          "lkeSummary.config",
+          "lkeSummary.config.basic",
+          "lkeSummary.config.chat",
+          "lkeSummary.config.model",
+          "lkeSummary.config.model.version",
+          "lkeSummary.config.output",
+          "lkeSummary.config.output.method",
+          "lkeSummary.config.output.requirement",
+          "lkeSummary.release",
+          "lkeSummary.release.call",
+          "lkeSummary.release.call.reception",
+          "lkeSummary.release.call.secret",
+          "lkeSummary.release.do"
+        ],
+        "ResourceEditPermissionIDs": ["adpAppEdit", "adpKnowledgeBaseEdit", "adpPluginCenterEdit", "adpPromptTemplateEdit", "adpWidgetCenterEdit", "adpOpenClawEdit", "adpSkillsCenterEdit"],
+        "EditPIDMap":{
+          "app" : "adpAppEdit",
+          "knowledge": "adpKnowledgeBaseEdit",
+          "plugin": "adpPluginCenterEdit",
+          "prompt_template": "adpPromptTemplateEdit",
+          "widget": "adpWidgetCenterEdit",
+          "openclaw": "adpOpenClawEdit",
+          "skill": "adpSkillsCenterEdit"
+        },
+        "ViewPIDMap":{
+          "app" : "adpAppView",
+          "knowledge": "adpKnowledgeBaseEdit",
+          "plugin": "adpPluginCenterView",
+          "prompt_template": "adpPromptTemplateView",
+          "widget": "adpWidgetCenterView",
+          "openclaw": "adpOpenClawView",
+          "skill": "adpSkillsCenterView"
+        },
+        "NoPIDMap":{
+          "app" : "adpAppNoPermission",
+          "knowledge": "adpKnowledgeBaseNoPermission",
+          "plugin": "adpPluginCenterNoPermission",
+          "prompt_template": "adpPromptTemplateNoPermission",
+          "widget": "adpWidgetCenterNoPermission",
+          "openclaw":  "adpOpenClawNoPermission",
+          "skill":  "adpSkillsCenterNoPermission"
+        },
+        "BotLimitPermissionIDs": [
+          "BotLimit",
+          "IABotLimit",
+          "IQIBotLimit",
+          "TCCIBotLimit"
+        ],
+        "BotFieldsPermissionIDs": [
+          "BotManagement.BotFields",
+          "IQIBotManagement.BotFields",
+          "IABotManagement.BotFields",
+          "TCCIBotManagement.BotFields"
+        ],
+        "PermissionResourceMap": {
+          "BotLimit": "BotLimit",
+          "IABotLimit": "BotLimit",
+          "IQIBotLimit": "BotLimit",
+          "IVHBotLimit": "BotLimit",
+          "BotManagement.BotFields": "AppKey",
+          "IABotManagement.BotFields": "AppKey",
+          "IQIBotManagement.BotFields": "AppKey",
+          "IVHBotManagement.BotFields": "AppKey",
+          "TCCIBotManagement.BotFields": "AppKey",
+          "BotManagement.BotFields.All": "AppKey",
+          "BotManagement.BotFields.Assignment": "AppKey",
+          "IVHResource.TextDriverRealman2D.ResourceChose": "RT_TextDriverRealman2DResourceChose",
+          "IVHResource.TextDriverRealman2D.Concurrent": "RT_TextDriverRealman2DConcurrent",
+          "IVHResource.TextDriverRealman2D.PeriodOfValidity": "RT_TextDriverRealman2DPeriodOfValidity",
+          "IVHResource.TextDriverCartoon2D.ResourceChose": "RT_TextDriverCartoon2DResourceChose",
+          "IVHResource.TextDriverCartoon2D.Concurrent": "RT_TextDriverCartoon2DConcurrent",
+          "IVHResource.TextDriverCartoon2D.PeriodOfValidity": "RT_TextDriverCartoon2DPeriodOfValidity",
+          "IVHResource.TextDriverRealistic3D.ResourceChose": "RT_TextDriverRealistic3DResourceChose",
+          "IVHResource.TextDriverRealistic3D.Concurrent": "RT_TextDriverRealistic3DConcurrent",
+          "IVHResource.TextDriverRealistic3D.PeriodOfValidity": "RT_TextDriverRealistic3DPeriodOfValidity",
+          "IVHResource.VoiceDriverRealman2D.ResourceChose": "RT_VoiceDriverRealman2DResourceChose",
+          "IVHResource.VoiceDriverRealman2D.Concurrent": "RT_VoiceDriverRealman2DConcurrent",
+          "IVHResource.VoiceDriverRealman2D.PeriodOfValidity": "RT_VoiceDriverRealman2DPeriodOfValidity",
+          "IVHResource.VoiceDriverRealistic3D.ResourceChose": "RT_VoiceDriverRealistic3DResourceChose",
+          "IVHResource.VoiceDriverRealistic3D.Concurrent": "RT_VoiceDriverRealistic3DConcurrent",
+          "IVHResource.VoiceDriverRealistic3D.PeriodOfValidity": "RT_VoiceDriverRealistic3DPeriodOfValidity",
+          "TCCIIndustryPackage": "IndustryPackage",
+          "ICRIVHResource.TextDriverRealman2D.ResourceChose": "RT_TextDriverRealman2DResourceChose",
+          "ICRIVHResource.TextDriverRealman2D.Concurrent": "RT_TextDriverRealman2DConcurrent",
+          "ICRIVHResource.TextDriverRealman2D.PeriodOfValidity": "RT_TextDriverRealman2DPeriodOfValidity",
+          "lkeApp.listApp": "AppKey",
+          "lkeShareKG.listShareKG": "LkeShareKGAppKey"
+        },
+        "ResourceSchemaMap": {
+          "AppKey": {
+            "ResourceValueType": 3,
+            "ResourceEffectRangeLevel": 1,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              "*"
+            ]
+          },
+          "LkeShareKGAppKey": {
+            "ResourceValueType": 3,
+            "ResourceEffectRangeLevel": 1,
+            "ResourceEffectPermissionIDWhiteList": [
+              ""
+            ],
+            "ResourceEffectPermissionIDs": [
+              "*"
+            ]
+          }
+        }
+      },
+      "LimitLoadCasbinSql": 1000,
+      "RedisConf": {
+        "Host": "21.14.246.243",
+        "Port": 6379,
+        "Password": "",
+        "RedisID": "crs-8xb68eec",
+        "MaxRetries": 3
+      },
+      "CacheConfig": {
+        "RedisExpTimeInSecond": 604800,
+        "RedisRefreshTimeWaitInSecond": 60,
+        "LRUCapacity": 100000,
+        "ExpTimeInSecond": 604800,
+        "ClearDelayTimeInSecond": 60,
+        "LoadBatchSize": 100,
+        "LoadConnNum": 10
+      },
+      "RescCacheConfig": {
+        "RedisExpTimeInSecond": 604800,
+        "RedisRefreshTimeWaitInSecond": 60,
+        "LRUCapacity": 100000,
+        "ExpTimeInSecond": 604800,
+        "ClearDelayTimeInSecond": 60,
+        "LoadBatchSize": 100,
+        "LoadConnNum": 10
+      },
+      "ProductTypesForAdminGetAllPermission": [
+        "lke"
+      ],
+      "AuthActionPermissionIDsMap": {
+        "ListModel": ["lkeCorpAssistant"],
+        "CreateCorpAssistantVariable": ["lkeCorpAssistant"],
+        "ModifyCorpAssistantVariable": ["lkeCorpAssistant"],
+        "DeleteCorpAssistantVariable": ["lkeCorpAssistant"],
+        "DescribeCorpAssistantVariableList": ["lkeCorpAssistant"],
+        "CreateCorpAssistantAgent": ["lkeCorpAssistant"],
+        "ModifyCorpAssistantAgent": ["lkeCorpAssistant"],
+        "DeleteCorpAssistantAgent": ["lkeCorpAssistant"],
+        "DescribeCorpAssistantAgent": ["lkeCorpAssistant"],
+        "CreateCorpAssistantConversation": ["lkeCorpAssistant"],
+        "DescribeCorpAssistantConversationList": ["lkeCorpAssistant"],
+        "DeleteCorpAssistantConversation": ["lkeCorpAssistant"],
+        "ModifyCorpAssistantConversation": ["lkeCorpAssistant"],
+        "DescribeCorpAssistantConversation": ["lkeCorpAssistant"],
+        "DescribeCorpAssistantConversationMessageList": ["lkeCorpAssistant"],
+        "CreateCorpAssistantWebSocketToken": ["lkeCorpAssistant"],
+        "CreateCorpAssistantWorkspaceCredential": ["lkeCorpAssistant"],
+        "DescribeSkillCategoryList": ["lkeCorpAssistant"],
+        "DescribeSkillSummaryList": ["lkeCorpAssistant"],
+        "DescribeKnowledgeBaseList": ["lkeCorpAssistant"],
+        "ListPlugin": ["lkeCorpAssistant"]
+      },
+      "DefaultGrantedPermissionIDs": ["lkeCorpAssistant"]
+    }
   key-AccessManagerServer: |
     {
       "DB": {
@@ -234,4 +527,110 @@ data:
             - key: {{ $key }}
               value: {{ $value }}
               {{- end }}
+          {{- end }}
+  trpc_go.yaml: |
+    global: #全局配置
+      namespace: Production                        #环境类型，分正式Production和非正式Development两种类型
+      env_name: formal                        #环境名称，非正式环境下多环境的名称
+      container_name: ${POD_NAME}                    #容器名称
+      local_ip: ${POD_IP}                            #本地IP，容器内为容器ip，物理机或虚拟机为本机ip
+      admin_port: 18888                              #管理命令服务端口
+      enable_set: ${ENABLE_SET}                      #是否启用set
+      full_set_name: ${SET_NAME}                     #set名
+    server:                                            #服务端配置
+      app: SmartService                                 #业务的应用名
+      server: AccessManagerServer                           #进程服务名
+      bin_path: /usr/local/trpc/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /usr/local/trpc/conf/                 #业务配置文件所在路径
+      data_path: /usr/local/trpc/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - galileo
+        - simpledebuglog
+        - recovery                                     #拦截框架创建的业务处理协程panic
+        - statsd
+      admin:
+        ip: ${POD_IP}                                  # 必须填外部可访问的ip, 不能填127.0.0.1
+        port: 18888                                    # admin 端口
+        read_timeout: 3000                             #ms. 请求被接受到请求信息被完全读取的超时时间设置，防止慢客户端
+        write_timeout: 60000                           #ms. 处理的超时时间
+      service:                                         #业务服务提供的service，可以有多个
+        - name: trpc.SmartService.AccessManagerServer.AccessManager #把ReplaceMe换成自己服务pb里的service名
+          network: tcp                                 #网络监听类型  tcp udp
+          protocol: trpc                               #应用层协议 trpc http
+          timeout: 3000                                #请求最长处理时间 单位 毫秒
+          registry: polaris                            #服务启动时使用的服务注册方式
+          ip: ${POD_IP}                                #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 10001                                  #服务监听端口
+    client:                                            #客户端调用的后端配置
+      filter:                                          #针对所有后端调用函数前后的拦截器列表
+        - galileo
+        - statsd
+      namespace: ${NAMESPACE}                          #针对所有后端的环境
+      timeout: 3000                                    #针对所有后端的请求最长处理时间
+      service:                                         #针对单个后端的配置，默认都有默认值，可以完全不用配置
+        - callee: trpc.VirtualHuman.virtualmanconfig.virtualmanInstance
+          name:  trpc.VirtualHuman.access.AccessService
+          # name: trpc.VirtualHuman.virtualmanconfig.VirtualmanInstance
+          env_name: formal
+    plugins:                                           #插件配置
+      selector:
+        polaris:
+          protocol: grpc #北极星交互协议支持 http，grpc，trpc
+          discovery:
+            refresh_interval: 10000                    #北极星服务发现刷新间隔，123默认10000
+      log:                                            #日志配置
+        default:                                      #默认日志的配置，可支持多输出
+          - writer: galileo
+            level: info
+          - writer: console
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+          - writer: file
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: ../log/trpc.log
+              write_mode: 2
+              roll_type: size
+              max_size: 200
+              max_backups: 10
+              compress: false
+      config:
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
           {{- end }}

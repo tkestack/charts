@@ -1,0 +1,4 @@
+images:
+  adp-time-scheduler:
+    url: "{{ .Values.global.imageRegistry }}/tke-market/time-scheduler:3_2607222005_stable_iaas_v4.0.3.0_3177fa29_private"
+replicas: 1

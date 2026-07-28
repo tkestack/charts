@@ -27,6 +27,30 @@ spec:
       port: 9093
       protocol: TCP
       targetPort: 9093
+    - name: tcp-9094
+      port: 9094
+      protocol: TCP
+      targetPort: 9094
+    - name: tcp-9095
+      port: 9095
+      protocol: TCP
+      targetPort: 9095
+    - name: tcp-9096
+      port: 9096
+      protocol: TCP
+      targetPort: 9096
+    - name: tcp-9097
+      port: 9097
+      protocol: TCP
+      targetPort: 9097
+    - name: tcp-9098
+      port: 9098
+      protocol: TCP
+      targetPort: 9098
+    - name: tcp-9099
+      port: 9099
+      protocol: TCP
+      targetPort: 9099
   selector:
     app: adp-platform-manager
   sessionAffinity: None

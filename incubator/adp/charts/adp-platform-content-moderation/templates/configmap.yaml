@@ -6,15 +6,15 @@ metadata:
 data:
   application.yaml: |
     ssd:
-      auditors:
+      auditors: 
         xinan:
-          product_id: 
-          secret_id: 
-          secret_key: 
-        tianyu:
-          product_id: 
+          product_id: 10153
           secret_id:
-          secret_key: 
+          secret_key:
+        tianyu:
+          product_id: 10163
+          secret_id:
+          secret_key:
       check_source:
         admin.robot_name.5:
           sid: 100434
@@ -167,7 +167,7 @@ data:
           allow_list_enabled: true
           block_list_enabled: true
           is_async: true
-          auto_submit_appeal: false   
+          auto_submit_appeal: false
         knowledge.doc.2:
           sid: 100406
           callback: trpc://trpc.KEP.bot_knowledge_config_server.Api/AuditResultCallback?target=ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
@@ -312,6 +312,7 @@ data:
           block_list_enabled: true
           is_async: false
           auto_submit_appeal: true
+      biz_type_whitelist: ${BIZ_TYPE_WHITELIST}
     callback:
       worker_num: 5
       retry_limit: 3
@@ -352,26 +353,17 @@ data:
       type: {{ (.Values.global.contentSecurity).type | default "sdk" }}
       disable_image_check: {{ .Values.global.contentSecurity.disableImageCheck }}
       http:
-        app_id : {{ .Values.global.contentSecurity.appId }}
+        app_id: {{ .Values.global.contentSecurity.appId }}
         uin: {{ .Values.global.contentSecurity.uin }}
         sub_account_uin: {{ .Values.global.contentSecurity.subUin }}
-        tms_url: {{ .Values.global.contentSecurity.tmsUrl | default "" }} 
-        ims_url: {{ .Values.global.contentSecurity.imsUrl | default "" }} 
+        tms_url: {{ .Values.global.contentSecurity.tmsUrl | default "" }}
+        ims_url: {{ .Values.global.contentSecurity.imsUrl | default "" }}
         tms_biz_type: {{ .Values.global.contentSecurity.bizType }}
-        ims_biz_type: {{ .Values.global.contentSecurity.bizType }}  
-      sdk:
-        secret_id: {{ (.Values.global.contentSecurity).secretId | default "" }}
-        secret_key: {{ (.Values.global.contentSecurity).secretKey | default "" }}
-        biz_type: {{ (.Values.global.contentSecurity).bizType | default "" }}
-        region: {{ (.Values.global.contentSecurity).region | default "" }}
-        channel_id: 17
-        ims_endpoint: {{ if hasKey .Values.global.contentSecurity "imsEndpoint" }}{{ .Values.global.contentSecurity.imsEndpoint }}{{ else }}"ims.internal.tencentcloudapi.com"{{ end }}
-        tms_endpoint: {{ if hasKey .Values.global.contentSecurity "tmsEndpoint" }}{{ .Values.global.contentSecurity.tmsEndpoint }}{{ else }}"tms.internal.tencentcloudapi.com"{{ end }}
-        ams_endpoint: {{ if hasKey .Values.global.contentSecurity "amsEndpoint" }}{{ .Values.global.contentSecurity.amsEndpoint }}{{ else }}"ams.internal.tencentcloudapi.com"{{ end }}
-        vm_endpoint: {{ if hasKey .Values.global.contentSecurity "vmEndpoint" }}{{ .Values.global.contentSecurity.vmEndpoint }}{{ else }}"vm.internal.tencentcloudapi.com"{{ end }}
-        callback_url: {{ if hasKey .Values.global.contentSecurity "callbackUrl" }}{{ .Values.global.contentSecurity.callbackUrl }}{{ else }}""{{ end }}
+        ims_biz_type: {{ .Values.global.contentSecurity.bizType }}
+      # RESOLVE: keep-public
+      sdk: ${TIANYU_SDK}
       label_result_type:
-        Normal: 100 
+        Normal: 100
         Polity: 20001
         Porn: 20002
         Illegal: 20006
@@ -388,31 +380,104 @@ data:
         InvalidParameterValue.InvalidImageContent: 图片内容错误。
         ResourceUnavailable.InvalidImageContent: 图片资源错误。
         ResourceUnavailable.ImageDownloadError: 图片文件下载失败。
-        RequestLimitExceeded: "超过了每秒频率上限"
-        ClientError.NetworkError: "网络错误"
+        RequestLimitExceeded: 超过了每秒频率上限
+        ClientError.NetworkError: 网络错误
+        InvalidParameterValue.InvalidFileContentSize: 图片大小超限制
+      target: https://oaatomicapi.adp.qq.com:443
+      atomic_api_key: test-01MLQS4kRmnhRLvQIH4SEqyKOdInV39hRb6D9Fkw9iWYdaWGQyFhzR5YL6fDdQnVB
     xinan:
       path: /interface/request/json
-      sid: 
-      appid: 
-      password: 
+      sid:
+      appid:
+      password:
     clear_check_task_interval: 72h
+
+
+  client.yaml: |
+    client:
+      service:
+        - name: mysql.qbot.qbot
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: tdsql.qbot.qbot
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: redis.qbot.infosec
+          network: tcp
+          protocol: redis
+          target: "ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/2"
+          password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
+          timeout: 800
+        - name: apigw.riskcontrol.csigssd
+          network: tcp
+          protocol: http2
+          target: "dns://riskcontrol.csigssd.tencent.com"
+          timeout: ${INFOSEC_RISKCONTROL_TIMEOUT}
+          namespace: ${INFOSEC_RISKCONTROL_NAMESPACE}
+        - name: trpc.adp.platform_manager.Admin
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: Production
+          protocol: trpc
+          timeout: 50000
+        - name: trpc.adp.platform-manager.Admin
+          callee: trpc.adp.platform_manager.Admin
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 5000
+
 
   placeholder.yaml: |
     INFOSEC_REDIS_PORT: 6379
     INFOSEC_REDIS_DB_NUMBER: 2
-    INFOSEC_RISKCONTROL_TARGET: dns://riskcontrol.csigssd.tencent.com
+
+    INFOSEC_RISKCONTROL_TARGET: "dns://riskcontrol.csigssd.tencent.com"
     INFOSEC_RISKCONTROL_TIMEOUT: 2000
     INFOSEC_RISKCONTROL_NAMESPACE: Production
+
+
+
     APP_ADMIN_PROXY_API_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+    RAINBOW_APPID: 3f090873-420d-4575-b9d2-cf6a72980a33
+    # global.serverConnector.joinPoint - 服务连接器接入点
+    TRPC_GLOBAL_JOIN_POINT: default
+
+    # plugins.telemetry.galileo.ocp_addr - 伽利略 OCP 配置地址
+    TRPC_GALILEO_OCP_ADDR: "http://gocp.woa.com/ocp/api/v1/get_config"
+
+    # plugins.telemetry.galileo.config.access_point - 伽利略接入点
+    # 1=新加坡公网, 2=新加坡内网, 3=中国大陆公网, 4=中国大陆内网
+    TRPC_GALILEO_ACCESS_POINT: 4
+
+    BIZ_TYPE_WHITELIST:
+
+    TIANYU_SDK:
+      secret_id: ${INFRA_MIDDLEWARES_CONTENTSECURITY_SECRETID}
+      secret_key: ${INFRA_MIDDLEWARES_CONTENTSECURITY_SECRETKEY}
+      biz_type: {{ (.Values.global.contentSecurity).bizType | default "" }}
+      region: {{ (.Values.global.contentSecurity).region | default "" }}
+      channel_id: 17
+      ims_endpoint: {{ if hasKey .Values.global.contentSecurity "imsEndpoint" }}{{ .Values.global.contentSecurity.imsEndpoint }}{{ else }}"ims.internal.tencentcloudapi.com"{{ end }}
+      tms_endpoint: {{ if hasKey .Values.global.contentSecurity "tmsEndpoint" }}{{ .Values.global.contentSecurity.tmsEndpoint }}{{ else }}"tms.internal.tencentcloudapi.com"{{ end }}
+      ams_endpoint: {{ if hasKey .Values.global.contentSecurity "amsEndpoint" }}{{ .Values.global.contentSecurity.amsEndpoint }}{{ else }}"ams.internal.tencentcloudapi.com"{{ end }}
+      vm_endpoint: {{ if hasKey .Values.global.contentSecurity "vmEndpoint" }}{{ .Values.global.contentSecurity.vmEndpoint }}{{ else }}"vm.internal.tencentcloudapi.com"{{ end }}
+      callback_url: {{ if hasKey .Values.global.contentSecurity "callbackUrl" }}{{ .Values.global.contentSecurity.callbackUrl }}{{ else }}""{{ end }}
+
+
+    # 平台管理服务 - 管理接口
+    PLATFORM_MANAGER_ADMIN_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
+
+
 
   trpc_go.yaml: |
     global:
       namespace: Test
       env_name: test
-      enable_set: false         #是否启用set
-      full_set_name: adp   #set名
+      enable_set: false                 #是否启用set
+      full_set_name: adp                #set名
       local_ip: ${POD_IP}
-      container_name: ${POD_NAME}  
+      container_name: ${POD_NAME}
+      serverConnector:
+        joinPoint: ${TRPC_GLOBAL_JOIN_POINT}
+
     server:
       app: adp
       server: platform-content-moderation
@@ -441,16 +506,14 @@ data:
           ip: 0.0.0.0
           port: 9101
           network: "5 10 1 */1 * *"
-          protocol: timer #应用层协议
+          protocol: timer
           timeout: 60000000
         - name: qbot.qbot.infosec.ClearCheckDataTask
           ip: 0.0.0.0
           port: 9102
           network: "0 10 0 * * *"
-          protocol: timer #应用层协议
+          protocol: timer
           timeout: 60000000
-
-
     plugins:
       config:
         file:
@@ -458,9 +521,9 @@ data:
             - name: rainbow
               path: /app/conf/
             - name: global
-              appid: ${RAINBOW_APP_ID}  # appid
-              group: global # 配置所属组
-              type: kv   # 七彩石数据格式, kv(默认), table
+              appid: ${RAINBOW_APP_ID}
+              group: global
+              type: kv
               env_name: ${RAINBOW_ENV_NAME}
               timeout: 2000
               enable_client_provider: true
@@ -493,7 +556,7 @@ data:
             level: info
             formatter: json
             formatter_config:
-              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
               time_key: time
               level_key: level
               name_key: name
@@ -504,7 +567,7 @@ data:
             level: info
             formatter: json
             formatter_config:
-              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
               time_key: time
               level_key: level
               name_key: name
@@ -514,29 +577,31 @@ data:
             writer_config:
               filename: /app/logs/trpc.log
               write_mode: 2
-              roll_type: time
-              max_age: 7
+              roll_type: size
+              max_size: 200
               max_backups: 10
               compress: false
-              time_unit: day
+      selector:
+        polaris:
+          join_point: ${TRPC_GLOBAL_JOIN_POINT}
+
 
     client:
       service:
         - name: mysql.qbot.qbot
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: tdsql.qbot.qbot
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
-
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: redis.qbot.infosec
           network: tcp
           protocol: redis
-          target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/2
+          target: "ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/2"
           password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
           timeout: 800
         - name: apigw.riskcontrol.csigssd
           network: tcp
           protocol: http2
-          target: dns://riskcontrol.csigssd.tencent.com
+          target: "dns://riskcontrol.csigssd.tencent.com"
           timeout: ${INFOSEC_RISKCONTROL_TIMEOUT}
           namespace: ${INFOSEC_RISKCONTROL_NAMESPACE}
         - name: trpc.adp.platform_manager.Admin
@@ -544,3 +609,9 @@ data:
           namespace: Production
           protocol: trpc
           timeout: 50000
+        - name: trpc.adp.platform-manager.Admin
+          callee: trpc.adp.platform_manager.Admin
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 5000

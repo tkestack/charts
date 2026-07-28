@@ -1,0 +1,6 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-agent-file-system
+  namespace: {{ .Release.Namespace }}
+data: {}

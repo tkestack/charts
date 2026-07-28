@@ -10,20 +10,18 @@ data:
     msg_menu_text_limit: 45
     msg_menu_item_num_limit: 10
     create_session_words:
-      "新建对话": true
+      新建对话: true
+      /new: true
+      /NEW: true
     reset_session_words:
-      "清除上下文关联": true
-    session_secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
-    session_secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
-    session_end_point: ${SESSIONS_END_POINT}
-    session_region: "ap-guangzhou"
-    # session_env_key: "X-TC-Canary"
-    # session_env_val: "toe-base"
-    system_msg_err: "【系统消息】内部服务错误，请稍候重试。"
-    system_msg_creation_session_success: "【系统消息】以下是新对话。"
-    system_msg_creation_session_failed: "【系统消息】新建对话失败，请稍候再试。"
-    system_msg_reset_session_success: "【系统消息】已清空上下文关联"
-    system_msg_reset_session_failed: "【系统消息】清空上下文关联失败，请稍候再试。"
+      清除上下文关联: true
+      /clear: true
+      /CLEAR: true
+    system_msg_err: 【系统消息】内部服务错误，请稍候重试。
+    system_msg_creation_session_success: 【系统消息】以下是新对话。
+    system_msg_creation_session_failed: 【系统消息】新建对话失败，请稍候再试。
+    system_msg_reset_session_success: 【系统消息】已清空上下文关联
+    system_msg_reset_session_failed: 【系统消息】清空上下文关联失败，请稍候再试。
     channel_type_map:
       wechat: 10000
       wecom: 10002
@@ -33,114 +31,228 @@ data:
       telegram: 10012
     component_app_id: ${COMPONENT_APP_ID}
     wx_authorize_callback_host: {{ .Values.global.scheme }}://{{ .Values.global.clb }}  #需要填写用户自己申请的域名  需要能反代回到msg服务
-    wx_authorize_callback: "/online/channel/callback/wx/authorize"
+    wx_authorize_callback: /online/channel/callback/wx/authorize
     sse_chat_path: /v1/qbot/chat/sse
     redirect_url: {{ .Values.global.scheme }}://{{ .Values.global.clb }}/adp/#/app/knowledge/release/channel?appid=%d&appType=knowledge_qa&spaceId=default_space
     redirect_url_with_space_id: {{ .Values.global.scheme }}://{{ .Values.global.clb }}/adp/#/app/knowledge/release/channel?appid=%d&appType=knowledge_qa&spaceId=%s
-    get_wx_auth_code_max_limit : 3
+    get_wx_auth_code_max_limit: 3
     streaming_throttle: 250
     not_support_msg: 暂不支持的消息类型
     env: lke
     yuanqi_api_key: xxxx
     publish_yuanqi_url: /admin_api/v2/agent/publish/yuanqi
     publish_yingyongbao_url: /admin_api/v2/agent/publish/yinyongbao
-    wx_nginx_l5: lke_https_forward_proxy
+    wx_nginx_l5: ${WX_NGINX_L5}
     wx_nginx_namespace: Test
+    # RESOLVE: keep-private
+    # 专有云环境无 Polaris，直接指定 channel-proxy 地址作为企微 API 正向代理
+    forward_proxy_ip: adp-app-channel-proxy.{{ .Release.Namespace }}.svc.cluster.local:8000
+    # RESOLVE: keep-private
     cos_secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+    # RESOLVE: keep-private
     cos_secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
     cos_bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
-    cos_region: ap-guangzhou
-    get_ip_max_limit : 2000
-    is_open_ip_max_limit_switch : false
+    cos_region: "${INFRA_MIDDLEWARES_S3_COS_REGION}"
+    get_ip_max_limit: 2000
+    is_open_ip_max_limit_switch: false
     message_interval_time: 800ms
     wechat_msg_time_out: 20m
     deployment_mode:
-      mode: "adp"
+      mode: adp
     default_greeting_content: 可以这样问我：
     uncertified_wx_reply_config:
       uncertified_reply_in_5s_wx_app_ids:
       continue_keywords:
-        - "继续"
-        - "继续。"
-        - "【继续】"
-        - "请继续"
-        - "继续发"
-      no_reply_notice: "正在思考中……可回复【继续】获取回答内容" # 5s 或 15s未回复提示
-      reply_not_complete_notice: "回答未完成，可回复【继续】获取更多回答内容" # 回答未完成提示
-      discard_continue_notice: "模型正在思考中，请稍后回复【继续】获取更多回答内容" # 忽略继续关键词通知
-    # storage相关配置
-    storage:
-      type: cos
-      subPath: {{ .Values.global.components.s3.cos.subPath | quote }}
-      cos_map:
-        realtime:
-          secret_id: {{ .Values.global.components.s3.cos.secretId }}
-          secret_key: {{ .Values.global.components.s3.cos.secretKey }}
-          app_id: {{ .Values.global.components.s3.cos.appId | quote }}
-          region: {{ .Values.global.components.s3.cos.region }}
-          bucket: {{ .Values.global.components.s3.cos.bucket }}
-          domain: {{ .Values.global.components.s3.cos.domain }}
-          expire_time: {{ .Values.global.components.s3.cos.expireTime | default "30m" }}
-          credential_time: 10m
-  channel-msg_en-US.json: |
-    {}
+        - 继续
+        - 继续。
+        - 【继续】
+        - 请继续
+        - 继续发
+      no_reply_notice: 正在思考中……可回复【继续】获取回答内容
+      reply_not_complete_notice: 回答未完成，可回复【继续】获取更多回答内容
+      discard_continue_notice: 模型正在思考中，请稍后回复【继续】获取更多回答内容
+    # RESOLVE: keep-public
+    storage: ${STORAGE}
+    sse_chat_path_v2: /adp/v2/chat
+    line_config:
+      max_msg_per_push: 5
+      text_buffer_max_rune: 1000
+      loading_seconds: 60
+    telegram_config:
+      text_buffer_max_rune: 1000
+    menu_select_text: "Please select an option:"
+    dingtalk_stream_config:
+      dingtalk_api_host: api.dingtalk.com
+      dedup_ttl: 300
+    etcd_config: ${ETCD_CONFIG}
+    doc_parse_path: /v1/qbot/chat/docParse
+    wecom_robot_stream_config:
+      ws_url: "wss://openws.work.weixin.qq.com"
+      ping_interval_sec: 30
+      read_timeout_sec: 45
+      write_timeout_sec: 10
+      auth_timeout_sec: 10
+      long_text_threshold: 3900
+      long_merge_timeout_ms: 2000
+      short_merge_timeout_ms: 600
+      dedup_ttl_sec: 300
+      media_presigned_url_hours: 168
+      media_large_size_mb: 5
+      partial_flush_interval_ms: 200
+      logic_timeout_sec: 5400
+      stream_max_duration_sec: 570
+      stream_truncate_notice: "⏳ 任务仍在处理中，完整结果稍后会以新消息发送给你"
+      push_segment_limit: 3900
+    corp_assistant_push_config:
+      msg_redis_ttl_hours: 24
+      max_retries: 3
+
   channel-msg_zh-CN.json: |
-    {}
+    {
+      "KeyWidgetNotDisplayProperly": "Widget无法正常展示\n",
+      "KeyReferenceSource": "参考来源",
+      "KeyReplyWithIndexOrKeyword": "你可以回复“以下序号或者关键词”进行提问 \n ",
+      "KeyAnswerIncompleteContinue": " \n\n 回答未完成，可回复【继续】获取更多回答内容。",
+      "KeyThinkingPleaseWait": "正在思考中...请稍候"
+    }
+
+  client.yaml: |
+    client:
+      filter:
+        - cle-route-propagator
+        - opentelemetry
+      service:
+        - name: mysql.qbot.admin
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: tdsql.tcadp.channel
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: redis.qbot.admin
+          network: tcp
+          target: "ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/2"
+          password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
+          timeout: 800
+        - name: wx.nginx
+          target: ip://adp-app-channel-proxy.{{ .Release.Namespace }}.svc.cluster.local:8000
+          network: tcp
+          protocol: http
+          timeout: 20000
+          namespace: ${NAMESPACE}
+        - name: wx.resource.nginx
+          target: ip://adp-app-channel-proxy.{{ .Release.Namespace }}.svc.cluster.local:8001
+          network: tcp
+          protocol: http
+          timeout: 20000
+          namespace: ${NAMESPACE}
+        - name: trpc.KEP.channel_token_svr.ChannelTokenService
+          network: tcp
+          protocol: trpc
+          target: ip://adp-app-channel-token.{{ .Release.Namespace }}.svc.cluster.local:8000
+          timeout: 10000
+          namespace: ${NAMESPACE}
+        - name: trpc.KEP.bot_admin_config_server.Admin
+          network: tcp
+          protocol: trpc
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 5000
+        - callee: trpc.ai.client
+          name: trpc.ai.client
+          network: tcp
+          protocol: http
+          target: dns://{{ .Values.global.clb }}:{{ ternary 443 80 (eq .Values.global.scheme "https") }}
+          timeout: 600000
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.KEP.bot_task_config_server.TaskConfig
+          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+          timeout: 5000
+        - callee: trpc.KEP.bot_knowledge_config_server.Api
+          name: trpc.KEP.bot-knowledge-config-server.Api
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 5000
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.kb_config.Api
+          name: trpc.KEP.bot-knowledge-config-server.Api
+          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 5000
+        - callee: trpc.adp.workflow_config.WorkflowConfig
+          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+          timeout: 5000
+        - callee: trpc.adp.app_admin_proxy.Api
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_admin_proxy.Login
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.chat_manage.Chat
+          name: trpc.adp.chat_manage.Chat
+          target: ip://adp-chat-manage.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_manager.Login
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.http.cos.Access
+          network: tcp
+          protocol: http
+          target: "dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn"
+          timeout: 5000
+        - callee: trpc.adp.chat_manage.Chat
+          namespace: ${NAMESPACE}
+          target: "ip://adp-chat-manage.{{ .Release.Namespace }}.svc.cluster.local:9093"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_config.Admin
+          namespace: ${NAMESPACE}
+          target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.agent_config.AgentConfig
+          namespace: ${NAMESPACE}
+          target: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          protocol: trpc
+          timeout: 20000
+        - name: qbot.qbot.chat.ChatHttp
+          callee: qbot.qbot.chat.ChatHttp
+          namespace: ${NAMESPACE}
+          network: tcp
+          protocol: http
+          target: "ip://adp-chat-manage.{{ .Release.Namespace }}.svc.cluster.local:9099"
+          timeout: 5400000
+        - name: trpc.internal.ai.client
+          callee: trpc.internal.ai.client
+          namespace: ${NAMESPACE}
+          network: tcp
+          protocol: http
+          target: "dns://api.adp.internal.cloud.tencent.com"
+          timeout: 600000
+        - callee: trpc.adp.platform_manager.Admin
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.resource_gallery.Admin
+          namespace: ${NAMESPACE}
+          target: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          protocol: trpc
+          timeout: 20000
+
+
   env.yaml: |
     version: 2.0.0 # 固定值，不需要修改
     kind: env # 固定值，不需要修改
     metadata:
         name: formal # 环境名称 [选填]
 
-  error_en-US.json: |
-    {
-      "参数错误": "Invalid Parameter",
-      "get请求签名校验错误": "Get Request Signature Verification Error",
-      "GetAgentInfo fail": "Get Agent Info Fail",
-      "请求签名校验错误": "Request Signature Verification Error",
-      "解密后参数解析错误": "Decrypted Parameter Parsing Error",
-      "get msg_provider failed, need register plugins": "Failed to get msg_provider, need to register plugins",
-      "unknown http method": "Unknown Http Method",
-      "no data available": "No Data Available",
-      "wxPub c2b msg type not support": "Wx Pub C2B Msg Type Not Support",
-      "公众号已被当前应用绑定，请先解绑后再操作": "Public Account Already Bound Please Unbind First",
-      "wx pub request url parse error": "Wechat Pub request URL parse error",
-      "wx pub request url not include appid": "Wx Pub Request Url Not Include Appid",
-      "wxPub b2c call wx failed": "Wechat Pub B2C Call Wechat Failed",
-      "wxPub c2b xml parse error": "Wx Pub C2B Xml Parse Error",
-      "wx auth code is empty": "Wechat auth code is empty",
-      "appBiz id is empty": "App Biz Id Is Empty",
-      "call wx get pre auth code failed": "Call Wx Get Pre Auth Code Failed",
-      "达到每分钟最大授权次数，请稍后再试": "Reached Max Auth Limit Per Minute, Please Try Later",
-      "call wecom send msg failed": "Call Wecom Send Msg Failed",
-      "ai response body is empty": "AI Response body is empty",
-      "msg id duplication has been intercepted": "Msg Id Duplication Has Been Intercepted",
-      "input cos uuid is intercepted": "Input Cos Uuid Is Intercepted",
-      "down data format error": "Down Data Format Error",
-      "env环境未注册": "Env Environment Not Registered",
-      "syncType传参错误": "Sync Type Parameter Error",
-      "修改渠道状态处理失败": "Failed to process channel status modification",
-      "获取公众号关联的应用信息失败": "Failed to get associated info for official account",
-      "获取公众号渠道信息失败": "Get Public Account Channel Info Failed",
-      "获取渠道信息失败": "Get Channel Info Failed",
-      "检查渠道发布状态失败": "Failed to check channel release status",
-      "获取元器配置失败": "Get Yuan Config Failed",
-      "c2b pull wxkf msg failed": "C2B Pull Wxkf Msg Failed",
-      "c2b wxkf msg event not support": "C2B Wxkf Msg Event Not Support",
-      "消息发送失败，系统错误": "Message sending failed, system error",
-      "wxkf set next cursor failed": "Wxkf Set Next Cursor Failed",
-      "wxkf get cursor failed": "Wxkf Get Cursor Failed",
-      "wxkf send msg finish": "Failed to send message to Wechat Customer Service",
-      "wxkf info no data available": "No Wechat Customer Service data available",
-      "拉取微信客服形象失败，确认已经开通微信客服": "Failed to call Wechat Customer Service, Please confirm it's enabled",
-      "无效的企业ID或Secret，请确认填写是否正确": "Invalid Corp Id Or Secret, Please Confirm if Correct",
-      "get wxkf id info failed": "Failed to get Wechat Customer Service Info",
-      "get corp id from ctx failed": "Get Corp Id From Ctx Failed",
-      "没有可操作的渠道": "No Operable Channel Available",
-      "发送失败:微信暂不支持该文件类型": "Sending failed: WeChat currently does not support this file type",
-      "发送失败:素材超过微信最大10MB限制": "Sending failed: Material exceeds the max 10MB limit for wechat",
-      "不合法的媒体文件id": "Invalid Media File Id"
-    }
   error_zh-CN.json: |
     {
       "参数错误": "参数错误",
@@ -188,25 +300,73 @@ data:
       "没有可操作的渠道": "没有可操作的渠道",
       "发送失败:微信暂不支持该文件类型": "发送失败:微信暂不支持该文件类型",
       "发送失败:素材超过微信最大10MB限制": "发送失败:素材超过微信最大10MB限制",
-      "不合法的媒体文件id": "不合法的媒体文件id"
+      "不合法的媒体文件id": "不合法的媒体文件id",
+      "文件 `%s` 类型不支持，当前仅支持：pdf, doc, docx, ppt, mhtml, pptx, wps, ppsx, keynote, pages, xlsx, xls, csv, md, txt, html, xmind, json, xml, log, numbers, jsonl": "文件 `%s` 类型不支持，当前仅支持：pdf, doc, docx, ppt, mhtml, pptx, wps, ppsx, keynote, pages, xlsx, xls, csv, md, txt, html, xmind, json, xml, log, numbers, jsonl",
+      "文件 `%s` 大小超过限制，最大支持 %s": "文件 `%s` 大小超过限制，最大支持 %s",
+      "文件 `%s` 行数超过限制，最大支持 %s 行": "文件 `%s` 行数超过限制，最大支持 %s 行",
+      "文件 `%s` 列数超过限制，最大支持 %s 列": "文件 `%s` 列数超过限制，最大支持 %s 列",
+      "ADP应用已经在使用该企业微信机器人": "ADP应用已经在使用该企业微信机器人"
     }
   placeholder.yaml: |
     NAMESPACE: Production
     ENV_NAME: formal
     RAINBOW_ENV_NAME: formal
     RAINBOW_GROUP: channel-msg-svr
-    #没有引用，清理
-    TRPC_KEP_CHANNEL_MSG_SVR_HTTP_TOKEN: 
-    #没有引用，清理
-    TRPC_KEP_CHANNEL_MSG_SVR_TRPC_TOKEN: 
-    #没有引用，清理
-    TRPC_KEP_TRPC_KEP_CHANNEL_MSG_SVR_API_TOKEN: 
-    TRPC_AI_CLIENT_TARGET: dns://testwss.testsite.woa.com:443
-    SESSIONS_END_POINT: lke.pre.tencentcloudapi.woa.com
-    COMPONENT_APP_ID: {{ dig "wechat" "componentAppId" "" .Values.global }}
-    WX_AUTHORIZE_CALLBACK_HOST: https://tde.xiaowei.cloud.tencent.com
+    TRPC_KEP_CHANNEL_MSG_SVR_HTTP_TOKEN:
+    TRPC_KEP_CHANNEL_MSG_SVR_TRPC_TOKEN:
+    TRPC_KEP_TRPC_KEP_CHANNEL_MSG_SVR_API_TOKEN:
+
+    TRPC_AI_CLIENT_TARGET: ""
+    COMPONENT_APP_ID: "{{ dig "wechat" "componentAppId" "" .Values.global }}"
+    WX_AUTHORIZE_CALLBACK_HOST: "https://tde.xiaowei.cloud.tencent.com"
     WX_AUTHORIZE_CALLBACK: /channel/callback/wx/test/authorize
     IS_PRIVATE: true
+    NGINX_FORWARD_PROXY_TARGET: "ip://adp-app-channel-proxy.{{ .Release.Namespace }}.svc.cluster.local:8000"
+    TRPC_INTERNAL_AI_CLIENT_TARGET: "dns://api.adp.internal.cloud.tencent.com"
+
+    COS_ACCESS_TARGET:
+      {{- if eq .Values.global.components.s3.providerType "minio" }}
+      {{ printf "ip://minio.%s.svc.cluster.local:80" .Release.Namespace }}
+      {{- else if eq .Values.global.components.s3.providerType "obs" }}
+      ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}
+      {{- else }}
+      dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn
+      {{- end }}
+    COS_NAMESPACE: Production
+    # 对象存储配置
+    STORAGE:
+      type: cos
+      subPath: {{ .Values.global.components.s3.cos.subPath | quote }}
+      cos_map:
+        realtime:
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
+          expire_time: ${INFRA_MIDDLEWARES_S3_COS_EXPIRETIME}
+          credential_time: ${INFRA_MIDDLEWARES_S3_COS_CREDENTIALTIME}
+          assume_role:
+            role_arn: {{ .Values.global.components.s3.cos.stsRoleArn | quote }}
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
+    ETCD_CONFIG: # etcd 部署在集群内，通过 ClusterIP Service 访问，namespace 与本服务保持一致
+      endpoints:                        # etcd 集群地址列表
+        - "etcd.{{ .Release.Namespace }}.svc.cluster.local:2379"
+      dial_timeout: 5                   # etcd 连接超时（秒），默认 5
+      lease_ttl: 3                      # etcd 租约 TTL（秒），默认 3
+      takeover_timeout: 45              # PreStop 等待接管超时（秒），默认 45
+      drain_timeout: 30                 # 排水超时（秒），默认 30
+      rebalance_timeout: 10             # Rebalance 移除等待超时（秒），默认 10
+      health_check_interval: 5          # 健康检查间隔（秒），默认 5
+      max_local_retries: 3              # 本地重连最大次数，默认 3
+      retry_base_delay: 1000            # 重连指数退避基础延迟（毫秒），默认 1000
+      retry_max_delay: 8000             # 重连指数退避最大延迟（毫秒），默认 8000
+    # 公网出口
+    WX_NGINX_L5: adp_channel_https_forward_proxy
+
+
   trpc_go.yaml: |
     global:
       namespace: ${POD_NAMESPACE}
@@ -300,30 +460,34 @@ data:
       log:
         default:
           - writer: console
-            level: debug
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
           - writer: file
             level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
             writer_config:
               filename: /app/log/trpc.log
-              max_size: 10
+              write_mode: 2
+              roll_type: size
+              max_size: 200
               max_backups: 10
-              max_age: 7
               compress: false
       registry:
-        polaris:
-          register_self: false
-          heartbeat_interval: 3000
-          heartbeat_timeout: 1000
-          service:
-            - name: trpc.KEP.channel-msg-svr.HTTP
-              namespace: ${POD_NAMESPACE}
-              token: d8b87889e517410e9a963c191f378d09  #safe
-            - name: trpc.KEP.channel-msg-svr.trpc
-              namespace: ${POD_NAMESPACE}
-              token: 34c9fa7d88974ac09189c928a7cb6fe2 #safe
-            - name: trpc.KEP.trpc.KEP.channel-msg-svr.Api
-              namespace: ${POD_NAMESPACE}
-              token: a294ef928f0648a3989999fe5186aa3a #safe
       selector:
         polaris:
           protocol: grpc
@@ -342,11 +506,7 @@ data:
             char_scaling_factor:
               zh-CN: 1
               en-US: 3
-      filter:
-        cos_rewrite:
-          path_prefixes:
-            - /public
-            - /qbot
+
     client:
       filter:
         - cle-route-propagator
@@ -366,16 +526,19 @@ data:
           network: tcp
           protocol: http
           timeout: 20000
+          namespace: ${NAMESPACE}
         - name: wx.resource.nginx
           target: ip://adp-app-channel-proxy.{{ .Release.Namespace }}.svc.cluster.local:8001
           network: tcp
           protocol: http
           timeout: 20000
+          namespace: ${NAMESPACE}
         - name: trpc.KEP.channel_token_svr.ChannelTokenService
           network: tcp
           protocol: trpc
           target: ip://adp-app-channel-token.{{ .Release.Namespace }}.svc.cluster.local:8000
-          timeout: 2000
+          timeout: 10000
+          namespace: ${NAMESPACE}
         - name: trpc.KEP.bot_admin_config_server.Admin
           network: tcp
           protocol: trpc
@@ -385,7 +548,6 @@ data:
           name: trpc.ai.client
           network: tcp
           protocol: http
-          # 端口随 global.scheme 切换：https -> 443，http -> 80
           target: dns://{{ .Values.global.clb }}:{{ ternary 443 80 (eq .Values.global.scheme "https") }}
           timeout: 600000
         - callee: trpc.KEP.bot_admin_config_server.Login
@@ -400,27 +562,22 @@ data:
           target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
           protocol: trpc
           timeout: 5000
-        # admin Login
         - callee: trpc.KEP.bot_admin_config_server.Api
           target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
           protocol: trpc
           timeout: 20000
-        # 知识库-内部接口
         - callee: trpc.adp.kb_config.Api
           name: trpc.KEP.bot-knowledge-config-server.Api
           target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
           protocol: trpc
           timeout: 5000
-        # 工作流配置端-内部接口
         - callee: trpc.adp.workflow_config.WorkflowConfig
           target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
           timeout: 5000
-        # admin API
         - callee: trpc.adp.app_admin_proxy.Api
           target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
           protocol: trpc
           timeout: 20000
-        # admin Login
         - callee: trpc.adp.app_admin_proxy.Login
           target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
           protocol: trpc
@@ -437,5 +594,44 @@ data:
         - name: trpc.http.cos.Access
           network: tcp
           protocol: http
-          target: dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn
+          target: "dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn"
           timeout: 5000
+        - callee: trpc.adp.chat_manage.Chat
+          namespace: ${NAMESPACE}
+          target: "ip://adp-chat-manage.{{ .Release.Namespace }}.svc.cluster.local:9093"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_config.Admin
+          namespace: ${NAMESPACE}
+          target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.agent_config.AgentConfig
+          namespace: ${NAMESPACE}
+          target: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          protocol: trpc
+          timeout: 20000
+        - name: qbot.qbot.chat.ChatHttp
+          callee: qbot.qbot.chat.ChatHttp
+          namespace: ${NAMESPACE}
+          network: tcp
+          protocol: http
+          target: "ip://adp-chat-manage.{{ .Release.Namespace }}.svc.cluster.local:9099"
+          timeout: 5400000
+        - name: trpc.internal.ai.client
+          callee: trpc.internal.ai.client
+          namespace: ${NAMESPACE}
+          network: tcp
+          protocol: http
+          target: "dns://api.adp.internal.cloud.tencent.com"
+          timeout: 600000
+        - callee: trpc.adp.platform_manager.Admin
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.resource_gallery.Admin
+          namespace: ${NAMESPACE}
+          target: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          protocol: trpc
+          timeout: 20000

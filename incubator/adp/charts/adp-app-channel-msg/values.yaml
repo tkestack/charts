@@ -1,4 +1,4 @@
 images:
   adp-app-channel:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/channel-msg-svr:11_2606132001_stable_iaas_cos_ed7f5824_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/channel-msg-svr:28_2607281033_stable_iaas_v4.0.3.0_f6fafe61_private"
 replicas: 1

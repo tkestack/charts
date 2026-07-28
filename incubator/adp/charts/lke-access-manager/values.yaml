@@ -1,4 +1,4 @@
 images:
   adp-access-manager:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/accessmanagerserver:master_private-ff5f4e-20260123"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/accessmanagerserver:release_iaas_v4.0.3.0-ff5f4e-20260718"
 replicas: 1

@@ -81,7 +81,10 @@ spec:
       initContainers:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       containers:
-        - env:
+        - envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
             - name: ADP-CHANNEL-ID
               value: "1"
             - name: MKL_NUM_THREADS
@@ -160,6 +163,9 @@ spec:
             - mountPath: /app/conf/application.yaml
               name: config
               subPath: application.yaml
+            - mountPath: /app/conf/placeholder.yaml
+              name: config
+              subPath: placeholder.yaml
             - mountPath: /app/conf/infrastructure.yaml
               name: infrastructure
               subPath: infrastructure.yaml

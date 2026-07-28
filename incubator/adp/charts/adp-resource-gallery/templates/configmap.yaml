@@ -21,7 +21,7 @@ data:
       tione_regions: ${TIONE_REGIONS}
       tione_enable_white: ${TIONE_ENABLE_WHITE}
       tione_white_uin: ${TIONE_WHITE_UIN}
-    # 模型广场
+      disabled: ${TIONE_DISABLED}
     model_hub:
       model_type: llm
       model_params:
@@ -59,15 +59,28 @@ data:
         model_length: 64k
         input_length: 57344
       model_category_to_tags:
-        generate: [KeyModelTagTextReasoning,KeyModelTagToolCalling,KeyModelTagOmniModal]
-        thought: [KeyModelTagTextReasoning,KeyModelTagToolCalling,KeyModelTagOmniModal]
-        standard_thought: [KeyModelTagTextReasoning,KeyModelTagToolCalling,KeyModelTagOmniModal]
-        agent_thought: [KeyModelTagTextReasoning,KeyModelTagToolCalling,KeyModelTagOmniModal]
-        rewrite: [KeyModelTagTextReasoning,KeyModelTagToolCalling,KeyModelTagOmniModal]
-        rerank: [KeyModelTagRerankingModel]
-        embedding: [KeyModelTagVectorModel]
-        widget: [KeyModelTagTextReasoning]
-        openclaw: [KeyModelTagTextReasoning,KeyModelTagToolCalling,KeyModelTagOmniModal]
+        generate: ["KeyModelTagTextReasoning", "KeyModelTagToolCalling", "KeyModelTagOmniModal"]
+        thought: ["KeyModelTagTextReasoning", "KeyModelTagToolCalling", "KeyModelTagOmniModal"]
+        standard_thought: ["KeyModelTagTextReasoning", "KeyModelTagToolCalling", "KeyModelTagOmniModal"]
+        agent_thought: ["KeyModelTagTextReasoning", "KeyModelTagToolCalling", "KeyModelTagOmniModal"]
+        rewrite: ["KeyModelTagTextReasoning", "KeyModelTagToolCalling", "KeyModelTagOmniModal"]
+        rerank: ["KeyModelTagRerankingModel"]
+        embedding: ["KeyModelTagVectorModel"]
+        widget: ["KeyModelTagTextReasoning"]
+        openclaw: ["KeyModelTagTextReasoning", "KeyModelTagToolCalling", "KeyModelTagOmniModal"]
+        multi_modal_embedding:
+        - KeyModelTagImageVector
+        corp_assistant:
+        - KeyModelTagTextReasoning
+        - KeyModelTagToolCalling
+        - KeyModelTagOmniModal
+      enable_scene_categories:
+        - multi_modal_qa
+        - multi_modal_understanding
+        - ai_optimize
+        - long_memory
+        - nl2sql
+        - graphrag
       embedding_limit:
         enable: true
         max_vector_dimension: 4096
@@ -75,41 +88,41 @@ data:
       model_finance_free_white: ${MODEL_FINANCE_FREE_WHITE}
       model_reply_format: ${MODEL_REPLY_FORMAT}
       check_models_before_delete: true
-
+      temporary_free_models: ${TEMPORARY_FREE_MODELS}
+      model_access_control: ${MODEL_ACCESS_CONTROL}
+      model_sync:
+        extra_model_names: ${EXTRA_MODEL_NAMES}
+      custom_model_allowed_params: ${CUSTOM_MODEL_ALLOWED_PARAMS}
+      exposed_model_properties: ${EXPOSED_MODEL_PROPERTIES}
+      exposed_model_parameters: ${EXPOSED_MODEL_PARAMETERS}
     robot_default:
-      # 模型模型列表
       app_default_model:
         knowledge_qa: ${APP_DEFAULT_MODEL_KNOWLEDGE_QA}
-      # 思考模型模型列表
       app_thought_model:
         standard: ${APP_THOUGHT_MODEL_STANDARD}
         agent: ${APP_THOUGHT_MODEL_AGENT}
       app_rewrite_model: ${APP_REWRITE_MODEL}
-      # rerank 和embedding模型
       app_rerank_model: ${APP_RERANK_MODEL}
       app_embedding_model: ${APP_EMBEDDING_MODEL}
       app_widget_model: ${APP_WIDGET_MODEL}
-      # fileparse模型
       app_fileparse_model: ${APP_FILEPARSE_MODEL}
-      # openclaw使用模型
       app_openclaw_model: ${APP_OPENCLAW_MODEL}
-      # 大模型输入框，角色描述，对话历史上下文上限设置
       llm_word_limit: ${LLM_WORD_LIMIT}
       search_model_free: ${SEARCH_MODEL_FREE}
-      # 模型对AI通话支持的类型
       llm_support_ai_call: ${LLM_SUPPORT_AI_CALL}
       default_model_config: ${DEFAULT_MODEL_CONFIG}
-    # 计费配置
+      corp_assistant_model: ${CORP_ASSISTANT_MODEL}
+      extra_model_config: ${EXTRA_MODEL_CONFIG}
     finance:
       disabled: ${FINANCE_DISABLED}
       search_disabled: ${SEARCH_DISABLED}
-    limit_config_info: #限流信息设置
+    limit_config_info:
       expire: 4m
       max_unlock_retry: 3
       try_lock_interval: 50ms
       concurrency_key_expire: 1800
+    experience_uin: 999999999
     managed_account_ids: ${MANAGED_ACCOUNT_IDS}
-    #国内版多语言开关
     language_all_switch: ${LANGUAGE_ALL_SWITCH}
     deep_think_enable_model: ${DEEP_THINK_ENABLE_MODEL}
     permission_app_category:
@@ -127,18 +140,17 @@ data:
         logo: /qbot/public/app-icon-classify.png
     cipher_config:
       default_version: 1
-      iv: hBb3Ls3edFBzYyrpQzTGSA==
+      iv: "hBb3Ls3edFBzYyrpQzTGSA=="
       versions:
-        1: Od3J9Ig47ztUpmdqfkRcAqXhqE7dlWHYLOFK/NDA+yU=
-        2: 1ofPtcXorwOy8r74H9DYO5ZMxoTFWdTZVf0bxv5zKqQ=
-        3: woEahOi+Bo6ejhBm2DqJL9wcVzQmoOx+lEE0DjYAaVo=
+        1: "Od3J9Ig47ztUpmdqfkRcAqXhqE7dlWHYLOFK/NDA+yU="
+        2: "1ofPtcXorwOy8r74H9DYO5ZMxoTFWdTZVf0bxv5zKqQ="
+        3: "woEahOi+Bo6ejhBm2DqJL9wcVzQmoOx+lEE0DjYAaVo="
     prompt_version:
       max_limit: 50
       max_version: 20
     model_uin_white: ${MODEL_UIN_WHITE}
     quota_model: ${QUOTA_MODEL}
     resource_config: ${RESOURCE_CONFIG}
-
     openclaw_config:
       default_name: ${OPENCLAW_DEFAULT_NAME}
       icon_url_regex: ${OPENCLAW_ICON_REGEX}
@@ -149,8 +161,8 @@ data:
         package_bundle_map: ${OPENCLAW_PACKAGE_BUNDLE_MAP}
       async_config: ${OPENCLAW_CREATE_ASYNC_CONFIG}
       credential:
-        secret_id: ""
-        secret_key: ""
+        secret_id: ''
+        secret_key: ''
       model_config: ${OPENCLAW_MODEL_CONFIG}
       channel_config: ${OPENCLAW_CHANNEL_CONFIG}
       skill_required_config: ${SKILL_REQUIRED_CONFIG}
@@ -158,187 +170,37 @@ data:
       wx_kf: ${OPENCLAW_WX_KF}
       watch_skill_status_max_seconds: 120
       skill_desc_max_length: 100
-
+      provider_guide_config: ${PROVIDER_GUIDE_CONFIG}
     api_key_config: ${API_KEY_CONFIG}
-
     adp_cloud:
       model_list_url: "https://api.adp.cloud.tencent.com/v1/model/list"
-
-
     connectivity_test:
-        default_max_tokens: 100
-  biz_en-US.json: |
-    {
-        "KeyModelConnectivityErr": "模型连通性错误:%s",
-        "KeyProviderAliasNameYoutu": "Tencent Youtu",
-        "KeyProviderAliasNameHunyuan": "Tencent Hunyuan",
-        "KeyProviderAliasNameQwen": "Qwen",
-        "KeyProviderAliasNameBaichuan": "Baichuan Intelligent",
-        "KeyProviderAliasNameZhipu": "Zhipu AI",
-        "KeyProviderAliasNameOpenAI": "OpenAI Compatible",
-        "KeyProviderAliasNameMoonshot": "Moonshot AI",
-        "KeyProviderAliasNameDeepSeek": "DeepSeek",
-        "KeyProviderAliasNameMinimax": "Minimax",
-        "KeyProviderAliasNameStepfun": "Stepfun",
-        "KeyProviderAliasNameVolcengine": "Volcengine",
-        "KeyProviderAliasNameTIONE": "Tencent Cloud TI-ONE",
-        "KeyProviderAliasNameYi": "01.AI",
-        "KeyProviderAliasNameOfficial": "OpenAI",
-        "KeyProviderAliasNameAnthropic": "ANTHROPIC\\C",
-        "KeyProviderAliasNameXAI": "xAI",
-        "KeyProviderAliasNameGemini": "Gemini",
-        "KeyProviderAliasNameADP": "ADP DocParsing Protocol",
-        "KeyProviderAliasNameAliyunFileParse": "AliYunFileParse",
-        "KeyProviderAliasNameTCADP": "Platform-Hosted Third-Party Models",
-        "KeyProviderDescHunyuan": "Tencent's self-developed general large-scale model has strong Chinese language comprehension, logical reasoning, and multimodal capabilities. Representative models include the Hunyuan Turbo series.",
-        "KeyProviderDescYoutu": "Focuses on cutting-edge AI technology research and industrial application, covering fields such as visual perception understanding, large language models, multimodal comprehension and generation, and computational acceleration.",
-        "KeyProviderDescQwen": "Tongyi Qianwen possesses multilingual and multimodal comprehension, logical reasoning, code generation, document processing, and audio-video understanding capabilities, while actively building an open-source ecosystem. Representative models include the Qwen series.",
-        "KeyProviderDescZhipu": "Originating from Tsinghua University, it is committed to developing next-generation cognitive intelligence general models. Its GLM series excels in reasoning, long-context processing, multilingual, and multimodal capabilities. Representative models include the GLM-4 series.",
-        "KeyProviderDescStepfun": "A multimodal AGI pioneer focusing on full-stack capabilities in vision, speech, and video, with outstanding performance in reasoning, coding, mathematics, and knowledge. Representative models include Step-2.",
-        "KeyProviderDescBaichuan": "Dedicated to building superior large model foundations. Its Baichuan series excels in long-text processing, multimodal understanding, mathematics, and coding capabilities. Representative models include the Baichuan4 series.",
-        "KeyProviderDescOpenAI": "Supports flexible integration of various custom or third-party large model services through compatibility with the OpenAI API protocol.",
-        "KeyProviderDescVolcengine": "An all-in-one large model service platform by Volcano Engine, offering full-process services including model training, inference, evaluation, and fine-tuning. Supports multimodal understanding, long-context windows, strong reasoning capabilities, and integrates various mainstream models like Doubao.",
-        "KeyProviderDescMoonshot": "Specializes in general artificial intelligence, with models supporting ultra-long contexts and possessing strong Agent capabilities along with multimodal comprehension and generation. Representative models include Kimi K2.",
-        "KeyProviderDescDeepSeek": "Focuses on fundamental general AI model and technology research, renowned for open-source, high performance, and exceptional reasoning capabilities. Representative models include DeepSeek-R1 (reasoning model) and DeepSeek-V3 (MoE architecture, balancing performance and cost-effectiveness).",
-        "KeyProviderDescMinimax": "A leading general AI technology company that independently develops multimodal large models, excelling in long-context processing, reasoning, coding, and multimodal comprehension and generation. Representative models include the M1 series.",
-        "KeyProviderDescTIONE": "Tencent Cloud's all-in-one machine learning platform for AI engineers, providing end-to-end development support from data ingestion, model training, model management to model serving. Supports multiple training methods and algorithm frameworks with a built-in large model library.",
-        "KeyProviderDescYi": "Founded by Dr. Kai-Fu Lee, its Yi series excels in coding, mathematics, reasoning, and instruction-following capabilities, achieving outstanding results in global open-source evaluations. Representative models include Yi-Lightning.",
-        "KeyProviderDescOfficial": "Models provided by OpenAI, such as GPT-4, GPT-5, and others.",
-        "KeyProviderDescAnthropic": "The Claude models provided by Anthropic.",
-        "KeyProviderDescXAI": "The LLMs provided by xAI, where xAI is a company dedicated to developing artificial intelligence (AI) to accelerate human scientific discovery.",
-        "KeyProviderDescGemini": "The Gemini models provided by Google.",
-        "KeyProviderDescADPDocParsing": "The doc parsing protocol defined by ADP. Users can access document parsing service in accordance with the protocol of ADP",
-        "KeyProviderDescAliyunFileParse": "The FileParse Atomic Server of Alibaba cloud.",
-        "KeyModelDesc_sn-edu-13b": "Specialized training on educational data for English speaking practice and lesson planning scenarios. Supports textbook dialogues, difficulty settings, grammar analysis, lesson generation/polishing, and exercise creation.",
-        "KeyModelDesc_hunyuan": "Trillion-parameter MOE-32k long-context model with advanced math capabilities, function call support, and optimizations for multilingual translation, finance, law, and healthcare.",
-        "KeyModelDesc_finance-13b": "Pre-trained and fine-tuned on financial data. Expert in financial Q&A for investment knowledge and product inquiries.",
-        "KeyModelDesc_medical-6b": "Enhanced with medical data. Specializes in medical Q&A, entity extraction, dialogue summarization, and medical record generation.",
-        "KeyModelDesc_sn-edu-70b": "Trained on educational data for scenarios requiring natural English dialogue, task compliance, and rich lesson plan generation.",
-        "KeyModelDesc_hunyuan-turbo": "Novel MoE architecture delivers faster inference and stronger performance compared to Hunyuan Advanced.",
-        "KeyModelDesc_hunyuan-13B": "Improved routing strategy with better load balancing and expert diversity. Cost-effective with long-text processing capabilities.",
-        "KeyModelDesc_function-call-pro": "Capable of task planning, tool selection/execution, and error correction for complex problem-solving.",
-        "KeyModelDesc_cs-normal-70b": "Fine-tuned for enterprise Q&A. Excels at multimodal responses, math calculations, logical reasoning, and table-based Q&A.",
-        "KeyModelDesc_hunyuan-standard-256K": "Optimized routing with 256K context length. Achieves 99.9% needle-in-haystack accuracy with extended input capacity.",
-        "KeyModelDesc_hunyuan-role": "Officially fine-tuned role-playing model with enhanced performance for character simulation scenarios.",
-        "KeyModelDesc_HY-Vision1.5-Instruct": "Comprehensive and Significant Upgrade with Enhanced Performance Across Image Recognition, Creation, and Reasoning. Supports Instant Responses with Image Uploads, More Accurate Entity Recognition, and More Efficient Problem Solving from Visual Input.",
-        "KeyModelDesc_workflow-pro": "Supports combined Q&A, document processing, and workflows with improved intent recognition and custom configuration. May increase response time.",
-        "KeyModelDesc_lke-deepseek-v3-function-call": "Latest DeepSeek-V3 with MoE and MLA architecture. Enhanced reasoning, code generation, and Chinese understanding.",
-        "KeyModelDesc_lke-deepseek-v3-0324": "Latest DeepSeek-V3 with MoE and MLA technology. Upgraded reasoning, coding, and Chinese semantic comprehension.",
-        "KeyModelDesc_lke-deepseek-r1": "RL-driven reasoning model comparable to OpenAI-o1 in math, code, and reasoning tasks. Powers DeepSeek's deep thinking mode.",
-        "KeyModelDesc_lke-deepseek-r1-0528": "Enhanced DeepSeek-R1 with improved instruction understanding, copywriting, programming, and reasoning. Supports long-duration complex tasks.",
-        "KeyModelDesc_lke-deepseek-v3": "671B parameter MoE model with MLA architecture and optimized load balancing for efficient training/inference.",
-        "KeyModelDesc_lke-deepseek-r1-0528-agent": "Latest DeepSeek-R1 agent with enhanced constraint understanding, programming, and reasoning for complex tasks.",
-        "KeyModelDesc_lke-deepseek-v3-agent": "DeepSeek-V3 agent with MoE and MLA architecture. Upgraded reasoning, coding, and Chinese understanding.",
-        "KeyModelDesc_cs-normal": "Fine-tuned for enterprise Q&A with multimodal capabilities. Cost-effective for balanced performance and price.",
-        "KeyModelDesc_lke-deepseek-v3.1": "Hybrid reasoning architecture for faster responses. Significantly improved performance on multi-step reasoning and expert-level tasks.",
-        "KeyModelDesc_lke-deepseek-v3.1-function-call": "Hybrid reasoning enables efficient multi-step problem-solving with enhanced performance on complex searches and multidisciplinary tasks.",
-        "KeyModelDesc_sn-large-multi-language-v0.2.5": "General-purpose vector retrieval model",
-        "KeyModelDesc_sn-llm-embedding-2b-v0.2.2": "LLM-enhanced vector retrieval with higher accuracy but increased latency",
-        "KeyModelDesc_sn-reranker-large-v0.4": "General text reranking model",
-        "KeyModelDesc_sn-llm-reranker-2b-v0.2": "LLM-enhanced reranking with improved accuracy and higher latency",
-        "KeyModelDesc_cs-normal-70b-1.1": "Enterprise Q&A model specializing in multimodal responses, math/reasoning, and table-based Q&A for complex scenarios.",
-        "KeyModelDesc_hunyuan-turbos": "The latest version of Hunyuan's flagship large model, featuring enhanced reasoning capabilities and an improved user experience.",
-        "KeyModelDesc_hunyuan-t1": "The industry's first ultra-large-scale Hybrid-Transformer-Mamba inference model, expanding reasoning capabilities with ultra-fast decoding speed and further alignment with human preferences.",
-        "KeyModelDesc_hunyuan-2.0-thinking-251109": "Suitable for advanced reasoning tasks, such as complex mathematical and logical computation, code generation, scientific problem solving, and scenarios requiring strong instruction adherence.",
-        "KeyModelDesc_hunyuan-2.0-instruct-251111": "Suitable for general conversational tasks, including daily multi-turn dialogue, role-playing, creative writing, and scenarios demanding high-level contextual understanding.",
-        "KeyModelDesc_lke-deepseek-v3.1-terminus": "Adopting a hybrid reasoning architecture, it delivers higher reasoning efficiency and faster responses. Performance has been significantly improved on complex multi-step reasoning and cross-disciplinary expert-level tasks. Output stability has also been enhanced compared to the previous version.",
-        "KeyModelDesc_zhipuint-glm-5": "Zhipu's latest flagship model can complete large-scale tasks end-to-end. It excels in complex systems engineering and long-horizon Agent tasks.",
-        "KeyModelDesc_tcadp-glm-5": "Zhipu's latest flagship model, capable of end-to-end completion of large-scale tasks, excelling in complex system engineering and long-range Agent tasks.",
-        "KeyModelDesc_tcadp-kimi-k2.5": "Kimi K2.5 supports text and visual input, combining conversational and Agent task capabilities. It supports switching between thinking and non-thinking modes, suitable for complex reasoning, code generation, and multimodal understanding scenarios.",
-        "KeyModelDesc_tcadp-minimax-m2.5": "Significantly enhanced multilingual programming capabilities with higher decision-making maturity in handling Agentic tasks. Achieved remarkable capability improvements in advanced workspace scenarios such as Word, PPT, Excel financial modeling, and other high-level applications.",
-        "KeyModelTagVectorModel": "VectorModel",
-        "KeyModelTagRerankingModel": "RerankingModel",
-        "KeyModelTagSpeechRecognition": "SpeechRecognition",
-        "KeyModelTagSpeechSynthesis": "SpeechSynthesis",
-        "KeyModelTagTextReasoning": "TextReasoning",
-        "KeyModelTagToolCalling": "ToolCalling",
-        "KeyModelTagAudioUnderstanding": "AudioUnderstanding",
-        "KeyModelTagVideoUnderstanding": "VideoUnderstanding",
-        "KeyModelTagImageUnderstanding": "ImageUnderstanding",
-        "KeyModelTagImageGeneration": "ImageGeneration",
-        "KeyModelTagDeepThinking": "DeepThinking",
-        "KeyModelTagOmniModal": "OmniModal",
-        "KeyModelTagFileParse": "FileParse",
-        "KeyPromptVersionTypeStand": "Role Instruction",
-        "KeyPromptVersionTypeAgent": "Agent Prompt",
-        "KeyPromptVersionTypeWorkflowSys": "Workflow Node System Prompt",
-        "KeyPromptVersionTypeWorkflowCust": "Workflow Node User Prompt",
-        "PromptTemplateOfficialNickName": "ADP",
-        "PromptTemplateModeGeneral": "General",
-        "PromptTemplateModeStandard": "Standard",
-        "PromptTemplateModeMultiAgent": "Multi-Agent",
-        "PromptTemplateModeWorkflow": "Workflow",
-        "PromptTemplateModeEvaluation": "Evaluation",
-        "PromptTemplateModeAppRuntime": "App Runtime Model",
-        "PromptTemplateModeKBProcess": "Knowledge Process Model",
-        "PromptTemplateTypeGeneral": "General",
-        "PromptTemplateTypeStandard": "Standard",
-        "PromptTemplateTypeMultiAgent": "Multi-Agent",
-        "PromptTemplateTypeLLMNode": "LLM Node",
-        "PromptTemplateTypeLLMIntentNode": "LLM Intent Node",
-        "PromptTemplateTypeLLMKnowledgeQANode": "LLM Knowledge QA Node",
-        "PromptTemplateTypeLLMLabelRetrievalNode": "LLM Label Retrieval Node",
-        "PromptTemplateTypeArgumentRetrievalNode": "Argument Retrieval Node",
-        "PromptTemplateTypeOptionsNode": "Options Node",
-        "PromptTemplateTypeBaselineEvaluation": "Baseline Evaluation",
-        "PromptTemplateTypeComparisonEvaluation": "Comparison Evaluation",
-        "PromptTemplateTypeMultimodalQAModel": "Multimodal QA Model",
-        "PromptTemplateTypeQAPairGeneration": "QA Pair Generation Model",
-        "PromptTemplateTypeMultimodalReading": "Multimodal Reading Model",
-        "PromptTemplateRecordSmartCategory": "SmartCategory",
-        "AppTemplateSecondCategoryEducation": "Education",
-        "AppTemplateSecondCategoryFinance": "Finance",
-        "AppTemplateSecondCategoryGovernment": "Government",
-        "AppTemplateSecondCategoryLaw": "Law",
-        "AppTemplateSecondCategoryEntertainment": "Entertainment",
-        "AppTemplateSecondCategoryRetail": "Retail",
-        "AppTemplateSecondCategoryMedical": "Medical",
-        "AppTemplateSecondCategoryInternet": "Internet",
-        "AppTemplateSecondCategoryMedia": "Media",
-        "AppTemplateSecondCategorySales": "Sales",
-        "AppTemplateSecondCategoryMarket": "Market",
-        "AppTemplateSecondCategoryManufacture": "Manufacture",
-        "AppTemplateSecondCategoryCommon": "Common",
-        "KeyPromptTemplateEditTitle": "Prompt template \"%s\" title edited to \"%s\"",
-        "KeyPromptTemplateEditDescription": "Prompt template \"%s\" description edited to \"%s\"",
-        "KeyPromptTemplateEditContent": "Prompt template \"%s\" prompt content edited to \"%s\"",
-        "KeyPromptTemplateEditCategoryKey": "Prompt template \"%s\" prompt type edited to %s",
-        "KeyPromptTemplateAddVariable": "Prompt template \"%s\" template variable added: \"%s\"",
-        "KeyPromptTemplateDeleteVariable": "Prompt template \"%s\" template variable removed: \"%s\"",
-        "KeyPromptTemplateAddLabel": "Prompt template \"%s\" label added: \"%s\"",
-        "KeyPromptTemplateDeleteLabel": "Prompt template \"%s\" label removed: \"%s\"",
-        "KeySpaceResource": "Space Resource Management",
-        "KeySpaceResourceQpm": "Space name \"%s\" call frequency (QPM) changed from %s to %s",
-        "KeySpaceResourceTpm": "Space name \"%s\" tokens processed per minute (TPM) changed from %s to %s",
-        "KeyAppResource": "Application Resource Management",
-        "KeyAppResourceQpm": "Application name \"%s\" call frequency (QPM) changed from %s to %s",
-        "KeyAppResourceTpm": "Application name \"%s\" tokens processed per minute (TPM) changed from %s to %s",
-        "KeyResourceNotSet": "not set",
-        "KeyAppResourceSyncTimeout": "Application name \"%s\" workflow synchronous call timeout changed from %d seconds to %d seconds",
-        "KeyAppResourceAsyncTimeout": "Application name \"%s\" workflow asynchronous call timeout changed from %d seconds to %d seconds",
-        "KeyOpenClawDeploying": "ClawPro is deploying",
-        "KeyOpenClawDeployingContent": "%s Completed in about 3 minutes",
-        "KeyOpenClawDeploymentSuccess": "ClawPro deployment completed",
-        "KeyOpenClawDeploymentSuccessContent": "%s Deployment completed",
-        "KeyOpenClawExpireSoon": "[%s] Expiring soon",
-        "KeyOpenClawExpireSoonContent": "[%s] Expiring soon, Will be frozen for 7 days and then deleted after expiration. Enable monthly subscription to continue using",
-        "KeyOpenClawExpired": "[%s] has expired",
-        "KeyOpenClawExpiredContent": "[%s] has expired, please renew to continue using",
-        "KeyOpenClawRenewFailure": "[%s] Monthly PU deduction failed",
-        "KeyOpenClawRenewFailureContent": "[%s] Monthly PU deduction failed, Will be deleted after 7 days of freezing. Reason: No available PU resources. Please act promptly",
-        "KeyOpenClawExpireDelete": "[%s] Deleted after 7 days of expiry",
-        "KeyOpenClawExpireDeleteContent": "[%s] Deleted after 7 days of expiry",
-        "KeyOpenClawAuditModifyName": "%s-Renamed to %s",
-        "KeyOpenClawAuditOpenAutoRenew": "%s-Enable monthly subscription",
-        "KeyOpenClawAuditCloseAutoRenew": "%s-Disable monthly subscription",
-        "KeyOpenClawAuditReset": "%s-Reinstall system",
-        "KeyOpenClawAuditRestart": "%s-Restart",
-        "KeyOpenClawAuditSetChannel": "%s-Set channel",
-        "KeyOpenClawAuditSetModel": "%s-Set Model",
-        "KeyOpenClawSkillCreate": "Please check if skill: %s is already installed. If not, use %s to install skill: %s at the global level",
-        "KeyOpenClawSkillUpdate": "Please check if skill: %s is already installed. If it is, please delete the old version globally first, then use %s to reinstall skill: %s at the global level",
-        "KeyOpenClawSkillDelete": "Please check if skill: %s is already installed. If it is, delete this skill at the global level"
-    }
+      # RESOLVE: keep-private
+      default_max_tokens: 100
+      uin_max_tokens: ${CONNECTIVITY_TEST_UIN_MAX_TOKENS}
+    ioa_model_black: ${IOA_MODEL_BLACK}
+    ioa_model_black_mapping: ${IOA_MODEL_BLACK_MAPPING}
+    ioa_model_black_scene_mapping: ${IOA_MODEL_BLACK_SCENE_MAPPING}
+    ioa_model_black_fallback: ${IOA_MODEL_BLACK_FALLBACK}
+    api_key_access_log_config: ${API_KEY_ACCESS_LOG_CONFIG}
+    gray_model_uin_white: ${GRAY_MODEL_UIN_WHITE}
+    model_package_types: ${MODEL_PACKAGE_TYPES}
+    model_providers: ${MODEL_PROVIDERS}
+    corp_assistant_var: ${CORP_ASSISTANT_VAR}
+    overseas_model_whitelist:
+      models: ${OVERSEAS_MODELS}
+      whitelist_uins: ${OVERSEAS_MODEL_WHITELIST_UINS}
+
+
+    # =============================================================================
+    # 配额签名配置（专有云 TKE 环境生效）
+    # 每个客户默认相同，如需定制配额请修改以下值
+    # =============================================================================
+    quota:
+      # RSA 公钥（PEM 格式），用于验证签名 Token
+      public_key: ${QUOTA_PUBLIC_KEY}
+      # 签名 Token（JWT RS256，对应默认配额: space=500, app=5000, user=2000）
+      token: ${QUOTA_SIGNED_TOKEN}
   biz_zh-CN.json: |
     {
         "KeyModelConnectivityErr": "模型连通性错误:%s",
@@ -356,7 +218,7 @@ data:
         "KeyProviderAliasNameTIONE": "腾讯云TI-ONE",
         "KeyProviderAliasNameYi": "零一万物",
         "KeyProviderAliasNameOfficial": "OpenAI",
-        "KeyProviderAliasNameAnthropic": "ANTHROPIC\\C",
+        "KeyProviderAliasNameAnthropic": "ANTHROPIC",
         "KeyProviderAliasNameXAI": "xAI",
         "KeyProviderAliasNameGemini": "Gemini",
         "KeyProviderAliasNameAliyunFileParse": "阿里云文档解析",
@@ -418,7 +280,7 @@ data:
         "KeyModelDesc_tcadp-glm-5": "智谱最新旗舰模型，可端到端完成大型任务，擅长复杂系统工程与长程 Agent 任务",
         "KeyModelDesc_tcadp-kimi-k2.5": "Kimi K2.5 支持文本与视觉输入，兼具对话与 Agent 任务能力，支持思考与非思考模式切换，适用于复杂推理、代码生成及多模态理解场景。",
         "KeyModelDesc_tcadp-minimax-m2.5": "显著增强多语言编程能力，在处理 Agentic 任务时具备更高的决策成熟度，在 Word、PPT、Excel 金融建模等 workspace 高阶场景中取得了显著的能力提升。",
-        "KeyModelTagVectorModel": "向量模型",
+        "KeyModelTagVectorModel": "文本向量",
         "KeyModelTagRerankingModel": "排序模型",
         "KeyModelTagSpeechRecognition": "语音识别",
         "KeyModelTagSpeechSynthesis": "语音合成",
@@ -509,138 +371,278 @@ data:
         "KeyOpenClawAuditSetModel": "%s-模型设置",
         "KeyOpenClawSkillCreate": "请先检查是否已安装skill: %s，若未安装，请使用%s全局层面安装skill: %s",
         "KeyOpenClawSkillUpdate": "请先检查是否已安装skill: %s，如果安装，请先全局删除旧版本，然后使用%s全局层面重新安装skill: %s",
-        "KeyOpenClawSkillDelete": "请先检查是否已安装skill: %s，如果安装，全局层面删除这个skill"
+        "KeyOpenClawSkillDelete": "请先检查是否已安装skill: %s，如果安装，全局层面删除这个skill",
+        "KeyCorpAssistantChannelRemote": "远程终端渠道",
+        "KeyCorpAssistantChannelWecom": "企业微信智能机器人",
+        "KeyCorpAssistantChannelWeixin": "微信 Claw Bot",
+        "KeyLicenseExpireSubject": "license授权即将过期",
+        "KeyLicenseExpireWarning": "当前授权仅剩 %d 天，即将过期，过期后ADP产品无法使用，建议尽快更新license授权",
+        "KeyLicenseExpired": "License 授权已到期，请及时续期",
+        "KeyModelAlias_TCADP-glm52": "智谱GLM-5.2",
+        "KeyModelAlias_deepseek-deepseek-v4-flash-202605": "DeepSeek-V4-Flash（原厂）",
+        "KeyModelAlias_deepseek-deepseek-v4-pro-202606": "DeepSeek-V4-Pro（原厂）",
+        "KeyModelDesc_TCADP-glm52": "GLM-5.2 是智谱最新旗舰模型，支持1M上下文及思考长度控制，在coding及agent场景表现优异",
+        "KeyModelDesc_deepseek-deepseek-v4-flash": "284B总参数，13B激活参数轻量化MoE高效模型，保留高阶模型核心通用能力的同时实现更轻量的参数与更快的响应。",
+        "KeyModelDesc_deepseek-deepseek-v4-flash-202605": "由 DeepSeek 直接提供的 DeepSeek V4 Flash 模型服务，该模型不适用《腾讯云智能体开发平台服务等级协议》的约定，ADP不对服务可用率进行承诺。使用该模型即视为您已知晓并同意遵守 DeepSeek 的服务协议，请您在使用前务必仔细阅读其中使用规范、数据处理规则、用户责任义务等相关内容（https://cdn.deepseek.com/policies/zh-CN/deepseek-terms-of-use.html），如不接受上述内容，请您立即停止使用。",
+        "KeyModelDesc_deepseek-deepseek-v4-pro": "1.6T总参数，49B激活参数MoE混合专家旗舰模型，在百万级超长上下文下精准驾驭复杂编程、深度推理与高精度知识问答等全链路高难度任务。",
+        "KeyModelDesc_deepseek-deepseek-v4-pro-202606": "由 DeepSeek 直接提供的 DeepSeek V4 Pro 模型服务，该模型不适用《腾讯云智能体开发平台服务等级协议》的约定，ADP不对服务可用率进行承诺。使用该模型即视为您已知晓并同意遵守 DeepSeek 的服务协议，请您在使用前务必仔细阅读其中使用规范、数据处理规则、用户责任义务等相关内容（https://cdn.deepseek.com/policies/zh-CN/deepseek-terms-of-use.html），如不接受上述内容，请您立即停止使用。",
+        "KeyModelDesc_hunyuan-hy3-preview": "采用高能效 MoE 架构，支持从对话智能切换至AGENT智能，灵活适配从日常高频交互到复杂长程工程任务的全场景需求。",
+        "KeyModelDesc_hunyuan-role-latest": "混元最新版角色扮演模型，混元官方精调训练推出的角色扮演模型，基于混元模型结合角色扮演场景数据集进行增训，在角色扮演场景具有更好的基础效果。",
+        "KeyModelDesc_hy-vision-2.0-instruct": "快思考模型，适用通用图生文场景。相比上代模型在基础感知、内容识别、知识、OCR、STEM、推理、图表理解等维度有明显提升。",
+        "KeyModelDesc_tcadp-Gemini-3.0-flash": "Google 推出的低延迟推理模型，兼顾响应速度与推理质量，适用于通用对话、智能助手及实时交互任务",
+        "KeyModelDesc_tcadp-claude-opus-4.6": "Anthropic 最强推理模型,擅长复杂分析和长文本理解",
+        "KeyModelDesc_tcadp-gemini-3.1-flash-lite": "Google 轻量级快速响应模型,适合对话和快速推理",
+        "KeyModelDesc_tcadp-gemini-3.1-pro": "Google 最新旗舰多模态模型,在推理、编码、图像理解等方面表现卓越",
+        "KeyModelDesc_tcadp-glm-5v-turbo": "GLM-5V-Turbo 是智谱首个多模态 Coding 基座模型，面向视觉编程任务打造。能够原生处理图片、视频、文本等多模态输入，同时擅长长程规划、复杂编程和动作执行；深度适配 Agent 工作流，能够与 Claude Code、OpenClaw 等 Agent 深度协同。",
+        "KeyModelDesc_tcadp-glm-5.0-turbo": "面向真实 Agent 长链路任务深度优化的模型，重点提升了复杂指令拆解、工具调用、定时持续执行与长任务稳定性。",
+        "KeyModelDesc_tcadp-glm-5.1": "智谱最新旗舰基座模型，擅长复杂逻辑推理、长程任务执行与代码生成，支持深度思考模式与 Function Call，可用于高阶 Agent 任务编排与 Agentic Coding 场景。",
+        "KeyModelDesc_tcadp-gpt-5.3-codex": "OpenAI 专为代码生成优化的模型,擅长编程任务",
+        "KeyModelDesc_tcadp-gpt-5.4": "OpenAI 最新旗舰模型,具备强大的推理和创作能力",
+        "KeyModelDesc_tcadp-gpt-5.5": "OpenAI 迄今最智能的模型，速度更快、功能更强，专为处理编程、研究以及跨工具数据分析等复杂任务而打造。",
+        "KeyModelDesc_tcadp-kimi-k2.6": "支持图片、文本和视频输入的多模态模型，在长程代码任务中表现突出，面对不同编程语言和任务场景均具备可靠的泛化能力。",
+        "KeyModelDesc_tcadp-kimi-k3": "Kimi K3是月之暗面（Moonshot）发布的开源SOTA旗舰大模型，基于KDA混合线性注意力机制（Kimi Delta Attention）与注意力残差技术构建，原生支持视觉理解（视频/图片/文本输入），拥有100万token上下文窗口，支持工具调用、结构化输出与深度思考。",
+        "KeyModelDesc_tcadp-minimax-m2.7": "MiniMax 推出的自我进化大语言模型，具备卓越的软件工程能力和专业办公能力，支持复杂 Agent 交互与端到端项目交付。",
+        "KeyModelDesc_tcadp-qwen3.5-flash": "Qwen3.5原生视觉语言系列Flash模型，基于混合架构设计，融合了线性注意力机制与稀疏混合专家模型，实现了更高的推理效率。模型效果在纯文本与多模态方面相较3系列均实现飞跃式进步；响应速度快，兼具推理速度和性能",
+        "KeyModelDesc_tcadp-qwen3.5-plus": "Qwen3.5原生视觉语言系列Plus模型，基于混合架构设计，融合了线性注意力机制与稀疏混合专家模型，实现了更高的推理效率。",
+        "KeyModelDesc_tongyi-embedding-vision-plus": "由阿里云通义实验室推出的通用多模态向量化模型，能够将文本和图片转换为高质量的语义向量，适用于跨模态检索、语义相似度计算、内容分类与聚类等场景。",
+        "KeyModelDesc_yt-vita": "VITA是一款多模态理解模型，支持对视频和图片内容进行分析，可用于视频结构解析、图像目标检测等场景",
+        "KeyModelTagFree": "限时免费",
+        "KeyModelTagFreeTips": "限时免费",
+        "KeyModelTagImageVector": "图片向量",
+        "KeyModelTagNoSLA": "无SLA",
+        "KeyModelTagNoSLATips": "由 DeepSeek 直接提供的 {model_name} 模型服务，该模型不适用《腾讯云智能体开发平台服务等级协议》的约定，ADP不对服务可用率进行承诺。使用该模型即视为您已知晓并同意遵守 DeepSeek 的服务协议，请您在使用前务必仔细阅读其中使用规范、数据处理规则、用户责任义务等相关内容（https://cdn.deepseek.com/policies/zh-CN/deepseek-terms-of-use.html），如不接受上述内容，请您立即停止使用。",
+        "KeyModelTagOfficial": "原厂直供",
+        "KeyModelTagOfficialTips": "由 DeepSeek 直接提供的 {model_name} 模型服务，该模型不适用《腾讯云智能体开发平台服务等级协议》的约定，ADP不对服务可用率进行承诺。使用该模型即视为您已知晓并同意遵守 DeepSeek 的服务协议，请您在使用前务必仔细阅读其中使用规范、数据处理规则、用户责任义务等相关内容（https://cdn.deepseek.com/policies/zh-CN/deepseek-terms-of-use.html），如不接受上述内容，请您立即停止使用。",
+        "KeyModelTagOffline": "即将下线",
+        "KeyModelTagOfflineTips": "【{model_name}】将于 {offline_date} 停止服务，届时将无法正常使用，请尽快切换模型后重新发布",
+        "KeyOpenClawRenewSoon": "【%s】即将扣费",
+        "KeyOpenClawRenewSoonContent": "【%s】已开启按月订阅，将于7天后扣除下月资源，请确保PU资源充足，以免订阅失败导致服务被冻结",
+        "KeyPromptTemplateLabelArgExtractNode": "参数提取节点",
+        "KeyPromptTemplateLabelArt": "艺术",
+        "KeyPromptTemplateLabelBaselineEval": "基准评测",
+        "KeyPromptTemplateLabelBusinessTravel": "商旅出行",
+        "KeyPromptTemplateLabelCodeProgramming": "代码编程",
+        "KeyPromptTemplateLabelComparisonEval": "对比评测",
+        "KeyPromptTemplateLabelContentPolishing": "内容润色",
+        "KeyPromptTemplateLabelDataAnalysis": "数据分析",
+        "KeyPromptTemplateLabelDataProcessing": "数据处理",
+        "KeyPromptTemplateLabelEcommerce": "电商",
+        "KeyPromptTemplateLabelEcommerceRetail": "电商/零售",
+        "KeyPromptTemplateLabelEducation": "教育",
+        "KeyPromptTemplateLabelFinance": "金融",
+        "KeyPromptTemplateLabelGSBEval": "GSB评测",
+        "KeyPromptTemplateLabelHumanResources": "人力资源",
+        "KeyPromptTemplateLabelIntelligentCS": "智能客服",
+        "KeyPromptTemplateLabelIntentRecogNode": "意图识别节点",
+        "KeyPromptTemplateLabelIntentRecognition": "意图识别",
+        "KeyPromptTemplateLabelKnowledgeQA": "知识库问答",
+        "KeyPromptTemplateLabelLLMKnowledgeQANode": "大模型知识问答节点",
+        "KeyPromptTemplateLabelLLMLabelExtractNode": "大模型标签提取节点",
+        "KeyPromptTemplateLabelLLMNode": "大模型节点",
+        "KeyPromptTemplateLabelLabelExtraction": "标签提取",
+        "KeyPromptTemplateLabelLanguageDetection": "语种识别",
+        "KeyPromptTemplateLabelLaw": "法律",
+        "KeyPromptTemplateLabelMarketing": "市场营销",
+        "KeyPromptTemplateLabelMarketingMedia": "营销/传媒",
+        "KeyPromptTemplateLabelMathComputation": "数学计算",
+        "KeyPromptTemplateLabelMedia": "传媒",
+        "KeyPromptTemplateLabelMedicalHealth": "医疗/健康",
+        "KeyPromptTemplateLabelMultiAgentCollab": "多Agent协同",
+        "KeyPromptTemplateLabelMultiAgentMode": "Multi-Agent模式",
+        "KeyPromptTemplateLabelOptionsNode": "选项卡节点",
+        "KeyPromptTemplateLabelParamNormalization": "参数取值归一化",
+        "KeyPromptTemplateLabelRetail": "零售",
+        "KeyPromptTemplateLabelRolePlay": "角色扮演",
+        "KeyPromptTemplateLabelRolePlayDetailed": "角色扮演详细版",
+        "KeyPromptTemplateLabelSecurityAudit": "安全审核",
+        "KeyPromptTemplateLabelStandardMode": "标准模式",
+        "KeyPromptTemplateLabelStructuredGen": "结构化生成",
+        "KeyPromptTemplateLabelTaskExecution": "任务执行",
+        "KeyPromptTemplateLabelTextClassification": "文本分类",
+        "KeyPromptTemplateLabelTextCreation": "文本创作",
+        "KeyPromptTemplateLabelTextUnderstanding": "文本理解",
+        "KeyPromptTemplateLabelToolCalling": "工具调用",
+        "KeyPromptTemplateLabelTranslation": "翻译",
+        "KeyPromptTemplateLabelWorkflowAgent": "工作流Agent",
+        "KeyPromptTemplateLabelWorkflowScenario": "工作流场景",
+        "KeyProviderAliasNameTencentTokenPlan": "腾讯云大模型Token Plan",
+        "KeyProviderDescTCADP": "平台接入多厂商模型，开箱即用",
+        "KeyProviderDescTencentTokenPlan": "腾讯云大模型 Token Plan 是面向龙虾和编程场景设计的专属订阅套餐，覆盖腾讯混元、MiniMax、GLM、Kimi 等国产主流模型，兼容热门龙虾工具和主流编程工具。",
+        "KeyTokenPlanGuide": "腾讯云Token Plan",
+        "KeyTokenPlanGuideContent": "接入腾讯云Token Plan，获得更强大的模型算力",
+        "PromptTemplateModeClaw": "Claw模式",
+        "PromptTemplateTypeClaw": "Claw模式"
     }
-  errors_en-US.json: |
-    {
-      "ErrSystem": "System error",
-      "ErrParams": "Parameter error, please retry",
-      "ErrOperateDoing": "Request processing, please wait",
-      "ErrCorpNotFound": "Enterprise does not exist",
-      "ErrPermissionDenied": "Insufficient permissions",
-      "ErrAppNotFound": "Application does not exist",
-      "ErrModelDebugNotFound": "Model debugging information does not exist",
-      "ErrModelProviderNotFound": "Model provider does not exist",
-      "ErrModelProviderCredentialsInvalid": "Model provider key configuration information is incorrect",
-      "ErrModelProviderNoNeedCredentials": "No configuration required for the model provider",
-      "ErrModelProviderAssociated": "The model information of the model provider is associated with applications, knowledge bases or ClawPro",
-      "ErrModelProviderConfigMissing": "Model provider is not configured",
-      "ErrProviderModelImmutable": "The models of the model provider are not allowed to be enabled or disabled",
-      "ErrProviderModelAssociated": "The model is associated with applications, knowledge bases, or ClawPro and cannot be disabled",
-      "ErrProviderModelNotFound": "The model of the model provider does not exist",
-      "ErrModelVectorDimension": "The model does not support this vector dimension temporarily",
-      "ErrModelConnectivity": "Model connectivity exception, please check if the model, call address, and key are correct",
-      "ErrModelProviderExist": "Model provider already exists",
-      "ErrProviderModelExist": "The model of the model provider already exists",
-      "ErrGetModelProvider": "Failed to get model provider information",
-      "ErrGetCorpModelProvider": "Failed to get enterprise-associated model provider",
-      "ErrCreateCorpModelProvider": "Failed to associate enterprise with model provider",
-      "ErrGetCorpProviderModel": "Failed to get enterprise-associated model information",
-      "ErrModifyProviderModelStatus": "Failed to modify provider model status",
-      "ErrGetProviderMode": "Failed to get model information",
-      "ErrCreateCorpProviderModel": "Failed to add enterprise-associated provider model information",
-      "ErrRegisterTioneModel": "Failed to register model information in Tione",
-      "ErrGetModelAssociatedInfo": "Failed to get model-associated information",
-      "ErrTioneProviderAuth": "Tione provider authorization failed",
-      "ErrDeleteCorpModelProvider": "Failed to delete enterprise-associated model provider",
-      "ErrNotFoundModel": "Model configuration not found",
-      "ErrCreateModelDebug": "Failed to create model debugging information",
-      "ErrDeleteModelDebug": "Failed to delete model debugging information",
-      "ErrGetModelDebug": "Failed to get model debugging information",
-      "ErrModelIDIsEmpty": "Model ID is empty",
-      "ErrModelLength": "Input length limit must be less than the model's context length limit",
-      "ErrModelCallMethod": "Model call method configuration error, please check the field's help configuration rules",
-      "ErrNotIsCustom": "Not a custom provider",
-      "ErrRegisterModel": "Failed to register model information",
-      "ErrGetProviderModelCacheOfAdp": "Failed to get model cache",
-      "ErrModelNameExist": "Model name already exists",
-      "ErrCreateProviderModel": "Failed to create enterprise-associated provider model information",
-      "ErrModifyCustomModel": "Failed to modify custom model",
-      "ErrDeleteCorpProviderModel": "Failed to delete enterprise-associated provider model information",
-      "ErrDeleteDeleteProviderModel": "Failed to delete enterprise-associated provider model information",
-      "ErrGetCorpByUin": "Failed to get enterprise information",
-      "ErrGetModelList": "Failed to get model list",
-      "ErrGetModelStatus": "Failed to get model billing status",
-      "ErrModelProviderHasEnabledModels": "The model provider has enabled models. Please disable them before deleting.",
-      "ErrGetPromptTemplateFavorite": "Failed to get favorite templates",
-      "ErrGetPromptTemplate": "Failed to get prompt templates",
-      "ErrMsgPromptTemplateExist": "Title already exists",
-      "ErrGetPromptTemplateLabel": "Failed to get prompt template labels",
-      "ErrCreatePromptTemplate": "Failed to create custom prompt template",
-      "ErrModifyPromptTemplate": "Failed to modify custom prompt template",
-      "ErrDeletePromptTemplate": "Failed to delete custom prompt template",
-      "ErrCreatePromptTemplateFavorite": "Failed to favorite prompt template",
-      "ErrDeletePromptTemplateFavorite": "Failed to unfavorite prompt template",
-      "ErrCreatePromptTemplateLabel": "Failed to create prompt template label",
-      "ErrDeletePromptTemplateLabel": "Failed to delete prompt template label",
-      "ErrExpNoManagedAccountIDs": "Experience center manager account ID is not configured",
-      "ErrGetDisplayDocs": "Failed to get the list of publicly displayed documents for the experience application",
-      "ErrDescribeExpInfo": "Failed to get experience application details",
-      "ErrModifyExpInfo": "Failed to modify application template data",
-      "ErrGetExperienceApps": "Failed to get experience application list",
-      "ErrGetBilling": "Error getting billing items",
-      "ErrAppNotSupportModelList": "Corresponding model list not found for the application",
-      "ErrGetPromptVersion": "Failed to query prompt version",
-      "ErrGetPromptVersionEmpty": "This prompt version does not exist",
-      "ErrCreatePromptVersion": "Failed to create prompt version",
-      "ErrGetPromptMaxVersion": "Failed to get the maximum prompt version",
-      "ErrPromptVersionLimit": "Prompt version count has reached the limit",
-      "ErrQuotaModel": "Third-party model usage is not allowed under this plan",
-      "ErrResourceNotFound": "Resource entity not found",
-      "ErrGetResource": "Failed to retrieve resource entity",
-      "ErrGetResourceRule": "Failed to retrieve resource rule",
-      "ErrResourceRuleOverLimit": "Resource rule limit exceeded",
-      "ErrResourceSpaceNotFound": "Space entity not found",
-      "ErrResourceWorkRuleLimit": "Application workflow configuration limit error",
-      "ErrAuditNotPass": "Content audit not passed",
-      "ErrSystemIntegratorNotFound": "System integrator not found",
-      "ErrOpenClawNotFound": "ClawPro record not found",
-      "ErrOpenClawFreezing": "ClawPro is freezing, operation not supported",
-      "ErrGetOpenClaw": "Failed to get ClawPro",
-      "ErrCreateOpenClaw": "Failed to create ClawPro",
-      "ErrModifyOpenClaw": "Failed to modify ClawPro",
-      "ErrDeleteOpenClaw": "Failed to delete ClawPro",
-      "ErrOpenClawNameFormat": "ClawPro name can only contain Chinese, English, numbers, underscores, hyphens, and spaces",
-      "ErrOpenClawIconFormat": "ClawPro icon URL format is invalid",
-      "ErrOpenClawAccountStatus": "Insufficient account balance",
-      "ErrRenewOpenClaw": "Failed to renew ClawPro",
-      "ErrDescribeOpenClawConfig": "Failed to get ClawPro configuration",
-      "ErrModifyOpenClawConfig": "Failed to modify ClawPro configuration",
-      "ErrRestartOpenClaw": "Failed to restart ClawPro",
-      "ErrResetOpenClaw": "Failed to reset ClawPro",
-      "ErrOpenClawQuotaEmpty": "ClawPro quota quota is empty",
-      "ErrOpenClawOverLimit": "ClawPro count has reached the limit",
-      "ErrOpenClawInstanceNotFound": "ClawPro instance not found",
-      "ErrOpenClawNotAllowDelete": "ClawPro is currently not allowed to be deleted",
-      "ErrApiKeyQuotaExceeded": "APIKey quota exceeded",
-      "ErrApiKeyNotFound": "APIKey not found",
-      "ErrApiKeyAlreadyEnabled": "APIKey is already enabled",
-      "ErrApiKeyAlreadyDisabled": "APIKey is already disabled",
-      "ErrApiKeyNotDisabled": "APIKey is not disabled, please disable it before deleting",
-      "ErrApiKeyDisabled": "APIKey is disabled",
-      "ErrSkillNotAllowDelete": "Required skill is not allowed to be deleted",
-      "ErrSkillNotAllowModify": "Required skill is not allowed to be disabled",
-      "ErrDeleteSkill": "Failed to delete skill",
-      "ErrModifySkill": "Failed to modify skill",
-      "ErrDescribeSkillList": "Failed to get skill list",
-      "ErrWxKfSceneParamExpired": "WeChat customer service share link has expired",
-      "ErrWxKfSceneParamInvalid": "WeChat customer service scene parameter is invalid",
-      "ErrWxKfBindUser": "Failed to bind user to ClawPro",
-      "ErrWxKfUserNotBound": "User not bound to ClawPro",
-      "ErrModifyOpenClawModel": "Failed to modify model",
-      "ErrOpenClawModelNotSupported": "The current package does not support this model",
-      "ErrResourceQuotaNotConfig": "Space quota not configured",
-      "ErrOpenClawModelMaxTokensTooSmall": "The model's max output tokens does not meet the minimum requirement",
-      "ErrOpenClawModelContextWindowTooSmall": "The model's context length does not meet the minimum requirement",
-      "ErrCreateSkill": "Failed to install skill", 
-      "ErrSkillVersionNotFound": "Skill version not found",
-      "ErrSkillConfigNotFound": "Skill config not found",
-      "ErrOpenClawSkillNotFound": "OpenClaw skill record not found",
-      "ErrSkillAlreadyExists": "Skill already exists, cannot be created repeatedly",
-      "ErrRunOpenClawCommandInvalid": "ClawPro Command Invalid",
-      "ErrRunOpenClawCommand": "ClawPro Run Command Fail",
-      "ErrDescribeOpenClawInvocationTask": "ClawPro Describe Task Fail"
-    }
+
+  client.yaml: |
+    client:
+      namespace: ${POD_NAMESPACE}
+      filter:
+        - cle-route-propagator
+      service:
+        - name: mysql.qbot.admin
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: tdsql.qbot.qbot
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local"
+        - name: tdsql.qbot.openclaw
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_openclaw?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local"
+        - name: redis.qbot.admin
+          target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/2"
+          timeout: 3000
+        - callee: trpc.KEP.agent_config_server.AgentConfigApi
+          name: trpc.KEP.agent-config-server.AgentConfigApi
+          target: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.adp.ai_gateway.Admin
+          namespace: Production
+          network: tcp
+          protocol: trpc
+          target: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          timeout: 2000
+        - name: qbot.finance.finance.Finance
+          target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: Production
+          network: tcp
+          protocol: trpc
+          timeout: 30000
+        - name: trpc.adp.ai-gateway.api
+          namespace: Production
+          network: tcp
+          timeout: 4500000
+          target: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          protocol: http
+        - callee: trpc.KEP.plugin_config_server.PluginConfigApi
+          name: trpc.KEP.plugin-config-server.PluginConfigApi
+          target: "ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          namespace: Production
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.KEP.bot-task-config-server.task-config
+          target: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          namespace: Production
+          env_name: formal
+          callee: trpc.KEP.bot_task_config_server.TaskConfig
+          timeout: 3000
+        - name: trpc.adp.kb-config.Api
+          target: "ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          namespace: Production
+          protocol: trpc
+          callee: trpc.adp.kb_config.Api
+          timeout: 10000
+        - name: trpc.adp.platform_manager.Admin
+          namespace: Production
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          timeout: 10000
+        - name: trpc.adp.platform_manager.Api
+          namespace: Production
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093"
+          timeout: 30000
+        - name: trpc.adp.app_config.Admin
+          target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: Production
+          protocol: trpc
+          timeout: 10000
+        - callee: trpc.KEP.bot_data_statistics_server.Api
+          namespace: Production
+          target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          protocol: trpc
+          timeout: 20000
+          env_name: formal
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          namespace: Production
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          namespace: Production
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_manager.Login
+          namespace: Production
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          protocol: trpc
+          timeout: 6000
+        - callee: trpc.adp.platform_charger.Finance
+          namespace: Production
+          target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          network: tcp
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_content_moderation.Infosec
+          target: "ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: Production
+          network: tcp
+          protocol: trpc
+          timeout: 3000
+        - callee: trpc.adp.app_admin_proxy.Api
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          namespace: Production
+          protocol: trpc
+          timeout: 3000
+        - callee: trpc.adp.platform_metrology.Api
+          namespace: Production
+          target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          protocol: trpc
+          timeout: 20000
+        - callee: http.KEP.atomic.PaaS
+          namespace: Production
+          target: "ip://${ATOMIC_PAAS_TARGET}:8000"
+          network: tcp
+          protocol: http
+          timeout: 20000
+        - callee: trpc.adp.adpbot_gateway.AdpBotGateway
+          namespace: Production
+          target: "ip://adp-bot-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          network: tcp
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.kb-parse-adapter.ParseAdapter
+          namespace: Production
+          target: "ip://adp-kb-parse-adapter.{{ .Release.Namespace }}.svc.cluster.local:10001"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.skill_config.SkillConfigInner
+          namespace: Production
+          target: "ip://adp-skill-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          protocol: trpc
+          timeout: 20000
+        - name: tdsql.qbot.assistant
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_assistant?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local"
+        - callee: trpc.adp.agent_config.AgentConfigApi
+          target: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.plugin_config.PluginConfigApi
+          target: "ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.workflow_config.WorkflowConfig
+          target: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          namespace: ${NAMESPACE}
+          timeout: 3000
+        - callee: trpc.adp.app_channel.Api
+          target: "ip://adp-app-channel.{{ .Release.Namespace }}.svc.cluster.local:8002"
+          namespace: ${NAMESPACE}
+          network: tcp
+          protocol: trpc
+          timeout: 10000
+        - callee: trpc.adp.platform_account.Internal
+          target: "ip://adp-platform-account.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 5000
+
+        - callee: trpc.adp.agent_config.v2.Api
+          target: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:9001"
+          namespace: ${NAMESPACE}
+          network: tcp
+          protocol: trpc
+          timeout: 10000
   errors_zh-CN.json: |
     {
       "ErrSystem": "系统错误",
@@ -721,7 +723,7 @@ data:
       "ErrGetResourceRule": "获取资源规则失败",
       "ErrResourceRuleOverLimit": "资源规则超限",
       "ErrResourceSpaceNotFound": "空间实体不存在",
-      "ErrResourceWorkRuleLimit": "应用工作流配置错误",
+      "ErrResourceWorkRuleLimit": "应用工作流配置超限",
       "ErrOpenClawNotFound": "ClawPro记录不存在",
       "ErrOpenClawFreezing": "ClawPro冻结中，不支持操作",
       "ErrAuditNotPass": "内容审核不通过",
@@ -762,15 +764,60 @@ data:
       "ErrResourceQuotaNotConfig": "空间额度未配置",
       "ErrOpenClawModelMaxTokensTooSmall": "该模型的最大输出Tokens长度不满足最低要求",
       "ErrOpenClawModelContextWindowTooSmall": "该模型的上下文长度不满足最低要求",
-      "ErrCreateSkill": "安装 skill 失败", 
+      "ErrCreateSkill": "安装 skill 失败",
       "ErrSkillVersionNotFound": "skill 版本不存在",
       "ErrSkillConfigNotFound": "skill 配置不存在",
       "ErrOpenClawSkillNotFound": "openclaw skill 记录不存在",
       "ErrSkillAlreadyExists": "skill 已存在，不可重复创建",
       "ErrDescribeOpenClawInvocationTask": "ClawPro查询命令执行结果失败",
       "ErrRunOpenClawCommandInvalid": "ClawPro命令非法",
-      "ErrRunOpenClawCommand": "ClawPro执行命令失败"
+      "ErrRunOpenClawCommand": "ClawPro执行命令失败",
+      "ErrAppGalleryConfigBannerDuplicate": "配置中存在重复的Banner",
+      "ErrAppGalleryConfigBannerLimitExceeded": "Banner数量超过上限",
+      "ErrAppGalleryConfigDraftOrPreviewExists": "已存在草稿或预览配置，不允许重复创建",
+      "ErrAppGalleryConfigHighlightCountInvalid": "专题下重点推荐应用数量不合法",
+      "ErrAppGalleryConfigHighlightNoCoverUrl": "重点推荐的应用必须配置运营大图",
+      "ErrAppGalleryConfigInvalidJSON": "配置JSON格式不合法",
+      "ErrAppGalleryConfigNotFound": "配置版本不存在",
+      "ErrAppGalleryConfigOnlineNotEditable": "上架状态不允许修改",
+      "ErrAppGalleryConfigStatusInvalid": "配置状态不合法",
+      "ErrAppGalleryConfigTopicAppDuplicate": "专题下存在重复的应用",
+      "ErrAppGalleryConfigTopicAppLimitExceeded": "专题下应用数量超过上限",
+      "ErrAppGalleryConfigTopicDuplicate": "配置中存在重复的专题",
+      "ErrAppGalleryConfigTopicLimitExceeded": "专题数量超过上限",
+      "ErrAppTemplateNotFound": "应用模板不存在",
+      "ErrAppTemplateNotOnline": "应用模板未上架",
+      "ErrAppTemplateShowcaseNotFound": "精选案例不存在",
+      "ErrAppTemplateTopicAppNotFound": "主题关联应用不存在",
+      "ErrAppTemplateTopicAppNotOnline": "主题关联应用不存在或未上架",
+      "ErrAppTemplateTopicNoRelateOnlineApp": "主题下无上架状态的关联应用，不允许上架",
+      "ErrAppTemplateTopicNotFound": "应用模板主题不存在",
+      "ErrAppTemplateTopicNotOnline": "应用模板主题未上架",
+      "ErrBannerNotFound": "Banner不存在",
+      "ErrBannerNotOnline": "Banner跳转目标未上架",
+      "ErrCorpAssistantChannelAlreadyExists": "渠道在当前空间已存在",
+      "ErrCorpAssistantChannelBotAlreadyBound": "渠道已被绑定到其他空间",
+      "ErrCorpAssistantChannelNotFound": "渠道在当前空间不存在",
+      "ErrCorpAssistantChannelNotifyFailed": "渠道建立连接失败",
+      "ErrCorpAssistantVarCountLimit": "变量数量已达上限(%d个),请删除后再添加",
+      "ErrCorpAssistantVarDescLengthLimit": "变量描述超过%d个字符,请重新填写",
+      "ErrCorpAssistantVarNameExist": "变量名称已存在",
+      "ErrCorpAssistantVarNameFormatInvalid": "写入的变量名不符合 %s 命名规则",
+      "ErrCorpAssistantVarNameLengthLimit": "变量名超过%d个字符,请重新填写",
+      "ErrCorpAssistantVarNotFound": "变量不存在",
+      "ErrCorpAssistantVarValueLengthLimit": "变量值超过%d个字符,请重新填写",
+      "ErrDeleteOnlineNotAllowed": "上架状态不允许删除，请先下架",
+      "ErrModelAccessDenied": "该模型暂不可用",
+      "ErrModelProviderNotEligible": "当前不支持使用该模型提供方",
+      "ErrOpenClawEnableModelFailed": "模型切换失败，请稍后重试",
+      "ErrOpenClawProviderNotConfigured": "Coding Plan模型未激活，请先配置 API Key",
+      "ErrPromptTemplateCustomVarLimit": "自定义变量总长度超过上限",
+      "ErrPromptTemplateLabelBindLimit": "绑定标签数量超过上限",
+      "ErrPromptTemplateLabelExceed": "自定义标签数量超过上限",
+      "ErrPromptTemplateLabelNotFound": "绑定的标签不存在",
+      "ErrPromptTemplateTitleFormat": "标题格式不合法，仅支持中英文、数字及常见标点"
     }
+
   model_mappings.json: |
     {
       "model_mappings": {
@@ -807,51 +854,73 @@ data:
         "youtu-segment-merge": "Youtu/youtu-segment-8b",
         "header-extraction": "Youtu/youtu-header-extract-7b",
         "youtu-vita": "Youtu/youtu-vita",
-        "hunyuan-turbos-vision": "Hunyuan/hunyuan-turbos-vision",
-        "hunyuan-turbos-vision-250619": "Hunyuan/hunyuan-turbos-vision-250619",
-        "hunyuan-t1": "Hunyuan/hunyuan-t1",
+        "hunyuan-turbos-vision": "Hunyuan/hy-vision-2.0-instruct",
+        "hunyuan-turbos-vision-250619": "Hunyuan/hy-vision-2.0-instruct",
+        "hunyuan-t1": "Hunyuan/hy3-preview",
         "hunyuan-t1-0529": "Hunyuan/hunyuan-t1-0529",
         "hunyuan-t1-vision": "Hunyuan/hunyuan-t1-vision",
         "hunyuan-t1-vision-250619": "Hunyuan/hunyuan-t1-vision-250619",
-        "hunyuan": "Hunyuan/hunyuan",
-        "hunyuan-pro-preview": "Hunyuan/hunyuan-pro-preview",
-        "hunyuan-13B": "Hunyuan/hunyuan-standard",
-        "hunyuan-standard-256K": "Hunyuan/hunyuan-standard-256k",
-        "hunyuan-turbo": "Hunyuan/hunyuan-turbo",
-        "hunyuan-turbos": "Hunyuan/hunyuan-turbos",
-        "hunyuan-role": "Hunyuan/hunyuan-role",
-        "hunyuan-2.0-instruct-251111": "Hunyuan/hunyuan-2.0-instruct-251111",
-        "hunyuan-2.0-thinking-251109": "Hunyuan/hunyuan-2.0-thinking-251109",
+        "hunyuan": "Hunyuan/hy3-preview",
+        "hunyuan-pro-preview": "Hunyuan/hy3-preview",
+        "hunyuan-13B": "Hunyuan/hy3-preview",
+        "hunyuan-standard-256K": "Hunyuan/hy3-preview",
+        "hunyuan-turbo": "Hunyuan/hy3-preview",
+        "hunyuan-turbos": "Hunyuan/hy3-preview",
+        "hunyuan-role": "Hunyuan/hunyuan-role-latest",
+        "hunyuan-2.0-instruct-251111": "Hunyuan/hy3-preview",
+        "hunyuan-2.0-thinking-251109": "Hunyuan/hy3-preview",
         "hunyuan-search": "Hunyuan/hunyuan-search",
-        "hunyuan-t1-search": "Hunyuan/hunyuan-t1-search",
-        "lke-deepseek-r1-search": "Deepseek/deepseek-r1-250528-search",
-        "lke-deepseek-v3-search": "Deepseek/deepseek-v3-250324-search",
-        "lke-deepseek-r1-0528-search": "Deepseek/deepseek-r1-250528-search",
-        "lke-deepseek-v3-0324-search": "Deepseek/deepseek-v3-250324-search",
-        "lke-deepseek-r1": "Deepseek/deepseek-r1-250528",
-        "lke-deepseek-v3": "Deepseek/deepseek-v3-250324",
-        "lke-deepseek-r1-0528": "Deepseek/deepseek-r1-250528",
-        "lke-deepseek-v3-0324": "Deepseek/deepseek-v3-250324",
-        "lke-deepseek-r1-vip": "Deepseek/deepseek-r1-250528-vip",
-        "lke-deepseek-v3-vip": "Deepseek/deepseek-v3-250324-vip",
-        "lke-deepseek-r1-0528-vip": "Deepseek/deepseek-r1-250528-vip",
-        "lke-deepseek-v3-0324-vip": "Deepseek/deepseek-v3-250324-vip",
-        "lke-deepseek-v3.1-vip": "Deepseek/deepseek-v3.1-vip",
-        "lke-deepseek-v3.1-terminus-vip": "Deepseek/deepseek-v3.1-terminus-vip",
+        "hunyuan-t1-search": "Hunyuan/hy3-preview",
+        "lke-deepseek-r1-search": "Deepseek/deepseek-v3.2-search",
+        "lke-deepseek-v3-search": "Deepseek/deepseek-v3.2-search",
+        "lke-deepseek-r1-0528-search": "Deepseek/deepseek-v3.2-search",
+        "lke-deepseek-v3-0324-search": "Deepseek/deepseek-v3.2-search",
+        "lke-deepseek-r1": "Deepseek/deepseek-v3.2",
+        "lke-deepseek-v3": "Deepseek/deepseek-v3.2",
+        "lke-deepseek-r1-0528": "Deepseek/deepseek-v3.2",
+        "lke-deepseek-v3-0324": "Deepseek/deepseek-v3.2",
+        "lke-deepseek-r1-vip": "Deepseek/deepseek-v3.2-vip",
+        "lke-deepseek-v3-vip": "Deepseek/deepseek-v3.2-vip",
+        "lke-deepseek-r1-0528-vip": "Deepseek/deepseek-v3.2-vip",
+        "lke-deepseek-v3-0324-vip": "Deepseek/deepseek-v3.2-vip",
+        "lke-deepseek-v3.1-vip": "Deepseek/deepseek-v3.2-vip",
+        "lke-deepseek-v3.1-terminus-vip": "Deepseek/deepseek-v3.2-vip",
         "lke-deepseek-v3.2-vip": "Deepseek/deepseek-v3.2-vip",
-        "lke-deepseek-v3-function-call": "Deepseek/deepseek-v3-250324",
-        "lke-deepseek-r1-agent": "Deepseek/deepseek-r1-250528",
-        "lke-deepseek-r1-0528-agent": "Deepseek/deepseek-r1-250528",
-        "lke-deepseek-v3-agent": "Deepseek/deepseek-v3-250324",
-        "lke-deepseek-v3.1": "Deepseek/deepseek-v3.1",
-        "lke-deepseek-v3.1-function-call": "Deepseek/deepseek-v3.1",
-        "lke-deepseek-v3.1-terminus": "Deepseek/deepseek-v3.1-terminus",
+        "lke-deepseek-v3-function-call": "Deepseek/deepseek-v3.2",
+        "lke-deepseek-r1-agent": "Deepseek/deepseek-v3.2",
+        "lke-deepseek-r1-0528-agent": "Deepseek/deepseek-v3.2",
+        "lke-deepseek-v3-agent": "Deepseek/deepseek-v3.2",
+        "lke-deepseek-v3.1": "Deepseek/deepseek-v3.2",
+        "lke-deepseek-v3.1-function-call": "Deepseek/deepseek-v3.2",
+        "lke-deepseek-v3.1-terminus": "Deepseek/deepseek-v3.2",
         "lke-deepseek-v3.2": "Deepseek/deepseek-v3.2",
         "lke-deepseek-v3.2-function-call": "Deepseek/deepseek-v3.2",
-        "hunyuan-speed-search": "Hunyuan/hunyuan-speed-search",
-        "hunyuan-turbo-vision": "Hunyuan/hunyuan-turbos-vision",
-        "lke-deepseek-v3.1-search": "Deepseek/deepseek-v3.1-search",
-        "lke-deepseek-v3.2-search": "Deepseek/deepseek-v3.2-search"
+        "hunyuan-speed-search": "Hunyuan/hy3-preview",
+        "hunyuan-turbo-vision": "Hunyuan/hy-vision-2.0-instruct",
+        "lke-deepseek-v3.1-search": "Deepseek/deepseek-v3.2-search",
+        "lke-deepseek-v3.2-search": "Deepseek/deepseek-v3.2-search",
+        "Deepseek/deepseek-v3.1": "Deepseek/deepseek-v3.2",
+        "Deepseek/deepseek-v3-250324": "Deepseek/deepseek-v3.2",
+        "Deepseek/deepseek-v3.1-terminus": "Deepseek/deepseek-v3.2",
+        "Deepseek/deepseek-r1-250528": "Deepseek/deepseek-v3.2",
+        "Deepseek/deepseek-v3-250324-vip": "Deepseek/deepseek-v3.2-vip",
+        "Deepseek/deepseek-v3.1-terminus-vip": "Deepseek/deepseek-v3.2-vip",
+        "Deepseek/deepseek-r1-250528-vip": "Deepseek/deepseek-v3.2-vip",
+        "Deepseek/deepseek-v3.1-vip": "Deepseek/deepseek-v3.2-vip",
+        "Hunyuan/hunyuan-2.0-thinking-251109": "Hunyuan/hy3-preview",
+        "Hunyuan/hunyuan-t1": "Hunyuan/hy3-preview",
+        "Hunyuan/hunyuan-2.0-instruct-251111": "Hunyuan/hy3-preview",
+        "Hunyuan/hunyuan-turbos": "Hunyuan/hy3-preview",
+        "Hunyuan/hunyuan-turbo": "Hunyuan/hy3-preview",
+        "Hunyuan/hunyuan-standard-256k": "Hunyuan/hy3-preview",
+        "Hunyuan/hunyuan-standard": "Hunyuan/hy3-preview",
+        "Hunyuan/hunyuan": "Hunyuan/hy3-preview",
+        "Hunyuan/hunyuan-speed-search": "Hunyuan/hy3-preview",
+        "Hunyuan/hunyuan-t1-search": "Hunyuan/hy3-preview",
+        "Hunyuan/hunyuan-role": "Hunyuan/hunyuan-role-latest",
+        "Hunyuan/hunyuan-turbos-vision": "Hunyuan/hy-vision-2.0-instruct",
+        "Hunyuan/hunyuan-turbos-vision-250619": "Hunyuan/hy-vision-2.0-instruct",
+        "Hunyuan/hunyuan-vision-1.5-instruct": "Hunyuan/hy-vision-2.0-instruct"
       },
       "third_model_mappings": {
         "Baichuan/Baichuan-Text-Embedding": "Baichuan/Baichuan-Text-Embedding",
@@ -2004,9 +2073,9 @@ data:
         "100004193503-OpenAI/noRpPWJT": "OpenAI/noRpPWJT",
         "100004193503-OpenAI/VKagXfvr": "OpenAI/VKagXfvr",
         "100004193503-OpenAI/CRJBqsyz": "OpenAI/CRJBqsyz"
-      }
+      },
+      "mapping_blacklist": {}
     }
-
   placeholder.yaml: |
     NAMESPACE: Production
     ENV_NAME: formal
@@ -2016,7 +2085,7 @@ data:
     # =============================================================================
 
     ENABLE_SET: N
-    FULL_SET_NAME: ""
+    FULL_SET_NAME: ''
 
     LOG_WRITER: console
 
@@ -2024,7 +2093,7 @@ data:
     RAINBOW_GROUP: resource-gallery
     RAINBOW_ENV_NAME: formal
 
-    # --- OpenClaw 定时任务 cron 表达式 ---
+    # global.serverConnector.joinPoint - 服务连接器接入点
     OPENCLAW_UNSTABLE_TASK_CRON: "0 */3 * * * *?scheduler=OpenClawUnstableTask&holdTime=150"
     OPENCLAW_EXPIRE_TASK_CRON: "0 */30 * * * *?scheduler=OpenClawExpireTask&holdTime=150"
     OPENCLAW_DELETE_TASK_CRON: "0 5 */1 * * *?scheduler=OpenClawDeleteTask&holdTime=150"
@@ -2035,81 +2104,75 @@ data:
     # 【client.yaml 使用】- 数据存储与依赖服务配置
     # =============================================================================
 
-
-    # --- trpc.KEP.agent_config_server.AgentConfigApi ---
-    AGENT_CONFIG_API_TARGET: ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+    # --- mysql.qbot.admin 数据库连接 ---
+    AGENT_CONFIG_API_TARGET: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
 
     # --- trpc.adp.ai_gateway.Admin ---
-    AI_GATEWAY_ADMIN_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
+    AI_GATEWAY_ADMIN_TARGET: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092"
 
     # --- qbot.finance.finance.Finance ---
-    FINANCE_TARGET: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+    FINANCE_TARGET: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
     # --- trpc.adp.ai-gateway.api ---
-    AI_GATEWAY_API_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+    AI_GATEWAY_API_TARGET: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
     # --- trpc.KEP.plugin_config_server.PluginConfigApi ---
-    PLUGIN_CONFIG_API_TARGET: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+    PLUGIN_CONFIG_API_TARGET: "ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
 
     # --- trpc.KEP.bot-task-config-server.task-config ---
-    TASK_CONFIG_TARGET: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+    TASK_CONFIG_TARGET: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
 
     # --- trpc.adp.kb-config.Api ---
-    KB_CONFIG_API_TARGET: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+    KB_CONFIG_API_TARGET: "ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092"
 
     # --- trpc.adp.platform_manager.Admin ---
-    PLATFORM_MANAGER_ADMIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+    PLATFORM_MANAGER_ADMIN_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
     # --- trpc.adp.platform_manager.Api ---
-    PLATFORM_MANAGER_API_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
+    PLATFORM_MANAGER_API_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093"
 
     # --- trpc.adp.app_config.Admin ---
-    APP_CONFIG_ADMIN_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+    APP_CONFIG_ADMIN_TARGET: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
     # --- trpc.KEP.bot_data_statistics_server.Api ---
-    DATA_STATISTICS_API_TARGET: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
+    DATA_STATISTICS_API_TARGET: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
 
     # --- trpc.KEP.bot_admin_config_server.Login ---
-    ADMIN_CONFIG_LOGIN_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+    ADMIN_CONFIG_LOGIN_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
 
     # --- trpc.KEP.bot_admin_config_server.Api ---
-    ADMIN_CONFIG_API_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+    ADMIN_CONFIG_API_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
 
     # --- trpc.adp.platform_manager.Login ---
-    PLATFORM_MANAGER_LOGIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+    PLATFORM_MANAGER_LOGIN_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
 
     # --- trpc.adp.platform_charger.Finance ---
-    PLATFORM_CHARGER_FINANCE_TARGET: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+    PLATFORM_CHARGER_FINANCE_TARGET: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
     # --- trpc.adp.platform_content_moderation.Infosec ---
-    CONTENT_MODERATION_TARGET: ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090
+    CONTENT_MODERATION_TARGET: "ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
     # --- trpc.adp.app_admin_proxy.Api ---
-    APP_ADMIN_PROXY_API_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+    APP_ADMIN_PROXY_API_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
 
     # --- trpc.adp.platform_metrology.Api ---
-    PLATFORM_METROLOGY_API_TARGET: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
+    PLATFORM_METROLOGY_API_TARGET: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
 
     # --- http.KEP.atomic.PaaS ---
-    # TODO: 这个不存在，待确认
-    ATOMIC_PAAS_TARGET: ip://${ATOMIC_PAAS_TARGET}:8000
+    ATOMIC_PAAS_TARGET: "ip://${ATOMIC_PAAS_TARGET}:8000"
 
     # --- trpc.adp.adpbot_gateway.AdpBotGateway ---
-    ADPBOT_GATEWAY_TARGET: ip://adp-bot-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+    ADPBOT_GATEWAY_TARGET: "ip://adp-bot-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
     # --- trpc.adp.kb-parse-adapter.ParseAdapter ---
-    KB_PARSE_ADAPTER_TARGET: ip://adp-kb-parse-adapter.{{ .Release.Namespace }}.svc.cluster.local:10001
+    KB_PARSE_ADAPTER_TARGET: "ip://adp-kb-parse-adapter.{{ .Release.Namespace }}.svc.cluster.local:10001"
 
     # ---trpc.adp.skill_config.SkillConfig ---
-    SKILL_CONFIG_INNER_TARGET: ip://adp-skill-config.{{ .Release.Namespace }}.svc.cluster.local:8001
-    # =============================================================================
-    # 【application.yaml 使用】- 业务配置
-    # 占位符顺序与 application.yaml 中出现顺序一致
-    # =============================================================================
+    SKILL_CONFIG_INNER_TARGET: "ip://adp-skill-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
 
-    # --- tione 配置 ---
-    TIONE_SECRET_ID: "xxx"
-    TIONE_SECRET_KEY: "xxx"
+    # --- trpc.adp.app_channel.Api ---
+    TIONE_SECRET_ID: xxx
+    TIONE_SECRET_KEY: xxx
     TIONE_REGION: ap-guangzhou
     TIONE_STS_HOST: sts.tencentcloudapi.com
     TIONE_HOST: tione.tencentcloudapi.com
@@ -2120,7 +2183,6 @@ data:
       - ap-guangzhou
       - ap-nanjing
       - ap-shanghai
-
     TIONE_ENABLE_WHITE: false
     TIONE_WHITE_UIN:
 
@@ -2137,9 +2199,7 @@ data:
       - sn-reranker-large-v0.4
       - sn-large-multi-language-v0.2.5
       - sn-llm-embedding-2b-v0.2.2
-      # - TCADP/glm-5
-      # - TCADP/kimi-k2.5
-      # - TCADP/minimax-m2.5
+      # - Hunyuan/hy3-preview
 
     MODEL_REPLY_FORMAT:
       # lke-deepseek-v3.2: [json_schema,json_object,text]
@@ -2150,19 +2210,28 @@ data:
       # Deepseek/deepseek-v3.1-terminus: [json_schema,json_object,text]
       # lke-deepseek-v3.1: [json_schema,json_object,text]
       # Deepseek/deepseek-v3.1: [json_schema,json_object,text]
-      doubao-seed-1-6-flash-250715: [json_object,text]
-      Volcengine/doubao-seed-1-6-flash-250715: [json_object,text]
-      doubao-seed-1-6-250615: [json_object,text]
-      Volcengine/doubao-seed-1-6-250615: [json_object,text]
+      doubao-seed-1-6-flash-250715: ["json_object", "text"]
+      Volcengine/doubao-seed-1-6-flash-250715:
+        - json_object
+        - text
+      doubao-seed-1-6-250615: ["json_object", "text"]
+      Volcengine/doubao-seed-1-6-250615:
+        - json_object
+        - text
+        # - "TCADP/gpt-5.4"
+        # - "TCADP/claude-opus-4.6"
 
     # --- robot_default 模型列表配置 ---
     APP_DEFAULT_MODEL_KNOWLEDGE_QA:
-      - alias_name: GLM-5
+      - alias_name: 智谱GLM-5
         name: TCADP/glm-5
       - alias_name: Kimi K2.5
         name: TCADP/kimi-k2.5
       - alias_name: MiniMax M2.5
         name: TCADP/minimax-m2.5
+      - alias_name: Tencent Hy3 preview
+        name: Hunyuan/hy3-preview
+        # is_free: true
       - alias_name: Tencent HY 2.0 Think
         name: Hunyuan/hunyuan-2.0-thinking-251109
       - alias_name: Tencent HY 2.0 Instruct
@@ -2189,7 +2258,6 @@ data:
         chat_words_limit: 14000
         desc:
         icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
-        is_free: true
       - alias_name: hunyuan-pro
         name: Hunyuan/hunyuan
         desc: |-
@@ -2211,14 +2279,20 @@ data:
         chat_words_limit: 28000
         desc:
         icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
-        is_free: true
       - alias_name: hunyuan-standard-256K
         name: Hunyuan/hunyuan-standard-256k
         desc: |-
           采用更优的路由策略，同时缓解了负载均衡和专家趋同的问题。长文方面，大海捞针指标达到99.9%。MOE-256k 在长度和效果上进一步突破，极大的扩展了可输入长度。
         icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
-      - alias_name: hunyuan-role
-        name: Hunyuan/hunyuan-role
+      # 上线hunyuan-role-latest,下掉hunyuan-role
+      # - alias_name: hunyuan-role
+      #   name: Hunyuan/hunyuan-role
+      #   chat_words_limit: 2000
+      #   desc: |-
+      #     混元最新版角色扮演模型，混元官方精调训练推出的角色扮演模型，基于混元模型结合角色扮演场景数据集进行增训，在角色扮演场景具有更好的基础效果。
+      #   icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
+      - alias_name: hunyuan-role-latest
+        name: Hunyuan/hunyuan-role-latest
         chat_words_limit: 2000
         desc: |-
           混元最新版角色扮演模型，混元官方精调训练推出的角色扮演模型，基于混元模型结合角色扮演场景数据集进行增训，在角色扮演场景具有更好的基础效果。
@@ -2248,11 +2322,11 @@ data:
           基于医疗领域数据专项强化，擅长医疗领域知识问答，适用于医学实体抽取、医学对话总结、病历撰写等应用场景。
         icon: https://cdn.xiaowei.qq.com/static/lke/cloud.png
         is_close: true
-      - alias_name: DeepSeek-R1-0528
-        name: Deepseek/deepseek-r1-250528
-        desc: |-
-          DeepSeek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。
-        icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
+      # - alias_name: DeepSeek-R1-0528
+      #   name: Deepseek/deepseek-r1-250528
+      #   desc: |-
+      #     DeepSeek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。
+      #   icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
       # - alias_name: DeepSeek-R1
       #   name: Deepseek/deepseek-r1-250528
       #   desc: |-
@@ -2263,16 +2337,16 @@ data:
       #   desc: |-
       #     拥有6710 亿参数的混合专家（MoE）语言模型，采用多头潜在注意力（MLA）和 DeepSeekMoE 架构，结合无辅助损失的负载平衡策略，优化推理和训练效率。
       #   icon: https://cdn.xiaowei.qq.com/static/lke/ds.png  // 待企点灰度账号验证后删除
-      - alias_name: DeepSeek-V3-0324
-        name: Deepseek/deepseek-v3-250324
-        desc: |-
-          DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
-        icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
-        scene: nl2sql
-      - alias_name: DeepSeek-V3.1
-        name: Deepseek/deepseek-v3.1
-        desc: |-
-          采用混合推理架构，具备更高的思考效率，能在更短时间给出答案，需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。
+      # - alias_name: DeepSeek-V3-0324
+      #   name: Deepseek/deepseek-v3-250324
+      #   desc: |-
+      #     DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
+      #   icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
+      #   scene: nl2sql
+      # - alias_name: DeepSeek-V3.1
+      #   name: Deepseek/deepseek-v3.1
+      #   desc: |-
+      #     采用混合推理架构，具备更高的思考效率，能在更短时间给出答案，需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。
       - alias_name: hunyuan-turbos-latest
         name: Hunyuan/hunyuan-turbos
         desc: |-
@@ -2281,64 +2355,40 @@ data:
         name: Hunyuan/hunyuan-t1
         desc: |-
           业内首个超大规模Hybrid-Transformer-Mamba 推理模型，扩展推理能力，超强解码速度，进一步对齐人类偏好。
-      - alias_name: DeepSeek-V3.2
-        name: Deepseek/deepseek-v3.2
+      - alias_name: DeepSeek-V4-Flash
+        name: Deepseek/deepseek-v4-flash
         desc: |-
-          采用混合推理架构，具备更高的思考效率，能在更短时间给出答案，需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。
+          284B总参数，13B激活参数轻量化MoE高效模型，保留高阶模型核心通用能力的同时实现更轻量的参数与更快的响应。
         scene: graphrag
-      - alias_name: DeepSeek-V3.1-Terminus
-        name: Deepseek/deepseek-v3.1-terminus
+      # - alias_name: DeepSeek-V3.1-Terminus
+      #   name: Deepseek/deepseek-v3.1-terminus
 
     APP_THOUGHT_MODEL_STANDARD:
-      - alias_name: Tencent HY 2.0 Instruct
+      - alias_name: "Tencent HY 2.0 Instruct"
         name: Hunyuan/hunyuan-2.0-instruct-251111
       - alias_name: youtu-intent-pro
         name: Youtu/youtu-intent-pro
         chat_words_limit: 2000
-        desc: |-
-          适用于同时配置问答、文档、工作流的场景，意图识别效果更佳，并且支持在角色指令中自定义配置意图。但可能会增加一定的对话耗时。
+        desc: 适用于同时配置问答、文档、工作流的场景，意图识别效果更佳，并且支持在角色指令中自定义配置意图。但可能会增加一定的对话耗时。
         is_default: true
         source: Hunyuan
-        icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
-        is_free: true
-      # - alias_name: DeepSeek-V3
-      #   name: Deepseek/deepseek-v3-250324
-      #   desc: |-
-      #     拥有6710 亿参数的混合专家（MoE）语言模型，采用多头潜在注意力（MLA）和 DeepSeekMoE 架构，结合无辅助损失的负载平衡策略，优化推理和训练效率。
-      #   source: Experience
-      #   icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
-      - alias_name: DeepSeek-V3-0324
-        name: Deepseek/deepseek-v3-250324
-        desc: |-
-          DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
-        source: Experience
-        icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
-      - alias_name: DeepSeek-V3.1
-        name: Deepseek/deepseek-v3.1
-        desc: |-
-          采用混合推理架构，具备更高的思考效率，能在更短时间给出答案，需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。
+        icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
       - alias_name: hunyuan-turbos-latest
         name: Hunyuan/hunyuan-turbos
-        desc: |-
-          混元旗舰大模型最新版本，具备更强的思考能力，更优的体验效果
+        desc: 混元旗舰大模型最新版本，具备更强的思考能力，更优的体验效果
       - alias_name: hunyuan-T1-latest
         name: Hunyuan/hunyuan-t1
-        desc: |-
-          业内首个超大规模Hybrid-Transformer-Mamba 推理模型，扩展推理能力，超强解码速度，进一步对齐人类偏好。
-      - alias_name: DeepSeek-V3.2
-        name: Deepseek/deepseek-v3.2
-        desc: |-
-          采用混合推理架构，具备更高的思考效率，能在更短时间给出答案，需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。
-      - alias_name: DeepSeek-V3.1-Terminus
-        name: Deepseek/deepseek-v3.1-terminus
-
+        desc: "业内首个超大规模Hybrid-Transformer-Mamba 推理模型，扩展推理能力，超强解码速度，进一步对齐人类偏好。"
     APP_THOUGHT_MODEL_AGENT:
-      - alias_name: GLM-5
+      - alias_name: 智谱GLM-5
         name: TCADP/glm-5
       - alias_name: Kimi K2.5
         name: TCADP/kimi-k2.5
       - alias_name: MiniMax M2.5
         name: TCADP/minimax-m2.5
+      - alias_name: Tencent Hy3 preview
+        name: Hunyuan/hy3-preview
+        # is_free: true
       - alias_name: Tencent HY 2.0 Think
         name: Hunyuan/hunyuan-2.0-thinking-251109
       - alias_name: Tencent HY 2.0 Instruct
@@ -2350,33 +2400,32 @@ data:
           具备任务规划、工具选择调用以及反思纠错能力，能够支持复杂问题的规划与执行。
         source: Hunyuan
         icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
-        is_free: true
-      - alias_name: DeepSeek-R1-0528
-        name: Deepseek/deepseek-r1-250528
-        desc: |-
-          DeepSeek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。
-        source: Experience
-        icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
-        finance_model_name: lke-deepseek-r1-0528
+      # - alias_name: DeepSeek-R1-0528
+      #   name: Deepseek/deepseek-r1-250528
+      #   desc: |-
+      #     DeepSeek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。
+      #   source: Experience
+      #   icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
+      #   finance_model_name: lke-deepseek-r1-0528
       # - alias_name: DeepSeek-R1
       #   name: Deepseek/deepseek-r1-250528
       #   desc: |-
       #     强化学习（RL）驱动的推理模型，在数学、代码和推理任务中与 OpenAI-o1 表现相当。与DeepSeek助手深度思考模式为同款模型
       #   source: Experience
       #   icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
-      - alias_name: DeepSeek-V3-0324
-        name: Deepseek/deepseek-v3-250324
-        desc: |-
-          DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
-        source: Experience
-        icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
-        is_default: true
-        finance_model_name: lke-deepseek-v3-0324
-      - alias_name: DeepSeek-V3.1
-        name: Deepseek/deepseek-v3.1
-        desc: |-
-          采用混合推理架构，具备更高的思考效率，能在更短时间给出答案，需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。
-        finance_model_name: lke-deepseek-v3.1
+      # - alias_name: DeepSeek-V3-0324
+      #   name: Deepseek/deepseek-v3-250324
+      #   desc: |-
+      #     DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
+      #   source: Experience
+      #   icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
+      #   is_default: true
+      #   finance_model_name: lke-deepseek-v3-0324
+      # - alias_name: DeepSeek-V3.1
+      #   name: Deepseek/deepseek-v3.1
+      #   desc: |-
+      #     采用混合推理架构，具备更高的思考效率，能在更短时间给出答案，需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。
+      #   finance_model_name: lke-deepseek-v3.1
       - alias_name: hunyuan-turbos-latest
         name: Hunyuan/hunyuan-turbos
         desc: |-
@@ -2385,12 +2434,8 @@ data:
         name: Hunyuan/hunyuan-t1
         desc: |-
           业内首个超大规模Hybrid-Transformer-Mamba 推理模型，扩展推理能力，超强解码速度，进一步对齐人类偏好。
-      - alias_name: DeepSeek-V3.2
-        name: Deepseek/deepseek-v3.2
-        desc: |-
-          采用混合推理架构，具备更高的思考效率，能在更短时间给出答案，需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。
-      - alias_name: DeepSeek-V3.1-Terminus
-        name: Deepseek/deepseek-v3.1-terminus
+      # - alias_name: DeepSeek-V3.1-Terminus
+      #   name: Deepseek/deepseek-v3.1-terminus
 
     APP_REWRITE_MODEL:
       - alias_name: youtu-rewrite
@@ -2398,37 +2443,28 @@ data:
         chat_words_limit: 14000
         is_default: true
         desc:
-        icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
-        is_free: true
-
+        icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
     APP_RERANK_MODEL:
       - alias_name: youtu-reranker-llm
         name: Youtu/youtu-reranker-llm
-        desc: |
-          LLM 增强排序模型，准确率更高，耗时将会有所增加。
+        desc: "LLM 增强排序模型，准确率更高，耗时将会有所增加。\n"
         is_default: true
-        is_free: true
       - alias_name: youtu-reranker
         name: Youtu/youtu-reranker
-        desc: |
-          通用文本排序模型
-        is_free: true
+        desc: '通用文本排序模型
 
+          '
     APP_EMBEDDING_MODEL:
       - alias_name: youtu-embedding
         name: Youtu/youtu-embedding
         is_default: true
-        is_free: true
       - alias_name: youtu-embedding-llm
         name: Youtu/youtu-embedding-llm
-        is_free: true
-
     APP_WIDGET_MODEL:
-      - alias_name: DeepSeek-V3.2
-        name: Deepseek/deepseek-v3.2
-        desc: |-
-          采用混合推理架构，具备更高的思考效率，能在更短时间给出答案，需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。
+      - alias_name: Tencent Hy3 preview
+        name: Hunyuan/hy3-preview
         is_default: true
+        # is_free: true
       - alias_name: Tencent HY 2.0 Think
         name: Hunyuan/hunyuan-2.0-thinking-251109
       - alias_name: Tencent HY 2.0 Instruct
@@ -2441,70 +2477,52 @@ data:
         name: Hunyuan/hunyuan-t1
         desc: |-
           业内首个超大规模Hybrid-Transformer-Mamba 推理模型，扩展推理能力，超强解码速度，进一步对齐人类偏好。
-      - alias_name: DeepSeek-R1-0528
-        name: Deepseek/deepseek-r1-250528
-        desc: |-
-          DeepSeek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。
-        icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
-      - alias_name: DeepSeek-V3-0324
-        name: Deepseek/deepseek-v3-250324
-        desc: |-
-          DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
-        icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
-      - alias_name: DeepSeek-V3.1
-        name: Deepseek/deepseek-v3.1
-        desc: |-
-          采用混合推理架构，具备更高的思考效率，能在更短时间给出答案，需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。
+      # - alias_name: DeepSeek-R1-0528
+      #   name: Deepseek/deepseek-r1-250528
+      #   desc: |-
+      #     DeepSeek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。
+      #   icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
+      # - alias_name: DeepSeek-V3-0324
+      #   name: Deepseek/deepseek-v3-250324
+      #   desc: |-
+      #     DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
+      #   icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
+      # - alias_name: DeepSeek-V3.1
+      #   name: Deepseek/deepseek-v3.1
+      #   desc: |-
+      #     采用混合推理架构，具备更高的思考效率，能在更短时间给出答案，需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。
 
     APP_FILEPARSE_MODEL:
       - alias_name: youtu-parsing-sync
         name: Youtu/youtu-parsing-sync
         scene: realtime_fileparse
         desc:
-        icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
-        is_free: true
+        icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
         finance_model_name: Youtu/youtu-parsing-sync
       - alias_name: youtu-parsing-async
         name: Youtu/youtu-parsing-async
         desc:
         is_default: true
-        icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
-        is_free: true
+        icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
         finance_model_name: Youtu/youtu-parsing-sync
-
     APP_OPENCLAW_MODEL:
       - alias_name: hunyuan-turbos-latest
         name: Hunyuan/hunyuan-turbos
-        desc: |-
-          混元旗舰大模型最新版本，具备更强的思考能力，更优的体验效果
-      - alias_name: Tencent HY 2.0 Instruct
+        desc: 混元旗舰大模型最新版本，具备更强的思考能力，更优的体验效果
+      - alias_name: "Tencent HY 2.0 Instruct"
         name: Hunyuan/hunyuan-2.0-instruct-251111
       - alias_name: hunyuan-T1-latest
         name: Hunyuan/hunyuan-t1
-        desc: |-
-          业内首个超大规模Hybrid-Transformer-Mamba 推理模型，扩展推理能力，超强解码速度，进一步对齐人类偏好。
-      - alias_name: Tencent HY 2.0 Think
+        desc: "业内首个超大规模Hybrid-Transformer-Mamba 推理模型，扩展推理能力，超强解码速度，进一步对齐人类偏好。"
+      - alias_name: "Tencent HY 2.0 Think"
         name: Hunyuan/hunyuan-2.0-thinking-251109
-      - alias_name: DeepSeek-V3-0324
-        name: Deepseek/deepseek-v3-250324
-        desc: |-
-          DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
-      # - alias_name: DeepSeek-V3.1
-      #   name: Deepseek/deepseek-v3.1
-      #   desc: |-
-      #     采用混合推理架构，具备更高的思考效率，能在更短时间给出答案，需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。
-      - alias_name: DeepSeek-V3.2
-        name: Deepseek/deepseek-v3.2
-        desc: |-
-          采用混合推理架构，具备更高的思考效率，能在更短时间给出答案，需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。
       - alias_name: GLM-5
         name: TCADP/glm-5
-      - alias_name: Kimi K2.5
+      - alias_name: "Kimi K2.5"
         name: TCADP/kimi-k2.5
         is_default: true
-      - alias_name: MiniMax M2.5
+      - alias_name: "MiniMax M2.5"
         name: TCADP/minimax-m2.5
-
     LLM_WORD_LIMIT:
       default:
         input_limit: 2500   # 对话框模型输入上限
@@ -2574,11 +2592,9 @@ data:
       - Deepseek/deepseek-r1-250528
       - Deepseek/deepseek-v3-250324-vip
       - Deepseek/deepseek-r1-250528-vip
-
-    # --- 模型对AI通话支持的类型 ---
     LLM_SUPPORT_AI_CALL:
-      support: ["function-call-pro","Youtu/youtu-agent","lke-deepseek-v3-function-call","lke-deepseek-v3","Deepseek/deepseek-v3.1","cs-normal-70b","Youtu/youtu-mrc-pro","hunyuan","sn-edu-70b","lke-deepseek-r1-vip","Deepseek/deepseek-r1-250528-vip","lke-deepseek-v3-vip","Deepseek/deepseek-v3-250324-vip","lke-deepseek-v3-0324","Deepseek/deepseek-v3-250324","cs-normal","Youtu/youtu-mrc-standard","hunyuan-13B","Hunyuan/hunyuan-standard","hunyuan-standard-256K","Hunyuan/hunyuan-standard-256k","hunyuan-turbo","Hunyuan/hunyuan-turbo","hunyuan-role","Hunyuan/hunyuan-role","finance-13b","sn-edu-13b","medical-6b"]
-      poor_support: ["lke-deepseek-r1",Deepseek/deepseek-r1-250528]
+      support: ["function-call-pro", "Youtu/youtu-agent", "lke-deepseek-v3-function-call", "lke-deepseek-v3", "Deepseek/deepseek-v3.1", "cs-normal-70b", "Youtu/youtu-mrc-pro", "hunyuan", "sn-edu-70b", "lke-deepseek-r1-vip", "Deepseek/deepseek-r1-250528-vip", "lke-deepseek-v3-vip", "Deepseek/deepseek-v3-250324-vip", "lke-deepseek-v3-0324", "Deepseek/deepseek-v3-250324", "cs-normal", "Youtu/youtu-mrc-standard", "hunyuan-13B", "Hunyuan/hunyuan-standard", "hunyuan-standard-256K", "Hunyuan/hunyuan-standard-256k", "hunyuan-turbo", "Hunyuan/hunyuan-turbo", "hunyuan-role", "Hunyuan/hunyuan-role", "finance-13b", "sn-edu-13b", "medical-6b", "Hunyuan/hunyuan-role-latest"]
+      poor_support: ["lke-deepseek-r1", "Deepseek/deepseek-r1-250528"]
       not_support: []
 
     DEFAULT_MODEL_CONFIG:
@@ -2598,11 +2614,11 @@ data:
         name: Youtu/youtu-rewrite
         alias_name: youtu-rewrite
       long_memory:
-        name: Deepseek/deepseek-v3-250324
-        alias_name: DeepSeek-V3-0324
+        name: Deepseek/deepseek-v4-flash
+        alias_name: DeepSeek-V4-Flash
       nl2sql:
-        name: Deepseek/deepseek-v3-250324
-        alias_name: DeepSeek-V3-0324
+        name: Deepseek/deepseek-v4-flash
+        alias_name: DeepSeek-V4-Flash
       ai_optimize:
         name: Youtu/youtu-mrc-standard
         alias_name: youtu-mrc-standard
@@ -2613,8 +2629,8 @@ data:
         alias_name: youtu-parsing-async
         name: Youtu/youtu-parsing-async
       graphrag:
-        name: Deepseek/deepseek-v3.2
-        alias_name: DeepSeek-V3.2
+        name: Deepseek/deepseek-v4-flash
+        alias_name: DeepSeek-V4-Flash
       openclaw:
         name: TCADP/kimi-k2.5
         alias_name: Kimi K2.5
@@ -2622,14 +2638,10 @@ data:
     # --- finance 配置 ---
     FINANCE_DISABLED: {{ .Values.global.finance.disabled }}
 
-    # --- search 配置 ---
-    SEARCH_DISABLED: true
-
     # --- managed_account_ids 管理账号 ---
+    SEARCH_DISABLED: true
     MANAGED_ACCOUNT_IDS:
       - 1042
-
-    # --- language_all_switch 多语言开关 ---
     LANGUAGE_ALL_SWITCH: true
 
     DEEP_THINK_ENABLE_MODEL:
@@ -2637,7 +2649,7 @@ data:
       Volcengine/doubao-seed-1-6-251015: true
       Deepseek/deepseek-v3.1: false
       Deepseek/deepseek-v3.1-terminus: false
-      Deepseek/deepseek-v3.2: true
+      Deepseek/deepseek-v3.2-vip: false
       Qwen/qwen3-max-preview: false
       Qwen/qwen-plus: false
       Qwen/qwen-plus-latest: false
@@ -2663,9 +2675,17 @@ data:
       qwen-turbo-2025-04-28: false
       TCADP/glm-5: false
       TCADP/kimi-k2.5: false
+      TCADP/glm-5.1: false
+      TCADP/glm-5.0-turbo: false
+      TCADP/kimi-k2.6: false
+      Deepseek/deepseek-v4-flash: false
+      Deepseek/deepseek-v4-pro: false
+      TCADP/qwen3.5-plus: false
+      TCADP/glm-5v-turbo: false
+      Deepseek/deepseek-v4-flash-202605: false
+      Deepseek/deepseek-v4-pro-202606: false
 
     MODEL_UIN_WHITE:
-
     QUOTA_MODEL:
       - lke-deepseek-r1-0528
       - lke-deepseek-r1-0528-agent
@@ -2685,6 +2705,8 @@ data:
       - Deepseek/deepseek-r1-250528
       - Deepseek/deepseek-v3-250324
       - Deepseek/deepseek-v3.1
+      - Deepseek/deepseek-v4-flash
+      - Deepseek/deepseek-v4-pro
       - Youtu/youtu-mrc-standard
       - Youtu/youtu-mrc-pro
       - Hunyuan/hunyuan
@@ -2692,10 +2714,12 @@ data:
       - Hunyuan/hunyuan-standard-256k
       - Hunyuan/hunyuan-standard
       - Hunyuan/hunyuan-role
+      - Hunyuan/hunyuan-role-latest
       - Hunyuan/hunyuan-t1
       - Hunyuan/hunyuan-turbos
       - Hunyuan/hunyuan-2.0-thinking-251109
       - Hunyuan/hunyuan-2.0-instruct-251111
+      - Hunyuan/hy3-preview
 
     # --- resource_config 基础配置 ---
     RESOURCE_CONFIG:
@@ -2709,28 +2733,27 @@ data:
 
     # --- openclaw_config 基础配置 ---
     OPENCLAW_DEFAULT_NAME: "ClawPro 助手"
-    OPENCLAW_ICON_REGEX: '^https:\/\/(qidian-qbot-1251316161\.cos\.ap-guangzhou\.myqcloud\.com|qidian-qbot-test-1251316161\.cos\.ap-guangzhou\.myqcloud\.com|cdn\.xiaowei\.qq\.com)\/[^\s]+$'
+    OPENCLAW_ICON_REGEX: "^https:\\/\\/(qidian-qbot-1251316161\\.cos\\.ap-guangzhou\\.myqcloud\\.com|qidian-qbot-test-1251316161\\.cos\\.ap-guangzhou\\.myqcloud\\.com|cdn\\.xiaowei\\.qq\\.com)\\/[^\\s]+$"
 
     # --- openclaw_config instance配置 ---
-    OPENCLAW_INSTANCE_PASSWORD: ""
+    OPENCLAW_INSTANCE_PASSWORD: ''
     OPENCLAW_CREATE_REGIONS:
       - ap-guangzhou
     OPENCLAW_CREATE_REGION_MAP:
       ap-guangzhou:
-        bundle_id: "bundle_starter_mc_med4_01"
-        blueprint_id: "lhbp-6l8zgg9z"
-        firewall_template_id: "lhft-7pe799m3"
+        bundle_id: bundle_starter_mc_med4_01
+        #原"lhbp-6l8zgg9z"
+        blueprint_id: lhbp-0rrkz1pp
+        firewall_template_id: lhft-7pe799m3
 
     # 套餐实例规格映射（按类型覆盖 bundle_id）
     OPENCLAW_PACKAGE_BUNDLE_MAP:
-      "1":
+      1:
         region_bundle_map:
-          ap-guangzhou: "bundle_starter_mc_med2_03"
-      "2":
+          ap-guangzhou: bundle_starter_mc_med2_03
+      2:
         region_bundle_map:
-          ap-guangzhou: "bundle_starter_mc_med4_01"
-
-    # --- openclaw_config 异步配置（async_config） ---
+          ap-guangzhou: bundle_starter_mc_med4_01
     OPENCLAW_CREATE_ASYNC_CONFIG:
       debug_async: false # 为true时，不进行严格的时间校验
       scan_interval: 10m #异步扫描的间隔，默认10分钟
@@ -2738,17 +2761,17 @@ data:
       enable_skill_confirm_task: true # 是否启用skill确认任务
 
     # --- openclaw_config 凭证配置（credential） ---
-    OPENCLAW_SECRET_ID: "xxx"
-    OPENCLAW_SECRET_KEY: "xxx"
+    OPENCLAW_SECRET_ID: xxx
+    OPENCLAW_SECRET_KEY: xxx
 
     # --- openclaw_config 模型配置（model_config） ---
     OPENCLAW_MODEL_CONFIG:
-      primary_model: "qcloudadp/TCADP/kimi-k2.5"       # 主模型全名
-      provider: "qcloudadp"                              # 供应商名称
+      primary_model: qcloudadp/TCADP/kimi-k2.5         # 主模型全名
+      provider: qcloudadp                                # 供应商名称
       base_url: "https://api.adp.cloud.tencent.com/openclaw"  # API 地址
-      api: "openai-completions"                          # API 类型
-      model_id: "TCADP/kimi-k2.5"                        # 模型 ID
-      model_name: "kimi-k2.5"                            # 模型显示名称
+      api: openai-completions                            # API 类型
+      model_id: TCADP/kimi-k2.5                          # 模型 ID
+      model_name: kimi-k2.5                              # 模型显示名称
       max_tokens: 32768                                # 模型参数：最大输出Token数
       allow_third_model_package_types: [3]             # 启用三方模型的套餐类型
       enable_fill_param: true                          # 启用模型参数填充
@@ -2788,132 +2811,373 @@ data:
 
     # --- openclaw_config 技能模板配置 ---
     OPENCLAW_SKILL_TEMPLATE_CONFIG:
-      - name: "表格处理"
-        template: "帮我安装excel-xlsx技能"
+      - name: 表格处理
+        template: 帮我安装excel-xlsx技能
         sort_order: 1
-      - name: "文档处理"
-        template: "帮我安装文档处理相关技能"
+      - name: 文档处理
+        template: 帮我安装文档处理相关技能
         sort_order: 2
-      - name: "语音转文字"
-        template: "帮我安装语音转文字相关技能"
+      - name: 语音转文字
+        template: 帮我安装语音转文字相关技能
         sort_order: 4
-      - name: "PPT制作"
-        template: "帮我安装powerpoint-pptx技能"
+      - name: PPT制作
+        template: 帮我安装powerpoint-pptx技能
         sort_order: 3
-
-    # --- openclaw_config.wx_kf ---
     OPENCLAW_WX_KF:
       share_url: "https://work.weixin.qq.com/kfid/kfc67c115bb3e705074?enc_scene=ENCGWNvR5FxV8qff1xsvQgMuNBU7KFKoAnAKnjaLXXNMKc8"
-      aes_key: "8f3a9b2c7d6e1f4a5b8c9d0e1f2a3b4c"
-      validity_period: "5m"
+      aes_key: 8f3a9b2c7d6e1f4a5b8c9d0e1f2a3b4c
+      validity_period: 5m
 
     # --- openclaw_config 技能配置 ---
     WATCH_SKILL_STATUS_MAX_SECONDS: 120
 
-    # --- api_key_config配置 ---
+    # 引导配置
     API_KEY_CONFIG:
       encrypt_key_part1: "php9GiXLWVpx64U8rTDhlg=="
       encrypt_key_part2: "QoFgeYJAjjNCVjLxIqq6Jw=="
       enable_ciphertext_patch: true
 
+    # --- api_key_access_log_config配置 ---
+    TRPC_GLOBAL_JOIN_POINT: default
+
+    # plugins.telemetry.galileo.ocp_addr - 伽利略 OCP 配置地址
+    TRPC_GALILEO_OCP_ADDR: "http://gocp.woa.com/ocp/api/v1/get_config"
+
+    # plugins.telemetry.galileo.config.access_point - 伽利略接入点
+    # 1=新加坡公网, 2=新加坡内网, 3=中国大陆公网, 4=中国大陆内网
+    TRPC_GALILEO_ACCESS_POINT: 4
+
+    # plugins.selector.polaris.join_point - 北极星服务发现接入点
+    TRPC_SELECTOR_JOIN_POINT: default
+
+    # plugins.i18n.i18n-adp.default_lang - 国际化默认语言
+    DEFAULT_LANG: zh-CN
+
+    # --- OpenClaw 定时任务 cron 表达式 ---
+    ASSISTANT_TDSQL_USER: ${INFRA_MIDDLEWARES_DB_0_USER}
+    ASSISTANT_TDSQL_PASSWORD: ${INFRA_MIDDLEWARES_DB_0_PASSWORD}
+    ASSISTANT_TDSQL_HOST: ${INFRA_MIDDLEWARES_DB_0_HOST}
+    ASSISTANT_TDSQL_PORT: ${INFRA_MIDDLEWARES_DB_0_PORT}
+
+    # --- redis.qbot.admin 缓存 ---
+    CHANNEL_MSG_SVR_API_TARGET: "ip://adp-app-channel.{{ .Release.Namespace }}.svc.cluster.local:8002"
+
+    # --- trpc.adp.platform_account.Api ---
+    PLATFORM_ACCOUNT_API_TARGET: "ip://adp-platform-account.{{ .Release.Namespace }}.svc.cluster.local:9092"
+
+    # =============================================================================
+    # 【application.yaml 使用】- 业务配置
+    # 占位符顺序与 application.yaml 中出现顺序一致
+    # =============================================================================
+
+    # --- tione 配置 ---
+    TIONE_DISABLED: false
+    TEMPORARY_FREE_MODELS:
+
+    MODEL_ACCESS_CONTROL:
+      cache_disabled: false
+      cache_ttl: 5m
+      restricted_models:
+    CORP_ASSISTANT_MODEL:
+    - name: TCADP/glm-5
+      alias_name: 智谱GLM-5
+    - name: TCADP/kimi-k2.5
+      alias_name: "Kimi K2.5"
+    - name: Hunyuan/hy3-preview
+      alias_name: "Tencent Hy3 preview"
+    EXTRA_MODEL_CONFIG:
+    - name: Youtu/youtu-intent-pro
+      alias_name: youtu-intent-pro
+      scenes:
+        workflow_code_gen: 1
+        workflow_llm: 1
+        workflow_parameter_extractor: 1
+        workflow_llm_knowledge_qa: 1
+        workflow_tag_extractor: 1
+        workflow_intent_recognition: 1
+        workflow_option_card: 1
+        workflow_logic_evaluator: 1
+    IOA_MODEL_BLACK:
+    - Youtu/youtu-mrc-pro
+    - Youtu/youtu-mrc-standard
+    - Youtu/youtu-agent
+    - Youtu/youtu-mllm
+    - Hunyuan/hunyuan-vision-1.5-instruct
+    - Hunyuan/hunyuan-turbo-vision
+    - Hunyuan/hunyuan-2.0-instruct-251111
+    - Hunyuan/hunyuan-2.0-thinking-251109
+    - Hunyuan/hunyuan-turbos-vision-250619
+    - Hunyuan/hunyuan-t1-vision
+    - Hunyuan/hunyuan-turbos
+    - Hunyuan/hunyuan-t1-vision-250619
+    - Hunyuan/hunyuan-t1
+    - Hunyuan/hunyuan-t1-search
+    - Hunyuan/hunyuan-role
+    - Hunyuan/hunyuan-role-latest
+    - Hunyuan/hunyuan-search
+    - Hunyuan/hunyuan-turbos-vision
+    - Hunyuan/hunyuan-pro-preview
+    - Hunyuan/hunyuan-standard-256k
+    - Hunyuan/hunyuan-standard
+    - Hunyuan/hunyuan-turbo
+    - Hunyuan/hunyuan
+    - hunyuan
+    - hunyuan-turbo
+    - hunyuan-13B
+    - hunyuan-standard-256K
+    - hunyuan-pro-preview
+    - hunyuan-turbos-vision
+    - hunyuan-search
+    - hunyuan-role
+    - hunyuan-turbo-vision
+    - hunyuan-t1-search
+    - hunyuan-t1
+    - hunyuan-t1-vision-250619
+    - hunyuan-turbos
+    - hunyuan-t1-vision
+    - hunyuan-turbos-vision-250619
+    - hunyuan-2.0-thinking-251109
+    - TCADP/minimax-m2.5
+    IOA_MODEL_BLACK_MAPPING:
+      Youtu/youtu-mllm: TCADP/kimi-k2.6
+      Hunyuan/hunyuan-turbos-vision: TCADP/kimi-k2.6
+      hunyuan-turbos-vision: TCADP/kimi-k2.6
+    IOA_MODEL_BLACK_SCENE_MAPPING:
+      workflow_intent_recognition:
+        Youtu/youtu-mrc-pro: Deepseek/deepseek-v4-flash
+    IOA_MODEL_BLACK_FALLBACK: TCADP/glm-5.1
+    PROVIDER_GUIDE_CONFIG:
+      provider_name: TencentTokenPlan
+      enable_guide_notify: true
+      guide_notify_expire_days: 180                        # 引导过期天数
+      guide_notify_deadline: '2026-06-30'                  # 引导截止日期
+      resource_buy_url: "https://buy.cloud.tencent.com/hunyuan"
+      ineligible_cache_ttl_minutes: 1440
+      lock_ttl_minutes: 720
+
+    # --- api_key_config配置 ---
+    API_KEY_ACCESS_LOG_CONFIG:
+      enable_debug_log: false
+
+    # --- gray_model_uin_white配置 ---
+    GRAY_MODEL_UIN_WHITE:
+
+    MODEL_PACKAGE_TYPES:
+
+    # --- model_providers配置 ---
+    MODEL_PROVIDERS:
+    - provider_name: TencentTokenPlan
+      enable: true
+      allow_all_package_types: false
+      eligible_package_types:
+        - 2
+        - 4
+      eligible_categories:
+        - openclaw
+      enable_credential_mask_return: true
+      enable_delete_credential: true
+      show_pending_models: true
+    CORP_ASSISTANT_VAR:
+      var_count_max: 1000
+      var_name_max: 50
+      var_desc_max: 1000
+      var_value_max: 20000
+      var_name_regex: "^[a-zA-Z][a-zA-Z0-9_\\-]*$"
+      secret_key: pbld5B98vp3OHm9T6yCP4R68nqRQvy0t
+      api_key_var: ADP_API_KEY
+
+    # --- overseas_model_whitelist 海外模型白名单配置 ---
+    # 海外可用模型列表
+    OVERSEAS_MODELS:
+    - name: TCADP/gpt-5.5
+      alias_name: GPT-5.5
+    - name: TCADP/gpt-5.4
+      alias_name: GPT-5.4
+    - name: TCADP/claude-opus-4.6
+      alias_name: Claude-Opus-4.6
+    - name: TCADP/claude-sonnet-4.6
+      alias_name: Claude-Sonnet-4.6
+    - name: TCADP/claude-opus-4.7
+      alias_name: Claude-Opus-4.7
+    - name: TCADP/claude-opus-4.7-1m
+      alias_name: "Claude-Opus-4.7（1M Context）"
+    - name: TCADP/claude-opus-4.8
+      alias_name: Claude-Opus-4.8
+    - name: TCADP/claude-opus-4.8-1m
+      alias_name: "Claude-Opus-4.8（1M Context）"
+    - name: TCADP/gemini-3.1-pro
+      alias_name: Gemini-3.1-pro
+    OVERSEAS_MODEL_WHITELIST_UINS:
+    - '100034032793'
+    - '100034812856'
+
+    # --- connectivity_test 模型连通性测试配置 ---
+    #100038737751部门账号
+    #100045521972用户账号
+    CONNECTIVITY_TEST_UIN_MAX_TOKENS:
+      100038737751: 16
+      100045521972: 16
+      100034032793: 16
+      100013928581: 16
+
+    EXTRA_MODEL_NAMES:
+    - Deepseek/deepseek-v4-pro
+    - Deepseek/deepseek-v4-flash
+    CUSTOM_MODEL_ALLOWED_PARAMS:
+    - name: deep_thinking
+      type: string
+      default_value: disabled
+      enum_values:
+        - enabled
+        - disabled
+    EXPOSED_MODEL_PROPERTIES:
+    #  - "support_workflow_status"
+    #  - "support_ai_call_status"
+    #  - "is_close_model_params"
+    #  - "is_deep_thinking"
+
+    # --- 模型超参白名单 ---
+    EXPOSED_MODEL_PARAMETERS:
+    - max_tokens
+    - temperature
+    - top_p
+    - deep_thinking
+
+    AGENT_CONFIG_V2_API_TARGET: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:9001"
+
+    # =============================================================================
+    # 【配额签名配置】- 专有云 TKE 环境签名配额管控
+    # 每个客户默认相同，如需定制可修改以下明文值
+    # =============================================================================
+    # RSA 公钥（PEM 格式），用于验证配额 Token 签名
+    QUOTA_PUBLIC_KEY: |
+      -----BEGIN PUBLIC KEY-----
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz4exO/KMMQm4s7IgTOcH
+      g64ExWHYM1flwW/1qyIsglh+Y2gpMAlzRjb436jQCmPIieEnzj5EfG31tC8/zvRf
+      tyAYIUgkzz+knOtnbaylw/ymDsw/N2MQf868Y1IGNyeJgWBOBDzGxc0fq2mycC3o
+      IvYh2ZdG0Ret9W54OZyueFv0cJzfCPxNDsg+K1tB5euXLWZes+JuSAhp5gnCP1Ch
+      4Tc3/vFK4Z77Xap34HdOYJnzu5Sl0ERuYR+d1/wNHe9dMw2LhWvnCN0zcC8D84eM
+      wr84u8Wy+ecSGN83cP6BwLjHPhdYnrJmwsQl1d8oWlxLJWrbnvymnz7YfPhd6SsG
+      NQIDAQAB
+      -----END PUBLIC KEY-----
+
+    # 签名 Token（JWT RS256，对应默认配额: space=500, app=5000, user=2000）
+    QUOTA_SIGNED_TOKEN: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzcGFjZV9saW1pdCI6NTAwLCJhcHBfbGltaXQiOjUwMDAsInVzZXJfbGltaXQiOjIwMDB9.spnT0GGnXbxd6oFVv6DRo6vhX3XdEPVNq2-U1lDqwledX-lQFxoZrFcYCbpmbyCHejBaSMQ0quLupnQigk7MyuXYF3lzMSrEN8PADQoK7O3R5_5i4qHujyu0ebnAsu7r64mNJFAbQovAcmZwWbkoyA1VmBbUj-OKOQiMS50dUsphUCfqCxxjYx3BkpphYHV1AWVajGKxMRJhwdR3DNMVuQ4R_acrYEN9KxaT6Yfigc5XeMcxpDUxjLhOAyIFx8H8ynuNkUHDfV1uZqYbAHvF3ovk8AKmClM6bwTzj9P5b-E-v3JjbYhsvYak-BnH5giYRpc1Y8AEHY1GZjouj6fSOg"
+
   trpc_go.yaml: |
-    global: #全局配置
-      namespace: Test #环境类型，分正式production和非正式development两种类型
-      env_name: test #环境名称，非正式环境下多环境的名称
-      enable_set: N #是否启用set
-      full_set_name: "" #set名
+    global:                             #全局配置
+      namespace: Test                    #环境类型，分正式production和非正式development两种类型
+      env_name: test                     #环境名称，非正式环境下多环境的名称
+      enable_set: N                     #是否启用set
+      full_set_name: ''                 #set名
       local_ip: ${POD_IP}
       container_name: ${POD_NAME}
-    server: #服务端配置
-      app: adp #业务的应用名
-      server: resource-gallery #进程服务名
-      bin_path: /usr/local/trpc/bin/ #二进制可执行文件和框架配置文件所在路径
-      conf_path: /usr/local/trpc/conf/ #业务配置文件所在路径
-      data_path: /usr/local/trpc/data/ #业务数据文件所在路径
-      filter: #针对所有service处理函数前后的拦截器列表
+      serverConnector:
+        joinPoint: ${TRPC_GLOBAL_JOIN_POINT}
+
+    server:                                            #服务端配置
+      app: adp                                        #业务的应用名
+      server: resource-gallery                         #进程服务名
+      bin_path: /usr/local/trpc/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /usr/local/trpc/conf/                 #业务配置文件所在路径
+      data_path: /usr/local/trpc/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
         - recovery
         - opentelemetry
         - i18n-adp
         - cle-route-propagator
         - cos_rewrite
       admin:
-        ip: ${POD_IP} #admin的ip，配置网卡nic也可以
-        port: 8081 #admin的port，必须同时配置这里的ip port才会启动admin
-      service: #业务服务提供的service，可以有多个
-        - name: trpc.adp.resource_gallery.Login #service的路由名称，格式：`业务领域.功能模块.项目名.Pb定义的服务名`
+        ip: ${POD_IP}  # admin 的 ip，配置网卡 nic 也可以
+        port: 8081   # admin 的 port，必须同时配置这里的 ip port 才会启动 admin
+      service:                                         #业务服务提供的service，可以有多个
+        - name: trpc.adp.resource_gallery.Login
           ip: ${POD_IP}
-          port: 9092 #服务监听端口
-          network: tcp #网络监听类型 tcp/udp
-          protocol: trpc #应用层协议 trpc/restful
-          timeout: 5000 #请求最长处理时间，单位毫秒
+          port: 9092
+          network: tcp
+          protocol: trpc
+          timeout: 5000
           filter:
             - session
             - permission
-        - name: trpc.adp.resource_gallery.Admin #service的路由名称，格式：`业务领域.功能模块.项目名.Pb定义的服务名`
+        - name: trpc.adp.resource_gallery.Admin
           ip: ${POD_IP}
-          port: 9090 #服务监听端口
-          network: tcp #网络监听类型 tcp/udp
-          protocol: trpc #应用层协议 trpc/restful
-          timeout: 120000 #请求最长处理时间，单位毫秒
-        - name: trpc.adp.resource_gallery.Http #service的路由名称，格式：`业务领域.功能模块.项目名.Pb定义的服务名`
+          port: 9090
+          network: tcp
+          protocol: trpc
+          timeout: 120000
+        - name: trpc.adp.resource_gallery.Http
           ip: ${POD_IP}
-          port: 9091 #服务监听端口
-          network: tcp #网络监听类型 tcp/udp
-          protocol: http #应用层协议 trpc/restful
-          timeout: 120000 #请求最长处理时间，单位毫秒
-        - name: trpc.adp.resource_gallery.OpenClawUnstableTask #service的路由名称
+          port: 9091
+          network: tcp
+          protocol: http
+          timeout: 120000
+        - name: trpc.adp.resource_gallery.OpenClawUnstableTask
           ip: ${POD_IP}
-          port: 9100 #服务监听端口 可使用占位符 ${port}
-          # 定时器cron表达式: [second minute hour day month weekday]
+          port: 9100
           network: ${OPENCLAW_UNSTABLE_TASK_CRON}
-          protocol: timer #应用层协议
-          timeout: 3600000 #请求最长处理时间，单位毫秒
-        - name: trpc.adp.resource_gallery.OpenClawExpireTask #service的路由名称
+          protocol: timer
+          timeout: 3600000
+        - name: trpc.adp.resource_gallery.OpenClawExpireTask
           ip: ${POD_IP}
-          port: 9101 #服务监听端口 可使用占位符 ${port}
-          # 定时器cron表达式: [second minute hour day month weekday]
+          port: 9101
           network: ${OPENCLAW_EXPIRE_TASK_CRON}
-          protocol: timer #应用层协议
-          timeout: 3600000 #请求最长处理时间，单位毫秒
-        - name: trpc.adp.resource_gallery.OpenClawDeleteTask #service的路由名称
+          protocol: timer
+          timeout: 3600000
+        - name: trpc.adp.resource_gallery.OpenClawDeleteTask
           ip: ${POD_IP}
-          port: 9102 #服务监听端口 可使用占位符 ${port}
-          # 定时器cron表达式: [second minute hour day month weekday]
+          port: 9102
           network: ${OPENCLAW_DELETE_TASK_CRON}
-          protocol: timer #应用层协议
-          timeout: 3600000 #请求最长处理时间，单位毫秒
+          protocol: timer
+          timeout: 3600000
         - name: trpc.adp.resource_gallery.ApiKeyAccessLogCleanTask
           ip: ${POD_IP}
-          port: 9104 #服务监听端口 可使用占位符 ${port}
-          # 定时器cron表达式: [second minute hour day month weekday]
+          port: 9104
           network: ${API_KEY_ACCESS_LOG_CLEAN_TASK_CRON}
-          protocol: timer #应用层协议
-          timeout: 3600000 #请求最长处理时间，单位毫秒
-        - name: trpc.adp.resource_gallery.OpenClawSkillConfirmTask #service的路由名称
+          protocol: timer
+          timeout: 3600000
+        - name: trpc.adp.resource_gallery.OpenClawSkillConfirmTask
           ip: ${POD_IP}
-          port: 9106 #服务监听端口 可使用占位符 ${port}
-          # 定时器cron表达式: [second minute hour day month weekday]
+          port: 9106
           network: ${OPENCLAW_SKILL_CONFIRM_CRON}
-          protocol: timer #应用层协议
-          timeout: 3600000 #请求最长处理时间，单位毫秒
+          protocol: timer
+          timeout: 3600000
+        - name: trpc.adp.resource_gallery.v2.ApiExternal
+          ip: ${POD_IP}
+          port: 9094
+          network: tcp
+          protocol: adp-capi
+          timeout: 5000
+          filter:
+            - session
+            - permission
+        - name: trpc.adp.resource_gallery.v2.External
+          ip: ${POD_IP}
+          port: 9093
+          network: tcp
+          protocol: trpc
+          timeout: 5000
+          filter:
+            - session
+            - permission
     plugins:
-      log: #日志配置
-        default: #默认日志的配置，可支持多输出
-          - writer: console #控制台标准输出 默认
-            level: info #标准输出日志的级别
+      log:
+        default:
+          - writer: console
+            level: info
             formatter: json
             formatter_config:
-              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
               time_key: time
               level_key: level
               name_key: name
               caller_key: caller
               message_key: message
-          - writer: file #本地文件日志
-            level: debug #本地文件滚动日志的级别
+          - writer: file
+            level: info
             formatter: json
             formatter_config:
-              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
               time_key: time
               level_key: level
               name_key: name
@@ -2921,27 +3185,41 @@ data:
               message_key: message
               stacktrace_key: stackTrace
             writer_config:
-              filename: /app/logs/trpc.log #本地文件滚动日志存放的路径
+              filename: /app/logs/trpc.log
               write_mode: 2
-              roll_type: time
-              max_age: 7
+              roll_type: size
+              max_size: 200
               max_backups: 10
               compress: false
-              time_unit: day
         clues:
-          - writer: console #控制台标准输出 默认
-            level: info #标准输出日志的级别
+          - writer: console
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
           - writer: file
             level: info
             formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
             writer_config:
               filename: /app/logs/clues.log
               write_mode: 2
-              roll_type: time
-              max_age: 7
+              roll_type: size
+              max_size: 200
               max_backups: 10
               compress: false
-              time_unit: day
       telemetry:
         opentelemetry:
           addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
@@ -2971,15 +3249,15 @@ data:
             - name: rainbow
               path: /app/conf/
             - name: global
-              appid: ${RAINBOW_APP_ID} #appid
-              group: global #配置所属组
-              type: kv #七彩石数据格式, kv(默认), table
+              appid: ${RAINBOW_APP_ID}
+              group: global
+              type: kv
               env_name: ${RAINBOW_ENV_NAME}
               timeout: 2000
               enable_client_provider: true
       i18n:
         i18n:
-          default_lang: zh-CN
+          default_lang: ${DEFAULT_LANG}
           supported_languages:
             - zh-CN
             - en-US
@@ -2992,29 +3270,29 @@ data:
               en-US: 3
       selector:
         polaris:
-          enable_servicerouter: true #注意这里一定要使用true
+          enable_servicerouter: true # 注意这里一定要使用 true
+          join_point: ${TRPC_SELECTOR_JOIN_POINT}
       filter:
         cos_rewrite:
-          path_prefixes:
-            - /public
-            - /qbot
+
+
     client:
       namespace: ${POD_NAMESPACE}
       filter:
         - cle-route-propagator
       service:
         - name: mysql.qbot.admin
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: tdsql.qbot.qbot
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local"
         - name: tdsql.qbot.openclaw
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_openclaw?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_openclaw?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local"
         - name: redis.qbot.admin
-          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/2
+          target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/2"
           timeout: 3000
         - callee: trpc.KEP.agent_config_server.AgentConfigApi
           name: trpc.KEP.agent-config-server.AgentConfigApi
-          target: ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          target: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
           namespace: Production
           protocol: trpc
           timeout: 20000
@@ -3022,10 +3300,10 @@ data:
           namespace: Production
           network: tcp
           protocol: trpc
-          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
+          target: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092"
           timeout: 2000
         - name: qbot.finance.finance.Finance
-          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
           namespace: Production
           network: tcp
           protocol: trpc
@@ -3034,101 +3312,135 @@ data:
           namespace: Production
           network: tcp
           timeout: 4500000
-          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+          target: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
           protocol: http
         - callee: trpc.KEP.plugin_config_server.PluginConfigApi
           name: trpc.KEP.plugin-config-server.PluginConfigApi
-          target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          target: "ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
           namespace: Production
           protocol: trpc
           timeout: 20000
         - name: trpc.KEP.bot-task-config-server.task-config
-          target: ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000
+          target: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
           namespace: Production
           env_name: formal
           callee: trpc.KEP.bot_task_config_server.TaskConfig
           timeout: 3000
         - name: trpc.adp.kb-config.Api
-          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          target: "ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092"
           namespace: Production
           protocol: trpc
           callee: trpc.adp.kb_config.Api
           timeout: 10000
         - name: trpc.adp.platform_manager.Admin
           namespace: Production
-          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
           timeout: 10000
         - name: trpc.adp.platform_manager.Api
           namespace: Production
-          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093"
           timeout: 30000
         - name: trpc.adp.app_config.Admin
-          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
           namespace: Production
           protocol: trpc
           timeout: 10000
         - callee: trpc.KEP.bot_data_statistics_server.Api
           namespace: Production
-          target: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
+          target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
           protocol: trpc
           timeout: 20000
           env_name: formal
         - callee: trpc.KEP.bot_admin_config_server.Login
           namespace: Production
-          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
           protocol: trpc
           timeout: 20000
         - callee: trpc.KEP.bot_admin_config_server.Api
           namespace: Production
-          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.platform_manager.Login
           namespace: Production
-          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
           protocol: trpc
           timeout: 6000
         - callee: trpc.adp.platform_charger.Finance
           namespace: Production
-          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
           network: tcp
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.platform_content_moderation.Infosec
-          target: ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090
+          target: "ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090"
           namespace: Production
           network: tcp
           protocol: trpc
           timeout: 3000
         - callee: trpc.adp.app_admin_proxy.Api
-          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
           namespace: Production
           protocol: trpc
           timeout: 3000
         - callee: trpc.adp.platform_metrology.Api
           namespace: Production
-          target: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
+          target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
           protocol: trpc
           timeout: 20000
         - callee: http.KEP.atomic.PaaS
           namespace: Production
-          target: ip://${ATOMIC_PAAS_TARGET}:8000
+          target: "ip://${ATOMIC_PAAS_TARGET}:8000"
           network: tcp
           protocol: http
           timeout: 20000
         - callee: trpc.adp.adpbot_gateway.AdpBotGateway
           namespace: Production
-          target: ip://adp-bot-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+          target: "ip://adp-bot-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
           network: tcp
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.kb-parse-adapter.ParseAdapter
           namespace: Production
-          target: ip://adp-kb-parse-adapter.{{ .Release.Namespace }}.svc.cluster.local:10001
+          target: "ip://adp-kb-parse-adapter.{{ .Release.Namespace }}.svc.cluster.local:10001"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.skill_config.SkillConfigInner
           namespace: Production
-          target: ip://adp-skill-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          target: "ip://adp-skill-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
           protocol: trpc
           timeout: 20000
+        - name: tdsql.qbot.assistant
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_assistant?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local"
+        - callee: trpc.adp.agent_config.AgentConfigApi
+          target: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.plugin_config.PluginConfigApi
+          target: "ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.workflow_config.WorkflowConfig
+          target: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          namespace: ${NAMESPACE}
+          timeout: 3000
+        - callee: trpc.adp.app_channel.Api
+          target: "ip://adp-app-channel.{{ .Release.Namespace }}.svc.cluster.local:8002"
+          namespace: ${NAMESPACE}
+          network: tcp
+          protocol: trpc
+          timeout: 10000
+        - callee: trpc.adp.platform_account.Internal
+          target: "ip://adp-platform-account.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 5000
+
+        - callee: trpc.adp.agent_config.v2.Api
+          target: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:9001"
+          namespace: ${NAMESPACE}
+          network: tcp
+          protocol: trpc
+          timeout: 10000

@@ -1,0 +1,4 @@
+images:
+  adp-app-channel-leader:
+    url: "{{ .Values.global.imageRegistry }}/tke-market/app-channel-leader:3_2607161432_stable_iaas_v4.0.3.0_e38e1a89_private"
+replicas: 1

@@ -1,6 +1,6 @@
 images:
   adp-workflow-exec:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/workflow-exec:10_2606132016_stable_iaas_cos_89fe386b_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/workflow-exec:12_2607171547_stable_iaas_v4.0.3.0_f7eda322_private"
 resources:
   limits:
     cpu: 1

@@ -1,6 +1,6 @@
 images:
   adp-workflow-config:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/workflow-config:15_2606151031_stable_iaas_cos_381c1fa2_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/workflow-config:22_2607171540_stable_iaas_v4.0.3.0_ac0084b7_private"
 adp-workflow-config:
   resources:
     limits:

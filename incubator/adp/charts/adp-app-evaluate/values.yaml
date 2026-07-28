@@ -1,4 +1,4 @@
 images:
   adp-app-evaluate:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/app-evaluate:20_2606132004_stable_iaas_cos_78791880_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/app-evaluate:27_2607171643_stable_iaas_v4.0.3.0_92d1daab_private"
 replicas: 1

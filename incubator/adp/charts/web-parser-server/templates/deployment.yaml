@@ -79,7 +79,10 @@ spec:
       initContainers:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       containers:
-        - env:
+        - envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
             - name: DEPLOYMENT_ENVIRONMENT
               value: TKE
             - name: __AppEnname
@@ -130,19 +133,17 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.name
-            {{- if .Values.global.components.s3.cos.stsKey }}
+            {{- if .Values.global.components.s3.cos.enableSts }}
             - name: ADP_ASSUME_ROLE_SECRET_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  name: infra-credentials
                   key: ADP_ASSUME_ROLE_SECRET_ID
-                  optional: true
             - name: ADP_ASSUME_ROLE_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  name: infra-credentials
                   key: ADP_ASSUME_ROLE_SECRET_KEY
-                  optional: true
             {{- end }}
           image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "web-parser-server").url "context" .) }}
           imagePullPolicy: Always

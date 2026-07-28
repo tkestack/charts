@@ -1,0 +1,12 @@
+images:
+  adp-plugin-gateway:
+    url: "{{ .Values.global.imageRegistry }}/tke-market/plugin-gateway:6_2607281439_stable_iaas_v4.0.3.0_b36563d9_private"
+adpplugingateway:
+  resources:
+    limits:
+      cpu: 1
+      memory: 4Gi
+    requests:
+      cpu: 1
+      memory: 1Gi
+replicas: 1
