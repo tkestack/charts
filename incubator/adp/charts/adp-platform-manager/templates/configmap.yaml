@@ -2073,8 +2073,8 @@ data:
         host: "ti-license.ti-base.svc.cluster.local:8081"
         version: 2021-02-05
         server: ti-auth
-        secret_id: {{ .Values.global.ti_license.appId }}
-        secret_key: {{ .Values.global.ti_license.secretKey }}
+        secret_id: {{ (.Values.global.ti_license).appId | default "" }}
+        secret_key: {{ (.Values.global.ti_license).secretKey | default "" }}
       app_license_ids:
         knowledge_qa: 258
         summary: 259
