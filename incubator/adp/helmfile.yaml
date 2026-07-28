@@ -526,15 +526,6 @@ releases:
     needs:
       - adp-app-config
 
-  - name: adp-private-op           # 私有化运维平台（取代 adp-platform-op）
-    chart: ./charts/adp-private-op
-    namespace: default
-    installed: {{ env "ADP_PRIVATE_OP_ENABLED" | default "true" }}
-    wait: true
-    timeout: 600
-    needs:
-      - adp-app-config
-
   # --- 文件与资源 ---
   - name: adp-crawler               # 爬虫服务
     chart: ./charts/adp-crawler
