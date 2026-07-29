@@ -508,6 +508,16 @@ releases:
     needs:
       - adp-app-config
 
+  # 私有化新版运维平台
+  - name: adp-private-op
+    chart: ./charts/adp-private-op
+    namespace: default
+    installed: {{ env "ADP_PRIVATE_OP_ENABLED" | default "false" }}
+    wait: true
+    timeout: 600
+    needs:
+      - adp-app-config
+
   - name: adp-platform-authenticator  # 平台认证
     chart: ./charts/adp-platform-authenticator
     namespace: default

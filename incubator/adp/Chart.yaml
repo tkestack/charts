@@ -156,10 +156,6 @@ dependencies:
     version: "1.0.0"
     repository: "file://charts/adp-plugin-gateway"
     condition: adp-plugin-gateway.enabled
-  - name: adp-private-op
-    version: "1.0.0"
-    repository: "file://charts/adp-private-op"
-    condition: adp-private-op.enabled
   - name: adp-pyright
     version: "2.0.0"
     repository: "file://charts/adp-pyright"
