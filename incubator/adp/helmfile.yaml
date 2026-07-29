@@ -45,7 +45,7 @@
 # │   adp-app-memory, adp-app-shorturl, adp-crawler, adp-file-converter,    │
 # │   adp-kb-config, adp-model-token-count,                                 │
 # │   adp-platform-charger, adp-platform-content-moderation,                │
-# │   adp-platform-manager, adp-private-op, adp-plugin-code-interpret,      │
+# │   adp-platform-manager, adp-plugin-code-interpret,                      │
 # │   adp-plugin-code-kernel, adp-plugin-config, adp-plugin-cos-util,       │
 # │   adp-plugin-exec, adp-pyright, adp-rag-exec, adp-resource-gallery,     │
 # │   adp-web-app, adp-workflow-config, entity-extractor-server,            │
@@ -676,7 +676,7 @@ releases:
     needs:
       - etcd
       - adp-chat-manage
-      - adp-app-channel
+      - adp-app-channel-msg
       - adp-agent-config
       - adp-resource-gallery
 
@@ -743,7 +743,7 @@ templates:
 # 全局 Hooks（可选）
 #############################################################################
 helmfiles:
-# 如果有其他 helmfile 需要包含
-# - path: ./helmfiles/monitoring.yaml
-#   selectors:
-#     - name=prometheus
+  # 如果有其他 helmfile 需要包含
+  # - path: ./helmfiles/monitoring.yaml
+  #   selectors:
+  #     - name=prometheus
