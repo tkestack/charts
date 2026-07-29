@@ -1,0 +1,18 @@
+images:
+  adp-agent-file-system:
+    url: "{{ .Values.global.imageRegistry }}/tke-market/agent-file-system:9_2607141533_stable_iaas_v4.0.3.0_b64e7bc8_private"
+resources:
+  limits:
+    cpu: 2
+    memory: 2Gi
+  requests:
+    cpu: 2
+    memory: 2Gi
+replicas: 1
+fileSystem:
+  tokenRequestSignatureKey: "75ad8166657babf0b113db4fbe44d14a34be4c721740638fd281a3a20d059d00"
+  tokenSecret: "bc76d4a74dc528508db9d7dc251d51f793b5d564e9e689d1e6efd2aa84c0d42e"
+  storage:
+    nfs:
+      server: ""
+      path: ""

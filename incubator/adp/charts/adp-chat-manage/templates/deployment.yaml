@@ -77,31 +77,36 @@ spec:
       initContainers:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       containers:
-        - env:
+        - envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.name
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             - name: version
               value: "20230925"
             - name: DEPLOYMENT_ENVIRONMENT
               value: "TKE"
             - name: ADP_HOST
               value: "{{ .Values.global.scheme }}://{{ .Values.global.clb }}"
-            {{- if .Values.global.components.s3.cos.stsKey }}
+            {{- if .Values.global.components.s3.cos.enableSts }}
             - name: ADP_ASSUME_ROLE_SECRET_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  name: infra-credentials
                   key: ADP_ASSUME_ROLE_SECRET_ID
-                  optional: true
             - name: ADP_ASSUME_ROLE_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  name: infra-credentials
                   key: ADP_ASSUME_ROLE_SECRET_KEY
-                  optional: true
             {{- end }}
           image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-chat-manage").url "context" .) }}
           imagePullPolicy: Always
@@ -207,9 +212,6 @@ spec:
             path: /data/ti-platform/log/chat
             type: DirectoryOrCreate
           name: logdata
-        - configMap:
-            name: chat-application
-          name: config-application
         - configMap:
             defaultMode: 420
             name:  {{ .Release.Name }}-chat-manage

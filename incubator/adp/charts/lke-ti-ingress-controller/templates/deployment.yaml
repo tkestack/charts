@@ -122,6 +122,9 @@ spec:
             - mountPath: /app/conf/infrastructure.yaml
               name: infrastructure
               subPath: infrastructure.yaml
+          envFrom:
+            - secretRef:
+                name: infra-credentials
           env:
             - name: POD_NAMESPACE
               valueFrom:

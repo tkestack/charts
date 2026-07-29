@@ -1,4 +1,4 @@
 images:
   adp-chat-manage:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/chat-manage:33_2606051603_stable_v3.4.1.1_8525d0f8_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/chat-manage:38_2607201151_stable_iaas_v4.0.3.0_f8835d19_private"
 replicas: 1

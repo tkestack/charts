@@ -1,8 +1,8 @@
 images:
   adp-apex:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/apex:4_2603280059_master_private_247b5729_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/apex:21_2607221155_stable_iaas_v4.0.3.0_5149ec05_private"
   apex-router:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/apex-router:5.8.0"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/apex-router:19_2607212227_stable_iaas_v4.0.3.0_5149ec05_private"
 apex:
   database:
     type: mysql

@@ -19,6 +19,26 @@ spec:
       port: 8081
       protocol: TCP
       targetPort: 8081
+    - name: adp-agent-config-9000
+      port: 9000
+      protocol: TCP
+      targetPort: 9000
+    - name: adp-agent-config-9001
+      port: 9001
+      protocol: TCP
+      targetPort: 9001
+    - name: adp-agent-config-9002
+      port: 9002
+      protocol: TCP
+      targetPort: 9002
+    - name: adp-agent-config-9010
+      port: 9010
+      protocol: TCP
+      targetPort: 9010
+    - name: adp-agent-config-9011
+      port: 9011
+      protocol: TCP
+      targetPort: 9011
   selector:
     app: adp-agent-config
   sessionAffinity: None

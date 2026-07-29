@@ -83,7 +83,12 @@ spec:
       - name: apex-router
         command:
         - /usr/bin/docker-entrypoint.sh
+        envFrom:
+        - secretRef:
+            name: infra-credentials
         env:
+        - name: DEPLOYMENT_ENVIRONMENT
+          value: TKE
         - name: LOG_POD_NAME
           valueFrom:
             fieldRef:

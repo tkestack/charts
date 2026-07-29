@@ -23,6 +23,14 @@ spec:
       port: 9092
       protocol: TCP
       targetPort: 9092
+    - name: adp-resource-gallery-9094
+      port: 9094
+      protocol: TCP
+      targetPort: 9094
+    - name: adp-resource-gallery-9093
+      port: 9093
+      protocol: TCP
+      targetPort: 9093
   selector:
     app: adp-resource-gallery
   sessionAffinity: None

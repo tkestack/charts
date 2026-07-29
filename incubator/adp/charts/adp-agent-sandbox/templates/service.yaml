@@ -1,0 +1,14 @@
+{{- if .Values.deploy }}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: adp-agent-sandbox
+  name: adp-agent-sandbox
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    app: adp-agent-sandbox
+  sessionAffinity: None
+  type: ClusterIP
+{{- end }}

@@ -78,7 +78,10 @@ spec:
       initContainers:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       containers:
-        - env:
+        - envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
             - name: MKL_NUM_THREADS
               value: "2"
             - name: LOG_SPACES
@@ -113,19 +116,19 @@ spec:
           {{- if eq .Values.global.clusterSize "minimal" }}
           resources:
             limits:
-              cpu: "500m"
-              memory: "2Gi"
+              cpu: "1"
+              memory: "4Gi"
             requests:
-              cpu: "125m"
+              cpu: "500m"
               memory: "512Mi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
             limits:
-              cpu: "1"
-              memory: "1Gi"
+              cpu: "2"
+              memory: "4Gi"
             requests:
-              cpu: "500m"
-              memory: "512Mi"
+              cpu: "1"
+              memory: "2Gi"
           {{- else }}
           resources:
             limits:

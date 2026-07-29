@@ -1,0 +1,6 @@
+apiVersion: v2
+name: adp-agent-sandbox
+description: A Helm chart for adp-agent-sandbox
+type: application
+version: 1.0.0
+appVersion: 1.0.0

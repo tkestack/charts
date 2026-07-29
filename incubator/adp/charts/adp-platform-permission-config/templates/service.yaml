@@ -15,6 +15,10 @@ spec:
       port: 9092
       protocol: TCP
       targetPort: 9092
+    - name: adp-platform-permission-config-9091
+      port: 9091
+      protocol: TCP
+      targetPort: 9091
   selector:
     app: adp-platform-permission-config
   sessionAffinity: None

@@ -27,7 +27,7 @@ global:
     enabled: false
     # 内网 CLB ID（开启必填）
     clbId: lb-internal-example
-  # 无需关注
+  # 是否开启secapi，建议保持默认false
   secapi_enable: false
   # 镜像仓库地址（勿动）
   imageRegistry: "ccr.ccs.tencentyun.com"
@@ -81,12 +81,12 @@ global:
     s3:
       vendor: tencent
       providerType: cos  # tencent: cos | aws: s3 | alibaba: oss | azure: blob | gcp: gcs | self: minio
-      # 是否启用s3代理 (非必填，默认false：关闭代理，会针对s3部分路径自动设置公有读；true: 开启代理，s3默认私有读，s3资源访问转发到adp服务代理)
-      enableProxy: false
+      # 是否启用s3代理 (非必填，true: 默认开启代理，s3默认私有读，s3资源访问转发到adp服务代理，false：关闭代理，会针对s3部分路径自动设置公有读，需要额外的cos跨域配置；)
+      enableProxy: true
       # COS 专用配置 (providerType=cos 时生效)
       cos:
-        secretId: "<YOUR_COS_SECRET_ID>"
-        secretKey: "<YOUR_COS_SECRET_KEY>"
+        secretId: "<YOUR_SECRET_ID>"
+        secretKey: "<YOUR_SECRET_KEY>"
         appId: "<YOUR_COS_APP_ID>"
         bucket: "<YOUR_COS_BUCKET>"
         region: "<YOUR_COS_REGION>"
@@ -94,10 +94,14 @@ global:
         subPath: "public"
         expireTime: 3600s
         credentialTime: 3600s
-        # cos sts secret key（非必填），sts模式下，保存cos访问秘钥的secret名称，需部署前主动创建。若配置该值，则表示仅支持通过sts模式访问cos资源，禁止使用永久secretId、secretKey
-        stsKey: ""
-        # cos sts RoleArn（非必填，stsKey不为空时必填），需要在腾讯云控制台创建CAM角色，并授予QcloudTsearchFullAccess、QcloudHunYuanFullAccess、QcloudOCRFullAccess、QcloudLKEAPFullAccess、QcloudCOSFullAccess权限
-        stsRoleArn: ""
+        # 是否启用 COS STS 临时凭证模式（非必填，默认 false）
+        # 为 true 时，仅通过 STS 模式访问 COS 资源，禁止使用永久 secretId/secretKey；此时 stsRoleArn 必填
+        enableSts: false
+        # COS STS 模式的角色标识（enableSts=true 时必填）
+        # 需在腾讯云控制台创建 CAM 角色，并授予以下权限策略：
+        #   QcloudTsearchFullAccess、QcloudHunYuanFullAccess、QcloudOCRFullAccess、
+        #   QcloudLKEAPFullAccess、QcloudCOSFullAccess
+        stsRoleArn: "qcs::cam::uin/1000000XXXXX:roleName/AaaBbbCcc"
 
     # 消息队列CKafka版 https://console.cloud.tencent.com/ckafka/instance
     kafka:
@@ -119,6 +123,53 @@ global:
       port: 9000
       user: "<YOUR_CLICKHOUSE_USER>"
       password: "<YOUR_CLICKHOUSE_PASSWORD>"
+
+  # ============================
+  # Agent Runtime 配置 (必填)
+  # ============================
+  # Agent Runtime 是 ADP【智能工作台】和【Claw 模式】的沙箱运行环境，必须提前完成配置。
+  #
+  # 前置依赖（均为必填）：
+  #   1. CFS 文件系统：用于沙箱之间共享用户工作目录 /users
+  #      https://console.cloud.tencent.com/cfs/fs
+  #      需要先在 CFS 中创建 /users 目录（在同 VPC 的 CVM 上挂载后 mkdir）
+  #   2. COS 对象存储：用于存放系统与用户的 Skills 资源，复用上面 components.s3.cos 配置的 COS 桶即可
+  #      需要在 COS 桶中创建 /skills/system 和 /skills/users 两个目录
+  #   3. Agent Runtime 沙箱工具：需要在腾讯云控制台创建 3 个沙箱工具
+  #      https://console.cloud.tencent.com/ags/sandbox/sandbox
+  #
+  # 详细配置流程（含控制台截图）请参见：docs/agent-runtime/README.md
+  agentRuntime:
+    # 是否禁用 Agent Runtime（默认 false，保持启用；禁用后【智能工作台】与【Claw 模式】将不可用）
+    disabled: false
+    vendor: tencent
+    # 申请沙箱时配置的 CAM 角色 RoleArn（必填）
+    # 沙箱工具通过该角色访问 COS、镜像仓库等云资源
+    stsRoleArn: "<YOUR_AGENT_RUNTIME_STS_ROLE_ARN>"
+    # 沙箱实例配置：需在腾讯云控制台预先创建 3 个沙箱工具，然后将对应 ID 填入下方
+    instances:
+      # Claw 模式沙箱：Claw 模式功能下沙箱运行的环境（建议规格 2C 4Gi）
+      clawAgs:
+        # 工具 ID，通过腾讯云沙箱列表页获取
+        toolID: "<YOUR_CLAW_SANDBOX_TOOL_ID>"
+      # 智能工作台沙箱：智能工作台功能下沙箱运行的环境（建议规格 4C 8Gi）
+      smartDeskAgs:
+        # 工具 ID，通过腾讯云沙箱列表页获取
+        toolID: "<YOUR_SMART_DESK_SANDBOX_TOOL_ID>"
+      # 公共沙箱：用于初始化智能工作台使用的工作目录（建议规格 2C 4Gi，常驻实例）
+      commonAgs:
+        # 工具 ID，通过腾讯云沙箱列表页获取
+        toolID: "<YOUR_COMMON_SANDBOX_TOOL_ID>"
+        # 实例 ID：进入公共沙箱工具详情，在实例列表页获取
+        instanceID: "<YOUR_COMMON_SANDBOX_INSTANCE_ID>"
+        # 实例 Token：进入公共沙箱工具详情，在实例列表页获取
+        token: "<YOUR_COMMON_SANDBOX_INSTANCE_TOKEN>"
+    # 沙箱挂载的 CFS 配置
+    cfs:
+      # CFS 文件系统 IP（可在 CFS 控制台 → 文件系统详情 → 挂载点信息 查看）
+      ip: "<YOUR_CFS_IP>"
+      # CFS 挂载路径
+      path: "/users"
 
   # ============================
   # 可观测性配置 (observability)
@@ -158,7 +209,7 @@ global:
     # 审核开关（可选，填写 true 或 false）
     auditSwitch: false
     # 是否禁用图片检查（可选，填写 true 或 false）
-    disableImageCheck: false
+    disableImageCheck: true
     # `bizType` （启用审核时 必选）
     bizType: "<YOUR_BIZ_TYPE>"
     # 文本内容安全配置 (可选) https://cloud.tencent.com/document/product/1124/51860
@@ -216,46 +267,6 @@ global:
     multi_modal:
       disabled: false
 
-  RagServer:
-    ds_faq_reject_model_name: ""
-    search_secret_id: ""
-    search_secret_key: ""
-    workflow_config_model_name: ""
-
-  channelmsgsvr:
-    component_app_id: ""
-
-  ti_license:
-    appId: ""
-    secretKey: ""
-
-  easygraph:
-    credentials:
-      username: ""
-      password: ""
-
-  # ============================
-  # objectstorage 兼容层（旧版引用兼容）
-  # ============================
-  objectstorage:
-    provider: "cos"
-    minio:
-      host: "minio.adp.svc.cluster.local"
-      port: 80
-    obs:
-      host: ""
-      port: 443
-    cos:
-      host: ""
-      port: 443
-    csp:
-      host: ""
-      port: 443
-    s3:
-      accessKey: ""
-      secretKey: ""
-      region: ""
-
   # 自定义 annotations，部署时会注入到所有服务的 Deployment/StatefulSet/Job 中
   # 不需要时留空或注释掉具体条目即可
   # 示例:
@@ -268,4 +279,5 @@ global:
   # 示例:
   #   nonstandardAppName: "txadp"
   #   envType: "PROD"
-  customLabels: {}
+  customLabels:
+    control-by: "helm"

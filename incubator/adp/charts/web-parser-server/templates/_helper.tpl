@@ -6,7 +6,7 @@
     {{- else if eq .Values.global.components.s3.providerType "csp" -}}
         {{ .Values.global.components.s3.csp.secretId }}
     {{- else -}}
-        {{ .Values.global.components.s3.cos.secretId }}
+        ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
     {{- end -}}
 {{- end -}}
 
@@ -18,7 +18,7 @@
     {{- else if eq .Values.global.components.s3.providerType "csp" -}}
         {{ .Values.global.components.s3.csp.secretKey }}
     {{- else -}}
-        {{ .Values.global.components.s3.cos.secretKey }}
+        ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
     {{- end -}}
 {{- end -}}
 
@@ -30,7 +30,7 @@
     {{- else if eq .Values.global.components.s3.providerType "csp" -}}
         qbot
     {{- else -}}
-        {{ .Values.global.components.s3.cos.bucket }}
+        ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
     {{- end -}}
 {{- end -}}
 
@@ -48,7 +48,7 @@
     {{- else if eq .Values.global.components.s3.providerType "csp" -}}
         {{ .Values.global.components.s3.csp.host }}:{{ .Values.global.components.s3.csp.port }}
     {{- else -}}
-        cos.{{ .Values.global.components.s3.cos.region }}.{{ .Values.global.components.s3.cos.domain }}
+        cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
     {{- end -}}
 {{- end -}}
 

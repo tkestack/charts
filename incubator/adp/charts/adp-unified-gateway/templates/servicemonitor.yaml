@@ -1,0 +1,24 @@
+{{- $tcs := (lookup "v1" "Service" "tce" "ocloud-tcenter-yunapi3-auth-server") }}
+{{- if $tcs }}
+apiVersion: infrastore.tce.io/v1
+{{- else }}
+apiVersion: monitoring.coreos.com/v1
+{{- end }}
+kind: ServiceMonitor
+metadata:
+  labels:
+    prometheus: kube-prometheus
+  name: adp-unified-gateway
+  namespace: {{ .Release.Namespace }}
+spec:
+  endpoints:
+    - path: /metrics
+      port: tcp-9028
+      interval: 10s
+      scheme: http
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      app: adp-unified-gateway

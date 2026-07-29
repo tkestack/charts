@@ -80,7 +80,10 @@ spec:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       terminationGracePeriodSeconds: 90
       containers:
-        - env:
+        - envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
             - name: MKL_NUM_THREADS
               value: "2"
             - name: LOG_SPACES

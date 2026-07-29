@@ -1,6 +1,6 @@
 images:
   adp-platform-content-moderation:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/bot-infosec-server:17_2605071117_stable_v3.4.1.1_1dad608f_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/bot-infosec-server:35_2607170209_stable_iaas_v4.0.3.0_ee89b62f_private"
 resources:
   limits:
     cpu: "1"

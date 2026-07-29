@@ -1,0 +1,195 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    ti.cloud.tencent.com/resource-quota: unlimited
+    configmap.reloader.stakater.com/reload: {{ .Release.Name }}-agent-exec-env
+    {{- if .Values.global.customAnnotations }}
+    {{- range $key, $value := .Values.global.customAnnotations }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
+  labels:
+    app: adp-agent-exec-env
+    {{- if .Values.global.customLabels }}
+    {{- range $key, $value := .Values.global.customLabels }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
+  name: adp-agent-exec-env
+  namespace: {{ .Release.Namespace }}
+spec:
+  {{- if eq .Values.global.clusterSize "minimal" }}
+  replicas: 1
+  {{- else if eq .Values.global.clusterSize "standard" }}
+  replicas: 2
+  {{- else }}
+  replicas: 3
+  {{- end }}
+  selector:
+    matchLabels:
+      app: adp-agent-exec-env
+  template:
+    metadata:
+      labels:
+        app: adp-agent-exec-env
+        {{- if .Values.global.customLabels }}
+        {{- range $key, $value := .Values.global.customLabels }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+        {{- end }}
+      {{- if .Values.global.customAnnotations }}
+      annotations:
+        {{- range $key, $value := .Values.global.customAnnotations }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+      {{- end }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - adp-agent-exec-env
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: GPUName
+                    operator: DoesNotExist
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: product
+                    operator: In
+                    values:
+                      - lke
+      {{- if eq (include "needInitContainer" .) "true" }}
+      serviceAccountName: adp-reader
+      {{- end }}
+      initContainers:
+        {{- include "dependencyChecker.initContainer" . | nindent 8 }}
+      containers:
+        - name: adp-agent-exec-env
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-agent-exec-env").url "context" .) }}
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: DEPLOYMENT_ENVIRONMENT
+              value: TKE
+            - name: ADP_HOST
+              value: "{{ .Values.global.scheme }}://{{ .Values.global.clb }}"
+          {{- if eq .Values.global.clusterSize "minimal" }}
+          resources:
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+          {{- else if eq .Values.global.clusterSize "standard" }}
+          resources:
+            limits:
+              cpu: "4"
+              memory: "8Gi"
+            requests:
+              cpu: "2"
+              memory: "4Gi"
+          {{- else }}
+          resources:
+            limits:
+              cpu: "4"
+              memory: "8Gi"
+            requests:
+              cpu: "2"
+              memory: "4Gi"
+          {{- end }}
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 9000
+            timeoutSeconds: 3
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 9000
+            timeoutSeconds: 3
+          volumeMounts:
+            - mountPath: /app/logs
+              name: log
+              subPathExpr: $(POD_NAME)
+            - mountPath: /app/conf/trpc_go.yaml
+              name: config
+              subPath: trpc_go.yaml
+            - mountPath: /app/conf/placeholder.yaml
+              name: config
+              subPath: placeholder.yaml
+            - mountPath: /app/conf/application.yaml
+              name: config
+              subPath: application.yaml
+            - mountPath: /app/conf/client.yaml
+              name: config
+              subPath: client.yaml
+            - mountPath: /app/conf/env.yaml
+              name: config
+              subPath: env.yaml
+            - mountPath: /app/conf/exec_env_en-US.json
+              name: config
+              subPath: exec_env_en-US.json
+            - mountPath: /app/conf/exec_env_zh-CN.json
+              name: config
+              subPath: exec_env_zh-CN.json
+            - mountPath: /app/conf/errors_en-US.json
+              name: config
+              subPath: errors_en-US.json
+            - mountPath: /app/conf/errors_zh-CN.json
+              name: config
+              subPath: errors_zh-CN.json
+            - mountPath: /app/conf/infrastructure.yaml
+              name: infrastructure
+              subPath: infrastructure.yaml
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      volumes:
+        {{- include "dependencyChecker.volumes" . | nindent 8 }}
+        - hostPath:
+            path: /data/ti-platform/log/adp-agent-exec-env
+            type: DirectoryOrCreate
+          name: log
+        - configMap:
+            defaultMode: 420
+            name: {{ .Release.Name }}-agent-exec-env
+          name: config
+        - configMap:
+            defaultMode: 420
+            name: infrastructure
+          name: infrastructure

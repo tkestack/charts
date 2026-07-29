@@ -2,8 +2,8 @@ apiVersion: v2
 name: adp
 description: Tencent Cloud Agent Development Platform (Tencent Cloud ADP) with RAG, Workflow and Multi-agent collaboration for TKE
 type: application
-version: 1.0.3
-appVersion: "1.0.3"
+version: 1.0.4
+appVersion: "1.0.4"
 icon: https://cloudcache.tencent-cloud.com/qcloud/ui/static/Industry_tke/bd9c98d6-46e2-48ec-a812-7adbbde304b6.jpg
 home: https://cloud.tencent.com/product/adp
 
@@ -16,10 +16,26 @@ dependencies:
     version: "1.0.0"
     repository: "file://charts/adp-agent-config"
     condition: adp-agent-config.enabled
+  - name: adp-agent-exec-env
+    version: "1.0.0"
+    repository: "file://charts/adp-agent-exec-env"
+    condition: adp-agent-exec-env.enabled
   - name: adp-agent-exec
     version: "1.0.0"
     repository: "file://charts/adp-agent-exec"
     condition: adp-agent-exec.enabled
+  - name: adp-agent-file-system
+    version: "1.0.0"
+    repository: "file://charts/adp-agent-file-system"
+    condition: adp-agent-file-system.enabled
+  - name: adp-agent-sandbox
+    version: "1.0.0"
+    repository: "file://charts/adp-agent-sandbox"
+    condition: adp-agent-sandbox.enabled
+  - name: adp-agent-secret-vault
+    version: "1.0.0"
+    repository: "file://charts/adp-agent-secret-vault"
+    condition: adp-agent-secret-vault.enabled
   - name: adp-ai-gateway
     version: "1.0.0"
     repository: "file://charts/adp-ai-gateway"
@@ -28,6 +44,10 @@ dependencies:
     version: "1.0.0"
     repository: "file://charts/adp-apex"
     condition: adp-apex.enabled
+  - name: adp-app-channel-leader
+    version: "1.0.0"
+    repository: "file://charts/adp-app-channel-leader"
+    condition: adp-app-channel-leader.enabled
   - name: adp-app-channel-msg
     version: "1.0.0"
     repository: "file://charts/adp-app-channel-msg"
@@ -80,10 +100,6 @@ dependencies:
     version: "1.0.0"
     repository: "file://charts/adp-kb-retrieval"
     condition: adp-kb-retrieval.enabled
-  - name: adp-kb-vdb-proxy
-    version: "1.0.0"
-    repository: "file://charts/adp-kb-vdb-proxy"
-    condition: adp-kb-vdb-proxy.enabled
   - name: adp-markmap-service
     version: "2.0.0"
     repository: "file://charts/adp-markmap-service"
@@ -112,10 +128,6 @@ dependencies:
     version: "1.0.0"
     repository: "file://charts/adp-platform-metrology"
     condition: adp-platform-metrology.enabled
-  - name: adp-platform-op
-    version: "1.0.0"
-    repository: "file://charts/adp-platform-op"
-    condition: adp-platform-op.enabled
   - name: adp-platform-permission-config
     version: "1.0.0"
     repository: "file://charts/adp-platform-permission-config"
@@ -140,10 +152,10 @@ dependencies:
     version: "1.0.0"
     repository: "file://charts/adp-plugin-exec"
     condition: adp-plugin-exec.enabled
-  - name: adp-plugin-pod-schedule
+  - name: adp-plugin-gateway
     version: "1.0.0"
-    repository: "file://charts/adp-plugin-pod-schedule"
-    condition: adp-plugin-pod-schedule.enabled
+    repository: "file://charts/adp-plugin-gateway"
+    condition: adp-plugin-gateway.enabled
   - name: adp-pyright
     version: "2.0.0"
     repository: "file://charts/adp-pyright"
@@ -156,6 +168,18 @@ dependencies:
     version: "1.0.0"
     repository: "file://charts/adp-resource-gallery"
     condition: adp-resource-gallery.enabled
+  - name: adp-skill-config
+    version: "1.0.0"
+    repository: "file://charts/adp-skill-config"
+    condition: adp-skill-config.enabled
+  - name: adp-time-scheduler
+    version: "1.0.0"
+    repository: "file://charts/adp-time-scheduler"
+    condition: adp-time-scheduler.enabled
+  - name: adp-unified-gateway
+    version: "1.0.0"
+    repository: "file://charts/adp-unified-gateway"
+    condition: adp-unified-gateway.enabled
   - name: adp-web-app
     version: "2.0.0"
     repository: "file://charts/adp-web-app"
@@ -177,7 +201,7 @@ dependencies:
     repository: "file://charts/common-config-map"
     condition: common-config-map.enabled
   - name: deploy-data-init
-    version: "3.4.1"
+    version: "4.0.3"
     repository: "file://charts/deploy-data-init"
     condition: deploy-data-init.enabled
   - name: deploy-pre-check
@@ -228,6 +252,10 @@ dependencies:
     version: "1.0.0"
     repository: "file://charts/lke-ti-perm-auth"
     condition: lke-ti-perm-auth.enabled
+  - name: log-cleaner
+    version: "1.0.0"
+    repository: "file://charts/log-cleaner"
+    condition: log-cleaner.enabled
   - name: ti-common
     version: "1.0.0"
     repository: "file://charts/ti-common"

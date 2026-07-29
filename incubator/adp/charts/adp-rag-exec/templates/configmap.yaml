@@ -6,7 +6,7 @@ metadata:
 data:
   application.yaml: |
     sse:
-      data_channel: 1000
+      data_channel: ${DATA_CHANNEL}
     bot:
       timeout: 280
       rejected_reply: 这个问题我不是很清楚，我所提供的答案或建议可能会存在不准确的地方。建议您转到人工，由专业顾问为您提供服务。
@@ -15,25 +15,22 @@ data:
       multi_intent_reply: 在知识库中找到多个内容可以回答您的问题。请问您是想问哪个问题：
       clarify_confirm_reply: 请描述您的问题
       intent_achievements:
-        0 : ["qa","workflow","self_awareness","doc","search_engine","llm","default"]
+        0: ["qa", "workflow", "self_awareness", "doc", "search_engine", "llm", "default"]
       rewrite:
-        rewrite_threshold: 100
-      intent_threshold: 5000
-      search_threshold: 5000
-      busy_replies:
-        1: 抱歉，当前咨询量大，请重新再问我一次。
-        4: 当前用量大，会话摘要生成失败。
-        5: 当前用量大，会话小结生成失败。
+        rewrite_threshold: ${REWRITE_THRESHOLD}
+      intent_threshold: ${INTENT_THRESHOLD}
+      search_threshold: ${SEARCH_THRESHOLD}
+      busy_replies: ${BUSY_REPLIES}
       throttles:
-        check: 20
-        streaming: 5
+        check: ${THROTTLES_CHECK}
+        streaming: ${THROTTLES_STREAMING}
       response_channel_size: 1500
       answer_from_knowledge_timeout: 2
-      single_message_limit: 5000
+      single_message_limit: ${SINGLE_MESSAGE_LIMIT}
       role_description: ${ROLE_DESCRIPTION}
       bot_role_description: ${BOT_ROLE_DESCRIPTION}
       self_awareness_direct_reply_models: ${SELF_AWARENESS_DIRECT_REPLY_MODELS}
-      content_limit: 192000
+      content_limit: ${BOT_CONTENT_LIMIT}
       role_command_regx:
         role_name_regex: "#+\\s*角色名称: (.*)"
         speech_style_regex: "#+\\s*言谈风格:\\n((?:.|\\n)+?)\\n\\n#+\\s*性格特点:"
@@ -41,17 +38,11 @@ data:
         experience_regex: "#+\\s*经历和背景:\\n((?:.|\\n)+?)\\n\\n#+\\s*能力限制:"
         capability_limit_regex: "#+\\s*能力限制:\\n(.*?)\\n\\n"
         skills_regex: "(#+\\s*意图\\s*\\d+)：([\\s\\S]*?)(#+\\s*意图描述)：([\\s\\S]*?)(#+\\s*意图实现)：([\\s\\S]*?)#"
-      recommend_regex: "\\[推荐问题.*?\\](.*?)\\n"
+      recommend_regex: ${BOT_RECOMMEND_REGEX}
       placeholder_conf:
-        start_placeholders:
-          "[" : 25
-          "h" : 25
-      channel_type_list: [10000,10001,10002,10003,10004,10005,10009]
-    unsatisfied_reply:
-      context_length:
-        above: 15
-        below: 15
-    reject_answer_judge_length: 20
+        start_placeholders: ${START_PLACEHOLDERS}
+      channel_type_list: ${CHANNEL_TYPE_LIST}
+    reject_answer_judge_length: ${REJECT_ANSWER_JUDGE_LENGTH}
     space_limiter_account: ${SPACE_USER_ACCOUNT}
     use_placeholder_models: ${USE_PLACEHOLDER_MODELS}
     app:
@@ -64,14 +55,15 @@ data:
       get_caption_prompt: 用200字以内描述这张图片
       get_multi_prompt: 分别用200字以内描述以上图片
       rewrite_prefix: 用户的问题是：
-      placeholder: <ut_im##age_here_index>%d</ut_im##age_here_index>
+      placeholder: "<ut_im##age_here_index>%d</ut_im##age_here_index>"
       placeholderv2: "Picture %d: <image>[Picture %d]"
       max_image_count: 20
-      one_image_token_length: 1248
+      one_image_token_length: ${ONE_IMAGE_TOKEN_LENGTH}
       multi_modal_comprehension:
         model_name: ${MLLM_MODEL_NAME}
         white_list: ${MLLM_WHITE_LIST}
       can_use_multi_modal_search: ${CAN_USE_MULTI_MODAL_SEARCH}
+      max_image_count_limit: ${MAX_IMAGE_COUNT_LIMIT}
     procedure:
       knowledge: 调用知识库
       task_flow: 调用任务流程
@@ -84,7 +76,7 @@ data:
       agent: 运行Agent
       model_generate: 大模型生成中
     limiter:
-      report_judge_length: 100
+      report_judge_length: ${REPORT_JUDGE_LENGTH}
     hunyuan_config:
       # 注意这里B是大写 跟其他的不一样
       hunyuan_standard: ${HUNYUAN_CONFIG_HUNYUAN_STANDARD}
@@ -92,42 +84,35 @@ data:
       whitelist: ${HUNYUAN_CONFIG_WHITELIST}
       enable_instruction_list: ${HUNYUAN_CONFIG_ENABLE_INSTRUCTION_LIST}
     workflow_config:
-      model_name: {{ .Values.global.RagServer.workflow_config_model_name }}
+      model_name: {{ (.Values.global.RagServer).workflow_config_model_name | default "" }}
       close_token_report: ${WORKFLOW_CONFIG_CLOSE_TOKEN_REPORT}
     model:
       prompt_length: ${MODEL_PROMPT_LENGHT}
       white_list: ${MODEL_WHITE_LIST}
       prompt_list: ${MODEL_PROMPT_LIST}
     reference:
-      patterns:
-        - 【passage (\d+)】
-        - \[passage (\d+?)\]
+      patterns: ${REFERENCE_PATTERN}
       hunyuan_switch: ${REFERENCE_HUNYUAN_SWITCH}
       hunyuan_patterns:
-        - （passage (\d+)）
-        - 以上信息来源于【passage (\d+)】(。|和【passage (\d+)】。)
+        - "（passage (\\d+)）"
+        - "以上信息来源于【passage (\\d+)】(。|和【passage (\\d+)】。)"
         - \n引用的passage编号：(\d+)
         - \n引用的passage编号是：(\d+)
-        - \n\*\*引用passage编号\*\*：\[(\d+)\]
-        - \[passage (\d+)\]
+        - "\\n\\*\\*引用passage编号\\*\\*：\\[(\\d+)\\]"
+        - "\\[passage (\\d+)\\]"
         - \n引用的passage编号是：
         - \n引用的passage编号为：
-        - \n\*\*引用passage编号：\*\*
+        - "\\n\\*\\*引用passage编号：\\*\\*"
+      retrieval_docs_white_list: ${REFERENCE_RETRIEVAL_DOCS_WHITE_LIST}
+      repeat_bracket: ${REPEAT_BRACKET}
+      abnormal_bracket: ${ABNORMAL_BRACKET}
+      max_input_length: ${REFERENCE_MAX_INPUT_LENGTH}
     finance:
       default_qpm: ${RAG_DEFAULT_QPM}
       default_tpm: ${RAG_DEFAULT_TPM}
       ds_default_qpm: ${RAG_DS_DEFAULT_QPM}
       ds_default_tpm: ${RAG_DS_DEFAULT_TPM}
       model_config:
-        # "TCADP/glm-5":
-        #   default_qpm: 10
-        #   default_tpm: 20000
-        # "TCADP/minimax-m2.5":
-        #   default_qpm: 10
-        #   default_tpm: 20000
-        # "TCADP/kimi-k2.5":
-        #   default_qpm: 10
-        #   default_tpm: 20000
     clarify_confirm: # 澄清确认、猜你想问白名单
       top_n: ${CLARIFY_CONFIRM_TOP_N}
       white_list: ${CLARIFY_CONFIRM_WHITE_LIST}
@@ -147,25 +132,12 @@ data:
         7: 天气
         8: 全文处理
         9: 知识问答
-      system_intent_map:
-        指令跟随回答: knowledge_qa
-        代码问题: knowledge_qa
-        数学计算: mathematics_calculate
-        逻辑推理: mathematics_calculate
-        自我认知: knowledge_qa
-        聊天: knowledge_qa
-        天气: knowledge_qa
-        全文处理: doc_summary
-        其他问题: knowledge_qa
-        知识问答: knowledge_qa
-        搜索引擎: search_engine
-        # 临时给微盛指定
-        兜底回复: model_chat 
+      system_intent_map: ${SYSTEM_INTENT_MAP}
       system_intent_white_list: ${SYSTEM_INTENT_WHITE_LIST}
       explicit_intent: ${EXPLICIT_INTENT}
       ds_faq_reject_model: ${DS_FAQ_REJECT_MODEL}
       rerank_score: -3
-      guide_of_opt_cards: "请从下面几个选项中进行选择。"
+      guide_of_opt_cards: 请从下面几个选项中进行选择。
       is_free: ${RAG_INTENT_MODEL_FREE}
     mock:
       enable_llm: false
@@ -173,7 +145,7 @@ data:
       enable_workflow: false
     retrieval_config:
       close_priority: []
-      ner_threshold: 100
+      ner_threshold: ${RETRIEVAL_CONFIG_NER_THRESHOLD}
     need_search_global_knowledge: ${NEED_SEARCH_GLOBAL_KNOWLEDGE}
     thought_conf:
       thought_icon: ${RAG_THOUGHT_ICON}
@@ -197,85 +169,167 @@ data:
       model_has_think: ${DEEP_SEEK_CONF_MODEL_HAS_THINK}
       image_quiz_white_list: ${DEEP_SEEK_CONF_IMAGE_QUIZE_WHITE_LIST} # 图文问答白名单列表
       qd_ds_start_time: ${DEEP_SEEK_CONF_QD_DS_START_TIME}
-      search_secret_id: ${RAG_SEARCH_SECRET_ID}
-      search_secret_key: ${RAG_SEARCH_SECRET_KEY}
+      search_secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+      search_secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
       search_result_size: 9
-      search_enable_free: false
+      search_enable_free: ${SEARCH_ENABLE_FREE}
       exclude_search_engine: ["mp"]
-      no_think_prompt: "<think>\n完成全部分析思考，按照用户要求直接输出答案，不再输出分析步骤或者其他思考内容。\n</think>\n\n"
-      no_think_model_params: "{\"seed\": 0, \"top_p\": 1, \"temperature\": 0, \"max_tokens\": 1000, \"remove_cot\": true}"
+      no_think_prompt: ${NO_THINK_PROMPT}
+      no_think_model_params: ${NO_THINK_MODEL_PARAMS}
     local_cache: ${LOCAL_CACHE}
     search_engine: ${SEARCH_ENGINE}
+    reply_trace_names:
+      # 中间节点
+      rewrite: ${REPLY_TRACE_REWRITE}
+      basic_search: ${REPLY_TRACE_BASIC_SEARCH}
+      knowledge_search: ${REPLY_TRACE_KNOWLEDGE_SEARCH}
+      intent_recognize: ${REPLY_TRACE_INTENT_RECOGNIZE}
+      workflow: ${REPLY_TRACE_WORKFLOW}
+      # 回复节点
+      query_with_image_and_file: ${REPLY_TRACE_QUERY_WITH_IMAGE_AND_FILE}
+      query_with_text_image_file_by_mllm_comprehension: ${REPLY_TRACE_QUERY_WITH_TEXT_IMAGE_FILE}
+      doc_summary: ${REPLY_TRACE_DOC_SUMMARY}
+      query_with_image: ${REPLY_TRACE_QUERY_WITH_IMAGE}
+      multi_modal_multi_turn_dialog: ${REPLY_TRACE_MULTI_MODAL_MULTI_TURN}
+      multi_modal_reading_comprehension: ${REPLY_TRACE_MULTI_MODAL_READING}
+      ds_r1_summary: ${REPLY_TRACE_DS_R1_SUMMARY}
+      faq_reply: ${REPLY_TRACE_FAQ_REPLY}
+      llm_direct: ${REPLY_TRACE_LLM_DIRECT}
+      qa_direct_reply: ${REPLY_TRACE_QA_DIRECT_REPLY}
+      reject_reply: ${REPLY_TRACE_REJECT_REPLY}
+      global_knowledge: ${REPLY_TRACE_GLOBAL_KNOWLEDGE}
+      summary_reject_reply: ${REPLY_TRACE_SUMMARY_REJECT_REPLY}
+      doc_and_qa: ${REPLY_TRACE_DOC_AND_QA}
+      doc: ${REPLY_TRACE_DOC}
+      doc_multi_model: ${REPLY_TRACE_DOC_MULTI_MODEL}
+      clarify_confirm: ${REPLY_TRACE_CLARIFY_CONFIRM}
+      general: ${REPLY_TRACE_GENERAL}
+      single_doc_full_text: ${REPLY_TRACE_SINGLE_DOC_FULL_TEXT}
+      multi_doc_summarize: ${REPLY_TRACE_MULTI_DOC_SUMMARIZE}
+      hun_yuan_search: ${REPLY_TRACE_HUN_YUAN_SEARCH}
+      sougou_search: ${REPLY_TRACE_SOUGOU_SEARCH}
+      search_intl: ${REPLY_TRACE_SEARCH_INTL}
+      yuanbao_search: ${REPLY_TRACE_YUANBAO_SEARCH}
+    think_conf:
+      model_has_think: ${THINK_CONF_MODEL_HAS_THINK}
+    web_search: ${WEB_SEARCH}
 
-  error_en-US.json: |
-    {
-        "ErrUserNotLogin": "User is not logged in",
-        "ErrIntentNotFound": "Intent does not exist",
-        "ErrAdminAppKeyInvalid": "Invalid APPKEY, please verify the APPKEY source",
-        "ErrBadRequest": "Invalid request parameters, please refer to the integration documentation.",
-        "ErrAuthTokenFailed": "Token verification failed",
-        "ErrEventHandlerNotExist": "Event handler does not exist",
-        "ErrSeatNotExist": "Seat user does not exist",
-        "ErrAdminRobotNotExist": "Robot does not exist",
-        "ErrRobotNotExist": "Robot does not exist",
-        "ErrSessionNotTransfered": "Session was not transferred to human",
-        "ErrInvalidMsgRecord": "Message does not exist or no operation permission",
-        "ErrCreateSessionFailed": "Session creation failed",
-        "ErrRenderTemplate": "Prompt rendering failed",
-        "ErrVisitorNotExist": "Visitor user does not exist",
-        "ErrSessionNotFound": "Session does not exist or no operation permission",
-        "ErrConcurrenceExceeded": "Exceeded concurrency limit",
-        "ErrLLMTimeout": "Model request timeout",
-        "ErrKnowledgeNotPublished": "Knowledge base not published",
-        "ErrCreateVisitorFailed": "Visitor creation failed",
-        "ErrRateMsgRecordFailed": "Message rating failed",
-        "ErrInvalidVisitorLabel": "Invalid label",
-        "ErrImageRecognitionFailed": "Image recognition failed",
-        "ErrRobotStopOrArrearage": "Robot is disabled or in arrears",
-        "ErrAppTypeNotSupported": "This application type does not support the current request",
-        "ErrAppRateLimiter": "Current application connections exceed request limit, please try again later",
-        "ErrNoBalance": "Insufficient model balance for current application",
-        "ErrInvalidApp": "Application does not exist or no operation permission",
-        "ErrContentTooLong": "Input content too long",
-        "ErrCalcContentTooLong": "Calculation content too long, stopped",
-        "ErrTaskFlowNodePreview": "Task flow node preview parameter exception",
-        "ErrNoSearchEngineBalance": "Search resources exhausted, call failed",
-        "ErrAppIDInBlacklist": "This AppID has abnormal behavior, call failed",
-        "ErrMsgRecordErr": "Message record is invalid",
-        "ErrAudioInteractNotEnabled": "Voice interaction function not enabled",
-        "ErrRTCNotEnabled": "Voice call function not enabled",
-        "ErrRTCResourceInsufficient": "Voice call lines busy, please try again later",
-        "ErrRTCVoiceNotConfig": "Voice call sound not configured",
-        "ErrRTCDigitalHumanNotConfig": "Voice call avatar not configured",
-        "ErrRTCDigitalHumanNotEnabled": "Voice call avatar not enabled",
-        "ErrRTCConcurrencyLimiter": "Current voice calls exceed request limit, please try again later",
-        "ErrRTCTaskNotExist": "Voice call task does not exist",
-        "ErrThoughtNoBalance": "Insufficient thought model balance",
-        "ErrWorkflowDisable": "Workflow function not enabled",
-        "ErrWorkflowRunError": "Workflow running exception",
-        "ErrWorkflowClose": "The workflow you selected is not enabled, please enable it before debugging",
-        "ErrWorkflowDebug": "The workflow you selected is pending debugging, please debug it in the workflow first",
-        "ErrWorkflowDelete": "The workflow you selected has been deleted, please select again",
-        "ErrWorkflowRelease": "The workflow you selected is not published, please enable it in the workflow first",
-        "ErrWorkflowReference": "This workflow references other workflows that are unavailable due to 'not enabled' or 'pending debugging', please 'enable' or 'debug' before testing.",
-        "ErrWorkflowIsEmpty": "You have not selected a workflow, please make a selection",
-        "ErrAgentImageUnsupported": "Agent temporarily does not support images",
-        "ErrAgentFileUnsupported": "Agent temporarily does not support files",
-        "ErrAgentRunError": "Agent running exception",
-        "ErrAgentNoToolsError": "Agent currently has no executable tools",
-        "ErrAgentToolsRunError": "Agent tool failed",
-        "ErrAgentLocalToolOuputsRedundant": "Invalid request parameters, last chat did not request local tool calls, please do not configure LocalToolOuputs parameter.",
-        "ErrAgentLocalToolsNotFound": "Invalid request parameters, tool name reported in LocalToolOuputs does not exist",
-        "ErrRedisNotFound": "Redis data does not exist",
-        "ErrForbidden": "Forbidden",
-        "ErrInternalServerError": "Internal Server Error",
-        "ErrAPPResourceLimitQPM": "Request failed: Current application's model QPM limit hit.",
-        "ErrAPPResourceLimitTPM": "Request failed: Current application's model TPM limit hit.",
-        "ErrAPPResourceLimitDailyTokens": "Request failed: Current application's model daily token limit exceeded.",
-        "ErrSpaceResourceLimitQPM": "Request failed: Current space's model QPM limit hit.",
-        "ErrSpaceResourceLimitTPM": "Request failed: Current space's model TPM limit hit.",
-        "ErrSpaceResourceLimitDailyTokens": "Request failed: Current space's model daily token limit exceeded."
-    }
+
+  client.yaml: |
+    client:
+      namespace: Test
+      filter:
+        - opentelemetry
+        - cle-route-propagator
+        - chat-trace
+      service:
+        - name: mysql.qbot.qbot
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: tdsql.qbot.qbot
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: mysql.adp.prompt
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: redis.qbot.qbot
+          network: tcp
+          protocol: redis
+          target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379
+          password: "${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}"
+          timeout: 800
+        - name: redis.lke.limiter
+          network: tcp
+          protocol: redis
+          target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/4
+          password: "${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}"
+          timeout: 800
+        - callee: trpc.KEP.bot_knowledge_config_server.Api
+          name: trpc.KEP.bot-knowledge-config-server.Api
+          target: "ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          namespace: Test
+          protocol: trpc
+          timeout: 600000
+        - name: qbot.finance.finance.Finance
+          namespace: Test
+          target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          network: tcp
+          timeout: 30000
+        - name: trpc.KEP.bot-llm-server.llm
+          callee: trpc.KEP.bot_llm_server.llm
+          namespace: Test
+          target: "ip://adp-llm.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          network: tcp
+          timeout: 5000
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          namespace: Test
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_admin_proxy.Api
+          namespace: Test
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_workflow_dm_server.WorkflowDm
+          name: trpc.KEP.bot-workflow-dm-server.workflow-dm
+          namespace: Test
+          target: "ip://adp-workflow-exec.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          timeout: 600000
+        - callee: trpc.KEP.bot-workflow-dm-server.workflow-dm-http
+          target: "ip://adp-workflow-exec.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          namespace: Test
+          network: tcp
+          protocol: http
+          timeout: 600000
+        - name: trpc.adp.ai-gateway.api
+          target: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: Test
+          network: tcp
+          protocol: http
+          timeout: 1800000
+        - callee: trpc.KEP.bot_data_statistics_server.Api
+          target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          namespace: Test
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.kb_config.Api
+          namespace: Test
+          protocol: trpc
+          timeout: 60000
+          target: "ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092"
+        - callee: trpc.adp.workflow_exec.WorkflowExec
+          namespace: Test
+          timeout: 600000
+          target: "ip://adp-workflow-exec.{{ .Release.Namespace }}.svc.cluster.local:8000"
+        - callee: trpc.adp.platform_metrology.Api
+          namespace: Test
+          target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_config.Admin
+          target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: Test
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.resource_gallery.Admin
+          target: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: Test
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_manager.Login
+          namespace: Test
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          protocol: trpc
+          timeout: 6000
+        - callee: trpc.adp.platform_charger.Finance
+          namespace: Test
+          target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          network: tcp
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.adp.kb_retrieval.DirectIndex
+          namespace: Test
+          target: "ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          timeout: 30000
+
 
   error_zh-CN.json: |
     {
@@ -344,67 +398,80 @@ data:
         "ErrAPPResourceLimitDailyTokens": "请求失败，当前应用的模型单日Tokens用量超限。",
         "ErrSpaceResourceLimitQPM": "请求失败，触发当前空间的模型QPM上限。",
         "ErrSpaceResourceLimitTPM": "请求失败，触发当前空间的模型 TPM 上限。",
-        "ErrSpaceResourceLimitDailyTokens": "请求失败，触发当前空间的模型单日Tokens用量超限。"
+        "ErrSpaceResourceLimitDailyTokens": "请求失败，触发当前空间的模型单日Tokens用量超限。",
+        "ErrInvalidParam": "一个或多个输入参数无效。",
+        "ErrProviderModelNotFound": "提供商模型不存在"
     }
 
   placeholder.yaml: |
+    # client.yaml start
+    RAG_KNOWLEDGE_CONFIG_SERVER_TARGET: "ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092"
 
-    RAG_KNOWLEDGE_CONFIG_SERVER_TARGET: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
-    RAG_FINANCE_SERVER_TARGET: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
-    RAG_LLM_SERVER_TARGET: ip://adp-llm.{{ .Release.Namespace }}.svc.cluster.local:8000
-    RAG_ADMIN_CONFIG_SERVER_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
-    RAG_WORKFLOW_DM_SERVER_TARGET: ip://adp-workflow-exec.{{ .Release.Namespace }}.svc.cluster.local:8000
-    RAG_WORKFLOW_DM_HTTP_SERVER_TARGET: ip://adp-workflow-exec.{{ .Release.Namespace }}.svc.cluster.local:8001
-    RAG_AI_GATEWAY_HTTP_SERVER_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
-    RAG_DATA_STATISTICS_SERVER_TARGET: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
-    RAG_KB_CONFIG_SERVER_TARGET: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+    RAG_FINANCE_SERVER_TARGET: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
-    APP_CONFIG_ADMIN_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+    RAG_LLM_SERVER_TARGET: "ip://adp-llm.{{ .Release.Namespace }}.svc.cluster.local:8000"
 
-    RAG_RESOURCE_GALLERY_ADMIN_TARGET: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
-    RAG_PLATFORM_MANAGER_LOGIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+    RAG_ADMIN_CONFIG_SERVER_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
 
-    KB_RETRIEVAL_DIRECTINDEX_TARGET: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091
+    RAG_WORKFLOW_DM_SERVER_TARGET: "ip://adp-workflow-exec.{{ .Release.Namespace }}.svc.cluster.local:8000"
+
+    RAG_WORKFLOW_DM_HTTP_SERVER_TARGET: "ip://adp-workflow-exec.{{ .Release.Namespace }}.svc.cluster.local:8001"
+
+    RAG_AI_GATEWAY_HTTP_SERVER_TARGET: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
+
+    RAG_DATA_STATISTICS_SERVER_TARGET: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
+
+    RAG_KB_CONFIG_SERVER_TARGET: "ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092"
+
+    APP_CONFIG_ADMIN_TARGET: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
+
+    RAG_RESOURCE_GALLERY_ADMIN_TARGET: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
+    RAG_PLATFORM_MANAGER_LOGIN_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
+    #client.yaml end
 
     #application.yaml start
+    KB_RETRIEVAL_DIRECTINDEX_TARGET: "ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091"
     ROLE_DESCRIPTION: 你是腾讯云智能体开发平台，一个善于进行文档阅读、知识问答的智能平台。具备海量的行业知识，对垂直行业超过10项基础能力进行精调优化，涵盖了文档阅读理解、语义理解、安全合规等，可以帮助用户解决行业问题、提高工作效率。
     BOT_ROLE_DESCRIPTION:
-      lke-deepseek-r1: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题"
-      lke-deepseek-v3: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题"
-      lke-deepseek-r1-vip: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题"
-      Deepseek/deepseek-r1-250528-vip: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题"
-      lke-deepseek-v3-vip: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题"
-      Deepseek/deepseek-v3-250324-vip: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题"
-      lke-deepseek-r1-lichan: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题"
-      lke-deepseek-v3-0324: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3-0324。你会尽你所能帮助用户回答问题、解决问题"
-      Deepseek/deepseek-v3-250324: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3-0324。你会尽你所能帮助用户回答问题、解决问题"
-      lke-deepseek-r1-0528: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1-0528。你会尽你所能帮助用户回答问题、解决问题"
-      Deepseek/deepseek-r1-250528: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1-0528。你会尽你所能帮助用户回答问题、解决问题"
-      lke-deepseek-v3.1: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3.1。你会尽你所能帮助用户回答问题、解决问题"
-      Deepseek/deepseek-v3.1: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3.1。你会尽你所能帮助用户回答问题、解决问题"
-      lke-deepseek-v3.2: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3.2。你会尽你所能帮助用户回答问题、解决问题"
-      Deepseek/deepseek-v3.2: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3.2。你会尽你所能帮助用户回答问题、解决问题"
+      lke-deepseek-r1: 你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题
+      lke-deepseek-v3: 你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题
+      lke-deepseek-r1-vip: 你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题
+      Deepseek/deepseek-r1-250528-vip: 你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题
+      lke-deepseek-v3-vip: 你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题
+      Deepseek/deepseek-v3-250324-vip: 你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题
+      lke-deepseek-r1-lichan: 你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题
+      lke-deepseek-v3-0324: 你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3-0324。你会尽你所能帮助用户回答问题、解决问题
+      Deepseek/deepseek-v3-250324: 你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3-0324。你会尽你所能帮助用户回答问题、解决问题
+      lke-deepseek-r1-0528: 你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1-0528。你会尽你所能帮助用户回答问题、解决问题
+      Deepseek/deepseek-r1-250528: 你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1-0528。你会尽你所能帮助用户回答问题、解决问题
+      lke-deepseek-v3.1: 你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3.1。你会尽你所能帮助用户回答问题、解决问题
+      Deepseek/deepseek-v3.1: 你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3.1。你会尽你所能帮助用户回答问题、解决问题
+      lke-deepseek-v3.2: 你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3.2。你会尽你所能帮助用户回答问题、解决问题
+      Deepseek/deepseek-v3.2: 你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3.2。你会尽你所能帮助用户回答问题、解决问题
       hunyuan-2.0-instruct-251111: "你选择的大语言模型是由中国的腾讯公司开发的智能助手Tencent HY 2.0 Instruct。你会尽你所能帮助用户回答问题、解决问题"
       Hunyuan/hunyuan-2.0-instruct-251111: "你选择的大语言模型是由中国的腾讯公司开发的智能助手Tencent HY 2.0 Instruct。你会尽你所能帮助用户回答问题、解决问题"
       hunyuan-2.0-thinking-251109: "你选择的大语言模型是由中国的腾讯公司开发的智能助手Tencent HY 2.0 Think。你会尽你所能帮助用户回答问题、解决问题"
       Hunyuan/hunyuan-2.0-thinking-251109: "你选择的大语言模型是由中国的腾讯公司开发的智能助手Tencent HY 2.0 Think。你会尽你所能帮助用户回答问题、解决问题"
-      Youtu/youtu-mllm: "你选择的大语言模型是由腾讯优图开发的youtu-mllm，擅长理解图片、回答与解决问题。很高兴为你提供帮助。"
+      Youtu/youtu-mllm: 你选择的大语言模型是由腾讯优图开发的youtu-mllm，擅长理解图片、回答与解决问题。很高兴为你提供帮助。
       TCADP/minimax-m2.5: "你选择的大语言模型是由中国的稀宇科技公司开发的智能助手MiniMax M2.5。你会尽你所能帮助用户回答问题、解决问题"
+      Hunyuan/hunyuan-pro: 你选择的大语言模型是由中国的腾讯公司开发的智能助手hunyuan-pro。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。
+      Hunyuan/hunyuan-standard: 你选择的大语言模型是由中国的腾讯公司开发的智能助手hunyuan-standard。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。
+      Hunyuan/hunyuan-turbo: 你选择的大语言模型是由中国的腾讯公司开发的智能助手hunyuan-turbo。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。
+      Hunyuan/hunyuan-standard-256k: 你选择的大语言模型是由中国的腾讯公司开发的智能助手hunyuan-standard-256K。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。
+      Hunyuan/hunyuan-turbos-vision: 你选择的大语言模型是由中国的腾讯公司开发的智能助手hunyuan-turbos-vision。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。
+      Hunyuan/hunyuan-turbos-latest: 你选择的大语言模型是由中国的腾讯公司开发的智能助手hunyuan-turbos-latest。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。
+      Hunyuan/hunyuan-T1-latest: 你选择的大语言模型是由中国的腾讯公司开发的智能助手hunyuan-T1-latest。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。
+      # Deepseek/deepseek-v4-flash: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V4-Flash。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。"
 
-      Hunyuan/hunyuan-pro: "你选择的大语言模型是由中国的腾讯公司开发的智能助手hunyuan-pro。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。"
-      Hunyuan/hunyuan-standard: "你选择的大语言模型是由中国的腾讯公司开发的智能助手hunyuan-standard。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。"
-      Hunyuan/hunyuan-turbo: "你选择的大语言模型是由中国的腾讯公司开发的智能助手hunyuan-turbo。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。"
-      Hunyuan/hunyuan-standard-256k: "你选择的大语言模型是由中国的腾讯公司开发的智能助手hunyuan-standard-256K。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。"
-      Hunyuan/hunyuan-turbos-vision: "你选择的大语言模型是由中国的腾讯公司开发的智能助手hunyuan-turbos-vision。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。"
-      Hunyuan/hunyuan-turbos-latest: "你选择的大语言模型是由中国的腾讯公司开发的智能助手hunyuan-turbos-latest。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。"
-      Hunyuan/hunyuan-T1-latest: "你选择的大语言模型是由中国的腾讯公司开发的智能助手hunyuan-T1-latest。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。"
 
-    SELF_AWARENESS_DIRECT_REPLY_MODELS: ["Youtu/youtu-mllm","Hunyuan/hunyuan-pro","Hunyuan/hunyuan-standard","Hunyuan/hunyuan-turbo","Hunyuan/hunyuan-standard-256k","Hunyuan/hunyuan-turbos-vision","Hunyuan/hunyuan-turbos-latest","Hunyuan/hunyuan-T1-latest"]
+      Deepseek/deepseek-v4-pro: 你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V4-Pro。你会尽你所能帮助用户回答问题、解决问题。
+      TCADP/minimax-m2.7: "你选择的大语言模型是由中国的稀宇科技公司开发的智能助手MiniMax M2.7。你会尽你所能帮助用户回答问题、解决问题"
 
-    RAG_THOUGHT_ICON: "/qbot/public/thinking.png"
-    #调用搜狗搜索（TMS）接口，使用cam的id key
-    RAG_SEARCH_SECRET_ID: {{ .Values.global.components.s3.cos.secretId }}
-    RAG_SEARCH_SECRET_KEY: {{ .Values.global.components.s3.cos.secretKey }}
+    SELF_AWARENESS_DIRECT_REPLY_MODELS: ["Youtu/youtu-mllm", "Hunyuan/hunyuan-pro", "Hunyuan/hunyuan-standard", "Hunyuan/hunyuan-turbo", "Hunyuan/hunyuan-standard-256k", "Hunyuan/hunyuan-turbos-vision", "Hunyuan/hunyuan-turbos-latest", "Hunyuan/hunyuan-T1-latest"]
+    RAG_THOUGHT_ICON: /webim/static/thinking.png
+
+    RAG_SEARCH_SECRET_ID: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+    RAG_SEARCH_SECRET_KEY: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
 
     RAG_INTENT_MODEL_FREE: false
 
@@ -419,7 +486,6 @@ data:
 
     SPACE_USER_ACCOUNT:
       - 100044597907
-
     USE_PLACEHOLDER_MODELS:
       - finance-13b
       - cs-normal-13b-v1.0-hf
@@ -444,9 +510,8 @@ data:
       - Deepseek/deepseek-r1-250528
       - lke-deepseek-v3.1
       - Deepseek/deepseek-v3.1
-
     MODEL_NAME_DIALOG: Hunyuan/hunyuan-turbos-vision
-    ONLY_COS_URL: ["hunyuan-turbos-vision","hunyuan-turbo-vision","hunyuan-t1-vision","hunyuan-t1-vision-250619","hunyuan-turbos-vision-250619", "Hunyuan/hunyuan-turbos-vision", "Hunyuan/hunyuan-t1-vision", "Hunyuan/hunyuan-t1-vision-250619", "Hunyuan/hunyuan-turbos-vision-250619"]
+    ONLY_COS_URL: ["hunyuan-turbos-vision", "hunyuan-turbo-vision", "hunyuan-t1-vision", "hunyuan-t1-vision-250619", "hunyuan-turbos-vision-250619", "Hunyuan/hunyuan-turbos-vision", "Hunyuan/hunyuan-t1-vision", "Hunyuan/hunyuan-t1-vision-250619", "Hunyuan/hunyuan-turbos-vision-250619"]
     MULTI_MODEL_WHITE_LIST:
       1783835494843416576: Hunyuan/hunyuan-turbos-vision
 
@@ -455,7 +520,7 @@ data:
       # hank 测试
       1853290039307141120: Youtu/youtu-mllm
 
-    CAN_USE_MULTI_MODAL_SEARCH: [1900384634925219840,1895452356913135616,1858353412890165248,1858511990910877696,1853471650115223552,1856554226124849152,1818976550396887040,1853290039307141120,1812776502234710016,1851518419257524224,1848651634984091648,1848904064467730432,1847187022983987200,1846447803226652672,1792382390890135552,1838433161230680064,1815613383469957120,1834540434487246848,1704362013292855296,1833826054702891008,1818634299669217280,1798267638664396800,1791012385573306368,1821374700960350208,1825471199168167936,17812113880532910081,1704362013292855296,1823014991651930112]
+    CAN_USE_MULTI_MODAL_SEARCH: [1900384634925219840, 1895452356913135616, 1858353412890165248, 1858511990910877696, 1853471650115223552, 1856554226124849152, 1818976550396887040, 1853290039307141120, 1812776502234710016, 1851518419257524224, 1848651634984091648, 1848904064467730432, 1847187022983987200, 1846447803226652672, 1792382390890135552, 1838433161230680064, 1815613383469957120, 1834540434487246848, 1704362013292855296, 1833826054702891008, 1818634299669217280, 1798267638664396800, 1791012385573306368, 1821374700960350208, 1825471199168167936, 17812113880532910081, 1704362013292855296, 1823014991651930112]
 
     HUNYUAN_CONFIG_HUNYUAN_STANDARD: Hunyuan/hunyuan-13b
     HUNYUAN_CONFIG_HUNYUAN_SEARCH: Hunyuan/hunyuan-search
@@ -472,7 +537,7 @@ data:
       1915355850537959424: Hunyuan/hunyuan-search
       1912797311936233472: Hunyuan/hunyuan-search
       1914869212387213312: Hunyuan/hunyuan-search
-    HUNYUAN_CONFIG_ENABLE_INSTRUCTION_LIST: [1866749321082830848,1874797542794330112,1866744176471179264,1868613498972667904,1803979694859616256,1774701091090071552,1837057197988904960,1858833145532252160,1859033650204770304,1859045120572129280,1859045205519368192,1859045305101582336,1859045399325573120,1859045474064662528,1859045521857970176,1859045573410947072,1859045611154702336,1859045649047093248,1859045688368431104,1859045732123410432,1859045783343464448,1859045824024018944,1859118088707637248,1859128012003344384,1859128187241365504,1859128226227683328,1859131092680835072,1859131239041859584,1859147815120011264,1859396747079188480,1859420042343481344,1859420293058002944,1859420481731428352,1859420596944764928,1859420862266998784,1859421785073647616,1859508003072376832,1859587066504675328,1859856015201140736,1860958948578820096,1862084418794946560,1862087143590985728,1863451970907930624,1863785608186953728,1863913041226366976,1864880421424594944,1864904265396912128,1866277475614982144,1867493633106116608,1869638703431286784,1870093252361191424,1870459702662922240,1870738603540742144,1871813890521169920,1871815310153613312,1871856522860429312,1872071924260274176,1872072391186972672,1872072518074368000,1872090287876603904,1872107083047108608,1872111326509662208,1872125620202766336,1875097378009907200,1875097492048838656,1875097592678318080,1875097674811179008,1812750839818485760]
+    HUNYUAN_CONFIG_ENABLE_INSTRUCTION_LIST: [1866749321082830848, 1874797542794330112, 1866744176471179264, 1868613498972667904, 1803979694859616256, 1774701091090071552, 1837057197988904960, 1858833145532252160, 1859033650204770304, 1859045120572129280, 1859045205519368192, 1859045305101582336, 1859045399325573120, 1859045474064662528, 1859045521857970176, 1859045573410947072, 1859045611154702336, 1859045649047093248, 1859045688368431104, 1859045732123410432, 1859045783343464448, 1859045824024018944, 1859118088707637248, 1859128012003344384, 1859128187241365504, 1859128226227683328, 1859131092680835072, 1859131239041859584, 1859147815120011264, 1859396747079188480, 1859420042343481344, 1859420293058002944, 1859420481731428352, 1859420596944764928, 1859420862266998784, 1859421785073647616, 1859508003072376832, 1859587066504675328, 1859856015201140736, 1860958948578820096, 1862084418794946560, 1862087143590985728, 1863451970907930624, 1863785608186953728, 1863913041226366976, 1864880421424594944, 1864904265396912128, 1866277475614982144, 1867493633106116608, 1869638703431286784, 1870093252361191424, 1870459702662922240, 1870738603540742144, 1871813890521169920, 1871815310153613312, 1871856522860429312, 1872071924260274176, 1872072391186972672, 1872072518074368000, 1872090287876603904, 1872107083047108608, 1872111326509662208, 1872125620202766336, 1875097378009907200, 1875097492048838656, 1875097592678318080, 1875097674811179008, 1812750839818485760]
 
     WORKFLOW_CONFIG_MODEL_NAME: Youtu/youtu-intent-pro
     WORKFLOW_CONFIG_CLOSE_TOKEN_REPORT: true
@@ -483,48 +548,48 @@ data:
     MODEL_PROMPT_LENGHT:
       1750376442139246592: 8000
       1840278427223195648: 4800
-    MODEL_WHITE_LIST: [1873991822079426560,1828678385328193536,1846735623477264384,1866104097838989312,1856600538514456576,1768574873671565312,1829426434714632192,1848636281100173312,1791012385573306368,1819051745442004992,1833032816207593472,1831521474295365632,1825849698702589952,1828362174568857600,1826077090934423552,1826076958692999168,1826077041705877504,1798267638664396800,1800730273933950976,1820384440839307264,1820384588952764416,1825465040159899648,1823274401393541120,1798267638664396800,1818634299669217280,1795513544547762176,1818626209415430144,1818628642236792832,1818628076299354112,1818627165045653504,1818625169445355520,1818542125473333248,1818574916256006144,1816686570294476800,1819206584466407424,1819200336291430400,1819205433934479360,1819205873065525248,1819205844091273216,1819205166107197440,1819202167108534272,1819205389617463296,1819201481474834432,1819201589657731072,1819200314849361920,1819200357657214976,1819053250002550784,1819053356609175552,1819053140819836928,1819052733733273600,1819052233684942848,1819052613600804864,1819051718736871424,1819051745442004992,1819051697186537472,1818976550396887040,1782246346991599616,1817735758117601280,1815546874285785088,1814232812651020288,1809095035194179584,1776932043064606720,1805785858257715200,1805152170209705984,1803838264057790464,1784910919487979520,1780415718948077568,1783748091701886976,1788152526683242496,1788746169654968320,1788746256808411136,1793532500956413952,1801131541400387584,1780776899268575232,1805056401830838272,1809121295445524480,1809121229968244736,1809121273605783552,1809121251796189184,1809140761537544192,1809141795828531200,1809143756393021440,1809144475316912128,1809148110390165504,1809151036731686912,1809152670450057216,1809157452623511552,1809158112563691520,1809159756164628480,1809164067943481344,1809167449667403776,1809170571492851712,1809171807779946496,1809173952377913344,1809173996585877504,1809178552363384832,1809179375029977088,1818533071316582400]
+    MODEL_WHITE_LIST: [1873991822079426560, 1828678385328193536, 1846735623477264384, 1866104097838989312, 1856600538514456576, 1768574873671565312, 1829426434714632192, 1848636281100173312, 1791012385573306368, 1819051745442004992, 1833032816207593472, 1831521474295365632, 1825849698702589952, 1828362174568857600, 1826077090934423552, 1826076958692999168, 1826077041705877504, 1798267638664396800, 1800730273933950976, 1820384440839307264, 1820384588952764416, 1825465040159899648, 1823274401393541120, 1798267638664396800, 1818634299669217280, 1795513544547762176, 1818626209415430144, 1818628642236792832, 1818628076299354112, 1818627165045653504, 1818625169445355520, 1818542125473333248, 1818574916256006144, 1816686570294476800, 1819206584466407424, 1819200336291430400, 1819205433934479360, 1819205873065525248, 1819205844091273216, 1819205166107197440, 1819202167108534272, 1819205389617463296, 1819201481474834432, 1819201589657731072, 1819200314849361920, 1819200357657214976, 1819053250002550784, 1819053356609175552, 1819053140819836928, 1819052733733273600, 1819052233684942848, 1819052613600804864, 1819051718736871424, 1819051745442004992, 1819051697186537472, 1818976550396887040, 1782246346991599616, 1817735758117601280, 1815546874285785088, 1814232812651020288, 1809095035194179584, 1776932043064606720, 1805785858257715200, 1805152170209705984, 1803838264057790464, 1784910919487979520, 1780415718948077568, 1783748091701886976, 1788152526683242496, 1788746169654968320, 1788746256808411136, 1793532500956413952, 1801131541400387584, 1780776899268575232, 1805056401830838272, 1809121295445524480, 1809121229968244736, 1809121273605783552, 1809121251796189184, 1809140761537544192, 1809141795828531200, 1809143756393021440, 1809144475316912128, 1809148110390165504, 1809151036731686912, 1809152670450057216, 1809157452623511552, 1809158112563691520, 1809159756164628480, 1809164067943481344, 1809167449667403776, 1809170571492851712, 1809171807779946496, 1809173952377913344, 1809173996585877504, 1809178552363384832, 1809179375029977088, 1818533071316582400]
     CLARIFY_CONFIRM_TOP_N: 3
-    CLARIFY_CONFIRM_WHITE_LIST: [1866768310405169152,1828362174568857600,1814125695813550080,1869306842170261504,1853340285630414848,1853345321173909504,1855864655993110528,1851182265433587712,1849634981445107712,1849386573505495040,1844544386074673152,1846456846130348032,1834202980517412864,1791012385573306368,1808762220522242048,1798267638664396800,1815613383469957120,1834540434487246848,1704362013292855296,1833826054702891008,1818634299669217280,1783842476929318912,1836584183320805376,1790579791999533056]
+    CLARIFY_CONFIRM_WHITE_LIST: [1866768310405169152, 1828362174568857600, 1814125695813550080, 1869306842170261504, 1853340285630414848, 1853345321173909504, 1855864655993110528, 1851182265433587712, 1849634981445107712, 1849386573505495040, 1844544386074673152, 1846456846130348032, 1834202980517412864, 1791012385573306368, 1808762220522242048, 1798267638664396800, 1815613383469957120, 1834540434487246848, 1704362013292855296, 1833826054702891008, 1818634299669217280, 1783842476929318912, 1836584183320805376, 1790579791999533056]
     MODEL_PROMPT_LIST:
       normal_message: |-
-            {{`{{- if gt (len .Docs) 0 -}}`}}
-              以下的已知信息包括多个passage，请基于这个已知信息，简洁和专业的来回答用户的问题。并输出引用的passage编号。
-              已知内容:<$!truN#cAte+>
-              {{`{{range $i, $el := .Docs -}}`}}
-                【passage {{`{{addOne $i }}`}}】
-                {{`{{ if or (eq .DocType 1) (eq .DocType 4) -}}`}}
-                  {{`{{.Question}}`}} {{`{{.Answer}}`}}
-                {{`{{- else -}}`}}
-                  {{`{{.OrgData}}`}}
-                {{`{{- end}}`}}
-              {{`{{end}}`}}<-truN#cAte!$>
-            问题:
-            {{`{{end -}}`}}
-            {{`{{.Question}}`}}
+        {{`{{- if gt (len .Docs) 0 -}}
+          以下的已知信息包括多个passage，请基于这个已知信息，简洁和专业的来回答用户的问题。并输出引用的passage编号。
+          已知内容:<$!truN#cAte+>
+          {{range $i, $el := .Docs -}}
+            【passage {{addOne $i }}】
+            {{ if or (eq .DocType 1) (eq .DocType 4) -}}
+              {{.Question}} {{.Answer}}
+            {{- else -}}
+              {{.OrgData}}
+            {{- end}}
+          {{end}}<-truN#cAte!$>
+        问题:
+        {{end -}}
+        {{.Question}}`}}
       normal_message_non_general_knowledge: |-
-            {{`{{- if gt (len .Docs) 0 -}}`}}
-              以下的已知信息包括多个passage，请基于这个已知信息，简洁和专业的来回答用户的问题。并输出引用的passage编号。如果无法从中得到答案，请拒绝回答，并说明原因。
-              已知内容:<$!truN#cAte+>
-              {{`{{range $i, $el := .Docs -}}`}}
-                【passage {{`{{addOne $i }}`}}】
-                {{`{{ if or (eq .DocType 1) (eq .DocType 4) -}}`}}
-                  {{`{{.Question}}`}} {{`{{.Answer}}`}}
-                {{`{{- else -}}`}}
-                  {{`{{.OrgData}}`}}
-                {{`{{- end}}`}}
-              {{`{{end}}`}}<-truN#cAte!$>
-            问题:
-            {{`{{end -}}`}}
-            {{`{{.Question}}`}}
+        {{`{{- if gt (len .Docs) 0 -}}
+          以下的已知信息包括多个passage，请基于这个已知信息，简洁和专业的来回答用户的问题。并输出引用的passage编号。如果无法从中得到答案，请拒绝回答，并说明原因。
+          已知内容:<$!truN#cAte+>
+          {{range $i, $el := .Docs -}}
+            【passage {{addOne $i }}】
+            {{ if or (eq .DocType 1) (eq .DocType 4) -}}
+              {{.Question}} {{.Answer}}
+            {{- else -}}
+              {{.OrgData}}
+            {{- end}}
+          {{end}}<-truN#cAte!$>
+        问题:
+        {{end -}}
+        {{.Question}}`}}
     REFERENCE_HUNYUAN_SWITCH: [1776892432517693440]
-    INTENT_MODEL_WHITE_LIST: [1882275369151889408,1871227411008847872,1866104097838989312,1865966221653180416,1862111132680454144,1810203323986083840,1861431548021309440,1861604183124738048,1830525106400788480,1869287573060845568,1862859369221455872,1810203261951541248,1810215183526658048] #爱普生验证、普联安防监控、DHL新工作流验、厦门汉印、理想、经营助手测试bot
-    INTENT_MODEL_IS_QA_NOT_FIRST: [1830525106400788480,1849328958734336000,1817826503458291712,1852183303863140352,1801425650265882624,1857225067439325184,1810160064961445888,1818194570104537088,1844211161909428224,1839146178954919936]
-    INTENT_MODEL_NO_FQA: [1912399307962056704,1899016612847288320,1910239800958386176,1899360735678955520,1892539155919929344,1894309732493295616,1894263315745210368,1888928569018286080,1891725168485597184,1856600538514456576,1879418267428978688,1878630479603433472,1874998406750666752,1848551143948681216,1855893561756352512,1844290358447702016,1862859369221455872,1869287573060845568,1867172694372909056,1861636669573693440,1814207169329889280,1863554149731532800,1852183303863140352,1818194570104537088,1750376442139246592,1801480191959891968]
+    INTENT_MODEL_WHITE_LIST: [1882275369151889408, 1871227411008847872, 1866104097838989312, 1865966221653180416, 1862111132680454144, 1810203323986083840, 1861431548021309440, 1861604183124738048, 1830525106400788480, 1869287573060845568, 1862859369221455872, 1810203261951541248, 1810215183526658048] #爱普生验证、普联安防监控、DHL新工作流验、厦门汉印、理想、经营助手测试bot
+    INTENT_MODEL_IS_QA_NOT_FIRST: [1830525106400788480, 1849328958734336000, 1817826503458291712, 1852183303863140352, 1801425650265882624, 1857225067439325184, 1810160064961445888, 1818194570104537088, 1844211161909428224, 1839146178954919936]
+    INTENT_MODEL_NO_FQA: [1912399307962056704, 1899016612847288320, 1910239800958386176, 1899360735678955520, 1892539155919929344, 1894309732493295616, 1894263315745210368, 1888928569018286080, 1891725168485597184, 1856600538514456576, 1879418267428978688, 1878630479603433472, 1874998406750666752, 1848551143948681216, 1855893561756352512, 1844290358447702016, 1862859369221455872, 1869287573060845568, 1867172694372909056, 1861636669573693440, 1814207169329889280, 1863554149731532800, 1852183303863140352, 1818194570104537088, 1750376442139246592, 1801480191959891968]
     SYSTEM_INTENT_WHITE_LIST:
-      数学计算: [1810215183526658048,1795749888733741056,1839146178954919936]
-      逻辑推理: [1795749888733741056,1839146178954919936]
-      全文处理: [1869924927215763456,1859771877685460992,1866873128150892544,1861406377848078336,1868926004440334336,1868923404676497408,1868921744800612352,1868914751076564992,1868907868040986624,1868865102988705792,1868863771613069312,1865003715170402304,1863501081171197952,1868922655659524096,1865982672448782336,1856612176860282880,1863482915933126656,1863587301470240768,1863480383462703104,1859574174816665600,1858459859560955904,1862419926144516096,1863481461881438208,1863499616319700992,1857328772482859008,1858449462757687296,1858334985894494208,1858348020990214144,1858345452838846464,1858779401797238784,1856168503113940992,1868880967719452672]
+      数学计算: [1810215183526658048, 1795749888733741056, 1839146178954919936]
+      逻辑推理: [1795749888733741056, 1839146178954919936]
+      全文处理: [1869924927215763456, 1859771877685460992, 1866873128150892544, 1861406377848078336, 1868926004440334336, 1868923404676497408, 1868921744800612352, 1868914751076564992, 1868907868040986624, 1868865102988705792, 1868863771613069312, 1865003715170402304, 1863501081171197952, 1868922655659524096, 1865982672448782336, 1856612176860282880, 1863482915933126656, 1863587301470240768, 1863480383462703104, 1859574174816665600, 1858459859560955904, 1862419926144516096, 1863481461881438208, 1863499616319700992, 1857328772482859008, 1858449462757687296, 1858334985894494208, 1858348020990214144, 1858345452838846464, 1858779401797238784, 1856168503113940992, 1868880967719452672]
     EXPLICIT_INTENT:
       1817826503458291712: 知识问答
       1888037014300524544: 自我认知
@@ -535,10 +600,11 @@ data:
       # 临时给微盛指定
       1972174996312112704: 兜底回复
     DS_FAQ_REJECT_MODEL: Youtu/youtu-mrc-pro
-    ERROR_DOWNGRADE_CONF: ["msg:您选择的工作流","type:business, code:460032","msg:超出并发数限制","code:460034"]
-    DEEP_SEEK_CONF_MODEL_NAME: ["lke-deepseek-r1","lke-deepseek-v3","lke-deepseek-r1-vip","lke-deepseek-v3-vip","lke-deepseek-r1-lichan","lke-deepseek-v3-0324","lke-deepseek-r1-0528","lke-deepseek-v3.1","lke-deepseek-v3-0324-vip","lke-deepseek-v3.2","Deepseek/deepseek-r1-250528","Deepseek/deepseek-v3-250324","Deepseek/deepseek-r1-250528-vip","Deepseek/deepseek-v3-250324-vip","Deepseek/deepseek-v3.1","Deepseek/deepseek-v3.2"]
-    DEEP_SEEK_CONF_MODEL_HAS_THINK: ["lke-deepseek-r1", "lke-deepseek-r1-vip","lke-deepseek-r1-lichan", "lke-deepseek-r1-0528", "Deepseek/deepseek-r1-250528", "Deepseek/deepseek-r1-250528-vip", "Deepseek/deepseek-r1-250528"]
-    DEEP_SEEK_CONF_IMAGE_QUIZE_WHITE_LIST: ["1938247533282491072","1933734924458546752","1924479796376275008","1803790207677104128","1915297780122255360","1902538297865404416","1920410824211169280","1924822663169988160","1907003241329852416"] # 图文问答白名单列表
+    # reply_trace_names placeholders
+    ERROR_DOWNGRADE_CONF: ["msg:您选择的工作流", "type:business, code:460032", "msg:超出并发数限制", "code:460034"]
+    DEEP_SEEK_CONF_MODEL_NAME: ["lke-deepseek-r1", "lke-deepseek-v3", "lke-deepseek-r1-vip", "lke-deepseek-v3-vip", "lke-deepseek-r1-lichan", "lke-deepseek-v3-0324", "lke-deepseek-r1-0528", "lke-deepseek-v3.1", "lke-deepseek-v3-0324-vip", "lke-deepseek-v3.2", "Deepseek/deepseek-r1-250528", "Deepseek/deepseek-v3-250324", "Deepseek/deepseek-r1-250528-vip", "Deepseek/deepseek-v3-250324-vip", "Deepseek/deepseek-v3.1", "Deepseek/deepseek-v3.2", "Deepseek/deepseek-v4-flash", "Deepseek/deepseek-v4-pro"]
+    DEEP_SEEK_CONF_MODEL_HAS_THINK: ["lke-deepseek-r1", "lke-deepseek-r1-vip", "lke-deepseek-r1-lichan", "lke-deepseek-r1-0528", "Deepseek/deepseek-r1-250528", "Deepseek/deepseek-r1-250528-vip", "Deepseek/deepseek-r1-250528", "Deepseek/deepseek-v4-flash", "Deepseek/deepseek-v4-pro"]
+    DEEP_SEEK_CONF_IMAGE_QUIZE_WHITE_LIST: ["1938247533282491072", "1933734924458546752", "1924479796376275008", "1803790207677104128", "1915297780122255360", "1902538297865404416", "1920410824211169280", "1924822663169988160", "1907003241329852416"] # 图文问答白名单列表
     DEEP_SEEK_CONF_QD_DS_START_TIME: "2025-06-09 00:00:00"
     LOCAL_CACHE:
       app_cache:
@@ -550,82 +616,162 @@ data:
       white_list:
         1991338120969701440: 0
         1996209788577036864: 0
+    RAG_APP_ADMIN_PROXY_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+    RAG_APP_CONFIG_SERVER_TARGET: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9092"
+    RAG_RESOURCE_GALLERY_SERVER_TARGET: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
+    RAG_PLATFORM_MANAGER_SERVER_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
+    DATA_CHANNEL: 1000
+    REWRITE_THRESHOLD: 100
+    INTENT_THRESHOLD: 5000
+    SEARCH_THRESHOLD: 5000
+    BUSY_REPLIES:
+      1: 抱歉，当前咨询量大，请重新再问我一次。
+      4: 当前用量大，会话摘要生成失败。
+      5: 当前用量大，会话小结生成失败。
+    THROTTLES_CHECK: 20
+    THROTTLES_STREAMING: 5
+    SINGLE_MESSAGE_LIMIT: 5000
+    BOT_CONTENT_LIMIT: 192000
+    BOT_RECOMMEND_REGEX: "\\[推荐问题.*?\\](.*?)\\n"
+    START_PLACEHOLDERS:
+      "[": 25
+      h: 25
+    CHANNEL_TYPE_LIST:
+    - 10000
+    - 10001
+    - 10002
+    - 10003
+    - 10004
+    - 10005
+    - 10009
+    REJECT_ANSWER_JUDGE_LENGTH: 20
+    ONE_IMAGE_TOKEN_LENGTH: 1248
+    REPORT_JUDGE_LENGTH: 100
+    MAX_IMAGE_COUNT_LIMIT:
+      default: 20
 
-    RAG_APP_ADMIN_PROXY_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
-    RAG_APP_CONFIG_SERVER_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9092
-    RAG_RESOURCE_GALLERY_SERVER_TARGET: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
-    RAG_PLATFORM_MANAGER_SERVER_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+    REFERENCE_PATTERN:
+    - "【passage (\\d+)】"
+    - "\\[passage (\\d+?)\\]"
+    SYSTEM_INTENT_MAP:
+      指令跟随回答: knowledge_qa
+      代码问题: knowledge_qa
+      数学计算: mathematics_calculate
+      逻辑推理: mathematics_calculate
+      自我认知: knowledge_qa
+      聊天: knowledge_qa
+      天气: knowledge_qa
+      全文处理: doc_summary
+      其他问题: knowledge_qa
+      知识问答: knowledge_qa
+      搜索引擎: search_engine
+      # 临时给微盛指定
+      兜底回复: model_chat
+    RETRIEVAL_CONFIG_NER_THRESHOLD: 100
+
+    REFERENCE_RETRIEVAL_DOCS_WHITE_LIST:
+      100000807138: true
+      100032272454: true
+      100034032793: true
+      100015747086: true
+      100014395848: true
+      100035604722: true
+      # 100038737751: true
+    REPEAT_BRACKET:
+      # default: 10
+      # by_app:
+      #   1869298177072693248: 20
+    ABNORMAL_BRACKET:
+      # default: 100
+      # by_app:
+      #   1869298177072693248: 100
+    REFERENCE_MAX_INPUT_LENGTH:
+      default: 65536   # 64 KB
+      # by_app:
+      #   12345: 262144   # 某个特殊 app 单独设 256 KB
+    REPLY_TRACE_REWRITE: "改写&同义词"
+    REPLY_TRACE_BASIC_SEARCH: 基础检索
+    REPLY_TRACE_KNOWLEDGE_SEARCH: 知识检索
+    REPLY_TRACE_INTENT_RECOGNIZE: 意图识别
+    REPLY_TRACE_WORKFLOW: 工作流执行
+    REPLY_TRACE_QUERY_WITH_IMAGE_AND_FILE: 图片+文件理解
+    REPLY_TRACE_QUERY_WITH_TEXT_IMAGE_FILE: 图文+文件阅读理解
+    REPLY_TRACE_DOC_SUMMARY: 文件摘要
+    REPLY_TRACE_QUERY_WITH_IMAGE: 图片理解
+    REPLY_TRACE_MULTI_MODAL_MULTI_TURN: 多模态问答
+    REPLY_TRACE_MULTI_MODAL_READING: 多模态阅读理解
+    REPLY_TRACE_DS_R1_SUMMARY: 深度推理摘要
+    REPLY_TRACE_FAQ_REPLY: FAQ回复
+    REPLY_TRACE_LLM_DIRECT: 大模型直接回复
+    REPLY_TRACE_QA_DIRECT_REPLY: 问答对优先回复
+    REPLY_TRACE_REJECT_REPLY: 拒答回复
+    REPLY_TRACE_GLOBAL_KNOWLEDGE: 全局知识回复
+    REPLY_TRACE_SUMMARY_REJECT_REPLY: 摘要拒答回复
+    REPLY_TRACE_DOC_AND_QA: 知识润色回复(DocAndQA)
+    REPLY_TRACE_DOC: 文档阅读理解
+    REPLY_TRACE_DOC_MULTI_MODEL: 多模型文档理解
+    REPLY_TRACE_CLARIFY_CONFIRM: 澄清确认
+    REPLY_TRACE_GENERAL: 通用兜底回复
+    REPLY_TRACE_SINGLE_DOC_FULL_TEXT: 单文档全文理解
+    REPLY_TRACE_MULTI_DOC_SUMMARIZE: 多文档摘要
+    REPLY_TRACE_HUN_YUAN_SEARCH: 混元搜索
+    REPLY_TRACE_SOUGOU_SEARCH: 搜狗搜索
+    REPLY_TRACE_SEARCH_INTL: 国际化搜索
+    REPLY_TRACE_YUANBAO_SEARCH: 元宝搜索
+
+    SEARCH_ENABLE_FREE: false
+    NO_THINK_PROMPT: |-
+      <think>
+      完成全部分析思考，按照用户要求直接输出答案，不再输出分析步骤或者其他思考内容。
+      </think>
+    NO_THINK_MODEL_PARAMS: "{\"seed\": 0, \"top_p\": 1, \"temperature\": 0, \"max_tokens\": 1000, \"remove_cot\": true}"
+    THINK_CONF_MODEL_HAS_THINK:
+    - lke-deepseek-r1
+    - lke-deepseek-r1-vip
+    - lke-deepseek-r1-lichan
+    - lke-deepseek-r1-0528
+    - Deepseek/deepseek-r1-250528
+    - Deepseek/deepseek-r1-250528-vip
+    - Deepseek/deepseek-v4-flash
+    - Deepseek/deepseek-v4-pro
+    - Deepseek/deepseek-v3.2
+    - lke-deepseek-v3.2
+    - TCADP/kimi-k2.6
+    - TCADP/kimi-k2.5
+    - TCADP/glm-5
+    - TCADP/glm-5.1
+    - TCADP/glm-5v-turbo
+    - TCADP/minimax-m2.5
+    - TCADP/minimax-m2.7
+    - TCADP/qwen3.5-plus
+    - Qwen/qwen3-32b
+    - Qwen/qwen3-235b-a22b
+    - Volcengine/doubao-seed-1-6-lite-251015
+    - Volcengine/doubao-seed-1-6-251015
+    WEB_SEARCH:
+    #application.yaml end
+
+    #trpc_go.yaml start
+    RAINBOW_APPID: 3f090873-420d-4575-b9d2-cf6a72980a33
+    RAINBOW_GROUP_NAME: rag-exec
+    # global.serverConnector.joinPoint - 服务连接器接入点
+    TRPC_GLOBAL_JOIN_POINT: default
+
+    # plugins.telemetry.galileo.ocp_addr - 伽利略 OCP 配置地址
+    TRPC_GALILEO_OCP_ADDR: "http://gocp.woa.com/ocp/api/v1/get_config"
+
+    # plugins.telemetry.galileo.config.access_point - 伽利略接入点
+    # 1=新加坡公网, 2=新加坡内网, 3=中国大陆公网, 4=中国大陆内网
+    TRPC_GALILEO_ACCESS_POINT: 4
+
+    # plugins.selector.polaris.join_point - 北极星服务发现接入点
+    TRPC_SELECTOR_JOIN_POINT: default
+
+    SERVER_CONF_PATH: /data/app/conf/
+
+    I18N_ADP_DEFAULT_LANG: zh-CN
 
 
-  rag_en-US.json: |
-    {
-      "PureImageRewriteQuery": "What does this picture say",
-      "RewriteQuerySummary": "《%s》summary：%s\n\n",
-      "RewriteQueryImageSummary": "[image%d] description：%s\n\n",
-      "RewriteQueryAllFilesAndPic": "describe all files and images",
-      "NoResultInKnowledgeReply": "no relevant results were found in the knowledge base",
-      "KnowledgeQAndA": "question:\n%s\n\nanswer:\n%s",
-      "GuessYouWantAsk": "guess you want to ask:<br><br>%s",
-      "BuildThisIs": "it's %s",
-      "BuildAlsoIs": ", also %s",
-      "BuildImageIdx": "[image%d]",
-      "PlaceHolderLeft": "[image",
-      "ContentFailed": "fail",
-
-      "抱歉，您这个问题我暂时无法回答，建议您换一个问题试试呢！": "Sorry, I can't answer your question at the moment. I suggest you try asking another question!",
-      "调用图片理解": "Calling image understanding",
-      "用200字以内描述这张图片": "describe this picture in 200 words or less",
-      "分别用200字以内描述以上图片": "describe the above pictures in 200 words or less",
-      "调用知识库": "Calling the knowledge base",
-      "文档问答": "Documentation Q&A",
-
-      "该结果依照法律法规不能展示，已被系统隐藏。": "This result cannot be displayed in accordance with laws and regulations and has been hidden by the system.",
-      "这个问题我不是很清楚，我所提供的答案或建议可能会存在不准确的地方。建议您转到人工，由专业顾问为您提供服务。": "I am not very clear about this question, and the answers or suggestions I provide may be inaccurate. It is recommended that you switch to manual and let professional consultants provide services for you.",
-      "抱歉，目前我无法提供关于这个问题的答复。为了更好地帮助您，请您尝试提出其他问题或需求。": "Sorry, I cannot provide an answer to this question at this time. To better help you, please try to ask other questions or requests.",
-      "对不起，作为知识库问答应用里的人工智能，我无法帮您总结文档。请告诉我你需要了解的其他信息，我会尽力为你提供帮助。": "Sorry, as an AI in a knowledge Q&A app, I can't help you summarize the document. Please tell me what else you need to know and I'll do my best to help you.",
-      "抱歉，当前咨询量大，请重新再问我一次。": "Sorry, the current volume of inquiries is high. Please ask me again.",
-      "当前用量大，会话摘要生成失败。": "The current usage is high and session summary generation failed.",
-      "当前用量大，会话小结生成失败。": "The current usage is high and the session summary generation failed.",
-      "你是腾讯云智能体开发平台，一个善于进行文档阅读、知识问答的智能平台。具备海量的行业知识，对垂直行业超过10项基础能力进行精调优化，涵盖了文档阅读理解、语义理解、安全合规等，可以帮助用户解决行业问题、提高工作效率。": "You are the Tencent Cloud Agent Development Platform, an intelligent platform that is good at document reading and knowledge question and answer. With a vast amount of industry knowledge, you can fine-tune and optimize more than 10 basic capabilities in vertical industries, covering document reading comprehension, semantic understanding, security compliance, etc., which can help users solve industry problems and improve work efficiency.",
-      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1。你会尽你所能帮助用户回答问题、解决问题": "The large language model you chose is the intelligent assistant DeepSeek-R1 developed by China's DeepSeek company. You will do your best to help users answer questions and solve problems.",
-      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V3。你会尽你所能帮助用户回答问题、解决问题": "The large language model you chose is DeepSeek-V3, an intelligent assistant developed by China's DeepSeek company. You will do your best to help users answer questions and solve problems.",
-      "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-R1-0528。你会尽你所能帮助用户回答问题、解决问题": "The large language model you chose is DeepSeek-R1-0528, an intelligent assistant developed by China's DeepSeek company. You will do your best to help users answer questions and solve problems.",
-      "抱歉，未从您提供的信息中提取出标签结果": "Sorry, no label results were extracted from the information you provided",
-
-      "调用任务流程": "Calling task flow",
-      "调用搜索引擎": "Calling search engine",
-      "大模型直接回复": "LLM direct reply",
-      "调用计算器": "Calling calculator",
-      "阅读文件": "Reading file",
-      "调用工作流": "Calling workflow",
-      "运行Agent": "Running Agent",
-      "大模型生成中": "LLM generating",
-      "思考已停止": "Thinking has stopped",
-      "思考已完成": "Thinking is complete",
-      "思考中": "Thinking",
-      "正在思考中": "Thinking",
-      "思考": "Thinking",
-      "描述一下这张图片": "Describe this picture",
-      "描述以上图片的内容": "Describe the content of the above pictures",
-      "以客服的语气，根据以下信息，用简短的语言询问用户每个槽位具体是什么：": "In a customer service tone, based on the following information, use short language to ask the user what each slot is:",
-
-      "role_name_regex": "#+\\s*Role Name: (.*)",
-      "speech_style_regex": "#+\\s*Language style:\\n((?:.|\\n)+?)\\n\\n#+\\s*Personality and characteristics:",
-      "personality_regex": "#+\\s*Personality and characteristics:\\n((?:.|\\n)+?)\\n\\n#+\\s*Experience and Background:",
-      "experience_regex": "#+\\s*Experience and Background:\\n((?:.|\\n)+?)\\n\\n#+\\s*Capacity Limitations:",
-      "capability_limit_regex": "#+\\s*Capacity Limitations:\\n(.*?)\\n\\n",
-      "skills_regex": "(#+\\s*Intention\\s*\\d+)：([\\s\\S]*?)(#+\\s*Description of intention)：([\\s\\S]*?)(#+\\s*Fulfillment of Intention)：([\\s\\S]*?)#",
-      "recommend_regex": "\\[Recommended Question.*?\\](.*?)\\n",
-
-      "工具{%s}不存在, 请尝试使用其他工具": "Tool {%s} Not Exist Please Try Other Tools",
-      "工具{%s}不可用, 请尝试使用其他工具": "Tool {%s} Not Available Please Try Other Tools",
-      "工具{%s}调用失败: %s": "Tool {%s} Invocation Failed %s",
-      "[链接](%s)": "[Link](%s)",
-      "文档URL%d:%s": "Document URL %d:%s",
-      "KeyQueryWithImageAndFile": "The picture shows:\n %s\n\n%s",
-      "调用思考模型": "Invoking the thinking model",
-      "KeyTimeNowPrompt": " Please note that the current time is %s "
-    }
 
   rag_zh-CN.json: |
     {
@@ -698,25 +844,29 @@ data:
     }
 
   trpc_go.yaml: |
-    global: #全局配置
-      namespace: Test #环境类型，分正式production和非正式development两种类型
-      env_name: test #环境名称，非正式环境下多环境的名称
-      enable_set: false #是否启用set
-      full_set_name: adp #set名
+    global:                             #全局配置
+      namespace: Test                           #环境类型，分正式production和非正式development两种类型
+      env_name: test                           #环境名称，非正式环境下多环境的名称
+      enable_set: false                 #是否启用set
+      full_set_name: adp                #set名
       local_ip: ${POD_IP}
       container_name: ${POD_NAME}
-    server: #服务端配置
-      app: adp #业务的应用名
-      server: rag-exec #进程服务名
-      bin_path: /usr/local/trpc/bin/ #二进制可执行文件和框架配置文件所在路径
-      conf_path: /data/app/conf/ #业务配置文件所在路径
-      data_path: /usr/local/trpc/data/ #业务数据文件所在路径
-      filter: #针对所有service处理函数前后的拦截器列表
-        - recovery #拦截框架创建的业务处理协程panic
+      serverConnector:
+        joinPoint: ${TRPC_GLOBAL_JOIN_POINT}
+
+    server:                                            #服务端配置
+      app: adp                                        #业务的应用名
+      server: rag-exec                                   #进程服务名
+      bin_path: /usr/local/trpc/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: ${SERVER_CONF_PATH}                 #业务配置文件所在路径
+      data_path: /usr/local/trpc/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - recovery
         - cle-route-propagator
         - i18n-adp
         - chat-trace
         - opentelemetry
+        - cos_rewrite
       admin:
         ip: ${POD_IP}
         port: 8081
@@ -726,45 +876,45 @@ data:
           port: 8001
           network: tcp
           protocol: trpc
-          timeout: 30000 #业务服务提供的service，可以有多个
-        - name: trpc.KEP.bot-rag-server.chat #service的路由名称
-          ip: ${POD_IP} #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
-          port: 8000 #服务监听端口 可使用占位符 ${port}
-          network: tcp #网络监听类型 tcp udp
-          protocol: http #应用层协议 trpc http
-          timeout: 0 #请求最长处理时间 单位 毫秒
-          server_async: true #开启异步处理
-          idletime: 600000 #idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
-        - name: qbot.chat.chat.LoadPromptVersionFromDB #本地定时器
-          ip: ${POD_IP} #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
-          port: 9001 #服务监听端口 可使用占位符 ${port}
-          network: "0 */2 * * * * ?startAtOnce=1" #启动立马执行
-          protocol: timer #应用层协议 trpc http
-          timeout: 600000 #请求最长处理时间 单位 毫秒
-        - name: qbot.chat.chat.GetRejectAnswer #本地定时器
-          ip: ${POD_IP} #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
-          port: 9002 #服务监听端口 可使用占位符 ${port}
-          network: "0 */2 * * * * ?startAtOnce=1" #启动立马执行
-          protocol: timer #应用层协议 trpc http
+          timeout: 30000
+        - name: trpc.KEP.bot-rag-server.chat
+          ip: ${POD_IP}
+          port: 8000
+          network: tcp
+          protocol: http
+          timeout: 0
+          server_async: true
+          idletime: 600000
+        - name: qbot.chat.chat.LoadPromptVersionFromDB
+          ip: ${POD_IP}
+          port: 9001
+          network: "0 */2 * * * * ?startAtOnce=1"
+          protocol: timer
           timeout: 600000
-    plugins: #插件配置
-      log: #日志配置
-        default: #默认日志的配置，可支持多输出
-          - writer: console #控制台标准输出 默认
-            level: info #标准输出日志的级别
+        - name: qbot.chat.chat.GetRejectAnswer
+          ip: ${POD_IP}
+          port: 9002
+          network: "0 */2 * * * * ?startAtOnce=1"
+          protocol: timer
+          timeout: 600000
+    plugins:                                          #插件配置
+      log:
+        default:
+          - writer: console
+            level: info
             formatter: json
             formatter_config:
-              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
               time_key: time
               level_key: level
               name_key: name
               caller_key: caller
               message_key: message
-          - writer: file #本地文件日志
-            level: info #本地文件滚动日志的级别
+          - writer: file
+            level: info
             formatter: json
             formatter_config:
-              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
               time_key: time
               level_key: level
               name_key: name
@@ -772,11 +922,12 @@ data:
               message_key: message
               stacktrace_key: stackTrace
             writer_config:
-              filename: /app/logs/trpc.log #本地文件滚动日志存放的路径
-              max_size: 200 #本地文件滚动日志的大小 单位 MB
-              max_backups: 10 #最大日志文件数
-              max_age: 7 #最大日志保留天数
-              compress: false #日志文件是否压缩
+              filename: /app/logs/trpc.log
+              write_mode: 2
+              roll_type: size
+              max_size: 200
+              max_backups: 10
+              compress: false
       telemetry:
         opentelemetry:
           addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
@@ -806,15 +957,15 @@ data:
             - name: rainbow
               path: /app/conf/
             - name: global
-              appid: ${RAINBOW_APP_ID} #appid
-              group: global #配置所属组
-              type: kv #七彩石数据格式, kv(默认), table
+              appid: ${RAINBOW_APP_ID}
+              group: global
+              type: kv
               env_name: ${RAINBOW_ENV_NAME}
               timeout: 2000
               enable_client_provider: true
       i18n:
         i18n-adp:
-          default_lang: zh-CN
+          default_lang: ${I18N_ADP_DEFAULT_LANG}
           supported_languages:
             - zh-CN
             - en-US
@@ -825,6 +976,11 @@ data:
             char_scaling_factor:
               zh: 1
               en: 3
+      selector: #针对用户自定义的selector的配置
+        polaris: #针对polaris整体api的内部配置
+          join_point: ${TRPC_SELECTOR_JOIN_POINT}
+
+
     client:
       namespace: Test
       filter:
@@ -852,50 +1008,50 @@ data:
           timeout: 800
         - callee: trpc.KEP.bot_knowledge_config_server.Api
           name: trpc.KEP.bot-knowledge-config-server.Api
-          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          target: "ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092"
           namespace: Test
           protocol: trpc
           timeout: 600000
         - name: qbot.finance.finance.Finance
           namespace: Test
-          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
           network: tcp
           timeout: 30000
         - name: trpc.KEP.bot-llm-server.llm
           callee: trpc.KEP.bot_llm_server.llm
           namespace: Test
-          target: ip://adp-llm.{{ .Release.Namespace }}.svc.cluster.local:8000
+          target: "ip://adp-llm.{{ .Release.Namespace }}.svc.cluster.local:8000"
           network: tcp
           timeout: 5000
         - callee: trpc.KEP.bot_admin_config_server.Api
           namespace: Test
-          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.app_admin_proxy.Api
           namespace: Test
-          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
           protocol: trpc
           timeout: 20000
         - callee: trpc.KEP.bot_workflow_dm_server.WorkflowDm
           name: trpc.KEP.bot-workflow-dm-server.workflow-dm
           namespace: Test
-          target: ip://adp-workflow-exec.{{ .Release.Namespace }}.svc.cluster.local:8000
+          target: "ip://adp-workflow-exec.{{ .Release.Namespace }}.svc.cluster.local:8000"
           timeout: 600000
         - callee: trpc.KEP.bot-workflow-dm-server.workflow-dm-http
-          target: ip://adp-workflow-exec.{{ .Release.Namespace }}.svc.cluster.local:8001
+          target: "ip://adp-workflow-exec.{{ .Release.Namespace }}.svc.cluster.local:8001"
           namespace: Test
           network: tcp
           protocol: http
           timeout: 600000
         - name: trpc.adp.ai-gateway.api
-          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
+          target: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
           namespace: Test
           network: tcp
           protocol: http
           timeout: 1800000
         - callee: trpc.KEP.bot_data_statistics_server.Api
-          target: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
+          target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
           namespace: Test
           protocol: trpc
           timeout: 20000
@@ -903,38 +1059,38 @@ data:
           namespace: Test
           protocol: trpc
           timeout: 60000
-          target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
+          target: "ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092"
         - callee: trpc.adp.workflow_exec.WorkflowExec
           namespace: Test
           timeout: 600000
-          target: ip://adp-workflow-exec.{{ .Release.Namespace }}.svc.cluster.local:8000
+          target: "ip://adp-workflow-exec.{{ .Release.Namespace }}.svc.cluster.local:8000"
         - callee: trpc.adp.platform_metrology.Api
           namespace: Test
-          target: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
+          target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.app_config.Admin
-          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
           namespace: Test
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.resource_gallery.Admin
-          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          target: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
           namespace: Test
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.platform_manager.Login
           namespace: Test
-          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
           protocol: trpc
           timeout: 6000
         - callee: trpc.adp.platform_charger.Finance
           namespace: Test
-          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
           network: tcp
           protocol: trpc
           timeout: 20000
         - name: trpc.adp.kb_retrieval.DirectIndex
           namespace: Test
-          target: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091
+          target: "ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091"
           timeout: 30000

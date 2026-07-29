@@ -1,0 +1,20 @@
+images:
+  adp-agent-secret-vault:
+    url: "{{ .Values.global.imageRegistry }}/tke-market/agent-secret-vault:5_2607141605_stable_iaas_v4.0.3.0_0533a2b9_private"
+resources:
+  limits:
+    cpu: 1
+    memory: 1Gi
+  requests:
+    cpu: 1
+    memory: 1Gi
+replicas: 1
+secretVault:
+  redisDb: "0"
+  redisKeyPrefix: ""
+  authSignKey: "7051596f046f5b919ffdcbcf95c5ec20845eb55e92f419d4426ec790beca8e11"
+  aesKey: "d983a6f9535a4281c5b7780e4bcdd47ebecce4578c0420ef1473d9c8973c89fe"
+  ttlSeconds: "7200"
+  timestampSkewSeconds: "300"
+  nonceTTLSeconds: "300"
+  shutdownTimeout: "10s"

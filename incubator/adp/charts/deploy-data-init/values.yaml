@@ -1,5 +1,17 @@
 enabled: true
 resourcesDir: ""
+
+# init 阶段：安装/升级前初始化（pre-install/pre-upgrade hook，根据版本状态执行 init 或 upgrade）
+init:
+  enabled: true
+
+# post-upgrade 阶段：全部服务部署完成后执行（post-install/post-upgrade hook，根据版本状态执行 post-upgrade）
+postUpgrade:
+  enabled: true
+
+# cross-up 目标版本
+targetVersion: v4.0.3
+
 images:
   deploy-data-init:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/data-init:37__feature_iaas_cos_a370cf8c_iaas"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/data-init:74__dev_v1.0.4_d9f37668_iaas"

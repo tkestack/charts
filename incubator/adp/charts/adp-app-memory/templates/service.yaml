@@ -23,6 +23,10 @@ spec:
       port: 9001
       protocol: TCP
       targetPort: 9001
+    - name: adp-app-memory-8002
+      port: 8002
+      protocol: TCP
+      targetPort: 8002
   selector:
     app: adp-app-memory
   sessionAffinity: None

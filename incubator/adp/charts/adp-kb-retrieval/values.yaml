@@ -1,6 +1,6 @@
 images:
   adp-kb-retrieval:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/kb-retrieval:18_2605062222_stable_v3.4.1.1_f55e837b_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/kb-retrieval:20_2607151141_stable_iaas_v4.0.3.0_df6c35e2_private"
 vector_doc:
   embedding_batch_size: 6
   image_embedding_batch_size: 5

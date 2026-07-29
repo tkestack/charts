@@ -1,6 +1,6 @@
 images:
   adp-plugin-code-interpret:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/code-interpreter-dispatcher:7_2606132010_stable_iaas_cos_03ff7eac_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/code-interpreter-dispatcher:9_2607161559_stable_iaas_v4.0.3.0_52a39f11_private"
 adp-plugin-code-interpret:
   resources:
     limits:

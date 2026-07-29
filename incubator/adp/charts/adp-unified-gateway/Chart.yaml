@@ -1,0 +1,10 @@
+apiVersion: v2
+name: adp-unified-gateway
+description: A helm chart for adp-unified-gateway
+type: application
+
+version: 1.0.0
+
+appVersion: 1.0.0
+maintainers:
+  - name: nicholaswei

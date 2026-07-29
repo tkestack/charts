@@ -1,0 +1,110 @@
+{{- if and .Values.enabled .Values.postUpgrade.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-data-post-upgrade-job
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-data-post-upgrade-job
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    {{- if .Values.global.customLabels }}
+    {{- range $key, $value := .Values.global.customLabels }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-succeeded": continue
+    "helm.sh/hook-delete-policy": before-hook-creation
+    {{- if .Values.global.customAnnotations }}
+    {{- range $key, $value := .Values.global.customAnnotations }}
+    {{ $key }}: {{ $value | toString | quote }}
+    {{- end }}
+    {{- end }}
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 3600
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-data-post-upgrade-job
+        release: {{ .Release.Name }}
+        {{- if .Values.global.customLabels }}
+        {{- range $key, $value := .Values.global.customLabels }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+        {{- end }}
+      annotations:
+        eks.tke.cloud.tencent.com/reserve-sandbox-duration: "30m"
+        eks.tke.cloud.tencent.com/reserve-succeeded-sandbox: "true"
+        eks.tke.cloud.tencent.com/reserve-failed-sandbox: "true"
+        {{- if .Values.global.customAnnotations }}
+        {{- range $key, $value := .Values.global.customAnnotations }}
+        {{ $key }}: {{ $value | toString | quote }}
+        {{- end }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ .Release.Name }}-data-init-sa
+      restartPolicy: Never
+      containers:
+      - name: data-post-upgrade
+        image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "deploy-data-init").url "context" .) }}
+        imagePullPolicy: IfNotPresent
+        workingDir: /app
+        command:
+          - "/bin/sh"
+          - "-c"
+          - |
+            TARGET_VERSION="{{ .Values.targetVersion }}"
+
+            # 版本比较函数：version_lt A B 返回 0 表示 A < B
+            version_lt() {
+              [ "$1" = "$2" ] && return 1
+              printf '%s\n%s\n' "$1" "$2" | sort -V -C 2>/dev/null
+            }
+
+            echo "=== Querying cluster data version ==="
+            VERSION_OUTPUT=$(/app/bin/cross-up --config /app/conf/trpc_go.yaml version 2>&1) || VERSION_OUTPUT=""
+
+            if [ -z "$VERSION_OUTPUT" ]; then
+              echo "=== ERROR: No version data found, init/upgrade may not have completed ==="
+              sleep infinity
+              exit 1
+            fi
+
+            echo "$VERSION_OUTPUT"
+            POST_UPGRADE_VERSION=$(echo "$VERSION_OUTPUT" | grep '(post_upgrade)' | awk '{print $NF}')
+
+            if [ -z "$POST_UPGRADE_VERSION" ]; then
+              echo "=== No post_upgrade version found, running post-upgrade ==="
+              /app/bin/cross-up --config /app/conf/trpc_go.yaml post-upgrade --target ${TARGET_VERSION}
+              EXIT_CODE=$?
+            elif [ "$POST_UPGRADE_VERSION" = "$TARGET_VERSION" ]; then
+              echo "=== post_upgrade already at ${TARGET_VERSION}, skipping ==="
+              EXIT_CODE=0
+            elif version_lt "$POST_UPGRADE_VERSION" "$TARGET_VERSION"; then
+              echo "=== Running post-upgrade from ${POST_UPGRADE_VERSION} to ${TARGET_VERSION} ==="
+              /app/bin/cross-up --config /app/conf/trpc_go.yaml post-upgrade --target ${TARGET_VERSION}
+              EXIT_CODE=$?
+            else
+              echo "=== post_upgrade version ${POST_UPGRADE_VERSION} >= ${TARGET_VERSION}, skipping ==="
+              EXIT_CODE=0
+            fi
+
+            if [ $EXIT_CODE -ne 0 ]; then
+              echo "=== FAILED with exit code $EXIT_CODE, sleeping forever for debug ==="
+              sleep infinity
+            fi
+            exit $EXIT_CODE
+        env:
+          {{- include "dataInit.commonEnv" . | nindent 10 }}
+        resources:
+          limits:
+            cpu: "2"
+            memory: 2G
+          requests:
+            cpu: "2"
+            memory: 2G
+{{- end }}

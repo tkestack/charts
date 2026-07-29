@@ -79,7 +79,10 @@ spec:
       initContainers:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       containers:
-        - env:
+        - envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -101,13 +104,25 @@ spec:
             - name: SERVER_LOG_LEVEL
               value: info
             - name: mysql_host
-              value: {{ .Values.global.components.db.host | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_DB_0_HOST
             - name: mysql_port
-              value: {{ .Values.global.components.db.port | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_DB_0_PORT
             - name: mysql_pwd
-              value: {{ .Values.global.components.db.password | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_DB_0_PASSWORD
             - name: mysql_user
-              value: {{ .Values.global.components.db.user | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_DB_0_USER
             - name: mysql_db
               value: ti_auth_proxy
           image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "lke-ti-perm-auth-proxy").url "context" .) }}

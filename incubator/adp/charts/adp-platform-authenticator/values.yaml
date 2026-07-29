@@ -1,6 +1,6 @@
 images:
   adp-platform-authenticator:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/platform-authenticator:8_2605221111_stable_v3.4.1.1_7b96da7e_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/platform-authenticator:20_2607180954_stable_iaas_v4.0.3.0_0e570106_private"
 resources:
   limits:
     cpu: 1

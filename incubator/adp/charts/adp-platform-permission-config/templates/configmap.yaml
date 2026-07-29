@@ -6,42 +6,26 @@ metadata:
 data:
   application.yaml: |
     is_private: ${IS_PRIVATE}
-
-    ######################
-    # 角色相关配置
-    ######################
     role_conf:
+      # RESOLVE: keep-public
       business_role_name: 管理员
       business_role_description: 主账号管理员角色
       role_id_salt: ${ROLE_ID_SALT}
-
     get_user_nickname_conc_limit: ${GET_USER_NICKNAME_CONC_LIMIT}
     space_member_limit: ${SPACE_MEMBER_LIMIT}
-
-    ######################
-    # 子账号默认功能权限
-    ######################
     sub_uin_default_base_permission_ids: ${SUB_UIN_DEFAULT_BASE_PERMISSION_IDS}
-
     resource_view_permission_ids: ${RESOURCE_VIEW_PERMISSION_IDS}
-
     resource_edit_permission_ids: ${RESOURCE_EDIT_PERMISSION_IDS}
-
     resource_no_permission_id_map: ${RESOURCE_NO_PERMISSION_ID_MAP}
-
-    ######################
-    # 不可用权限id
-    ######################
     disable_permission_ids: ${DISABLE_PERMISSION_IDS}
-
-    ######################
-    # adp产品所有权限id
-    ######################
     adp_all_permission_ids: ${ADP_ALL_PERMISSION_IDS}
-
-    ######################
-    # ti-auth 账号服务配置
-    ######################
+    filter_user_product_permission_list:
+      - adpSpace
+      - lkeSystem
+      - lkeOP
+    # 申万定开
+    single_role_mode: ${SINGLE_ROLE_MODE}
+    export_presigned_expire: 48h
     ti_auth_account_conf:
       account_host: /DescribeSelfInfo
       describe_users: /DescribeUsers
@@ -64,7 +48,7 @@ data:
       delete_space_data: /DeleteSpaceData
       describe_child_dept_ids: /DescribeChildDeptIDs
       get_dept_user_list: /DescribeDeptUsers
-
+      count_users: /CountUsers
     resource_name_map:
       app: 应用开发
       knowledge: 知识库
@@ -72,7 +56,6 @@ data:
       prompt_template: 提示词模板
       widget: Widget
       skill: 技能中心
-
     super_admin_conf:
       necessary_permissions:
         lke:
@@ -81,47 +64,103 @@ data:
       necessary_resource_permissions:
         - lke
       permission_resource_type_map: ${PERMISSION_RESOURCE_TYPE_MAP}
+    default_granted_permission_ids: ${DEFAULT_GRANTED_PERMISSION_IDS}
+    oneid_default_permission_ids: ${OneIDDefaultPermissionIDs}
+    ioa_default_accounts: ${IOA_DEFAULT_ACCOUNTS}
+    object_storage:
+      {{ include "qbot.s3_storage" . }}
+    task_prefix: ${TASK_PREFIX}
+    task_fetch_num: ${TASK_FETCH_NUM}
+    task_fetch_timeout: ${TASK_FETCH_TIMEOUT}
+    task_fetch_period: ${TASK_FETCH_PERIOD}
+    task_clean_enable: ${TASK_CLEAN_ENABLE}
+    task_keep_rows: ${TASK_KEEP_ROWS}
+    task_clean_start_hour: ${TASK_CLEAN_START_HOUR}
+    task_clean_end_hour: ${TASK_CLEAN_END_HOUR}
+    task_clean_slow_threshold: ${TASK_CLEAN_SLOW_THRESHOLD}
+    task_delete_batch_interval: ${TASK_DELETE_BATCH_INTERVAL}
+    tasks: ${TASKS}
+    handle_tasks: ${HANDLE_TASKS}
+    batch_set_permission_limit: ${BATCH_SET_PERMISSION_LIMIT}
 
-  error_en-US.json: |
-    {
-        "ErrParams": "Parameter error, please retry",
-        "ErrSystem": "System error",
-        "ErrInvalidParameter": "Invalid parameter",
-        "ErrOwnerAccountCannotBeOperated": "The owner account cannot be operated",
-        "ErrUserCountExceedSpaceLimit": "The number of users exceeds the space limit",
-        "ErrPermissionIdsNotExist": "permissionIds not found",
-        "ErrAccountNotExistOrNotVerified": "Account does not exist or is not verified",
-        "ErrUinNotExist": "does not exist",
-        "ErrUinNotBelong": "does not belong to the current operator",
-        "ErrCorpRoleIDNotExist": "Role ID does not exist",
-        "ErrCreateOwnerUserFailed": "Failed to create owner user",
-        "ErrAttachCorpSuperAdminRoleFailed": "Failed to bind corp super admin role",
-        "ErrCreateAndAttachSpaceAdminFailed": "Failed to create and bind space admin role",
-        "ErrActivateProductFailed": "Failed to activate product",
-        "ErrSpaceAdminRoleNameCannotBeCustom": "Cannot be used as a custom role name",
-        "ErrRoleNotExist": "Role does not exist",
-        "ErrAddUsersToSpaceFailed": "Failed to add users to space",
-        "ErrRoleOperationNotAllowed": "Role operation not allowed",
-        "ErrAttachTypeInvalid": "Invalid AttachType parameter",
-        "ErrInvalidSpaceID": "Invalid space ID",
-        "ErrOnlySpaceAdminRoleAllowed": "Only space admin role is allowed",
-        "ErrCreateAndAttachSpaceRoleFailed": "Failed to create and bind space role",
-        "ErrCreateAndAttachPersonalRoleFailed": "Failed to create and bind personal role",
-        "ErrRoleNameDuplicate": "Role name duplicate",
-        "ErrRoleAlreadyExist": "Role already exists",
-        "ErrDescribeUserInfoFailed": "Failed to describe user info",
-        "ErrGetRolesByRoleIDsFailed": "Failed to get roles by role IDs",
-        "ErrGetRolesByUserFailed": "Failed to get roles by user",
-        "ErrGetUinsByRoleIDsFailed": "Failed to get uins by role IDs",
-        "ErrFilterUinsByCorpRoleTypeFailed": "Failed to filter uins by corp role type",
-        "ErrCreateUserFailed": "Failed to create user",
-        "ErrDeleteSpaceFailed": "Failed to delete space",
-        "ErrCreateAndAttachRoleFailed": "Failed to create and attach role",
-        "ErrGetUserBasicInfoFailed": "Failed to get user basic info",
-        "ErrBatchGetUserInfoFailed": "Failed to batch get user info",
-        "ErrSpatialRemovableFailed": "Failed to get space removable status",
-        "ErrGetNicknameFailed": "Failed to get user nickname"
-    }
+  client.yaml: |
+    client:
+      # RESOLVE: keep-private
+      filter:
+        - cle-route-propagator
+        - opentelemetry
+      namespace: ${NAMESPACE}
+      timeout: 10000
+      service:
+        - name: mysql.adp.permission
+          # RESOLVE: keep-private
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/openplatform_permission_data?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: mysql.adp.conf
+          # RESOLVE: keep-private
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/openplatform_conf_data?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - callee: trpc.adp.app_admin_proxy.Api
+          namespace: ${NAMESPACE}
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_admin_proxy.Login
+          namespace: ${NAMESPACE}
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_charger.Finance
+          namespace: ${NAMESPACE}
+          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.adp.platform_manager.Login
+          namespace: ${NAMESPACE}
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          timeout: 30000
+        - callee: tencent-account-http
+          target: dns://account.tencentyun.com:50001
+          network: tcp
+          protocol: http
+          timeout: 10000
+        - callee: tencent-sts-http
+          target: dns://sts.tencentyun.com:50020
+          network: tcp
+          protocol: http
+          timeout: 10000
+        - name: trpc.adp.platform_authenticator.Authenticator
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-authenticator.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          protocol: trpc
+          # RESOLVE: keep-private
+          timeout: 10000
+        - callee: ti-auth-account-http
+          target: dns://ti-perm-auth.{{ .Release.Namespace }}.svc.cluster.local:8081
+          network: tcp
+          protocol: http
+          timeout: 10000
+        - callee: trpc.adp.platform_account.Internal
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-account.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          protocol: trpc
+          timeout: 10000
+        - name: trpc.http.cos.Access
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_HTTP_COS_ACCESS_NAMESPACE}
+          network: tcp
+          protocol: http
+          target: "dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn"
+          timeout: 10000
+        - name: redis.permission.config
+          target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${INFRA_MIDDLEWARES_REDIS_0_PORT}"
+          timeout: 800
+        - callee: trpc.adp.resource_gallery.Admin
+          namespace: ${NAMESPACE}
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.adp.platform_manager.Admin
+          namespace: ${NAMESPACE}
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 30000
   error_zh-CN.json: |
     {
         "ErrParams": "参数异常，请重试",
@@ -154,197 +193,51 @@ data:
         "ErrGetRolesByUserFailed": "通过用户获取关联角色失败",
         "ErrGetUinsByRoleIDsFailed": "通过角色ID列表获取关联用户失败",
         "ErrFilterUinsByCorpRoleTypeFailed": "通过企业角色类型过滤用户列表失败",
-        "ErrCreateUserFailed": "账号不存在或者没有实名认证",
+        "ErrCreateUserFailed": "开通注册用户失败",
         "ErrDeleteSpaceFailed": "删除空间失败",
         "ErrCreateAndAttachRoleFailed": "创建并绑定角色失败",
         "ErrGetUserBasicInfoFailed": "获取用户基本信息失败",
         "ErrBatchGetUserInfoFailed": "批量获取用户信息失败",
         "ErrSpatialRemovableFailed": "获取空间可移除状态失败",
-        "ErrGetNicknameFailed": "获取用户昵称失败"
+        "ErrGetNicknameFailed": "获取用户昵称失败",
+        "ErrAccountNotExist": "账号不存在",
+        "ErrAccountNotVerified": "账号未实名认证",
+        "ErrAddRoleAndPermissionsFailed": "添加角色和权限失败",
+        "ErrAddUserToDeptFailed": "添加用户到部门失败",
+        "ErrAddUsersNoPermission": "添加用户无权限",
+        "ErrAttachCorpUserRolesFailed": "绑定企业用户角色失败",
+        "ErrAuthFailure": "鉴权失败",
+        "ErrCreateDeptFailed": "创建部门失败",
+        "ErrCreateUserAccountFailed": "创建用户账号失败",
+        "ErrCreateUserAccountFailedWithMsg": "创建用户账号失败：%s",
+        "ErrDelUsersFailed": "删除用户失败",
+        "ErrDelUsersNoPermission": "删除用户无权限",
+        "ErrDelUsersUserNotFound": "删除用户时用户不存在",
+        "ErrDeleteDeptFailed": "删除部门失败",
+        "ErrDeleteSpaceDataFailed": "删除空间数据失败",
+        "ErrDeptNotExist": "部门不存在",
+        "ErrDescribeAccountDeptFailed": "查询账号部门信息失败",
+        "ErrDescribeChildDeptIDsFailed": "查询子部门ID列表失败",
+        "ErrDescribeDeptDetailsFailed": "查询部门详情失败",
+        "ErrDescribeUserFailed": "查询用户信息失败",
+        "ErrDisableUserFailed": "禁用用户失败",
+        "ErrDisableUserNoPermission": "禁用用户无权限",
+        "ErrEnableUserFailed": "启用用户失败",
+        "ErrEnableUserNoPermission": "启用用户无权限",
+        "ErrGetDeptUserListFailed": "获取部门用户列表失败",
+        "ErrGetSpaceResourceListFailed": "获取空间资源列表失败",
+        "ErrGetUserAuthInfoFailed": "查询实名认证信息失败",
+        "ErrGetUserInfoFailed": "获取用户信息失败",
+        "ErrInsertBusinessAdministratorFailed": "添加业务管理员失败",
+        "ErrInsertBusinessProductsFailed": "添加业务产品失败",
+        "ErrInvalidSubjectType": "无效的主体类型",
+        "ErrModifyUserInfoFailed": "修改用户信息失败",
+        "ErrModifyUserInfoNoPermission": "修改用户信息无权限",
+        "ErrRemoveUserFromDeptFailed": "从部门移除用户失败",
+        "ErrSelectProductInfoFailed": "查询产品信息失败",
+        "ErrSetRoleBasePermissionsFailed": "设置角色基础权限失败"
     }
-  permission_en-US.json: |
-    {
-        "KeyOwnerAccountCannotBeOperated": "The owner account cannot be operated",
-        "KeyUinNotExist": "does not exist",
-        "KeyUinNotBelong": "does not belong to the current operator",
-        "KeyUserCountExceedSpaceLimit": "The number of users exceeds the space limit",
-        "KeyPermissionIdsNotExist": "permissionIds not found",
-        "KeySpaceAdminRoleName": "Space Admin",
-        "KeySpaceAdminRoleDescription": "Space administrator role",
-        "KeyAttachTypeInvalid": "Invalid AttachType parameter",
-        "KeyCorpRoleIDNotExist": "Role ID does not exist",
-        "KeyRoleNotExist": "Role does not exist",
-        "KeyRoleOperationNotAllowed": "Role operation not allowed",
-        "KeyRoleNameCannotBeCustom": "Cannot be used as a custom role name",
-        "KeySpaceRoleAlreadyExist": "Role already exists",
-        "KeyAccountNotExistOrNotVerified": "Account does not exist or is not verified",
-        "KeyCreateOwnerUserFailed": "Failed to create owner user",
-        "KeyAttachCorpSuperAdminRoleFailed": "Failed to bind corp super admin role",
-        "KeyCreateAndAttachSpaceAdminFailed": "Failed to create and bind space admin role",
-        "KeyActivateProductFailed": "Failed to activate product",
-        "KeyInvalidSpaceID": "Invalid space ID",
-        "KeyOnlySpaceAdminRoleAllowed": "Only space admin role is allowed",
-        "KeyCreateAndAttachSpaceRoleFailed": "Failed to create and bind space role",
-        "KeyCreateAndAttachPersonalRoleFailed": "Failed to create and bind personal role",
-        "KeyUserManagerOperDelete": "Delete - User Management",
-        "KeyUserManagerOperCreate": "Create - User Management",
-        "KeyRoleManagerOperCreate": "Create - Role Management",
-        "KeyRoleManagerOperDelete": "Delete - Role Management",
-        "KeyRoleManagerOperModify": "Edit - Role Management",
-        "KeyRoleManagerOperAttach": "Edit - Bind Role",
-        "KeyBasePermissionManagerOperModify": "Edit - Permission Management",
-        "KeyModifyBasePermission": "Configure Function Permission",
-        "KeyResourcePermissionManagerOperModify": "Edit - Permission Management",
-        "KeyModifyResourcePermission": "Configure Data Permission",
-        "主账号管理员角色": "Main Account Administrator Role",
-        "管理员": "Administrator",
-        "空间创建员": "Space Creator",
-        "超级管理员": "Super Administrator",
-        "空间管理员角色": "Space Administrator Role",
-        "普通用户": "Regular User",
-        "高级自定义": "Advanced Customization",
-        "应用配置": "Application Configuration",
-        "高级配置": "Advanced Configuration",
-        "应用端用户权限": "Application-side User Permissions",
-        "上下文改写": "Context Rewriting",
-        "检索知识库回答图片问题": "Retrieve Knowledge Base to Answer Image Questions",
-        "意图达成优先级": "Intent Fulfillment Priority",
-        "同义词": "Synonyms",
-        "Agent协同方式": "Agent Collaboration Mode",
-        "agent协同方式": "Agent Collaboration Mode",
-        "自由转交": "Free Transfer",
-        "工作流编排": "Workflow Orchestration",
-        "对话体验": "Conversation Experience",
-        "编辑应用": "Edit Application",
-        "应用模式": "Application Mode",
-        "欢迎语": "Welcome Message",
-        "知识": "Knowledge",
-        "数据库开关": "Database Toggle",
-        "文档检索匹配度": "Document Retrieval Match Score",
-        "文档开关": "Document Toggle",
-        "文档召回数量": "Document Recall Count",
-        "向量模型": "Vector Model",
-        "Excel检索增强": "Excel Retrieval Enhancement",
-        "问答库答案回复": "Q&A Library Answer Response",
-        "问答检索匹配度": "Q&A Retrieval Match Score",
-        "问答开关": "Q&A Toggle",
-        "问答召回数量": "Q&A Recall Count",
-        "结果重排序": "Result Re-ranking",
-        "检索策略": "Retrieval Strategy",
-        "任务流程配置": "Task Flow Configuration",
-        "模型配置": "Model Configuration",
-        "生成模型": "Generation Model",
-        "上下文轮数": "Context Turn Count",
-        "思考模型": "Reasoning Model",
-        "输出设置": "Output Settings",
-        "输出方式": "Output Method",
-        "回复设置": "Reply Settings",
-        "角色指令": "Role Instructions",
-        "联网搜索": "Web Search",
-        "变量与记忆": "Variables & Memory",
-        "应用评测": "Application Evaluation",
-        "应用运营": "Application Operations",
-        "删除应用/复制应用": "Delete Application / Copy Application",
-        "复制应用": "Copy Application",
-        "删除应用": "Delete Application",
-        "知识管理": "Knowledge Management",
-        "添加共享知识": "Add Shared Knowledge",
-        "数据库": "Database",
-        "文档": "Documents",
-        "下载": "Download",
-        "知识库设置": "Knowledge Base Settings",
-        "标签管理": "Tag Management",
-        "问答": "Q&A",
-        "导出": "Export",
-        "任务流程": "Task Flow",
-        "应用发布": "Application Publishing",
-        "发布按钮": "Publish Button",
-        "发布渠道": "Publishing Channels",
-        "服务状态": "Service Status",
-        "获取appkey": "Get App Key",
-        "体验链接获取": "Get Experience Link",
-        "工作流管理": "Workflow Management",
-        "可编辑": "Editable",
-        "无权限": "No Permission",
-        "可查看": "Viewable",
-        "知识库": "Knowledge Base",
-        "删除知识库": "Delete Knowledge Base",
-        "编辑知识库": "Edit Knowledge Base",
-        "插件广场": "Plugin Marketplace",
-        "删除插件": "Delete Plugin",
-        "编辑插件": "Edit Plugin",
-        "提示词模板": "Prompt Template",
-        "删除提示词模板": "Delete Prompt Template",
-        "编辑提示词模板": "Edit Prompt Template",
-        "模型广场": "Model Marketplace",
-        "添加模型": "Add Model",
-        "删除模型": "Delete Model",
-        "新建提示词模板": "New Prompt Template",
-        "工作空间": "Workspace",
-        "删除工作空间": "Delete Workspace",
-        "修改工作空间": "Modify Workspace",
-        "应用开发": "Application Development",
-        "新建应用": "New Application",
-        "原子能力": "Atomic Capability",
-        "应用模版": "Application Template",
-        "清空会话": "Clear Conversation",
-        "复制": "Copy",
-        "应用体验": "Application Experience",
-        "接入mcp插件": "Integrate MCP Plugin",
-        "创建插件": "Create Plugin",
-        "新建知识库": "New Knowledge Base",
-        "平台管理": "Platform Management",
-        "计费资源清单": "Billing Resource List",
-        "并发资源": "Concurrency Resources",
-        "知识库容量": "Knowledge Base Capacity",
-        "按量资源": "Pay-as-you-go Resources",
-        "后付费设置": "Postpaid Settings",
-        "计费资源使用明细": "Billing Resource Usage Details",
-        "并发统计": "Concurrency Statistics",
-        "知识库容量统计": "Knowledge Base Capacity Statistics",
-        "插件用量统计": "Plugin Usage Statistics",
-        "模型用量统计": "Model Usage Statistics",
-        "平台端用户权限": "Platform-side User Permissions",
-        "权限管理": "Permission Management",
-        "角色管理": "Role Management",
-        "用户管理": "User Management",
-        "内容安全": "Content Security",
-        "应用安全设置": "Application Security Settings",
-        "关键词库": "Keyword Library",
-        "安全策略": "Security Policy",
-        "风险识别明细": "Risk Identification Details",
-        "风险识别统计": "Risk Identification Statistics",
-        "运维管理": "Operations Management",
-        "操作日志": "Operation Logs",
-        "Widget开发": "Widget",
-        "新建Widget": "Create Widget",
-        "复制Widget": "Copy Widget",
-        "删除Widget": "Delete Widget",
-        "导出Widget": "Export Widget",
-        "编辑Widget": "Edit Widget",
-        "对话内容审核": "Conversation content review",
-        "数据报表": "Data Reports",
-        "业务看板": "Business Dashboard",
-        "资源看板": "Resource Dashboard",
-        "创建AppKey": "Create AppKey",
-        "删除AppKey": "Delete AppKey",
-        "修改AppKey状态": "Modify AppKey",
-        "计费资源": "Billing Resources",
-        "输入框按钮": "InputBox Button",
-        "推荐问题": "Recommended Question",
-        "导入应用": "Import App",
-        "导出应用": "Export App",
-        "知识图谱检索": "Knowledge Graph Search",
-        "告警历史": "Alarm History",
-        "告警管理": "Alarm Manage",
-        "资源管控": "Resource management",
-        "联网搜索设置": "Internet search settings",
-        "一键部署 ClawPro": "Install ClawPro",
-        "Skills广场": "Skills Center",
-        "导入Skill": "Import Skill",
-        "智能工作台": "Smart Desk",
-        "密钥管理": "API Key Management"
-    }
+
   permission_zh-CN.json: |
     {
       "KeyOwnerAccountCannotBeOperated": "主账号不能被操作",
@@ -360,6 +253,8 @@ data:
       "KeyRoleOperationNotAllowed": "角色不允许操作",
       "KeyRoleNameCannotBeCustom": "不能作为自定义角色名",
       "KeySpaceRoleAlreadyExist": "角色已存在",
+      "KeyRoleCountMustBeOne": "只允许绑定一个角色",
+      "KeyDeptManager": "部门管理",
       "KeyAccountNotExistOrNotVerified": "账号不存在或者没有实名认证",
       "KeyCreateOwnerUserFailed": "添加主账号失败",
       "KeyAttachCorpSuperAdminRoleFailed": "绑定企业超级管理员角色失败",
@@ -369,15 +264,16 @@ data:
       "KeyOnlySpaceAdminRoleAllowed": "只能创建绑定空间角色",
       "KeyCreateAndAttachSpaceRoleFailed": "创建绑定空间角色失败",
       "KeyCreateAndAttachPersonalRoleFailed": "创建绑定个人角色失败",
-      "KeyUserManagerOperDelete": "删除-用户管理",
-      "KeyUserManagerOperCreate": "新建-用户管理",
-      "KeyRoleManagerOperCreate": "新建-角色管理",
-      "KeyRoleManagerOperDelete": "删除-角色管理",
-      "KeyRoleManagerOperModify": "编辑-角色管理",
-      "KeyRoleManagerOperAttach": "编辑-绑定角色",
-      "KeyBasePermissionManagerOperModify": "编辑-权限管理",
+      "KeyUserManagerOperDelete": "用户管理",
+      "KeyUserManagerOperCreate": "用户管理",
+      "KeyUserManagerOperModify": "用户管理",
+      "KeyRoleManagerOperCreate": "角色管理",
+      "KeyRoleManagerOperDelete": "角色管理",
+      "KeyRoleManagerOperModify": "角色管理",
+      "KeyRoleManagerOperAttach": "绑定角色",
+      "KeyBasePermissionManagerOperModify": "权限管理",
       "KeyModifyBasePermission": "配置功能权限",
-      "KeyResourcePermissionManagerOperModify": "编辑-权限管理",
+      "KeyResourcePermissionManagerOperModify": "权限管理",
       "KeyModifyResourcePermission": "配置数据权限",
       "主账号管理员角色": "主账号管理员角色",
       "管理员": "管理员",
@@ -526,10 +422,63 @@ data:
       "Skills广场": "Skills广场",
       "导入Skill": "导入Skill",
       "智能工作台": "智能工作台",
-      "密钥管理": "密钥管理"
+      "密钥管理": "密钥管理",
+      "KeyCorpPermissionOperModify": "企业权限管理",
+      "KeyCorpSpaceAdminRoleName": "空间管理员",
+      "KeyCorpSuperAdminRoleName": "超级管理员",
+      "KeyCorpUserRoleName": "普通用户",
+      "KeyDefaultRootDepartmentName": "部门",
+      "KeyDisable": "关闭",
+      "KeyEnable": "开启",
+      "KeyExpUsers": "批量导出用户",
+      "KeyExportHeaderAccountID": "账号ID",
+      "KeyExportHeaderRoleDescription": "角色描述",
+      "KeyExportHeaderRoleName": "角色名称",
+      "KeyExportHeaderUserName": "用户名称",
+      "KeyImportErrorDownload": "部分账号校验失败，请下载错误文件查看详情",
+      "KeyImportErrorGenFailed": "部分账号校验失败，错误文件生成失败，请稍后重试",
+      "KeyImportExceedLimit": "单次导入数量限制1000条，超过上限不支持导入",
+      "KeyImportFileParseFailed": "导入文件解析失败",
+      "KeyImportInvalidFileHeader": "文件表头错误，请使用模板下载并按照模板格式填写后重新上传",
+      "KeyImportNoValidData": "导入文件中没有有效的待导入数据",
+      "KeyImportNoValidDataSpaceHint": "导入文件中没有有效的待导入数据，请确认 A 列「账号ID」已按模板填写",
+      "KeyImportOwnerNotAllowed": "主账号不允许被批量导入",
+      "KeyImportPartialFail": "部分账号校验失败",
+      "KeyImportRoleAlreadyExist": "角色已存在",
+      "KeyImportUserAlreadyInRole": "账号ID已在该角色中",
+      "KeyImportUserAlreadyInSpace": "账号ID已存在，无需重复导入",
+      "KeyImportUserNotFound": "企业用户不存在",
+      "KeyImportUserNotInCorp": "企业用户不存在，建议优先创建为企业用户",
+      "KeyImportUserNotInSpace": "账号ID不在该空间，请先将该账号添加到空间后再绑定角色",
+      "KeyImportUsers": "批量导入用户",
+      "KeyImportWrongTemplateSpaceUser": "您似乎上传了「角色用户导入模板」，请下载「空间用户导入模板」并按 A 列「账号ID」填写后重新上传",
+      "KeyKeyManagement": "密钥管理",
+      "KeyNotifyExportRoleListFailed": "导出空间角色列表失败：请稍后重试或联系管理员",
+      "KeyNotifyExportRoleListSuccess": "导出空间角色列表完成：共导出 %d 条记录，请点击下方按钮下载文件",
+      "KeyNotifyExportSpaceUserFailed": "导出空间用户列表失败：请稍后重试或联系管理员",
+      "KeyNotifyExportSpaceUserSuccess": "导出空间用户列表完成：共导出 %d 条记录，请点击下方按钮下载文件",
+      "KeyNotifyImportRoleUserFailed": "批量导入用户到角色失败：共 %d 个用户导入失败",
+      "KeyNotifyImportRoleUserPartial": "批量导入用户到角色部分完成：%d 个成功，%d 个失败",
+      "KeyNotifyImportRoleUserSuccess": "批量导入用户到角色完成：共 %d 个用户导入成功",
+      "KeyNotifyImportSpaceUserFailed": "批量导入用户到空间失败：共 %d 个用户导入失败",
+      "KeyNotifyImportSpaceUserPartial": "批量导入用户到空间部分完成：%d 个成功，%d 个失败",
+      "KeyNotifyImportSpaceUserSuccess": "批量导入用户到空间完成：共 %d 个用户导入成功",
+      "KeyNotifyTitleExportRoleList": "导出空间角色列表",
+      "KeyNotifyTitleExportSpaceUser": "导出空间用户列表",
+      "KeyNotifyTitleImportRoleUser": "批量导入用户到角色",
+      "KeyNotifyTitleImportSpaceUser": "批量导入用户到空间",
+      "KeyVirtualDepartmentName": "未命名部门",
+      "创建连接器与工具": "创建连接器与工具",
+      "常用应用": "常用应用",
+      "提示词": "提示词",
+      "数据源": "数据源",
+      "模型": "模型",
+      "知识库召回测试": "知识库召回测试",
+      "秘钥管理": "秘钥管理",
+      "连接器与工具": "连接器与工具"
     }
+
   placeholder.yaml: |
-    #trpc_go.yaml start
     NAMESPACE: Production
     GLOBAL_ENV_NAME: formal
     RAINBOW_APP_ID: 3f090873-420d-4575-b9d2-cf6a72980a33
@@ -545,17 +494,14 @@ data:
     TENCENT_ACCOUNT_TARGET: dns://account.tencentyun.com:50001
     TENCENT_STS_TARGET: dns://sts.tencentyun.com:50020
     TI_AUTH_ACCOUNT_TARGET: dns://ti-perm-auth.{{ .Release.Namespace }}.svc.cluster.local:8081
-    PLATFORM_AUTHENTICATOR_TARGET: ip://adp-platform-authenticator.{{ .Release.Namespace }}.svc.cluster.local:9090
-    #client.yaml end
-
-    #application.yaml start
+    PLATFORM_MANAGER_ADMIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+    # RESOLVE: keep-private
     IS_PRIVATE: true
-
+    # RESOLVE: keep-private
     ROLE_ID_SALT: superadmin
-
+    SINGLE_ROLE_MODE: false
     GET_USER_NICKNAME_CONC_LIMIT: 100
     SPACE_MEMBER_LIMIT: 1000
-
     SUB_UIN_DEFAULT_BASE_PERMISSION_IDS:
       - lkeApp
       - lkeApp.createApp
@@ -580,37 +526,34 @@ data:
       - lkeOpenClaw.CreateOpenClaw
       - lkeSkillsCenter
       - lkeSkillsCenter.ImportSkill
-
     RESOURCE_VIEW_PERMISSION_IDS:
-      app: 
+      app:
         - adpAppView
-      knowledge: 
+      knowledge:
         - adpKnowledgeBaseView
-      plugin: 
+      plugin:
         - adpPluginCenterView
-      prompt_template: 
+      prompt_template:
         - adpPromptTemplateView
-      widget: 
+      widget:
         - adpWidgetCenterView
-      skill: 
+      skill:
         - adpSkillsCenterView
-
     RESOURCE_EDIT_PERMISSION_IDS:
-      app: 
+      app:
         - adpAppEdit
-      knowledge: 
+      knowledge:
         - adpKnowledgeBaseEdit
-      plugin: 
+      plugin:
         - adpPluginCenterEdit
-      prompt_template: 
+      prompt_template:
         - adpPromptTemplateEdit
-      widget: 
+      widget:
         - adpWidgetCenterEdit
       openclaw:
         - adpOpenClawEdit
-      skill: 
+      skill:
         - adpSkillsCenterEdit
-
     RESOURCE_NO_PERMISSION_ID_MAP:
       app: adpAppNoPermission
       knowledge: adpKnowledgeBaseNoPermission
@@ -619,7 +562,6 @@ data:
       widget: adpWidgetCenterNoPermission
       openclaw: adpOpenClawNoPermission
       skill: adpSkillsCenterNoPermission
-
     PERMISSION_RESOURCE_TYPE_MAP:
       NoPermission:
         app: adpAppNoPermission
@@ -659,7 +601,6 @@ data:
         prompt_template: adpPromptTemplateAuthorize
         widget: adpWidgetCenterAuthorize
         skill: adpSkillsCenterAuthorize
-
     SPECIAL_PLATFORM_PERMISSIONS_IDS:
       - adpSpace
       - adpSpace.DeleteSpace
@@ -669,7 +610,6 @@ data:
       - lkeSystem.UserPermission.DeptManager
       - lkeSystem.UserPermission.RoleManager
       - lkeSystem.UserPermission.UserManager
-
     DISABLE_PERMISSION_IDS:
       - lkeApp.basic
       - lkeApp.copyApp
@@ -749,7 +689,6 @@ data:
       - lkeSummary.release.call.reception
       - lkeSummary.release.call.secret
       - lkeSummary.release.do
-
     ADP_ALL_PERMISSION_IDS:
       - adpModelHub
       - adpModelHub.addModel
@@ -904,26 +843,85 @@ data:
       - adpWidgetCenterEdit
       - adpWidgetCenterNoPermission
       - adpWidgetCenterView
-
-    #application.yaml end
+    KB_PLATFORM_ACCOUNT_API_TARGET: "ip://adp-platform-account.{{ .Release.Namespace }}.svc.cluster.local:9092"
+    AUTHENTICATOR_TARGET: "ip://adp-platform-authenticator.{{ .Release.Namespace }}.svc.cluster.local:9090"
+    DEFAULT_GRANTED_PERMISSION_IDS:
+    - lkeCorpAssistant
+    - adpFavoriteAppReference
+    OneIDDefaultPermissionIDs:
+    - APIKeyManage
+    IOA_DEFAULT_ACCOUNTS:
+    - 100034032793
+    TASK_PREFIX: "permission-config:task"
+    TASK_FETCH_NUM: 100
+    TASK_FETCH_TIMEOUT: 2s
+    TASK_FETCH_PERIOD: 2s
+    TASK_CLEAN_ENABLE: true
+    TASK_KEEP_ROWS: 1000000
+    TASK_CLEAN_START_HOUR: 21
+    TASK_CLEAN_END_HOUR: 8
+    TASK_CLEAN_SLOW_THRESHOLD: 3s
+    TASK_DELETE_BATCH_INTERVAL: 500ms
+    TASKS:
+      batch_import_space_user:
+        runners: 5
+        retry_wait_time: 1m
+        max_retry: 3
+        timeout: 10m
+        fail_timeout: 3s
+        delay: 0s
+        batch: 1
+        batch_size: 0
+        stopped_resume_time: 3h
+      batch_import_role_user:
+        runners: 5
+        retry_wait_time: 1m
+        max_retry: 3
+        timeout: 10m
+        fail_timeout: 3s
+        delay: 0s
+        batch: 1
+        batch_size: 0
+        stopped_resume_time: 3h
+      batch_export_space_user:
+        runners: 1
+        max_retry: 2
+        timeout: 10m
+        retry_wait_time: 30s
+        stopped_resume_time: 720h
+      batch_export_role_list:
+        runners: 1
+        max_retry: 2
+        timeout: 10m
+        retry_wait_time: 30s
+        stopped_resume_time: 720h
+    HANDLE_TASKS:
+    - batch_import_space_user
+    - batch_import_role_user
+    - batch_export_space_user
+    - batch_export_role_list
+    CLIENT_CLIENT_SERVICE_TRPC_HTTP_COS_ACCESS_NAMESPACE: Production
+    CLIENT_CLIENT_SERVICE_TRPC_HTTP_COS_ACCESS_TARGET: "dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn"
+    BATCH_SET_PERMISSION_LIMIT: 100
   trpc_go.yaml: |
     global:
-      namespace: ${NAMESPACE}            #环境类型，分正式production和非正式development两种类型
-      env_name: ${GLOBAL_ENV_NAME}                    #环境名称，非正式环境下多环境的名称
-      enable_set: ${ENABLE_SET}         #是否启用set
-      full_set_name: ${FULL_SET_NAME}   #set名
+      namespace: ${NAMESPACE}
+      env_name: ${GLOBAL_ENV_NAME}
+      enable_set: ${ENABLE_SET}
+      full_set_name: ${FULL_SET_NAME}
       local_ip: ${POD_IP}
       container_name: ${POD_NAME}
-
     server:
       app: adp
       server: platform-permission-config
+      # RESOLVE: keep-private
       filter:
         - recovery
         - i18n-adp
         - accesslog
         - cle-route-propagator
         - opentelemetry
+      # RESOLVE: keep-private
       stream_filter:
         - opentelemetry
       admin:
@@ -932,34 +930,56 @@ data:
       service:
         - name: trpc.adp.platform_permission_config.Admin
           ip: ${POD_IP}
-          port: 9090 # 服务监听端口
-          network: tcp # 网络监听类型 tcp/udp
-          protocol: trpc # 应用层协议 trpc/restful
-          timeout: 120000 # 请求最长处理时间，单位毫秒
+          port: 9090
+          network: tcp
+          protocol: trpc
+          timeout: 120000
           filter:
-            - session
             - permission
+        - name: trpc.adp.platform_permission_config.SuperAdmin
+          ip: ${POD_IP}
+          port: 9091
+          network: tcp
+          protocol: trpc
+          timeout: 120000
         - name: trpc.adp.platform_permission_config.Api
           ip: ${POD_IP}
-          port: 9092 # 服务监听端口
-          network: tcp # 网络监听类型 tcp/udp
-          protocol: trpc # 应用层协议 trpc/restful
-          timeout: 25000 # 请求最长处理时间，单位毫秒
-
-
-    plugins:                                          #插件配置
-      log:                                            #日志配置
-        default:                                      #默认日志的配置，可支持多输出
+          port: 9092
+          network: tcp
+          protocol: trpc
+          timeout: 25000
+    plugins:
+      log:
+        # RESOLVE: keep-private
+        default:
           - writer: console
-            level: error
-          - writer: file  # 本地文件日志
-            level: debug  # 标准输出日志的级别，开发提测环境可以用debug，线上建议用info
-            writer_config:  # 本地文件输出具体配置
-              filename: /app/log/trpc.log  # 本地文件滚动日志存放的路径
-              max_size: 100   # 本地文件滚动日志大小，单位 MB
-              max_backups: 10 # 最大日志文件数
-              max_age: 7      # 最大日志保留天数
-              compress: false # 日志文件是否压缩
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+          - writer: file
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/log/trpc.log
+              write_mode: 2
+              roll_type: size
+              max_size: 200
+              max_backups: 10
+              compress: false
       telemetry:
         opentelemetry:
           addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
@@ -989,17 +1009,18 @@ data:
             - name: rainbow
               path: /app/conf/
             - name: global
-              appid: ${RAINBOW_APP_ID}  # appid
-              group: global # 配置所属组
-              type: kv   # 七彩石数据格式, kv(默认), table
+              appid: ${RAINBOW_APP_ID}
+              group: global
+              type: kv
               env_name: ${RAINBOW_ENV_NAME}
               timeout: 2000
               enable_client_provider: true
       registry:
-        polaris:
       selector:
         polaris:
           enable_servicerouter: true
+          protocol: grpc
+          enable_trans_meta: true
       i18n:
         i18n:
           default_lang: zh-CN
@@ -1013,18 +1034,33 @@ data:
             char_scaling_factor:
               zh: 1
               en: 3
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+          - zh-CN
+          - en-US
+          data_provider:
+            type: rainbow
+            prefix: permission
+            error_prefix: error
+            char_scaling_factor:
+              zh: 1
+              en: 3
 
-    client:                                            #客户端调用的后端配置
-      filter:                                          #针对所有后端调用函数前后的拦截器列表
+    client:
+      # RESOLVE: keep-private
+      filter:
         - cle-route-propagator
         - opentelemetry
-      namespace: ${NAMESPACE}                          #针对所有后端的环境
-      timeout: 10000                                    #针对所有后端的请求最长处理时间
-      service:                                         #针对单个后端的配置，默认都有默认值，可以完全不用配置
+      namespace: ${NAMESPACE}
+      timeout: 10000
+      service:
         - name: mysql.adp.permission
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/openplatform_permission_data?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+          # RESOLVE: keep-private
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/openplatform_permission_data?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: mysql.adp.conf
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/openplatform_conf_data?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+          # RESOLVE: keep-private
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/openplatform_conf_data?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - callee: trpc.adp.app_admin_proxy.Api
           namespace: ${NAMESPACE}
           target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
@@ -1032,7 +1068,7 @@ data:
           timeout: 20000
         - callee: trpc.adp.app_admin_proxy.Login
           namespace: ${NAMESPACE}
-          target:  ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.platform_charger.Finance
@@ -1056,11 +1092,35 @@ data:
           timeout: 10000
         - name: trpc.adp.platform_authenticator.Authenticator
           namespace: ${NAMESPACE}
-          target: ip://adp-platform-authenticator.{{ .Release.Namespace }}.svc.cluster.local:9090
+          target: "ip://adp-platform-authenticator.{{ .Release.Namespace }}.svc.cluster.local:9090"
           protocol: trpc
+          # RESOLVE: keep-private
           timeout: 10000
         - callee: ti-auth-account-http
           target: dns://ti-perm-auth.{{ .Release.Namespace }}.svc.cluster.local:8081
           network: tcp
           protocol: http
           timeout: 10000
+        - callee: trpc.adp.platform_account.Internal
+          namespace: ${NAMESPACE}
+          target: "ip://adp-platform-account.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          protocol: trpc
+          timeout: 10000
+        - name: trpc.http.cos.Access
+          namespace: ${CLIENT_CLIENT_SERVICE_TRPC_HTTP_COS_ACCESS_NAMESPACE}
+          network: tcp
+          protocol: http
+          target: "dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn"
+          timeout: 10000
+        - name: redis.permission.config
+          target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${INFRA_MIDDLEWARES_REDIS_0_PORT}"
+          timeout: 800
+        - callee: trpc.adp.resource_gallery.Admin
+          namespace: ${NAMESPACE}
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.adp.platform_manager.Admin
+          namespace: ${NAMESPACE}
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 30000

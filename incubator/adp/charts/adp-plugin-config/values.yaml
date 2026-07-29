@@ -1,6 +1,6 @@
 images:
   adp-plugin-config:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/plugin-config:54_2606132011_stable_iaas_cos_edacb22b_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/plugin-config:83_2607271740_stable_iaas_v4.0.3.0_0ccdfff7_private"
 adppluginconfig:
   resources:
     limits:
@@ -11,3 +11,5 @@ adppluginconfig:
       memory: 1Gi
   dbtype: ''
 replicas: 1
+custom_plugin_share_enable: true
+plugin_audit_enable: false

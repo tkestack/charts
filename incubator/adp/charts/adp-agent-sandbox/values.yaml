@@ -1,0 +1,15 @@
+# images 块保留：镜像仍会被构建并推送到目标仓库，replace-images.sh 也依赖此处注入镜像地址
+images:
+  adp-agent-sandbox:
+    url: "{{ .Values.global.imageRegistry }}/tke-market/agent-sandbox:stable_iaas_4.0.3.0_4df788c_private"
+# deploy 开关：默认 false，仅打镜像、不部署该服务的任何 K8s 资源（Deployment/Service/ConfigMap）
+# 如需实际部署，将其置为 true 即可
+deploy: false
+replicas: 1
+resources:
+  limits:
+    cpu: 1
+    memory: 1Gi
+  requests:
+    cpu: 1
+    memory: 1Gi

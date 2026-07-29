@@ -1,0 +1,127 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ .Release.Name }}-log-cleaner
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "log-cleaner.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "log-cleaner.selectorLabels" . | nindent 6 }}
+  updateStrategy:
+    {{- toYaml .Values.updateStrategy | nindent 4 }}
+  template:
+    metadata:
+      labels:
+        {{- include "log-cleaner.selectorLabels" . | nindent 8 }}
+      annotations:
+        # 每次升级 configmap 时强制重建 pod
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      # 使用宿主机网络非必要，这里不启用
+      hostNetwork: false
+      hostPID: false
+      # 只读根文件系统 + 最小权限
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 10
+      {{- if .Values.imagePullSecretName }}
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecretName }}
+      {{- end }}
+      {{- if .Values.tolerateAllTaints }}
+      tolerations:
+        - operator: Exists
+      {{- end }}
+      volumes:
+        - name: scripts
+          configMap:
+            name: {{ .Release.Name }}-log-cleaner-scripts
+            defaultMode: 0755
+        - name: host-logs
+          hostPath:
+            path: {{ .Values.hostLogPath | quote }}
+            type: DirectoryOrCreate
+        # crond 需要可写的 /var/spool/cron/crontabs
+        - name: cron-spool
+          emptyDir: {}
+        # busybox crond 需要 /var/log/messages 可写
+        - name: var-log
+          emptyDir: {}
+        {{- if .Values.timezone }}
+        - name: tz-localtime
+          hostPath:
+            path: /etc/localtime
+            type: FileOrCreate
+        {{- end }}
+      containers:
+        - name: log-cleaner
+          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "log-cleaner").url "context" .) }}
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -c
+            - exec /scripts/entrypoint.sh
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: HOST_LOG_ROOT
+              value: /host/logs
+            - name: RETAIN_DAYS
+              value: {{ .Values.retainDays | quote }}
+            - name: SCHEDULE
+              value: {{ .Values.schedule | quote }}
+            {{- if .Values.timezone }}
+            - name: TZ
+              value: {{ .Values.timezone | quote }}
+            {{- end }}
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+              readOnly: true
+            - name: host-logs
+              mountPath: /host/logs
+              # 需要写权限用于删除
+              readOnly: false
+            - name: cron-spool
+              mountPath: /var/spool/cron
+            - name: var-log
+              mountPath: /var/log
+            {{- if .Values.timezone }}
+            - name: tz-localtime
+              mountPath: /etc/localtime
+              readOnly: true
+            {{- end }}
+          securityContext:
+            # 需要 root 才能删除其他 uid 写入的日志文件
+            runAsUser: 0
+            runAsNonRoot: false
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+              # 保留跨用户删除文件所需的最小 cap：
+              # DAC_READ_SEARCH / DAC_OVERRIDE 让 root 无视文件 uid 权限进行读写
+              # FOWNER 让 root 无视 sticky bit 删除他人文件
+              # CHOWN 让 -delete 能正常处理带属主的目录
+              add:
+                - DAC_READ_SEARCH
+                - DAC_OVERRIDE
+                - FOWNER
+                - CHOWN
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - pgrep crond >/dev/null
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            failureThreshold: 3
+{{- end }}

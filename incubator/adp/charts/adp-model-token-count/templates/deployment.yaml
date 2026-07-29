@@ -84,6 +84,9 @@ spec:
           - bash
           - -c
           - python3 /usr/local/trpc/bin/trpc_main.py -c /usr/local/trpc/conf/trpc.yaml 2>&1
+          envFrom:
+            - secretRef:
+                name: infra-credentials
           env:
             - name: MKL_NUM_THREADS
               value: "2"
@@ -132,11 +135,11 @@ spec:
           {{- else }}
           resources:
             limits:
-              cpu: "2"
-              memory: "4Gi"
-            requests:
               cpu: "1"
               memory: "2Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
           {{- end }}
           name: adp-model-token-count
           volumeMounts:

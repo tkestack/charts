@@ -99,6 +99,58 @@ data:
 
     data_migration_config: ${DataMigrationConfig}
 
+  client.yaml: |
+    client:
+      namespace: Production
+      service:
+        - name: mysql.qbot.short_url.db
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+          timeout: 800
+        - name: redis.qbot.short_url
+          network: tcp
+          target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/7
+          password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
+          timeout: 800
+        - name: tdsql.db_llm_robot
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local
+          timeout: 800
+        - name: qbot.qbot.admin.Login
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: qbot.qbot.admin.Api
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: qbot.qbot.admin.Admin
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: qbot.qbot.chat.Chat
+          target: ip://adp-chat-manage.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: qbot.qbot.short_url.Admin
+          target: ip://adp-app-shorturl.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: qbot.qbot.vector_doc.VectorDoc
+          target: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+        - name: qbot.qbot.vector_doc.DirectIndex
+          target: ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091
+          protocol: trpc
+          network: tcp
+          timeout: 4000
+
+
   data_migration_config: |
     # 新迁移到TDSQL的数据表
     tdsql_tables:
@@ -107,24 +159,92 @@ data:
 
 
   placeholder.yaml: |
-
-
     SHORT_URL_REDIS_PORT: 6379
     SHORT_URL_REDIS_DB_NUMBER: 7
 
+    #tdsql.db_llm_robot
     DataMigrationConfig:
+      # 新迁移到TDSQL的数据表
       tdsql_tables:
       - table: t_short_url
         effective_time: "2026-02-02 22:45:00"
+    RAINBOW_APPID: 3f090873-420d-4575-b9d2-cf6a72980a33
+    # global.serverConnector.joinPoint - 服务连接器接入点
+    TRPC_GLOBAL_JOIN_POINT: default
+    # plugins.telemetry.galileo.ocp_addr - 伽利略 OCP 配置地址
+    TRPC_GALILEO_OCP_ADDR: "http://gocp.woa.com/ocp/api/v1/get_config"
+    # plugins.telemetry.galileo.config.access_point - 伽利略接入点
+    # 1=新加坡公网, 2=新加坡内网, 3=中国大陆公网, 4=中国大陆内网
+    TRPC_GALILEO_ACCESS_POINT: 4
+
+    STORAGE:
+      scheme:
+        corpassistantoa: 1
+        corpassistant: 1
+
+    S3_CONFIG:
+      scheme:
+        corpassistantoa: 1
+        corpassistant: 1
+      cos_map:
+        corpassistantoa:
+          secret_id:
+          secret_key:
+          app_id: 1300986092
+          region: ap-guangzhou
+          bucket: adp-assistant-test-1300986092
+          domain: myqcloud.com
+          expire_time: 30m
+          polaris_service: "1084865:196608"
+          polaris_namespace: Production
+        corpassistant:
+          secret_id:
+          secret_key:
+          app_id: 1300986092
+          region: ap-guangzhou
+          bucket: adp-assistant-1300986092
+          domain: myqcloud.com
+          expire_time: 30m
+          polaris_service: "1084865:196608"
+          polaris_namespace: Production
+
+        cos:
+          ssm_tag:
+          secret_id:
+          secret_key:
+        cosoa:
+          ssm_tag:
+          secret_id:
+          secret_key:
+        realtimeoa:
+          ssm_tag:
+          secret_id:
+          secret_key:
+        cospre:
+          ssm_tag:
+          secret_id:
+          secret_key:
+        realtimepre:
+          ssm_tag:
+          secret_id:
+          secret_key:
+        realtime:
+          ssm_tag:
+          secret_id:
+          secret_key:
+
 
   trpc_go.yaml: |
     global:
       namespace: Production
       env_name: formal
-      enable_set: false         #是否启用set
-      full_set_name: adp   #set名
+      enable_set: false                 #是否启用set
+      full_set_name: adp                #set名
       local_ip: ${POD_IP}
-      container_name: ${POD_NAME}  
+      container_name: ${POD_NAME}
+      serverConnector:
+        joinPoint: ${TRPC_GLOBAL_JOIN_POINT}
+
     server:
       app: adp
       server: app-shorturl
@@ -136,6 +256,7 @@ data:
         - opentelemetry
         - recovery
         - simpledebuglog
+        - cos_rewrite
       service:
         - name: qbot.qbot.short_url.ShortUrl
           ip: 0.0.0.0
@@ -149,7 +270,6 @@ data:
           network: tcp
           protocol: trpc
           timeout: 3000
-
     plugins:
       config:
         file:
@@ -157,9 +277,9 @@ data:
             - name: rainbow
               path: /app/conf/
             - name: global
-              appid: ${RAINBOW_APP_ID}  # appid
-              group: global # 配置所属组
-              type: kv   # 七彩石数据格式, kv(默认), table
+              appid: ${RAINBOW_APP_ID}
+              group: global
+              type: kv
               env_name: ${RAINBOW_ENV_NAME}
               timeout: 2000
               enable_client_provider: true
@@ -192,7 +312,7 @@ data:
             level: info
             formatter: json
             formatter_config:
-              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
               time_key: time
               level_key: level
               name_key: name
@@ -203,7 +323,7 @@ data:
             level: info
             formatter: json
             formatter_config:
-              time_cmt: 2006-01-02T15:04:05.999999999Z07:00
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
               time_key: time
               level_key: level
               name_key: name
@@ -213,11 +333,14 @@ data:
             writer_config:
               filename: /app/logs/trpc.log
               write_mode: 2
-              roll_type: time
-              max_age: 7
+              roll_type: size
+              max_size: 200
               max_backups: 10
               compress: false
-              time_unit: day
+      selector:
+        polaris:
+          join_point: ${TRPC_GLOBAL_JOIN_POINT}
+
 
     client:
       namespace: Production

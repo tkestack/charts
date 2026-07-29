@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: adp-agent-file-system
+  name: adp-agent-file-system
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: tcp-8080
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: adp-agent-file-system
+  sessionAffinity: None
+  type: ClusterIP

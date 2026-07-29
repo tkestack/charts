@@ -57,11 +57,17 @@ spec:
       initContainers:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       containers:
-        - env:
+        - envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
             - name: pathprefix
               value: {{.Values.global.rsa.publicKey}}
             - name: RsaPublicKey
-              value: {{.Values.global.rsa.publicKey}}
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: INFRA_MIDDLEWARES_RSA_PUBLICKEY
           image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "ti-auth-web").url "context" .) }}
           #command: ["sh", "-c", "nginx -c /etc/nginx/nginx.conf -g 'daemon off;'"]
           imagePullPolicy: IfNotPresent

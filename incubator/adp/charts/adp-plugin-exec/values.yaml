@@ -1,8 +1,8 @@
 images:
   adp-plugin-exec:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/plugin-exec:36_2606151046_stable_iaas_cos_27870f1c_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/plugin-exec:57_2607272024_stable_iaas_v4.0.3.0_965f6eca_private"
   adp-plugin-exec-sidecar:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:markmap-96aaeac-24"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:markmap-stable_iaas_v4.0.3.0-5e4e6a0-81"
 adppluginexec:
   resources:
     limits:

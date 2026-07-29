@@ -1,0 +1,806 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-skill-config
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yaml: |
+    # Skill 功能相关限制配置
+    skill_config:
+      skill_name_max_len: 64   # 技能名称最大长度
+      skill_url_max_len: 1024   # 技能 URL 最大长度
+      query_max_len: 128        # 搜索关键词最大长度
+      max_page_size: 100        # 最大分页大小
+      default_page_size: 20     # 默认分页大小
+      max_filter_values: 20     # 单个过滤条件最大值数量
+      max_skill_ids: 100        # 最大技能 ID 列表长度
+      max_package_file_count: 300
+
+    # 技能分类标识列表
+    category_keys:
+      - "adp_knowledge_engine"
+      - "office_doc"
+      - "design_and_development"
+      - "image_processing"
+      - "audio_video"
+      - "search_retrieval"
+      - "ocr"
+      - "medical_health"
+      - "business_management"
+      - "finance_tax_legal"
+      - "human_resources"
+      - "financial_services"
+
+    # 默认技能版本号（_meta.json 不存在时的兜底版本）
+    default_skill_version: "1.0.0"
+    # 默认icon
+    default_icon_url: ${DEFAULT_ICON_URL}
+    #【变更需评估！】sandbox 挂载路径前缀（容器内路径）
+    skill_sandbox_mount_prefix: "/adp/custom/.skills"
+    #【变更需评估！】COS 路径前缀<cosPathPrefix>/<uin>/<spaceID>/<filePath>
+    skill_sandbox_cos_path_prefix: "skills/users"
+
+    skill_uin_whitelist:
+      - "100020322809"
+
+    # COS 对象存储配置
+    storage:
+      type: cos
+      cos_map:
+        offline:
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
+          expire_time: 30m
+          credential_time: 10m
+          assume_role:
+            role_arn: "{{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}"
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
+          retry_times: 3          # 请求失败重试次数
+          retry_interval: 500ms   # 重试间隔
+        sandbox:
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
+          expire_time: 30m
+          credential_time: 10m
+          assume_role:
+            role_arn: "{{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}"
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
+          retry_times: 3          # 请求失败重试次数；common/x/clientx/s3x 读的是 cfg.RetryTimes，未配置时 CopyObject 等操作的 for 循环跑 0 次，会静默返回 ("", nil) 伪成功
+          retry_interval: 500ms   # 重试间隔
+        inner:
+          secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+          secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+          app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
+          region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
+          bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
+          domain: ${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
+          expire_time: 30m
+          credential_time: 10m
+          assume_role:
+            role_arn: "{{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}"
+            duration_seconds: 43200
+            refresh_ahead_seconds: 300
+          retry_times: 3
+          retry_interval: 500ms
+
+    skill_analysis:
+      endpoint: "https://xti.qq.com/api/v3/ti"
+      app_key: "jztuhfsvulf02l38quofhz229i4nblbz"
+      timeout: 5s
+      query_key_type: "md5"         # md5 / sha256
+      retry_task: ${RETRY_TASK}
+
+    notice_text:
+      audit_subject: "Skills安全审核提示"
+      audit_content: "内置Skills均已通过平台安全检测，自定义Skills会在导入时进行平台安全检测"
+      update_subject: "Skills更新结果"
+      update_succ_tmpl: "Skill“%s”更新成功"
+      update_fail_tmpl: "Skill“%s”更新失败，请稍后重试"
+      result_subject: "Skills安全审核结果"
+      result_succ_tmpl: "Skills“%s”已通过安全检测，未发现已知风险"
+      result_fail_tmpl: "Skills“%s”审核失败，可能存在安全隐患"
+      result_risk_tmpl: "Skills“%s”安全审核结果为“疑似风险”，需谨慎使用"
+      result_high_tmpl: "Skills“%s”安全审核结果为“高危风险”，为保障安全性，不支持上架"
+      share_approved_subject: "提交到企业共享Skill已通过"
+      share_approved_tmpl: "Skill【%s】提交到企业共享Skill被通过"
+      share_rejected_subject: "提交到企业共享Skill被驳回"
+      share_rejected_tmpl: "Skill【%s】提交到企业共享Skill被驳回"
+
+    inner_notice:
+      webhook_enabled: true
+      webhook_urls: ${INNER_NOTICE_WEBHOOK_URLS}
+
+    skillhub:
+      base_url: https://lightmake.site
+      api_key: ${SKILLHUB_API_KEY}
+      client_user_id: adp-skill
+      timeout: 30s
+
+    skill_auto_upgrade:
+      enable: false
+      batch_size: 20
+      max_per_round: 100
+      dry_run: false
+      log_same_version: false
+      hold_time: 10m
+      sources:
+        - skillhub
+
+    task_config:
+      task_prefix: "skill-config"       # Redis key 前缀，用于隔离不同服务的任务
+      task_fetch_num: 10                 # 单次拉取任务数量
+      task_fetch_timeout: 5s             # 拉取超时时间
+      task_fetch_period: 1s              # 拉取间隔
+      tasks:
+        export_skill_component:          # 导出技能组件任务
+          runners: 3                     # 执行协程数
+          max_retry: 3                   # 最大重试次数
+          timeout: 300s                  # 任务超时时间
+          fail_timeout: 30s              # 失败回调超时时间
+          retry_wait_time: 5s            # 重试等待时间
+          stopped_resume_time: 24h       # 任务停止后可恢复的时效
+        import_skill_component:          # 导入技能组件任务
+          runners: 3                     # 执行协程数
+          max_retry: 3                   # 最大重试次数
+          timeout: 300s                  # 任务超时时间
+          fail_timeout: 30s              # 失败回调超时时间
+          retry_wait_time: 5s            # 重试等待时间
+          stopped_resume_time: 24h       # 任务停止后可恢复的时效
+
+    skill_address_map: ${SKILL_ADDRESS_MAP}
+  client.yaml: |
+    client:
+      namespace: ${NAMESPACE}
+      filter:
+        - tpstelemetry
+        - cle-route-propagator
+      service:
+        - name: trpc.mysql.skill_config
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_skill?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: trpc.redis.skill_config
+          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${INFRA_MIDDLEWARES_REDIS_0_PORT}/40
+
+        # cos调用
+        - name: trpc.http.cos.Access
+          target: dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn
+          namespace: Production
+          network: tcp
+          protocol: http
+          timeout: 5000
+        # 平台管理服务 - 管理接口
+        - callee: trpc.adp.platform_manager.Admin
+          name: trpc.adp.platform-manager.Admin
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 5000
+        - callee: trpc.adp.resource_gallery.Admin
+          namespace: ${NAMESPACE}
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 5000
+        - callee: trpc.adp.app_admin_proxy.Api
+          namespace: ${NAMESPACE}
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.adp.platform_manager.Login
+          namespace: ${NAMESPACE}
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          timeout: 30000
+        - callee: trpc.adp.platform_content_moderation.Infosec
+          target: ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: ${NAMESPACE}
+          network: tcp
+          protocol: trpc
+          timeout: 3000
+        - name: trpc.adp.platform_manager.Api
+          namespace: ${NAMESPACE}
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
+          timeout: 30000
+        - callee: trpc.adp.platform_account.Internal
+          target: polaris://trpc.adp.platform_account.Api
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 5000
+        - callee: trpc.adp.agent_config.v3.Internal
+          target: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:9011"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 5000
+        - callee: trpc.adp.agent_config.AgentConfigApi
+          target: ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 5000
+  env.yaml: |
+    version: 2.0.0 # 固定值，不需要修改
+    kind: env # 固定值，不需要修改
+    metadata:
+        name: formal # 环境名称 [选填]
+
+  error_zh-CN.json: |
+    {
+      "ErrParams": "参数错误",
+      "ErrSkillNotFound": "技能不存在",
+      "ErrVersionNotFound": "技能版本不存在",
+      "ErrPermissionDenied": "权限拒绝",
+      "ErrSkillURLTooLong": "技能文件地址过长",
+      "ErrSourceRequired": "无效的技能来源",
+      "ErrQueryTooLong": "搜索关键词过长",
+      "ErrInvalidPageSize": "无效的分页大小",
+      "ErrInvalidPageNumber": "无效的页码",
+      "ErrTooManySkillIDs": "查询技能列表过多",
+      "ErrFilterValuesTooMany": "过滤条件值过多",
+      "ErrUnknownFilterName": "未知的过滤条件",
+      "ErrSkillIDRequired": "无效的技能ID",
+      "ErrSkillPackageInvalid": "技能不可用，请检查技能必要文件是否存在",
+      "ErrSkillMDParseFailed": "技能解析失败，技能应遵循SKILL开放标准",
+      "ErrSkillNameDuplicated": "该Skill标识在企业内已存在，请更换后重试。",
+      "ErrSkillNameMismatch": "更新失败，与当前 Skill 标识符不匹配",
+      "ErrUploadSkillFileFailed": "技能上传失败",
+      "ErrCreateSkillFailed": "创建技能失败",
+      "ErrModifySkillFailed": "修改技能失败",
+      "ErrGetSkillFailed": "获取技能失败",
+      "ErrSkillNotDisabled": "技能未下架，无法删除",
+      "ErrSkillVersionStatusNotAllowed": "当前技能版本状态不允许该操作",
+      "ErrSkillVersionTooLow": "技能版本号不能低于当前版本",
+      "ErrSkillRiskLevelNotAllowed": "风险等级不满足上架要求",
+      "ErrInvalidVersionFormat": "技能版本号格式不合法，必须符合 SemVer 格式（x.y.z）",
+      "ErrSkillPackageTooLarge": "技能压缩包超过大小限制",
+      "ErrSkillPackageContainsBinary": "技能包含不支持的二进制文件",
+      "ErrSkillPackageTooManyFiles": "技能压缩包内文件数目超过限制",
+      "ErrDisplayNameTooLong": "技能标识过长",
+      "ErrDisplayNameTooShort": "技能标识不能少于3个字符",
+      "ErrDisplayDescTooLong": "技能描述过长",
+      "ErrUpdateDescTooLong": "变更说明过长",
+      "ErrVersionTooLong": "技能版本号过长",
+      "ErrAuditNotPass": "内容审核不通过",
+      "ErrDisplayNameInvalidFormat": "Skill标识格式不合法，仅支持小写字母、数字、连字符(-)，且不能以连字符开头或结尾。",
+      "ErrFileURLRequired": "Skill文件地址必填",
+      "ErrSkillAnalyzingInProgress": "当前技能存在正在安全检测中的版本，请等待检测完成后再进行操作",
+      "ErrSkillNotInner": "当前技能不是内置技能，禁止该操作",
+      "ErrInvalidSourceLink": "来源链接格式不合法",
+      "ErrShareApplyRemarkRequired": "共享申请说明不能为空",
+      "ErrAlreadyShared": "当前版本已企业级共享，无需重复申请",
+      "ErrOtherVersionSharing": "该技能已有其他版本正在共享中，请先处理",
+      "ErrSkillIsApproving": "该技能存在审批中的共享申请，请勿重复提交",
+      "ErrSharedVersionTooLow": "共享版本号必须严格高于已共享版本",
+      "ErrUnknownFilterValue": "过滤条件取值非法",
+      "ErrSharedSkillReadOnly": "共享生成的技能不允许直接修改或删除",
+      "ErrSkillHasBeenShared": "该技能已企业级共享，无法删除",
+      "ErrCreateApprovalFailed": "提交审批失败，请稍后重试",
+      "ErrShareNotFound": "共享记录不存在",
+      "ErrOperateDoing": "当前技能操作中，请稍后重试",
+      "ErrApprovalIDRequired": "审批单ID必填",
+      "ErrSkillShareInProgress": "Skill「%s」正在上架/下架处理中，请稍后重试",
+      "ErrSkillUnderAuditing": "Skill「%s」正在安全检测中，请检测完成后再操作",
+      "ErrSkillUnderShareApproval": "Skill「%s」正在企业共享审批中，请等待审批结果后再操作",
+      "ErrSkillUnderUnshareApproval": "Skill「%s」正在下架审批中，请等待审批结果后再操作",
+      "ErrShareVersionNotCurrent": "共享Skill的版本必须是当前在线最新版本，请刷新后重试",
+      "ErrSkillReferenced": "Skill仍被其它实体引用，无法下架，请先解除引用后重试"
+    }
+  placeholder.yaml: |
+    NAMESPACE: Production
+    ENV_NAME: formal
+
+    LOG_WRITER: galileo
+
+    RAINBOW_APP_ID: 3f090873-420d-4575-b9d2-cf6a72980a33
+    RAINBOW_ENV_NAME: formal
+    RAINBOW_GROUP: skill-config-server
+
+    SKILL_DB_USER:
+    SKILL_DB_PASSWORD: ""
+    SKILL_DB_HOST:
+    SKILL_DB_PORT:
+
+    SKILL_REDIS_HOST:
+    SKILL_REDIS_PORT:
+    SKILL_REDIS_PASSWORD:
+
+    COS_TARGET: dns://cos-internal.ap-guangzhou.tencentcos.cn
+    PLATFORM_MANAGER_ADMIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+    ADMIN_API_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+    RESOURCE_GALLERY_TARGET: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+    PLATFORM_MANAGER_LOGIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+    CONTENT_MODERATION_TARGET: ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090
+    PLATFORM_MANAGER_API_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
+    PLATFORM_ACCOUNT_API_TARGET: polaris://trpc.adp.platform_account.Api
+    AGENT_CONFIG_TARGET: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:9011"
+    AGENT_CONFIG_API_TARGET: ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+
+    DEFAULT_ICON_URL: "https://qidian-qbot-1251316161.cos.ap-guangzhou.myqcloud.com/public/adp/skill/skill_icon/skill_default.jpg"
+    SKILLHUB_API_KEY: "sk_84056a1ac70ba3a0c5df3106f552e897"
+
+    STORAGE:
+      type: cos
+      cos_map:
+        offline:
+          secret_id:
+          secret_key:
+          app_id: 1251316161
+          region: ap-guangzhou
+          bucket: qidian-qbot-1251316161
+          domain: myqcloud.com
+          retry_times: 3          # 请求失败重试次数
+          retry_interval: 500ms   # 重试间隔
+        sandbox:
+          secret_id:
+          secret_key:
+          app_id: 1300986092
+          region: ap-guangzhou
+          bucket: adp-assistant-1300986092
+          domain: myqcloud.com
+          expire_time: 7776000s
+          credential_time: 10m
+          retry_times: 3          # 请求失败重试次数；common/x/clientx/s3x 读的是 cfg.RetryTimes，未配置时 CopyObject 等操作的 for 循环跑 0 次，会静默返回 ("", nil) 伪成功
+          retry_interval: 500ms   # 重试间隔
+        inner:
+          secret_id:
+          secret_key:
+          app_id: 1257943044
+          region: ap-guangzhou
+          bucket: adp-oa-cos-1257943044
+          domain: myqcloud.com
+          expire_time: 7776000s
+          credential_time: 10m
+          retry_times: 3
+          retry_interval: 500ms
+
+    INNER_NOTICE_WEBHOOK_URLS:
+      - "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=0b42e3b4-1dd3-4125-aed3-9973d61f92d1"
+
+    RETRY_TASK:
+        enable: true
+        interval: 2m
+        batch_size: 100
+        max_retry: 20
+        min_age: 1m
+        claim_stale_after: 3m
+        base_backoff: 2m
+        max_backoff: 30m
+        max_pending_duration: 12h
+        backfill_disable: true
+        backfill_run_envs: 
+          - ""
+
+    SKILL_ADDRESS_MAP:
+      # ── MCP 服务端点 ──
+      "1c966d98-292e-436e-af1c-cc38d171f9c4": # ADP「标准模式」应用创建 / public-adp-standardagent-creator
+        - "https://adp.cloud.tencent.com/plugin/mcp/921ad3a1-0def-4b8a-aaa6-4e5be898f511/mcp"  # [MCP]
+      "f7466afe-97a5-40ee-8926-61bbb0c09177": # ADP「Multi-Agent 模式」应用创建 / public-adp-multiagent-creator
+        - "https://adp.cloud.tencent.com/plugin/mcp/921ad3a1-0def-4b8a-aaa6-4e5be898f511/mcp"  # [MCP]
+      "4afcd580-5915-4276-bafe-f70b2b15a31f": # ADP 工作流生成助手 / adp-workflow-package-generator
+        - "https://adp.cloud.tencent.com/plugin/mcp/921ad3a1-0def-4b8a-aaa6-4e5be898f511/mcp"  # [MCP]
+      "2cf44299-6e23-48d9-a853-7feec8190b13": # ADP技能管理 / adp-skill-manager
+        - "https://adp.cloud.tencent.com/plugin/mcp/91efcd24-354e-43c5-bfab-dadb0c6ef8c3/mcp"  # [MCP]
+      "6d80521b-0f5b-4cc7-9394-7c5c6d608265": # ADP应用配置助手 / adp-app-manager
+        - "https://adp.cloud.tencent.com/plugin/mcp/921ad3a1-0def-4b8a-aaa6-4e5be898f511/mcp"  # [MCP]
+      "9ba118e8-5616-4583-9128-e954ada659d7": # 视频理解 / tencentcloud-video-understand
+        - "https://adp.cloud.tencent.com/plugin/mcp/388bf055-a024-45a8-82e2-402e85793173/mcp"  # [MCP]
+      "b6a2d0fa-1049-4e5b-b996-9c308e98eafb": # 混元生3D / tencentcloud-hunyuan-3d
+        - "https://adp.cloud.tencent.com/plugin/mcp/a5001b32-a316-4c3a-a906-78b1faa709b7/mcp"  # [MCP]
+      "d03c71f6-6d5f-4b0d-9def-e7685a2b832f": # 混元生3D（专业版） / tencentcloud-hunyuan-3d-pro
+        - "https://adp.cloud.tencent.com/plugin/mcp/bbe5c35a-fbfd-45fd-bd9e-e02a3b83a847/mcp"  # [MCP]
+      "6c7358b5-7d21-4ec2-8d77-d54c8c3a7431": # 多模态生成 / adp-multimodal-generation
+        - "https://adp.cloud.tencent.com/plugin/mcp/d4672062-ed07-45e5-a419-b9d8eb5f0473/mcp"  # [MCP] hunyuan-image (文生图)
+        - "https://adp.cloud.tencent.com/plugin/mcp/0fba7541-f43c-40bd-be39-1096eb8f2971/mcp"  # [MCP] hunyuan-3d (文生3D)
+        - "https://adp.cloud.tencent.com/plugin/mcp/b3644bcb-5aa3-4446-877c-e5029bcb57b7/mcp"  # [MCP] nano-banana (nano绘图)
+        - "https://adp.cloud.tencent.com/plugin/mcp/35506aed-3c77-48e8-8c6b-fd2c49ab161e/mcp"  # [MCP] gemini-image (Gemini绘图)
+        - "https://adp.cloud.tencent.com/plugin/mcp/bbe5c35a-fbfd-45fd-bd9e-e02a3b83a847/mcp"  # [MCP] hunyuan-3d-pro (专业版3D)
+      "7a5a1146-05b1-44d9-bb84-b6c4548c57ce": # 人脸美颜 / tencentcloud-face-beautify
+        - "https://adp.cloud.tencent.com/plugin/mcp/bea91c45-7e79-4a5c-a7e0-13d6b97f8ba0/mcp"  # [MCP]
+      "bdcc1c8e-ae29-447e-baa2-b120f81b3496": # 人脸年龄变化 / tencentcloud-face-age-transformation
+        - "https://adp.cloud.tencent.com/plugin/mcp/e7681bc4-9fe6-4cf8-af72-caaeb2ec377d/mcp"  # [MCP]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/9ebc029f-5567-493f-b823-0ad978a9bab1/b511190e-ab93-46ba-bee7-d852d53a28a9"  # [API]
+      "c7b0b180-24b3-439b-b6d0-befe2ea92a6b": # 人脸性别转换 / tencentcloud-face-gender-swap
+        - "https://adp.cloud.tencent.com/plugin/mcp/2eeb9d92-1bbf-4020-8020-4cd69d8b7a04/mcp"  # [MCP]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/9ebc029f-5567-493f-b823-0ad978a9bab1/b511190e-ab93-46ba-bee7-d852d53a28a9"  # [API]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/61a2635f-62f8-4e44-94fd-38cf07a9cc71/6f7a8b9c-0d1e-4f2a-3456-789abcdef01a"  # [API]
+      "50f28e9e-8cd1-4312-a99c-6e63db6e916c": # AI人脸防护盾 / tencentcloud-AI-face-protection-shield
+        - "https://adp.cloud.tencent.com/plugin/mcp/5f2077f1-3511-4afe-9169-d971559d8d95/mcp"  # [MCP]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/9ebc029f-5567-493f-b823-0ad978a9bab1/b511190e-ab93-46ba-bee7-d852d53a28a9"  # [API]
+      "63fa4318-fa1b-459c-bd97-bd0a2bd25aea": # 图片生成（3.0） / tencentcloud-hunyuan-image
+        - "https://adp.cloud.tencent.com/plugin/mcp/d4672062-ed07-45e5-a419-b9d8eb5f0473/mcp"  # [MCP]
+      "b87ba5d8-e7c3-4f28-85f6-5b51b245d275": # 通用文字识别（高精度版） / tencentcloud-general-accurate-ocr
+        - "https://adp.cloud.tencent.com/plugin/mcp/36e1218c-2322-4cca-8b9d-a521edfb0a8f/mcp"  # [MCP]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/9ebc029f-5567-493f-b823-0ad978a9bab1/b511190e-ab93-46ba-bee7-d852d53a28a9"  # [API]
+      "430d6c79-3686-4bf1-9db4-546f507df88e": # 图文结构化提取（基础版） / tencentcloud-structured-visual-extraction(Basic)
+        - "https://adp.cloud.tencent.com/plugin/mcp/e40dad70-16de-483f-864d-1357c2b1996d/mcp"  # [MCP]
+      "6b4afb83-58f3-4cb1-a61e-408489ca88fc": # 图文结构化提取（多模态版） / tencentcloud-structured-visual-extraction(Multimodal)
+        - "https://adp.cloud.tencent.com/plugin/mcp/bd2865b7-082c-4cc2-8c9a-53021ad8b5c0/mcp"  # [MCP]
+      "602c21ef-902e-4b0a-9fe6-acdd4a570dea": # PDF转Office文档 / tencent-pdf-to-office-document
+        - "https://adp.cloud.tencent.com/plugin/mcp/adae8c2c-572b-453f-a78e-cee4593413a1/mcp"  # [MCP]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/9ebc029f-5567-493f-b823-0ad978a9bab1/b511190e-ab93-46ba-bee7-d852d53a28a9"  # [API]
+      "e2bcb78d-082a-485e-96fa-211cfa93f6c5": # 文档转PDF / tencent-document-to-pdf
+        - "https://adp.cloud.tencent.com/plugin/mcp/b9936dab-dd67-446f-996b-021b67d604e8/mcp"  # [MCP]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/9ebc029f-5567-493f-b823-0ad978a9bab1/b511190e-ab93-46ba-bee7-d852d53a28a9"  # [API]
+      "91bbf3d5-b962-43b0-b479-fd73d14960e6": # 图片转Office文档 / tencent-Image-to-office-document
+        - "https://adp.cloud.tencent.com/plugin/mcp/ac67e81d-429d-4b6b-997b-b49e5b3be0a0/mcp"  # [MCP]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/9ebc029f-5567-493f-b823-0ad978a9bab1/b511190e-ab93-46ba-bee7-d852d53a28a9"  # [API]
+      "d6c47b93-dcc1-4c84-a11b-dadd7e4c25ca": # 文档翻译 / tencent-document-translation
+        - "https://adp.cloud.tencent.com/plugin/mcp/25738774-0a98-406f-abfc-58775e3caed4/mcp"  # [MCP]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/9ebc029f-5567-493f-b823-0ad978a9bab1/b511190e-ab93-46ba-bee7-d852d53a28a9"  # [API]
+      "5b09ea1f-d50d-4fd1-babf-d2300f5c0784": # ADP连接器查询向导 / adp-plugin-manager
+        - "https://adp.cloud.tencent.com/plugin/mcp/c03fd9aa-0984-461a-9a1c-de8c73137272/mcp"  # [MCP]
+
+      # ── REST API 端点 ──
+      "072eeb33-f9a9-4ca7-8f0c-c8f61f0e8296": # 文档重排序（Rerank） / tencentcloud-adp-rerank
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4923ae97-3af8-4a73-8391-34d4da3ad6fb/1db7b95f-fbd4-427e-9ab1-471238e736f8"  # [API]
+      "f5fc841f-82fc-46ca-8152-d3bab786d52c": # ADP 知识库文档管理 / tencentcloud-adp-kb-management
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/0b616bb2-9e21-40e2-b571-a83542a8123d"  # [API] [TMPL] (tool_id=0b616bb2-9e21-40e2-b571-a83542a8123d)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/6fd5da0f-5540-4ffd-a05c-805129f9857d"  # [API] [TMPL] (tool_id=6fd5da0f-5540-4ffd-a05c-805129f9857d)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/3b4b1f44-509d-4efa-988f-e16e2d36f409"  # [API] [TMPL] (tool_id=3b4b1f44-509d-4efa-988f-e16e2d36f409)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/04a95e35-b22c-41d8-be6a-0120768ec5aa"  # [API] [TMPL] (tool_id=04a95e35-b22c-41d8-be6a-0120768ec5aa)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/2506ec47-456e-430c-9904-42a30ae27f3c"  # [API] [TMPL] (tool_id=2506ec47-456e-430c-9904-42a30ae27f3c)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/88dce784-32d6-4689-a527-ec969d0f6228"  # [API] [TMPL] (tool_id=88dce784-32d6-4689-a527-ec969d0f6228)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/f1686ad0-961b-43b0-b7d9-e7869f4c9325"  # [API] [TMPL] (tool_id=f1686ad0-961b-43b0-b7d9-e7869f4c9325)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/5c357eae-c482-4f5c-bd2a-b3413bd3e1a5"  # [API] [TMPL] (tool_id=5c357eae-c482-4f5c-bd2a-b3413bd3e1a5)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/5ea1b348-b422-4cb6-8291-88cfd4654d3a"  # [API] [TMPL] (tool_id=5ea1b348-b422-4cb6-8291-88cfd4654d3a)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/a2a16fa5-da29-4025-888f-d5dd6be6779f"  # [API] [TMPL] (tool_id=a2a16fa5-da29-4025-888f-d5dd6be6779f)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/698ef384-7bcd-4548-8c79-ecd568685cf7"  # [API] [TMPL] (tool_id=698ef384-7bcd-4548-8c79-ecd568685cf7)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/1b3c3b37-75bd-4b00-a924-a0e41a07c10c"  # [API] [TMPL] (tool_id=1b3c3b37-75bd-4b00-a924-a0e41a07c10c)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/852091c3-2406-48b6-aede-10a62ccc378b"  # [API] [TMPL] (tool_id=852091c3-2406-48b6-aede-10a62ccc378b)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/611a599d-a99f-48bc-8581-443553ce3e86"  # [API] [TMPL] (tool_id=611a599d-a99f-48bc-8581-443553ce3e86)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/c9d504cd-cd1c-4e35-b7d2-cb9ac4262ed4"  # [API] [TMPL] (tool_id=c9d504cd-cd1c-4e35-b7d2-cb9ac4262ed4)
+      "c7ea2973-f488-439e-be73-f71d74c35d87": # ADP知识库检索 / tencentcloud-adp-kb-search
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/0b616bb2-9e21-40e2-b571-a83542a8123d"  # [API] [TMPL] (tool_id=0b616bb2-9e21-40e2-b571-a83542a8123d)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/05813dd1-dbf4-4314-badb-4985bb2594e6"  # [API] [TMPL] (tool_id=05813dd1-dbf4-4314-badb-4985bb2594e6)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/6fd5da0f-5540-4ffd-a05c-805129f9857d"  # [API] [TMPL] (tool_id=6fd5da0f-5540-4ffd-a05c-805129f9857d)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/3b4b1f44-509d-4efa-988f-e16e2d36f409"  # [API] [TMPL] (tool_id=3b4b1f44-509d-4efa-988f-e16e2d36f409)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/04a95e35-b22c-41d8-be6a-0120768ec5aa"  # [API] [TMPL] (tool_id=04a95e35-b22c-41d8-be6a-0120768ec5aa)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/2506ec47-456e-430c-9904-42a30ae27f3c"  # [API] [TMPL] (tool_id=2506ec47-456e-430c-9904-42a30ae27f3c)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/88dce784-32d6-4689-a527-ec969d0f6228"  # [API] [TMPL] (tool_id=88dce784-32d6-4689-a527-ec969d0f6228)
+      "ed8ea9b5-6a79-46cc-b85c-f9c8c2858723": # ADP应用交互助手 / adp-app-chat
+        - "https://wss.lke.cloud.tencent.com/v1/qbot/chat/sse"  # [API] SSE chat endpoint
+        - "https://lke.tencentcloudapi.com"  # [API] LKE API (ListApp etc.)
+      "35808eb3-7172-4dbd-aa59-6755f8c69512": # 腾讯云语音识别 / tencentcloud-asr-recognition
+        - "https://adp.cloud.tencent.com/plugin/api/v1/e9c2d603-dcec-4ef5-8618-8a99b2035663/1f5abf87-56fb-4c78-b65a-b975753dcf6e"  # [API]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/e9c2d603-dcec-4ef5-8618-8a99b2035663/3a33b2b2-136c-41ee-89b5-f43fb48aaa2d"  # [API]
+      "760dc78e-149a-4165-b553-761db97ab2e3": # 短文本语音合成 / tencentcloud-short-text-to-speech-synthesis
+        - "https://adp.cloud.tencent.com/plugin/api/v1/0cb3fd17-344e-4317-8f6b-5482aa607a22/48eaac5d-0425-4996-8f9d-c59e07918345"  # [API]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/9ebc029f-5567-493f-b823-0ad978a9bab1/b511190e-ab93-46ba-bee7-d852d53a28a9"  # [API]
+      "92f4f942-eac9-426c-8602-e547a37b5959": # 综艺视频片段拆分 / tencentcloud-variety-show-video-clip-splitting
+        - "https://adp.cloud.tencent.com/plugin/api/v1/74bd6d74-46e2-49b7-8feb-394c539610c8/737e1ed3-7273-4a03-9b9e-b6f4abe0304a"  # [API]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/3c81a9ae-c31a-46fa-a8a5-c7f014748805/c378a4fe-090d-4e0a-ad6c-66633c4c3ab9"  # [API]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/9ebc029f-5567-493f-b823-0ad978a9bab1/b511190e-ab93-46ba-bee7-d852d53a28a9"  # [API]
+      "cc8b019a-3af5-4198-b5aa-9c817b18bdb0": # 视频处理 / tencentcloud-video-processing
+        - "https://adp.cloud.tencent.com/plugin/api/v1/74bd6d74-46e2-49b7-8feb-394c539610c8/737e1ed3-7273-4a03-9b9e-b6f4abe0304a"  # [API]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/74bd6d74-46e2-49b7-8feb-394c539610c8/4e379a5e-18a3-449d-b4a9-395569eb9ab8"  # [API]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/74bd6d74-46e2-49b7-8feb-394c539610c8/15fb61b6-60a7-40a6-a6c4-9a6e8884821c"  # [API]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/74bd6d74-46e2-49b7-8feb-394c539610c8/d27287ed-ebf4-430c-9f13-2e7991be367d"  # [API]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/74bd6d74-46e2-49b7-8feb-394c539610c8/3935817f-fc0d-428e-a7b2-e9b38b54d64d"  # [API]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/74bd6d74-46e2-49b7-8feb-394c539610c8/a3f5970d-de98-4915-8f28-d4e8d4b30788"  # [API]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/9ebc029f-5567-493f-b823-0ad978a9bab1/b511190e-ab93-46ba-bee7-d852d53a28a9"  # [API]
+      "ec0be326-0636-473d-8b6b-c6ed152695ad": # 长文本语音合成 / tencentcloud-long-text-to-voice
+        - "https://adp.cloud.tencent.com/plugin/api/v1/9ebc029f-5567-493f-b823-0ad978a9bab1/b511190e-ab93-46ba-bee7-d852d53a28a9"  # [API]
+      "84006e01-373e-47a8-8e5c-6a9a53e67dbc": # 多平台营销素材生成 / multi-platform-content-generation
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/0b616bb2-9e21-40e2-b571-a83542a8123d"  # [API] [TMPL] (tool_id=0b616bb2-9e21-40e2-b571-a83542a8123d)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/05813dd1-dbf4-4314-badb-4985bb2594e6"  # [API] [TMPL] (tool_id=05813dd1-dbf4-4314-badb-4985bb2594e6)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/6fd5da0f-5540-4ffd-a05c-805129f9857d"  # [API] [TMPL] (tool_id=6fd5da0f-5540-4ffd-a05c-805129f9857d)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/3b4b1f44-509d-4efa-988f-e16e2d36f409"  # [API] [TMPL] (tool_id=3b4b1f44-509d-4efa-988f-e16e2d36f409)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/04a95e35-b22c-41d8-be6a-0120768ec5aa"  # [API] [TMPL] (tool_id=04a95e35-b22c-41d8-be6a-0120768ec5aa)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/2506ec47-456e-430c-9904-42a30ae27f3c"  # [API] [TMPL] (tool_id=2506ec47-456e-430c-9904-42a30ae27f3c)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/88dce784-32d6-4689-a527-ec969d0f6228"  # [API] [TMPL] (tool_id=88dce784-32d6-4689-a527-ec969d0f6228)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/f1686ad0-961b-43b0-b7d9-e7869f4c9325"  # [API] [TMPL] (tool_id=f1686ad0-961b-43b0-b7d9-e7869f4c9325)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/5c357eae-c482-4f5c-bd2a-b3413bd3e1a5"  # [API] [TMPL] (tool_id=5c357eae-c482-4f5c-bd2a-b3413bd3e1a5)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/5ea1b348-b422-4cb6-8291-88cfd4654d3a"  # [API] [TMPL] (tool_id=5ea1b348-b422-4cb6-8291-88cfd4654d3a)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/a2a16fa5-da29-4025-888f-d5dd6be6779f"  # [API] [TMPL] (tool_id=a2a16fa5-da29-4025-888f-d5dd6be6779f)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/698ef384-7bcd-4548-8c79-ecd568685cf7"  # [API] [TMPL] (tool_id=698ef384-7bcd-4548-8c79-ecd568685cf7)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/1b3c3b37-75bd-4b00-a924-a0e41a07c10c"  # [API] [TMPL] (tool_id=1b3c3b37-75bd-4b00-a924-a0e41a07c10c)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/852091c3-2406-48b6-aede-10a62ccc378b"  # [API] [TMPL] (tool_id=852091c3-2406-48b6-aede-10a62ccc378b)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/611a599d-a99f-48bc-8581-443553ce3e86"  # [API] [TMPL] (tool_id=611a599d-a99f-48bc-8581-443553ce3e86)
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4270baf0-d5a6-4b9f-b29a-38cebc821753/c9d504cd-cd1c-4e35-b7d2-cb9ac4262ed4"  # [API] [TMPL] (tool_id=c9d504cd-cd1c-4e35-b7d2-cb9ac4262ed4)
+      "0c10392a-59fa-4b5b-930a-a0c4c72ab478": # 旗帜、地标、台标识别 / tencentcloud-image-flag-landmark-logo-recognition
+        - "https://adp.cloud.tencent.com/plugin/api/v1/3e03d04c-cc7e-4814-84af-585e120722c9/658827ba-8392-49ec-9acb-d0fdc29b4b7b"  # [API]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/3e03d04c-cc7e-4814-84af-585e120722c9/f37425fc-f305-40fb-9f6b-e01906b031d4"  # [API]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/3e03d04c-cc7e-4814-84af-585e120722c9/9f847474-a093-46df-9b96-324782b8b4de"  # [API]
+      "8c953dc2-d96f-44a1-b6f3-f563c29e2804": # 图片理解 / tencentcloud-image-understand
+        - "https://adp.cloud.tencent.com/plugin/api/v1/61a2635f-62f8-4e44-94fd-38cf07a9cc71/c78ea687-08d9-40d4-9bf2-3bd2c2fa4b5a"  # [API]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/61a2635f-62f8-4e44-94fd-38cf07a9cc71/6f7a8b9c-0d1e-4f2a-3456-789abcdef01a"  # [API]
+      "48432781-a23f-4ac3-bc6e-44f9dd0731dc": # 图片翻译 / tencentcloud-image-translation
+        - "https://adp.cloud.tencent.com/plugin/api/v1/4e7510ca-f704-4d83-9dce-ea59a65767d7/77917cfc-33ea-4998-95bd-384b9c0d4dc8"  # [API]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/9ebc029f-5567-493f-b823-0ad978a9bab1/b511190e-ab93-46ba-bee7-d852d53a28a9"  # [API]
+      "6985330a-2d74-4ee9-b0b3-2a2f5fb4d920": # AI智能问药 / tencent-ai-drug-consultant
+        - "https://adp.cloud.tencent.com/plugin/api/v1/9ebc029f-5567-493f-b823-0ad978a9bab1/b511190e-ab93-46ba-bee7-d852d53a28a9"  # [API]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/ad556584-bbdc-476f-bae6-3508f93f9fe2/96e25d77-fd43-4793-a9cd-d1f7d46f0511"  # [API]
+        - "https://adp.cloud.tencent.com/plugin/api/v1/ad556584-bbdc-476f-bae6-3508f93f9fe2/a10287d9-9cc6-44f7-9139-16260498b02b"  # [API]
+      "5638dc61-58e1-40b3-8b9d-5c93c6129f2e": # AI症状自查 / tencent-diagnosis
+        - "https://adp.cloud.tencent.com/plugin/api/v1/d6d7ff14-db95-4bd0-9960-5b8f498d24eb/5bedda58-b5d6-4513-9a93-1a6cb7aeb456"  # [API]
+      "25088144-eddc-478b-941f-25b18ad0ba8a": # 药品说明书查询 / tencent-drug-instructions
+        - "https://adp.cloud.tencent.com/plugin/api/v1/2ff2d6ff-13de-43df-9706-400cb4608b54/abe70f18-5218-45ad-bf0d-61b4f8629830"  # [API]
+      "bb01bd81-1f1c-4b34-9f61-dd57d6afb096": # 腾讯医典 / tencent-medical-encyclopedia
+        - "https://adp.cloud.tencent.com/plugin/api/v1/9a3b4f2c-1d5e-4f8a-9b6c-7d3e5f2a1b4c/f2e5a9b3-c4d1-4e2f-8a7b-3c5d6e1f2a3b"  # [API]
+      "94c743d2-3c60-480b-bda0-497a0645acc9": # 脑图生成 / tencentcloud-adp-mindmap-generator
+        - "https://adp.cloud.tencent.com/plugin/api/v1/80fbbf73-d074-4ad8-a537-3fa491a46829/eb820430-ffd9-4088-bccf-84a79958b5e8"  # [API]
+      "efc5e814-573a-40c6-8f94-c22c188cd221": # 较真AI-智能查真假 / tencent-fact-check
+        - "https://adp.cloud.tencent.com/plugin/api/v1/8ae7f924-1abf-498c-b4d4-3b2167b17821/d65ce89c-0f33-44f0-8c2f-0cd2edf99b83"  # [API]
+      "d0697362-2f14-442a-b529-41c49826f4df": # 新闻 / news
+        - "https://adp.cloud.tencent.com/plugin/api/v1/93b86329-9503-4219-8748-526883bdfe3d/ec6f8b82-2638-4153-b41c-ae40e5deebeb"  # [API]
+  scurl.yaml: |
+    scurl_whitelist_config:
+      gorm_config:
+        name: mysql.db_llm_plugin
+        target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+      reload_second: 5
+  skill_zh-CN.json: |
+    {
+      "office_doc": "通用办公",
+      "image_processing": "图像处理",
+      "medical_health": "医疗健康",
+      "search_retrieval": "搜索与获取",
+      "audio_video": "音视频处理",
+      "ocr": "文字识别",
+      "adp_knowledge_engine": "ADP平台能力",
+      "design_and_development": "设计与开发",
+      "human_resources": "人力资源",
+      "finance_tax_legal": "财税法务",
+      "business_management": "经营管理",
+      "financial_services": "金融服务",
+      "请求参数错误: %s": "请求参数错误: %s",
+      "检测任务创建失败": "检测任务创建失败",
+      "样本安全": "样本安全",
+      "样本可疑": "样本可疑",
+      "样本高危": "样本高危",
+      "检测查询失败，等待重试(%d/%d): %v": "检测查询失败，等待重试(%d/%d): %v",
+      "检测超时": "检测超时",
+      "初始版本": "初始版本",
+      "Skills安全审核提示": "Skills安全审核提示",
+      "自定义Skills会进行官方安全审核，审核通过后可以放心使用": "自定义Skills会进行官方安全审核，审核通过后可以放心使用",
+      "Skills更新结果": "Skills更新结果",
+      "Skill“%s”更新成功": "Skill“%s”更新成功",
+      "Skill“%s”更新失败，请稍后重试": "Skill“%s”更新失败，请稍后重试",
+      "Skills安全审核结果": "Skills安全审核结果",
+      "Skills“%s”已通过安全检测，未发现已知风险": "Skills“%s”已通过安全检测，未发现已知风险",
+      "Skills“%s”审核失败，可能存在安全隐患": "Skills“%s”审核失败，可能存在安全隐患",
+      "内置Skills均已通过平台安全检测，自定义Skills会在导入时进行平台安全检测": "内置Skills均已通过平台安全检测，自定义Skills会在导入时进行平台安全检测",
+      "Skills“%s”安全审核结果为“疑似风险”，需谨慎使用": "Skills“%s”安全审核结果为“疑似风险”，需谨慎使用",
+      "Skills“%s”安全审核结果为“高危风险”，为保障安全性，不支持上架": "Skills“%s”安全审核结果为“高危风险”，为保障安全性，不支持上架",
+      "提交到企业共享Skill已通过": "提交到企业共享Skill已通过",
+      "Skill【%s】提交到企业共享Skill被通过": "Skill【%s】提交到企业共享Skill被通过",
+      "提交到企业共享Skill被驳回": "提交到企业共享Skill被驳回",
+      "Skill【%s】提交到企业共享Skill被驳回": "Skill【%s】提交到企业共享Skill被驳回"
+    }
+  trpc_go.yaml: |
+    global:                             #全局配置
+      namespace: ${NAMESPACE}            #环境类型，分正式production和非正式development两种类型
+      env_name: ${ENV_NAME}                    #环境名称，非正式环境下多环境的名称
+      enable_set: ${ENABLE_SET}         #是否启用set
+      full_set_name: ${FULL_SET_NAME}   #set名
+      local_ip: ${POD_IP}
+      container_name: ${POD_NAME}
+
+    server:                                            #服务端配置
+      app: adp                                        #业务的应用名
+      server: skill-config-server                             #进程服务名
+      bin_path: /usr/local/trpc/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /usr/local/trpc/conf/                 #业务配置文件所在路径
+      data_path: /usr/local/trpc/data/                 #业务数据文件所在路径
+      filter:                                          #针对所有service处理函数前后的拦截器列表
+        - recovery                                     #拦截框架创建的业务处理协程panic
+        - i18n-adp                                          # 用来翻译错误信息
+        - validation
+        - debuglog
+        - cle-route-propagator
+        - cos_rewrite
+        - opentelemetry
+      stream_filter:
+      admin:
+        ip: ${POD_IP}
+        port: 8081
+      service:                                         #业务服务提供的service，可以有多个
+        - name: trpc.adp.skill_config.SkillConfig      #service的路由名称
+          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 8000                #服务监听端口 可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: trpc               #应用层协议 trpc http
+          timeout: 0                            #请求最长处理时间 单位 毫秒
+          server_async: true                           #开启异步处理
+          idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+          filter:
+            - session
+            - permission
+            - accesslog
+        - name: trpc.adp.skill_config.SkillConfigInner      #service的路由名称
+          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 8001                #服务监听端口 可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: trpc               #应用层协议 trpc http
+          timeout: 0                            #请求最长处理时间 单位 毫秒
+          server_async: true                           #开启异步处理
+          idletime: 600000                             # idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+        - name: trpc.adp.skill_config.Mcp          #service的路由名称
+          ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+          port: 8003                               #服务监听端口 可使用占位符 ${port}
+          network: tcp                             #网络监听类型  tcp udp
+          protocol: trpc                           #应用层协议 trpc http
+          timeout: 0                               #请求最长处理时间 单位 毫秒
+          server_async: true                       #开启异步处理
+          idletime: 600000                         #idletime，设置tcp空闲等待时间，避免耗时过长的操作导致trpc-go将tcp关闭
+          filter:
+            - session
+            - permission
+        - name: trpc.adp.skill_config.v2.External  # v2 External 服务（对外CAPI接口）
+          ip: ${POD_IP}
+          port: 9001
+          network: tcp
+          protocol: adp-capi
+          timeout: 30000
+          filter:
+            - session
+            - permission
+        - name: trpc.adp.skill_config.TimerReconcileSkillAnalysisTasks
+          ip: ${POD_IP}
+          port: 8002
+          network: "0 */2 * * * * ?startAtOnce=0&scheduler=redis&holdTime=60"
+          protocol: timer
+          timeout: 120000
+        - name: trpc.adp.skill_config.TimerSkillAutoUpgrade
+          ip: ${POD_IP}
+          port: 8004
+          network: "0 0 21 * * * ?startAtOnce=0&scheduler=redis&holdTime=180"
+          protocol: timer
+          timeout: 300000
+
+    plugins:                                          #插件配置
+      log:
+        default:
+          - writer: console
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+          - writer: file
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/trpc.log
+              write_mode: 2
+              roll_type: size
+              max_size: 200
+              max_backups: 10
+              compress: false
+      telemetry:
+        opentelemetry:
+          addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
+          tenant_id: adp
+          sampler:
+            fraction: 1
+          traces:
+            disable_trace_body: false
+          metrics:
+            {{- if ((.Values.global.observability).apm).registry }}
+            registry_endpoints: ["{{ .Values.global.observability.apm.registry}}"]
+            {{- end }}
+          logs:
+            enabled: true
+            level: "debug"
+            trace_log_mode: "disable"
+          {{- if ((.Values.global.observability).apm).attributes }}
+          attributes:
+            {{- range $key, $value := .Values.global.observability.apm.attributes }}
+          - key: {{ $key }}
+            value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      config:
+        file:
+          providers:
+            - name: rainbow
+              path: /app/conf/
+            - name: rainbow-comm
+              path: /app/conf/
+            - name: global
+              appid: ${RAINBOW_APP_ID}
+              group: global
+              type: kv
+              env_name: ${RAINBOW_ENV_NAME}
+              timeout: 2000
+              enable_client_provider: true
+      selector: #针对用户自定义的selector的配置
+        polaris: #针对polaris整体api的内部配置
+          protocol: grpc                              #名字服务远程交互协议类型
+          enable_servicerouter: true
+          enable_trans_meta: true
+      i18n:
+        i18n-adp:
+          default_lang: zh-CN
+          supported_languages:
+            - zh-CN
+            - en-US
+          data_provider:
+            type: rainbow
+            prefix: skill
+            error_prefix: error
+            char_scaling_factor:
+              zh-CN: 1
+              en-US: 3
+
+    client:
+      namespace: ${NAMESPACE}
+      filter:
+        - tpstelemetry
+        - cle-route-propagator
+      service:
+        - name: trpc.mysql.skill_config
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_skill?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
+        - name: trpc.redis.skill_config
+          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${INFRA_MIDDLEWARES_REDIS_0_PORT}/40
+
+        # cos调用
+        - name: trpc.http.cos.Access
+          target: dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn
+          namespace: Production
+          network: tcp
+          protocol: http
+          timeout: 5000
+        # 平台管理服务 - 管理接口
+        - callee: trpc.adp.platform_manager.Admin
+          name: trpc.adp.platform-manager.Admin
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 5000
+        - callee: trpc.adp.resource_gallery.Admin
+          namespace: ${NAMESPACE}
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 5000
+        - callee: trpc.adp.app_admin_proxy.Api
+          namespace: ${NAMESPACE}
+          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
+          protocol: trpc
+          timeout: 20000
+        - name: trpc.adp.platform_manager.Login
+          namespace: ${NAMESPACE}
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
+          timeout: 30000
+        - callee: trpc.adp.platform_content_moderation.Infosec
+          target: ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090
+          namespace: ${NAMESPACE}
+          network: tcp
+          protocol: trpc
+          timeout: 3000
+        - name: trpc.adp.platform_manager.Api
+          namespace: ${NAMESPACE}
+          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
+          timeout: 30000
+        - callee: trpc.adp.platform_account.Internal
+          target: polaris://trpc.adp.platform_account.Api
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 5000
+        - callee: trpc.adp.agent_config.v3.Internal
+          target: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:9011"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 5000
+        - callee: trpc.adp.agent_config.AgentConfigApi
+          target: ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          timeout: 5000

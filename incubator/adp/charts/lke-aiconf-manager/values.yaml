@@ -1,4 +1,4 @@
 images:
   adp-aiconf-manager:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/aiconfmanagerserver:master_private-40b6a8-20260128"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/aiconfmanagerserver:release_iaas_v4.0.3.0-40b6a8-20260718"
 replicas: 1

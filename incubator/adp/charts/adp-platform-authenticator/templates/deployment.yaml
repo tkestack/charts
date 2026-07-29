@@ -80,7 +80,10 @@ spec:
       initContainers:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       containers:
-        - env:
+        - envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
             - name: ADP-CHANNEL-ID
               value: "1"
             - name: POD_NAME
@@ -112,26 +115,26 @@ spec:
           {{- if eq .Values.global.clusterSize "minimal" }}
           resources:
             limits:
-              cpu: "500m"
-              memory: "1Gi"
+              cpu: "2"
+              memory: "4Gi"
             requests:
-              cpu: "125m"
-              memory: "512Mi"
+              cpu: "1"
+              memory: "1Gi"
           {{- else if eq .Values.global.clusterSize "standard" }}
           resources:
             limits:
+              cpu: "2"
+              memory: "4Gi"
+            requests:
               cpu: "1"
               memory: "1Gi"
-            requests:
-              cpu: "500m"
-              memory: "512Mi"
           {{- else }}
           resources:
             limits:
-              cpu: "1"
-              memory: "2Gi"
+              cpu: "2"
+              memory: "4Gi"
             requests:
-              cpu: "500m"
+              cpu: "1"
               memory: "1Gi"
           {{- end }}
           livenessProbe:

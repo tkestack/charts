@@ -8,7 +8,7 @@ data:
     window.TIWEB_CONFIG = {
       domain: '{{ .Values.global.scheme }}://{{ .Values.global.clb }}/',
       // 如果需要配置header logo, 配置路径'/portal/config/platform-title-logo.png'，同时修改platform-title-logo.png文件
-      HeaderTitle: '/portal/config/platform-title-logo.png',
+      HeaderTitle: '',
       // 登陆页面
       LoginPage: {
         Title: '云小微客服机器人',
@@ -21,7 +21,7 @@ data:
       },
       Iaas: true,
       multiModal: false,
-      RsaPublicKey: '{{ .Values.global.rsa.publicKey }}',
+      RsaPublicKey: '',
       chatFileUpload: false,
       minioPort: 30900,
       enableASRTTS: false,
@@ -33,7 +33,7 @@ data:
       MaxDocLen: 100,
       objectStorageAddr: 'https://obs.cn-east-3.myhuaweicloud.com',
       IsGenerateFromDoc: true,
-      proxyCos: {{ if .Values.global.components.s3.cos.stsKey }}true{{ else }}false{{ end }}
+      proxyCos: {{ if .Values.global.components.s3.cos.enableSts }}true{{ else }}false{{ end }}
     };
 
   nginx.conf: |
@@ -96,6 +96,16 @@ data:
         image/svg+xml
         text/x-cross-domain-policy;
 
+      map $request_uri $cos_target_host {
+        ~^/adp/cos/(?<h>[^/?#]+)(/[^?#]*)?(\?.*)?$  $h;
+        default                                     "";
+      }
+
+      map $request_uri $cos_target_uri {
+        ~^/adp/cos/[^/?#]+(/[^?#]*)(\?.*)?$  $1;
+        default                              /;
+      }
+
       server {
           listen 30002;
           access_log on;
@@ -108,7 +118,13 @@ data:
             alias /web/html/manage/;
             try_files $uri $uri/ /adp/index.html;
           }
-
+          location /adp/cos/ {
+            if ($cos_target_host !~* "^[a-zA-Z0-9-]+\.cos\.[a-zA-Z0-9-]+\.myqcloud\.com$") {
+                return 403;
+            }
+            proxy_pass        https://$cos_target_host$cos_target_uri$is_args$args;
+            proxy_set_header  Host $cos_target_host;
+          }
           location /adp/ {
             alias /web/html/manage/;
             try_files $uri $uri/ /adp/index.html;

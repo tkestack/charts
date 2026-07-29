@@ -79,7 +79,10 @@ spec:
       initContainers:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       containers:
-        - env:
+        - envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -111,19 +114,17 @@ spec:
             - name: ADP_CHANNEL_UUID
               value: {{ $channelUUID | quote }}
             {{- end }}
-            {{- if .Values.global.components.s3.cos.stsKey }}
+            {{- if .Values.global.components.s3.cos.enableSts }}
             - name: ADP_ASSUME_ROLE_SECRET_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  name: infra-credentials
                   key: ADP_ASSUME_ROLE_SECRET_ID
-                  optional: true
             - name: ADP_ASSUME_ROLE_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  name: infra-credentials
                   key: ADP_ASSUME_ROLE_SECRET_KEY
-                  optional: true
             {{- end }}
           image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-resource-gallery").url "context" .) }}
           imagePullPolicy: Always

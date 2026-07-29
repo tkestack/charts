@@ -4,11 +4,111 @@ metadata:
   name: {{ .Release.Name }}-app-memory
   namespace: {{ .Release.Namespace }}
 data:
-  error_en-US.json: |
-    {
-        "用户未登录": "User not logged in",
-        "意图不存在": "Intent does not exist"
-    }
+  client.yaml: |
+    client:
+      filter:
+        - cle-route-propagator
+        - debuglog
+        - opentelemetry
+      service:
+        - name: trpc.tcadp.memory.redis
+          # RESOLVE: keep-private
+          target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/${MEMORY_REDIS_DB}"
+        - name: redis.lke.limiter
+          network: tcp
+          protocol: redis
+          target: "ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/4"
+          password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
+          timeout: 800
+        - name: trpc.tcadp.memory.tdsql
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: trpc.tcadp.memory.mysql
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: trpc.adp.ai-gateway.api
+          namespace: ${NAME_SPACE}
+          network: tcp
+          protocol: http
+          target: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          timeout: 1800000
+        - callee: trpc.adp.app_admin_proxy.Login
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_admin_proxy.Api
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_content_moderation.Infosec
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          network: tcp
+          timeout: 500
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_manager.Login
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          protocol: trpc
+          timeout: 6000
+        - callee: trpc.adp.platform_metrology.Api
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot-data-statistics-server.Api
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_charger.Api
+          name: qbot.finance.finance.Finance
+          target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: ${NAME_SPACE}
+          network: tcp
+          timeout: 300000
+        - callee: trpc.adp.app_memory.MemoryInner
+          name: trpc.KEP.bot-memory-server.memoryInner
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_memory_server.MemoryInner
+          name: trpc.KEP.bot-memory-server.memoryInner
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_charger.Finance
+          target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: ${NAME_SPACE}
+          network: tcp
+          timeout: 30000
+        - callee: trpc.adp.resource_gallery.Admin
+          target: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: ${NAME_SPACE}
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_config.Admin
+          target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: ${NAME_SPACE}
+          protocol: trpc
+          timeout: 30000
+        - callee: trpc.adp.platform_manager.Admin
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: ${NAME_SPACE}
+          protocol: trpc
+          timeout: 20000
+      namespace: ${NAME_SPACE}
 
   error_zh-CN.json: |
     {
@@ -21,7 +121,7 @@ data:
       你是一个用户画像总结助手，需要根据<默认提取规则>，从用户输入中总结出用户画像。当<用户自定义提取规则>不为空时，优先遵循<用户自定义提取规则>。
 
       <默认提取规则>
-      用户画像包括以下信息: 
+      用户画像包括以下信息:
       (1) 用户个人信息，如姓名、年龄、性别、爱好、性格特征等；
       (2) 用户已经发生的一些关键事件。
 
@@ -37,15 +137,15 @@ data:
       用户输入: 你好呀，我叫Owen
       对应的模型输出: {"是否包含用户画像": "是", "用户画像": "名字叫Owen"}
 
-      示例2: 
+      示例2:
       用户输入: 每天都跑步。此外，我喜欢玩水，我从小就会游泳
       对应的模型输出: {"是否包含用户画像": "是", "用户画像": "喜欢跑步和游泳"}
 
-      示例3: 
+      示例3:
       用户输入: 明天的天气怎么样
       对应的模型输出: {"是否包含用户画像": "否", "用户画像": ""}
 
-      示例4: 
+      示例4:
       用户输入: 我家冰箱已经空了
       对应的模型输出: {"是否包含用户画像": "否", "用户画像": ""}
       </提取示例>
@@ -77,68 +177,72 @@ data:
       - <用户输入>是疑问句，没有明确表达个人画像，不要提取用户画像
       - 提取到的用户画像和<已收集到的用户画像>内容重复，不要再次提取
 
-    llm: 
-      model_name: "lke-deepseek-v3-0324"
+    llm:
+      model_name: lke-deepseek-v3-0324
     memory_content_max_length: 140
     infosec:
       disable_content_check: true
 
-    long_term_memory_max_count: 50 
+    # 长期记忆最大数量限制（每个用户最多保留的记忆条数）
+    long_term_memory_max_count: 50
     app_var_expire_time: 168
     long_term_memory_worker_count: 100
     long_term_memory_scan_batch_size: 1000
-
     finance:
       model_config:
-        # TCADP/glm-5:
-        #   default_qpm: 10
-        #   default_tpm: 20000
-        # TCADP/kimi-k2.5:
-        #   default_qpm: 10
-        #   default_tpm: 20000
-        # TCADP/minimax-m2.5:
-        #   default_qpm: 10
-        #   default_tpm: 20000
-  memory_en-US.json: |
-    {}
+    mongo_database: db_memory
+    is_private: true
+
+
 
   memory_zh-CN.json: |
     {}
 
   placeholder.yaml: |
+    AI_GATEWAY_TARGET: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
+    ADMIN_LOGIN_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
+    ADMIN_API_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+    INFOSEC_TARGET: "ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090"
+    MEMORY_TARGET: "ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001"
+    FINANCE_TARGET: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
+    PLATFORM_METROLOGY_TARGET: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
+    PLATFORM_LOGIN_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
+    RESOURCE_GALLERY_ADMIN_TARGET: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
+    APP_CONFIG_ADMIN_TARGET: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
-    AI_GATEWAY_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
-    ADMIN_LOGIN_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
-    ADMIN_API_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
-    INFOSEC_TARGET: ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090
-    MEMORY_TARGET: ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001
-    FINANCE_TARGET: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
-    PLATFORM_METROLOGY_TARGET: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
-    PLATFORM_LOGIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
-    RESOURCE_GALLERY_ADMIN_TARGET: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
-    APP_CONFIG_ADMIN_TARGET: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+    MEMORY_MONGO_USER: app-memory
+    MEMORY_MONGO_PASSWORD: ${INFRA_MIDDLEWARES_MEMORY_MONGO_PASSWORD}  
+    MEMORY_MONGO_HOST: 9.139.215.10
+    MEMORY_MONGO_PORT: 27017
+
+    MEMORY_REDIS_DB: 0
+    NAME_SPACE: Production
+    ENV_NAME: formal
+    GROUP_NAME: bot-memory-server
+
 
   trpc_go.yaml: |
-    global:
-      namespace: Production
-    server:
-      app: adp
-      server: app-memory
-      bin_path: /app/bin/
-      conf_path: /app/conf/
+    global:                             #全局配置
+      namespace: ${NAME_SPACE}          #环境类型，分正式production和非正式development两种类型
+      env_name: ${ENV_NAME}             #环境名称，非正式环境下多环境的名称
+    server:                                            #服务端配置
+      app: adp                                        #业务的应用名
+      server: app-memory                                    #进程服务名
+      bin_path: /app/bin/                              #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                            #业务配置文件所在路径
       log_path: /app/logs/
       admin:
         ip: ${POD_IP}
         port: 8081
         read_timeout: 3000
         write_timeout: 60000
-      filter:
+      filter:                                          #针对所有service处理函数前后的拦截器列表
         - recovery
         - i18n-adp
         - debuglog
         - cle-route-propagator
         - opentelemetry
-      service:
+      service:                                         #业务服务提供的service，可以有多个
         - name: trpc.KEP.bot-memory-server.memory
           ip: ${POD_IP}
           port: 8000
@@ -156,110 +260,21 @@ data:
           protocol: trpc
           server_async: true
           idletime: 600000
+        - name: trpc.KEP.bot-memory-server.memoryCAPI
+          ip: ${POD_IP}
+          port: 8002
+          network: tcp
+          protocol: trpc
+          timeout: 0
+          server_async: true
+          idletime: 600000
         - name: trpc.KEP.bot-memory-server.longTermMemoryReport
           ip: ${POD_IP}
           port: 9001
           network: "0 */13 * * * * ?scheduler=distributed&startAtOnce=1"
           protocol: timer
           timeout: 3500000
-    client:
-      filter:
-        - cle-route-propagator
-        - debuglog
-        - opentelemetry
-      service:
-        - name: trpc.tcadp.memory.redis
-          target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379
-        - name: redis.lke.limiter
-          network: tcp
-          protocol: redis
-          target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/4
-          password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
-          timeout: 800
-        - name: trpc.tcadp.memory.tdsql
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
-        - name: trpc.tcadp.memory.mysql
-          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
-        - name: trpc.adp.ai-gateway.api
-          namespace: Production
-          network: tcp
-          protocol: http
-          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090
-          timeout: 1800000
-        - callee: trpc.adp.app_admin_proxy.Login
-          namespace: Production
-          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
-          protocol: trpc
-          timeout: 20000
-        - callee: trpc.adp.app_admin_proxy.Api
-          namespace: Production
-          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
-          protocol: trpc
-          timeout: 20000
-        - callee: trpc.adp.platform_content_moderation.Infosec
-          namespace: Production
-          target: ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090
-          network: tcp
-          timeout: 500
-        - callee: trpc.KEP.bot_admin_config_server.Login
-          namespace: Production
-          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
-          protocol: trpc
-          timeout: 20000
-        - callee: trpc.KEP.bot_admin_config_server.Api
-          namespace: Production
-          target: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
-          protocol: trpc
-          timeout: 20000
-        - callee: trpc.adp.platform_manager.Login
-          namespace: Production
-          target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
-          protocol: trpc
-          timeout: 6000
-        - callee: trpc.adp.platform_metrology.Api
-          namespace: Production
-          target: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
-          protocol: trpc
-          timeout: 20000
-        - callee: trpc.KEP.bot-data-statistics-server.Api
-          namespace: Production
-          target: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
-          protocol: trpc
-          timeout: 20000
-        - callee: trpc.adp.platform_charger.Api
-          name: qbot.finance.finance.Finance
-          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
-          namespace: Production
-          network: tcp
-          timeout: 300000
-        - callee: trpc.adp.app_memory.MemoryInner
-          name: trpc.KEP.bot-memory-server.memoryInner
-          namespace: Production
-          target: ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001
-          protocol: trpc
-          timeout: 20000
-        - callee: trpc.KEP.bot_memory_server.MemoryInner
-          name: trpc.KEP.bot-memory-server.memoryInner
-          namespace: Production
-          target: ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001
-          protocol: trpc
-          timeout: 20000
-        - callee: trpc.adp.platform_charger.Finance
-          target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
-          namespace: Production
-          network: tcp
-          timeout: 30000
-        - callee: trpc.adp.resource_gallery.Admin
-          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
-          namespace: Production
-          protocol: trpc
-          timeout: 20000
-        - callee: trpc.adp.app_config.Admin
-          target: ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090
-          namespace: Production
-          protocol: trpc
-          timeout: 30000
-    plugins:
+    plugins:                                          #插件配置
       telemetry:
         opentelemetry:
           addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
@@ -286,14 +301,32 @@ data:
       log:
         default:
           - writer: console
-            level: error
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
           - writer: file
-            level: debug
+            level: info
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
             writer_config:
               filename: /app/logs/trpc.log
-              max_size: 100
+              write_mode: 2
+              roll_type: size
+              max_size: 200
               max_backups: 10
-              max_age: 7
               compress: false
       config:
         file:
@@ -301,9 +334,9 @@ data:
             - name: rainbow
               path: /app/conf/
             - name: global
-              appid: ${RAINBOW_APP_ID}  # appid
-              group: global # 配置所属组
-              type: kv   # 七彩石数据格式, kv(默认), table
+              appid: ${RAINBOW_APP_ID}
+              group: global
+              type: kv
               env_name: ${RAINBOW_ENV_NAME}
               timeout: 2000
               enable_client_provider: true
@@ -321,7 +354,112 @@ data:
               zh-CN: 1
               en-US: 3
       registry:
-        polaris:
-      selector:
-        polaris:
+      selector: #针对用户自定义的selector的配置
+        polaris: #针对polaris整体api的内部配置
           enable_servicerouter: true
+
+
+    client:
+      filter:
+        - cle-route-propagator
+        - debuglog
+        - opentelemetry
+      service:
+        - name: trpc.tcadp.memory.redis
+          # RESOLVE: keep-private
+          target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/${MEMORY_REDIS_DB}"
+        - name: redis.lke.limiter
+          network: tcp
+          protocol: redis
+          target: "ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/4"
+          password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
+          timeout: 800
+        - name: trpc.tcadp.memory.tdsql
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: trpc.tcadp.memory.mysql
+          target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
+        - name: trpc.adp.ai-gateway.api
+          namespace: ${NAME_SPACE}
+          network: tcp
+          protocol: http
+          target: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          timeout: 1800000
+        - callee: trpc.adp.app_admin_proxy.Login
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_admin_proxy.Api
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_content_moderation.Infosec
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          network: tcp
+          timeout: 500
+        - callee: trpc.KEP.bot_admin_config_server.Login
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_admin_config_server.Api
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_manager.Login
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
+          protocol: trpc
+          timeout: 6000
+        - callee: trpc.adp.platform_metrology.Api
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot-data-statistics-server.Api
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_charger.Api
+          name: qbot.finance.finance.Finance
+          target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: ${NAME_SPACE}
+          network: tcp
+          timeout: 300000
+        - callee: trpc.adp.app_memory.MemoryInner
+          name: trpc.KEP.bot-memory-server.memoryInner
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.KEP.bot_memory_server.MemoryInner
+          name: trpc.KEP.bot-memory-server.memoryInner
+          namespace: ${NAME_SPACE}
+          target: "ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001"
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.platform_charger.Finance
+          target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: ${NAME_SPACE}
+          network: tcp
+          timeout: 30000
+        - callee: trpc.adp.resource_gallery.Admin
+          target: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: ${NAME_SPACE}
+          protocol: trpc
+          timeout: 20000
+        - callee: trpc.adp.app_config.Admin
+          target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: ${NAME_SPACE}
+          protocol: trpc
+          timeout: 30000
+        - callee: trpc.adp.platform_manager.Admin
+          target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
+          namespace: ${NAME_SPACE}
+          protocol: trpc
+          timeout: 20000
+      namespace: ${NAME_SPACE}

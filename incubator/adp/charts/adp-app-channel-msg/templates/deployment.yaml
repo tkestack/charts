@@ -80,7 +80,10 @@ spec:
       initContainers:
         {{- include "dependencyChecker.initContainer" . | nindent 8 }}
       containers:
-        - env:
+        - envFrom:
+            - secretRef:
+                name: infra-credentials
+          env:
             - name: MKL_NUM_THREADS
               value: "2"
             - name: LOG_SPACES
@@ -109,19 +112,17 @@ spec:
               value: info
             - name: ADP_HOST
               value: "{{ .Values.global.scheme }}://{{ .Values.global.clb }}"
-            {{- if .Values.global.components.s3.cos.stsKey }}
+            {{- if .Values.global.components.s3.cos.enableSts }}
             - name: ADP_ASSUME_ROLE_SECRET_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  name: infra-credentials
                   key: ADP_ASSUME_ROLE_SECRET_ID
-                  optional: true
             - name: ADP_ASSUME_ROLE_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.global.components.s3.cos.stsKey }}
+                  name: infra-credentials
                   key: ADP_ASSUME_ROLE_SECRET_KEY
-                  optional: true
             {{- end }}
           image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-app-channel").url "context" .) }}
           imagePullPolicy: Always

@@ -1,6 +1,6 @@
 images:
   ti-ingress-controller:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/ti-ingress-controller:feature_3.9-lke_7695473b_20260120_zhiyan31"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/ti-ingress-controller:feature_3.9-lke_afe207e8_20260718_zhiyan33"
 namespace: ti-base
 imagePullSecretName: qcloudregistrykey
 replicas: 1

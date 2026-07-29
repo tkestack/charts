@@ -23,6 +23,10 @@ spec:
       port: 8081
       protocol: TCP
       targetPort: 8081
+    - name: adp-plugin-exec-8003
+      port: 8003
+      protocol: TCP
+      targetPort: 8003
   selector:
     app: adp-plugin-exec
   sessionAffinity: None

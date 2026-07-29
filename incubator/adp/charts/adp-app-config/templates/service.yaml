@@ -23,6 +23,18 @@ spec:
       port: 9000
       protocol: TCP
       targetPort: 9000
+    - name: adp-app-config-9001
+      port: 9001
+      protocol: TCP
+      targetPort: 9001
+    - name: adp-app-config-9002
+      port: 9002
+      protocol: TCP
+      targetPort: 9002
+    - name: adp-app-config-9003
+      port: 9003
+      protocol: TCP
+      targetPort: 9003
   selector:
     app: adp-app-config
   sessionAffinity: None

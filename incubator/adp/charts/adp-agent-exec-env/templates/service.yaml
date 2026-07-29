@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: adp-agent-exec-env
+  name: adp-agent-exec-env
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: tcp-8080
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: adp-agent-exec-env-9000
+      port: 9000
+      protocol: TCP
+      targetPort: 9000
+  selector:
+    app: adp-agent-exec-env
+  sessionAffinity: None
+  type: ClusterIP
