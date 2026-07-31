@@ -284,7 +284,7 @@ MySQL:
 | `components.s3.cos.expireTime` | ⚪ 选填 | 签名过期时间 | `3600s` |
 | `components.s3.cos.credentialTime` | ⚪ 选填 | 临时凭证有效期                                               | `3600s`                                     |
 | `components.s3.cos.enableSts`      | ⚪ 选填 | 是否启用 STS 临时凭证模式。为 `true` 时，仅通过 STS 模式访问 COS 资源，禁止使用永久 `secretId` / `secretKey`；此时 `stsRoleArn` 必填 | `true`                                      |
-| `components.s3.cos.stsRoleArn`     | ⚪ 选填 | STS 模式的角色标识，需要在腾讯云控制台创建 CAM 角色，并关联 QcloudTsearchFullAccess、QcloudHunYuanFullAccess、QcloudOCRFullAccess、QcloudLKEAPFullAccess、QcloudCOSFullAccess 权限策略。`enableSts=true` 时必填 | `qcs::cam::uin/1234567890:roleName/CosFull` |
+| `components.s3.cos.stsRoleArn`     | ⚪ 选填 | STS 模式的角色标识，需要在腾讯云控制台创建 CAM 角色，并关联 QcloudTsearchFullAccess、QcloudHunYuanFullAccess、QcloudOCRFullAccess、QcloudLKEAPFullAccess、QcloudCOSFullAccess 权限策略。`enableSts=true` 时必填；如需使用联网搜索能力，还需额外关联 **QcloudWSAFullAccess** 权限策略 | `qcs::cam::uin/1234567890:roleName/CosFull` |
 
 **注意**
 
@@ -293,6 +293,8 @@ MySQL:
 <img src="https://adp-iaas-aio-1406902593.cos.ap-beijing.myqcloud.com/agent-runtime/doc-parse-postpaid.png" width="400">
 
 - 2、如果components.s3.enableProxy设置为false，cos桶中要针对使用的域名进行跨域设置，放开GET、PUT、OPTIONS、HEAD等Method。如果components.s3.enableProxy设置为默认值true则不需要配置。
+
+- 3、如需使用联网搜索能力（智能工作台的 WebSearch / WebFetch 工具），需开通腾讯云联网搜索服务（WSA），购买链接：https://buy.cloud.tencent.com/buywsa 。若启用了 STS 模式（`enableSts=true`），还需在 `stsRoleArn` 对应的 CAM 角色上额外关联 **QcloudWSAFullAccess** 权限策略。
 
 **购买链接：** https://cloud.tencent.com/product/cos 在页面中创建桶，并且创建一个目录给adp使用。
 
