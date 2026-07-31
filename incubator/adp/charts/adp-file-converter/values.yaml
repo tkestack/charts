@@ -1,6 +1,6 @@
 images:
   adp-file-converter:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:fileconvertor-450bec0-15"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:fileconvertor-9965ac1-16"
   adp-file-converter-sidecar:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:fileconvertor-sidercar-450bec0-15"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:fileconvertor-sidercar-9965ac1-16"
 replicas: 1

@@ -6,10 +6,6 @@
 
 - **腾讯云控制台入口**：<https://console.cloud.tencent.com/ags/sandbox/sandbox>
 
-![沙箱控制台入口 - 主入口](https://adp-iaas-aio-1406902593.cos.ap-beijing.myqcloud.com/agent-runtime/console-entry-primary.png)
-
-![沙箱控制台入口 - 交互页](https://adp-iaas-aio-1406902593.cos.ap-beijing.myqcloud.com/agent-runtime/console-entry-secondary.png)
-
 ---
 
 ## 目录
@@ -54,6 +50,10 @@ umount /mnt
 > **注意**：CFS 挂载目录信息可在 CFS 控制台 → 文件系统详情 → 挂载点信息 查看。
 
 ---
+
+![沙箱控制台入口 - 主入口](https://adp-iaas-aio-1406902593.cos.ap-beijing.myqcloud.com/agent-runtime/console-entry-primary.png)
+
+![沙箱控制台入口 - 交互页](https://adp-iaas-aio-1406902593.cos.ap-beijing.myqcloud.com/agent-runtime/console-entry-secondary.png)
 
 ## 3. COS 配置说明
 

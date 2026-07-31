@@ -383,8 +383,8 @@ data:
         RequestLimitExceeded: 超过了每秒频率上限
         ClientError.NetworkError: 网络错误
         InvalidParameterValue.InvalidFileContentSize: 图片大小超限制
-      target: https://oaatomicapi.adp.qq.com:443
-      atomic_api_key: test-01MLQS4kRmnhRLvQIH4SEqyKOdInV39hRb6D9Fkw9iWYdaWGQyFhzR5YL6fDdQnVB
+      target: https://atomicapi.adp.qq.com:443
+      atomic_api_key: 
     xinan:
       path: /interface/request/json
       sid:
@@ -423,8 +423,18 @@ data:
           namespace: ${NAMESPACE}
           protocol: trpc
           timeout: 5000
-
-
+        - name: trpc.adp.ai_gateway.Admin
+          namespace: ${CLIENT_NAMESPACE}
+          network: tcp
+          protocol: trpc
+          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
+          timeout: 2000
+        - callee: trpc.adp.resource_gallery.Admin
+          namespace: ${CLIENT_NAMESPACE}
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 2000
+          env_name: formal
   placeholder.yaml: |
     INFOSEC_REDIS_PORT: 6379
     INFOSEC_REDIS_DB_NUMBER: 2
@@ -464,6 +474,9 @@ data:
 
     # 平台管理服务 - 管理接口
     PLATFORM_MANAGER_ADMIN_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
+    AI_GATEWAY_ADMIN_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
+    RESOURCE_GALLERY_ADMIN_TARGET: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+    CLIENT_NAMESPACE: Production
 
 
 
@@ -615,3 +628,15 @@ data:
           namespace: ${NAMESPACE}
           protocol: trpc
           timeout: 5000
+        - name: trpc.adp.ai_gateway.Admin
+          namespace: ${CLIENT_NAMESPACE}
+          network: tcp
+          protocol: trpc
+          target: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
+          timeout: 2000
+        - callee: trpc.adp.resource_gallery.Admin
+          namespace: ${CLIENT_NAMESPACE}
+          target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
+          protocol: trpc
+          timeout: 2000
+          env_name: formal

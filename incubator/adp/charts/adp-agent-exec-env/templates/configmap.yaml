@@ -14,9 +14,9 @@ data:
       public_sandbox_token: ${PUBLIC_SANDBOX_TOKEN}     # 公共沙箱固定访问token（用于目录预创建）
       default_tool_id: ${DEFAULT_TOOL_ID}
       role_arn: "{{ dig "agentRuntime" "stsRoleArn" "" .Values.global }}"
-      image: "adp-iaas.tencentcloudcr.com/adp-public/agent-sandbox:stable_iaas_4.0.3.0_4df788c_private"
-      image_registry_type: "enterprise"      # 镜像仓库类型 personal/enterprise
-      command: "/usr/local/bin/start-services"  # 容器启动命令
+      image: ${AGS_IMAGE}
+      image_registry_type: ${AGS_IMAGE_REGISTRY_TYPE}      # 镜像仓库类型 personal/enterprise
+      command: ${AGS_COMMAND}  # 容器启动命令
       workdir:                              # 用户工作目录挂载
         name: "users"
         path: "/workdir"
@@ -52,15 +52,15 @@ data:
       tool_id: ${AGENT_APP_TOOL_ID}            # Agent App 模式使用的 SandboxTool ID
         # CPU / Memory 在 CreateSandboxTool 阶段已固化到该 ToolID 中
       # 为空时回退到 ags.default_tool_id（不推荐，过渡期兼容）
-      image: "adp-iaas.tencentcloudcr.com/adp-public/agent-sandbox:stable_iaas_4.0.3.0_4df788c_private"  # Agent App 模式启动实例使用的镜像
+      image: ${AGS_IMAGE}  # Agent App 模式启动实例使用的镜像
         # StartSandboxInstance.CustomConfiguration.Image
       # 为空时回退到 ags.image
-      image_registry_type: "enterprise"    # 镜像仓库类型（personal / official 等），为空时回退到 ags.image_registry_type 再到 "personal"
-      command: ""                        # 容器启动命令，为空时回退到 ags.command 再到 "/usr/local/bin/start-services"
+      image_registry_type: ${AGS_IMAGE_REGISTRY_TYPE}    # 镜像仓库类型（personal / official 等），为空时回退到 ags.image_registry_type 再到 "personal"
+      command: ${AGS_COMMAND}                        # 容器启动命令，为空时回退到 ags.command 再到 "/usr/local/bin/start-services"
       pause_idle_instances_enabled: false # 是否启用空闲实例暂停
       idle_timeout_minutes: 1            # 空闲多少分钟后暂停实例
       pause_backup_minutes: 30           # 暂停多少分钟后备份 Session 并停止
-      instance_quota_per_uin: 100        # 单 uin 活跃实例数上限
+      instance_quota_per_uin: 999999        # 单 uin 活跃实例数上限
       instance_quota_whitelist: ${INSTANCE_QUOTA_WHITELIST}        # 单 uin 配额白名单 map[uin]quota；命中后用 value 替代默认值（value<=0 视为未配置）；占位符在 placeholder.yaml 配置
       soft_delete_retain_days: 7         # 软删除记录保留天数
       init_env_lock_ttl_seconds: 120     # InitEnv 分布式锁TTL（秒）
@@ -379,9 +379,14 @@ data:
     PUBLIC_SANDBOX_INSTANCE_ID: "{{ dig "agentRuntime" "instances" "commonAgs" "instanceID" "" .Values.global }}"
     PUBLIC_SANDBOX_TOKEN: "{{ dig "agentRuntime" "instances" "commonAgs" "token" "" .Values.global }}"
     DEFAULT_TOOL_ID: "{{ dig "agentRuntime" "instances" "smartDeskAgs" "toolID" "" .Values.global }}" #工作台的工具ID
-
     # AGENT APP 配置
     AGENT_APP_TOOL_ID: "{{ dig "agentRuntime" "instances" "clawAgs" "toolID" "" .Values.global }}" #Claw模式的工具ID
+
+    # 沙箱镜像配置
+    AGS_IMAGE: "{{ .Values.global.imageRegistry }}/tke-market/agent-sandbox:stable_iaas_4.0.3.0_4df788c_private"   # 从 deploy-infos/platform-conf registry.type 注入 {{ .Values.global.imageRegistry }}/tke-market（格式: registry/namespace）
+    AGS_IMAGE_REGISTRY_TYPE: "personal"   # 从 deploy-infos/platform-conf registry.type 注入（enterprise/personal）
+    AGS_COMMAND: "/usr/local/bin/start-services"                                                  # 容器启动命令
+
     OA_ASSISTANT_TOOL_ID: ""  #不需要
     OA_AGENT_APP_TOOL_ID: ""  #不需要
     # Agent App 单 uin 沙箱配额白名单 map[uin]quota（YAML 内联 flow map）；命中后用 value 替代默认 100，

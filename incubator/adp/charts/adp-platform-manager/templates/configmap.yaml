@@ -54,26 +54,26 @@ data:
         - lkeSummary.release.call.reception
         - lkeSummary.release.do
     user_avatar:
-      - /qbot/public/avatar_swan01.png
-      - /qbot/public/avatar_tiger01.png
-      - /qbot/public/avatar_tiger02.png
-      - /qbot/public/avatar_cat01.png
-      - /qbot/public/avatar_cattle01.png
-      - /qbot/public/avatar_dolphin01.png
-      - /qbot/public/avatar_dragon01.png
-      - /qbot/public/avatar_dragon02.png
-      - /qbot/public/avatar_flamingo01.png
-      - /qbot/public/avatar_koala01.png
-      - /qbot/public/avatar_monkey01.png
-      - /qbot/public/avatar_owl01.png
-      - /qbot/public/avatar_owl02.png
-      - /qbot/public/avatar_panda01.png
-      - /qbot/public/avatar_penguin01.png
-      - /qbot/public/avatar_rabbit01.png
-      - /qbot/public/avatar_rabbit02.png
-      - /qbot/public/avatar_seal01.png
-      - /qbot/public/avatar_sheep01.png
-      - /qbot/public/avatar_squirrel01.png
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_swan01.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_tiger01.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_tiger02.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_cat01.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_cattle01.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_dolphin01.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_dragon01.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_dragon02.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_flamingo01.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_koala01.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_monkey01.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_owl01.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_owl02.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_panda01.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_penguin01.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_rabbit01.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_rabbit02.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_seal01.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_sheep01.png"
+      - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/qbot/public/avatar_squirrel01.png"
     audit_switch: false
     infosec_biz_type_default: ${INFOSEC_BIZ_TYPE_DEFAULT}
     corp_max_char_size: 5000000
@@ -457,8 +457,8 @@ data:
           desc: KeyDefaultContentSecurityLowDesc
           type: 1
           category: "81006"
-      target: https://oaatomicapi.adp.qq.com
-      atomic_api_key: test-01MLQS4kRmnhRLvQIH4SEqyKOdInV39hRb6D9Fkw9iWYdaWGQyFhzR5YL6fDdQnVB
+      target: https://atomicapi.adp.qq.com
+      atomic_api_key: 
     # RESOLVE: keep-public
     es_config:
       name: trpc.elasticsearch.lke.admin

@@ -99,8 +99,8 @@ spec:
             fi
 
             if [ $EXIT_CODE -ne 0 ]; then
-              echo "=== FAILED with exit code $EXIT_CODE, sleeping forever for debug ==="
-              sleep infinity
+              echo "=== FAILED with exit code $EXIT_CODE, sleeping 10min for debug ==="
+              sleep 600
             fi
             exit $EXIT_CODE
         env:

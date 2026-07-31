@@ -451,7 +451,7 @@ components:
 
 Agent Runtime 是 ADP **智能工作台** 和 **Claw 模式** 的沙箱运行环境，**必须完成配置**。
 
-> 📘 **详细配置流程（含控制台截图）**：请参见 [AGENT-RUNTIME.md](AGENT-RUNTIME.md)
+> 📘 **详细配置流程（含控制台截图）**：请参见 [AGENT-RUNTIME.md](https://github.com/tkestack/charts/blob/main/incubator/adp/AGENT-RUNTIME.md)
 
 ### 前置依赖（均为必填）
 
