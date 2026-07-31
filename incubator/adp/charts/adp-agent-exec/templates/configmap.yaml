@@ -724,9 +724,20 @@ data:
       tools:
         fetch:
           truncate: true
-          provider: ""
+          provider: "jina"
         search:
-          provider: ""
+          provider: "sougou"
+          sougou:
+            end_point: wsa.tencentcloudapi.com
+            secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+            secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+            service: wsa
+            version: 2025-05-08
+            action: SearchPro
+            max_concurrency: 30
+            max_cnt: 10
+            assume_role:
+              role_arn: {{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}
 
   placeholder.yaml: |
     LOG_WRITER: galileo

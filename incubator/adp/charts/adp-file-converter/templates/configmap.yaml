@@ -66,7 +66,7 @@ data:
       "URL_EXPIRE_TIME": "168h",
       "FILE_EXPIRE_TIME": "4320h",
       "ROLE_ARN": {{ .Values.global.components.s3.cos.stsRoleArn | quote }},
-      "PROXY_COS": {{ if .Values.global.components.s3.cos.enableSts }}true{{ else }}false{{ end }}
+      "USE_STS": {{ if .Values.global.components.s3.cos.enableSts }}true{{ else }}false{{ end }}
     }
 
   trpc_go.yaml: |

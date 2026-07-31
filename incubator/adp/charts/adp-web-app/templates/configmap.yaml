@@ -33,7 +33,7 @@ data:
       MaxDocLen: 100,
       objectStorageAddr: 'https://obs.cn-east-3.myhuaweicloud.com',
       IsGenerateFromDoc: true,
-      proxyCos: {{ if .Values.global.components.s3.cos.enableSts }}true{{ else }}false{{ end }}
+      proxyCos: {{ if .Values.global.components.s3.enableProxy }}true{{ else }}false{{ end }}
     };
 
   nginx.conf: |

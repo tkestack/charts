@@ -686,7 +686,7 @@ releases:
     needs:
       - etcd
       - adp-chat-manage
-      - adp-app-channel-msg
+      - adp-app-channel
       - adp-agent-config
       - adp-resource-gallery
 

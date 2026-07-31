@@ -1,6 +1,6 @@
 images:
   adp-agent-exec:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/agent-exec:14_2607271708_stable_iaas_v4.0.3.0_403ec660_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/agent-exec:18_2607302052_stable_iaas_v4.0.3.0_bcdd034f_private"
 resources:
   limits:
     cpu: 4

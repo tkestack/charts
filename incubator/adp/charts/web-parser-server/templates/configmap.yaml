@@ -40,8 +40,8 @@ data:
             "Region": "{{ .Values.global.components.s3.cos.region }}",
             "Bucket": "{{ include "web-parser-server.cos.bucket" . | trim }}",
             "Domain": "{{ .Values.global.components.s3.cos.domain }}",
-            "ExpireTime": "30m",
-            "CredentialTime": "10m",
+            "ExpireTime": 1800000000000,
+            "CredentialTime": 600000000000,
             "AssumeRole": {
               "RoleArn": "{{ .Values.global.components.s3.cos.stsRoleArn }}",
               "DurationSeconds": 43200,
@@ -55,8 +55,8 @@ data:
             "Region": "{{ .Values.global.components.s3.cos.region }}",
             "Bucket": "{{ include "web-parser-server.cos.bucket" . | trim }}",
             "Domain": "{{ .Values.global.components.s3.cos.domain }}",
-            "ExpireTime": "30m",
-            "CredentialTime": "10m",
+            "ExpireTime": 1800000000000,
+            "CredentialTime": 600000000000,
             "AssumeRole": {
               "RoleArn": "{{ .Values.global.components.s3.cos.stsRoleArn }}",
               "DurationSeconds": 43200,
@@ -70,8 +70,8 @@ data:
             "Region": "{{ .Values.global.components.s3.cos.region }}",
             "Bucket": "{{ include "web-parser-server.cos.bucket" . | trim }}",
             "Domain": "{{ .Values.global.components.s3.cos.domain }}",
-            "ExpireTime": "30m",
-            "CredentialTime": "10m",
+            "ExpireTime": 1800000000000,
+            "CredentialTime": 600000000000,
             "AssumeRole": {
               "RoleArn": "{{ .Values.global.components.s3.cos.stsRoleArn }}",
               "DurationSeconds": 43200,

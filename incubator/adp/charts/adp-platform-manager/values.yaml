@@ -1,6 +1,6 @@
 images:
   adp-platform-manager:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/platform-manager:101_2607281629_stable_iaas_v4.0.3.0_5d9cfa67_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/platform-manager:104_2607302104_stable_iaas_v4.0.3.0_89ab8e30_private"
 resources:
   limits:
     cpu: 1

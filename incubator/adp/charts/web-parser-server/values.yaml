@@ -1,6 +1,6 @@
 images:
   web-parser-server:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/web-parser-server:6_2607171606_stable_iaas_v4.0.3.0_c47145de_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/web-parser-server:7_2607291612_stable_iaas_v4.0.3.0_d22904d1_private"
   web-parser-server-sidecar:
     url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:crawl-0dafe48-57-fixed"
 replicas: 1
