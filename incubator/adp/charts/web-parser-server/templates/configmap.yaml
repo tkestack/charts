@@ -229,6 +229,12 @@ data:
           protocol: trpc
           timeout: 20000
           target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+        - callee: trpc.adp.kb_file_manager.Internal
+          name: trpc.adp.kb_file_manager.Internal
+          namespace: Production
+          protocol: trpc
+          timeout: 30000
+          target: ip://adp-kb-file-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
         - name: trpc.http.cos.Access
           network: tcp
           protocol: http
@@ -427,6 +433,12 @@ data:
           protocol: trpc
           timeout: 20000
           target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+        - callee: trpc.adp.kb_file_manager.Internal
+          name: trpc.adp.kb_file_manager.Internal
+          namespace: Production
+          protocol: trpc
+          timeout: 30000
+          target: ip://adp-kb-file-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
         - name: trpc.http.cos.Access
           network: tcp
           protocol: http

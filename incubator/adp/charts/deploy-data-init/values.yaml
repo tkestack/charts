@@ -14,4 +14,4 @@ targetVersion: v4.0.3
 
 images:
   deploy-data-init:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/data-init:75__dev_v1.0.4_616097d6_iaas"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/data-init:77__dev_v1.0.4_a5615d92_iaas"
