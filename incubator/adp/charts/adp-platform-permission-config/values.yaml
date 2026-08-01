@@ -1,6 +1,6 @@
 images:
   adp-platform-permission-config:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/platform-permission-config:70_2607281936_stable_iaas_v4.0.3.0_55b46479_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/platform-permission-config:72_2607311527_stable_iaas_v4.0.3.0_a9c695fb_private"
 resources:
   limits:
     cpu: 1

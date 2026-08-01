@@ -724,7 +724,7 @@ data:
       tools:
         fetch:
           truncate: true
-          provider: "jina"
+          provider: ""
         search:
           provider: "sougou"
           sougou:
