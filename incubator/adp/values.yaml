@@ -97,11 +97,17 @@ global:
         # 是否启用 COS STS 临时凭证模式（非必填，默认 false）
         # 为 true 时，仅通过 STS 模式访问 COS 资源，禁止使用永久 secretId/secretKey；此时 stsRoleArn 必填
         enableSts: false
-        # COS STS 模式的角色标识（enableSts=true 时必填）
+        # COS STS 模式的角色标识（enableSts=true 时必填，enableSts=false时无需配置）
         # 需在腾讯云控制台创建 CAM 角色，并授予以下权限策略：
-        #   QcloudTsearchFullAccess、QcloudHunYuanFullAccess、QcloudOCRFullAccess、
-        #   QcloudLKEAPFullAccess、QcloudCOSFullAccess
-        stsRoleArn: "qcs::cam::uin/1000000XXXXX:roleName/AaaBbbCcc"
+        #   QcloudTsearchFullAccess: 检索分析服务（Tsearch）全读写访问权限
+        #   QcloudHunYuanFullAccess: 腾讯混元大模型（Hunyuan）全读写访问权限
+        #   QcloudOCRFullAccess: 文字识别全读写访问权限
+        #   QcloudLKEAPFullAccess: ADP原子能力权限
+        #   QcloudCOSFullAccess: 对象存储（COS）全读写访问权限
+        #   QcloudWSAFullAccess: 联网搜索API（WSA）全读写访问权限
+        #   QcloudAGSFullAccess: Agent 沙箱服务（AGS）全读写访问权限（启用agentRuntime需要授权该权限，用于调用ags api创建沙箱）
+        #   QcloudAccessForCAM_QCSLinkedRoleInsirui: 用于cam访问其他云服务资源（启用agentRuntime需要授权该权限，用于将角色传递给沙箱实例）
+        stsRoleArn: ""
 
     # 消息队列CKafka版 https://console.cloud.tencent.com/ckafka/instance
     kafka:

@@ -102,6 +102,18 @@ spec:
               value: TKE
             - name: ADP_HOST
               value: "{{ .Values.global.scheme }}://{{ .Values.global.clb }}"
+            {{- if .Values.global.components.s3.cos.enableSts }}
+            - name: ADP_ASSUME_ROLE_SECRET_ID
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: ADP_ASSUME_ROLE_SECRET_ID
+            - name: ADP_ASSUME_ROLE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: infra-credentials
+                  key: ADP_ASSUME_ROLE_SECRET_KEY
+            {{- end }}
           {{- if eq .Values.global.clusterSize "minimal" }}
           resources:
             limits:
