@@ -10,6 +10,11 @@ data:
       region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
       secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
       secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+      # 调用 AGS API 时的 STS 临时凭证配置（非必填，为空时回退到 secret_id/secret_key 长期 AK/SK）
+      assume_role:
+        role_arn: "{{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}"
+        duration_seconds: 3600
+        refresh_ahead_seconds: 300
       public_sandbox_instance_id: ${PUBLIC_SANDBOX_INSTANCE_ID}      # 公共沙箱固定实例ID（用于目录预创建）
       public_sandbox_token: ${PUBLIC_SANDBOX_TOKEN}     # 公共沙箱固定访问token（用于目录预创建）
       default_tool_id: ${DEFAULT_TOOL_ID}
