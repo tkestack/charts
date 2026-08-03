@@ -931,7 +931,7 @@ data:
         - name: trpc.adp.ai_gateway.Admin
           network: tcp
           protocol: trpc
-          target: "ip://adp-ai-gateway.adp.svc.cluster.local:9092"
+          target: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092"
           timeout: 5000
         - callee: trpc.SmartService.AIConfManagerServer.AIConfManager
           target: "ip://adp-aiconf-manager.{{ .Release.Namespace }}.svc.cluster.local:10002"
@@ -8996,7 +8996,7 @@ data:
         - name: trpc.adp.ai_gateway.Admin
           network: tcp
           protocol: trpc
-          target: "ip://adp-ai-gateway.adp.svc.cluster.local:9092"
+          target: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092"
           timeout: 5000
         - callee: trpc.SmartService.AIConfManagerServer.AIConfManager
           target: "ip://adp-aiconf-manager.{{ .Release.Namespace }}.svc.cluster.local:10002"
