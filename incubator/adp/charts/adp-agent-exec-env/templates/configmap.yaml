@@ -51,6 +51,7 @@ data:
       default_tool_timeout_sec: 3600      # 默认工具执行超时（秒）
       init_env_lock_ttl_seconds: 120      # InitEnv 分布式锁TTL（秒），默认120
       ensure_running_retry_budget_ms: 60000 # EnsureEnvReady 吸收 ErrEnvCreating 的总预算（ms），默认 5min；实际被调用方 ctx timeout 钳制，<0 关闭重试
+      stop_idle_minutes: 4320             # 智能工作台沙箱保留时长（分钟）：空闲 3 天后 Stop 销毁实例，下次进入自动重建。0或负数=关闭该能力
 
     # Agent App 模式专属配置
     agent_app:
@@ -64,7 +65,7 @@ data:
       command: ${AGS_COMMAND}                        # 容器启动命令，为空时回退到 ags.command 再到 "/usr/local/bin/start-services"
       pause_idle_instances_enabled: false # 是否启用空闲实例暂停
       idle_timeout_minutes: 1            # 空闲多少分钟后暂停实例
-      pause_backup_minutes: 30           # 暂停多少分钟后备份 Session 并停止
+      pause_backup_minutes: 10           # Claw 沙箱保留时长（分钟）：暂停后 10 min 备份 Session 并停止实例
       instance_quota_per_uin: 999999        # 单 uin 活跃实例数上限
       instance_quota_whitelist: ${INSTANCE_QUOTA_WHITELIST}        # 单 uin 配额白名单 map[uin]quota；命中后用 value 替代默认值（value<=0 视为未配置）；占位符在 placeholder.yaml 配置
       soft_delete_retain_days: 7         # 软删除记录保留天数
