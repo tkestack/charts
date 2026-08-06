@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "Agent Portal Helm values",
+  "type": "object",
+  "properties": {
+    "replicaCount": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "image": {
+      "type": "object",
+      "required": ["repository", "pullPolicy", "tag"],
+      "properties": {
+        "repository": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pullPolicy": {
+          "type": "string",
+          "enum": ["Always", "IfNotPresent", "Never"]
+        },
+        "tag": {
+          "type": "string"
+        }
+      }
+    },
+    "scheme": {
+      "type": "string",
+      "enum": ["http", "https"]
+    },
+    "clb": {
+      "type": "string",
+      "pattern": "^$|^[A-Za-z0-9.-]+$"
+    },
+    "adp": {
+      "type": "object",
+      "required": ["apiEndpoint", "chatEndpoint", "host"],
+      "properties": {
+        "apiEndpoint": {
+          "type": "string"
+        },
+        "chatEndpoint": {
+          "type": "string"
+        },
+        "host": {
+          "type": "string"
+        }
+      }
+    },
+    "service": {
+      "type": "object",
+      "required": ["type", "port"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["ClusterIP", "NodePort", "LoadBalancer"]
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        }
+      }
+    },
+    "ingress": {
+      "type": "object",
+      "required": ["enabled", "path", "pathType", "tls"],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^/"
+        },
+        "pathType": {
+          "type": "string",
+          "enum": ["ImplementationSpecific", "Prefix", "Exact"]
+        },
+        "tls": {
+          "type": "boolean"
+        }
+      }
+    },
+    "APP_BASE_PATH": {
+      "type": "string",
+      "pattern": "^$|^/[^?#\\s]*$"
+    },
+    "LOG_LEVEL": {
+      "type": "string",
+      "enum": ["trace", "debug", "info", "warn", "error", "fatal"]
+    },
+    "db": {
+      "type": "object",
+      "required": ["host", "port", "user", "password", "type", "name", "connectionLimit"],
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "user": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["mysql", "tdsql"]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "connectionLimit": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "storage": {
+      "type": "object",
+      "required": ["type", "bucket", "region", "endpoint", "accessKey", "secretKey", "forcePathStyle"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["s3", "local"]
+        },
+        "bucket": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "accessKey": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string"
+        },
+        "forcePathStyle": {
+          "type": "string",
+          "enum": ["true", "false"]
+        }
+      }
+    },
+    "AUTH_GENERIC_OAUTH_TOKEN_AUTH_METHOD": {
+      "type": "string",
+      "enum": ["client_secret_post", "client_secret_basic"]
+    },
+    "AUTH_GENERIC_OAUTH_USER_INFO_AUTH_METHOD": {
+      "type": "string",
+      "enum": ["query", "bearer"]
+    },
+    "LOGIN_CAPTCHA_PROVIDER": {
+      "type": "string",
+      "enum": ["cap", "slider", "character"]
+    },
+    "LICENSE_MODE": {
+      "type": "string",
+      "enum": ["adp", "private"]
+    }
+  }
+}

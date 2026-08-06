@@ -1,0 +1,115 @@
+{{- $healthPath := printf "%s/api/health" (trimSuffix "/" .Values.APP_BASE_PATH) -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "agent-portal.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "agent-portal.labels" . | nindent 4 }}
+  annotations:
+    secret.reloader.stakater.com/reload: {{ include "agent-portal.secretName" . | quote }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  # 避免更新期间新旧 Pod 的 IM 长连接短暂并存。
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "agent-portal.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "agent-portal.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+        - name: db-init
+          image: {{ include "agent-portal.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["node", "apps/server/dist/db/init.js", "--startup-sync"]
+          volumeMounts:
+            - mountPath: /app/apps/server/.env
+              name: config
+              subPath: .env
+      containers:
+        - name: agent-portal
+          image: {{ include "agent-portal.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: NODE_ENV
+              value: production
+            - name: SERVE_WEB
+              value: "true"
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: {{ $healthPath }}
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - mountPath: /app/apps/server/.env
+              name: config
+              subPath: .env
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: config
+          secret:
+            defaultMode: 420
+            secretName: {{ include "agent-portal.secretName" . }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

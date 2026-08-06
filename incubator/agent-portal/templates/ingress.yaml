@@ -1,0 +1,40 @@
+{{- if .Values.ingress.enabled -}}
+{{- $host := .Values.ingress.host | default .Values.clb -}}
+{{- $tlsSecret := .Values.ingress.tlsSecretName | default (printf "%s-secret" $host) -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "agent-portal.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "agent-portal.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.ingress.className }}
+  ingressClassName: {{ . }}
+  {{- end }}
+  rules:
+    {{- if and $host (eq $.Values.scheme "https") }}
+    - host: {{ $host | quote }}
+      http:
+    {{- else }}
+    - http:
+    {{- end }}
+        paths:
+          - path: {{ .Values.ingress.path }}
+            pathType: {{ .Values.ingress.pathType }}
+            backend:
+              service:
+                name: {{ include "agent-portal.fullname" . }}
+                port:
+                  number: {{ .Values.service.port }}
+  {{- if and .Values.ingress.tls $host }}
+  tls:
+    - hosts:
+        - {{ $host | quote }}
+      secretName: {{ $tlsSecret | quote }}
+  {{- end }}
+{{- end }}

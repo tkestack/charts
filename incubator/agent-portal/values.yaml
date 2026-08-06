@@ -1,0 +1,251 @@
+# Agent Portal - 对外配置
+#
+# 配置分为两部分：
+#   1. 必填配置：安装前必须逐项修改，占位符形如 <YOUR_XXX>
+#   2. 可选配置：保持默认即可正常启动，按需调整
+#
+# 快速配置清单（最少需要修改以下 8 项）：
+#   clb / db.host / db.user / db.password
+#   storage.bucket / storage.region / storage.accessKey / storage.secretKey
+#   以及 PORTAL_CREDENTIALS_KEY、BETTER_AUTH_SECRET 两个密钥
+
+# ============================================================
+# 一、必填配置
+# ============================================================
+
+# ---------- 对外访问 ----------
+# Portal 对外访问域名（必填），不含协议和路径
+# 需要给 CLB 绑定一个自定义域名 https://console.cloud.tencent.com/clb/instance
+clb: "xx-portal.example.com"
+# 平台访问协议：http 或 https（必填）
+# 使用 https 时需提前在集群中创建 TLS 证书 Secret https://console.cloud.tencent.com/ssl
+scheme: https
+
+# ---------- 数据库（必填）----------
+# 支持 MySQL 8.0+ 或 TDSQL-MySQL，需与 TKE 集群同地域
+#   MySQL: https://console.cloud.tencent.com/cdb/instance
+#   TDSQL: https://console.cloud.tencent.com/tdsqld/instance-tdmysql
+# 要求：字符集 UTF8MB4、lower_case_table_names=1、提前创建库与授权用户
+db:
+  # 数据库主机地址，必须可从 TKE 集群内访问
+  host: "192.168.0.1"
+  # 数据库端口
+  port: 3306
+  # 数据库用户名，需对下方 name 指定的库有建表权限
+  user: "<YOUR_DB_USER>"
+  # 数据库密码
+  password: "<YOUR_DB_PASSWORD>"
+  # 数据库名称，容器启动时 db-init 会自动初始化或迁移该库
+  name: agent_portal
+  # 数据库兼容模式：mysql 或 tdsql
+  type: mysql
+  # MySQL 连接池上限，IM 长连接与调度器会长期占用 leader lock 连接，不建议低于 50
+  connectionLimit: 50
+
+# ---------- 对象存储（必填）----------
+# 用于存放头像、会话附件等文件，建议与 TKE 集群同地域
+# COS 控制台：https://console.cloud.tencent.com/cos
+storage:
+  # 存储类型：s3（COS / MinIO 等 S3 兼容存储）或 local（仅测试用，Pod 重建后文件丢失）
+  type: "s3"
+  # Bucket 名称，COS 需带 APPID 后缀，例如 portal-1250000000
+  bucket: "<YOUR_COS_BUCKET>"
+  # Bucket 所在地域，例如 ap-guangzhou
+  region: "<YOUR_COS_REGION>"
+  # 访问 Endpoint；留空时自动使用 https://cos.<region>.myqcloud.com
+  # 对接自建 MinIO 时填写完整地址，例如 http://minio.default.svc.cluster.local:9000
+  endpoint: ""
+  # COS SecretId 或 MinIO Access Key
+  accessKey: "<YOUR_SECRET_ID>"
+  # COS SecretKey 或 MinIO Secret Key
+  secretKey: "<YOUR_SECRET_KEY>"
+  # 路径风格寻址：COS 填 false，自建 MinIO 填 true
+  forcePathStyle: "false"
+
+# ---------- 应用安全密钥（必填）----------
+# 以下密钥写入 Kubernetes Secret，不会进入 ConfigMap
+# 生成方法：openssl rand -base64 32
+#
+# 注意：PORTAL_CREDENTIALS_KEY 用于 IM / Connector 凭据的 AES-256-GCM 加密。
+# 已有存量数据的环境升级时必须沿用原值，重新生成会导致历史凭据无法解密。
+PORTAL_CREDENTIALS_KEY: "<YOUR_PORTAL_CREDENTIALS_KEY>"
+# Better Auth 用于加密登录 session 的密钥
+BETTER_AUTH_SECRET: "<YOUR_BETTER_AUTH_SECRET>"
+
+# ============================================================
+# 二、可选配置（保持默认即可正常启动）
+# ============================================================
+
+# ---------- 应用基础 ----------
+# 应用部署子路径，必须与 ingress.path 保持一致；部署到根路径时两者分别设为 "" 和 /
+APP_BASE_PATH: "/agent-portal"
+# 日志级别：trace / debug / info / warn / error / fatal
+LOG_LEVEL: "info"
+# 日志美化，仅开发环境生效，生产环境建议 false
+LOG_PRETTY: "false"
+
+# ---------- 镜像 ----------
+image:
+  # 镜像仓库地址（勿动）
+  repository: ccr.ccs.tencentyun.com/tke-market/agent-portal
+  # 镜像标签；留空时使用 Chart.yaml 中的 appVersion
+  # 当前镜像仅支持 linux/amd64，集群含 ARM 节点时请配合下方 nodeSelector 约束调度
+  tag: "tke-market-license-dev-67799082-20260805-143502-amd64"
+  # 镜像拉取策略：Always / IfNotPresent / Never
+  pullPolicy: Always
+
+# 私有镜像仓库拉取凭据，例如：[{ name: ccr-registry }]
+imagePullSecrets: []
+
+# ---------- 工作负载 ----------
+# Deployment 副本数，生产环境建议至少 2
+# IM 长连接的单写由数据库 leader lock 保证，多副本安全
+replicaCount: 2
+
+# Pod 资源请求与上限
+resources:
+  limits:
+    cpu: "2"
+    memory: 4Gi
+  requests:
+    cpu: "1"
+    memory: 2Gi
+
+# ---------- Service ----------
+service:
+  # Service 类型：ClusterIP / NodePort / LoadBalancer
+  # 集群未开启负载均衡直连 Pod 模式时，配合 Ingress 需改为 NodePort
+  # 详见 https://cloud.tencent.com/document/product/457/41897
+  type: ClusterIP
+  # Service 端口，同时作为容器监听端口
+  port: 4000
+
+# ---------- Ingress ----------
+ingress:
+  # 是否创建 Ingress
+  enabled: true
+  # IngressClass 名称，TKE 通常为 qcloud
+  className: qcloud
+  # 网关读写超时，SSE 长会话需要放宽，不建议调小
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
+  # Ingress 域名；留空时复用上方 clb
+  host: ""
+  # 路由路径，必须与 APP_BASE_PATH 保持一致
+  path: /agent-portal
+  # 路径匹配类型：ImplementationSpecific / Prefix / Exact
+  pathType: ImplementationSpecific
+  # 是否配置 TLS，仅在已准备证书 Secret 时开启
+  tls: true
+  # TLS Secret 名称；留空时使用 <host>-secret
+  tlsSecretName: ""
+
+# ---------- ADP 接入 ----------
+# Portal 与 ADP 共用同一域名时无需配置；使用独立 ADP 地址时按实际填写
+adp:
+  # ADP 云 API 地址，支持 host 或完整 URL；留空时使用 clb
+  apiEndpoint: ""
+  # ADP 对话 SSE 完整地址；留空时使用 <scheme>://<clb>/adp/v2/chat
+  chatEndpoint: ""
+  # 门户展示与同步时写入的 ADP Host；留空时使用 <scheme>://<clb>
+  host: ""
+
+# ---------- License ----------
+# 授权模式：adp（ADP 激活码）或 private（独立授权服务）
+LICENSE_MODE: "adp"
+# adp 模式的校验地址；留空时自动使用 <scheme>://<clb>/cgi/apex/test/adp/platform/CheckLicense
+LICENSE_HOST_ADP: ""
+# License 提示语言：zh 或 en
+LICENSE_LANGUAGE: "zh"
+
+# ---------- 登录与功能开关 ----------
+# 是否启用登录图形验证码
+LOGIN_CAPTCHA_ENABLED: "true"
+# 验证码提供方：cap / slider / character
+LOGIN_CAPTCHA_PROVIDER: "cap"
+# 是否要求验证码两次请求的来源 IP 一致
+# CGNAT、多层负载均衡等出口 IP 会变化的场景需设为 false
+LOGIN_CAPTCHA_CHECK_IP: "false"
+# 多智能体协同编排总开关
+FEATURE_ORCHESTRATION: "true"
+
+# ---------- 履约执行超时（毫秒）----------
+# 智能体履约超时
+FULFILLMENT_AGENT_TIMEOUT_MS: "30000"
+# 模型履约超时
+FULFILLMENT_MODEL_TIMEOUT_MS: "30000"
+# API 履约超时
+FULFILLMENT_API_TIMEOUT_MS: "15000"
+
+# ---------- 邮件服务 ----------
+# 用于邮箱验证与密码重置；SMTP_HOST 为空时邮件功能不可用
+SMTP_HOST: ""
+SMTP_PORT: "587"
+SMTP_USER: ""
+SMTP_PASS: ""
+# 发件人地址，例如 noreply@example.com
+SMTP_FROM: ""
+
+# ---------- 单点登录（三选一，均可选）----------
+# 未配置任何 SSO 时使用账号密码登录
+
+# 钉钉 SSO：Client ID 与 Secret 需成组配置
+AUTH_DINGTALK_CLIENT_ID: ""
+AUTH_DINGTALK_CLIENT_SECRET: ""
+# 钉钉开放平台登记的完整回调 URL，例如 https://portal.example.com/api/auth/callback/dingtalk
+AUTH_DINGTALK_CALLBACK_URL: ""
+# 钉钉 OAuth scope
+AUTH_DINGTALK_SCOPE: "openid Contact.User.Read"
+# 钉钉未返回企业邮箱时使用的合成邮箱域名
+AUTH_DINGTALK_EMAIL_DOMAIN: "sso.local"
+
+# ADP OAuth2 IdP：Base URL、Client ID 与 Secret 需成组配置
+AUTH_ADP_OAUTH_BASE_URL: ""
+AUTH_ADP_OAUTH_CLIENT_ID: ""
+AUTH_ADP_OAUTH_CLIENT_SECRET: ""
+# 完整回调 URL，例如 https://portal.example.com/api/auth/callback/adp
+AUTH_ADP_OAUTH_CALLBACK_URL: ""
+# IdP 未返回邮箱时使用的合成邮箱域名
+AUTH_ADP_OAUTH_EMAIL_DOMAIN: "adp.local"
+
+# 通用 OAuth2 SSO：Client ID、Secret 与三个端点需成组配置
+AUTH_GENERIC_OAUTH_CLIENT_ID: ""
+AUTH_GENERIC_OAUTH_CLIENT_SECRET: ""
+AUTH_GENERIC_OAUTH_AUTHORIZATION_URL: ""
+AUTH_GENERIC_OAUTH_TOKEN_URL: ""
+AUTH_GENERIC_OAUTH_USER_INFO_URL: ""
+# 请求 scope，多个值用空格分隔
+AUTH_GENERIC_OAUTH_SCOPES: "read all"
+# Token 端点认证方式：client_secret_post 或 client_secret_basic
+AUTH_GENERIC_OAUTH_TOKEN_AUTH_METHOD: "client_secret_post"
+# 追加到授权请求的参数，URL 查询字符串格式
+AUTH_GENERIC_OAUTH_AUTHORIZATION_PARAMS: "approval_prompt=auto"
+# 用户信息请求认证方式：query 或 bearer
+AUTH_GENERIC_OAUTH_USER_INFO_AUTH_METHOD: "query"
+# query 模式下携带 access token 的参数名
+AUTH_GENERIC_OAUTH_USER_INFO_TOKEN_PARAM: "access_token"
+# 用户信息响应的字段映射，按 IdP 实际返回结构调整
+AUTH_GENERIC_OAUTH_USER_ID_FIELD: "userId"
+AUTH_GENERIC_OAUTH_EMAIL_FIELD: "email"
+AUTH_GENERIC_OAUTH_NAME_FIELD: "realname"
+AUTH_GENERIC_OAUTH_USERNAME_FIELD: "username"
+AUTH_GENERIC_OAUTH_DEPARTMENT_FIELD: "department"
+# IdP 未返回邮箱时使用的合成邮箱域名
+AUTH_GENERIC_OAUTH_EMAIL_DOMAIN: "sso.local"
+
+# Customer 免密登录签名密钥；未启用 Customer 登录时留空
+# 生成方法：openssl rand -base64 32
+AUTH_CUSTOMER_SECRET_KEY: ""
+
+# ---------- Pod 元数据与调度 ----------
+# 附加到 Pod 的注解
+podAnnotations: {}
+# 附加到 Pod 的标签
+podLabels: {}
+# 节点选择器
+nodeSelector: {}
+# 污点容忍
+tolerations: []
+# 亲和性 / 反亲和性
+affinity: {}
