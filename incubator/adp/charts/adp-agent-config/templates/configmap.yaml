@@ -129,14 +129,12 @@ data:
         - opentelemetry
       service:
         - name: redis.plugin-config-server
-          # RESOLVE: keep-private
           target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${AGENT_REDIS_PORT}/${PLUGIN_CONFIG_REDIS_DB}"
         - name: mysql.db_llm_plugin
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: mysql.db_llm_prod_plugin
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: trpc.redis.agent_config
-          # RESOLVE: keep-private
           target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${AGENT_REDIS_PORT}/${AGENT_CONFIG_REDIS_DB}"
         - name: trpc.mysql.agent_config
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
@@ -420,7 +418,6 @@ data:
     data_sync_task:
       release_queue_length: 200
       release_items_per_batch: 100
-    # 定时任务
     task_config:
       task_prefix: "agent-config-server:task"
       task_fetch_num: 400
@@ -446,7 +443,6 @@ data:
         read_file:
           plugin_id: 3de4a6c6-e055-4d78-9e09-c4410aee79e4
           tool_id: f546f2ff-6245-41a0-945d-cd710ec7e4db
-          # 参数可见性配置
           parameters:
             path:
               agent_hidden: false  # 文件路径对模型可见
@@ -460,7 +456,6 @@ data:
         write_file:
           plugin_id: 3de4a6c6-e055-4d78-9e09-c4410aee79e4
           tool_id: be07cc91-4017-4a68-8168-c77c8e888921
-          # 参数可见性配置
           parameters:
             path:
               agent_hidden: false  # 文件路径对模型可见
@@ -478,7 +473,6 @@ data:
         shell_exec:
           plugin_id: 3de4a6c6-e055-4d78-9e09-c4410aee79e4
           tool_id: 18d9f76b-ffcb-4b9f-881a-61b424bf056b
-          # 参数可见性配置
           parameters:
             command:
               agent_hidden: false  # 命令对模型可见
@@ -490,7 +484,6 @@ data:
         code_interpreter:
           plugin_id: 3de4a6c6-e055-4d78-9e09-c4410aee79e4
           tool_id: b9cc0a1c-ab0c-4919-84d5-4d69e63d2b34
-          # 参数可见性配置
           parameters:
             Code:
               agent_hidden: false  # 代码对模型可见
@@ -498,7 +491,6 @@ data:
         file_str_replace:
           plugin_id: 3de4a6c6-e055-4d78-9e09-c4410aee79e4
           tool_id: 89993c80-c3f9-476e-bf3e-e8e460f8f83d
-          # 参数可见性配置
           parameters:
             path:
               agent_hidden: false  # 文件路径对模型可见
@@ -667,13 +659,10 @@ data:
     WORKFLOW_CONFIG_API_TARGET: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
     PLATFORM_MANAGER_V2_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9099"
 
-    # platform-manager Admin（DescribeSkillReferenceList 装配 Owner 依赖）
     PLATFORM_MANAGER_ADMIN_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
-    # platform-manager Api（DescribeSkillReferenceList 装配 SpaceName 依赖）
     PLATFORM_MANAGER_API_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093"
 
-    # app_config Api（DescribeAgentSkillReferenceList 装配 cloud agent 引用名依赖 GetAppBaseInfoList）
     APP_CONFIG_API_TARGET: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091"
 
     APP_SKILL_SYNC_SOURCE_LIST:
@@ -876,14 +865,12 @@ data:
         - opentelemetry
       service:
         - name: redis.plugin-config-server
-          # RESOLVE: keep-private
           target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${AGENT_REDIS_PORT}/${PLUGIN_CONFIG_REDIS_DB}"
         - name: mysql.db_llm_plugin
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: mysql.db_llm_prod_plugin
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: trpc.redis.agent_config
-          # RESOLVE: keep-private
           target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${AGENT_REDIS_PORT}/${AGENT_CONFIG_REDIS_DB}"
         - name: trpc.mysql.agent_config
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"

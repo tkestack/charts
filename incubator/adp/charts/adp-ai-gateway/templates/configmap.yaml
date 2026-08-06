@@ -30,8 +30,6 @@ data:
       enable: {{ default "" .Values.global.secapi_enable }}
       unsafe_domains: ["v2.open.venus.oa.com", "testapi.lkeap.cloud.tencent.com", "hunyuanapi.woa.com"]
     builtin_providers: ["Hunyuan", "Deepseek", "Youtu", "TCADP", "ADP"]
-    # /cmds/* 管理端点鉴权
-    # 切到 true 后强制 HMAC 校验
     admin_auth:
       enable: true
       token: ${ADMIN_AUTH_KEY}
@@ -77,9 +75,7 @@ data:
     AIGETWAY_REDIS_TARGET: ip://11.135.8.138:6379
     AIGETWAY_REDIS_PASSWD: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
     ZHIYAN_PLUGIN_CONFIG_APIKEY: 11195#apm-log-fc1gc2ae6bed9cgf#10790_162090___apm
-    # /cmds/* 管理端点共享密钥（HMAC-SHA256），与 model-gateway-admin 同步
     ADMIN_AUTH_KEY: a5bc6d7e5cbfa6882c105830bff4982e
-    # 自定义模型 SOCKS5 代理（仅作用于 IsCustom=true 的模型；DB 凭证 proxy_url 优先于本配置）
     SOCKES_PROXY:
       enable: false
       address: "21.148.87.147:1080"
@@ -147,7 +143,6 @@ data:
       - "Deepseek/deepseek-v4-flash-202605"
   trpc_go.yaml: |
     global:
-      # RESOLVE: keep-public
       namespace: ${TRPC_GO_GLOBAL_NAMESPACE}
       admin_port: 18888
       enable_set: N

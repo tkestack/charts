@@ -89,7 +89,6 @@ data:
           namespace: ${CLIENT_NAMESPACE}
           protocol: trpc
           timeout: 60000
-        # 平台管理服务 - 登录态校验 (session filter 调用 CheckSession/CheckPermission)
         - name: trpc.adp.platform_manager.Login
           target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
           namespace: ${CLIENT_NAMESPACE}
@@ -200,7 +199,6 @@ data:
     CLIENT_RESOURCE_GALLERY_ADMIN_TARGET: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
     PLATFORM_MANAGER_LOGIN_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
 
-    #application.yaml
     APPLICATION_DATABASE_SERVICE_NAME: tdsql.adp.time_scheduler
     APPLICATION_DATABASE_AUTO_MIGRATE: false
 
@@ -461,7 +459,6 @@ data:
           namespace: ${CLIENT_NAMESPACE}
           protocol: trpc
           timeout: 60000
-        # 平台管理服务 - 登录态校验 (session filter 调用 CheckSession/CheckPermission)
         - name: trpc.adp.platform_manager.Login
           target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
           namespace: ${CLIENT_NAMESPACE}

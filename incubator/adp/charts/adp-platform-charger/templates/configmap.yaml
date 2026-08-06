@@ -304,7 +304,6 @@ data:
       Concurrency: Concurrency
       KnowledgeGraphCreate: SchemaExtract
       GraphSchemaExpand: SchemaExtract
-    # RESOLVE: keep-public
     free_pack_order: ${FREE_PACK_ORDER}
     enable_gift_atomic_proxy: ${ENABLE_GIFT_ATOMIC_PROXY}
     overseas: ${OVERSEAS_CONF}
@@ -748,7 +747,6 @@ data:
     }
 
   placeholder.yaml: |
-    #client.yaml start
     CLOUD_TRADE_GATEWAY_HTTP_TARGET: "ip://127.0.0.1:1"  # 私有化不使用公有云计量计费，占位避免空target panic
     QCLOUD_MEASURE_HTTP_TARGET: "ip://127.0.0.1:1"  # 私有化不使用
     TRPC_MEASURE_TPAPI_HTTP_TARGET: "ip://127.0.0.1:1"  # 私有化不使用
@@ -777,12 +775,8 @@ data:
     ADP_GATEWAY_MEASURE_END_POINT: billing.ap-guangzhou.tencentcloudapi.woa.com
     PLATFORM_ACCOUNT_API_TARGET: "ip://adp-platform-account.{{ .Release.Namespace }}.svc.cluster.local:9092"  # TODO: 待人工确认
 
-    #client.yaml end
-    #trpc_go.yaml start
     GLOBAL_ENV_NAME: online
-    #trpc_go.yaml end
 
-    #application.yaml start
     INTL_SECRET_ID:
     INTL_SECRET_KEY:
     GATEWAY_ACTION_REQ_METHOD:

@@ -728,7 +728,6 @@ data:
         - 人工
         - 人工客服
       default_model_prompt_limit: 4K
-        # rerank 和embedding模型
       app_rerank_model:
         - alias_name: youtu-reranker-llm
           name: Youtu/youtu-reranker-llm
@@ -1099,26 +1098,17 @@ data:
             tail_overlap_size: 2
             trim_by_symbols: ["。", "？", "！", "\n", "；", "!", ";", "?", "、", "，"]
       max_char_size: 15000000
-      # 创建应用，默认角色描述为空
       role_description:
       greeting:
       bare_answer: 作为一个智能助手，针对您这个问题，我所提供的答案或建议可能会存在不准确的地方。建议您转到人工，由专业顾问为您提供服务。
       parse_strategy: 1
-      #上传文件大小 最大 100M
       max_file_size: 104857600
-      #头像图片大小，最大 10M
       max_avatar_size: 10485760
-      # 应用描述最大字符数限制
       max_desc_size: 150
-      # 背景图大小30M
       max_background_image_size: 31457280 # 30M
-      # 开场问最大数量限制
       max_opening_questions_item: 3
-      # 单条开场问长度限制
       max_opening_questions_item_length: 100
-      # 支持的文件类型
       allowed_media_type: "doc,docx,ppt,pptx,pdf,txt,xls,xlsx,md,jpg,png,jpeg,bmp"
-      #工作流程配置
       max_concurrence:
         standard: 5
       workflow:
@@ -1254,9 +1244,7 @@ data:
       type: cos
       cos_map:
         offline:
-          # RESOLVE: keep-private
           secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
-          # RESOLVE: keep-private
           secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
           app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
           region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
@@ -1267,9 +1255,7 @@ data:
           polaris_service: "1084865:196608"
           polaris_namespace: Production
         realtime:
-          # RESOLVE: keep-private
           secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
-          # RESOLVE: keep-private
           secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
           app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
           region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
@@ -2359,11 +2345,6 @@ data:
           target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/4
           password: "${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}"
           timeout: 800
-        #- name: basic.interface.trpc_to_inner.Cloudcc
-        #  target: polaris://basic.interface.trpc_to_inner.Proxy
-        #  protocol: trpc
-        #  timeout: 5000
-        #  namespace: Test
         - name: trpc.http.cos.Access
           network: tcp
           protocol: http
@@ -4546,7 +4527,6 @@ data:
         - name: trpc.KEP.bot-admin-config-server.AppUsageTask
           ip: ${POD_IP}
           port: 9096
-          # RESOLVE: keep-public
           network: "0 0 6 31 12 *?disable=1"
           protocol: timer
           timeout: 3600000
@@ -4693,11 +4673,6 @@ data:
           target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/4
           password: "${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}"
           timeout: 800
-        #- name: basic.interface.trpc_to_inner.Cloudcc
-        #  target: polaris://basic.interface.trpc_to_inner.Proxy
-        #  protocol: trpc
-        #  timeout: 5000
-        #  namespace: Test
         - name: trpc.http.cos.Access
           network: tcp
           protocol: http
@@ -4897,13 +4872,11 @@ data:
         100015822485: true
         3009073176: true
       apis:
-        # 应用配置
         CreateApp: add
         CreateAppByExperienceApp: add
         ModifyApp: modify
         DeleteApp: delete
         CreateRelease: release
-        # 工作流
         CreateWorkflow: add
         CreateWorkflowExample: add
         CopyWorkflow: add
@@ -4918,7 +4891,6 @@ data:
         DeleteWorkflow: delete
         DeleteWorkflowExample: delete 
         ExportWorkflow: download  
-        # 知识库
         SaveDoc: add 
         CreateQA: add 
         CreateSharedKnowledge: add 
@@ -4989,35 +4961,30 @@ data:
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v1
-      # 参数超过最大询问次数，兜底回复
       workflow_probe_exceeded_answer:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v2
-      # 选项卡
       workflow_option_card:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v2
-      # 意图识别
       workflow_intent:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v1
-      # 多意图识别
       workflow_multi_intent:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v1
-      # 大模型输出格式为json
       workflow_llm_output_format_json:
         prompt_words_limit: 5000
         history_limit: 5

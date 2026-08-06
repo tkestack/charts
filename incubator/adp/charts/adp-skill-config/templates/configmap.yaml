@@ -5,7 +5,6 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   application.yaml: |
-    # Skill 功能相关限制配置
     skill_config:
       skill_name_max_len: 64   # 技能名称最大长度
       skill_url_max_len: 1024   # 技能 URL 最大长度
@@ -16,7 +15,6 @@ data:
       max_skill_ids: 100        # 最大技能 ID 列表长度
       max_package_file_count: 300
 
-    # 技能分类标识列表
     category_keys:
       - "adp_knowledge_engine"
       - "office_doc"
@@ -31,19 +29,14 @@ data:
       - "human_resources"
       - "financial_services"
 
-    # 默认技能版本号（_meta.json 不存在时的兜底版本）
     default_skill_version: "1.0.0"
-    # 默认icon
     default_icon_url: ${DEFAULT_ICON_URL}
-    #【变更需评估！】sandbox 挂载路径前缀（容器内路径）
     skill_sandbox_mount_prefix: "/adp/custom/.skills"
-    #【变更需评估！】COS 路径前缀<cosPathPrefix>/<uin>/<spaceID>/<filePath>
     skill_sandbox_cos_path_prefix: "skills/users"
 
     skill_uin_whitelist:
       - "100020322809"
 
-    # COS 对象存储配置
     storage:
       type: cos
       cos_map:
@@ -170,14 +163,12 @@ data:
         - name: trpc.redis.skill_config
           target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${INFRA_MIDDLEWARES_REDIS_0_PORT}/40
 
-        # cos调用
         - name: trpc.http.cos.Access
           target: dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn
           namespace: Production
           network: tcp
           protocol: http
           timeout: 5000
-        # 平台管理服务 - 管理接口
         - callee: trpc.adp.platform_manager.Admin
           name: trpc.adp.platform-manager.Admin
           target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
@@ -376,7 +367,6 @@ data:
           - ""
 
     SKILL_ADDRESS_MAP:
-      # ── MCP 服务端点 ──
       "1c966d98-292e-436e-af1c-cc38d171f9c4": # ADP「标准模式」应用创建 / public-adp-standardagent-creator
         - "https://adp.cloud.tencent.com/plugin/mcp/921ad3a1-0def-4b8a-aaa6-4e5be898f511/mcp"  # [MCP]
       "f7466afe-97a5-40ee-8926-61bbb0c09177": # ADP「Multi-Agent 模式」应用创建 / public-adp-multiagent-creator
@@ -435,7 +425,6 @@ data:
       "5b09ea1f-d50d-4fd1-babf-d2300f5c0784": # ADP连接器查询向导 / adp-plugin-manager
         - "https://adp.cloud.tencent.com/plugin/mcp/c03fd9aa-0984-461a-9a1c-de8c73137272/mcp"  # [MCP]
 
-      # ── REST API 端点 ──
       "072eeb33-f9a9-4ca7-8f0c-c8f61f0e8296": # 文档重排序（Rerank） / tencentcloud-adp-rerank
         - "https://adp.cloud.tencent.com/plugin/api/v1/4923ae97-3af8-4a73-8391-34d4da3ad6fb/1db7b95f-fbd4-427e-9ab1-471238e736f8"  # [API]
       "f5fc841f-82fc-46ca-8152-d3bab786d52c": # ADP 知识库文档管理 / tencentcloud-adp-kb-management
@@ -751,14 +740,12 @@ data:
         - name: trpc.redis.skill_config
           target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${INFRA_MIDDLEWARES_REDIS_0_PORT}/40
 
-        # cos调用
         - name: trpc.http.cos.Access
           target: dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn
           namespace: Production
           network: tcp
           protocol: http
           timeout: 5000
-        # 平台管理服务 - 管理接口
         - callee: trpc.adp.platform_manager.Admin
           name: trpc.adp.platform-manager.Admin
           target: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090

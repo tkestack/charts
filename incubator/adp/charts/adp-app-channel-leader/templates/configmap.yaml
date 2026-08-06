@@ -5,57 +5,32 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   application.yaml: |
-    # ETCD 集群地址
     etcd_endpoints: ${ETCD_ENDPOINTS}
 
-    # ETCD 连接超时
     etcd_dial_timeout: "5s"
 
-    # 选举相关配置
     election:
-      # leader 租约 TTL（秒）
       lease_ttl: 5
-      # 选举失败重试间隔
       retry_interval: "3s"
 
-    # Watcher 相关配置
     watcher:
-      # Watch 断开后重连间隔
       reconnect_interval: "2s"
 
-    # Rebalance 相关配置
     rebalance:
-      # 新 app / migration-request 防抖时间
       debounce: "2s"
-      # 无可用节点时的初始重试间隔
       no_node_retry_interval: "5s"
-      # 无可用节点时的最大重试间隔（指数退避上限）
       no_node_retry_max: "60s"
-      # 负载不均衡告警阈值（最大负载 / 最小负载 > 此值时告警）
       imbalance_threshold: 2.0
-      # 负载不均衡告警最小差值（最大负载 - 最小负载 > 此值时告警）
       imbalance_min_diff: 50
-      # 全量 Rebalance 触发时间戳（秒级 Unix 时间戳）
-      # 运维想触发全量 rebalance 时，修改为当前或未来的秒级时间戳即可
-      # 服务对比 ETCD 中记录的上次执行时间戳，配置值 > 上次执行值时触发
-      # 设为 0 表示不触发
       full_rebalance_at: ${FULL_REBALANCE_AT}
-      # 一致性哈希虚拟节点数，越大分布越均匀
       virtual_nodes: 150
-      # 全量 Rebalance 检测间隔
       full_rebalance_check_interval: "5s"
 
-    # 对账配置
     reconcile:
-      # 对账巡检间隔
       interval: "30s"
 
-    # 节点黑名单配置（Rainbow 热加载，修改后自动生效无需重启）
     blacklist:
-      # 手动拉黑的节点列表（填写 nodeID，即 podIP:port 或 hostname）
-      # 被拉黑的节点不参与调度，其负责的 app 会被迁移到其他节点
       nodes: ${BLACKLIST_NODES}
-      # 黑名单变更检测间隔
       check_interval: "2s"
   client.yaml: |
     client:
@@ -73,46 +48,28 @@ data:
         name: formal # 环境名称 [选填]
 
   placeholder.yaml: |
-    # ============================================================
-    # trpc_go.yaml 占位符
-    # ============================================================
 
-    # 命名空间
     NAMESPACE: Production
 
-    # 环境名
     ENV_NAME: formal
 
-    # Rainbow 环境名
     RAINBOW_ENV_NAME: formal
 
-    # 是否启用 set
     ENABLE_SET: "N"
 
-    # set 名
     FULL_SET_NAME: ""
 
-    # 日志级别
     LOG_LEVEL: info
 
-    # Polaris Leader 服务 token
     POLARIS_LEADER_TOKEN: "9c2e094500c642daba328b6067129ae4"
 
-    # ============================================================
-    # client.yaml 占位符
-    # ============================================================
 
     CHANNEL_TDSQL_TARGET: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local
 
-    # ============================================================
-    # application.yaml 占位符
-    # ============================================================
 
-    # ETCD 集群地址（集群内部署，namespace 与本服务保持一致，通过 ClusterIP Service 访问）
     ETCD_ENDPOINTS:
       - "etcd.{{ .Release.Namespace }}.svc.cluster.local:2379"
 
-    # 黑名单节点列表（空列表用 [] 表示，有值时用 YAML 列表格式）
     BLACKLIST_NODES: []
 
     FULL_REBALANCE_AT: 0

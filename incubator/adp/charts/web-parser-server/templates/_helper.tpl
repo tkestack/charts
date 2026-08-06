@@ -1,65 +1,29 @@
 {{- define "web-parser-server.cos.secretId" -}}
-    {{- if eq .Values.global.components.s3.providerType "minio" -}}
-        {{ .Values.global.components.s3.minio.secretId }}
-    {{- else if eq .Values.global.components.s3.providerType "obs" -}}
-        {{ .Values.global.components.s3.obs.secretId }}
-    {{- else if eq .Values.global.components.s3.providerType "csp" -}}
-        {{ .Values.global.components.s3.csp.secretId }}
-    {{- else -}}
+    {{- if eq .Values.global.components.s3.providerType "cos" -}}
         ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
     {{- end -}}
 {{- end -}}
 
 {{- define "web-parser-server.cos.secretKey" -}}
-    {{- if eq .Values.global.components.s3.providerType "minio" -}}
-        {{ .Values.global.components.s3.minio.secretKey }}
-    {{- else if eq .Values.global.components.s3.providerType "obs" -}}
-        {{ .Values.global.components.s3.obs.secretKey }}
-    {{- else if eq .Values.global.components.s3.providerType "csp" -}}
-        {{ .Values.global.components.s3.csp.secretKey }}
-    {{- else -}}
+    {{- if eq .Values.global.components.s3.providerType "cos" -}}
         ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
     {{- end -}}
 {{- end -}}
 
 {{- define "web-parser-server.cos.bucket" -}}
-    {{- if eq .Values.global.components.s3.providerType "minio" -}}
-        qbot
-    {{- else if eq .Values.global.components.s3.providerType "obs" -}}
-        qbot
-    {{- else if eq .Values.global.components.s3.providerType "csp" -}}
-        qbot
-    {{- else -}}
+    {{- if eq .Values.global.components.s3.providerType "cos" -}}
         ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
     {{- end -}}
 {{- end -}}
 
 {{- define "web-parser-server.cos.endpoint" -}}
-    {{- if eq .Values.global.components.s3.providerType "minio" -}}
-        {{- $host := .Values.global.components.s3.minio.host -}}
-        {{- $port := .Values.global.components.s3.minio.port -}}
-        {{- if $port -}}
-            {{ $host }}:{{ $port }}
-        {{- else -}}
-            {{ $host }}
-        {{- end -}}
-    {{- else if eq .Values.global.components.s3.providerType "obs" -}}
-        {{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}
-    {{- else if eq .Values.global.components.s3.providerType "csp" -}}
-        {{ .Values.global.components.s3.csp.host }}:{{ .Values.global.components.s3.csp.port }}
-    {{- else -}}
+    {{- if eq .Values.global.components.s3.providerType "cos" -}}
         cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.${INFRA_MIDDLEWARES_S3_COS_DOMAIN}
     {{- end -}}
 {{- end -}}
 
 {{- define "web-parser-server.cos.protocol" -}}
-    {{- if eq .Values.global.components.s3.providerType "minio" -}}
-        http
-    {{- else if eq .Values.global.components.s3.providerType "obs" -}}
-        {{ .Values.global.scheme }}
-    {{- else if eq .Values.global.components.s3.providerType "csp" -}}
-        {{ .Values.global.scheme }}
-    {{- else -}}
+    {{- if eq .Values.global.components.s3.providerType "cos" -}}
         https
     {{- end -}}
 {{- end -}}

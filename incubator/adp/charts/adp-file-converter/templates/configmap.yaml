@@ -5,7 +5,6 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   FileManagerServer.yaml: |
-    #k: v     # 使用yaml做配置管理，可以写注释
     base:                                         # 基础配置
       is_manager_server: true
       reload_interval: 30s                        # 路由表重载间隔

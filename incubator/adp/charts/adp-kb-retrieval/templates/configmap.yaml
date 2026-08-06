@@ -387,11 +387,9 @@ data:
         /qbot.qbot.vector_doc.DirectIndex/SearchVector: true
         /qbot.qbot.vector_doc.DirectIndex/AddVector: true
         /trpc.smartassistant.vectordbmanager.VectorObj/Embedding: false
-    # RESOLVE: keep-public
     disable_image_embedding: ${DISABLE_IMAGE_EMBEDDING}
     platform_es_instances:
       es-0:
-        # RESOLVE: keep-public
         url: "http://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}"
         user: ${INFRA_MIDDLEWARES_ES_0_USER}
         password: ${INFRA_MIDDLEWARES_ES_0_PASSWORD}
@@ -450,7 +448,6 @@ data:
           protocol: trpc
           timeout: 20000
         - name: pipeline-flow-detail
-          # RESOLVE: keep-private
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/${PIPLINE_DB}?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: trpc.SmartAssistant.LLMManagerServer.Chat
           target: "ip://adp-llm.{{ .Release.Namespace }}.svc.cluster.local:8000"
@@ -544,8 +541,6 @@ data:
     }
 
   placeholder.yaml: |
-    # ---------- trpc_go.yaml start -----------
-    # global字段下使用
     VDB_MANAGER_TARGET: "ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001"
     PLUGIN_LLM_MANAGER_SERVER_TARGET: "ip://adp-llm.{{ .Release.Namespace }}.svc.cluster.local:8000"
     VDB_PREFIX: "__qd:qbot"
@@ -659,7 +654,6 @@ data:
     TEXT2SQL_CONTENT_101_900_PREVIEW: text2sql_content_101_900_preview
     TEXT2SQL_CONTENT_101_900_PROD: text2sql_content_101_900_prod
 
-    # easygraph配置项
     EASYGRAPH_NAME: formal
     EASYGRAPH_URL: "ws://30.44.134.72:8182/gremlin"
     EASYGRAPH_USER: {{ ((.Values.global.easygraph).credentials).username | default "" }}
@@ -668,10 +662,8 @@ data:
     DB_NAME_PREVIEW: db_text2sql_preview
     DB_NAME_PROD: db_text2sql_prod
 
-    # 是否使用向量召回，私有化当前模型窗口小，不开启  vector_recall_enable
     TEXT2SQL_VECTOR_RECALL_ENABLE: {{ .Values.global.retrieval_config.vector_recall_enable }}
 
-    # 数据库代理，私有化不需要
     INTERNAL_DB_HOST_WHITE_LIST:
       '100036585679':
         - "9.140.52.213:3306"
@@ -683,14 +675,10 @@ data:
     GALILEO_OCP_ADDR:
     GALILEO_ACCESS_POINT:
     DEFAULT_LANG: zh-CN
-    # ---------- trpc_go.yaml end -----------
 
-    # ---------- client.yaml start -----------
-    #mysql.db_llm_robot
     SHORT_URL_ROOT_URL: "http://short.url.com/"
 
 
-    # 禁用多模态embedding，包括文搜图、图片入库和图搜图，私有化设置为true disable_image_embedding
     OFFLINE_MODEL_MAPPING:
       sn-llm-embedding-2b-v0.2.2: Youtu/youtu-offline-embedding-llm
       sn-large-multi-language-v0.2.5: Youtu/youtu-offline-embedding
@@ -703,7 +691,6 @@ data:
       Youtu/youtu-embedding-llm: sn-llm-embedding-2b-v0.2.2
 
     DEFAULT_IMAGE_MODEL_WHITE_LIST: {}
-    # ---------- whitelist.yaml start -----------
 
     ES_INSTANCE0_URL: "http://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}"
 
@@ -713,12 +700,9 @@ data:
       - Youtu/youtu-offline-embedding
       - Youtu/youtu-offline-embedding-llm
       cache_ttl: 1200s
-    # PIPELINE_MYSQL_PASSWORD: "jQ$6+^V=@c46@Ex%Y6,@G"  # TODO: 请移除内置敏感信息，改用环境变量或外部密钥管理 -> 没有引用
     PIPLINE_DB: db_llm_robot_history
 
-    # ---------- client.yaml end -----------
 
-    # ---------- application.yaml start -----------
     INTERNAL_DB_WHITE_LIST:
       1954609918:           # 零信任产品中心
         0: true
@@ -951,7 +935,6 @@ data:
           protocol: trpc
           timeout: 20000
         - name: pipeline-flow-detail
-          # RESOLVE: keep-private
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/${PIPLINE_DB}?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: trpc.SmartAssistant.LLMManagerServer.Chat
           target: "ip://adp-llm.{{ .Release.Namespace }}.svc.cluster.local:8000"
@@ -1005,10 +988,6 @@ data:
           timeout: 15000
 
   whitelist.yaml: |
-    # 允许访问内网地址的数据库的账号，废弃，使用internal_db_host_white_list
     internal_db_white_list:
-    # 内网数据库IP白名单，限制用户只能访问指定的ip:port
     internal_db_host_white_list: ${INTERNAL_DB_HOST_WHITE_LIST}
-    # 默认多模态embedding模型白名单（key=appBizID, value=true）
-    # 默认图搜图/文搜图模型已下线，仅白名单内的应用允许继续使用 DefaultImageModel / DefaultTextSearchImageModel
     default_image_model_white_list: ${DEFAULT_IMAGE_MODEL_WHITE_LIST}

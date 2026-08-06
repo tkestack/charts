@@ -10,7 +10,6 @@ data:
         - client_track
         - cle-route-propagator
       service:
-        # 工作流MySQL
         - name: mysql.db_llm_plugin
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: mysql.db_llm_robot_task
@@ -354,85 +353,46 @@ data:
       workflow_name_len: 100
       min_workflow_len: 1
       workflow_limit: 1000
-      # 节点名称长度限制
       node_name_max_len: 100
-      # 每个节点的输入参数个数限制
       node_input_param_max: 50
-      # 输入参数名字长度限制
       node_input_param_name_len: 40
-      # 输入参数名字要求正则表达式
       node_input_param_name_pattern: "^[a-zA-Z_][a-zA-Z0-9_]*$"
-      # 输入参数名字要求正则表达式(允许空格)
       node_input_param_name_pattern_with_space: "^[a-zA-Z_][ a-zA-Z0-9_]*$"
-      # 输入参数默认值长度限制
       node_input_param_default_value_len: 10000
-      # 输入子入参数的数组长度
       node_sub_input_param_len: 99
-      # 输入子入参数的深度
       node_sub_input_param_depth: 10
-      # 意图描述长度
       intent_desc_len: 1000
-      # 工作流画布JSON节点总数
       ui_node_total: 500
-      # 节点中prompt的长度（用于固定长度控制，如知识检索节点）
-      # 前端按照默认4000进行限制，后端需要double
       node_prompt_max_len: 8000
-      # 每个节点最多支持配置x个参数
       node_parameter_max_len: 20
-      # 大模型节点视觉输入个数限制
       llm_visual_input_limit: 10
-      # 大模型节点音频输入个数限制
       llm_audio_input_limit: 10
-      # 知识检索及大模型知识问答两节点文档数量
       doc_biz_ids_max: 100
-      # 文档召回数量
       doc_recall_count_min: 1
-      # 文档召回数量Max
       doc_recall_count_max: 200
-      # 文档检索匹配度Max
       doc_confidence_max: 0.99
-      # 问答召回数量
       qa_recall_count_min: 2
-      # 问答召回数量Max
       qa_recall_count_max: 10
-      # 问答检索匹配度Max, 0.01 ~ 0.99
       qa_confidence_max: 0.99
-      # 知识检索和知识Max
       knowledge_tag_max: 10
-      # 标签节点最多支持配置标签的个数
       node_tag_max_len: 10
-      # 支持输入标签的取值示例，最多支持50个
       node_tag_example_max_len: 50
-      # 工具节点入参的个数
       node_tool_max_count: 50
-      # 工具节点入参的深度
       node_tool_sub_max_depth: 10
-      # 工具节点出入参规则
       node_tool_valid_json_field_rex: "^[a-zA-Z_][a-zA-Z0-9_-]*$"
-      # 工具节点参数名称最大长度
       node_tool_name_max: 40
-      # 工具节点resp的最大深度
       node_tool_resp_max_depth: 11
-      # 用户输入的"固定值"的长度
       user_input_max_len: 10000
-      # 条件组最多个数限制
       logic_group_count_max: 50
-      # 回复节点内容最大
       answer_max_len: 8000
       code_node_input_len: 99
       code_node_output_len: 99
       code_node_code_len: 131072
-      # 反馈描述最大长度
       feedback_desc_max_len: 2000
-      # 选项卡节点中选项的最大个数（包含else）
       option_max_item_count: 101
-      # 选项卡问题最大长度
       option_max_question_len: 2000
-      # 选项卡选项最大长度
       option_item_max_len: 200
-      # 意图识别模型 - 待识别意图的内容（deprecated，由模型动态配置）
       intent_prompt: 4000
-      # 循环节点内置的"输入变量"
       iteration_inner_input_param_names:
         - Loop
         - Loop.Index
@@ -440,55 +400,30 @@ data:
         - Loop.ErrorCode
         - Loop.Log
       var_aggregation_max_group_count: 10
-      # 变量聚合节点中 聚合变量组 中 聚合变量的最大个数
       var_aggregation_max_item_count: 50
-      # 知识库数据库节点sql语句最长字符数
       knowledge_db_sql_max_len: 4000
-      # 知识库数据库节点最多支持选择到10个表
       knowledge_db_table_max_len: 10
-      # 大模型，agent，标签提取，知识问答，意图识别节点异常超时触发时间    600秒
       llm_abnormal_time: 600
-      # 代码，消息队列节点异常超时触发时间    60秒
       code_abnormal_time: 60
-      # 插件节点异常超时触发时间    1800秒
       plugin_abnormal_time: 1800
-      # 异常处理机制，最大重试次数
       retry_max: 5
-      # 异常处理机制，最大重试时间间隔
       retry_interval_max: 60
-      # 异常处理机制，异常输出变量最大长度
       abnormal_output_result_len: 4000
-      # 中间消息，最大内容长度 200
       pending_message_max_content_len: 200
-      # 中间消息，最长输出延时（单位：秒） 5
       pending_message_max_delay_seconds: 5
-      # 工作流引用最大深度
       workflow_reference_depth: 5
-      # 意图识别个数
       intent_max: 51
-      # 是否开启真只针对调试通过和发布的工作流开关
       debugged_or_published_enable: true
-      # 是否支持工作流高版本向低版本导入，默认false不支持
       is_support_workflow_import_high_to_low: true
-      # 注释节点文本长度上限
       node_comment_data_max_len: 1200
-      # 文件采集节点提示词长度上限
       node_file_collection_question_max_len: 1200
-      # 文件收集节点允许最多上传文件个数
       node_file_collection_max_allowed_upload_file_count: 20
-      # 工具节点腾讯云签名的SecretId允许的最大长度
       node_tool_tencent_secret_id_max_len: 1024
-      # 工具节点腾讯云签名的SecretKey允许的最大长度
       node_tool_tencent_secret_key_max_len: 1024
-      # 工具节点异步轮询调用超时时间最大值
       node_tool_polling_max_timeout: 600
-      # 工具节点异步轮询调用间隔最大值
       node_tool_polling_max_interval: 10
-      # 工具节点异步回调调用超时时间-分钟
       node_tool_callback_max_timeout: 10
-      # 文本收集节点引导语长度上限
       node_text_collection_question_max_len: 1000
-      # 历史对话轮数上限
       node_dialog_history_limit_max_len: 50
 
     verify_parameter:
@@ -804,7 +739,6 @@ data:
         batch_size: 0
         stopped_resume_time: 720h
 
-    # 数据同步任务
     data_sync_task:
       release_queue_length: 200
       release_items_per_batch: 10
@@ -895,7 +829,6 @@ data:
       not_support: ["medical-6b", "Youtu/youtu-mllm", "cs-normal-mllm-72B"]
 
     workflow_node_llm_support:
-      # 参数提取节点
       parameter_extractor:
         high_performance_price: ["Hunyuan/hunyuan", "Youtu/youtu-mrc-pro", "Deepseek/deepseek-v3-250324", "hunyuan", "cs-normal-70b", "lke-deepseek-v3"]
         recommend: ["Hunyuan/hunyuan", "Youtu/youtu-mrc-pro", "Deepseek/deepseek-v3-250324", "hunyuan", "cs-normal-70b", "lke-deepseek-v3"]
@@ -904,7 +837,6 @@ data:
         limit_time_free: []
         default_selected: ["Youtu/youtu-intent-pro", "workflow-pro"]
         not_show: ["Youtu/youtu-mllm", "cs-normal-mllm-72B"]
-      # 大模型节点
       llm:
         high_performance_price: ["Hunyuan/hunyuan", "Youtu/youtu-mrc-pro", "Deepseek/deepseek-v3-250324", "hunyuan", "cs-normal-70b", "lke-deepseek-v3"]
         recommend: ["Hunyuan/hunyuan", "Youtu/youtu-mrc-pro", "Deepseek/deepseek-v3-250324", "hunyuan", "cs-normal-70b", "lke-deepseek-v3"]
@@ -913,7 +845,6 @@ data:
         limit_time_free: []
         default_selected: ["Youtu/youtu-mrc-pro", "cs-normal-70b", "Youtu/youtu-intent-pro", "workflow-pro"]
         not_show: ["Youtu/youtu-mllm", "cs-normal-mllm-72B"]
-      # 大模型知识问答节点
       llm_knowledge_qa:
         high_performance_price: ["Hunyuan/hunyuan", "Youtu/youtu-mrc-pro", "Deepseek/deepseek-v3-250324", "hunyuan", "cs-normal-70b", "lke-deepseek-v3"]
         recommend: ["Hunyuan/hunyuan", "Youtu/youtu-mrc-pro", "Deepseek/deepseek-v3-250324", "hunyuan", "cs-normal-70b", "lke-deepseek-v3"]
@@ -922,7 +853,6 @@ data:
         limit_time_free: []
         default_selected: ["Youtu/youtu-mrc-pro", "cs-normal-70b"]
         not_show: ["Youtu/youtu-mllm", "cs-normal-mllm-72B"]
-      # 标签提取节点
       tag_extractor:
         high_performance_price: ["Hunyuan/hunyuan", "Youtu/youtu-mrc-pro", "Deepseek/deepseek-v3-250324", "hunyuan", "cs-normal-70b", "lke-deepseek-v3"]
         recommend: ["Hunyuan/hunyuan", "Youtu/youtu-mrc-pro", "Deepseek/deepseek-v3-250324", "hunyuan", "cs-normal-70b", "lke-deepseek-v3"]
@@ -931,7 +861,6 @@ data:
         limit_time_free: []
         default_selected: ["Youtu/youtu-mrc-pro", "cs-normal-70b"]
         not_show: ["Youtu/youtu-mllm", "cs-normal-mllm-72B"]
-      # 意图识别节点
       intent_recognition:
         high_performance_price: ["Hunyuan/hunyuan", "Youtu/youtu-mrc-pro", "Deepseek/deepseek-v3-250324", "hunyuan", "cs-normal-70b", "lke-deepseek-v3"]
         recommend: ["Hunyuan/hunyuan", "Youtu/youtu-mrc-pro", "Deepseek/deepseek-v3-250324", "hunyuan", "cs-normal-70b", "lke-deepseek-v3"]
@@ -940,7 +869,6 @@ data:
         limit_time_free: []
         default_selected: ["Youtu/youtu-mrc-pro", "cs-normal-70b"]
         not_show: ["Youtu/youtu-mllm", "cs-normal-mllm-72B"]
-      # 选项卡节点
       option_card:
         high_performance_price: ["Hunyuan/hunyuan", "Youtu/youtu-mrc-pro", "Deepseek/deepseek-v3-250324", "hunyuan", "cs-normal-70b", "lke-deepseek-v3"]
         recommend: ["Hunyuan/hunyuan", "Youtu/youtu-mrc-pro", "Deepseek/deepseek-v3-250324", "hunyuan", "cs-normal-70b", "lke-deepseek-v3"]
@@ -949,7 +877,6 @@ data:
         limit_time_free: []
         default_selected: ["Youtu/youtu-intent-pro", "workflow-pro"]
         not_show: ["Youtu/youtu-mllm", "cs-normal-mllm-72B"]
-      # 逻辑判断节点
       logic_evaluator:
         high_performance_price: ["Hunyuan/hunyuan", "Youtu/youtu-mrc-pro", "Deepseek/deepseek-v3-250324", "hunyuan", "cs-normal-70b", "lke-deepseek-v3"]
         recommend: ["Hunyuan/hunyuan", "Youtu/youtu-mrc-pro", "Deepseek/deepseek-v3-250324", "hunyuan", "cs-normal-70b", "lke-deepseek-v3"]
@@ -963,10 +890,8 @@ data:
       disabled: ${DISABLE_FINANCE}
 
     app_share:
-      # base_url + "/" + shareCode
       base_url: ${APP_SHARE_BASE_URL}
       immediately_base_url: ${APP_SHARE_IMMEDIATE_BASE_URL}
-      # 过期时间，0标识不过期
       expired_time: 0
       redis_prefix_key: lke_share_url
       share_code_len: 6
@@ -1034,13 +959,6 @@ data:
         t_workflow_ref_agent_history: f_app_biz_id
         t_workflow_ref_widget_history: f_app_biz_id
 
-    # 工作流数据库表物理删除配置
-    # need_delete_tables DB需要删除的表名列表
-    #   map:[string]string, key:表名 value:表删除handler name
-    #       t_category: ROBOT_ID
-    #       ...
-    # delete_batch_size 批次删除最大数量
-    # query_batch_size 批次查询最大数量
     flow_delete_config:
       delete_batch_size: 5000 # 批次删除最大数量
       query_batch_size: 1000 # 批次查询最大数量
@@ -1051,29 +969,18 @@ data:
         t_bot_task_history: OTHER_ROBOT_ID
         t_sync_task: OTHER_ROBOT_ID   # robot_id
         t_sync_task_log: OTHER_ROBOT_ID
-        # 包含 t_entity, t_entry,t_slot_entity,
         t_entity: ENTITY_ID
-        #  ================= f_robot_id ==============
         t_category: ROBOT_ID
         t_intent_corpus: ROBOT_ID
         t_slot: ROBOT_ID
         t_task_flow_import: ROBOT_ID
         t_vector_group: ROBOT_ID
-        # ================= f_intent_id ===============
-        # 包含 t_robot_intent,t_intent,t_task_flow,t_task_flow_history,t_task_flow_publish_history,t_corpus,t_intent_var,
-        # t_intent_slot,t_intent_flow,t_intent_entry,t_intent_corpus_publish_history
         t_robot_intent: FLOW_INTENT_ID
-        # ================== PROD ==============
         "prod|t_var": OTHER_ROBOT_ID_PROD
-        # 包含 t_entity, t_entry,t_slot_entity,
         "prod|t_entity": ENTITY_ID_PROD
-        #  ================= f_robot_id ==============
         "prod|t_intent_corpus": ROBOT_ID_PROD
         "prod|t_slot": ROBOT_ID_PROD
-        # 包含 t_robot_intent,t_intent,t_task_flow,t_corpus,t_intent_var,
-        # t_intent_slot,t_intent_flow,t_intent_entry,
         "prod|t_robot_intent": FLOW_INTENT_ID_PROD
-        # ----------------- workflow ---------
         "w|t_workflow": W_ROBOT_ID
         "w|t_robot_workflow": W_ROBOT_ID
         "w|t_workflow_example": W_ROBOT_ID
@@ -1124,24 +1031,15 @@ data:
         t_parameter_history: W_ROBOT_ID_HISTORY
         t_workflow_custom_model_history: W_ROBOT_ID_HISTORY
 
-    # 企点所对应的sid
     qidian_sid: 2
 
-    # 异步工作流配置
     async_workflow_config:
-      # 工作流运行实例个数用户级限制
       workflow_run_limit: 10
-      # 工作流运行实例个数总体限制
       workflow_run_overall_limit: 300
-      # 定时兜底间隔时间，单位秒
       fallback_timer_interval: 300
-      #定时重试UIN间隔时间，单位秒
       retry_timer_interval: 5
-      # 运行中重试间隔时间，单位秒
       running_retry_interval: 7200
-      # 工作流运行实例个数用户级限制白名单，uin:limit
       batch_stop_workflow_run_limit: 100
-      # 创建异步任务时调试参数最大长度
       max_custom_variables_chars: 65535
 
     ignore_service_name:
@@ -1170,7 +1068,6 @@ data:
       Youtu/youtu-embedding: Youtu/youtu-offline-embedding
       embedding_1121_7500: Youtu/youtu-offline-embedding
 
-    # 向量库配置
 
 
   placeholder.yaml: |
@@ -2075,7 +1972,6 @@ data:
         - client_track
         - cle-route-propagator
       service:
-        # 工作流MySQL
         - name: mysql.db_llm_plugin
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: mysql.db_llm_robot_task

@@ -5,13 +5,11 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   adp.yaml: |
-    # 私有化环境不需要灰度配置，留空即可
     vips:
     envs:
     default_env: ""
 
   placeholder.yaml: |
-    # 私有化环境占位符
     NAMESPACE: Production
 
   router.yaml: |

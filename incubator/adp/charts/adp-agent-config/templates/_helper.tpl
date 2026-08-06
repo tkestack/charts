@@ -1,38 +1,5 @@
 {{- define "qbot.s3_storage" -}}
-    {{- if eq .Values.global.components.s3.providerType "minio" -}}
-      type: minio
-      min_io_map:
-        default:
-          secret_id: cspuser
-          secret_key: {{ .Values.global.components.s3.cos.secretKey | default "" }}
-          region: ""
-          bucket: qbot
-          sts_endpoint: http://minio.{{ .Release.Namespace }}.svc.cluster.local
-          end_point: minio.{{ .Release.Namespace }}.svc.cluster.local
-          external_end_point: {{ .Values.global.clb }}
-          use_https: {{ eq .Values.global.scheme "https" }}
-          expire_time: 30m
-        offline:
-          secret_id: cspuser
-          secret_key: {{ .Values.global.components.s3.cos.secretKey | default "" }}
-          region: ""
-          bucket: qbot
-          sts_endpoint: http://minio.{{ .Release.Namespace }}.svc.cluster.local
-          end_point: minio.{{ .Release.Namespace }}.svc.cluster.local
-          external_end_point: {{ .Values.global.clb }}
-          use_https: {{ eq .Values.global.scheme "https" }}
-          expire_time: 30m
-        realtime:
-          secret_id: cspuser
-          secret_key: {{ .Values.global.components.s3.cos.secretKey | default "" }}
-          region: ""
-          bucket: qbot
-          sts_endpoint: http://minio.{{ .Release.Namespace }}.svc.cluster.local
-          end_point: minio.{{ .Release.Namespace }}.svc.cluster.local
-          external_end_point: {{ .Values.global.clb }}
-          use_https: {{ eq .Values.global.scheme "https" }}
-          expire_time: 30m
-      {{- else -}}
+    {{- if eq .Values.global.components.s3.providerType "cos" -}}
       type: cos
       cos:
         secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
@@ -83,6 +50,6 @@
             role_arn: {{ .Values.global.components.s3.cos.stsRoleArn | quote }}
             duration_seconds: 43200
             refresh_ahead_seconds: 300
-      {{- end -}}
+    {{- end -}}
 
 {{- end -}}

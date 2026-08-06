@@ -12,7 +12,6 @@ data:
         - opentelemetry
       service:
         - name: trpc.tcadp.memory.redis
-          # RESOLVE: keep-private
           target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/${MEMORY_REDIS_DB}"
         - name: redis.lke.limiter
           network: tcp
@@ -183,7 +182,6 @@ data:
     infosec:
       disable_content_check: true
 
-    # 长期记忆最大数量限制（每个用户最多保留的记忆条数）
     long_term_memory_max_count: 50
     app_var_expire_time: 168
     long_term_memory_worker_count: 100
@@ -366,7 +364,6 @@ data:
         - opentelemetry
       service:
         - name: trpc.tcadp.memory.redis
-          # RESOLVE: keep-private
           target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/${MEMORY_REDIS_DB}"
         - name: redis.lke.limiter
           network: tcp

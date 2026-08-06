@@ -650,7 +650,6 @@ data:
         - name: trpc.kafka.producer.platform_metrology.finance_pay
           target: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_pack_pay&compression=none&partitioner=random&requiredAcks=-1"
         - name: trpc.kafka.producer.platform_metrology.report
-          # RESOLVE: keep-public
           target: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_platform_metrology_report"
         - name: trpc.http.cos.Access
           network: tcp
@@ -788,7 +787,6 @@ data:
     PLATFORM_MANAGER_ADMIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
     PLATFORM_MANAGER_API_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093
     PLATFORM_MANAGER_LOGIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091
-    #PLATFORM_MANAGER_API_TARGET: ip://21.0.181.215:9093
     KB_CONFIG_API_TARGET: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
 
     RESOURCE_GALLERY_ADMIN_TARGET: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
@@ -796,7 +794,6 @@ data:
     PLATFORM_CHARGER_API_TARGET: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9091
     PLUGIN_CONFIG_TARGET: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
 
-    # Kafka 地址配置
     KAFKA_ADDR: ${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}
 
     AI_GATEWAY_ADMIN_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
@@ -854,7 +851,6 @@ data:
         kafka_client: trpc.KEP.msg-log-kafka.700001751666-test
     PLATFORM_ACCOUNT_API_TARGET: "ip://adp-platform-account.{{ .Release.Namespace }}.svc.cluster.local:9092"  # TODO: 待人工确认
 
-    # 插件
     KAFKA_EVENT_REPORT_TOPIC: platform_metrology_event_report
     KAFKA_REPORT_GROUP: bot-data-statistic-event-report
 
@@ -1183,7 +1179,6 @@ data:
         - name: trpc.kafka.producer.platform_metrology.finance_pay
           target: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_pack_pay&compression=none&partitioner=random&requiredAcks=-1"
         - name: trpc.kafka.producer.platform_metrology.report
-          # RESOLVE: keep-public
           target: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_platform_metrology_report"
         - name: trpc.http.cos.Access
           network: tcp

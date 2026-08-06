@@ -45,7 +45,6 @@ data:
 
   application.yaml: |
     disable_content_check: {{ .Values.global.contentSecurity.disableContentCheck }}
-    # RESOLVE: keep-private
     skip_check: []
     evil_check_config: ${APPLICATION_EVIL_CHECK_CONFIG}
     session:
@@ -76,7 +75,6 @@ data:
       max_same_event: 100
       nil_return_msg: "nil returned"
     clean_data_conf:
-      # RESOLVE: keep-private
       retention_day: {{ .Values.global.delete_data.chat_server_retention_days }}
       select_batch_size: ${APPLICATION_CLEAN_DATA_SELECT_BATCH_SIZE}
       clean_interval: 1000
@@ -94,7 +92,6 @@ data:
         check: 20
         streaming: ${APPLICATION_BOT_THROTTLES_STREAMING}
       response_channel_size: 1500
-      # RESOLVE: keep-private
       max_concurrence:
         standard: {{ .Values.global.ChatServer.max_concurrence }}
         white_list:
@@ -121,9 +118,7 @@ data:
         below: 15
     reject_answer_judge_length: 20
     app:
-      # RESOLVE: keep-private
       black_list: []
-      # RESOLVE: keep-private
       force_close_llm: []
     multi_modal:
       get_caption_prompt: 用200字以内描述这张图片
@@ -139,7 +134,6 @@ data:
       time_period: 1
       default_corp_limit: ${APPLICATION_LIMITER_DEFAULT_CORP_LIMIT}
       report_judge_length: 100
-      # RESOLVE: keep-private
       corp_limit:
         233748: 20
         274049: 100
@@ -163,7 +157,6 @@ data:
     model:
       local_cache_ttl: 300
       prompt_length: ${APPLICATION_MODEL_PROMPT_LENGTH}
-      # RESOLVE: keep-private
       white_list: []
       prompt_list:
         normal_message: |-
@@ -207,11 +200,9 @@ data:
       ds_default_tpm: ${APPLICATION_FINANCE_DS_DEFAULT_TPM}
       billing_model_map: ${APPLICATION_FINANCE_BILLING_MODEL_MAP}
       biz_type: ${APPLICATION_FINANCE_BIZ_TYPE}
-      # 模型级默认 QPM/TPM 限流配置
       model_config: ${APPLICATION_FINANCE_MODEL_CONFIG}
     clarify_confirm:
       top_n: 3
-      # RESOLVE: keep-private
       white_list: []
     mock:
       enable_llm: false
@@ -219,7 +210,6 @@ data:
       salt: a99a52254a1d58231ebe07b2a7f28534
     stage_task_name: ${APPLICATION_STAGE_TASK_NAME}
     thought_conf:
-      # RESOLVE: keep-public
       thought_icon: ${APPLICATION_THOUGHT_ICON}
       status_title: ${APPLICATION_THOUGHT_STATUS_TITLE}
     event_downgrade_conf: ${APPLICATION_EVENT_DOWNGRADE_CONF}
@@ -306,7 +296,6 @@ data:
     doc_clean_config:
       doc_record_expire_days: ${APPLICATION_DOC_CLEAN_EXPIRE_DAYS}
       default_expire_seconds: ${APPLICATION_DOC_CLEAN_DEFAULT_EXPIRE_SECONDS}
-      # RESOLVE: keep-public
       custom_app_expire_seconds: ${APPLICATION_DOC_CLEAN_CUSTOM_APP_EXPIRE_SECONDS}
     core_config:
       data_channel: ${APPLICATION_CORE_CONFIG_DATA_CHANNEL}
@@ -390,7 +379,6 @@ data:
                 refresh_ahead_seconds: 300
       optimize:
         default_model_name: ${APPLICATION_WIDGET_OPTIMIZE_DEFAULT_MODEL}
-        # RESOLVE: keep-public
         prompt_template: ${APPLICATION_WIDGET_OPTIMIZE_PROMPT_TEMPLATE}
       storage: ${APPLICATION_WIDGET_STORAGE}
       cos_config:
@@ -404,11 +392,8 @@ data:
     inner_access_control: ${APPLICATION_INNER_ACCESS_CONTROL}
     is_private: true
     apex:
-      # RESOLVE: keep-private
       use_grpc: true
-      # RESOLVE: keep-private
       namespace: ''
-      # RESOLVE: keep-private
       service: apex.router
       default_target: "apex-router-cmlb-8083-0.{{ .Release.Namespace }}.svc.cluster.local:8083"
     experiment_config:
@@ -584,7 +569,6 @@ data:
           target: ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001
           namespace: ${CLIENT_NAMESPACE}
           protocol: trpc
-          # RESOLVE: keep-public
           timeout: ${CLIENT_APP_MEMORY_TIMEOUT}
         - callee: trpc.adp.platform_metrology.Api
           target: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
@@ -950,26 +934,21 @@ data:
     AGENT_FILE_SYSTEM_DOMAIN: "{{ .Values.global.scheme }}://{{ .Values.global.clb }}/sandbox"
     AGENT_FILE_SYSTEM_SIGN_KEY: 75ad8166657babf0b113db4fbe44d14a34be4c721740638fd281a3a20d059d00
     APPLICATION_EVIL_CHECK_CONFIG:
-      # 丰田中国
       100036958148:
         skip_check_evil: true
         white_app_list:
-      # 丰田中国
       100037164921:
         skip_check_evil: true
         white_app_list:
-      # 南京开为网络科技有限公司
       100020322809:
         skip_check_evil: true
         white_app_list:
-      # 内容识别中心账号
       100042596873:
         skip_check_evil: true
         white_app_list:
       100004528167:
         skip_check_evil: true
         white_app_list:
-      # 北京精一强远科技有限公司
       100003054009:
         skip_check_evil: true
         white_app_list:
@@ -3328,7 +3307,6 @@ data:
           target: ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001
           namespace: ${CLIENT_NAMESPACE}
           protocol: trpc
-          # RESOLVE: keep-public
           timeout: ${CLIENT_APP_MEMORY_TIMEOUT}
         - callee: trpc.adp.platform_metrology.Api
           target: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000

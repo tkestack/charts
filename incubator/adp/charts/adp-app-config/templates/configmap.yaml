@@ -981,7 +981,6 @@ data:
       expired_time: 0
       share_code_len: 6
       white_app_id: ${APP_SHARE_WHITE_APP_ID}
-      # RESOLVE: keep-public
       access_control_max_account_count: 500 
       independent_site_base_url: ${APP_SHARE_INDEPENDENT_SITE_BASE_URL}
       immediately_independent_site_base_url: ${APP_SHARE_IMMEDIATELY_INDEPENDENT_SITE_BASE_URL}
@@ -1079,7 +1078,6 @@ data:
           protocol: trpc
           target: ip://adp-app-channel-token.{{ .Release.Namespace }}.svc.cluster.local:8000
         - name: trpc.KEP.channel_token_svr.ChannelTokenService
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           network: tcp
           protocol: trpc
@@ -1093,12 +1091,10 @@ data:
           target: ip://adp-app-channel.{{ .Release.Namespace }}.svc.cluster.local:8002
           timeout: 10000
         - name: trpc.KEP.channel_msg_svr.Api
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           network: tcp
           protocol: trpc
           target: ip://adp-app-channel.{{ .Release.Namespace }}.svc.cluster.local:8002
-          # RESOLVE: keep-public
           timeout: 10000 # TODO: 待人工确认，公有云从5000改成了10000，专有云之前是2000
         - callee: trpc.adp.app_admin_proxy.Login
           namespace: Production
@@ -1838,7 +1834,6 @@ data:
       disabled: true
     AI_CALL:
       account_uin: '100036138923'
-    # RESOLVE: keep-private
     CHANNEL_WXKF_CALLBACK_URL: {{ .Values.global.scheme }}://{{ .Values.global.clb }}/online/channel/callback/wxkf/
     CHANNEL_WECOM_CALLBACK_URL: {{ .Values.global.scheme }}://{{ .Values.global.clb }}/online/channel/callback/wecom/
     CHANNEL_WECOM_ROBOT_CALLBACK_URL: {{ .Values.global.scheme }}://{{ .Values.global.clb }}/online/channel/callback/wecomrobot/
@@ -1934,19 +1929,15 @@ data:
 
   plugin_model.yaml: |
     plugin_model:
-      # DeepSeek总结
       plugin_deep_seek:
         is_enabled: true
         prompt_version: v1
-      # 插件embedding
       plugin_embedding:
         is_enabled: true
         prompt_version: v1
-      # 插件工具embedding
       plugin_tool_embedding:
         is_enabled: true
         prompt_version: v1
-      # 插件prompt，用于文档解析和网页解析问答
       plugin_normal_message:
         is_enabled: true
         prompt_version: v1
@@ -2558,7 +2549,6 @@ data:
           protocol: trpc
           target: ip://adp-app-channel-token.{{ .Release.Namespace }}.svc.cluster.local:8000
         - name: trpc.KEP.channel_token_svr.ChannelTokenService
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           network: tcp
           protocol: trpc
@@ -2572,12 +2562,10 @@ data:
           target: ip://adp-app-channel.{{ .Release.Namespace }}.svc.cluster.local:8002
           timeout: 10000
         - name: trpc.KEP.channel_msg_svr.Api
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           network: tcp
           protocol: trpc
           target: ip://adp-app-channel.{{ .Release.Namespace }}.svc.cluster.local:8002
-          # RESOLVE: keep-public
           timeout: 10000 # TODO: 待人工确认，公有云从5000改成了10000，专有云之前是2000
         - callee: trpc.adp.app_admin_proxy.Login
           namespace: Production
@@ -2786,84 +2774,72 @@ data:
 
   workflow_model.yaml: |
     workflow_model:
-      # 大模型标签提取
       workflow_tag_extract:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v1
-      # 参数提取
       workflow_parameter_extract:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v1
-      # 参数提取（非COT）
       workflow_parameter_extract_not_cot:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v2
-      # 逻辑判断
       workflow_logic_evaluator:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v1
-      #逻辑判断（非COT）
       workflow_logic_evaluator_not_cot:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v1
-      # 参数追问
       workflow_parameter_probe:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v1
-      # 参数超过最大询问次数，兜底回复
       workflow_probe_exceeded_answer:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v2
-      # 选项卡
       workflow_option_card:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v2
-      # 选项卡多选
       workflow_intent:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v1
-      # 多意图识别
       workflow_multi_intent:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v1
-      # 大模型输出格式为json
       workflow_llm_output_format_json:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v1
-      # 推荐问
       workflow_recommend_question:
         prompt_words_limit: 5000
         history_limit: 5
@@ -2871,49 +2847,42 @@ data:
         is_enabled: true
         prompt_version: v2
 
-      # 工作流描述一键优化prompt
       workflow_desc_prompt:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v1
-      # 工作流参数提取节点提示词一键优化prompt
       workflow_parameter_prompt:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v1
-      # 工作流大模型节点提示词一键优化prompt
       workflow_llm_prompt:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v1
-      # 工作流大模型标签提取节点提示词一键优化prompt
       workflow_tag_prompt:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v1
-      # 工作流意图识别节点意图一键优化prompt
       workflow_intent_prompt:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v2
-      # 工作流一键优化prompt
       workflow_role_prompt:
         prompt_words_limit: 5000
         history_limit: 5
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v1
-      # 工作流代码节点AI生成prompt
       workflow_code_gen_prompt:
         prompt_words_limit: 5000
         history_limit: 5
@@ -2927,4 +2896,3 @@ data:
         history_words_limit: 5000
         is_enabled: true
         prompt_version: v1
-      # 意图识别

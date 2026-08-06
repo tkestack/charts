@@ -429,7 +429,6 @@ data:
         - wait
         - downloadsearch
       system_prompt: ''
-    # RESOLVE: keep-private
     sandbox_url: http://plugin-sandbox-mcp.{{ .Release.Namespace }}.svc.cluster.local:8000/lke/sandbox/sse # TODO: 待人工确认，公有云改成了"https://lke.testsite.woa.com/internal/plugin/mcp/3de4a6c6-e055-4d78-9e09-c4410aee79e4/sse"
     token_usage:
       model_name_map:
@@ -459,7 +458,6 @@ data:
       - TCADP/glm-5.0-turbo
       - TCADP/kimi-k2.6
       - TCADP/minimax-m2.7
-    # RESOLVE: keep-private
     storage:
       {{ include "adp-agent-exec.s3_storage" . }}
     executor_agent_limit:
@@ -549,7 +547,6 @@ data:
         url: "https://google.serper.dev/search"
         gl: cn
         hl: zh-cn
-        # RESOLVE: keep-private
         api_key: ''
         max_concurrency: 15
         num: 3

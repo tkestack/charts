@@ -7,7 +7,6 @@ data:
   application.yaml: |
     is_private: ${IS_PRIVATE}
     role_conf:
-      # RESOLVE: keep-public
       business_role_name: 管理员
       business_role_description: 主账号管理员角色
       role_id_salt: ${ROLE_ID_SALT}
@@ -23,7 +22,6 @@ data:
       - adpSpace
       - lkeSystem
       - lkeOP
-    # 申万定开
     single_role_mode: ${SINGLE_ROLE_MODE}
     export_presigned_expire: 48h
     ti_auth_account_conf:
@@ -85,7 +83,6 @@ data:
 
   client.yaml: |
     client:
-      # RESOLVE: keep-private
       filter:
         - cle-route-propagator
         - opentelemetry
@@ -93,10 +90,8 @@ data:
       timeout: 10000
       service:
         - name: mysql.adp.permission
-          # RESOLVE: keep-private
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/openplatform_permission_data?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: mysql.adp.conf
-          # RESOLVE: keep-private
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/openplatform_conf_data?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - callee: trpc.adp.app_admin_proxy.Api
           namespace: ${NAMESPACE}
@@ -131,7 +126,6 @@ data:
           namespace: ${NAMESPACE}
           target: "ip://adp-platform-authenticator.{{ .Release.Namespace }}.svc.cluster.local:9090"
           protocol: trpc
-          # RESOLVE: keep-private
           timeout: 10000
         - callee: ti-auth-account-http
           target: dns://ti-perm-auth.{{ .Release.Namespace }}.svc.cluster.local:8081
@@ -484,7 +478,6 @@ data:
     RAINBOW_APP_ID: 3f090873-420d-4575-b9d2-cf6a72980a33
     RAINBOW_ENV_NAME: formal
     RAINBOW_GROUP: platform-permission-config
-    #trpc_go.yaml end
 
     KB_ADMIN_CONFIG_API_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092
     KB_ADMIN_CONFIG_LOGIN_TARGET: ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091
@@ -495,9 +488,7 @@ data:
     TENCENT_STS_TARGET: dns://sts.tencentyun.com:50020
     TI_AUTH_ACCOUNT_TARGET: dns://ti-perm-auth.{{ .Release.Namespace }}.svc.cluster.local:8081
     PLATFORM_MANAGER_ADMIN_TARGET: ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090
-    # RESOLVE: keep-private
     IS_PRIVATE: true
-    # RESOLVE: keep-private
     ROLE_ID_SALT: superadmin
     SINGLE_ROLE_MODE: false
     GET_USER_NICKNAME_CONC_LIMIT: 100
@@ -914,14 +905,12 @@ data:
     server:
       app: adp
       server: platform-permission-config
-      # RESOLVE: keep-private
       filter:
         - recovery
         - i18n-adp
         - accesslog
         - cle-route-propagator
         - opentelemetry
-      # RESOLVE: keep-private
       stream_filter:
         - opentelemetry
       admin:
@@ -950,7 +939,6 @@ data:
           timeout: 25000
     plugins:
       log:
-        # RESOLVE: keep-private
         default:
           - writer: console
             level: info
@@ -1048,7 +1036,6 @@ data:
               en: 3
 
     client:
-      # RESOLVE: keep-private
       filter:
         - cle-route-propagator
         - opentelemetry
@@ -1056,10 +1043,8 @@ data:
       timeout: 10000
       service:
         - name: mysql.adp.permission
-          # RESOLVE: keep-private
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/openplatform_permission_data?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: mysql.adp.conf
-          # RESOLVE: keep-private
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/openplatform_conf_data?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - callee: trpc.adp.app_admin_proxy.Api
           namespace: ${NAMESPACE}
@@ -1094,7 +1079,6 @@ data:
           namespace: ${NAMESPACE}
           target: "ip://adp-platform-authenticator.{{ .Release.Namespace }}.svc.cluster.local:9090"
           protocol: trpc
-          # RESOLVE: keep-private
           timeout: 10000
         - callee: ti-auth-account-http
           target: dns://ti-perm-auth.{{ .Release.Namespace }}.svc.cluster.local:8081

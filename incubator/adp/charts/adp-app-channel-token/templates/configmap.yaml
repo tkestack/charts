@@ -31,7 +31,6 @@ data:
           target: "ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/2"
           password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
         - name: wx.nginx
-          # RESOLVE: keep-public
           target: ip://adp-app-channel-proxy.{{ .Release.Namespace }}.svc.cluster.local:8000
           network: tcp
           protocol: http
@@ -187,7 +186,6 @@ data:
           target: "ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/2"
           password: ${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}
         - name: wx.nginx
-          # RESOLVE: keep-public
           target: ip://adp-app-channel-proxy.{{ .Release.Namespace }}.svc.cluster.local:8000
           network: tcp
           protocol: http

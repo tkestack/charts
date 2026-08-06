@@ -20,12 +20,10 @@ data:
     auth_action_permission_ids_map: ${AUTH_ACTION_PERMISSION_IDS_MAP}
     default_granted_permission_ids: ${DEFAULT_GRANTED_PERMISSION_IDS}
     ti_auth_account_conf: ${TI_AUTH_ACCOUNT_CONF}
-    # RESOLVE: keep-public
     role_conf: ${ROLE_CONF}
 
   client.yaml: |
     client:
-      # RESOLVE: keep-private
       filter:
         - cle-route-propagator
         - opentelemetry
@@ -33,10 +31,8 @@ data:
       timeout: 3000
       service:
         - name: tdsql.adp.permission
-          # RESOLVE: keep-private
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/openplatform_permission_data?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: redis.authenticator
-          # RESOLVE: keep-private
           target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379"
           timeout: 800
         - name: ti-auth-account-http
@@ -52,7 +48,6 @@ data:
     RAINBOW_ENV_NAME: formal
     RAINBOW_GROUP: platform-authenticator
     TI_AUTH_ACCOUNT_TARGET: dns://ti-perm-auth.{{ .Release.Namespace }}.svc.cluster.local:8081
-    # RESOLVE: keep-private
     IS_PRIVATE: true
     MEMORY_CACHE_CONFIG:
       PermissionInfo:
@@ -306,13 +301,11 @@ data:
     server:
       app: adp
       server: platform-authenticator
-      # RESOLVE: keep-private
       filter:
         - recovery
         - i18n-adp
         - cle-route-propagator
         - opentelemetry
-      # RESOLVE: keep-private
       stream_filter:
         - opentelemetry
       admin:
@@ -410,7 +403,6 @@ data:
           enable_trans_meta: true
 
     client:
-      # RESOLVE: keep-private
       filter:
         - cle-route-propagator
         - opentelemetry
@@ -418,10 +410,8 @@ data:
       timeout: 3000
       service:
         - name: tdsql.adp.permission
-          # RESOLVE: keep-private
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/openplatform_permission_data?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: redis.authenticator
-          # RESOLVE: keep-private
           target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379"
           timeout: 800
         - name: ti-auth-account-http
