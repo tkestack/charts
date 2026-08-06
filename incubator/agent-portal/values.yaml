@@ -4,10 +4,13 @@
 #   1. 必填配置：安装前必须逐项修改，占位符形如 <YOUR_XXX>
 #   2. 可选配置：保持默认即可正常启动，按需调整
 #
-# 快速配置清单（最少需要修改以下 8 项）：
-#   clb / db.host / db.user / db.password
+# 快速配置清单（最少需要修改以下项）：
+#   clb / clbId / scheme / clbScheme / clbCertId（https 时）
+#   db.host / db.user / db.password
 #   storage.bucket / storage.region / storage.accessKey / storage.secretKey
 #   以及 PORTAL_CREDENTIALS_KEY、BETTER_AUTH_SECRET 两个密钥
+#
+# CLB 相关字段对齐 ADP Chart（global.clb / clbId / scheme / clbScheme / clbCertId）
 
 # ============================================================
 # 一、必填配置
@@ -17,9 +20,21 @@
 # Portal 对外访问域名（必填），不含协议和路径
 # 需要给 CLB 绑定一个自定义域名 https://console.cloud.tencent.com/clb/instance
 clb: "xx-portal.example.com"
+# CLB ID（必填），写入 Ingress 注解 kubernetes.io/ingress.existLbId，绑定已有 CLB
+# https://console.cloud.tencent.com/clb/instance
+clbId: lb-example
 # 平台访问协议：http 或 https（必填）
-# 使用 https 时需提前在集群中创建 TLS 证书 Secret https://console.cloud.tencent.com/ssl
+# 用于拼接 PORTAL_PUBLIC_URL / CLIENT_ORIGIN 等应用侧对外地址
 scheme: https
+# CLB 监听协议：http 或 https（必填，默认与 scheme 保持一致）
+# 适用场景：CLB 与后端之间存在协议卸载（SSL Offload）
+# 例如：客户端 https 访问 CLB，CLB 以 http 转发到后端 → scheme=https，clbScheme=http
+clbScheme: https
+# CLB HTTPS 证书 ID（clbScheme 为 https 时必填）
+# Chart 会自动创建 Secret <release>-agent-portal-clb-cert（key: qcloud_cert_id）供 TKE Ingress 使用
+# 已通过 ingress.tlsSecretName 指定现成证书 Secret 时，本项可留空
+# https://console.cloud.tencent.com/ssl
+clbCertId: "<YOUR_CLB_CERT_ID>"
 
 # ---------- 数据库（必填）----------
 # 支持 MySQL 8.0+ 或 TDSQL-MySQL，需与 TKE 集群同地域
@@ -126,19 +141,20 @@ ingress:
   enabled: true
   # IngressClass 名称，TKE 通常为 qcloud
   className: qcloud
-  # 网关读写超时，SSE 长会话需要放宽，不建议调小
-  annotations:
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
+  # 额外 Ingress 注解（可选）。下列注解由模板根据 clbId 自动注入，无需在此重复填写：
+  #   kubernetes.io/ingress.existLbId
+  #   ingress.cloud.tencent.com/direct-access
+  annotations: {}
   # Ingress 域名；留空时复用上方 clb
   host: ""
   # 路由路径，必须与 APP_BASE_PATH 保持一致
   path: /agent-portal
   # 路径匹配类型：ImplementationSpecific / Prefix / Exact
   pathType: ImplementationSpecific
-  # 是否配置 TLS，仅在已准备证书 Secret 时开启
+  # 是否配置 TLS；实际是否挂载 tls 段还取决于 clbScheme（默认与 scheme 一致）为 https
   tls: true
-  # TLS Secret 名称；留空时使用 <host>-secret
+  # TLS Secret 名称；留空时由 clbCertId 自动生成 <release>-agent-portal-clb-cert
+  # 填写后将复用该现成 Secret，Chart 不再创建证书 Secret
   tlsSecretName: ""
 
 # ---------- ADP 接入 ----------

@@ -32,6 +32,17 @@
       "type": "string",
       "pattern": "^$|^[A-Za-z0-9.-]+$"
     },
+    "clbId": {
+      "type": "string",
+      "pattern": "^$|^lb-[A-Za-z0-9]+$"
+    },
+    "clbScheme": {
+      "type": "string",
+      "enum": ["http", "https"]
+    },
+    "clbCertId": {
+      "type": "string"
+    },
     "adp": {
       "type": "object",
       "required": ["apiEndpoint", "chatEndpoint", "host"],

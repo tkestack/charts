@@ -21,8 +21,8 @@ Chart 将 Agent Portal 部署为单个 Deployment（前后端同镜像，后端�
 | ---- | ---- | ---- |
 | MySQL / TDSQL-MySQL | ✅ | MySQL 8.0+ 或 TDSQL-MySQL；字符集 `UTF8MB4`；`lower_case_table_names=1`；需提前创建库与授权用户。购买：[MySQL](https://console.cloud.tencent.com/cdb/instance) / [TDSQL](https://console.cloud.tencent.com/tdsqld/instance-tdmysql) |
 | 对象存储 COS | ✅ | 用于头像、附件等文件存储；也可对接自建 MinIO。购买：[COS](https://console.cloud.tencent.com/cos) |
-| CLB + 域名 | ✅ | 对外访问入口，需绑定自定义域名。购买：[CLB](https://console.cloud.tencent.com/clb/instance) |
-| SSL 证书 | 条件必填 | `scheme=https` 时需在集群中准备 TLS Secret。申请：[SSL](https://console.cloud.tencent.com/ssl) |
+| CLB + 域名 | ✅ | 对外访问入口，需绑定自定义域名；填写 `clb` / `clbId`。购买：[CLB](https://console.cloud.tencent.com/clb/instance) |
+| SSL 证书 | 条件必填 | `clbScheme=https` 时填写 `clbCertId`，Chart 自动创建 TKE 用的证书 Secret。申请：[SSL](https://console.cloud.tencent.com/ssl) |
 | SMTP 服务 | 可选 | 用于邮箱验证与密码重置 |
 
 > **注意**：数据库、COS 建议与 TKE 集群部署在**同一地域**，以获得最佳网络性能。
@@ -53,7 +53,10 @@ Chart 将 Agent Portal 部署为单个 Deployment（前后端同镜像，后端�
 | Key | Description | Default |
 |-----|-------------|---------|
 | clb | **必填**，对外访问域名（绑定到 CLB 的自定义域名） | xx-portal.example.com |
-| scheme | 平台访问协议，`http` 或 `https` | https |
+| clbId | **必填**，已有 CLB 实例 ID，写入 `kubernetes.io/ingress.existLbId` | lb-example |
+| scheme | 平台访问协议，`http` 或 `https`（用于应用侧 Origin / Public URL） | https |
+| clbScheme | CLB 监听协议，`http` 或 `https`；可与 `scheme` 不同以支持 SSL Offload | https |
+| clbCertId | **`clbScheme=https` 时必填**，腾讯云 SSL 证书 ID；Chart 生成 Secret `<release>-agent-portal-clb-cert` | \<YOUR_CLB_CERT_ID\> |
 | APP_BASE_PATH | 应用部署子路径，需与 `ingress.path` 保持一致；留空表示部署在根路径 | /agent-portal |
 | service.type | Service 类型 | ClusterIP |
 | service.port | Service 与容器端口 | 4000 |
@@ -77,11 +80,13 @@ Portal 与 ADP 共用同一个 CLB/域名时无需配置本段；使用独立 AD
 | ingress.host | Ingress 域名，为空时取 `clb` | "" |
 | ingress.path | 路由路径，需与 `APP_BASE_PATH` 一致 | /agent-portal |
 | ingress.pathType | 路径匹配类型 | ImplementationSpecific |
-| ingress.tls | 是否启用 TLS，仅 `scheme=https` 时生效 | true |
-| ingress.tlsSecretName | TLS Secret 名称，为空时取 `<host>-secret` | "" |
-| ingress.annotations | Ingress 注解，默认放宽读写超时以适配 SSE 长连接 | 见 `values.yaml` |
+| ingress.tls | 是否启用 TLS；实际挂载还需 `clbScheme=https` | true |
+| ingress.tlsSecretName | TLS Secret 名称，为空时由 `clbCertId` 自动生成；填写后复用现成 Secret 且不再创建 | "" |
+| ingress.annotations | 额外 Ingress 注解；`existLbId` / `direct-access` 由模板按 `clbId` 自动注入 | {} |
 
 **TKE Ingress 使用注意事项**：
+- Chart 对齐 ADP：用 `clbId` 绑定已有 CLB，用 `clbCertId` 自动创建含 `qcloud_cert_id` 的 Secret（名称带 release 前缀，可与 ADP 同命名空间共存）
+- `nginx.ingress.kubernetes.io/*` 系列注解对 `qcloud` IngressClass 不生效，如需配置超时请在 CLB 监听器上调整
 - 如果集群网络模式未采用负载均衡直连 Pod 模式，后端 Service 的访问类型不能为 `ClusterIP`，需改为 `NodePort` 或 `LoadBalancer`
 - 负载均衡直连 Pod 模式详见：[TKE 文档](https://cloud.tencent.com/document/product/457/41897)
 
@@ -190,7 +195,10 @@ Client ID、Client Secret 与三个端点需成组配置。用户信息字段映
 
 ```yaml
 clb: "portal.example.com"
+clbId: lb-xxxxxxxx
 scheme: https
+clbScheme: https
+clbCertId: "<YOUR_CLB_CERT_ID>"
 
 db:
   host: "10.0.0.10"
@@ -265,7 +273,9 @@ kubectl -n agent-portal logs deploy/agent-portal -c db-init
 
 **4. 会话回复中断或长请求被截断**
 
-SSE 长连接被网关超时切断。确认 Ingress 保留了默认的读写超时注解（`proxy-read-timeout` / `proxy-send-timeout` 为 1800），如使用其他网关请配置等效的超时参数。
+SSE 长连接被链路上的超时切断。使用 TKE 默认的 `qcloud` IngressClass 时，流量由 CLB 承载，需要在 CLB 监听器上放宽会话保持与空闲超时。若前端还串接了自建网关（Nginx、APISIX 等），需同步放宽其读写超时。
+
+注意 `nginx.ingress.kubernetes.io/*` 系列注解仅对 Nginx Ingress Controller 生效，配置在 `qcloud` IngressClass 上不起作用。
 
 **5. 升级后历史 IM / Connector 凭据无法解密**
 
