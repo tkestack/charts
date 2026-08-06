@@ -1,4 +1,4 @@
-# agent-portal
+# Agent Portal
 
 `agent-portal` 是用于在 TKE 上部署 Agent Portal（智能体门户）的 Helm Chart。
 
