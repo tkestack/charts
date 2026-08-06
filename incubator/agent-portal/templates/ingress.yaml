@@ -17,7 +17,7 @@ spec:
   ingressClassName: {{ . }}
   {{- end }}
   rules:
-    {{- if and $host (eq $.Values.scheme "https") }}
+    {{- if $host }}
     - host: {{ $host | quote }}
       http:
     {{- else }}
@@ -31,7 +31,7 @@ spec:
                 name: {{ include "agent-portal.fullname" . }}
                 port:
                   number: {{ .Values.service.port }}
-  {{- if and .Values.ingress.tls $host }}
+  {{- if and .Values.ingress.tls $host (eq .Values.scheme "https") }}
   tls:
     - hosts:
         - {{ $host | quote }}

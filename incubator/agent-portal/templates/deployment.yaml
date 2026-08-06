@@ -6,8 +6,6 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "agent-portal.labels" . | nindent 4 }}
-  annotations:
-    secret.reloader.stakater.com/reload: {{ include "agent-portal.secretName" . | quote }}
 spec:
   replicas: {{ .Values.replicaCount }}
   # 避免更新期间新旧 Pod 的 IM 长连接短暂并存。
@@ -23,10 +21,12 @@ spec:
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-      {{- with .Values.podAnnotations }}
       annotations:
+        {{- /* Secret 以 subPath 挂载，kubelet 不会热更新；用 checksum 触发滚动更新 */}}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

@@ -52,7 +52,8 @@ stringData:
     # ────────────────────────────────────────────────────────────────────────────
 
     # ===== 服务端 =====
-    SERVER_PORT=4000
+    # 与 service.port 保持一致，同时作为 containerPort 与探针目标端口
+    SERVER_PORT={{ .Values.service.port }}
     APP_NAME="agent-portal"
     # ===== 腾讯云 ADP（可选，默认公有云；私有化/专有云请按实际地址覆盖） =====
     # ADP 云 API 域名，支持填写 host 或完整 URL；显式写 http:// 或 https:// 会按该协议请求
