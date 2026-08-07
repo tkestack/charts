@@ -11,7 +11,6 @@ data:
       session_expr: ${SESSION_EXPR}
       ahead_renew_time: ${AHEAD_RENEW_TIME}
       cookie_domain: {{ .Values.global.clb }}
-      # RESOLVE: keep-public
       exp_cookie_domain: ${EXP_COOKIE_DOMAIN}
       exp_cookie_path: /cgi/apex
       secure: true
@@ -26,7 +25,6 @@ data:
       enable: false
       white_list_telephone: ${WHITE_LIST_TELEPHONE}
       white_list_user_id: ${WHITE_LIST_USER_ID}
-    # RESOLVE: keep-public
     account: ${ACCOUNT}
     trial: ${TRIAL}
     normal:
@@ -273,7 +271,6 @@ data:
       max_retry: 1
       prefix: "问题:"
       content_prefix: "问题:"
-    # RESOLVE: keep-private
     object_storage:
       {{ include "qbot.s3_storage" . }}
     max_export_count: 100000
@@ -377,7 +374,6 @@ data:
     default_model_name: cs-normal-70b
     smart_cate_msg_prompt: {{`"下面的聚类中包含了多个含义相似的问题，请为这个聚类生成一个简洁、准确的聚类名称。输出要求：1.聚类名称长度不超过50个字。2.仅返回结果，不包含解释。 问题: {{.Questions}}"`}}
     smart_existed_cate_prompt: {{`"你是一个专业分类助手，负责将用户的咨询问题准确归类到指定的业务分类中。\nTask: 请阅读提供的【分类】，根据用户输入的【咨询问题】，输出对应的【分类】。\n# 分类:\n{{.Categories}}\n# 输出要求:\n请直接输出问题所属分类，不要输出多余文字。输出示例：{{.Category}}\n# 咨询问题: {{.Question}}\n# 分类输出:"`}}
-    # RESOLVE: keep-private
     tianyu:
       disable_channel: false
       channel_uin:
@@ -459,7 +455,6 @@ data:
           category: "81006"
       target: https://atomicapi.adp.qq.com
       atomic_api_key: 
-    # RESOLVE: keep-public
     es_config:
       name: trpc.elasticsearch.lke.admin
       url: "http://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}"
@@ -473,7 +468,6 @@ data:
       index_name:
         content_recognition: content_recognition
         content_recognition_stats: content_recognition_stats
-    # RESOLVE: keep-public
     audit_log_es:
       name: trpc.elasticsearch.lke.audit_log
       url: "http://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}"
@@ -538,7 +532,6 @@ data:
     count_category_limit: 10000
     coroutine_sleep: 5
     approval: ${APPROVAL}
-    # RESOLVE: keep-public
     notify_config: ${NOTIFY_CONFIG}
     ioa_login: ${IOA_LOGIN}
     notice_config:
@@ -549,17 +542,11 @@ data:
       announcement_summary_len: 500
     function_permission: ${FUNCTION_PERMISSION}
     msg_log_es_white_list: ${MSG_LOG_ES_WHITE_LIST}
-    # RESOLVE: keep-public
     is_private: ${IS_PRIVATE}
-    # RESOLVE: keep-public
     is_tke: ${IS_TKE}
-    # RESOLVE: keep-public
     license: ${LICENSE}
-    # RESOLVE: keep-public
     license_host: ${LICENSE_HOST}
-    # RESOLVE: keep-public
     public_key: ${PUBLIC_KEY}
-    # RESOLVE: keep-public
     admin_bypass: ${ADMIN_BYPASS}
     is_intl_tke: ${IS_INTL_TKE}
     ses: ${SES}
@@ -1188,17 +1175,13 @@ data:
         - opentelemetry
       service:
         - name: mysql.qbot.admin
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: tdsql.qbot.admin
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local"
         - name: redis.qbot.admin
-          # RESOLVE: keep-public
           target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379"
           timeout: 800
         - name: redis.lke.limiter
-          # RESOLVE: keep-public
           target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/4"
           timeout: 800
         - name: trpc.adp.platform_charger.Finance
@@ -1291,7 +1274,6 @@ data:
           target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
           namespace: ${CLIENT_NAMESPACE}
           protocol: trpc
-          # RESOLVE: keep-private
           timeout: 60000
         - name: trpc.adp.kb_config.Api
           target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
@@ -1304,7 +1286,6 @@ data:
           timeout: 20000
           env_name: formal
         - name: trpc.adp.platform_manager.audit_log_producer
-          # RESOLVE: keep-private
           target: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_audit_log_prod&clientid=platform-manager-prod&compression=none&trpcMeta=true"
           timeout: 1000
         - callee: trpc.adp.widget_config.WidgetConfigInner
@@ -1325,7 +1306,6 @@ data:
           timeout: 20000
         - name: elastic.data.statistics
           namespace: Production
-          # RESOLVE: keep-private
           target: "ip://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}"
           password: "${INFRA_MIDDLEWARES_ES_0_USER}:${INFRA_MIDDLEWARES_ES_0_PASSWORD}"
           protocol: http
@@ -2317,17 +2297,13 @@ data:
         - opentelemetry
       service:
         - name: mysql.qbot.admin
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: tdsql.qbot.admin
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true&loc=Local"
         - name: redis.qbot.admin
-          # RESOLVE: keep-public
           target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379"
           timeout: 800
         - name: redis.lke.limiter
-          # RESOLVE: keep-public
           target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/4"
           timeout: 800
         - name: trpc.adp.platform_charger.Finance
@@ -2420,7 +2396,6 @@ data:
           target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
           namespace: ${CLIENT_NAMESPACE}
           protocol: trpc
-          # RESOLVE: keep-private
           timeout: 60000
         - name: trpc.adp.kb_config.Api
           target: ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092
@@ -2433,7 +2408,6 @@ data:
           timeout: 20000
           env_name: formal
         - name: trpc.adp.platform_manager.audit_log_producer
-          # RESOLVE: keep-private
           target: "kafka://${INFRA_MIDDLEWARES_KAFKA_0_HOSTS}:${INFRA_MIDDLEWARES_KAFKA_0_PORT}?topic=adp_audit_log_prod&clientid=platform-manager-prod&compression=none&trpcMeta=true"
           timeout: 1000
         - callee: trpc.adp.widget_config.WidgetConfigInner
@@ -2454,7 +2428,6 @@ data:
           timeout: 20000
         - name: elastic.data.statistics
           namespace: Production
-          # RESOLVE: keep-private
           target: "ip://${INFRA_MIDDLEWARES_ES_0_HOSTS}:${INFRA_MIDDLEWARES_ES_0_PORT}"
           password: "${INFRA_MIDDLEWARES_ES_0_USER}:${INFRA_MIDDLEWARES_ES_0_PASSWORD}"
           protocol: http

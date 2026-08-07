@@ -44,12 +44,8 @@ data:
     publish_yingyongbao_url: /admin_api/v2/agent/publish/yinyongbao
     wx_nginx_l5: ${WX_NGINX_L5}
     wx_nginx_namespace: Test
-    # RESOLVE: keep-private
-    # 专有云环境无 Polaris，直接指定 channel-proxy 地址作为企微 API 正向代理
     forward_proxy_ip: adp-app-channel-proxy.{{ .Release.Namespace }}.svc.cluster.local:8000
-    # RESOLVE: keep-private
     cos_secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
-    # RESOLVE: keep-private
     cos_secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
     cos_bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
     cos_region: "${INFRA_MIDDLEWARES_S3_COS_REGION}"
@@ -71,7 +67,6 @@ data:
       no_reply_notice: 正在思考中……可回复【继续】获取回答内容
       reply_not_complete_notice: 回答未完成，可回复【继续】获取更多回答内容
       discard_continue_notice: 模型正在思考中，请稍后回复【继续】获取更多回答内容
-    # RESOLVE: keep-public
     storage: ${STORAGE}
     sse_chat_path_v2: /adp/v2/chat
     line_config:
@@ -333,7 +328,6 @@ data:
       dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn
       {{- end }}
     COS_NAMESPACE: Production
-    # 对象存储配置
     STORAGE:
       type: cos
       subPath: {{ .Values.global.components.s3.cos.subPath | quote }}
@@ -363,7 +357,6 @@ data:
       max_local_retries: 3              # 本地重连最大次数，默认 3
       retry_base_delay: 1000            # 重连指数退避基础延迟（毫秒），默认 1000
       retry_max_delay: 8000             # 重连指数退避最大延迟（毫秒），默认 8000
-    # 公网出口
     WX_NGINX_L5: adp_channel_https_forward_proxy
 
 

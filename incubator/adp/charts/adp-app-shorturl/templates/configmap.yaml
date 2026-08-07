@@ -162,19 +162,13 @@ data:
     SHORT_URL_REDIS_PORT: 6379
     SHORT_URL_REDIS_DB_NUMBER: 7
 
-    #tdsql.db_llm_robot
     DataMigrationConfig:
-      # 新迁移到TDSQL的数据表
       tdsql_tables:
       - table: t_short_url
         effective_time: "2026-02-02 22:45:00"
     RAINBOW_APPID: 3f090873-420d-4575-b9d2-cf6a72980a33
-    # global.serverConnector.joinPoint - 服务连接器接入点
     TRPC_GLOBAL_JOIN_POINT: default
-    # plugins.telemetry.galileo.ocp_addr - 伽利略 OCP 配置地址
     TRPC_GALILEO_OCP_ADDR: "http://gocp.woa.com/ocp/api/v1/get_config"
-    # plugins.telemetry.galileo.config.access_point - 伽利略接入点
-    # 1=新加坡公网, 2=新加坡内网, 3=中国大陆公网, 4=中国大陆内网
     TRPC_GALILEO_ACCESS_POINT: 4
 
     STORAGE:

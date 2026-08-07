@@ -175,7 +175,6 @@ data:
     adp_cloud:
       model_list_url: "https://api.adp.cloud.tencent.com/v1/model/list"
     connectivity_test:
-      # RESOLVE: keep-private
       default_max_tokens: 100
       uin_max_tokens: ${CONNECTIVITY_TEST_UIN_MAX_TOKENS}
     ioa_model_black: ${IOA_MODEL_BLACK}
@@ -192,14 +191,8 @@ data:
       whitelist_uins: ${OVERSEAS_MODEL_WHITELIST_UINS}
 
 
-    # =============================================================================
-    # 配额签名配置（专有云 TKE 环境生效）
-    # 每个客户默认相同，如需定制配额请修改以下值
-    # =============================================================================
     quota:
-      # RSA 公钥（PEM 格式），用于验证签名 Token
       public_key: ${QUOTA_PUBLIC_KEY}
-      # 签名 Token（JWT RS256，对应默认配额: space=500, app=5000, user=2000）
       token: ${QUOTA_SIGNED_TOKEN}
   biz_zh-CN.json: |
     {
@@ -2080,9 +2073,6 @@ data:
     NAMESPACE: Production
     ENV_NAME: formal
 
-    # =============================================================================
-    # 【trpc_go.yaml 使用】- 框架核心配置
-    # =============================================================================
 
     ENABLE_SET: N
     FULL_SET_NAME: ''
@@ -2093,91 +2083,63 @@ data:
     RAINBOW_GROUP: resource-gallery
     RAINBOW_ENV_NAME: formal
 
-    # global.serverConnector.joinPoint - 服务连接器接入点
     OPENCLAW_UNSTABLE_TASK_CRON: "0 */3 * * * *?scheduler=OpenClawUnstableTask&holdTime=150"
     OPENCLAW_EXPIRE_TASK_CRON: "0 */30 * * * *?scheduler=OpenClawExpireTask&holdTime=150"
     OPENCLAW_DELETE_TASK_CRON: "0 5 */1 * * *?scheduler=OpenClawDeleteTask&holdTime=150"
     API_KEY_ACCESS_LOG_CLEAN_TASK_CRON: "0 30 */2 * * *?scheduler=ApiKeyAccessLogCleanTask&holdTime=150"
     OPENCLAW_SKILL_CONFIRM_CRON: "0 */5 * * * *?scheduler=OpenClawSkillConfirmTask&holdTime=150"
 
-    # =============================================================================
-    # 【client.yaml 使用】- 数据存储与依赖服务配置
-    # =============================================================================
 
-    # --- mysql.qbot.admin 数据库连接 ---
     AGENT_CONFIG_API_TARGET: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
 
-    # --- trpc.adp.ai_gateway.Admin ---
     AI_GATEWAY_ADMIN_TARGET: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092"
 
-    # --- qbot.finance.finance.Finance ---
     FINANCE_TARGET: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
-    # --- trpc.adp.ai-gateway.api ---
     AI_GATEWAY_API_TARGET: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
-    # --- trpc.KEP.plugin_config_server.PluginConfigApi ---
     PLUGIN_CONFIG_API_TARGET: "ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
 
-    # --- trpc.KEP.bot-task-config-server.task-config ---
     TASK_CONFIG_TARGET: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
 
-    # --- trpc.adp.kb-config.Api ---
     KB_CONFIG_API_TARGET: "ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092"
 
-    # --- trpc.adp.platform_manager.Admin ---
     PLATFORM_MANAGER_ADMIN_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
-    # --- trpc.adp.platform_manager.Api ---
     PLATFORM_MANAGER_API_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093"
 
-    # --- trpc.adp.app_config.Admin ---
     APP_CONFIG_ADMIN_TARGET: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
-    # --- trpc.KEP.bot_data_statistics_server.Api ---
     DATA_STATISTICS_API_TARGET: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
 
-    # --- trpc.KEP.bot_admin_config_server.Login ---
     ADMIN_CONFIG_LOGIN_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
 
-    # --- trpc.KEP.bot_admin_config_server.Api ---
     ADMIN_CONFIG_API_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
 
-    # --- trpc.adp.platform_manager.Login ---
     PLATFORM_MANAGER_LOGIN_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
 
-    # --- trpc.adp.platform_charger.Finance ---
     PLATFORM_CHARGER_FINANCE_TARGET: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
-    # --- trpc.adp.platform_content_moderation.Infosec ---
     CONTENT_MODERATION_TARGET: "ip://adp-platform-content-moderation.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
-    # --- trpc.adp.app_admin_proxy.Api ---
     APP_ADMIN_PROXY_API_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
 
-    # --- trpc.adp.platform_metrology.Api ---
     PLATFORM_METROLOGY_API_TARGET: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
 
-    # --- http.KEP.atomic.PaaS ---
     ATOMIC_PAAS_TARGET: "ip://${ATOMIC_PAAS_TARGET}:8000"
 
-    # --- trpc.adp.adpbot_gateway.AdpBotGateway ---
     ADPBOT_GATEWAY_TARGET: "ip://adp-bot-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
-    # --- trpc.adp.kb-parse-adapter.ParseAdapter ---
     KB_PARSE_ADAPTER_TARGET: "ip://adp-kb-parse-adapter.{{ .Release.Namespace }}.svc.cluster.local:10001"
 
-    # ---trpc.adp.skill_config.SkillConfig ---
     SKILL_CONFIG_INNER_TARGET: "ip://adp-skill-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
 
-    # --- trpc.adp.app_channel.Api ---
     TIONE_SECRET_ID: xxx
     TIONE_SECRET_KEY: xxx
     TIONE_REGION: ap-guangzhou
     TIONE_STS_HOST: sts.tencentcloudapi.com
     TIONE_HOST: tione.tencentcloudapi.com
 
-    # --- tione_regions 区域列表 ---
     TIONE_REGIONS:
       - ap-beijing
       - ap-guangzhou
@@ -2186,7 +2148,6 @@ data:
     TIONE_ENABLE_WHITE: false
     TIONE_WHITE_UIN:
 
-    # --- model_hub 模型广场相关配置 ---
     MODEL_FINANCE_FREE_WHITE:
       - workflow-light-32b
       - Youtu/youtu-intent-32b
@@ -2199,17 +2160,8 @@ data:
       - sn-reranker-large-v0.4
       - sn-large-multi-language-v0.2.5
       - sn-llm-embedding-2b-v0.2.2
-      # - Hunyuan/hy3-preview
 
     MODEL_REPLY_FORMAT:
-      # lke-deepseek-v3.2: [json_schema,json_object,text]
-      # Deepseek/deepseek-v3.2: [json_schema,json_object,text]
-      # lke-deepseek-r1-0528: [json_schema,json_object,text]
-      # Deepseek/deepseek-r1-250528: [json_schema,json_object,text]
-      # lke-deepseek-v3.1-terminus: [json_schema,json_object,text]
-      # Deepseek/deepseek-v3.1-terminus: [json_schema,json_object,text]
-      # lke-deepseek-v3.1: [json_schema,json_object,text]
-      # Deepseek/deepseek-v3.1: [json_schema,json_object,text]
       doubao-seed-1-6-flash-250715: ["json_object", "text"]
       Volcengine/doubao-seed-1-6-flash-250715:
         - json_object
@@ -2218,10 +2170,7 @@ data:
       Volcengine/doubao-seed-1-6-250615:
         - json_object
         - text
-        # - "TCADP/gpt-5.4"
-        # - "TCADP/claude-opus-4.6"
 
-    # --- robot_default 模型列表配置 ---
     APP_DEFAULT_MODEL_KNOWLEDGE_QA:
       - alias_name: 智谱GLM-5
         name: TCADP/glm-5
@@ -2231,7 +2180,6 @@ data:
         name: TCADP/minimax-m2.5
       - alias_name: Tencent Hy3 preview
         name: Hunyuan/hy3-preview
-        # is_free: true
       - alias_name: Tencent HY 2.0 Think
         name: Hunyuan/hunyuan-2.0-thinking-251109
       - alias_name: Tencent HY 2.0 Instruct
@@ -2284,13 +2232,6 @@ data:
         desc: |-
           采用更优的路由策略，同时缓解了负载均衡和专家趋同的问题。长文方面，大海捞针指标达到99.9%。MOE-256k 在长度和效果上进一步突破，极大的扩展了可输入长度。
         icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
-      # 上线hunyuan-role-latest,下掉hunyuan-role
-      # - alias_name: hunyuan-role
-      #   name: Hunyuan/hunyuan-role
-      #   chat_words_limit: 2000
-      #   desc: |-
-      #     混元最新版角色扮演模型，混元官方精调训练推出的角色扮演模型，基于混元模型结合角色扮演场景数据集进行增训，在角色扮演场景具有更好的基础效果。
-      #   icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
       - alias_name: hunyuan-role-latest
         name: Hunyuan/hunyuan-role-latest
         chat_words_limit: 2000
@@ -2322,31 +2263,6 @@ data:
           基于医疗领域数据专项强化，擅长医疗领域知识问答，适用于医学实体抽取、医学对话总结、病历撰写等应用场景。
         icon: https://cdn.xiaowei.qq.com/static/lke/cloud.png
         is_close: true
-      # - alias_name: DeepSeek-R1-0528
-      #   name: Deepseek/deepseek-r1-250528
-      #   desc: |-
-      #     DeepSeek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。
-      #   icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
-      # - alias_name: DeepSeek-R1
-      #   name: Deepseek/deepseek-r1-250528
-      #   desc: |-
-      #     强化学习（RL）驱动的推理模型，在数学、代码和推理任务中与 OpenAI-o1 表现相当。与DeepSeek助手深度思考模式为同款模型
-      #   icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
-      # - alias_name: DeepSeek-V3
-      #   name: Deepseek/deepseek-v3-250324
-      #   desc: |-
-      #     拥有6710 亿参数的混合专家（MoE）语言模型，采用多头潜在注意力（MLA）和 DeepSeekMoE 架构，结合无辅助损失的负载平衡策略，优化推理和训练效率。
-      #   icon: https://cdn.xiaowei.qq.com/static/lke/ds.png  // 待企点灰度账号验证后删除
-      # - alias_name: DeepSeek-V3-0324
-      #   name: Deepseek/deepseek-v3-250324
-      #   desc: |-
-      #     DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
-      #   icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
-      #   scene: nl2sql
-      # - alias_name: DeepSeek-V3.1
-      #   name: Deepseek/deepseek-v3.1
-      #   desc: |-
-      #     采用混合推理架构，具备更高的思考效率，能在更短时间给出答案，需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。
       - alias_name: hunyuan-turbos-latest
         name: Hunyuan/hunyuan-turbos
         desc: |-
@@ -2360,8 +2276,6 @@ data:
         desc: |-
           284B总参数，13B激活参数轻量化MoE高效模型，保留高阶模型核心通用能力的同时实现更轻量的参数与更快的响应。
         scene: graphrag
-      # - alias_name: DeepSeek-V3.1-Terminus
-      #   name: Deepseek/deepseek-v3.1-terminus
 
     APP_THOUGHT_MODEL_STANDARD:
       - alias_name: "Tencent HY 2.0 Instruct"
@@ -2388,7 +2302,6 @@ data:
         name: TCADP/minimax-m2.5
       - alias_name: Tencent Hy3 preview
         name: Hunyuan/hy3-preview
-        # is_free: true
       - alias_name: Tencent HY 2.0 Think
         name: Hunyuan/hunyuan-2.0-thinking-251109
       - alias_name: Tencent HY 2.0 Instruct
@@ -2400,32 +2313,6 @@ data:
           具备任务规划、工具选择调用以及反思纠错能力，能够支持复杂问题的规划与执行。
         source: Hunyuan
         icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
-      # - alias_name: DeepSeek-R1-0528
-      #   name: Deepseek/deepseek-r1-250528
-      #   desc: |-
-      #     DeepSeek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。
-      #   source: Experience
-      #   icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
-      #   finance_model_name: lke-deepseek-r1-0528
-      # - alias_name: DeepSeek-R1
-      #   name: Deepseek/deepseek-r1-250528
-      #   desc: |-
-      #     强化学习（RL）驱动的推理模型，在数学、代码和推理任务中与 OpenAI-o1 表现相当。与DeepSeek助手深度思考模式为同款模型
-      #   source: Experience
-      #   icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
-      # - alias_name: DeepSeek-V3-0324
-      #   name: Deepseek/deepseek-v3-250324
-      #   desc: |-
-      #     DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
-      #   source: Experience
-      #   icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
-      #   is_default: true
-      #   finance_model_name: lke-deepseek-v3-0324
-      # - alias_name: DeepSeek-V3.1
-      #   name: Deepseek/deepseek-v3.1
-      #   desc: |-
-      #     采用混合推理架构，具备更高的思考效率，能在更短时间给出答案，需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。
-      #   finance_model_name: lke-deepseek-v3.1
       - alias_name: hunyuan-turbos-latest
         name: Hunyuan/hunyuan-turbos
         desc: |-
@@ -2434,8 +2321,6 @@ data:
         name: Hunyuan/hunyuan-t1
         desc: |-
           业内首个超大规模Hybrid-Transformer-Mamba 推理模型，扩展推理能力，超强解码速度，进一步对齐人类偏好。
-      # - alias_name: DeepSeek-V3.1-Terminus
-      #   name: Deepseek/deepseek-v3.1-terminus
 
     APP_REWRITE_MODEL:
       - alias_name: youtu-rewrite
@@ -2464,7 +2349,6 @@ data:
       - alias_name: Tencent Hy3 preview
         name: Hunyuan/hy3-preview
         is_default: true
-        # is_free: true
       - alias_name: Tencent HY 2.0 Think
         name: Hunyuan/hunyuan-2.0-thinking-251109
       - alias_name: Tencent HY 2.0 Instruct
@@ -2477,20 +2361,6 @@ data:
         name: Hunyuan/hunyuan-t1
         desc: |-
           业内首个超大规模Hybrid-Transformer-Mamba 推理模型，扩展推理能力，超强解码速度，进一步对齐人类偏好。
-      # - alias_name: DeepSeek-R1-0528
-      #   name: Deepseek/deepseek-r1-250528
-      #   desc: |-
-      #     DeepSeek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。
-      #   icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
-      # - alias_name: DeepSeek-V3-0324
-      #   name: Deepseek/deepseek-v3-250324
-      #   desc: |-
-      #     DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
-      #   icon: https://cdn.xiaowei.qq.com/static/lke/ds.png
-      # - alias_name: DeepSeek-V3.1
-      #   name: Deepseek/deepseek-v3.1
-      #   desc: |-
-      #     采用混合推理架构，具备更高的思考效率，能在更短时间给出答案，需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。
 
     APP_FILEPARSE_MODEL:
       - alias_name: youtu-parsing-sync
@@ -2635,10 +2505,8 @@ data:
         name: TCADP/kimi-k2.5
         alias_name: Kimi K2.5
 
-    # --- finance 配置 ---
     FINANCE_DISABLED: {{ .Values.global.finance.disabled }}
 
-    # --- managed_account_ids 管理账号 ---
     SEARCH_DISABLED: true
     MANAGED_ACCOUNT_IDS:
       - 1042
@@ -2721,7 +2589,6 @@ data:
       - Hunyuan/hunyuan-2.0-instruct-251111
       - Hunyuan/hy3-preview
 
-    # --- resource_config 基础配置 ---
     RESOURCE_CONFIG:
       max_async_timeout: 86400
       max_sync_timeout: 900
@@ -2731,22 +2598,18 @@ data:
       space_resource_expired_time: 86400
       force_refresh_cache: true
 
-    # --- openclaw_config 基础配置 ---
     OPENCLAW_DEFAULT_NAME: "ClawPro 助手"
     OPENCLAW_ICON_REGEX: "^https:\\/\\/(qidian-qbot-1251316161\\.cos\\.ap-guangzhou\\.myqcloud\\.com|qidian-qbot-test-1251316161\\.cos\\.ap-guangzhou\\.myqcloud\\.com|cdn\\.xiaowei\\.qq\\.com)\\/[^\\s]+$"
 
-    # --- openclaw_config instance配置 ---
     OPENCLAW_INSTANCE_PASSWORD: ''
     OPENCLAW_CREATE_REGIONS:
       - ap-guangzhou
     OPENCLAW_CREATE_REGION_MAP:
       ap-guangzhou:
         bundle_id: bundle_starter_mc_med4_01
-        #原"lhbp-6l8zgg9z"
         blueprint_id: lhbp-0rrkz1pp
         firewall_template_id: lhft-7pe799m3
 
-    # 套餐实例规格映射（按类型覆盖 bundle_id）
     OPENCLAW_PACKAGE_BUNDLE_MAP:
       1:
         region_bundle_map:
@@ -2760,11 +2623,9 @@ data:
       enable_openclaw_status_task: true # 是否启用状态监控任务，默认 false
       enable_skill_confirm_task: true # 是否启用skill确认任务
 
-    # --- openclaw_config 凭证配置（credential） ---
     OPENCLAW_SECRET_ID: xxx
     OPENCLAW_SECRET_KEY: xxx
 
-    # --- openclaw_config 模型配置（model_config） ---
     OPENCLAW_MODEL_CONFIG:
       primary_model: qcloudadp/TCADP/kimi-k2.5         # 主模型全名
       provider: qcloudadp                                # 供应商名称
@@ -2778,11 +2639,9 @@ data:
       fill_param_provider_types: ["Third"]             # 启用模型参数填充的供应商，为空时全部填充
       min_context_window: 16000                        # 第三方模型上下文长度最低要求，默认0不校验
 
-    # --- openclaw_config 渠道配置（channel_config） ---
     OPENCLAW_CHANNEL_CONFIG:
       ws_url: "wss://wss.lke.cloud.tencent.com/bot/gateway/conn"  # WebSocket 地址
 
-    # --- openclaw_config 技能配置 ---
     SKILL_REQUIRED_CONFIG:
       clawhub: true
       find-skills: true
@@ -2809,7 +2668,6 @@ data:
       wecom-smartsheet-data: true
       wecom-smartsheet-schema: true
 
-    # --- openclaw_config 技能模板配置 ---
     OPENCLAW_SKILL_TEMPLATE_CONFIG:
       - name: 表格处理
         template: 帮我安装excel-xlsx技能
@@ -2828,49 +2686,33 @@ data:
       aes_key: 8f3a9b2c7d6e1f4a5b8c9d0e1f2a3b4c
       validity_period: 5m
 
-    # --- openclaw_config 技能配置 ---
     WATCH_SKILL_STATUS_MAX_SECONDS: 120
 
-    # 引导配置
     API_KEY_CONFIG:
       encrypt_key_part1: "php9GiXLWVpx64U8rTDhlg=="
       encrypt_key_part2: "QoFgeYJAjjNCVjLxIqq6Jw=="
       enable_ciphertext_patch: true
 
-    # --- api_key_access_log_config配置 ---
     TRPC_GLOBAL_JOIN_POINT: default
 
-    # plugins.telemetry.galileo.ocp_addr - 伽利略 OCP 配置地址
     TRPC_GALILEO_OCP_ADDR: "http://gocp.woa.com/ocp/api/v1/get_config"
 
-    # plugins.telemetry.galileo.config.access_point - 伽利略接入点
-    # 1=新加坡公网, 2=新加坡内网, 3=中国大陆公网, 4=中国大陆内网
     TRPC_GALILEO_ACCESS_POINT: 4
 
-    # plugins.selector.polaris.join_point - 北极星服务发现接入点
     TRPC_SELECTOR_JOIN_POINT: default
 
-    # plugins.i18n.i18n-adp.default_lang - 国际化默认语言
     DEFAULT_LANG: zh-CN
 
-    # --- OpenClaw 定时任务 cron 表达式 ---
     ASSISTANT_TDSQL_USER: ${INFRA_MIDDLEWARES_DB_0_USER}
     ASSISTANT_TDSQL_PASSWORD: ${INFRA_MIDDLEWARES_DB_0_PASSWORD}
     ASSISTANT_TDSQL_HOST: ${INFRA_MIDDLEWARES_DB_0_HOST}
     ASSISTANT_TDSQL_PORT: ${INFRA_MIDDLEWARES_DB_0_PORT}
 
-    # --- redis.qbot.admin 缓存 ---
     CHANNEL_MSG_SVR_API_TARGET: "ip://adp-app-channel.{{ .Release.Namespace }}.svc.cluster.local:8002"
 
-    # --- trpc.adp.platform_account.Api ---
     PLATFORM_ACCOUNT_API_TARGET: "ip://adp-platform-account.{{ .Release.Namespace }}.svc.cluster.local:9092"
 
-    # =============================================================================
-    # 【application.yaml 使用】- 业务配置
-    # 占位符顺序与 application.yaml 中出现顺序一致
-    # =============================================================================
 
-    # --- tione 配置 ---
     TIONE_DISABLED: false
     TEMPORARY_FREE_MODELS:
 
@@ -2955,16 +2797,13 @@ data:
       ineligible_cache_ttl_minutes: 1440
       lock_ttl_minutes: 720
 
-    # --- api_key_config配置 ---
     API_KEY_ACCESS_LOG_CONFIG:
       enable_debug_log: false
 
-    # --- gray_model_uin_white配置 ---
     GRAY_MODEL_UIN_WHITE:
 
     MODEL_PACKAGE_TYPES:
 
-    # --- model_providers配置 ---
     MODEL_PROVIDERS:
     - provider_name: TencentTokenPlan
       enable: true
@@ -2986,8 +2825,6 @@ data:
       secret_key: pbld5B98vp3OHm9T6yCP4R68nqRQvy0t
       api_key_var: ADP_API_KEY
 
-    # --- overseas_model_whitelist 海外模型白名单配置 ---
-    # 海外可用模型列表
     OVERSEAS_MODELS:
     - name: TCADP/gpt-5.5
       alias_name: GPT-5.5
@@ -3011,9 +2848,6 @@ data:
     - '100034032793'
     - '100034812856'
 
-    # --- connectivity_test 模型连通性测试配置 ---
-    #100038737751部门账号
-    #100045521972用户账号
     CONNECTIVITY_TEST_UIN_MAX_TOKENS:
       100038737751: 16
       100045521972: 16
@@ -3031,12 +2865,7 @@ data:
         - enabled
         - disabled
     EXPOSED_MODEL_PROPERTIES:
-    #  - "support_workflow_status"
-    #  - "support_ai_call_status"
-    #  - "is_close_model_params"
-    #  - "is_deep_thinking"
 
-    # --- 模型超参白名单 ---
     EXPOSED_MODEL_PARAMETERS:
     - max_tokens
     - temperature
@@ -3045,11 +2874,6 @@ data:
 
     AGENT_CONFIG_V2_API_TARGET: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:9001"
 
-    # =============================================================================
-    # 【配额签名配置】- 专有云 TKE 环境签名配额管控
-    # 每个客户默认相同，如需定制可修改以下明文值
-    # =============================================================================
-    # RSA 公钥（PEM 格式），用于验证配额 Token 签名
     QUOTA_PUBLIC_KEY: |
       -----BEGIN PUBLIC KEY-----
       MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz4exO/KMMQm4s7IgTOcH
@@ -3061,7 +2885,6 @@ data:
       NQIDAQAB
       -----END PUBLIC KEY-----
 
-    # 签名 Token（JWT RS256，对应默认配额: space=500, app=5000, user=2000）
     QUOTA_SIGNED_TOKEN: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzcGFjZV9saW1pdCI6NTAwLCJhcHBfbGltaXQiOjUwMDAsInVzZXJfbGltaXQiOjIwMDB9.spnT0GGnXbxd6oFVv6DRo6vhX3XdEPVNq2-U1lDqwledX-lQFxoZrFcYCbpmbyCHejBaSMQ0quLupnQigk7MyuXYF3lzMSrEN8PADQoK7O3R5_5i4qHujyu0ebnAsu7r64mNJFAbQovAcmZwWbkoyA1VmBbUj-OKOQiMS50dUsphUCfqCxxjYx3BkpphYHV1AWVajGKxMRJhwdR3DNMVuQ4R_acrYEN9KxaT6Yfigc5XeMcxpDUxjLhOAyIFx8H8ynuNkUHDfV1uZqYbAHvF3ovk8AKmClM6bwTzj9P5b-E-v3JjbYhsvYak-BnH5giYRpc1Y8AEHY1GZjouj6fSOg"
 
   trpc_go.yaml: |

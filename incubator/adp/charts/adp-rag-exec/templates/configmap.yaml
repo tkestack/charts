@@ -78,7 +78,6 @@ data:
     limiter:
       report_judge_length: ${REPORT_JUDGE_LENGTH}
     hunyuan_config:
-      # 注意这里B是大写 跟其他的不一样
       hunyuan_standard: ${HUNYUAN_CONFIG_HUNYUAN_STANDARD}
       hunyuan_search: ${HUNYUAN_CONFIG_HUNYUAN_SEARCH}
       whitelist: ${HUNYUAN_CONFIG_WHITELIST}
@@ -117,7 +116,6 @@ data:
       top_n: ${CLARIFY_CONFIRM_TOP_N}
       white_list: ${CLARIFY_CONFIRM_WHITE_LIST}
     intent_model:
-      # 加白是意图中不添加文档
       white_list: ${INTENT_MODEL_WHITE_LIST}
       is_qa_not_first: ${INTENT_MODEL_IS_QA_NOT_FIRST}
       no_faq: ${INTENT_MODEL_NO_FQA}
@@ -179,13 +177,11 @@ data:
     local_cache: ${LOCAL_CACHE}
     search_engine: ${SEARCH_ENGINE}
     reply_trace_names:
-      # 中间节点
       rewrite: ${REPLY_TRACE_REWRITE}
       basic_search: ${REPLY_TRACE_BASIC_SEARCH}
       knowledge_search: ${REPLY_TRACE_KNOWLEDGE_SEARCH}
       intent_recognize: ${REPLY_TRACE_INTENT_RECOGNIZE}
       workflow: ${REPLY_TRACE_WORKFLOW}
-      # 回复节点
       query_with_image_and_file: ${REPLY_TRACE_QUERY_WITH_IMAGE_AND_FILE}
       query_with_text_image_file_by_mllm_comprehension: ${REPLY_TRACE_QUERY_WITH_TEXT_IMAGE_FILE}
       doc_summary: ${REPLY_TRACE_DOC_SUMMARY}
@@ -404,7 +400,6 @@ data:
     }
 
   placeholder.yaml: |
-    # client.yaml start
     RAG_KNOWLEDGE_CONFIG_SERVER_TARGET: "ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092"
 
     RAG_FINANCE_SERVER_TARGET: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
@@ -427,9 +422,7 @@ data:
 
     RAG_RESOURCE_GALLERY_ADMIN_TARGET: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
     RAG_PLATFORM_MANAGER_LOGIN_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
-    #client.yaml end
 
-    #application.yaml start
     KB_RETRIEVAL_DIRECTINDEX_TARGET: "ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091"
     ROLE_DESCRIPTION: 你是腾讯云智能体开发平台，一个善于进行文档阅读、知识问答的智能平台。具备海量的行业知识，对垂直行业超过10项基础能力进行精调优化，涵盖了文档阅读理解、语义理解、安全合规等，可以帮助用户解决行业问题、提高工作效率。
     BOT_ROLE_DESCRIPTION:
@@ -461,7 +454,6 @@ data:
       Hunyuan/hunyuan-turbos-vision: 你选择的大语言模型是由中国的腾讯公司开发的智能助手hunyuan-turbos-vision。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。
       Hunyuan/hunyuan-turbos-latest: 你选择的大语言模型是由中国的腾讯公司开发的智能助手hunyuan-turbos-latest。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。
       Hunyuan/hunyuan-T1-latest: 你选择的大语言模型是由中国的腾讯公司开发的智能助手hunyuan-T1-latest。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。
-      # Deepseek/deepseek-v4-flash: "你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V4-Flash。擅长回答与解决问题，协助你高效完成各类任务。很高兴为你提供帮助。"
 
 
       Deepseek/deepseek-v4-pro: 你选择的大语言模型是由中国的深度求索公司开发的智能助手DeepSeek-V4-Pro。你会尽你所能帮助用户回答问题、解决问题。
@@ -475,9 +467,6 @@ data:
 
     RAG_INTENT_MODEL_FREE: false
 
-    # RAG_FINANCE_DISABLE: false
-    # RAG_SEARCH_DISABLE: false
-    # RAG_REPORT_DISABLE: false
 
     RAG_DEFAULT_QPM: 50
     RAG_DEFAULT_TPM: 100000
@@ -517,7 +506,6 @@ data:
 
     MLLM_MODEL_NAME: Youtu/youtu-mllm
     MLLM_WHITE_LIST:
-      # hank 测试
       1853290039307141120: Youtu/youtu-mllm
 
     CAN_USE_MULTI_MODAL_SEARCH: [1900384634925219840, 1895452356913135616, 1858353412890165248, 1858511990910877696, 1853471650115223552, 1856554226124849152, 1818976550396887040, 1853290039307141120, 1812776502234710016, 1851518419257524224, 1848651634984091648, 1848904064467730432, 1847187022983987200, 1846447803226652672, 1792382390890135552, 1838433161230680064, 1815613383469957120, 1834540434487246848, 1704362013292855296, 1833826054702891008, 1818634299669217280, 1798267638664396800, 1791012385573306368, 1821374700960350208, 1825471199168167936, 17812113880532910081, 1704362013292855296, 1823014991651930112]
@@ -543,7 +531,6 @@ data:
     WORKFLOW_CONFIG_CLOSE_TOKEN_REPORT: true
 
     NEED_SEARCH_GLOBAL_KNOWLEDGE:
-      # - 1868500601205424128
 
     MODEL_PROMPT_LENGHT:
       1750376442139246592: 8000
@@ -597,10 +584,8 @@ data:
       1890685851659141120: 搜索引擎
       1891519161068421120: 搜索引擎
       1891520681284206592: 搜索引擎
-      # 临时给微盛指定
       1972174996312112704: 兜底回复
     DS_FAQ_REJECT_MODEL: Youtu/youtu-mrc-pro
-    # reply_trace_names placeholders
     ERROR_DOWNGRADE_CONF: ["msg:您选择的工作流", "type:business, code:460032", "msg:超出并发数限制", "code:460034"]
     DEEP_SEEK_CONF_MODEL_NAME: ["lke-deepseek-r1", "lke-deepseek-v3", "lke-deepseek-r1-vip", "lke-deepseek-v3-vip", "lke-deepseek-r1-lichan", "lke-deepseek-v3-0324", "lke-deepseek-r1-0528", "lke-deepseek-v3.1", "lke-deepseek-v3-0324-vip", "lke-deepseek-v3.2", "Deepseek/deepseek-r1-250528", "Deepseek/deepseek-v3-250324", "Deepseek/deepseek-r1-250528-vip", "Deepseek/deepseek-v3-250324-vip", "Deepseek/deepseek-v3.1", "Deepseek/deepseek-v3.2", "Deepseek/deepseek-v4-flash", "Deepseek/deepseek-v4-pro"]
     DEEP_SEEK_CONF_MODEL_HAS_THINK: ["lke-deepseek-r1", "lke-deepseek-r1-vip", "lke-deepseek-r1-lichan", "lke-deepseek-r1-0528", "Deepseek/deepseek-r1-250528", "Deepseek/deepseek-r1-250528-vip", "Deepseek/deepseek-r1-250528", "Deepseek/deepseek-v4-flash", "Deepseek/deepseek-v4-pro"]
@@ -665,7 +650,6 @@ data:
       其他问题: knowledge_qa
       知识问答: knowledge_qa
       搜索引擎: search_engine
-      # 临时给微盛指定
       兜底回复: model_chat
     RETRIEVAL_CONFIG_NER_THRESHOLD: 100
 
@@ -676,19 +660,10 @@ data:
       100015747086: true
       100014395848: true
       100035604722: true
-      # 100038737751: true
     REPEAT_BRACKET:
-      # default: 10
-      # by_app:
-      #   1869298177072693248: 20
     ABNORMAL_BRACKET:
-      # default: 100
-      # by_app:
-      #   1869298177072693248: 100
     REFERENCE_MAX_INPUT_LENGTH:
       default: 65536   # 64 KB
-      # by_app:
-      #   12345: 262144   # 某个特殊 app 单独设 256 KB
     REPLY_TRACE_REWRITE: "改写&同义词"
     REPLY_TRACE_BASIC_SEARCH: 基础检索
     REPLY_TRACE_KNOWLEDGE_SEARCH: 知识检索
@@ -749,22 +724,15 @@ data:
     - Volcengine/doubao-seed-1-6-lite-251015
     - Volcengine/doubao-seed-1-6-251015
     WEB_SEARCH:
-    #application.yaml end
 
-    #trpc_go.yaml start
     RAINBOW_APPID: 3f090873-420d-4575-b9d2-cf6a72980a33
     RAINBOW_GROUP_NAME: rag-exec
-    # global.serverConnector.joinPoint - 服务连接器接入点
     TRPC_GLOBAL_JOIN_POINT: default
 
-    # plugins.telemetry.galileo.ocp_addr - 伽利略 OCP 配置地址
     TRPC_GALILEO_OCP_ADDR: "http://gocp.woa.com/ocp/api/v1/get_config"
 
-    # plugins.telemetry.galileo.config.access_point - 伽利略接入点
-    # 1=新加坡公网, 2=新加坡内网, 3=中国大陆公网, 4=中国大陆内网
     TRPC_GALILEO_ACCESS_POINT: 4
 
-    # plugins.selector.polaris.join_point - 北极星服务发现接入点
     TRPC_SELECTOR_JOIN_POINT: default
 
     SERVER_CONF_PATH: /data/app/conf/

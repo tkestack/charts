@@ -88,22 +88,18 @@ data:
         - Content-Range
       max_age: 3600
     client:
-      # inner 代理服务
       - name: trpc_to_inner_service
         addr: trpc-to-inner.{{ .Release.Namespace }}.svc.cluster.local:80
         namespace: Test
 
-      # 权限校验服务
       - name: privilege_service
         addr: privilege.{{ .Release.Namespace }}.svc.cluster.local:80
         namespace: Test
 
-      # 企点认证服务
       - name: qidian_auth_web_service
         addr: account-web.{{ .Release.Namespace }}.svc.cluster.local:80
         namespace: Test
 
-      # PTLogin 认证服务
       - name: ptlogin_auth_service
         addr: ptlogin-auth.{{ .Release.Namespace }}.svc.cluster.local:80
         namespace: Production

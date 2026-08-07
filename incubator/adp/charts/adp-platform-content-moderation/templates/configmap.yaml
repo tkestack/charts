@@ -360,7 +360,6 @@ data:
         ims_url: {{ .Values.global.contentSecurity.imsUrl | default "" }}
         tms_biz_type: {{ .Values.global.contentSecurity.bizType }}
         ims_biz_type: {{ .Values.global.contentSecurity.bizType }}
-      # RESOLVE: keep-public
       sdk: ${TIANYU_SDK}
       label_result_type:
         Normal: 100
@@ -447,14 +446,10 @@ data:
 
     APP_ADMIN_PROXY_API_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
     RAINBOW_APPID: 3f090873-420d-4575-b9d2-cf6a72980a33
-    # global.serverConnector.joinPoint - 服务连接器接入点
     TRPC_GLOBAL_JOIN_POINT: default
 
-    # plugins.telemetry.galileo.ocp_addr - 伽利略 OCP 配置地址
     TRPC_GALILEO_OCP_ADDR: "http://gocp.woa.com/ocp/api/v1/get_config"
 
-    # plugins.telemetry.galileo.config.access_point - 伽利略接入点
-    # 1=新加坡公网, 2=新加坡内网, 3=中国大陆公网, 4=中国大陆内网
     TRPC_GALILEO_ACCESS_POINT: 4
 
     BIZ_TYPE_WHITELIST:
@@ -472,7 +467,6 @@ data:
       callback_url: {{ if hasKey .Values.global.contentSecurity "callbackUrl" }}{{ .Values.global.contentSecurity.callbackUrl }}{{ else }}""{{ end }}
 
 
-    # 平台管理服务 - 管理接口
     PLATFORM_MANAGER_ADMIN_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
     AI_GATEWAY_ADMIN_TARGET: ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9092
     RESOURCE_GALLERY_ADMIN_TARGET: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090

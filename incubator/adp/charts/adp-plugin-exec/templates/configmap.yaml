@@ -20,43 +20,36 @@ data:
           env_name: ${LLM_MANAGER_ENV_NAME}
           service_name: trpc.SmartAssistant.LLMManagerServer.Chat
         - callee: trpc.KEP.bot_admin_config_server.Api
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.app_admin_proxy.Api
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
           protocol: trpc
           timeout: 20000
         - callee: trpc.KEP.plugin_config_server.PluginConfigApi
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.plugin_config.PluginConfigApi
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
           protocol: trpc
           timeout: 20000
         - callee: trpc.KEP.code_interpreter_dispatcher.CodeExec
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
           protocol: trpc
           timeout: 60000
         - callee: trpc.adp.plugin_code_interpret.CodeExec
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
           protocol: trpc
           timeout: 60000
         - callee: trpc.SmartAssistant.WebParserServer.ParserObj
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: ip://web-parser-server.{{ .Release.Namespace }}.svc.cluster.local:10001
           timeout: 60000
@@ -64,12 +57,10 @@ data:
           target: "ip://adp-chat-manage.{{ .Release.Namespace }}.svc.cluster.local:9190"
           protocol: trpc
           timeout: 60000
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
         - callee: trpc.KEP.bot_rag_server.Chat
           name: trpc.KEP.bot-rag-server.rpc
           target: "ip://adp-rag-exec.{{ .Release.Namespace }}.svc.cluster.local:8001"
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           network: tcp
           protocol: trpc
@@ -77,7 +68,6 @@ data:
         - callee: trpc.adp.rag_exec.Chat
           name: trpc.KEP.bot-rag-server.rpc
           target: "ip://adp-rag-exec.{{ .Release.Namespace }}.svc.cluster.local:8001"
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           network: tcp
           protocol: trpc
@@ -87,7 +77,6 @@ data:
           network: tcp
           timeout: 5000
           target: "dns://api.caiyunapp.com"
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           filter:
             - remove_trpc_headers
@@ -96,25 +85,21 @@ data:
           network: tcp
           timeout: 5000
           target: "dns://apis.map.qq.com"
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           filter:
             - remove_trpc_headers
         - name: redis.plugin-exec-server
-          # RESOLVE: keep-private
           target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${PLUGIN_REDIS_PORT}/${PLUGIN_REDIS_DB}"
         - name: mysql.news
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_digital_content?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: trpc.KEP.bot-llm-server.llm
           callee: trpc.KEP.bot_llm_server.llm
           target: "ip://adp-llm.{{ .Release.Namespace }}.svc.cluster.local:8000"
-          # RESOLVE: keep-private
           namespace: Test
           network: tcp
           timeout: 3000
         - callee: trpc.adp.model_token_count.Tokenizer
           target: "ip://adp-llm.{{ .Release.Namespace }}.svc.cluster.local:8000"
-          # RESOLVE: keep-private
           namespace: Test
           timeout: 3000
         - name: trpc.http.cos.Access
@@ -131,7 +116,6 @@ data:
           filter:
             - remove_trpc_headers
         - name: trpc.aimedia.adapter.Adapter
-          # RESOLVE: keep-private
           namespace: Development
           network: tcp
           protocol: http
@@ -139,18 +123,14 @@ data:
           timeout: 1800000
         - callee: trpc.KEP.bot_knowledge_config_server.Api
           target: "ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092"
-          # RESOLVE: keep-private
           namespace: Test
           protocol: trpc
-          # RESOLVE: keep-private
           env_name: test
           timeout: 30000
         - callee: trpc.adp.kb_config.Api
           target: "ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092"
-          # RESOLVE: keep-private
           namespace: Test
           protocol: trpc
-          # RESOLVE: keep-private
           env_name: test
           timeout: 30000
         - callee: trpc.adp.kb_config.Admin
@@ -161,7 +141,6 @@ data:
           timeout: 30000
         - name: qbot.finance.finance.Finance
           target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
-          # RESOLVE: keep-private
           namespace: Test
           protocol: trpc
           network: tcp
@@ -169,27 +148,23 @@ data:
         - name: mysql.adp.prompt
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: trpc.adp.app_config.Api
-          # RESOLVE: keep-private
           namespace: Test
           target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091"
           timeout: 30000
         - callee: trpc.chat.sse
           name: trpc.chat.sse
-          # RESOLVE: keep-private
           namespace: Test
           network: tcp
           protocol: http
           timeout: 300000
         - name: trpc.adp.ai-gateway.api
           target: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
-          # RESOLVE: keep-private
           namespace: Test
           network: tcp
           protocol: http
           timeout: 1800000
         - callee: trpc.adp.resource_gallery.Admin
           target: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
-          # RESOLVE: keep-private
           namespace: Test
           protocol: trpc
           timeout: 30000
@@ -198,7 +173,6 @@ data:
           network: tcp
           timeout: 10000
           target: "dns://miying.qq.com"
-          # RESOLVE: keep-private
           namespace: Test
           ca_cert: none
         - name: llm.diagnosis.query.drug.instructions
@@ -206,11 +180,9 @@ data:
           network: tcp
           timeout: 10000
           target: "dns://miying.qq.com"
-          # RESOLVE: keep-private
           namespace: Test
           ca_cert: none
         - callee: trpc.ai_tools.pc_tool_agent.ToolAgentSvr
-          # RESOLVE: keep-private
           namespace: Development
           target: ''
           protocol: trpc
@@ -224,21 +196,17 @@ data:
           protocol: trpc
           timeout: 60000
           target: ''
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
         - callee: trpc.adp.adpbot_gateway.AdpBotGatewayHTTP
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: ''
           protocol: http
           timeout: 3600000
         - name: trpc.adp.platform_manager.Api
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093"
           timeout: 30000
         - callee: trpc.KEP.bot_admin_config_server.Admin
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9090"
           protocol: trpc
@@ -552,9 +520,7 @@ data:
       baike_secret: ''
     weather:
       tencent_location_path: "/ws/geocoder/v1?address=%s&key=%s"
-      # RESOLVE: keep-private
       tencent_location_key: ''
-      # RESOLVE: keep-private
       tencent_location_sk: ''
       caiyun_path: "/v2.6/PN8mBpYnvMt=0X5x/%f,%f/weather?dailysteps=%d&begin=%d"
       location_expire_time: 604800
@@ -619,14 +585,10 @@ data:
         role_arn: "{{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}"
     api:
       timeout: 120
-      # RESOLVE: keep-public
       white_urls: ${API_WHITE_URLS}
-      # RESOLVE: keep-public
       ports: ${API_PORTS}
     tx_map:
-      # RESOLVE: keep-private
       tencent_location_key: ''
-      # RESOLVE: keep-private
       tencent_location_sk: ''
       radius_default: 1000
     transfer_img:
@@ -799,12 +761,10 @@ data:
     adapter:
       adapter_service_name: trpc.aimedia.adapter.Adapter
     mind_map_generate:
-      # RESOLVE: keep-public
       end_point: ${MIND_MAP_GENERATE_END_POINT}
       port: 7001
       action: getSvgFromMarkdown
       schema: HTTP
-      # RESOLVE: keep-public
       white_urls: ${MIND_MAP_GENERATE_WHITE_URLS}
       ports: ["allow_all"]
     le_xiang_knowledge:
@@ -828,7 +788,6 @@ data:
       streamable_sl_path_prefix: /mcp/stateless/
       streamable_sl_server_files: ["stateless_mcp_server_1.yaml", "stateless_mcp_server_2.yaml"]
     wx_pay:
-      # RESOLVE: keep-public
       mcp_server_url: ${WX_PAY_MCP_SERVER_URL}
       timeout: 5
       sse_read_timeout: 180
@@ -860,7 +819,6 @@ data:
       enable_metrics_report: true
       header_host_white_list: ${GATEWAY_HEADER_HOST_WHITE_LIST}
     chat_sse:
-      # RESOLVE: keep-public
       url: ${CHAT_SSE_URL}
     aippt:
       url: "https://co.aippt.cn"
@@ -7669,7 +7627,6 @@ data:
                 description: "返回图片类型，url：返回图片链接，base64：返回base64编码。默认为url。"
   trpc_go.yaml: |
     global:
-      # RESOLVE: keep-public
       namespace: ${NAMESPACE}
       env_name: ${GLOBAL_ENV_NAME}
       enable_set: false
@@ -7826,43 +7783,36 @@ data:
           env_name: ${LLM_MANAGER_ENV_NAME}
           service_name: trpc.SmartAssistant.LLMManagerServer.Chat
         - callee: trpc.KEP.bot_admin_config_server.Api
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.app_admin_proxy.Api
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
           protocol: trpc
           timeout: 20000
         - callee: trpc.KEP.plugin_config_server.PluginConfigApi
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.plugin_config.PluginConfigApi
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
           protocol: trpc
           timeout: 20000
         - callee: trpc.KEP.code_interpreter_dispatcher.CodeExec
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
           protocol: trpc
           timeout: 60000
         - callee: trpc.adp.plugin_code_interpret.CodeExec
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
           protocol: trpc
           timeout: 60000
         - callee: trpc.SmartAssistant.WebParserServer.ParserObj
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: ip://web-parser-server.{{ .Release.Namespace }}.svc.cluster.local:10001
           timeout: 60000
@@ -7870,12 +7820,10 @@ data:
           target: "ip://adp-chat-manage.{{ .Release.Namespace }}.svc.cluster.local:9190"
           protocol: trpc
           timeout: 60000
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
         - callee: trpc.KEP.bot_rag_server.Chat
           name: trpc.KEP.bot-rag-server.rpc
           target: "ip://adp-rag-exec.{{ .Release.Namespace }}.svc.cluster.local:8001"
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           network: tcp
           protocol: trpc
@@ -7883,7 +7831,6 @@ data:
         - callee: trpc.adp.rag_exec.Chat
           name: trpc.KEP.bot-rag-server.rpc
           target: "ip://adp-rag-exec.{{ .Release.Namespace }}.svc.cluster.local:8001"
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           network: tcp
           protocol: trpc
@@ -7893,7 +7840,6 @@ data:
           network: tcp
           timeout: 5000
           target: "dns://api.caiyunapp.com"
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           filter:
             - remove_trpc_headers
@@ -7902,25 +7848,21 @@ data:
           network: tcp
           timeout: 5000
           target: "dns://apis.map.qq.com"
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           filter:
             - remove_trpc_headers
         - name: redis.plugin-exec-server
-          # RESOLVE: keep-private
           target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${PLUGIN_REDIS_PORT}/${PLUGIN_REDIS_DB}"
         - name: mysql.news
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_digital_content?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: trpc.KEP.bot-llm-server.llm
           callee: trpc.KEP.bot_llm_server.llm
           target: "ip://adp-llm.{{ .Release.Namespace }}.svc.cluster.local:8000"
-          # RESOLVE: keep-private
           namespace: Test
           network: tcp
           timeout: 3000
         - callee: trpc.adp.model_token_count.Tokenizer
           target: "ip://adp-llm.{{ .Release.Namespace }}.svc.cluster.local:8000"
-          # RESOLVE: keep-private
           namespace: Test
           timeout: 3000
         - name: trpc.http.cos.Access
@@ -7937,7 +7879,6 @@ data:
           filter:
             - remove_trpc_headers
         - name: trpc.aimedia.adapter.Adapter
-          # RESOLVE: keep-private
           namespace: Development
           network: tcp
           protocol: http
@@ -7945,18 +7886,14 @@ data:
           timeout: 1800000
         - callee: trpc.KEP.bot_knowledge_config_server.Api
           target: "ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092"
-          # RESOLVE: keep-private
           namespace: Test
           protocol: trpc
-          # RESOLVE: keep-private
           env_name: test
           timeout: 30000
         - callee: trpc.adp.kb_config.Api
           target: "ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092"
-          # RESOLVE: keep-private
           namespace: Test
           protocol: trpc
-          # RESOLVE: keep-private
           env_name: test
           timeout: 30000
         - callee: trpc.adp.kb_config.Admin
@@ -7967,7 +7904,6 @@ data:
           timeout: 30000
         - name: qbot.finance.finance.Finance
           target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
-          # RESOLVE: keep-private
           namespace: Test
           protocol: trpc
           network: tcp
@@ -7975,27 +7911,23 @@ data:
         - name: mysql.adp.prompt
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: trpc.adp.app_config.Api
-          # RESOLVE: keep-private
           namespace: Test
           target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091"
           timeout: 30000
         - callee: trpc.chat.sse
           name: trpc.chat.sse
-          # RESOLVE: keep-private
           namespace: Test
           network: tcp
           protocol: http
           timeout: 300000
         - name: trpc.adp.ai-gateway.api
           target: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
-          # RESOLVE: keep-private
           namespace: Test
           network: tcp
           protocol: http
           timeout: 1800000
         - callee: trpc.adp.resource_gallery.Admin
           target: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
-          # RESOLVE: keep-private
           namespace: Test
           protocol: trpc
           timeout: 30000
@@ -8004,7 +7936,6 @@ data:
           network: tcp
           timeout: 10000
           target: "dns://miying.qq.com"
-          # RESOLVE: keep-private
           namespace: Test
           ca_cert: none
         - name: llm.diagnosis.query.drug.instructions
@@ -8012,11 +7943,9 @@ data:
           network: tcp
           timeout: 10000
           target: "dns://miying.qq.com"
-          # RESOLVE: keep-private
           namespace: Test
           ca_cert: none
         - callee: trpc.ai_tools.pc_tool_agent.ToolAgentSvr
-          # RESOLVE: keep-private
           namespace: Development
           target: ''
           protocol: trpc
@@ -8030,21 +7959,17 @@ data:
           protocol: trpc
           timeout: 60000
           target: ''
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
         - callee: trpc.adp.adpbot_gateway.AdpBotGatewayHTTP
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: ''
           protocol: http
           timeout: 3600000
         - name: trpc.adp.platform_manager.Api
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093"
           timeout: 30000
         - callee: trpc.KEP.bot_admin_config_server.Admin
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9090"
           protocol: trpc

@@ -55,10 +55,6 @@ data:
     }
 
   kube.yaml: |
-    # kube.yaml
-    # 使用 pod 内挂载的 ServiceAccount 凭据访问 InCluster apiserver。
-    # 依赖 pod 里 K8s 自动挂载的 /var/run/secrets/kubernetes.io/serviceaccount/{ca.crt,token}。
-    # 该 SA 的权限由 chart 的 account.yaml 授予（endpoints/pods 的 get/list/watch/delete，deployments 的 get/list/watch/update/patch/delete）。
 
     apiVersion: v1
     kind: Config
@@ -170,7 +166,6 @@ data:
       namespace: {{ .Release.Namespace }}
       service_name: adp-plugin-code-kernel
       max_pods: 360
-      # RESOLVE: keep-private
       min_pods: {{- if eq .Values.global.clusterSize "minimal" }} 2{{- else if eq .Values.global.clusterSize "standard" }} 5{{- else }} 10{{- end }}
       upper_thr: 0.8
       lower_thr: 0.3

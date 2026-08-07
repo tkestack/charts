@@ -11,32 +11,26 @@ data:
         - cle-route-propagator
       stream_filter:
       service:
-        # redis
         - name: redis.plugin-gateway-server
           target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${INFRA_MIDDLEWARES_REDIS_0_PORT}/27
 
-        # PluginConfigApi
         - callee: trpc.KEP.plugin_config_server.PluginConfigApi
           namespace: ${NAMESPACE}
           target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
           protocol: trpc
           timeout: 20000
-          # disable_servicerouter: true
 
-        # PluginConfigApi
         - callee: trpc.adp.plugin_config.PluginConfigApi
           namespace: ${NAMESPACE}
           target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
           protocol: trpc
           timeout: 20000
 
-        # # PluginExec
         - callee: trpc.adp.plugin_exec.PluginExec
           namespace: ${NAMESPACE}
           target: ip://adp-plugin-exec.{{ .Release.Namespace }}.svc.cluster.local:8000
           timeout: 7200000
 
-        # 计费服务
         - name: qbot.finance.finance.Finance
           target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
           namespace: ${NAMESPACE}
@@ -44,7 +38,6 @@ data:
           network: tcp
           timeout: 30000
 
-        # 资源服务
         - name: trpc.adp.resource_gallery.Admin
           target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
           namespace: ${NAMESPACE}
@@ -59,7 +52,6 @@ data:
           network: tcp
           timeout: 30000
 
-        # 计费服务
         - name: qbot.finance.finance.Finance
           target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
           namespace: ${NAMESPACE}
@@ -75,23 +67,14 @@ data:
 
   main.yaml: |
     gateway:
-      # 网关请求超时，单位秒
       gateway_timeout: 60
-      # 下游请求超时，单位秒
       downstream_timeout: 30
-      # session 过期时间，单位秒，默认 1800
       session_ttl_second: 1800
-      # owner command 全局处理并发上限，0 表示默认 128，<0 表示不限制
       owner_command_max_concurrency: 128
-      # 单个 SSE session 的 owner command 队列长度，默认 128
       owner_command_session_queue_size: 128
-      # 本地 initialize 响应返回的 MCP protocol version
       mcp_protocol_version: "2025-03-26"
-      # 本地 initialize 响应返回的网关 server name
       mcp_server_name: "ADP"
-      # session 清理定时任务执行间隔，单位秒，默认 300
       session_cleanup_interval_second: 300
-      # 下游请求/响应日志中允许打印的 body 最大字节数，默认 4096
       max_logged_body_bytes: 4096
       forward_header_blacklist:
         - host
@@ -119,19 +102,14 @@ data:
     NAMESPACE: Production
     ENV_NAME: formal
 
-    # PluginConfigApi
     PLUGIN_CONFIG_TARGET: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
 
-    # PluginExec
     PLUGIN_EXEC_TARGET: ip://adp-plugin-exec.{{ .Release.Namespace }}.svc.cluster.local:8000
 
-    # ResourceGalleryAdmin
     RESOURCE_GALLERY_TARGET: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
 
-    # Metrology
     METROLOGY_TARGET: ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000
 
-    # 计费
     FINANCE_TARGET: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
   plugin_zh-CN.json: |
     {
@@ -164,7 +142,6 @@ data:
       service:                                         #业务服务提供的service，可以有多个
         - name: trpc.KEP.plugin-gateway-server.PluginGatewayHttp      #service的路由名称
           ip: ${POD_IP}                                 #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
-          #nic: eth0
           port: 8002                                    #服务监听端口 可使用占位符 ${port}
           network: tcp                                  #网络监听类型  tcp udp
           protocol: http_no_protocol                    #应用层协议 trpc http
@@ -264,32 +241,26 @@ data:
         - cle-route-propagator
       stream_filter:
       service:
-        # redis
         - name: redis.plugin-gateway-server
           target: redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${INFRA_MIDDLEWARES_REDIS_0_PORT}/27
 
-        # PluginConfigApi
         - callee: trpc.KEP.plugin_config_server.PluginConfigApi
           namespace: ${NAMESPACE}
           target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
           protocol: trpc
           timeout: 20000
-          # disable_servicerouter: true
 
-        # PluginConfigApi
         - callee: trpc.adp.plugin_config.PluginConfigApi
           namespace: ${NAMESPACE}
           target: ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001
           protocol: trpc
           timeout: 20000
 
-        # # PluginExec
         - callee: trpc.adp.plugin_exec.PluginExec
           namespace: ${NAMESPACE}
           target: ip://adp-plugin-exec.{{ .Release.Namespace }}.svc.cluster.local:8000
           timeout: 7200000
 
-        # 计费服务
         - name: qbot.finance.finance.Finance
           target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
           namespace: ${NAMESPACE}
@@ -297,7 +268,6 @@ data:
           network: tcp
           timeout: 30000
 
-        # 资源服务
         - name: trpc.adp.resource_gallery.Admin
           target: ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090
           namespace: ${NAMESPACE}
@@ -312,7 +282,6 @@ data:
           network: tcp
           timeout: 30000
 
-        # 计费服务
         - name: qbot.finance.finance.Finance
           target: ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090
           namespace: ${NAMESPACE}

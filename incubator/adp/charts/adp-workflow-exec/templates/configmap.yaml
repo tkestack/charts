@@ -12,7 +12,6 @@ data:
         - cle-route-propagator
         - chat-trace
       service:
-        # redis（主要的存储）
         - name: redis.bot-workflow-dm-server
           target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379"
         - name: redis-cluster.workflow-exec
@@ -349,7 +348,6 @@ data:
       DsDefaultTPM: 100000
       DefaultReportStep: 100
       SpaceLimiterAccount: ${FINANCE_SPACE_LIMITER_ACCOUNTS}
-    # RESOLVE: keep-private
     storage:
       {{ include "qbot.s3_storage" . }}
     AsyncTask:
@@ -814,7 +812,6 @@ data:
         - cle-route-propagator
         - chat-trace
       service:
-        # redis（主要的存储）
         - name: redis.bot-workflow-dm-server
           target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379"
         - name: redis-cluster.workflow-exec

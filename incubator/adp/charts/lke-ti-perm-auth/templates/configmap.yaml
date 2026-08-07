@@ -83,17 +83,12 @@ data:
 
   config.yaml: |
     AuthConfig:
-      # 禁止自动创建账号， 默认自动创建
       DisableAutoCreateAccount: {{ .Values.DisableAutoCreateAccount }}
-      # 对接第三方登录使用
       TiLoginSwitch: "false"
       TiLogoutSwitch: "false"
       TiAuthProxyUrl: "http://ti-perm-auth-proxy:80"
-      # 登录态有效期
       TicketExpirationTime: "24"
-      # 登录页地址
       LoginUrl: "{{ .Values.global.scheme }}://{{ .Values.global.clb }}/portal/login"
-      # 主账号
       DefaultMainUin: "100000000"
       MySQLExecTimeoutSec: "10"
       VerifyTokenSwitch: "true"
@@ -127,7 +122,6 @@ data:
           AddUsers: "AddUsers"
           AddMainUsers: "CreateBusinessAdministrator"
           CreateDept: "CreateDept"
-      # 密码策略
       PasswordPolicy:
         MinLength: 8
         MaxLength: 20

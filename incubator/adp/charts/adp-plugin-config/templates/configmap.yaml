@@ -22,43 +22,36 @@ data:
         - name: mysql.db_llm_prod_plugin
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - callee: trpc.KEP.bot_admin_config_server.Api
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
           protocol: trpc
           timeout: 20000
         - callee: trpc.KEP.bot_admin_config_server.Login
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.app_admin_proxy.Api
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.app_admin_proxy.Login
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
           protocol: trpc
           timeout: 20000
         - callee: trpc.KEP.bot_task_config_server.TaskConfig
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.workflow_config.WorkflowConfig
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.workflow_config.WorkflowConfigApi
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
           protocol: trpc
@@ -69,13 +62,11 @@ data:
           protocol: http
           target: {{ if eq .Values.global.components.s3.providerType "minio" }}{{ printf "ip://minio.%s.svc.cluster.local:80" .Release.Namespace }}{{- else if eq .Values.global.components.s3.providerType "obs" }}ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}{{- else }}dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn{{- end }}
         - callee: trpc.KEP.code_interpreter_dispatcher.CodeExec
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.plugin_code_interpret.CodeExec
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
           protocol: trpc
@@ -83,85 +74,70 @@ data:
         - callee: trpc.smartservice.accessmanager.AccessManager
           name: trpc.SmartService.AccessManagerServer.AccessManager
           target: "ip://adp-access-manager.{{ .Release.Namespace }}.svc.cluster.local:10001"
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
-          # RESOLVE: keep-public
           env_name: ${ACCESS_MANAGER_ENV_NAME}
           set_name: commonset.sz.common1
           timeout: 3000
         - callee: trpc.KEP.agent_config_server.AgentConfigApi
           name: trpc.KEP.agent-config-server.AgentConfigApi
           target: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           protocol: trpc
           timeout: 60000
         - callee: trpc.adp.agent_config.AgentConfigApi
           name: trpc.KEP.agent-config-server.AgentConfigApi
           target: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           protocol: trpc
           timeout: 60000
         - name: qbot.finance.finance.Finance
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
           protocol: trpc
           network: tcp
           timeout: 30000
         - callee: trpc.SmartService.AIConfManagerServer.AIConfManager
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           name: trpc.SmartService.AIConfManagerServer.AIConfManager
           target: "ip://adp-aiconf-manager.{{ .Release.Namespace }}.svc.cluster.local:10002"
           timeout: 3000
-          # RESOLVE: keep-public
           env_name: ${AI_CONF_MANAGER_ENV_NAME}
         - callee: trpc.KEP.bot_data_statistics_server.Api
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.platform_metrology.Api
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.platform_manager.Admin
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.app_config.Api
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091"
           timeout: 30000
         - callee: trpc.adp.app_config.Admin
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
           timeout: 30000
         - callee: trpc.adp.platform_manager.Login
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
           protocol: trpc
           timeout: 6000
         - callee: trpc.smartassistant.vectordbmanager.VectorObj
           target: "ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001"
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           env_name: pre
           set_name: commonset.sz.common1
           timeout: 20000
         - callee: trpc.adp.kb_vdb_proxy.VectorObj
           target: "ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001"
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           env_name: pre
           set_name: commonset.sz.common1
@@ -315,7 +291,6 @@ data:
         TimeWindowInterval: 1
         Timeout: 0
       Timeout: 60
-      # RESOLVE: keep-private
       McpSecurityRules:
         - ID: mr-eb6bc341
           Status: open
@@ -472,9 +447,7 @@ data:
       permission_ids: ["adpPluginCenterView"]
     api_config:
       timeout: 30
-      # RESOLVE: keep-public
       white_urls: ${API_CONFIG_WHITE_URLS}
-      # RESOLVE: keep-public
       ports: ${API_CONFIG_PORTS}
     tool_ref_limit: 1000
     plugin_check:
@@ -503,13 +476,10 @@ data:
       sync_batch_size: 10
       load_db_tick_interval: ${MCP_LOAD_DB_TICK_INTERVAL}
       mcp_sync_interval: ${MCP_SYNC_INTERVAL}
-      # RESOLVE: keep-public
       mcp_degrade_sync_interval: ${MCP_DEGRADE_SYNC_INTERVAL}
       mcp_degrade_threshold: 3
       mcp_proxy_urls: ["https://{{ .Values.global.clb }}/v1/lke/mcp","http://{{ .Values.global.clb }}/v1/lke/mcp", "https://devwss.testsite.woa.com/v1/lke/mcp","https://testwss.testsite.woa.com/v1/lke/mcp"]
-      # RESOLVE: keep-public
       white_urls: ${MCP_WHITE_URLS}
-      # RESOLVE: keep-public
       white_ports: ${MCP_WHITE_PORTS}
       describe_plugin_refresh: false
       external_mcp_gateway: ${EXTERNAL_GATEWAY}
@@ -522,20 +492,16 @@ data:
     storage_conf:
       type: cos
       cos_conf:
-        # RESOLVE: keep-private
         secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
-        # RESOLVE: keep-private
         secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
         region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
         app_id: ${INFRA_MIDDLEWARES_S3_COS_APPID}
-        # RESOLVE: keep-private
         bucket: ${INFRA_MIDDLEWARES_S3_COS_BUCKET}
         domain: myqcloud.com
         assume_role:
           role_arn: "{{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}"
           duration_seconds: 43200
           refresh_ahead_seconds: 300
-    # RESOLVE: keep-private
     storage:
       {{ include "qbot.s3_storage" . }}
     app_tool_limit: 30
@@ -557,16 +523,11 @@ data:
       - CheckMCPServer
       - DeleteFavoritePlugin
       - AddFavoritePlugin
-    # 是否开启自定义插件分享
     custom_plugin_share_enable: true
-    # 自定义插件企业共享是否开启审核
     plugin_audit_enable: true
-    # 是否为私有化环境部署
     privacy_env: true
     cloud_api:
-      # RESOLVE: keep-private
       secret_id: xxx
-      # RESOLVE: keep-private
       secret_key: xxx
       account_host: ${CLOUD_API_ACCOUNT_HOST}
       version: '2018-12-25'
@@ -653,94 +614,58 @@ data:
       role_credential_concurrency: 2
       role_config:
         ADP_QCSLinkedRoleInSMS:
-          # RESOLVE: keep-private
           secret_id: ''
-          # RESOLVE: keep-private
           secret_key: ''
         ADP_QCSLinkedRoleInHCM:
-          # RESOLVE: keep-private
           secret_id: ''
-          # RESOLVE: keep-private
           secret_key: ''
         ADP_QCSLinkedRoleInSES:
-          # RESOLVE: keep-private
           secret_id: ''
-          # RESOLVE: keep-private
           secret_key: ''
         ADP_QCSLinkedRoleInIMS:
-          # RESOLVE: keep-private
           secret_id: ''
-          # RESOLVE: keep-private
           secret_key: ''
         ADP_QCSLinkedRoleInTMS:
-          # RESOLVE: keep-private
           secret_id: ''
-          # RESOLVE: keep-private
           secret_key: ''
         ADP_QCSLinkedRoleInIAI:
-          # RESOLVE: keep-private
           secret_id: ''
-          # RESOLVE: keep-private
           secret_key: ''
         ADP_QCSLinkedRoleInES:
-          # RESOLVE: keep-private
           secret_id: ''
-          # RESOLVE: keep-private
           secret_key: ''
         ADP_QCSLinkedRoleInAMS:
-          # RESOLVE: keep-private
           secret_id: ''
-          # RESOLVE: keep-private
           secret_key: ''
         ADP_QCSLinkedRoleInVM:
-          # RESOLVE: keep-private
           secret_id: ''
-          # RESOLVE: keep-private
           secret_key: ''
         ADP_QCSLinkedRoleInTTS:
-          # RESOLVE: keep-private
           secret_id: ''
-          # RESOLVE: keep-private
           secret_key: ''
         ADP_QCSLinkedRoleInTMT:
-          # RESOLVE: keep-private
           secret_id: ''
-          # RESOLVE: keep-private
           secret_key: ''
         ADP_QCSLinkedRoleInMRS:
-          # RESOLVE: keep-private
           secret_id: ''
-          # RESOLVE: keep-private
           secret_key: ''
         ADP_QCSLinkedRoleInAIART:
-          # RESOLVE: keep-private
           secret_id: ''
-          # RESOLVE: keep-private
           secret_key: ''
         ADP_QCSLinkedRoleInOCR:
-          # RESOLVE: keep-private
           secret_id: ''
-          # RESOLVE: keep-private
           secret_key: ''
         ADP_QCSLinkedRoleInVCLM:
-          # RESOLVE: keep-private
           secret_id: ''
-          # RESOLVE: keep-private
           secret_key: ''
         ADP_QCSLinkedRoleInASR:
-          # RESOLVE: keep-private
           secret_id: ''
-          # RESOLVE: keep-private
           secret_key: ''
         ADP_QCSLinkedRoleInAI3D:
-          # RESOLVE: keep-private
           secret_id: ''
-          # RESOLVE: keep-private
           secret_key: ''
         ADP_QCSLinkedRoleInFACEID:
-          # RESOLVE: keep-private
           secret_id: ''
-          # RESOLVE: keep-private
           secret_key: ''
     category_keys:
       - ocr
@@ -807,9 +732,7 @@ data:
               </SPSSODescriptor>
             </EntityDescriptor>
     oauth2:
-      # RESOLVE: keep-public
       redirect_url: ${OAUTH2_REDIRECT_URL}
-      # RESOLVE: keep-public
       callback_result_url: ${OAUTH2_CALLBACK_RESULT_URL}
       state_expire: 10m
       temporary_cache_expire: 1h
@@ -1075,7 +998,6 @@ data:
 
   trpc_go.yaml: |
     global:
-      # RESOLVE: keep-public
       namespace: ${NAMESPACE}
       env_name: ${RAINBOW_ENV_NAME}
       enable_set: false
@@ -1258,43 +1180,36 @@ data:
         - name: mysql.db_llm_prod_plugin
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - callee: trpc.KEP.bot_admin_config_server.Api
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
           protocol: trpc
           timeout: 20000
         - callee: trpc.KEP.bot_admin_config_server.Login
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.app_admin_proxy.Api
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.app_admin_proxy.Login
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
           protocol: trpc
           timeout: 20000
         - callee: trpc.KEP.bot_task_config_server.TaskConfig
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.workflow_config.WorkflowConfig
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.workflow_config.WorkflowConfigApi
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
           protocol: trpc
@@ -1305,13 +1220,11 @@ data:
           protocol: http
           target: {{ if eq .Values.global.components.s3.providerType "minio" }}{{ printf "ip://minio.%s.svc.cluster.local:80" .Release.Namespace }}{{- else if eq .Values.global.components.s3.providerType "obs" }}ip://{{ .Values.global.components.s3.obs.host }}:{{ .Values.global.components.s3.obs.port }}{{- else }}dns://cos-internal.{{ .Values.global.components.s3.cos.region }}.tencentcos.cn{{- end }}
         - callee: trpc.KEP.code_interpreter_dispatcher.CodeExec
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.plugin_code_interpret.CodeExec
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
           protocol: trpc
@@ -1319,85 +1232,70 @@ data:
         - callee: trpc.smartservice.accessmanager.AccessManager
           name: trpc.SmartService.AccessManagerServer.AccessManager
           target: "ip://adp-access-manager.{{ .Release.Namespace }}.svc.cluster.local:10001"
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
-          # RESOLVE: keep-public
           env_name: ${ACCESS_MANAGER_ENV_NAME}
           set_name: commonset.sz.common1
           timeout: 3000
         - callee: trpc.KEP.agent_config_server.AgentConfigApi
           name: trpc.KEP.agent-config-server.AgentConfigApi
           target: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           protocol: trpc
           timeout: 60000
         - callee: trpc.adp.agent_config.AgentConfigApi
           name: trpc.KEP.agent-config-server.AgentConfigApi
           target: "ip://adp-agent-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           protocol: trpc
           timeout: 60000
         - name: qbot.finance.finance.Finance
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
           protocol: trpc
           network: tcp
           timeout: 30000
         - callee: trpc.SmartService.AIConfManagerServer.AIConfManager
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           name: trpc.SmartService.AIConfManagerServer.AIConfManager
           target: "ip://adp-aiconf-manager.{{ .Release.Namespace }}.svc.cluster.local:10002"
           timeout: 3000
-          # RESOLVE: keep-public
           env_name: ${AI_CONF_MANAGER_ENV_NAME}
         - callee: trpc.KEP.bot_data_statistics_server.Api
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.platform_metrology.Api
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.platform_manager.Admin
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
           protocol: trpc
           timeout: 20000
         - callee: trpc.adp.app_config.Api
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091"
           timeout: 30000
         - callee: trpc.adp.app_config.Admin
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
           timeout: 30000
         - callee: trpc.adp.platform_manager.Login
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
           protocol: trpc
           timeout: 6000
         - callee: trpc.smartassistant.vectordbmanager.VectorObj
           target: "ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001"
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           env_name: pre
           set_name: commonset.sz.common1
           timeout: 20000
         - callee: trpc.adp.kb_vdb_proxy.VectorObj
           target: "ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001"
-          # RESOLVE: keep-public
           namespace: ${NAMESPACE}
           env_name: pre
           set_name: commonset.sz.common1

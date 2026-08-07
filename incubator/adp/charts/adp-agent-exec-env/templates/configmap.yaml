@@ -5,12 +5,10 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   application.yaml: |
-    # AGS 服务配置
     ags:
       region: ${INFRA_MIDDLEWARES_S3_COS_REGION}
       secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
       secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
-      # 调用 AGS API 时的 STS 临时凭证配置（非必填，为空时回退到 secret_id/secret_key 长期 AK/SK）
       assume_role:
         role_arn: "{{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}"
         duration_seconds: 3600
@@ -41,7 +39,6 @@ data:
       envd_port: 49983                      # 沙箱 envd 文件服务端口
       upload_sign_expire_days: 90           # 文件上传预签名 URL 过期天数
 
-    # 环境管理配置
     env:
       pause_idle_instances_enabled: false # 是否启用空闲实例暂停
       idle_timeout_minutes: 60            # 空闲超时时间（分钟）
@@ -53,14 +50,9 @@ data:
       ensure_running_retry_budget_ms: 60000 # EnsureEnvReady 吸收 ErrEnvCreating 的总预算（ms），默认 5min；实际被调用方 ctx timeout 钳制，<0 关闭重试
       stop_idle_minutes: 4320             # 智能工作台沙箱保留时长（分钟）：空闲 3 天后 Stop 销毁实例，下次进入自动重建。0或负数=关闭该能力
 
-    # Agent App 模式专属配置
     agent_app:
       tool_id: ${AGENT_APP_TOOL_ID}            # Agent App 模式使用的 SandboxTool ID
-        # CPU / Memory 在 CreateSandboxTool 阶段已固化到该 ToolID 中
-      # 为空时回退到 ags.default_tool_id（不推荐，过渡期兼容）
       image: ${AGS_IMAGE}  # Agent App 模式启动实例使用的镜像
-        # StartSandboxInstance.CustomConfiguration.Image
-      # 为空时回退到 ags.image
       image_registry_type: ${AGS_IMAGE_REGISTRY_TYPE}    # 镜像仓库类型（personal / official 等），为空时回退到 ags.image_registry_type 再到 "personal"
       command: ${AGS_COMMAND}                        # 容器启动命令，为空时回退到 ags.command 再到 "/usr/local/bin/start-services"
       pause_idle_instances_enabled: false # 是否启用空闲实例暂停
@@ -72,7 +64,6 @@ data:
       init_env_lock_ttl_seconds: 120     # InitEnv 分布式锁TTL（秒）
       ensure_running_retry_budget_ms: 300000 # EnsureInstanceRunning 吸收 ErrEnvCreating 的总预算（ms），默认 5min；实际被调用方 ctx timeout 钳制，<0 关闭重试
 
-    # 沙箱资源 profile。上游 context adp_identity_provider=ioa 时使用 oa_dev_cloud。
     sandbox_profile:
       default_profile: "cloud_default"
       oa_profile: "oa_dev_cloud"
@@ -99,7 +90,6 @@ data:
             addr: "polaris://trpc.adp.agent_secret_vault.http"
             auth_sign_key: ${VAULT_SIGN_KEY}
 
-    # 对象存储配置
     storage:
       type: ${INFRA_MIDDLEWARES_S3_TYPE}
       cos_map:
@@ -131,8 +121,6 @@ data:
       auth_sign_key: ${VAULT_SIGN_KEY}   # 即 .local/keys.env 里的 AUTH_SIGN_KEY
       redis_key_prefix: "env:"
       token_cache_ttl_seconds: 3600           # 本地 placeholder 缓存 TTL 上限（秒），默认 1 小时；
-        # 代码层强制收紧到 ≤ 3600，与服务端默认 7200 的 1/2 对齐，
-      # 避免"客户端缓存还活、但服务端 placeholder 已 evict"导致沙箱拿到死 placeholder。
       request_timeout_ms: 5000                # HTTP 请求超时（毫秒），默认 5 秒
       max_retries: 2                          # 请求最大重试次数，默认 2
 
@@ -147,13 +135,10 @@ data:
       stream_filter:
         - opentelemetry
       service:
-        # 默认的DB
         - name: tdsql.adp.agent-exec-env
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_assistant?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
-        # redis
         - name: redis.agent-exec-env
           target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379"
-        # cos
         - name: trpc.http.cos.Access
           namespace: Production
           network: tcp
@@ -161,22 +146,18 @@ data:
           target: "dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn"
           timeout: 50000
 
-        ###################################################################################
-        # 向量库
         - callee: trpc.smartassistant.vectordbmanager.VectorObj
           name: trpc.SmartAssistant.VectorDBManager.VectorObj
           target: "ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001"
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME3}
           timeout: 60000
-        # 应用配置-登录态接口
         - callee: trpc.KEP.bot_admin_config_server.Login
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME4}
           protocol: trpc
           timeout: 20000
-        # 应用配置-内部接口
         - callee: trpc.KEP.bot_admin_config_server.Api
           namespace: ${CLIENT_NAMESPACE}
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
@@ -184,65 +165,55 @@ data:
           protocol: trpc
           timeout: 60000
 
-        # 应用配置-内部接口
         - callee: trpc.adp.app_admin_proxy.Api
           namespace: ${CLIENT_NAMESPACE}
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
           env_name: ${ENV_NAME4}
           protocol: trpc
           timeout: 60000
-        # 知识库-内部接口
         - callee: trpc.adp.kb_config.Api
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME4}
           protocol: trpc
           timeout: 60000
           target: "ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092"
-        # 插件配置端
         - callee: trpc.adp.plugin_config.PluginConfigApi
           target: "ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME2}
           timeout: 60000
-        # 插件运行时
         - callee: trpc.adp.plugin_exec.PluginExec
           target: "ip://adp-plugin-exec.{{ .Release.Namespace }}.svc.cluster.local:8000"
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME2}
           timeout: 7200000
-        # 代码执行
         - callee: trpc.adp.plugin_code_interpret.CodeExec
           target: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
           namespace: ${CLIENT_NAMESPACE}
           protocol: trpc
           timeout: 60000
-        # 计费服务, @stanwei 提供。 需要升级废弃
         - callee: qbot.finance.finance.Finance
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME4}
           target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
           network: tcp
           timeout: 30000
-        # 计费服务
         - callee: trpc.adp.platform_charger.Finance
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME4}
           target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
           network: tcp
           timeout: 30000
-        # token计数
         - callee: trpc.adp.model_token_count.Tokenizer
           namespace: ${CLIENT_NAMESPACE}
           target: "ip://adp-model-token-count.{{ .Release.Namespace }}.svc.cluster.local:8000"
           timeout: 3000
-        # 记忆服务
         - callee: trpc.adp.app_memory.MemoryInner
           target: "ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001"
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME2}
           network: tcp
           timeout: 30000
-        # agent服务
         - callee: trpc.adp.agent_exec.chat
           target: "ip://adp-agent-exec.{{ .Release.Namespace }}.svc.cluster.local:8000"
           namespace: ${CLIENT_NAMESPACE}
@@ -250,47 +221,40 @@ data:
           protocol: http                  # 应用层协议 trpc http
           timeout: 600000                  # 请求最长处理时间
           serialization: 2                # (0=pb, 1=JCE, 2=json, 3=flat_buffer, 4=bytes_flow)
-        # 资源管理服务
         - callee: trpc.adp.resource_gallery.Admin
           target: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME4}
           protocol: trpc
           timeout: 20000
-        # 模型网关（embedding相关）
         - callee: trpc.adp.ai-gateway.api
           target: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
           namespace: ${CLIENT_NAMESPACE}
           network: tcp
           protocol: http
           timeout: 1800000
-        # 知识问答服务
         - callee: trpc.adp.rag_exec.Chat
           target: "ip://adp-rag-exec.{{ .Release.Namespace }}.svc.cluster.local:8001"
           namespace: ${CLIENT_NAMESPACE}
           network: tcp
           protocol: trpc
           timeout: 300000
-        # 资源管理服务-登录态接口
         - callee: trpc.adp.resource_gallery.Login
           target: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9092"
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME4}
           protocol: trpc
           timeout: 50000
-        # 平台管理服务-内部接口
         - callee: trpc.adp.platform_manager.Admin
           namespace: ${CLIENT_NAMESPACE}
           target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
           protocol: trpc
           timeout: 6000
-        # 平台管理服务-登录态接口
         - callee: trpc.adp.platform_manager.Login
           namespace: ${CLIENT_NAMESPACE}
           target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
           protocol: trpc
           timeout: 6000
-        # 数据上报服务
         - callee: trpc.adp.platform_metrology.Api
           namespace: ${CLIENT_NAMESPACE}
           target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
@@ -309,42 +273,28 @@ data:
   exec_env_zh-CN.json: |
     {}
   placeholder.yaml: |
-    # placeholder方案： https://iwiki.woa.com/p/4016211588
 
-    ###############################################################################
-    # trpc_go.yaml 变量
-    ###############################################################################
-    # global
     GLOBAL_NAMESPACE: Production
     GLOBAL_ENV_NAME: formal
     GLOBAL_SERVER_CONNECTOR: ""
 
-    # galileo
     GALILEO_OCP_ADDR: ""
     GALILEO_ACCESS_POINT: ""
     GALILEO_DISABLE_STREAM_TRACE_BODY: false
     LOG_REMOTE_LEVEL: debug
 
-    # rainbow
     RAINBOW_ADDRESS: ""
     RAINBOW_APP_ID: 3f090873-420d-4575-b9d2-cf6a72980a33
     RAINBOW_GROUP: "agent-exec-env"
     RAINBOW_ENV_NAME: formal
 
-    # registry
     REGISTRY_NAMESPACE: Production
     REGISTRY_TOKEN: 19b41e9ac65f4509912ce3669056a160
 
-    # i18n
     I18N_DEFAULT_LANG: zh-CN
 
-    # polaris
     POLARIS_JOIN_POINT: ""
 
-    ###############################################################################
-    # client.yaml 变量
-    ###############################################################################
-    # 基础配置
     CLIENT_NAMESPACE: Production
     ENV_NAME: formal # formal test
     ENV_NAME2: "" # <empty> testing
@@ -352,13 +302,10 @@ data:
     ENV_NAME4: ""  # <empty> test
     COS_INTERNAL_TARGET: "dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn"
 
-    # 存储地址
     TDSQL_DEFAULT_TARGET: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_assistant?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
 
-    # redis地址
     REDIS_DEFAULT_TARGET: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379"
 
-    # 服务地址
     VECTORDBMANAGER_VECTOROBJ_TARGET: "ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001"
     ADMIN_CONFIG_LOGIN_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
     APP_ADMIN_PROXY_API_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
@@ -378,34 +325,23 @@ data:
     PLATFORM_MANAGER_LOGIN_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
     PLATFORM_METROLOGY_API_TARGET: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
 
-    ###############################################################################
-    # application.yaml 变量
-    ###############################################################################
-    # AGS 配置， 公共沙箱的工具ID：sdt-52p8l5z6
     PUBLIC_SANDBOX_INSTANCE_ID: "{{ dig "agentRuntime" "instances" "commonAgs" "instanceID" "" .Values.global }}"
     PUBLIC_SANDBOX_TOKEN: "{{ dig "agentRuntime" "instances" "commonAgs" "token" "" .Values.global }}"
     DEFAULT_TOOL_ID: "{{ dig "agentRuntime" "instances" "smartDeskAgs" "toolID" "" .Values.global }}" #工作台的工具ID
-    # AGENT APP 配置
     AGENT_APP_TOOL_ID: "{{ dig "agentRuntime" "instances" "clawAgs" "toolID" "" .Values.global }}" #Claw模式的工具ID
 
-    # 沙箱镜像配置
     AGS_IMAGE: "{{ .Values.global.imageRegistry }}/tke-market/agent-sandbox:stable_iaas_4.0.3.0_4df788c_private"   # 从 deploy-infos/platform-conf registry.type 注入 {{ .Values.global.imageRegistry }}/tke-market（格式: registry/namespace）
     AGS_IMAGE_REGISTRY_TYPE: "personal"   # 从 deploy-infos/platform-conf registry.type 注入（enterprise/personal）
     AGS_COMMAND: "/usr/local/bin/start-services"                                                  # 容器启动命令
 
     OA_ASSISTANT_TOOL_ID: ""  #不需要
     OA_AGENT_APP_TOOL_ID: ""  #不需要
-    # Agent App 单 uin 沙箱配额白名单 map[uin]quota（YAML 内联 flow map）；命中后用 value 替代默认 100，
-    # value <= 0 视为未配置仍走默认。要放开请填明确大数（如 500）。
-    # 例：{"144115141220094": 500, "144115138345701": 300}
     INSTANCE_QUOTA_WHITELIST:
 
-    # COS存储（COS 连接信息由私有化平台通过 INFRA_MIDDLEWARES_S3_* 全局注入，无需在此硬编码）
     OA_AGS_SECRET_ID: ""
     OA_AGS_SECRET_KEY: ""
     OA_COS_BUCKET: ""
 
-    # VAULT
     AGENT_SECRET_VAULT_ADDR: "http://adp-agent-secret-vault.{{ .Release.Namespace }}.svc.cluster.local:8080"
     VAULT_SIGN_KEY: "7051596f046f5b919ffdcbcf95c5ec20845eb55e92f419d4426ec790beca8e11"
 
@@ -441,7 +377,6 @@ data:
       service:                                         #业务服务提供的service，可以有多个
         - name: trpc.adp.agent_exec_env.AgentExecEnv      #service的路由名称
           ip: ${POD_IP}                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
-          #nic: eth0
           port: 9000                #服务监听端口 可使用占位符 ${port}
           network: tcp                             #网络监听类型  tcp udp
           protocol: trpc               #应用层协议 trpc http
@@ -466,7 +401,6 @@ data:
           protocol: timer
           timeout: 600000
           network: "30 */5 * * * *?scheduler=agent_exec_env_scheduler&holdTime=120&startAtOnce=0"
-        # ---- Agent App 模式定时任务 ----
         - name: trpc.adp.agent_exec_env.agent-app-pause-idle
           ip: 127.0.0.1
           port: 9104
@@ -599,13 +533,10 @@ data:
       stream_filter:
         - opentelemetry
       service:
-        # 默认的DB
         - name: tdsql.adp.agent-exec-env
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_assistant?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
-        # redis
         - name: redis.agent-exec-env
           target: "redis://:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379"
-        # cos
         - name: trpc.http.cos.Access
           namespace: Production
           network: tcp
@@ -613,22 +544,18 @@ data:
           target: "dns://cos-internal.${INFRA_MIDDLEWARES_S3_COS_REGION}.tencentcos.cn"
           timeout: 50000
 
-        ###################################################################################
-        # 向量库
         - callee: trpc.smartassistant.vectordbmanager.VectorObj
           name: trpc.SmartAssistant.VectorDBManager.VectorObj
           target: "ip://adp-kb-vdb-proxy.{{ .Release.Namespace }}.svc.cluster.local:10001"
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME3}
           timeout: 60000
-        # 应用配置-登录态接口
         - callee: trpc.KEP.bot_admin_config_server.Login
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME4}
           protocol: trpc
           timeout: 20000
-        # 应用配置-内部接口
         - callee: trpc.KEP.bot_admin_config_server.Api
           namespace: ${CLIENT_NAMESPACE}
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
@@ -636,65 +563,55 @@ data:
           protocol: trpc
           timeout: 60000
 
-        # 应用配置-内部接口
         - callee: trpc.adp.app_admin_proxy.Api
           namespace: ${CLIENT_NAMESPACE}
           target: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
           env_name: ${ENV_NAME4}
           protocol: trpc
           timeout: 60000
-        # 知识库-内部接口
         - callee: trpc.adp.kb_config.Api
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME4}
           protocol: trpc
           timeout: 60000
           target: "ip://adp-kb-config.{{ .Release.Namespace }}.svc.cluster.local:9092"
-        # 插件配置端
         - callee: trpc.adp.plugin_config.PluginConfigApi
           target: "ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8001"
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME2}
           timeout: 60000
-        # 插件运行时
         - callee: trpc.adp.plugin_exec.PluginExec
           target: "ip://adp-plugin-exec.{{ .Release.Namespace }}.svc.cluster.local:8000"
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME2}
           timeout: 7200000
-        # 代码执行
         - callee: trpc.adp.plugin_code_interpret.CodeExec
           target: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
           namespace: ${CLIENT_NAMESPACE}
           protocol: trpc
           timeout: 60000
-        # 计费服务, @stanwei 提供。 需要升级废弃
         - callee: qbot.finance.finance.Finance
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME4}
           target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
           network: tcp
           timeout: 30000
-        # 计费服务
         - callee: trpc.adp.platform_charger.Finance
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME4}
           target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
           network: tcp
           timeout: 30000
-        # token计数
         - callee: trpc.adp.model_token_count.Tokenizer
           namespace: ${CLIENT_NAMESPACE}
           target: "ip://adp-model-token-count.{{ .Release.Namespace }}.svc.cluster.local:8000"
           timeout: 3000
-        # 记忆服务
         - callee: trpc.adp.app_memory.MemoryInner
           target: "ip://adp-app-memory.{{ .Release.Namespace }}.svc.cluster.local:8001"
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME2}
           network: tcp
           timeout: 30000
-        # agent服务
         - callee: trpc.adp.agent_exec.chat
           target: "ip://adp-agent-exec.{{ .Release.Namespace }}.svc.cluster.local:8000"
           namespace: ${CLIENT_NAMESPACE}
@@ -702,47 +619,40 @@ data:
           protocol: http                  # 应用层协议 trpc http
           timeout: 600000                  # 请求最长处理时间
           serialization: 2                # (0=pb, 1=JCE, 2=json, 3=flat_buffer, 4=bytes_flow)
-        # 资源管理服务
         - callee: trpc.adp.resource_gallery.Admin
           target: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME4}
           protocol: trpc
           timeout: 20000
-        # 模型网关（embedding相关）
         - callee: trpc.adp.ai-gateway.api
           target: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
           namespace: ${CLIENT_NAMESPACE}
           network: tcp
           protocol: http
           timeout: 1800000
-        # 知识问答服务
         - callee: trpc.adp.rag_exec.Chat
           target: "ip://adp-rag-exec.{{ .Release.Namespace }}.svc.cluster.local:8001"
           namespace: ${CLIENT_NAMESPACE}
           network: tcp
           protocol: trpc
           timeout: 300000
-        # 资源管理服务-登录态接口
         - callee: trpc.adp.resource_gallery.Login
           target: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9092"
           namespace: ${CLIENT_NAMESPACE}
           env_name: ${ENV_NAME4}
           protocol: trpc
           timeout: 50000
-        # 平台管理服务-内部接口
         - callee: trpc.adp.platform_manager.Admin
           namespace: ${CLIENT_NAMESPACE}
           target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
           protocol: trpc
           timeout: 6000
-        # 平台管理服务-登录态接口
         - callee: trpc.adp.platform_manager.Login
           namespace: ${CLIENT_NAMESPACE}
           target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
           protocol: trpc
           timeout: 6000
-        # 数据上报服务
         - callee: trpc.adp.platform_metrology.Api
           namespace: ${CLIENT_NAMESPACE}
           target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"

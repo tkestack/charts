@@ -86,10 +86,8 @@ data:
         expiration: 1800
         update_cache_interval: 30
     run_code:
-      # 代码结果的最大长度
       MaxResultLength: 1000
       ResultSeparator: _______ResultSeparator_______
-      # 每个App最大的代码运行并发数
       MaxAppParallel: 5
       CodeTemplate: |-
         {{`import time
@@ -366,11 +364,7 @@ data:
       "KeyAuditBatchDelete":"批量删除"
     }
   placeholder.yaml: |
-    # ============================================================
-    # trpc_go.yaml
-    # ============================================================
 
-    # 命名空间
     SPACE_LIMITER_ACCOUNT:
       - 100044597907
     BOT_ADMIN_CONFIG_SERVER_LOGIN: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
@@ -385,71 +379,48 @@ data:
     PLATFORM_METROLOGY_API_TARGET: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
     TARGET_BOT_ADMIN_LOGIN: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
 
-    # bot_admin_config_server.Api / app_admin_proxy.Api target
     RESOURCE_GALLERY_ADMIN_TARGET: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
     TARGET_BOT_ADMIN_API: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
 
-    # trpc.http.cos.Access target
     BOT_ADMIN_CONFIG_SERVER_LOGIN_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9091"
     COS_ACCESS_NAMESPACE: Production
 
-    # code_interpreter_dispatcher.CodeExec target
     APP_ADMIN_PROXY_API_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
     TARGET_CODE_EXEC: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
 
-    # ai-gateway.Api target
     BOT_ADMIN_CONFIG_SERVER_API_TARGET: "ip://adp-app-admin-proxy.{{ .Release.Namespace }}.svc.cluster.local:9092"
     TARGET_AI_GATEWAY: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
-    # finance.Finance / platform_charger.Finance target
     CODE_INTERPRETER_DISPATCHER_CODEEXEC_TARGET: "ip://adp-plugin-code-interpret.{{ .Release.Namespace }}.svc.cluster.local:8001"
     TARGET_FINANCE: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
-    # platform_manager.Admin target
     TARGET_PLATFORM_ADMIN: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
-    # platform_manager.Login target
     AI_GATEWAY_API_TARGET: "ip://adp-ai-gateway.{{ .Release.Namespace }}.svc.cluster.local:9090"
     TARGET_PLATFORM_LOGIN: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
 
-    # bot-data-statistics-server.Api target
     TARGET_DATA_STATISTICS: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
 
-    # resource_gallery.Admin target
     TARGET_RESOURCE_GALLERY: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
-    # bot_admin_config_server.Api timeout（ms）
     APP_DS_DEFAULT_QPM: 50
 
-    # DS 默认 TPM
     APP_DS_DEFAULT_TPM: 100000
 
-    # SSE 连接配置（连接地址、超时、命名空间等）
     APP_TASK_POOL_NUM: 80
 
-    # 任务配置（各任务的协程数、重试、超时等）
     CLIENT_BOT_ADMIN_API_TIMEOUT: 10000
 
-    # trpc.http.cos.Access timeout（ms）
     CLIENT_COS_ACCESS_TIMEOUT: 10000
 
-    # redis.lke.limiter timeout（ms）
     CLIENT_REDIS_LKE_LIMITER_TIMEOUT: 2000
 
-    # ============================================================
-    # application.yaml
-    # ============================================================
 
     IS_PRIVATE: true
 
-    # DS 默认 QPM
     LOG_LEVEL: info
 
-    # ============================================================
-    # client.yaml
-    # ============================================================
 
-    # MySQL DSN
     SSE_CONN_OPTIONS:
       conn_url: "http://adp-apex:80/v1/qbot/chat/experienceSse"
       mod_id: 0
@@ -458,7 +429,6 @@ data:
       client_timeout: 30000
       sse_buffer_size_k: 1000
 
-    # 任务池协程数
     TASKS:
       upload_sample_set:
         runners: 20 # 处理协程数, 无法动态调整
@@ -541,7 +511,6 @@ data:
         batch_size: 0
         stopped_resume_time: 720h
 
-    # storage 配置（类型、COS 密钥、bucket、域名、凭证等）
     SSE_V2_CONN_OPTIONS:
       conn_url: "http://adp-chat-manage:9099/adp/v2/chat/experience"
       mod_id: 0

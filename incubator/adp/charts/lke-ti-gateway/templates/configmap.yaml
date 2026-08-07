@@ -90,15 +90,12 @@ data:
         enable_access_log: false         # enable access log or not, default false
         access_log: logs/access_stream.log
         access_log_format: "$remote_addr [$time_local] $protocol $status $bytes_sent $bytes_received $session_time"
-        # create your custom log format by visiting http://nginx.org/en/docs/varindex.html
         access_log_format_escape: default       # allows setting json or default characters escaping in variables
         lua_shared_dict:
           etcd-cluster-health-check-stream: 10m
           lrucache-lock-stream: 10m
           plugin-limit-conn-stream: 10m
 
-      #envs:                            # allow to get a list of environment variables
-      #  - TEST_ENV
 
       main_configuration_snippet: |
         # Add custom Nginx main configuration to nginx.conf.
@@ -225,7 +222,6 @@ data:
       - rewrite-cos
       - ti-notebook-rewrite
       - ti-asr-rewrite
-      #  - skywalking
       - batch-requests
       - prometheus
       - grpc-transcode
@@ -250,10 +246,6 @@ data:
       log-rotate:
         interval: 600    # rotate interval (unit: second)
         max_kept: 1      # max number of log files will be kept
-      #  skywalking:
-      #    service_name: APISIX
-      #    service_instance_name: "APISIX Instance Name"
-      #    endpoint_addr: http://127.0.0.1:12800
       prometheus:
         export_uri: /apisix/prometheus/metrics
         metric_prefix: gateway_

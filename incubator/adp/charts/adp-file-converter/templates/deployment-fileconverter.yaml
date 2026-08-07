@@ -21,9 +21,9 @@ spec:
   {{- if eq .Values.global.clusterSize "minimal" }}
   replicas: 1
   {{- else if eq .Values.global.clusterSize "standard" }}
-  replicas: 2
+  replicas: 1
   {{- else }}
-  replicas: 3
+  replicas: 1
   {{- end }}
   selector:
     matchLabels:

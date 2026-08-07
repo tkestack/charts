@@ -570,7 +570,6 @@ data:
       service:                                         #针对单个后端的配置，默认都有默认值，可以完全不用配置
         - callee: trpc.VirtualHuman.virtualmanconfig.virtualmanInstance
           name:  trpc.VirtualHuman.access.AccessService
-          # name: trpc.VirtualHuman.virtualmanconfig.VirtualmanInstance
           env_name: formal
     plugins:                                           #插件配置
       selector:

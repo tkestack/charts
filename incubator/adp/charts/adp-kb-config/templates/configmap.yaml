@@ -497,7 +497,6 @@ data:
       qa_release_max_limit: 50000
       batch_download_doc_max_limit: 15
       bot_max_char_size_white_list: ${APPLICATION_ROBOT_DEFAULT_BOT_MAX_CHAR_SIZE_WHITE_LIST}
-    # RESOLVE: keep-public
     doc_preview: ${APPLICATION_DOC_PREVIEW}
     doc_preview_type: 0
     doc_qa:
@@ -543,7 +542,6 @@ data:
       time_before: 5m
       limit: 1000
     demo_mode: ${APPLICATION_DEMO_MODE}
-    # RESOLVE: keep-public
     user_avatar: ${APPLICATION_USER_AVATAR}
     task_prefix: "knowledge:task"
     task_fetch_num: 100
@@ -555,21 +553,15 @@ data:
     task_clean_end_hour: ${APPLICATION_TASK_CLEAN_END_HOUR}
     task_clean_slow_threshold: ${APPLICATION_TASK_CLEAN_SLOW_THRESHOLD}
     task_delete_batch_interval: ${APPLICATION_TASK_DELETE_BATCH_INTERVAL}
-    # RESOLVE: keep-public
     tasks: ${APPLICATION_TASKS}
-    # RESOLVE: keep-public
     short_url_root_url: ${APPLICATION_SHORT_URL_ROOT_URL}
-    # RESOLVE: keep-public
     preview_url_root_url: ${APPLICATION_PREVIEW_URL_ROOT_URL}
-    # RESOLVE: keep-public
     offline_short_url_scheme: ${APPLICATION_OFFLINE_SHORT_URL_SCHEME}
     realtime_short_url_scheme: ${APPLICATION_REALTIME_SHORT_URL_SCHEME}
     max_export_count: 100000
     max_export_batch_size: 2000
     audit_switch: {{ .Values.global.contentSecurity.auditSwitch }}
-    # RESOLVE: keep-public
     file_audit_switch: ${APPLICATION_FILE_AUDIT_SWITCH}
-    # RESOLVE: keep-public
     video_audit_switch: ${APPLICATION_VIDEO_AUDIT_SWITCH}
     high_light_threshold: 7
     attribute_label:
@@ -607,7 +599,6 @@ data:
       max_row: 10000
       execl_head: ${APPLICATION_ATTRIBUTE_LABEL_EXECL_HEAD}
       redis_expire_second: 86400
-    # RESOLVE: keep-public
     sse_conn_options: ${APPLICATION_SSE_CONN_OPTIONS}
     doc_parse_error:
       10001:
@@ -631,7 +622,6 @@ data:
     doc_placeholder:
       link: "https://L%d"
       img: "https://I%d"
-    # RESOLVE: keep-public
     cloud_apis: ${APPLICATION_CLOUD_APIS}
     ai_conf:
       product_type: lke
@@ -642,9 +632,7 @@ data:
     page_content_max_length: 1800
     org_data_max_length: ${APPLICATION_ORG_DATA_MAX_LENGTH}
     splicing_intervene_doc_path: /tmp
-    # RESOLVE: keep-public
     finance: ${APPLICATION_FINANCE}
-    # RESOLVE: keep-public
     elastic_search_config: ${APPLICATION_ELASTIC_SEARCH_CONFIG}
     es_index_name_config: ${APPLICATION_ES_INDEX_NAME_CONFIG}
     es_search:
@@ -654,14 +642,10 @@ data:
       model_has_think: ["lke-deepseek-r1", "lke-deepseek-r1-vip", "lke-deepseek-r1-lichan", "lke-deepseek-r1-0528"]
       no_think_prompt: ${APPLICATION_DEEP_SEEK_CONF_NO_THINK_PROMPT}
       no_think_model_params: "{\"seed\": 0, \"top_p\": 1, \"temperature\": 0, \"max_tokens\": 1000, \"remove_cot\": true}"
-    # RESOLVE: keep-public
     db_source: ${APPLICATION_DB_SOURCE}
     share_knowledge_config:
-      # RESOLVE: keep-public
       default_qa_extract_model: ${APPLICATION_SHARE_KNOWLEDGE_CONFIG_DEFAULT_QA_EXTRACT_MODEL}
-    # RESOLVE: keep-public
     data_migration_config: ${APPLICATION_DATA_MIGRATION_CONFIG}
-    # RESOLVE: keep-public
     cos_document_config: ${APPLICATION_COS_DOCUMENT_CONFIG}
     database: ${APPLICATION_DATABASE}
     embedding_config:
@@ -700,16 +684,11 @@ data:
       delete_batch_size: 100
     exceed_knowledge_resume_config: ${APPLICATION_EXCEED_KNOWLEDGE_RESUME_CONFIG}
     kb_package_config: ${APPLICATION_KB_PACKAGE_CONFIG}
-    # RESOLVE: keep-public
     graph_config: ${APPLICATION_GRAPH_CONFIG}
-    # RESOLVE: keep-public
     easy_graph_config: ${APPLICATION_EASY_GRAPH_CONFIG}
     free_preview: {{ .Values.global.free_preview }}
-    # RESOLVE: keep-public
     synonyms: ${APPLICATION_SYNONYMS}
-    # RESOLVE: keep-public
     sample_rule: ${APPLICATION_SAMPLE_RULE}
-    # RESOLVE: keep-public
     sample_test: ${APPLICATION_SAMPLE_TEST}
     stream_save_doc:
       parse_timeout: 1
@@ -764,45 +743,33 @@ data:
 
   client.yaml: |
     client:
-      # RESOLVE: keep-public
       namespace: ${CLIENT_CLIENT_NAMESPACE}
       filter:
         - opentelemetry
         - cle-route-propagator
       service:
         - name: mysql.db_text2sql
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/?charset=utf8mb4&timeout=1s&readTimeout=30s&writeTimeout=30s&parseTime=true&interpolateParams=true&loc=Local"
         - name: mysql.qbot.admin
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: mysql.qbot.admin.read
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: tdsql.qbot.qbot
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=5s&parseTime=true&interpolateParams=true&loc=Local"
         - name: tdsql.qbot.qbot.read
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: mysql.qbot.admin.delete
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: isearch.tdsql.qbot.qbot
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot_isearch?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: tdsql.qbot.qbot.delete
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: tdsql.qbot.graph
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_graph?charset=utf8mb4&timeout=5s&parseTime=true&interpolateParams=true&loc=Local"
         - name: redis.qbot.admin
-          # RESOLVE: keep-public
           target: "redis://${KB_ADMIN_REDIS_USER}:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/2"
           timeout: 5000
         - name: redis.qbot.retrieval.config
-          # RESOLVE: keep-public
           target: "redis://${KB_RETRIEVAL_REDIS_USER}:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/1"
           timeout: 5000
         - name: trpc.http.cos.Access
@@ -840,7 +807,6 @@ data:
           network: tcp
           timeout: 10000
         - name: lke-code-node-tdoclinker
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_LKE_CODE_NODE_TDOCLINKER_NAMESPACE}
           callee: lke-code-node-tdoclinker
           network: tcp
@@ -883,7 +849,6 @@ data:
           network: tcp
           timeout: 30000
         - name: pipeline-flow-detail
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot_history_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: trpc.adp.kb_parse_router.ParseRouter
           network: tcp
@@ -903,7 +868,6 @@ data:
           target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
           protocol: trpc
           network: tcp
-          # RESOLVE: keep-public
           timeout: ${CLIENT_CLIENT_SERVICE_QBOT_FINANCE_FINANCE_FINANCE_TIMEOUT}
           namespace: ${CLIENT_CLIENT_SERVICE_QBOT_FINANCE_FINANCE_FINANCE_NAMESPACE}
         - name: trpc.SmartAssistant.VectorDBManager.VectorObj
@@ -947,62 +911,50 @@ data:
           timeout: 10000
           namespace: ${CLIENT_CLIENT_SERVICE_QBOT_QBOT_INFOSEC_INFOSEC_NAMESPACE}
         - callee: trpc.KEP.bot_data_statistics_server.Api
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_KEP_BOT_DATA_STATISTICS_SERVER_API_NAMESPACE}
           target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
           protocol: trpc
-          # RESOLVE: keep-private
           timeout: 20000
-          # RESOLVE: keep-public
           env_name: ${CLIENT_CLIENT_SERVICE_TRPC_KEP_BOT_DATA_STATISTICS_SERVER_API_ENV_NAME}
         - name: trpc.adp.app_config.Api
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_APP_CONFIG_API_NAMESPACE}
           network: tcp
           protocol: trpc
           target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091"
           timeout: 30000
         - name: trpc.adp.platform_manager.Api
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_PLATFORM_MANAGER_API_NAMESPACE}
           network: tcp
           protocol: trpc
           target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093"
           timeout: 30000
         - callee: trpc.adp.platform_metrology.Api
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_PLATFORM_METROLOGY_API_NAMESPACE}
           target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
           protocol: trpc
           timeout: 20000
           env_name: test
         - name: trpc.adp.app_config.Admin
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_APP_CONFIG_ADMIN_NAMESPACE}
           target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
           timeout: 30000
         - name: trpc.adp.platform_manager.Login
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_PLATFORM_MANAGER_LOGIN_NAMESPACE}
           target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
           timeout: 30000
         - name: trpc.adp.platform_manager.Admin
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_PLATFORM_MANAGER_ADMIN_NAMESPACE}
           target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
           timeout: 30000
         - name: trpc.adp.resource_gallery.Admin
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_RESOURCE_GALLERY_ADMIN_NAMESPACE}
           target: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
           timeout: 30000
         - name: trpc.adp.kb_retrieval.Retrieval
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_KB_RETRIEVAL_RETRIEVAL_NAMESPACE}
           target: "ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9090"
           timeout: 30000
         - name: trpc.adp.kb_retrieval.DirectIndex
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_KB_RETRIEVAL_DIRECT_INDEX_NAMESPACE}
           target: "ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091"
           timeout: 30000
@@ -2159,29 +2111,8 @@ data:
       "ErrGraphEdgeExceedMaxLimit": "知识图谱关系数量超过系统限制"
     }
   file_type_policy.yaml: |
-    # =============================================
-    # 文件类型策略配置 — Single Source of Truth
-    # =============================================
-    # 新增文件类型只需在此处追加一段配置即可
-    # 通过七彩石配置中心加载（key: file_type_policy.yaml）
-    #
-    # 字段说明：
-    #   ext:                      文件扩展名（小写，必填）
-    #   aliases:                  别名列表（如 jpeg→jpg，选填）
-    #   max_size:                 单文件大小上限（字节），0 表示使用全局 MaxFileSize
-    #   audit_flag:               审核标识 1=待审核 3=免审
-    #   batch_import:             是否支持 QA 批量导入（即原 IsExcel 含义）
-    #   doc_import:               是否支持文档导入
-    #   spreadsheet:              是否表格类文档（统一了 IsExcelx/IsTableTypeDocument）
-    #   selectable:               是否出现在文档选择下拉列表
-    #   count_in_validity:        是否纳入有效文档数统计
-    #   can_create_qa:            是否允许生成 QA
-    #   structured:               是否用于 text2sql 结构化场景
-    #   parse_engine_file_type:   file_parse_common.FileType 枚举值（0=UNKNOWN）
-    #   file_manager_file_type:   file_manager_server.FileType 枚举值（0=UNKNOWN）
 
     file_types:
-      # ===== 文档类 =====
       - ext: docx
         max_size: 209715200        # 200MB
         audit_flag: 1
@@ -2258,7 +2189,6 @@ data:
         parse_engine_file_type: 0
         file_manager_file_type: 35   # PAGES
 
-      # ===== 演示文稿类 =====
       - ext: pptx
         max_size: 209715200        # 200MB
         audit_flag: 1
@@ -2305,7 +2235,6 @@ data:
         parse_engine_file_type: 0
         file_manager_file_type: 36   # KEYNOTE
 
-      # ===== 表格类 =====
       - ext: xlsx
         max_size: 20971520         # 20MB
         audit_flag: 3                # 免审
@@ -2355,7 +2284,6 @@ data:
         parse_engine_file_type: 0
         file_manager_file_type: 33   # TSV
 
-      # ===== 图片类 =====
       - ext: png
         max_size: 52428800         # 50MB
         audit_flag: 1
@@ -2472,7 +2400,6 @@ data:
         parse_engine_file_type: 0
         file_manager_file_type: 26   # XBM
 
-      # ===== 网页/结构化文本类 =====
       - ext: html
         max_size: 20971520         # 20MB
         audit_flag: 1
@@ -2531,7 +2458,6 @@ data:
         parse_engine_file_type: 0
         file_manager_file_type: 0
 
-      # ===== 其他 =====
       - ext: ofd
         max_size: 209715200        # 200MB
         audit_flag: 1
@@ -5213,18 +5139,13 @@ data:
       delete_doc_max_limit: ${MAIN_BATCH_INTERFACE_LIMIT_DELETE_DOC_MAX_LIMIT}
       retry_doc_parse_max_limit: ${MAIN_BATCH_INTERFACE_LIMIT_RETRY_DOC_PARSE_MAX_LIMIT}
     knowledge_delete_config:
-      # RESOLVE: keep-public
       need_delete_tables: ${MAIN_KNOWLEDGE_DELETE_CONFIG_NEED_DELETE_TABLES}
       delete_batch_size: ${MAIN_KNOWLEDGE_DELETE_CONFIG_DELETE_BATCH_SIZE}
       query_batch_size: 1000
-    # RESOLVE: keep-public
     handle_tasks: ${MAIN_HANDLE_TASKS}
     enable_worker_mode: ${MAIN_ENABLE_WORKER_MODE}
-    # RESOLVE: keep-public
     default_doc_unstable_timeout_minutes: ${MAIN_DEFAULT_DOC_UNSTABLE_TIMEOUT_MINUTES}
-    # RESOLVE: keep-public
     search_knowledge_app_id_replace_map: ${MAIN_SEARCH_KNOWLEDGE_APP_ID_REPLACE_MAP}
-    # RESOLVE: keep-public
     third_permission_check: ${MAIN_THIRD_PERMISSION_CHECK}
     third_permission_check_config: ${MAIN_THIRD_PERMISSION_CHECK_CONFIG}
     permissions:
@@ -5252,7 +5173,6 @@ data:
       chunk_number: 1000
       attribute_label_use_light_update: true
     knowledge_schema:
-      # RESOLVE: keep-public
       max_process_file_count: ${MAIN_KNOWLEDGE_SCHEMA_MAX_PROCESS_FILE_COUNT}
       doc_process_batch_size: 10
       doc_cluster_threshold: ${MAIN_KNOWLEDGE_SCHEMA_DOC_CLUSTER_THRESHOLD}
@@ -5331,7 +5251,6 @@ data:
         Represent the passage:
         <|embed|>
     audit:
-      # RESOLVE: keep-private
       audit_callback_check_cos_path_prefix:
         - "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}"
     segment_intervene:
@@ -5440,13 +5359,11 @@ data:
           - Monitor
 
     APPLICATION_DATA_MIGRATION_CONFIG:
-      # 新迁移到TDSQL的数据表
       migrate_tdsql_tables:
         - t_image_vector
       is_migrating: false # 是否正在进行数据迁移
       sleep_seconds: 2 # 等待时检查间隔时间（秒），默认2秒
       max_wait_seconds: 180 # 最大等待时间（秒），默认60秒
-      # 迁移tdsql的表名和生效时间，上海时区，格式: 2006-01-02 15:04:05
       tdsql_tables:
         - table_name: t_doc_segment
           effect_time: "2026-02-05 22:05:00"
@@ -5640,16 +5557,13 @@ data:
       es_private_key:
 
     APPLICATION_EXCEED_KNOWLEDGE_RESUME_CONFIG:
-      # 并发恢复的数量
       resume_concurrent_num: 5
-      # 恢复的批次大小
       resume_batch_size: 200
 
     APPLICATION_FILE_AUDIT_SWITCH: false
 
     APPLICATION_FINANCE:
       disabled: {{ .Values.global.finance.disabled }}
-      # RESOLVE: keep-private
       billing_model_map: {}
       embedding_and_rerank:
         report_switch: true
@@ -5949,7 +5863,6 @@ data:
             duration_seconds: 43200
             refresh_ahead_seconds: 300
 
-    # 异步任务配置
     APPLICATION_TASKS:
       demo:
         runners: 5 # 处理协程数, 无法动态调整
@@ -7284,7 +7197,6 @@ data:
         1889495814992560128: true
 
     WHITELIST_INTERNAL_DB_HOST_WHITE_LIST:
-      # 优衣库
       100036585679:
         - "9.140.52.213:3306"
       100039384462:
@@ -7716,8 +7628,6 @@ data:
         - If the retrieved segment body contains image links related to the answer content (Markdown format `![...](url)`), you MUST include those image links verbatim at the corresponding position in your answer; do NOT fabricate image links when no relevant images exist.
         - If no relevant information can be found, output "no relevant information found" directly with the reason.
 
-      # Fallback final-answer user prompt: appended when max_iterations or token_budget is exhausted,
-      # forcing the model to answer directly based on whatever information has been collected so far.
       final_answer_user_prompt: |-
         Tool call budget is exhausted. Please immediately produce the final answer based on all information collected so far.
 
@@ -7728,24 +7638,17 @@ data:
         4. Do NOT output any tool-call format, and do NOT fabricate facts that were not retrieved.
         5. If the already-retrieved content contains image links (Markdown `![...](url)` format) near the text corresponding to the answer, you MUST include those image links verbatim at the corresponding position in your answer — do not discard them; do NOT output images unrelated to the answer, and do NOT fabricate image links.
 
-      # Per-tool Description: the capability description the LLM sees during function calling.
-      # The key is the tool name (matching function_call's function name) and MUST match the toolName constants in code exactly.
-      # If a key is missing or its value is empty, the code will log Error and return an empty string
-      # (see internal/logic/agentic_rag/agent/tools/descriptions.go).
       tool_descriptions:
-        # Standard search: hybrid ES + vector; the default general-purpose semantic retrieval
         standard_search: |-
           Standard retrieval (the default ADP semantic retrieval channel): vector + BM25 + RRF + Rerank + small-to-large, returning parent-segment text, suitable for most natural-language questions.
           When the user question is a complete descriptive sentence with no explicit literal keyword, this is the first-choice tool.
           If you already know an explicit literal string (article number, product model, proper noun), prefer grep_segments.
           Note: the returned content is already parent-segment text (~4k characters) with full context — you do **NOT** need to call `read_parent_segments` afterwards to fetch parents again.
 
-        # Broad search: pure vector + BM25, relaxed thresholds and larger TopN, for fallback or exploration
         broad_search: |-
           Pure vector + BM25 broad-recall retrieval. Compared with standard_search it uses relaxed thresholds and a larger TopN, and has no rerank pipeline, so the recall surface is wider.
           Suitable when standard_search / keyword_search has too few hits and you need a fallback or topic exploration.
 
-        # Segment literal matching: ES wildcard precise matching for proper nouns / numbers / literal strings
         grep_segments: |-
           Segment literal matching (ES wildcard). Match a literal keyword precisely in child-segment bodies, no relevance scoring.
           Use when: you already know an explicit literal string (legal article number, product model, proper noun, person name, etc.) and want to locate the segments containing it.
@@ -7756,7 +7659,6 @@ data:
           2. No tokenization and no semantic expansion. For natural-language questions, prefer broad_search;
           3. Hits include both QA and document segments, distinguished by the `doc_type` field (1 = QA, 2 = document segment).
 
-        # read_segments: read raw child-segment text by doc_id + segment index range in order
         read_segments: |-
           Read raw child-segment text. Read child-segment bodies from a document by a segment-index range, e.g. read segments 1 to 3 of document 1, to browse context in document order.
           Use when: you already know `doc_id` and want to read a section of that document in segment-index order (e.g. the beginning, the end, or segments right before/after a hit).
@@ -7767,20 +7669,17 @@ data:
           3. The range length `(index_to - index_from + 1)` is capped at 200; anything beyond is truncated.
           The response contains `total_segments` so you can tell whether there are more segments to read afterwards.
 
-        # read_parent_segments: from child segment(s) expand to the parent segment's 4k-character paragraph
         read_parent_segments: |-
           Parent-segment fetch. Expand from child segment(s) to the full context of their parent segments (4k-character paragraphs), useful when a child segment's semantics are truncated.
           Use when: after grep_segments / broad_search hit some child segments (`segment_id`) you find their content insufficient to answer (e.g. truncated, missing preceding / following text). Use this tool to fetch the corresponding parent-segment bodies.
           **MUST NOT use** for `standard_search` hits (including the pre-retrieval `pre_*` injected results) — those are already parent-segment text; calling this tool on them yields no extra content and wastes an iteration.
           The `segment_ids` parameter is required, with at most 200 elements. Results are deduplicated by `parent_segment_id` (multiple child segments under the same parent keep only one). Segment IDs that are not hit are returned separately in `missing_segment_ids`.
 
-        # list_knowledge_bases: overview of KB categories / labels / file list, to help narrow down retrieval scope
         list_knowledge_bases: |-
           List meta-overview of the specified or all knowledge bases: name, description, categories, labels, and file list.
           Suitable when: the Agent needs to understand the overall KB structure (which categories exist / which labels can be used for filtering / which files exist), in order to narrow down the next retrieval scope.
           Each sub-collection (categories / labels / documents) is truncated when it exceeds the threshold and `truncated=true` is set; when you need a detailed drill-down, use finer-grained tools like list_documents.
 
-        # Document list: filter documents by category / label / document name
         list_documents: |-
           Query the document list under a specified knowledge base (including category and label information), supporting filtering by document name keyword, label keyword, or category ID.
           Use when: you need to filter documents by condition (e.g. only view documents under a certain category, filter by label, fuzzy search by filename), or need to understand document category and label metadata.
@@ -7790,7 +7689,6 @@ data:
           - By category: cate_id=category business ID (automatically expands to include sub-categories)
           Returns: document list (doc_id / name / file_type / category / labels) + pagination info.
 
-        # Text2SQL - table metadata: query text2sql table metadata under the KB
         list_table_meta: |-
           Query text2sql table metadata under the current knowledge base, with support for filtering by db_biz_id / table_id and pagination.
           Use when: before generating SQL, inspect available table metadata (including schema information).
@@ -7798,7 +7696,6 @@ data:
           Returns: table metadata list + total. Each item contains id / robot_id / doc_id / doc_type / segment_type / db_biz_id / table_id / table_name / file_name / data / expire_time / update_time / db_source_type.
           **Important**: the `table_id` in the returned results is the table identifier that MUST be used in the SQL FROM clause (the query engine only recognizes table_id); `table_name` is only a human-readable alias. When generating SQL, write table_id after FROM, not table_name. Also, `doc_id` and `db_source_type` are required fields when calling execute_sql — make sure to record them.
 
-        # Text2SQL - execute SQL: submit generated SQL for execution and return results
         execute_sql: |-
           Execute a SQL query and return results (in markdown table format).
           Use when: after obtaining table metadata via list_table_meta and generating SQL, call this tool to execute the SQL.
@@ -7807,13 +7704,7 @@ data:
           **Important**: the table name in the SQL FROM clause must use the table_id returned by list_table_meta (not table_name), because the query engine only recognizes table_id. table_id is a pure number and must be wrapped in backticks in SQL, e.g. SELECT * FROM \`2055227039961676864\` WHERE ...
           Returns: the actual executed SQL, query results (markdown table), whether truncated, database type.
 
-      # Per-tool Parameters JSON Schema: the basis on which the LLM assembles function-calling arguments.
-      # The key is the tool name (matching function_call's function name) and MUST match the toolName constants in code exactly.
-      # The value is a valid JSON Schema string (mind the quoting / escaping inside YAML block scalars).
-      # If a key is missing or its value is empty, the code will log Error and return an empty string
-      # (see internal/logic/agentic_rag/agent/tools/descriptions.go).
       tool_parameters:
-        # standard_search: single `query` parameter
         standard_search: |-
           {
             "type": "object",
@@ -7826,7 +7717,6 @@ data:
             "required": ["query"]
           }
 
-        # broad_search: single `query` parameter
         broad_search: |-
           {
             "type": "object",
@@ -7839,7 +7729,6 @@ data:
             "required": ["query"]
           }
 
-        # grep_segments: query / doc_ids / limit
         grep_segments: |-
           {
             "type": "object",
@@ -7861,7 +7750,6 @@ data:
             "required": ["query"]
           }
 
-        # read_segments: doc_id + segment index range
         read_segments: |-
           {
             "type": "object",
@@ -7884,7 +7772,6 @@ data:
             "required": ["doc_id"]
           }
 
-        # read_parent_segments: batch segment_ids -> corresponding parent segments
         read_parent_segments: |-
           {
             "type": "object",
@@ -7899,7 +7786,6 @@ data:
             "description": "segment_ids is required, element count <= 200."
           }
 
-        # list_knowledge_bases
         list_knowledge_bases: |-
           {
             "type": "object",
@@ -7924,7 +7810,6 @@ data:
             }
           }
 
-        # Document list: filter by category / label / document name
         list_documents: |-
           {
             "type": "object",
@@ -7958,7 +7843,6 @@ data:
             "required": ["kb_id"]
           }
 
-        # Text2SQL - table metadata
         list_table_meta: |-
           {
             "type": "object",
@@ -7982,7 +7866,6 @@ data:
             }
           }
 
-        # Text2SQL - execute SQL
         execute_sql: |-
           {
             "type": "object",
@@ -8034,59 +7917,38 @@ data:
             "required": ["sql", "tables"]
           }
 
-      # Messages returned to the LLM at tool-execution time (served as the Content of role=tool messages and may influence subsequent decisions).
-      # The key is the message identifier (matching the msgXxxKey constants in descriptions.go); the value is the message template.
-      # `fmt`-style placeholders (%v / %d / %s, etc.) may be used; the specific placeholders are defined by the caller (see the comment on each constant in descriptions.go).
-      # If a key is missing or its value is empty, the code will log Error and return an empty string (see internal/logic/agentic_rag/agent/tools/descriptions.go).
       tool_messages:
-        # ===== Generic errors =====
-        # Failed to parse argument JSON (%v = err)
         invalid_args: "Failed to parse arguments: %v"
-        # `query` field is empty
         query_empty: "`query` must not be empty"
-        # kb_id_list is not injected
         no_kb: "No knowledge base available (kb_id_list is empty)"
 
-        # ===== standard_search =====
         standard_search_no_hit: "No results hit. Consider switching to grep_segments (literal precise matching) or broad_search (pure-vector broad recall)."
 
-        # ===== broad_search =====
         broad_search_no_hit: "No results hit. Consider switching to standard_search (hybrid recall) or keyword_search (i.e. grep_segments, literal precise matching)."
 
-        # ===== grep_segments =====
         grep_no_hit: "No results hit. Consider switching to standard_search (semantic retrieval) or relaxing the literal string in `query`."
         grep_no_wildcard: '`query` is missing ES wildcard characters (`*` or `?`). Literal matching will only hit segment bodies that exactly equal the query. For fuzzy matching, rewrite the query as "*keyword*" and retry.'
-        # TruncatedNote shown when the underlying hit count exceeds the returned count (%d %d = underlying hit count / current returned count)
         grep_truncated: "Results truncated: %d hits underneath, %d returned now; raise `limit` if you need more."
 
-        # ===== list_knowledge_bases =====
         list_kb_empty: "No knowledge-base information found"
         list_kb_no_scope: "No knowledge base available (neither app_id nor kb_ids is injected)"
 
-        # ===== list_documents =====
         list_documents_no_kb: "kb_id must not be empty. Please specify the knowledge base ID to query."
         list_documents_empty: "No documents found matching the criteria. Consider loosening the filter conditions (e.g. removing category / label / document name filters) and retry."
 
-        # ===== read_segments =====
         read_segments_doc_id_empty: "`doc_id` must not be empty."
         read_segments_empty_rsp: "No segments read (empty response)."
-        # %d %d %d %d = doc_id / index_from / index_to / total_segments
         read_segments_no_hit: "No segments read. doc_id=%d, index=[%d,%d], total_segments=%d. `index_from` may exceed the total segment count of the document; please adjust the range based on `total_segments` and retry."
 
-        # ===== read_parent_segments =====
         read_parent_segments_ids_empty: "`segment_ids` must not be empty; pass at least one child-segment business ID."
-        # %s = missingNote (empty string, or an already-formatted fragment from the caller)
         read_parent_no_hit: "No parent segments found. %sThe given IDs may not belong to the current application or may have been deleted; please verify and retry."
-        # %v = the list of missing segment IDs
         read_parent_missing_note: "(Note: the following segment_ids were not found: %v)\n"
         read_parent_partial_truncated: "Some segment_ids were not hit; see the note at the end of Content for details"
 
-        # ===== list_table_meta (Text2SQL table metadata, replaces list_tables / describe_table_schema) =====
         list_table_meta_kb_empty: "No knowledge base available (kb_id is not injected)"
         list_table_meta_app_empty: "No application context available (app_biz_id is not injected)"
         list_table_meta_empty: "No matching table metadata found. Consider removing db_biz_id / table_id filters, or verify that text2sql tables are configured under this knowledge base."
 
-        # ===== execute_sql (Text2SQL execute SQL) =====
         execute_sql_kb_empty: "No knowledge base available (kb_id is not injected)"
         execute_sql_app_empty: "No application context available (app_biz_id is not injected)"
         execute_sql_empty: "The sql parameter must not be empty. Please provide the SQL statement to execute."
@@ -8244,7 +8106,6 @@ data:
         - 如果检索结果正文中包含与答案内容关联的图片链接（Markdown 格式 `![...](url)`），必须在答案对应位置原样输出该图片链接；不存在相关图片时不要编造图片链接
         - 如果确实无法找到相关信息，也直接输出"未找到相关信息"并说明原因
 
-      # 兜底作答 User Prompt：达到 max_iterations 或 token_budget 耗尽时追加，强制模型基于已收集信息直接作答
       final_answer_user_prompt: |-
         工具调用次数已用尽，请立刻基于到目前为止收集到的所有信息直接给出最终答案。
 
@@ -8255,23 +8116,17 @@ data:
         4. 不要输出工具调用格式，也不要编造未检索到的事实
         5. 如果已检索内容中，答案对应文字附近存在内容关联的图片链接（`![...](url)` 格式），必须在答案对应位置原样输出这些图片链接，不要丢弃；不要输出与答案无关的图片，也不要编造图片链接
 
-      # 各工具 Description：LLM function calling 时看到的工具能力说明。
-      # key 为工具名（对应 function_call 的 function name），必须与代码中的 toolName 常量严格一致。
-      # 若某工具 key 缺失或值为空，代码会打印 Error 日志并返回空串（见 internal/logic/agentic_rag/agent/tools/descriptions.go）。
       tool_descriptions:
-        # 标准检索：ES + 向量混合，首选通用语义检索
         standard_search: |-
           标准检索（ADP 默认语义检索通道）：向量 + BM25 + RRF + Rerank + 小找大，返回父切片正文，适用于大多数自然语言问题。
           当用户问题是完整描述性句子、无明确字面关键字时，这是首选工具。
           若已知明确的字面串（如条款编号、产品型号、专有名词），优先使用 grep_segments。
           注意：返回的已是父切片正文（4k 字符），上下文完整，**不需要再用 read_parent_segments 二次取父切片**。
 
-        # 扩大召回检索：纯向量 + BM25，放宽阈值扩大 TopN，用于兜底或探索
         broad_search: |-
           纯向量和BM25扩大召回检索。相比 standard_search 放宽阈值、扩大 TopN，且没有rerank等处理流程，召回范围更广。
           适合 standard_search / keyword_search 命中不足、需要兜底或主题探索的场景。
 
-        # 切片字面匹配：ES wildcard 精准匹配，用于专名 / 编号等字面串定位
         grep_segments: |-
           切片字面匹配（ES wildcard）。按字面关键字在子切片正文中精确匹配，无相关性评分。
           适用场景：已知明确的字面串（如法律条款编号、产品型号、专有名词、人名等），需要定位包含该字面串的切片时使用。
@@ -8282,7 +8137,6 @@ data:
           2. 不做分词也不做语义扩展。自然语言问题请优先用 board_search；
           3. 命中结果包含 QA 和文档切片两类，通过 doc_type 字段区分（1=QA, 2=文档段）。
 
-        # 切片原文读取：已知 doc_id 按切片序号顺序翻阅上下文
         read_segments: |-
           切片原文读取。按文档 + 切片序号区间读取子切片原文，例如读文档 1 的第 1 个到第 3 个切片，
           用于按文档顺序翻阅上下文。
@@ -8294,7 +8148,6 @@ data:
           3. 区间长度 (index_to - index_from + 1) 上限 200，超过会被截断。
           出参含 total_segments，方便判断是否还有后续切片可读。
 
-        # 父切片读取：子切片语义截断时取父切片 4k 段落补齐上下文
         read_parent_segments: |-
           父切片读取。由子切片扩展到父切片完整上下文（4k 字符段落），用于子切片语义截断时补齐上下文。
           适用场景：grep_segments / broad_search 命中某些子切片 (segment_id) 后，
@@ -8303,13 +8156,11 @@ data:
           入参 segment_ids 必填，元素个数 ≤ 200；结果按 parent_segment_id 去重（同一父切片下多个
           子切片只保留一条），未命中的 segment_id 通过 missing_segment_ids 单独回传。
 
-        # 知识库概览：列出 KB 的分类 / 标签 / 文件，指导缩小检索范围
         list_knowledge_bases: |-
           列出指定或全部知识库的元信息概览：名称、描述、分类、标签、文件列表。
           适用于：Agent 需要了解 KB 整体结构（有哪些分类 / 有哪些标签可用于过滤 / 有哪些文件），指导后续检索范围缩小。
           各子集合（categories / labels / documents）超阈值会截断并标 truncated=true；需要详细展开时可用 list_documents 等更精细工具下钻。
 
-        # 文档列表：按分类 / 标签 / 文档名过滤拉取文档列表
         list_documents: |-
           查询指定知识库下的文档列表（含分类和标签信息），支持按文档名关键词、标签关键词、分类 ID 过滤。
           适用场景：需要按条件筛选文档（如只看某分类下的文档、按标签过滤、按文件名模糊搜索），或需要了解文档的分类和标签元信息时使用。
@@ -8319,7 +8170,6 @@ data:
           - 按分类筛选：cate_id=分类业务ID（会自动展开子分类）
           返回：文档列表（doc_id / name / file_type / category / labels）+ 分页信息。
 
-        # Text2SQL - 表元数据：查询知识库下 text2sql 表的元数据信息
         list_table_meta: |-
           查询当前知识库下 text2sql 表的元数据信息，支持按 db_biz_id / table_id 过滤和分页。
           使用场景：在生成 SQL 前，查看可用的表元数据（包含表结构信息）。
@@ -8327,7 +8177,6 @@ data:
           返回：表元数据列表 + 总数。每条包含 id / robot_id / doc_id / doc_type / segment_type / db_biz_id / table_id / table_name / file_name / data / expire_time / update_time / db_source_type。
           **重要**：返回结果中的 table_id 是 SQL FROM 子句中必须使用的表标识（查询引擎只识别 table_id），table_name 仅作为可读别名。生成 SQL 时 FROM 后面写 table_id，不要写 table_name。同时 doc_id 和 db_source_type 是调用 execute_sql 时的必填字段，请务必记录。
 
-        # Text2SQL - 执行 SQL：将生成的 SQL 提交执行并返回结果
         execute_sql: |-
           执行 SQL 查询并返回结果（markdown 表格格式）。
           使用场景：在通过 list_table_meta 获取表元数据并生成 SQL 后，调用此工具执行 SQL。
@@ -8336,12 +8185,7 @@ data:
           **重要**：SQL 中 FROM 子句的表名必须使用 list_table_meta 返回的 table_id（而非 table_name），因为查询引擎只识别 table_id。table_id 是纯数字，SQL 中必须用反引号包裹，如 SELECT * FROM \`2055227039961676864\` WHERE ...。
           返回：实际执行的 SQL、查询结果（markdown 表格）、是否截断、数据库类型。
 
-      # 各工具 Parameters JSON Schema：LLM function calling 组装 arguments 的依据。
-      # key 为工具名（对应 function_call 的 function name），必须与代码中的 toolName 常量严格一致。
-      # value 为合法的 JSON Schema 字符串（注意 YAML 块标量内的引号与转义）。
-      # 若某工具 key 缺失或值为空，代码会打印 Error 日志并返回空串（见 internal/logic/agentic_rag/agent/tools/descriptions.go）。
       tool_parameters:
-        # 标准检索：单一 query 入参
         standard_search: |-
           {
             "type": "object",
@@ -8354,7 +8198,6 @@ data:
             "required": ["query"]
           }
 
-        # 扩大召回检索：单一 query 入参
         broad_search: |-
           {
             "type": "object",
@@ -8367,7 +8210,6 @@ data:
             "required": ["query"]
           }
 
-        # 切片字面匹配：query / doc_ids / limit
         grep_segments: |-
           {
             "type": "object",
@@ -8389,7 +8231,6 @@ data:
             "required": ["query"]
           }
 
-        # 切片原文读取：doc_id + 切片序号区间
         read_segments: |-
           {
             "type": "object",
@@ -8412,7 +8253,6 @@ data:
             "required": ["doc_id"]
           }
 
-        # 父切片读取：批量 segment_ids → 对应父切片
         read_parent_segments: |-
           {
             "type": "object",
@@ -8427,7 +8267,6 @@ data:
             "description": "segment_ids 必填，元素个数 ≤ 200。"
           }
 
-        # 知识库概览
         list_knowledge_bases: |-
           {
             "type": "object",
@@ -8451,7 +8290,6 @@ data:
               }
             }
           }
-        # 文档列表：按分类 / 标签 / 文档名过滤
         list_documents: |-
           {
             "type": "object",
@@ -8485,7 +8323,6 @@ data:
             "required": ["kb_id"]
           }
 
-        # Text2SQL - table metadata
         list_table_meta: |-
           {
             "type": "object",
@@ -8509,7 +8346,6 @@ data:
             }
           }
 
-        # Text2SQL - 执行 SQL
         execute_sql: |-
           {
             "type": "object",
@@ -8561,59 +8397,38 @@ data:
             "required": ["sql", "tables"]
           }
 
-      # 工具执行期回注给 LLM 的消息文案（作为 role=tool 的 Content 回给 LLM，会影响后续决策）。
-      # key 为消息标识（对应 descriptions.go 中的 msgXxxKey 常量），value 为文案模板。
-      # 允许使用 fmt 风格占位符（%v / %d / %s 等），具体占位符由调用方约定（详见 descriptions.go 每个常量的注释）。
-      # 若某 key 缺失或值为空，代码会打印 Error 日志并返回空串（见 internal/logic/agentic_rag/agent/tools/descriptions.go）。
       tool_messages:
-        # ===== 通用错误 =====
-        # 参数 JSON 解析失败（%v = err）
         invalid_args: "参数解析失败: %v"
-        # query 字段为空
         query_empty: "query 不能为空"
-        # 未注入 kb_id_list
         no_kb: "没有可用的知识库（kb_id_list 为空）"
 
-        # ===== standard_search =====
         standard_search_no_hit: "未命中任何结果。可尝试换用 grep_segments（字面精准匹配）或 broad_search（纯向量粗召）。"
 
-        # ===== broad_search =====
         broad_search_no_hit: "未命中任何结果。可尝试换用 standard_search（综合召回）或 keyword_search(即grep_segments)（字面精准匹配）。"
 
-        # ===== grep_segments =====
         grep_no_hit: "未命中任何结果。可尝试换用 standard_search（语义检索）或放宽 query 字面串。"
         grep_no_wildcard: 'query 缺少 ES wildcard 通配符（* 或 ?），字面匹配将只命中与 query 完全相等的整段切片正文；如需模糊匹配请改写为 "*关键字*" 形式后重试。'
-        # grep_segments 命中数超过返回条数时的 TruncatedNote（%d %d = 底层命中数 / 当前返回条数）
         grep_truncated: "结果已截断，底层命中 %d 条，当前返回 %d 条；如需更多可调大 limit。"
 
-        # ===== list_knowledge_bases =====
         list_kb_empty: "未查询到知识库信息"
         list_kb_no_scope: "没有可用的知识库（未注入 app_id 且 kb_ids 为空）"
 
-        # ===== list_documents =====
         list_documents_no_kb: "kb_id 不能为空，请指定要查询的知识库 ID。"
         list_documents_empty: "未查询到符合条件的文档。可尝试放宽筛选条件（如去掉分类 / 标签 / 文档名过滤）后重试。"
 
-        # ===== read_segments =====
         read_segments_doc_id_empty: "doc_id 不能为空。"
         read_segments_empty_rsp: "未读取到任何切片（空响应）。"
-        # %d %d %d %d = doc_id / index_from / index_to / total_segments
         read_segments_no_hit: "未读取到任何切片。doc_id=%d, index=[%d,%d], total_segments=%d。可能 index_from 已超过文档总切片数，请结合 total_segments 调整区间后重试。"
 
-        # ===== read_parent_segments =====
         read_parent_segments_ids_empty: "segment_ids 不能为空，请传入至少一个子切片业务 ID。"
-        # %s = missingNote（为空串或调用方已 Sprintf 过的一段）
         read_parent_no_hit: "未查到任何父切片。%s可能是输入 ID 不属于当前应用或已被删除，请核对后重试。"
-        # %v = 未命中的 segment_id 列表
         read_parent_missing_note: "（注：以下 segment_ids 未查到: %v）\n"
         read_parent_partial_truncated: "部分 segment_ids 未命中，详见 Content 末尾备注"
 
-        # ===== list_table_meta（Text2SQL 表元数据，替代 list_tables / describe_table_schema） =====
         list_table_meta_kb_empty: "没有可用的知识库（kb_id 未注入）"
         list_table_meta_app_empty: "没有可用的应用上下文（app_biz_id 未注入）"
         list_table_meta_empty: "未找到匹配的表元数据。可尝试不传 db_biz_id / table_id 过滤，或检查知识库下是否已配置 text2sql 表。"
 
-        # ===== execute_sql（Text2SQL 执行 SQL） =====
         execute_sql_kb_empty: "没有可用的知识库（kb_id 未注入）"
         execute_sql_app_empty: "没有可用的应用上下文（app_biz_id 未注入）"
         execute_sql_empty: "sql 参数不能为空，请提供待执行的 SQL 语句"
@@ -8621,7 +8436,6 @@ data:
         execute_sql_no_result: "SQL 执行成功但无返回结果。请检查 SQL 是否正确，或确认表中是否有匹配数据。"
   trpc_go.yaml: |
     global:
-      # RESOLVE: keep-public
       namespace: ${TRPC_GO_GLOBAL_NAMESPACE}
       env_name: ${TRPC_GO_GLOBAL_ENV_NAME}
       enable_set: false
@@ -8659,7 +8473,6 @@ data:
           port: 9092
           network: tcp
           protocol: trpc
-          # RESOLVE: keep-public
           timeout: ${TRPC_GO_SERVER_SERVICE_TRPC_ADP_KB_CONFIG__API_TIMEOUT}
         - name: trpc.adp.kb_config.QASimilarTask
           ip: ${POD_IP}
@@ -8696,7 +8509,6 @@ data:
           port: 9103
           network: ${TRPC_GO_SERVER_SERVICE_TRPC_ADP_KB_CONFIG__CLEAN_DATABASE_COMMON_DATA_NETWORK}
           protocol: timer
-          # RESOLVE: keep-public
           timeout: ${TRPC_GO_SERVER_SERVICE_TRPC_ADP_KB_CONFIG__CLEAN_DATABASE_COMMON_DATA_TIMEOUT}
         - name: trpc.adp.kb_config.AutoDocRefresh
           ip: ${POD_IP}
@@ -8829,45 +8641,33 @@ data:
           join_point: ${TRPC_GO_PLUGINS_SELECTOR_POLARIS_JOIN_POINT}
 
     client:
-      # RESOLVE: keep-public
       namespace: ${CLIENT_CLIENT_NAMESPACE}
       filter:
         - opentelemetry
         - cle-route-propagator
       service:
         - name: mysql.db_text2sql
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/?charset=utf8mb4&timeout=1s&readTimeout=30s&writeTimeout=30s&parseTime=true&interpolateParams=true&loc=Local"
         - name: mysql.qbot.admin
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: mysql.qbot.admin.read
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: tdsql.qbot.qbot
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=5s&parseTime=true&interpolateParams=true&loc=Local"
         - name: tdsql.qbot.qbot.read
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: mysql.qbot.admin.delete
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: isearch.tdsql.qbot.qbot
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot_isearch?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: tdsql.qbot.qbot.delete
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: tdsql.qbot.graph
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_graph?charset=utf8mb4&timeout=5s&parseTime=true&interpolateParams=true&loc=Local"
         - name: redis.qbot.admin
-          # RESOLVE: keep-public
           target: "redis://${KB_ADMIN_REDIS_USER}:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/2"
           timeout: 5000
         - name: redis.qbot.retrieval.config
-          # RESOLVE: keep-public
           target: "redis://${KB_RETRIEVAL_REDIS_USER}:${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}@${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:6379/1"
           timeout: 5000
         - name: trpc.http.cos.Access
@@ -8905,7 +8705,6 @@ data:
           network: tcp
           timeout: 10000
         - name: lke-code-node-tdoclinker
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_LKE_CODE_NODE_TDOCLINKER_NAMESPACE}
           callee: lke-code-node-tdoclinker
           network: tcp
@@ -8948,7 +8747,6 @@ data:
           network: tcp
           timeout: 30000
         - name: pipeline-flow-detail
-          # RESOLVE: keep-public
           target: "dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot_history_prod?charset=utf8mb4&timeout=1s&parseTime=true&interpolateParams=true&loc=Local"
         - name: trpc.adp.kb_parse_router.ParseRouter
           network: tcp
@@ -8968,7 +8766,6 @@ data:
           target: "ip://adp-platform-charger.{{ .Release.Namespace }}.svc.cluster.local:9090"
           protocol: trpc
           network: tcp
-          # RESOLVE: keep-public
           timeout: ${CLIENT_CLIENT_SERVICE_QBOT_FINANCE_FINANCE_FINANCE_TIMEOUT}
           namespace: ${CLIENT_CLIENT_SERVICE_QBOT_FINANCE_FINANCE_FINANCE_NAMESPACE}
         - name: trpc.SmartAssistant.VectorDBManager.VectorObj
@@ -9012,62 +8809,50 @@ data:
           timeout: 10000
           namespace: ${CLIENT_CLIENT_SERVICE_QBOT_QBOT_INFOSEC_INFOSEC_NAMESPACE}
         - callee: trpc.KEP.bot_data_statistics_server.Api
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_KEP_BOT_DATA_STATISTICS_SERVER_API_NAMESPACE}
           target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
           protocol: trpc
-          # RESOLVE: keep-private
           timeout: 20000
-          # RESOLVE: keep-public
           env_name: ${CLIENT_CLIENT_SERVICE_TRPC_KEP_BOT_DATA_STATISTICS_SERVER_API_ENV_NAME}
         - name: trpc.adp.app_config.Api
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_APP_CONFIG_API_NAMESPACE}
           network: tcp
           protocol: trpc
           target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9091"
           timeout: 30000
         - name: trpc.adp.platform_manager.Api
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_PLATFORM_MANAGER_API_NAMESPACE}
           network: tcp
           protocol: trpc
           target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9093"
           timeout: 30000
         - callee: trpc.adp.platform_metrology.Api
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_PLATFORM_METROLOGY_API_NAMESPACE}
           target: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
           protocol: trpc
           timeout: 20000
           env_name: test
         - name: trpc.adp.app_config.Admin
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_APP_CONFIG_ADMIN_NAMESPACE}
           target: "ip://adp-app-config.{{ .Release.Namespace }}.svc.cluster.local:9090"
           timeout: 30000
         - name: trpc.adp.platform_manager.Login
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_PLATFORM_MANAGER_LOGIN_NAMESPACE}
           target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
           timeout: 30000
         - name: trpc.adp.platform_manager.Admin
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_PLATFORM_MANAGER_ADMIN_NAMESPACE}
           target: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9090"
           timeout: 30000
         - name: trpc.adp.resource_gallery.Admin
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_RESOURCE_GALLERY_ADMIN_NAMESPACE}
           target: "ip://adp-resource-gallery.{{ .Release.Namespace }}.svc.cluster.local:9090"
           timeout: 30000
         - name: trpc.adp.kb_retrieval.Retrieval
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_KB_RETRIEVAL_RETRIEVAL_NAMESPACE}
           target: "ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9090"
           timeout: 30000
         - name: trpc.adp.kb_retrieval.DirectIndex
-          # RESOLVE: keep-public
           namespace: ${CLIENT_CLIENT_SERVICE_TRPC_ADP_KB_RETRIEVAL_DIRECT_INDEX_NAMESPACE}
           target: "ip://adp-kb-retrieval.{{ .Release.Namespace }}.svc.cluster.local:9091"
           timeout: 30000
@@ -9116,16 +8901,11 @@ data:
           timeout: 10000
 
   whitelist.yaml: |
-    # 应用标签OR检索白名单
     internal_ip_cfg: ${WHITELIST_INTERNAL_IP_CFG}
     label_or_whitelist: ${WHITELIST_LABEL_OR_WHITELIST}
-    # 预览URL Uin黑名单
     presigned_url_uin_blacklist: ${WHITELIST_PRESIGNED_URL_UIN_BLACKLIST}
-    # 知识库权限白名单
     infinity_attribute_label: ${WHITELIST_INFINITY_ATTRIBUTE_LABEL}
     qa_url_whitelist: ${WHITELIST_QA_URL_WHITELIST}
     auto_doc_diff_blacklist: ${WHITELIST_AUTO_DOC_DIFF_BLACKLIST}
-    # 允许访问内网地址的数据库的账号，后续放弃，都用internal_db_host_white_list
     internal_db_white_list: ${WHITELIST_INTERNAL_DB_WHITE_LIST}
-    # 内网数据库IP白名单，限制用户只能访问指定的ip:port
     internal_db_host_white_list: ${WHITELIST_INTERNAL_DB_HOST_WHITE_LIST}
