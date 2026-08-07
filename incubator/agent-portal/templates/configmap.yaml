@@ -1,0 +1,534 @@
+{{- $publicHost := .Values.ingress.host | default .Values.clb -}}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "agent-portal.secretName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "agent-portal.labels" . | nindent 4 }}
+type: Opaque
+stringData:
+  .env: |
+    # ===== 基础地址（前端 + 后端） =====
+    # 可选：应用部署子路径，例如 /user1；留空表示部署在根路径 /
+    # 该值同时用于静态资源挂载、API 前缀兼容，以及认证 cookie 隔离
+    APP_BASE_PATH={{ .Values.APP_BASE_PATH }}
+    # Portal 对外可达服务地址；部署到子路径时可包含 APP_BASE_PATH
+    # 启用 OpenCode sandbox 时不能使用 localhost / 127.0.0.1 / ::1，因为这些地址在 sandbox 内不可访问
+    PORTAL_PUBLIC_URL={{ .Values.scheme }}://{{ $publicHost }}{{ .Values.APP_BASE_PATH }}
+    # CORS 允许的来源（多个用英文逗号分隔）
+    CLIENT_ORIGIN={{ .Values.scheme }}://{{ $publicHost }}
+    # 触发器 webhook 对外地址（公网部署时需要可访问）
+    # WEBHOOK_BASE_URL=
+    # 沙箱内 LLM 域名解析到可达 IP（逗号分隔 hostname:ip）；OpenSandbox 默认 DNS 对部分 LLM 域名不可达
+    # PORTAL_EXTRA_HOSTS=api.deepseek.com:183.131.191.171
+    # 特殊网络拓扑下可覆盖 OpenCode sandbox 访问 Portal 网关类服务的地址；默认从 PORTAL_PUBLIC_URL 派生
+    # 该地址会同时用于 Model Gateway、OpenCode MCP router、Skills MCP gateway 等 sandbox -> Portal 调用
+    # MODEL_GATEWAY_BASE_URL=
+    #
+    # 签发给外网/公有云智能体（ADP SaaS、Dify 云等）的 OpenAI 兼容 Base URL；Portal 在内网、DMZ 反代暴露网关时必填
+    # 示例：https://api.example.com/api/model-gateway/openai/v1
+    # MODEL_GATEWAY_EXTERNAL_BASE_URL=
+    # 旧部署兼容变量不建议新部署继续配置
+    #
+    # ─── 出站请求 SSRF 防护配置（对所有对外 HTTP 请求生效）─────────────────────
+    # 统一策略见 apps/server/src/utils/ssrfPolicy.ts，覆盖 safeFetch（Dify/画布/
+    # 意图履约/COS/会话标题等）与模型管理（连接测试 / 模型列表拉取）。
+    #
+    # 推荐：信创/内网用「白名单」精确放行，而不是整体关闭防护。
+    #
+    # SSRF_ALLOWED_DOMAINS：追加可信域名（含子域），逗号分隔或 JSON 数组。
+    #   命中后即使解析到内网 IP 也放行。例：
+    # SSRF_ALLOWED_DOMAINS=internal-llm.corp.local,gateway.corp.local
+    #
+    # SSRF_ALLOWED_IPS：追加可信 IP / CIDR（支持 IPv4 CIDR），逗号分隔或 JSON 数组。例：
+    # SSRF_ALLOWED_IPS=10.0.0.0/8,172.16.0.0/12,192.168.1.10
+    #
+    # SSRF_PROTECTION_DISABLED=true：全局关闭 SSRF 防护（最宽松）。
+    #   仅在网络完全可信的隔离环境下开启；公网/混合云部署严禁使用。
+    #
+    # MODEL_ALLOW_PRIVATE_NETWORK=true：仅对模型管理放开内网 IP 访问（兼容保留，
+    #   一般用 SSRF_ALLOWED_IPS / SSRF_ALLOWED_DOMAINS 即可）。
+    # ────────────────────────────────────────────────────────────────────────────
+
+    # ===== 服务端 =====
+    # 与 service.port 保持一致，同时作为 containerPort 与探针目标端口
+    SERVER_PORT={{ .Values.service.port }}
+    APP_NAME="agent-portal"
+    # ===== 腾讯云 ADP（可选，默认公有云；私有化/专有云请按实际地址覆盖） =====
+    # ADP 云 API 域名，支持填写 host 或完整 URL；显式写 http:// 或 https:// 会按该协议请求
+    ADP_API_ENDPOINT={{ .Values.adp.apiEndpoint | default .Values.clb }}
+    # ADP 对话 SSE 地址，支持填写 host 或完整 URL；只填 host 时默认补 /adp/v2/chat
+    ADP_CHAT_ENDPOINT={{ .Values.adp.chatEndpoint | default (printf "%s://%s/adp/v2/chat" .Values.scheme .Values.clb) }}
+    # 门户展示/同步时写入的 ADP Host，支持填写 host 或完整 URL
+    ADP_HOST={{ .Values.adp.host | default (printf "%s://%s" .Values.scheme .Values.clb) }}
+    # 日志级别：trace | debug | info | warn | error | fatal
+    LOG_LEVEL={{ .Values.LOG_LEVEL }}
+    # 是否隐藏辅助工具调用卡片（默认 true）。设为 false 时不隐藏任何工具调用记录
+    # CHAT_HIDE_AUXILIARY_TOOL_CALLS=true
+    # 日志美化（仅开发环境生效，默认 true，可设 false 关闭）
+    LOG_PRETTY={{ .Values.LOG_PRETTY }}
+    # Trace 日志开关（默认 true）
+    # LOG_TRACE_ENABLED=true
+    # Trace 日志级别：debug | info | warn | error（默认 info）
+    # LOG_TRACE_LEVEL=info
+    # 是否禁用日志截断（默认 true，开启后记录完整 prompt/response）
+    # LOG_NO_TRUNCATE=true
+    # 当 LOG_NO_TRUNCATE=false 时生效
+    # LOG_MAX_TEXT_LENGTH=500
+    NODE_ENV=production
+    SERVE_WEB=true
+    # VITE_DEV_SERVER_URL=http://localhost:5173
+
+    # ===== 文件存储（可选，默认本地文件系统） =====
+    STORAGE_TYPE={{ .Values.storage.type }}
+    S3_BUCKET={{ .Values.storage.bucket }}
+    S3_REGION={{ .Values.storage.region }}
+    S3_ENDPOINT={{ .Values.storage.endpoint | default (printf "https://cos.%s.myqcloud.com" .Values.storage.region) }}
+    S3_ACCESS_KEY_ID={{ .Values.storage.accessKey }}
+    S3_SECRET_ACCESS_KEY={{ .Values.storage.secretKey }}
+    # COS 默认 false；自建 MinIO 时在 values 中设为 true
+    S3_FORCE_PATH_STYLE={{ .Values.storage.forcePathStyle | default "false" }}
+    # LOCAL_UPLOAD_DIR=./uploads/avatars
+
+    # ===== OpenClaw Docker 一键部署（可选） =====
+    # Portal 下发的一键部署脚本会锁定 remote-claw 仓库版本与镜像标签
+    # OPENCLAW_REMOTE_CLAW_REPO=https://github.com/TencentCloudADP-DevRel/remote-claw.git
+    # OPENCLAW_REMOTE_CLAW_REF=main
+    # OPENCLAW_REMOTE_CLAW_INSTALL_SCRIPT=install.sh
+    # OPENCLAW_DOCKER_IMAGE=tencentcloudadpdevrel/openclaw-desktop:latest
+
+    # OpenClaw 沙箱托管部署默认走 service_runtime 沙箱，lease=null（不自动过期），
+    # 由 Portal 通过 destroyServiceWorkspace 显式销毁。这是为长跑安装+健康检查
+    # 流程留出空间；早期 300s 默认 lease 会在部署中途到期，导致沙箱被回收、
+    # 健康检查全程报 "Service workspace not found"。
+
+    # ===== OpenSandbox（可选，沙箱管理 / Code Builder 使用） =====
+    # 连接信息只通过服务端环境变量配置；管理台只展示并测试当前唯一连接
+    # OPENSANDBOX_SERVER_URL=http://opensandbox-server.default.svc.cluster.local:8080
+    # OPENSANDBOX_API_KEY=
+    # OPENSANDBOX_CONNECTION_NAME=Sandbox
+    # OPENSANDBOX_USE_SERVER_PROXY=true
+    # 以下运行参数作为初始值 / fallback；管理台保存后以管理台配置为准
+    # OPENSANDBOX_CODE_INTERPRETER_IMAGE=sandbox-registry.cn-zhangjiakou.cr.aliyuncs.com/opensandbox/code-interpreter:v1.0.1
+    # OpenCode 超级智能体 runtime 使用的专用镜像，需预装 opencode CLI。
+    # OPENSANDBOX_OPENCODE_IMAGE=docker/sandbox-templates:opencode
+    # OPENSANDBOX_DEFAULT_CPU=1
+    # OPENSANDBOX_DEFAULT_MEMORY=2Gi
+    # OPENSANDBOX_DEFAULT_TIMEOUT_SECONDS=300
+    # OPENSANDBOX_READY_TIMEOUT_SECONDS=60
+    # OPENSANDBOX_CREATE_MAX_ATTEMPTS=2
+    # OPENSANDBOX_DEFAULT_PREVIEW_PORT=5173
+    # 以下挂载与网络参数由服务端环境变量统一管理；PVC 默认只用一个，通过 subPath 区分 sessions / agents / users
+    # OPENSANDBOX_PVC_NAME=sandbox-data
+    # OpenSandbox PVC 上 Portal 工作区/会话文件卷的 subPath 模板（默认见 settingsService）：
+    # OPENSANDBOX_WORKSPACE_FILES_SUBPATH_TEMPLATE=workspaces/<spaceId>/<userId>/<workspaceId>
+    # OPENSANDBOX_AGENT_CODE_SUBPATH_TEMPLATE=agents/<spaceId>/<agentId>
+    # OPENSANDBOX_WORKSPACE_MOUNT_PATH=/workspace
+    # OPENSANDBOX_AGENT_CODE_MOUNT_PATH=/agent
+    # OPENSANDBOX_HOME_SUBPATH_TEMPLATE=users/<spaceId>/<userId>
+    # OPENSANDBOX_HOME_MOUNT_PATH=/portal-home
+    # OPENSANDBOX_NETWORK_POLICY_MODE=allow_all
+    # OPENSANDBOX_ALLOWED_EGRESS_TARGETS=[]
+    # 沙箱 PVC 文件存储（STORAGE_TYPE=sandbox 时生效）：Portal Pod 不挂载 PVC，通过专用长期沙箱读写 objects/ 子路径
+    # SANDBOX_STORAGE_IMAGE=sandbox-registry.cn-zhangjiakou.cr.aliyuncs.com/opensandbox/code-interpreter:v1.0.1
+    # SANDBOX_STORAGE_TIMEOUT_SECONDS=86400
+    # SANDBOX_STORAGE_CPU=0.5
+    # SANDBOX_STORAGE_MEMORY=512Mi
+    # SANDBOX_STORAGE_SUBPATH=objects
+    # SANDBOX_STORAGE_MOUNT_PATH=/storage
+
+    # ===== OpenTelemetry（可选） =====
+    # OTEL_ENABLED=true
+    # OTEL_SERVICE_NAME=agent-portal-server
+    # OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318/v1/traces
+    # OTEL_LOG_LEVEL=info
+
+    # ===== License（是否启用由打包时 BUILD_ENABLE_LICENSE 决定） =====
+    # 本地开发和普通构建默认不启用 License。
+    # 如需启用，请在构建阶段传入 BUILD_ENABLE_LICENSE=true，例如：
+    #   make pack BUILD_ENABLE_LICENSE=true
+    #   make push BUILD_ENABLE_LICENSE=true
+    # 模式选择：
+    # - adp     = 专有云 / ADP 激活码模式
+    # - private = 私有化 / 授权服务模式
+    # 优先读取 LICENSE_MODE；LICENSE_STRATEGY 作为兼容别名保留
+    LICENSE_MODE={{ .Values.LICENSE_MODE }}
+    # LICENSE_STRATEGY=adp
+    # ===== 专有云 / ADP 激活码模式 =====
+    # 复用 platform-manager 的 RSA 公钥，支持 \n 形式的单行 PEM
+    # LICENSE_PUBLIC_KEY=-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----
+    LICENSE_HOST_ADP={{ .Values.LICENSE_HOST_ADP | default (printf "%s://%s/cgi/apex/test/adp/platform/CheckLicense" .Values.scheme .Values.clb) }}
+    # ProductType 固定校验为 4，服务端不再读取 LICENSE_PRODUCT_TYPE
+    # 可选：手动指定实例 ID；不填时会在集群内自动读取 kube-system namespace UID
+    # LICENSE_INSTANCE_ID=
+    # 可选：后台自动续期任务间隔，最小 60000（默认 900000）
+    # LICENSE_RENEW_INTERVAL_MS=900000
+
+    # ===== 默认对话 LLM（未选择智能体时使用） =====
+    # LLM_SYSTEM_PROMPT=你是一个有帮助的智能助手。
+    # LLM_MAX_HISTORY=20
+
+    # ===== OpenAI 兼容默认模型（可选，供 DeepAgent Local `runtimeModelId=env` 等链路回退使用） =====
+    # OPENAI_API_KEY=your-openai-compatible-api-key
+    # OPENAI_BASE_URL=https://openrouter.ai/api/v1
+    # OPENAI_MODEL=gpt-4.1-mini
+
+    # ===== 数据库 =====
+    # 生产环境必填：以下 4 项任一缺失都会在启动时抛错，阻止退回到 localhost/root/空密码。
+    # DB_PORT 保留 3306 默认值（MySQL 标准端口约定）。
+    # 若数据库确实使用空密码（仅内网 + socket 鉴权），请显式写 `DB_PASSWORD=`，
+    # 不允许完全省略该变量。
+    DB_HOST={{ .Values.db.host }}
+    DB_PORT={{ .Values.db.port | quote }}
+    DB_USER={{ .Values.db.user | quote }}
+    DB_PASSWORD={{ .Values.db.password }}
+    DB_NAME={{ .Values.db.name }}
+    # MySQL 连接池上限；IM 长连接和调度器会长期占用 leader lock 连接。
+    DB_CONNECTION_LIMIT={{ .Values.db.connectionLimit }}
+    # 数据库兼容模式：mysql（默认）/ tdsql。TDSQL 部署设为 tdsql。
+    DB_COMPATIBILITY={{ .Values.db.type }}
+    # 可选：容器启动前自动准备数据库
+    # - 空库：执行 init（建库 + migrate + seed）
+    # - 已初始化库：仅执行 migrate
+    # 推荐在私有化环境首启或升级时临时打开，完成后再关闭
+    DB_INIT_ON_START=true
+    # 数据库连接时区（建议统一使用 UTC：+00:00 / Z）
+    DB_TIMEZONE=+00:00
+
+    # ===== Better Auth/Auth Customer Key 必须配置=====
+    # 必填：用于加密 session 的密钥（生成方法：openssl rand -base64 32）
+    BETTER_AUTH_SECRET={{ .Values.BETTER_AUTH_SECRET }}
+    # 可选：Customer 签名密钥（生成方法：openssl rand -base64 32）
+    AUTH_CUSTOMER_SECRET_KEY={{ .Values.AUTH_CUSTOMER_SECRET_KEY }}
+    # 可选：iOA登录，站点token
+    # AUTH_IOA_SITE_TOKEN=
+    #AUTH_IOA_EMAIL_DOMAIN=example.com
+    # 可选：iOA 官方登录入口根地址（通常只填 origin；若配置 APP_BASE_PATH，后端会自动拼上该子路径）
+    #AUTH_IOA_OFFICIAL_LOGIN_ORIGIN=https://agent-portal.testsite.woa.com
+
+    # ===== Portal 凭据密钥（所有环境必填） =====
+    # 统一用于 IM / Connector 凭据 AES-256-GCM 加密，以及 Connector Gateway / OpenCode 托管 MCP token HMAC 签名。
+    # 旧配置 CONNECTOR_CREDENTIALS_KEY / IM_CREDENTIALS_KEY / CONNECTOR_GATEWAY_SECRET 已废弃，请迁移到此项。
+    # 要求 >= 32 字符且非占位符。全新环境用 `openssl rand -base64 32` 生成。
+    # 已有存量加密凭据的环境：把原旧 key 的值原样填入，切勿重新生成，否则历史凭据无法解密。
+    PORTAL_CREDENTIALS_KEY={{ .Values.PORTAL_CREDENTIALS_KEY }}
+
+    # ===== 其他专用签名密钥（生产必填） =====
+    # 开发环境未配置时会为当前进程生成临时随机值；服务重启后历史 token 将失效，仅适合本地开发。
+    # SDK Proxy access token HMAC 签名密钥
+    # SDK_PROXY_SECRET=
+    # Connector Gateway token 有效期（毫秒，默认 12 小时）
+    # CONNECTOR_GATEWAY_TOKEN_TTL_MS=43200000
+    # ClawHub CLI /cli/auth confirm token HMAC 签名密钥
+    # CLAWHUB_CLI_AUTH_SECRET=
+    # 可选：钉钉 SSO 回调地址；建议显式配置为开放平台登记的完整回调 URL
+    AUTH_DINGTALK_CALLBACK_URL={{ .Values.AUTH_DINGTALK_CALLBACK_URL }}
+    # 可选：ADP OAuth2 IdP / 通用 OAuth2 SSO 配置见下方独立小节
+
+    # 可选：Customer 登录允许的时间戳偏差（秒），默认 60
+    # AUTH_CUSTOMER_TIMESTAMP_SKEW_SECONDS=60
+    # 可选：Customer nonce 防重放窗口（秒），默认 180
+    # AUTH_CUSTOMER_NONCE_TTL_SECONDS=180
+    # TOF 头像服务配置（可选，用于 iOA 登录用户头像）
+    TOF_AVATAR_BASE_URL=https://r.hrc.woa.com
+    TOF_AVATAR_SIZE=500
+
+    # ===== Connector 授权配置（可选） =====
+    # Google Drive / Gmail OAuth
+    # CONNECTOR_GOOGLE_CLIENT_ID=
+    # CONNECTOR_GOOGLE_CLIENT_SECRET=
+    # 可选：Google Drive / Gmail 专属 redirect URI（例如复用外部静态 callback 页）
+    # CONNECTOR_GOOGLE_REDIRECT_URL=
+    # 可选：Notion 专属 redirect URI
+    # CONNECTOR_NOTION_REDIRECT_URL=
+    # 可选：Lexiang Knowledge Base 专属 redirect URI
+    # CONNECTOR_LEXIANG_REDIRECT_URL=
+    # connector OAuth 回调基础地址默认从 PORTAL_PUBLIC_URL + /api 派生
+    # OpenSandbox 远程沙箱访问 Portal API 的地址（PORTAL_PUBLIC_URL 为 localhost 时必填，例如内网域名或 host.docker.internal:4000）
+    # SANDBOX_REACHABLE_PORTAL_URL=
+
+    # ===== 邮件服务配置（可选，用于邮箱验证和密码重置） =====
+    # 是否启用邮件发送；未启用时发送/测试都会被拒绝
+    # MAIL_ENABLED=false
+    # 邮件 provider：smtp | resend | sendgrid；未配置时默认 smtp
+    # MAIL_TYPE=smtp
+    # 默认发件人；未配置时回退 SMTP_FROM
+    # MAIL_DEFAULT_SEND_FROM=noreply@example.com
+    # MAIL_DEFAULT_SEND_FROM_NAME=Agent Portal
+    # MAIL_DEFAULT_REPLY_TO=
+    SMTP_HOST={{ .Values.SMTP_HOST }}
+    SMTP_PORT={{ .Values.SMTP_PORT }}
+    SMTP_USER={{ .Values.SMTP_USER }}
+    SMTP_PASS={{ .Values.SMTP_PASS }}
+    SMTP_FROM={{ .Values.SMTP_FROM }}
+    # SMTP_USE_TLS=false
+    # SMTP_OPPORTUNISTIC_TLS=false
+    # RESEND_API_KEY=
+    # SENDGRID_API_KEY=
+    # 兼容旧别名（仅存量环境迁移时使用，不建议新部署继续配置）
+    # SMTP_SERVER=smtp.example.com
+    # SMTP_USERNAME=your-smtp-user
+    # SMTP_PASSWORD=your-smtp-password
+
+    # ===== Intent Router 兼容兜底配置（可选） =====
+    # 意图路由模型优先在后台「模型管理 / 意图路由设置」中配置。
+    # 下列环境变量仅用于数据库尚无模型配置时的兼容兜底，新部署不建议依赖。
+    # INTENT_ROUTER_MODEL=deepseek/deepseek-chat
+    # INTENT_ROUTER_FALLBACK_MODEL=deepseek/deepseek-chat
+    # INTENT_ROUTER_EMBEDDING_MODEL=qwen/qwen3-embedding-4b
+    # INTENT_ROUTER_DEFAULT_BASE_URL=https://openrouter.ai/api/v1
+    # INTENT_ROUTER_DEFAULT_API_KEY=
+
+    # ===== Intent Router 缓存配置（可选） =====
+    # 缓存后端：memory | redis；未配置时默认 memory
+    # INTENT_ROUTER_CACHE_TYPE=memory
+    # INTENT_ROUTER_REDIS_HOST=localhost
+    # INTENT_ROUTER_REDIS_PORT=6379
+    # INTENT_ROUTER_REDIS_PASSWORD=
+
+    # ===== 履约执行超时配置（单位：毫秒） =====
+    # 智能体履约超时时间（默认 30000ms = 30秒）
+    FULFILLMENT_AGENT_TIMEOUT_MS={{ .Values.FULFILLMENT_AGENT_TIMEOUT_MS }}
+    # 模型履约超时时间（默认 30000ms = 30秒）
+    FULFILLMENT_MODEL_TIMEOUT_MS={{ .Values.FULFILLMENT_MODEL_TIMEOUT_MS }}
+    # API 履约超时时间（默认 15000ms = 15秒）
+    FULFILLMENT_API_TIMEOUT_MS={{ .Values.FULFILLMENT_API_TIMEOUT_MS }}
+
+    # ===== 钉钉 SSO（可选） =====
+    AUTH_DINGTALK_CLIENT_ID={{ .Values.AUTH_DINGTALK_CLIENT_ID }}
+    AUTH_DINGTALK_CLIENT_SECRET={{ .Values.AUTH_DINGTALK_CLIENT_SECRET }}
+    # 可选：钉钉 OAuth scope；默认 openid Contact.User.Read
+    AUTH_DINGTALK_SCOPE={{ .Values.AUTH_DINGTALK_SCOPE }}
+    # 可选：未返回企业邮箱时使用的合成邮箱域名；默认 sso.local
+    AUTH_DINGTALK_EMAIL_DOMAIN={{ .Values.AUTH_DINGTALK_EMAIL_DOMAIN }}
+
+    # ===== ADP OAuth2 IdP（可选） =====
+    AUTH_ADP_OAUTH_BASE_URL={{ .Values.AUTH_ADP_OAUTH_BASE_URL }}
+    AUTH_ADP_OAUTH_CLIENT_ID={{ .Values.AUTH_ADP_OAUTH_CLIENT_ID }}
+    AUTH_ADP_OAUTH_CLIENT_SECRET={{ .Values.AUTH_ADP_OAUTH_CLIENT_SECRET }}
+    AUTH_ADP_OAUTH_CALLBACK_URL={{ .Values.AUTH_ADP_OAUTH_CALLBACK_URL }}
+    AUTH_ADP_OAUTH_EMAIL_DOMAIN={{ .Values.AUTH_ADP_OAUTH_EMAIL_DOMAIN }}
+
+    # ===== 单通用 OAuth2 SSO（可选，provider id 固定为 generic） =====
+    AUTH_GENERIC_OAUTH_CLIENT_ID={{ .Values.AUTH_GENERIC_OAUTH_CLIENT_ID }}
+    AUTH_GENERIC_OAUTH_CLIENT_SECRET={{ .Values.AUTH_GENERIC_OAUTH_CLIENT_SECRET }}
+    AUTH_GENERIC_OAUTH_AUTHORIZATION_URL={{ .Values.AUTH_GENERIC_OAUTH_AUTHORIZATION_URL }}
+    AUTH_GENERIC_OAUTH_TOKEN_URL={{ .Values.AUTH_GENERIC_OAUTH_TOKEN_URL }}
+    AUTH_GENERIC_OAUTH_USER_INFO_URL={{ .Values.AUTH_GENERIC_OAUTH_USER_INFO_URL }}
+    AUTH_GENERIC_OAUTH_SCOPES={{ .Values.AUTH_GENERIC_OAUTH_SCOPES }}
+    AUTH_GENERIC_OAUTH_TOKEN_AUTH_METHOD={{ .Values.AUTH_GENERIC_OAUTH_TOKEN_AUTH_METHOD }}
+    AUTH_GENERIC_OAUTH_AUTHORIZATION_PARAMS={{ .Values.AUTH_GENERIC_OAUTH_AUTHORIZATION_PARAMS }}
+    AUTH_GENERIC_OAUTH_USER_INFO_AUTH_METHOD={{ .Values.AUTH_GENERIC_OAUTH_USER_INFO_AUTH_METHOD }}
+    AUTH_GENERIC_OAUTH_USER_INFO_TOKEN_PARAM={{ .Values.AUTH_GENERIC_OAUTH_USER_INFO_TOKEN_PARAM }}
+    AUTH_GENERIC_OAUTH_USER_ID_FIELD={{ .Values.AUTH_GENERIC_OAUTH_USER_ID_FIELD }}
+    AUTH_GENERIC_OAUTH_EMAIL_FIELD={{ .Values.AUTH_GENERIC_OAUTH_EMAIL_FIELD }}
+    AUTH_GENERIC_OAUTH_NAME_FIELD={{ .Values.AUTH_GENERIC_OAUTH_NAME_FIELD }}
+    AUTH_GENERIC_OAUTH_USERNAME_FIELD={{ .Values.AUTH_GENERIC_OAUTH_USERNAME_FIELD }}
+    AUTH_GENERIC_OAUTH_DEPARTMENT_FIELD={{ .Values.AUTH_GENERIC_OAUTH_DEPARTMENT_FIELD }}
+    AUTH_GENERIC_OAUTH_EMAIL_DOMAIN={{ .Values.AUTH_GENERIC_OAUTH_EMAIL_DOMAIN }}
+
+    # ===== 协同编排模块（Feature Flags） =====
+    # 总开关：启用多智能体编排、智能分流、编排记录等功能
+    FEATURE_ORCHESTRATION={{ .Values.FEATURE_ORCHESTRATION }}
+    # 规则型协同（默认 true，总开关开启时生效）
+    FEATURE_ORCHESTRATION_RULE=true
+    # 规划型协同 Phase 2（默认 false）
+    FEATURE_ORCHESTRATION_PLANNER=false
+
+    # 编排运行默认超时（未在单个 plannerConfig.maxDurationMs 覆盖时生效）
+    # ORCHESTRATION_RUN_DEFAULT_MAX_DURATION_MS=120000
+    # running 状态超过该阈值仍未结束时，会被后台回收任务标记为 timeout
+    # ORCHESTRATION_RUN_RECLAIM_GRACE_MS=900000
+    # stuck run 回收任务 cron（默认每 5 分钟）
+    # ORCHESTRATION_RUN_RECLAIM_CRON=*/5 * * * *
+
+    # ===== 实验性功能开关（默认未配置即关闭；只有 true 时开启） =====
+    # 说明：
+    # - 以下功能默认不交付，只有显式配置为 true 才会打开
+    # - 前后端都通过 /api/feature-flags 读取服务端解析结果
+    #
+    # 解决方案 /solutions
+    # FEATURE_EXPERIMENTAL_SOLUTIONS=true
+    # 用户端连接中心 /connectors
+    # FEATURE_EXPERIMENTAL_CONNECTOR_CENTER=true
+    # Canvas /canvas
+    # FEATURE_EXPERIMENTAL_CANVAS=true
+    # 新建 DeepAgent Local（仅控制新建入口与创建动作）
+    # FEATURE_EXPERIMENTAL_DEEPAGENT_LOCAL_CREATE=true
+    # 多智能体协同编排（控制意图达成方式中的多智能体相关功能）
+    FEATURE_EXPERIMENTAL_MULTI_AGENT_ORCHESTRATION=true
+
+    # ===== 管理台功能开关（稳定模块默认开；实验性模块默认关） =====
+    # 说明：
+    # - 一级模块关闭后，所属二级模块即使未配置或显式 true，也会一起关闭
+    # - 二级模块用于精细裁剪单个后台页面；关闭后直达时会显示“功能已关闭”
+    # - 稳定模块：未配置即开启；显式 false 时关闭
+    # - 实验性模块：未配置即关闭；只有 true 时开启
+    # - 以下名称与后台 canonical 路由一一对应
+    #
+    # 一级模块
+    # 总览 /dashboard/overview
+    # FEATURE_DASHBOARD_OVERVIEW=false
+    # 智能体中心 /dashboard/agent-management
+    # FEATURE_DASHBOARD_AGENT_MANAGEMENT=false
+    # 意图总控 /dashboard/intent-control
+    # FEATURE_DASHBOARD_INTENT_CONTROL=false
+    # 运行观测 /dashboard/observation
+    # FEATURE_DASHBOARD_OBSERVATION=false
+    # 资源中心 /dashboard/resource-center
+    # FEATURE_DASHBOARD_RESOURCE_CENTER=false
+    # 模型中心 /dashboard/model-evaluation
+    # FEATURE_DASHBOARD_MODEL_EVALUATION=false
+    # 系统设置 /dashboard/system-settings
+    # FEATURE_DASHBOARD_SYSTEM_SETTINGS=false
+    #
+    # 二级模块
+    # 智能体管理 /dashboard/agent-management/agent-center
+    # FEATURE_DASHBOARD_AGENT_CENTER=false
+    # 智能体平台管理 /dashboard/agent-management/platform-connection
+    # FEATURE_DASHBOARD_PLATFORM_CONNECTION=false
+    # 技能列表 /dashboard/resource-center/skill-list（实验性，默认关，须 true）
+    # FEATURE_DASHBOARD_SKILL_LIST=true
+    # MCP 服务 /dashboard/resource-center/mcp-servers（稳定模块，随资源中心开启；无单独 env）
+    # 触发器管理 /dashboard/agent-management/trigger-management
+    # FEATURE_DASHBOARD_TRIGGER_MANAGEMENT=false
+    # IM 渠道管理 /dashboard/agent-management/im-channels
+    # FEATURE_DASHBOARD_IM_CHANNELS=false
+    # 意图概览 /dashboard/intent-control/intent-overview
+    # FEATURE_DASHBOARD_INTENT_OVERVIEW=false
+    # 意图管理 /dashboard/intent-control/intent-library
+    # FEATURE_DASHBOARD_INTENT_LIBRARY=false
+    # 意图达成方式 /dashboard/intent-control/fulfillment-strategies
+    # FEATURE_DASHBOARD_FULFILLMENT_STRATEGIES=false
+    # 意图测试 /dashboard/intent-control/routing-test
+    # FEATURE_DASHBOARD_ROUTING_TEST=false
+    # 意图追溯 /dashboard/intent-control/runtime-trace
+    # FEATURE_DASHBOARD_RUNTIME_TRACE=false
+    #
+    # 整体观测 /dashboard/observation/observation-dashboard
+    # FEATURE_DASHBOARD_OBSERVATION_DASHBOARD=false
+    # 请求列表 /dashboard/observation/observation-list
+    # FEATURE_DASHBOARD_OBSERVATION_LIST=false
+    # 会话列表 /dashboard/observation/session-list
+    # FEATURE_DASHBOARD_SESSION_LIST=false
+    # 记忆层 /dashboard/resource-center/memory-layer
+    # FEATURE_DASHBOARD_MEMORY_LAYER=false
+    # 技能审计日志 /dashboard/resource-center/skill-list?tab=audit（实验性）
+    # FEATURE_DASHBOARD_SKILL_AUDIT_LOG=true
+    #
+    # 沙箱管理 /dashboard/resource-center/sandbox-management（实验性）
+    # FEATURE_DASHBOARD_SANDBOX_MANAGEMENT=true
+    # 文件存储 /dashboard/resource-center/file-storage（实验性）
+    # FEATURE_DASHBOARD_FILE_STORAGE=true
+    # 连接器 /dashboard/resource-center/connector-definitions + /dashboard/resource-center/connector-center
+    # FEATURE_DASHBOARD_CONNECTORS=false
+    #
+    # 模型管理 /dashboard/model-evaluation/model-management
+    # FEATURE_DASHBOARD_MODEL_MANAGEMENT=false
+    # 模型体验 /dashboard/model-evaluation/model-testing
+    # FEATURE_DASHBOARD_MODEL_TESTING=false
+    #
+    # 基础设置 /dashboard/system-settings/settings-basic
+    # FEATURE_DASHBOARD_SETTINGS_BASIC=false
+    # 通知设置 /dashboard/auth-notifications/notification-settings
+    # FEATURE_DASHBOARD_NOTIFICATION_SETTINGS=false
+    # 用户端展示设置 /dashboard/system-settings/portal-experience
+    # FEATURE_DASHBOARD_AGENT_DISPLAY=false
+    # 认证设置 /dashboard/system-settings/settings-auth
+    # FEATURE_DASHBOARD_SETTINGS_AUTH=false
+    # 许可证管理 /dashboard/system-settings/settings-license
+    # FEATURE_DASHBOARD_SETTINGS_LICENSE=false
+    # 空间管理 /dashboard/system-settings/settings-spaces
+    # FEATURE_DASHBOARD_SETTINGS_SPACES=false
+    # 角色授权 /dashboard/system-settings/settings-role-assignment
+    # FEATURE_DASHBOARD_SETTINGS_ROLE_ASSIGNMENT=false
+    # 用户权限 /dashboard/system-settings/settings-users
+    # FEATURE_DASHBOARD_SETTINGS_USERS=false
+
+    # ===== 用户端功能开关（稳定功能：未配置 = 开启；显式 false = 关闭） =====
+    # 说明：
+    #   - 作用于用户端导航入口（非管理端）
+    #   - 稳定功能默认开启，Lite 部署可按需关闭
+    #   - FEATURE_USER_HOME 关闭后，访问 / 自动跳转到第一个可达入口
+    #
+    # 首页（/ 根路径，关闭后所有用户均跳转）
+    # FEATURE_USER_HOME=false
+    # 首页新会话默认模式：workbench 或 intent
+    # USER_HOME_DEFAULT_MODE=intent
+    # 智能工作台 /workbench（用户侧入口总开关）
+    # FEATURE_USER_WORKBENCH=false
+    # 智能工作台 provider 部署配置：pi_inprocess（默认）、opencode 或 adp_workbench
+    # 默认只通过 .env 配置，不在后台页面在线切换
+    # WORKBENCH_PROVIDER=pi_inprocess
+    # 当 provider=pi_inprocess 时，使用 Pi 进程内智能体；可复用后台超级智能体配置页选择运行模型
+    # 当 provider=opencode 时，使用 OpenCode 沙箱超级智能体；需配置下方 OpenCode 运行时，且后台 opencode 智能体配置页与创建能力自动启用
+    # WORKBENCH_PROVIDER=opencode
+    # 内部调试开关：开启后后台可在线切换智能工作台 provider，且 DB 配置优先于 WORKBENCH_PROVIDER
+    # 关闭时 WORKBENCH_PROVIDER 是唯一事实来源，后台不会展示在线切换入口
+    # WORKBENCH_PROVIDER_DEBUG_SWITCH_ENABLED=false
+    # ADP 工作台地址；仅 WORKBENCH_PROVIDER=adp_workbench 时使用
+    # WORKBENCH_ADP_URL=
+    # 个人助理 /personal-assistant
+    # FEATURE_USER_PERSONAL_ASSISTANT=false
+    # 工作搭子 /team
+    # FEATURE_USER_TEAM=false
+
+    # ===== OpenCode 运行时（WORKBENCH_PROVIDER=opencode 时必填；画布网页模式亦可能共用） =====
+    # OpenCode 服务地址（通过 opencode serve 启动，默认 http://127.0.0.1:4096）
+    # OPENCODE_BASE_URL=http://127.0.0.1:4096
+    # OpenCode 单轮对话超时（毫秒），默认 500000
+    # OPENCODE_CHAT_TIMEOUT_MS=500000
+    # OpenCode 基础认证（可选）
+    # OPENCODE_SERVER_USERNAME=
+    # OPENCODE_SERVER_PASSWORD=
+    # OpenCode 默认模型（当未指定 modelConfigId 时使用）
+    # OPENCODE_MODEL=
+
+    # ===== 智能工作台调试（本地/测试可选） =====
+    # 打开后写入超级智能体 / 智能工作台 provider 的 prompt 调试快照到 .workspace/workbench-debug/
+    # WORKBENCH_DEBUG=on
+
+    # 是否启用登录图形验证码（默认 true；本地调试可设为 false）
+    LOGIN_CAPTCHA_ENABLED={{ .Values.LOGIN_CAPTCHA_ENABLED }}
+    # 验证码提供方：cap、slider 或 character
+    LOGIN_CAPTCHA_PROVIDER={{ .Values.LOGIN_CAPTCHA_PROVIDER }}
+    # 是否开启验证码 IP 一致性校验（默认 true）
+    # 在 CGNAT / 负载均衡 / 代理等场景下，用户两次请求的出口 IP 可能不同，设为 false 可关闭
+    LOGIN_CAPTCHA_CHECK_IP={{ .Values.LOGIN_CAPTCHA_CHECK_IP }}
+    # ===== 私有化 / 授权服务模式 =====
+    # 仅当 LICENSE_MODE=private 时生效；TKE 部署使用 adp 模式，以下取值固定
+    LICENSE_SERVER_URL=
+    LICENSE_SPU_CODE=spu_tencent_cloud_agent_development_platform_subscription_license
+    LICENSE_PRICING_CODE=standard_edition_private_cloud_subscription_license
+    LICENSE_RULE_KEY=adp_agent_count
+    LICENSE_AUTH_TYPE=NODE_RESTRICTED
+    LICENSE_LANGUAGE={{ .Values.LICENSE_LANGUAGE }}
+
+    # 许可证跳过令牌（可选，用于无许可证服务器的场景）
+    # 仅当 LICENSE_MODE=private 时生效
+    # 不配置 LICENSE_SERVER_URL 时，若也不配置此项，则所有写操作被拦截
+    # 此 token 由开发方使用 RSA 私钥签名生成，客户无法自行生成
+    # 需要时请联系开发方获取
+    # LICENSE_BYPASS_TOKEN=
+
+    # ===== Observability · 外部 DLP / 安全平台事件接收 =====
+    # 用于 POST /api/observability/security-event 的 Bearer token 鉴权
+    # 外部 DLP / 安全平台调用方需在请求头携带：
+    #   Authorization: Bearer <OBSERVABILITY_SECURITY_EVENT_TOKEN>
+    # 或：
+    #   X-Observability-Security-Event-Token: <OBSERVABILITY_SECURITY_EVENT_TOKEN>
+    # 未配置时该接口直接返回 503，避免默认放通
+    # OBSERVABILITY_SECURITY_EVENT_TOKEN=
+    #
+    # 外部入口加固（P1.9-a）—— 以下三个参数可选，未配置时使用默认值
+    # 分钟级限流：默认 60 次/分钟/token
+    # OBSERVABILITY_SECURITY_EVENT_RATE_LIMIT_PER_MIN=60
+    # 秒级突发限流：默认 10 次/秒/token
+    # OBSERVABILITY_SECURITY_EVENT_BURST_PER_SEC=10
+    # 单包体积上限：默认 256kb，支持 b/kb/mb 后缀
+    # OBSERVABILITY_SECURITY_EVENT_BODY_LIMIT=256kb
+    # IP 维度分钟级限流：默认 120 次/分钟/IP，独立于 token 维度，挡 token 轮换攻击
+    # OBSERVABILITY_SECURITY_EVENT_RATE_LIMIT_PER_IP_PER_MIN=120
+    # IP 维度秒级突发限流：默认 30 次/秒/IP
+    # OBSERVABILITY_SECURITY_EVENT_BURST_PER_IP_PER_SEC=30

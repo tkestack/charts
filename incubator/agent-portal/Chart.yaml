@@ -1,0 +1,11 @@
+apiVersion: v2
+name: agent-portal
+description: Tencent Cloud Agent Portal - enterprise platform with agent management, intent routing, multi-agent orchestration, observability and model management for TKE.
+type: application
+version: 2.0.0
+appVersion: "2.0.0"
+icon: https://agent-portal-1256076159.cos.ap-guangzhou.myqcloud.com/Portal-Docs20260804161651580.png
+home: https://portal.helloadp.com/
+
+maintainers:
+  - name: ADP Team

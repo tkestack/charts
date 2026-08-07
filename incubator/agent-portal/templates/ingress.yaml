@@ -1,0 +1,45 @@
+{{- if .Values.ingress.enabled -}}
+{{- $host := .Values.ingress.host | default .Values.clb -}}
+{{- $clbScheme := default .Values.scheme .Values.clbScheme -}}
+{{- $tlsSecret := .Values.ingress.tlsSecretName | default (printf "%s-clb-cert" (include "agent-portal.fullname" .)) -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "agent-portal.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "agent-portal.labels" . | nindent 4 }}
+  annotations:
+    ingress.cloud.tencent.com/direct-access: "true"
+    {{- if .Values.clbId }}
+    kubernetes.io/ingress.existLbId: {{ .Values.clbId | quote }}
+    {{- end }}
+    {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  {{- with .Values.ingress.className }}
+  ingressClassName: {{ . }}
+  {{- end }}
+  rules:
+    {{- if $host }}
+    - host: {{ $host | quote }}
+      http:
+    {{- else }}
+    - http:
+    {{- end }}
+        paths:
+          - path: {{ .Values.ingress.path }}
+            pathType: {{ .Values.ingress.pathType }}
+            backend:
+              service:
+                name: {{ include "agent-portal.fullname" . }}
+                port:
+                  number: {{ .Values.service.port }}
+  {{- if and .Values.ingress.tls $host (eq $clbScheme "https") }}
+  tls:
+    - hosts:
+        - {{ $host | quote }}
+      secretName: {{ $tlsSecret | quote }}
+  {{- end }}
+{{- end }}
