@@ -9,6 +9,7 @@
 #   db.host / db.user / db.password
 #   storage.bucket / storage.region / storage.accessKey / storage.secretKey
 #   以及 PORTAL_CREDENTIALS_KEY、BETTER_AUTH_SECRET 两个密钥
+#   LICENSE_PUBLIC_KEY / LICENSE_HOST_ADP 默认已可用，部署后粘贴激活码即可
 #
 # CLB 相关字段对齐 ADP Chart（global.clb / clbId / scheme / clbScheme / clbCertId）
 
@@ -168,10 +169,34 @@ adp:
   host: ""
 
 # ---------- License ----------
-# 授权模式：adp（ADP 激活码）或 private（独立授权服务）
+# 专有云固定为 ADP 激活码模式；部署后在 Portal 授权页粘贴激活码即可
 LICENSE_MODE: "adp"
-# adp 模式的校验地址；留空时自动使用 <scheme>://<clb>/cgi/apex/test/adp/platform/CheckLicense
+# ADP CheckLicense 地址
+# 留空时默认使用公网 ADP 正式环境：https://adp.cloud.tencent.com/cgi/apex/adp/platform/CheckLicense
+# 联调/测试环境可改为 https://adp.cloud.tencent.com/cgi/apex/test/adp/platform/CheckLicense
+# 若 Portal 与专有云 ADP 共用同一入口且已暴露该路径，可改为 <scheme>://<clb>/cgi/apex/adp/platform/CheckLicense
 LICENSE_HOST_ADP: ""
+# ADP / platform-manager 的 RSA 公钥，用于解密用户粘贴的激活码
+# 支持多行 PEM；Chart 写入 .env 时会自动转为 \n 单行形式
+# 默认值与 ADP platform-manager 的 PUBLIC_KEY 对齐；若研发另行下发公钥请覆盖本项
+LICENSE_PUBLIC_KEY: |
+  -----BEGIN PUBLIC KEY-----
+  MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAurReoU7qNrUu+hVIiCLM
+  yXfOUZIODPMuR9xphD8S+/Df8DDj40lVOgU3sh0sghFmkhva71fji+N+a279wsjd
+  MDBd5ZO7hBApxOdm82TUVnx1be+PhvIkChDKIbOlZJ+GG/gbZsrbCzR+1yHI6h5u
+  DmumU4WRGpBg28/6quJ2nl1GUWJAjNCtGdPozJ0Q2Gm0nq1MrQPf5fjBzxJ2GI83
+  iM8We8MyeNQO/iAbr+iUqG1XsjD4QqDUUqcgBYRGexS0HHuGYrDWEUvkBnsgqdpR
+  zVgqxxJhsDCz7IiqFaTugJJDIoH2/uPJ4rAwSxko481Li1VCKpQQ6KN2mM7cMEeK
+  nGakkgkI0OI5znUgC5vBoprUkEO0pk1JcaIrEnEZm5pZCrBJsSbCLQLbiDReSe7q
+  XTO54hyFiHv1huweQB5psL/2O0WvKcSM4H4zgAWSSEatxZ/MKD8ESmjgLcUg6KFo
+  8aGyRNJLv3+nE7qMLagJDtt0Gqinutu/SXwurj75+Xb2DQWD5JGvkwvvlt5Muvcd
+  2HjdhWqwM5sR37a58YK3Rd/M+XqFpOjgXQ1si3m1CyXGAOscgm4/p5pFBgUOjmfI
+  tyqsHyMMdAugX6Duo20FkKZwC/gPtAeNYso/Vxt0wRifIrJZPUkdTTOPcmtx+a+6
+  +8Dhq8soyKlm51Dc6ia0cUECAwEAAQ==
+  -----END PUBLIC KEY-----
+# 可选：手动指定 License 实例 ID；留空时由 Pod 读取 kube-system namespace UID
+# Chart 会创建最小权限 RBAC（get namespaces/kube-system）；若集群策略禁止该权限，请显式填写本项
+LICENSE_INSTANCE_ID: ""
 # License 提示语言：zh 或 en
 LICENSE_LANGUAGE: "zh"
 
