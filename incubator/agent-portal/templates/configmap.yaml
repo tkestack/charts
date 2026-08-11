@@ -150,10 +150,8 @@ stringData:
     #   make pack BUILD_ENABLE_LICENSE=true
     #   make push BUILD_ENABLE_LICENSE=true
     LICENSE_MODE={{ .Values.LICENSE_MODE }}
-    # 复用 platform-manager 的 RSA 公钥，支持 \n 形式的单行 PEM
-    {{- with .Values.LICENSE_PUBLIC_KEY }}
-    LICENSE_PUBLIC_KEY={{ . | trim | replace "\n" "\\n" | quote }}
-    {{- end }}
+    {{- $licensePublicKey := .Values.LICENSE_PUBLIC_KEY | default (include "agent-portal.defaultLicensePublicKey" .) }}
+    LICENSE_PUBLIC_KEY={{ $licensePublicKey | trim | replace "\n" "\\n" | quote }}
     # 默认走公网 ADP 正式环境 CheckLicense；测试环境可在 values 覆盖为 .../cgi/apex/test/adp/platform/CheckLicense
     LICENSE_HOST_ADP={{ .Values.LICENSE_HOST_ADP | default "https://adp.cloud.tencent.com/cgi/apex/adp/platform/CheckLicense" | quote }}
     # ProductType 固定校验为 4，服务端不再读取 LICENSE_PRODUCT_TYPE
