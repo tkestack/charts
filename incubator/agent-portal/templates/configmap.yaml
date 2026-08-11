@@ -144,26 +144,24 @@ stringData:
     # OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318/v1/traces
     # OTEL_LOG_LEVEL=info
 
-    # ===== License（是否启用由打包时 BUILD_ENABLE_LICENSE 决定） =====
+    # ===== License（专有云固定 ADP 激活码模式；是否启用由打包时 BUILD_ENABLE_LICENSE 决定） =====
     # 本地开发和普通构建默认不启用 License。
     # 如需启用，请在构建阶段传入 BUILD_ENABLE_LICENSE=true，例如：
     #   make pack BUILD_ENABLE_LICENSE=true
     #   make push BUILD_ENABLE_LICENSE=true
-    # 模式选择：
-    # - adp     = 专有云 / ADP 激活码模式
-    # - private = 私有化 / 授权服务模式
-    # 优先读取 LICENSE_MODE；LICENSE_STRATEGY 作为兼容别名保留
     LICENSE_MODE={{ .Values.LICENSE_MODE }}
-    # LICENSE_STRATEGY=adp
-    # ===== 专有云 / ADP 激活码模式 =====
-    # 复用 platform-manager 的 RSA 公钥，支持 \n 形式的单行 PEM
-    # LICENSE_PUBLIC_KEY=-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----
-    LICENSE_HOST_ADP={{ .Values.LICENSE_HOST_ADP | default (printf "%s://%s/cgi/apex/test/adp/platform/CheckLicense" .Values.scheme .Values.clb) }}
+    {{- $licensePublicKey := .Values.LICENSE_PUBLIC_KEY | default (include "agent-portal.defaultLicensePublicKey" .) }}
+    LICENSE_PUBLIC_KEY={{ $licensePublicKey | trim | replace "\n" "\\n" | quote }}
+    # 默认走公网 ADP 正式环境 CheckLicense；测试环境可在 values 覆盖为 .../cgi/apex/test/adp/platform/CheckLicense
+    LICENSE_HOST_ADP={{ .Values.LICENSE_HOST_ADP | default "https://adp.cloud.tencent.com/cgi/apex/adp/platform/CheckLicense" | quote }}
     # ProductType 固定校验为 4，服务端不再读取 LICENSE_PRODUCT_TYPE
-    # 可选：手动指定实例 ID；不填时会在集群内自动读取 kube-system namespace UID
-    # LICENSE_INSTANCE_ID=
+    # 可选：手动指定实例 ID；不填时会在集群内自动读取 kube-system namespace UID（依赖 Chart 创建的 RBAC）
+    {{- with .Values.LICENSE_INSTANCE_ID }}
+    LICENSE_INSTANCE_ID={{ . | quote }}
+    {{- end }}
     # 可选：后台自动续期任务间隔，最小 60000（默认 900000）
     # LICENSE_RENEW_INTERVAL_MS=900000
+    LICENSE_LANGUAGE={{ .Values.LICENSE_LANGUAGE }}
 
     # ===== 默认对话 LLM（未选择智能体时使用） =====
     # LLM_SYSTEM_PROMPT=你是一个有帮助的智能助手。
@@ -496,21 +494,6 @@ stringData:
     # 是否开启验证码 IP 一致性校验（默认 true）
     # 在 CGNAT / 负载均衡 / 代理等场景下，用户两次请求的出口 IP 可能不同，设为 false 可关闭
     LOGIN_CAPTCHA_CHECK_IP={{ .Values.LOGIN_CAPTCHA_CHECK_IP }}
-    # ===== 私有化 / 授权服务模式 =====
-    # 仅当 LICENSE_MODE=private 时生效；TKE 部署使用 adp 模式，以下取值固定
-    LICENSE_SERVER_URL=
-    LICENSE_SPU_CODE=spu_tencent_cloud_agent_development_platform_subscription_license
-    LICENSE_PRICING_CODE=standard_edition_private_cloud_subscription_license
-    LICENSE_RULE_KEY=adp_agent_count
-    LICENSE_AUTH_TYPE=NODE_RESTRICTED
-    LICENSE_LANGUAGE={{ .Values.LICENSE_LANGUAGE }}
-
-    # 许可证跳过令牌（可选，用于无许可证服务器的场景）
-    # 仅当 LICENSE_MODE=private 时生效
-    # 不配置 LICENSE_SERVER_URL 时，若也不配置此项，则所有写操作被拦截
-    # 此 token 由开发方使用 RSA 私钥签名生成，客户无法自行生成
-    # 需要时请联系开发方获取
-    # LICENSE_BYPASS_TOKEN=
 
     # ===== Observability · 外部 DLP / 安全平台事件接收 =====
     # 用于 POST /api/observability/security-event 的 Bearer token 鉴权

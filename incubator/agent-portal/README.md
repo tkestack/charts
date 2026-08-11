@@ -2,7 +2,7 @@
 
 `agent-portal` 是用于在 TKE 上部署 Agent Portal（智能体门户）的 Helm Chart。
 
-Agent Portal 是面向企业的智能体统一入口，提供智能体接入与管理、意图总控与路由、多智能体协同编排、运行观测以及模型管理等能力，可对接腾讯云智能体开发平台（ADP）及其他 OpenAI 兼容模型服务。
+Agent Portal 是面向企业的智能体统一入口，提供智能体接入与管理、意图总控与路由、多智能体协同编排、运行观测以及模型管理等能力，可对接腾讯云智能体开发平台（ADP）、Dify 及其他 OpenAI 兼容智能体服务。
 
 ## 架构说明
 
@@ -187,43 +187,40 @@ Client ID、Client Secret 与三个端点需成组配置。用户信息字段映
 | podAnnotations | Pod 注解 | {} |
 | podLabels | Pod 标签 | {} |
 
-## 示例
+## 安装
 
-### 最小配置部署
+### 在 TKE 应用市场安装（推荐）
 
-创建 `my-values.yaml`：
+在容器服务控制台进入 **应用市场**，搜索并打开 **Agent Portal**，点击「创建应用」：
 
-```yaml
-clb: "portal.example.com"
-clbId: lb-xxxxxxxx
-scheme: https
-clbScheme: https
-clbCertId: "<YOUR_CLB_CERT_ID>"
+![TKE 应用市场创建 Agent Portal](https://agent-portal-1256076159.cos.ap-guangzhou.myqcloud.com/Portal-DocsClipboard_Screenshot_1786436357.png)
 
-db:
-  host: "10.0.0.10"
-  port: 3306
-  user: "portal"
-  password: "<YOUR_DB_PASSWORD>"
-  type: mysql
+按上图填写：
 
-storage:
-  bucket: "portal-1250000000"
-  region: "ap-guangzhou"
-  accessKey: "<YOUR_COS_SECRET_ID>"
-  secretKey: "<YOUR_COS_SECRET_KEY>"
+1. **名称**：应用实例名，例如 `agent-portal`
+2. **地域 / 集群**：选择目标 TKE 集群
+3. **Namespace**：选择或新建部署命名空间
+4. **Chart 版本**：选择需要的版本
+5. **参数**：右侧编辑框即完整的 `values.yaml`，把占位符替换为实际值即可
 
-PORTAL_CREDENTIALS_KEY: "<openssl rand -base64 32>"
-BETTER_AUTH_SECRET: "<openssl rand -base64 32>"
-```
+参数各字段的含义与默认值见本文「[配置说明](#配置说明)」及 Chart 内的 [`values.yaml`](./values.yaml)，安装前**至少**需要修改：
 
-部署：
+- 对外访问：`clb` / `clbId` / `scheme` / `clbScheme` / `clbCertId`
+- 数据库：`db.host` / `db.user` / `db.password`
+- 对象存储：`storage.bucket` / `storage.region` / `storage.accessKey` / `storage.secretKey`
+- 应用密钥：`PORTAL_CREDENTIALS_KEY` / `BETTER_AUTH_SECRET`（`openssl rand -base64 32` 生成）
+
+填好后点击「创建」，等待应用状态变为已部署，即可通过 `https://<clb>/<APP_BASE_PATH>` 访问；首次进入以超级管理员身份在授权页粘贴激活码完成 License 激活。
+
+### 使用 Helm 命令行安装
+
+也可以直接用本 Chart 安装，参数写入 `my-values.yaml`（字段同上）：
 
 ```bash
 helm install agent-portal . -f my-values.yaml -n agent-portal --create-namespace
 ```
 
-部署完成后访问 `https://portal.example.com/agent-portal`。
+## 示例
 
 ### 部署到根路径
 

@@ -168,10 +168,17 @@ adp:
   host: ""
 
 # ---------- License ----------
-# 授权模式：adp（ADP 激活码）或 private（独立授权服务）
+# 专有云固定为 ADP 激活码模式；部署后在 Portal 授权页粘贴激活码即可
 LICENSE_MODE: "adp"
-# adp 模式的校验地址；留空时自动使用 <scheme>://<clb>/cgi/apex/test/adp/platform/CheckLicense
+# ADP CheckLicense 地址
+# 留空时默认使用公网 ADP 正式环境：https://adp.cloud.tencent.com/cgi/apex/adp/platform/CheckLicense
+# 联调/测试环境可改为 https://adp.cloud.tencent.com/cgi/apex/test/adp/platform/CheckLicense
 LICENSE_HOST_ADP: ""
+# 解密激活码的 RSA 公钥：默认由 Chart 内置（与 ADP platform-manager 对齐），安装时无需填写
+# 仅当研发另行下发公钥时再覆盖本项
+LICENSE_PUBLIC_KEY: ""
+# 可选：手动指定 License 实例 ID；留空时由 Pod 读取 kube-system namespace UID
+LICENSE_INSTANCE_ID: ""
 # License 提示语言：zh 或 en
 LICENSE_LANGUAGE: "zh"
 

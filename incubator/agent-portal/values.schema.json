@@ -176,7 +176,20 @@
     },
     "LICENSE_MODE": {
       "type": "string",
-      "enum": ["adp", "private"]
+      "enum": ["adp"]
+    },
+    "LICENSE_HOST_ADP": {
+      "type": "string"
+    },
+    "LICENSE_PUBLIC_KEY": {
+      "type": "string"
+    },
+    "LICENSE_INSTANCE_ID": {
+      "type": "string"
+    },
+    "LICENSE_LANGUAGE": {
+      "type": "string",
+      "enum": ["zh", "en"]
     }
   }
 }
