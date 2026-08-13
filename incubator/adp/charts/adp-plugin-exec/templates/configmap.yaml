@@ -236,6 +236,12 @@ data:
           protocol: trpc
           network: tcp
           timeout: 30000
+        - callee: trpc.adp.skill_config.SkillConfig
+          target: "ip://adp-skill-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          network: tcp
+          timeout: 30000
         - callee: trpc.KEP.plugin_config_server.PluginConfig
           target: "ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
           namespace: ${NAMESPACE}
@@ -3530,6 +3536,7 @@ data:
     PLATFORM_MANAGER_LOGIN_TARGET: "ip://adp-platform-manager.{{ .Release.Namespace }}.svc.cluster.local:9091"
     METROLOGY_TARGET: "ip://adp-platform-metrology.{{ .Release.Namespace }}.svc.cluster.local:8000"
     SKILL_CONFIG_TARGET: "ip://adp-skill-config.{{ .Release.Namespace }}.svc.cluster.local:8001"  # TODO: 待人工确认
+    SKILL_CONFIG_SVC_TARGET: "ip://adp-skill-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
     PLUGIN_CONFIG_SERVER_TARGET: "ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
     PLUGIN_CONFIG_MCP_TARGET: "ip://adp-plugin-config.{{ .Release.Namespace }}.svc.cluster.local:8003"
     WORKFLOW_CONFIG_TARGET: "ip://adp-workflow-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
@@ -7995,6 +8002,12 @@ data:
           timeout: 30000
         - callee: trpc.adp.skill_config.SkillConfigInner
           target: "ip://adp-skill-config.{{ .Release.Namespace }}.svc.cluster.local:8001"  # TODO: 待人工确认
+          namespace: ${NAMESPACE}
+          protocol: trpc
+          network: tcp
+          timeout: 30000
+        - callee: trpc.adp.skill_config.SkillConfig
+          target: "ip://adp-skill-config.{{ .Release.Namespace }}.svc.cluster.local:8000"
           namespace: ${NAMESPACE}
           protocol: trpc
           network: tcp

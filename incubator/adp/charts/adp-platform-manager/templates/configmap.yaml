@@ -2078,7 +2078,7 @@ data:
     AGENT_BACKGROUND:
     MSG_LOG_ES_WHITE_ALL_OPEN: true
     LICENSE_HOST:
-      adp: "https://adp.cloud.tencent.com/cgi/apex/test/adp/platform/CheckLicense"
+      adp: "https://adp.cloud.tencent.com/cgi/apex/adp/platform/CheckLicense"
     PUBLIC_KEY: |
       -----BEGIN PUBLIC KEY-----
       MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAurReoU7qNrUu+hVIiCLM
