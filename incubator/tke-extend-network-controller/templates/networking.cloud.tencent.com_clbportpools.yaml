@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.15.0
+    controller-gen.kubebuilder.io/version: v0.21.0
   name: clbportpools.networking.cloud.tencent.com
 spec:
   group: networking.cloud.tencent.com
@@ -153,8 +153,10 @@ spec:
                         - clb.c4.xlarge
                         type: string
                       subnetId:
-                        description: 在私有网络内购买内网负载均衡实例的情况下，必须指定子网 ID，内网负载均衡实例的 VIP
-                          将从这个子网中产生。创建内网负载均衡实例时，此参数必填，创建公网IPv4负载均衡实例时，不支持指定该参数。
+                        description: |-
+                          在私有网络内购买内网负载均衡实例的情况下，必须指定子网 ID，内网负载均衡实例的 VIP 将从这个子网中产生。
+                          创建内网负载均衡实例，或者创建 IPv6FullChain 版本的负载均衡实例，此参数必填。
+                          创建公网IPv4负载均衡实例时，不支持指定该参数。
                         type: string
                       tags:
                         description: 购买负载均衡的同时，给负载均衡打上标签，最大支持20个标签键值对。
@@ -224,7 +226,6 @@ spec:
                   CLB 分配策略，单个端口池中有多个可分配 CLB ，分配端口时 CLB 的挑选策略。
                   可选值：Uniform（均匀分配）、InOrder（顺序分配）、Random（随机分配）。默认值为 Random。
 
-
                   若希望减小 DDoS 攻击的影响，建议使用 Uniform 策略，避免业务使用的 IP 过于集中；若希望提高
                   CLB 的利用率，建议使用 InOrder 策略。
                 enum:
@@ -235,7 +236,6 @@ spec:
               listenerPrecreate:
                 description: |-
                   监听器预创建，预先为 lb 创建一些固定的监听器，不销毁，用于加快扩缩容时 CLB 的绑定和解绑速度。
-
 
                   注意：预创建监听器的端口池只支持 TCP 和 UDP 协议（不支持 TCP_SSL 和 QUIC）。
                 properties:
@@ -268,7 +268,6 @@ spec:
                   监听器数量配额。仅用在单独调整了指定 CLB 实例监听器数量配额的场景（TOTAL_LISTENER_QUOTA），
                   控制器默认会获取账号维度的监听器数量配额作为端口分配的依据，如果 listenerQuota 不为空，
                   将以它的值作为该端口池中所有 CLB 监听器数量配额覆盖账号维度的监听器数量配额。
-
 
                   注意：如果指定了 listenerQuota，不支持启用 CLB 自动创建，且需自行保证该端口池中所有 CLB
                   实例的监听器数量配额均等于 listenerQuota 的值。
@@ -305,6 +304,9 @@ spec:
                 items:
                   description: LoadBalancerStatus 定义负载均衡器状态
                   properties:
+                    addressIPVersion:
+                      description: CLB 的 IP 版本，可选值：IPV4、IPV6、IPv6FullChain
+                      type: string
                     allocated:
                       description: 已分配的监听器数量
                       type: integer

@@ -19,10 +19,10 @@ spec:
     spec:
       hostAliases:
       - hostnames:
-        - clb.tencentcloudapi.com
-        - vpc.tencentcloudapi.com
-        - cam.tencentcloudapi.com
-        ip: 169.254.0.95
+        {{- range $svc := list "clb" "vpc" "cam" "tag" }}
+        - {{ $svc }}{{ if $.Values.cloudAPI.endpointSuffix }}.{{ $.Values.cloudAPI.endpointSuffix }}{{ end }}.tencentcloudapi.com
+        {{- end }}
+        ip: {{ .Values.cloudAPI.hostAliasesIP }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -56,6 +56,8 @@ spec:
           value: "{{ .Values.concurrency.clbNodeBindingController }}"
         - name: WORKER_CLB_PORT_POOL_CONTROLLER
           value: "{{ .Values.concurrency.clbPortPoolController }}"
+        - name: CLOUD_API_ENDPOINT_SUFFIX
+          value: "{{ .Values.cloudAPI.endpointSuffix }}"
         - name: WORKER_POD_CONTROLLER
           value: "{{ .Values.concurrency.podController }}"
         - name: WORKER_NODE_CONTROLLER

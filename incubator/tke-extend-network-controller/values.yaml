@@ -16,6 +16,14 @@ secretKey: ""
 # -- Cluster ID of the current TKE Cluster.
 clusterID: ""
 
+# -- Cloud API options
+cloudAPI:
+  # -- Cloud API endpoint suffix. Empty for production (clb.tencentcloudapi.com);
+  # set to "test" for test env, the SDK will call clb.test.tencentcloudapi.com etc.
+  endpointSuffix: ""
+  # -- IP of hostAliases to resolve cloud API domains
+  hostAliasesIP: "169.254.0.95"
+
 # -- Concurrency options of the controller, in large-scale rapid expansion scenarios,
 # the concurrency of the first 3 controllers can be appropriately increased
 # (mainly by batch creating clb listeners and binding rs to speed up the process).

@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.15.0
+    controller-gen.kubebuilder.io/version: v0.21.0
   name: clbpodbindings.networking.cloud.tencent.com
 spec:
   group: networking.cloud.tencent.com
@@ -97,6 +97,11 @@ spec:
                 items:
                   description: PortBindingStatus 描述单个端口的实际绑定情况
                   properties:
+                    addressIPVersion:
+                      description: |-
+                        CLB 的 IP 版本，可选值：IPV4、IPV6、IPv6FullChain
+                        用于确定注册后端时使用 Pod/Node 的 IPv4 还是 IPv6 地址
+                      type: string
                     certId:
                       description: 服务端证书 ID（仅在 TCP_SSL 和 QUIC 协议下有效）
                       type: string
