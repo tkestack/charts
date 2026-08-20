@@ -79,6 +79,10 @@ data:
           protocol: trpc               #应用层协议 trpc http
           target: ip://127.0.0.1:8081            #请求服务地址
           timeout: 1000                            #请求最长处理时间
+        - name: trpc.adp.platform_permission_config.Admin  #平台权限配置 Admin 接口
+          namespace: Production
+          target: ip://adp-platform-permission-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 3000
 
 
   config.yaml: |
@@ -206,3 +210,7 @@ data:
           protocol: trpc               #应用层协议 trpc http
           target: ip://127.0.0.1:8081            #请求服务地址
           timeout: 1000                            #请求最长处理时间
+        - name: trpc.adp.platform_permission_config.Admin  #平台权限配置 Admin 接口
+          namespace: Production
+          target: ip://adp-platform-permission-config.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 3000

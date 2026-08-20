@@ -1,0 +1,108 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-private-op
+  namespace: {{ .Release.Namespace }}
+data:
+  trpc_go.yaml: |
+    global: #全局配置
+      namespace: {{ .Release.Namespace }}            #环境类型，分正式Production和非正式Development两种类型
+      admin_port: 18888                              #管理命令服务端口
+      enable_set: N                      #是否启用set
+    server: #服务端配置
+      app: private                                 #业务的应用名
+      server: private-op                           #进程服务名
+      max_close_wait_time: 2400000
+      bin_path: /app/bin/                   #二进制可执行文件和框架配置文件所在路径
+      conf_path: /app/conf/                 #业务配置文件所在路径
+      data_path: /app/data/                 #业务数据文件所在路径
+      admin:
+        ip: ${POD_IP}                                  # 必须填外部可访问的ip, 不能填127.0.0.1
+        port: 18888                                    # admin 端口
+        read_timeout: 3000                             #ms. 请求被接受到请求信息被完全读取的超时时间设置，防止慢客户端
+        write_timeout: 60000                           #ms. 处理的超时时间
+      service: #业务服务提供的service，可以有多个
+        - name: trpc.private.private-op.api  # service 的路由名称
+          port: 8081
+          network: tcp
+          protocol: http_no_protocol
+          timeout: 2700000
+    client: #客户端调用的后端配置
+      namespace: {{ .Release.Namespace }}                          #针对所有后端的环境
+      timeout: 2700000                                    #针对所有后端的请求最长处理时间
+      service: #针对单个后端的配置
+        - name: trpc.private.private-op.db.robot   # db_llm_robot 数据库（应用/Widget/Prompt/模型）
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot?charset=utf8mb4&parseTime=True&loc=Local
+          timeout: 5000
+        - name: trpc.private.private-op.db.robot_history  # db_llm_robot_history 数据库（pipeline 详情）
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_robot_history_prod?charset=utf8mb4&parseTime=True&loc=Local
+          timeout: 5000
+        - name: trpc.private.private-op.db.plugin  # db_llm_plugin 数据库（插件）
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_plugin?charset=utf8mb4&parseTime=True&loc=Local
+          timeout: 5000
+        - name: trpc.private.private-op.db.gateway  # db_ai_gateway_adp 数据库（模型）
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_ai_gateway_adp?charset=utf8mb4&parseTime=True&loc=Local
+          timeout: 5000
+        - name: trpc.private.private-op.db.apex_private  # db_apex_private 数据库（网关路由）
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_apex_private?charset=utf8mb4&parseTime=True&loc=Local
+          timeout: 5000
+        - name: trpc.private.private-op.db.parsing_engine  # db_parsing_engine 解析引擎
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_parsing_engine?charset=utf8mb4&parseTime=True&loc=Local
+          timeout: 5000
+        - name: trpc.private.private-op.db.workflow  # db_llm_workflow 工作流运行
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_llm_workflow?charset=utf8mb4&parseTime=True&loc=Local
+          timeout: 5000
+        - name: trpc.private.private-op.db.monitor  # db_model_monitor_adp 模型巡检监控
+          target: dsn://${INFRA_MIDDLEWARES_DB_0_USER}:${INFRA_MIDDLEWARES_DB_0_PASSWORD}@tcp(${INFRA_MIDDLEWARES_DB_0_HOST}:${INFRA_MIDDLEWARES_DB_0_PORT})/db_model_monitor_adp?charset=utf8mb4&parseTime=True&loc=Local
+          timeout: 5000
+        - name: trpc.private.private-op.redis  # Redis 缓存
+          target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${INFRA_MIDDLEWARES_REDIS_0_PORT}
+          password: '${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}'
+          timeout: 800
+        - name: trpc.private.private-op.redis.resource  # Redis 缓存 DB4（提供商模型缓存）
+          target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${INFRA_MIDDLEWARES_REDIS_0_PORT}/4
+          password: '${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}'
+          timeout: 800
+        - name: trpc.private.private-op.redis.plugin  # Redis 缓存 DB13 (插件缓存)
+          target: ip://${INFRA_MIDDLEWARES_REDIS_0_HOSTS}:${INFRA_MIDDLEWARES_REDIS_0_PORT}/13
+          password: '${INFRA_MIDDLEWARES_REDIS_0_PASSWORD}'
+          timeout: 800
+        - name: trpc.smartservice.accessmanager.AccessManager 
+          target: ip://adp-access-manager.{{ .Release.Namespace }}.svc.cluster.local:10001
+          timeout: 3000
+        - name: trpc.adp.platform_authenticator.Authenticator
+          target: ip://adp-platform-authenticator.{{ .Release.Namespace }}.svc.cluster.local:9090
+          timeout: 3000
+    plugins: #插件配置
+      log:
+        default:
+          - writer: console
+            level: info
+            caller_skip: 4
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+          - writer: file
+            level: info
+            caller_skip: 4
+            formatter: json
+            formatter_config:
+              time_cmt: "2006-01-02T15:04:05.999999999Z07:00"
+              time_key: time
+              level_key: level
+              name_key: name
+              caller_key: caller
+              message_key: message
+              stacktrace_key: stackTrace
+            writer_config:
+              filename: /app/logs/trpc.log
+              write_mode: 2
+              roll_type: size
+              max_size: 200
+              max_backups: 10
+              compress: false
