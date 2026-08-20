@@ -24,3 +24,11 @@ rules:
   - apiGroups: [""]
     resources: ["pods/log"]
     verbs: ["get"]
+  # 清理不再使用的 ApisixRoute CRD（升级过程 del_nonuse_ar.sh 需要）
+  # 缺少此权限会导致 CRD 被 ti-ingress-controller 反复回写，路由删不掉
+  - apiGroups: ["apisix.apache.org"]
+    resources: ["apisixroutes"]
+    verbs: ["get", "list", "delete"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "list", "patch"]

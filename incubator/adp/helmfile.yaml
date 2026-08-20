@@ -512,7 +512,7 @@ releases:
   - name: adp-private-op
     chart: ./charts/adp-private-op
     namespace: default
-    installed: {{ env "ADP_PRIVATE_OP_ENABLED" | default "false" }}
+    installed: {{ env "ADP_PRIVATE_OP_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:

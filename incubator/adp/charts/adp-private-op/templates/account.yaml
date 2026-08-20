@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: adp-private-op-controllers
+  namespace: {{ .Release.Namespace }}
+
+---
+# ClusterRole：仅允许读取集群级别资源（namespaces）
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: adp-private-op-controllers-cluster
+rules:
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list"]
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: adp-private-op-controllers-cluster-role
+subjects:
+  - kind: ServiceAccount
+    name: adp-private-op-controllers
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: adp-private-op-controllers-cluster
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Role：命名空间级别的资源访问权限
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: adp-private-op-controllers-ns
+rules:
+  # core 资源
+  - apiGroups: [""]
+    resources: ["pods", "configmaps"]
+    verbs: ["get", "list"]
+  # apps 资源
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list"]
+  # networking 资源
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "list"]
+  # Apisix CRD
+  - apiGroups: ["apisix.apache.org"]
+    resources: ["apisixroutes"]
+    verbs: ["get", "list"]
+
+---
+# 仅绑定到 adp 命名空间
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: adp-private-op-controllers-role
+  namespace: adp
+subjects:
+  - kind: ServiceAccount
+    name: adp-private-op-controllers
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: adp-private-op-controllers-ns
+  apiGroup: rbac.authorization.k8s.io
