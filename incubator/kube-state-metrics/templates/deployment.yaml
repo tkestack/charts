@@ -145,10 +145,8 @@ spec:
         ports:
         - containerPort: {{ .Values.service.port | default 8080}}
           name: "http"
-        {{- if .Values.selfMonitor.enabled }}
         - containerPort: {{ $telemetryPort }}
           name: "metrics"
-        {{- end }}
         {{- end }}
         {{- if .Values.startupProbe.enabled }}
         startupProbe:
@@ -200,7 +198,7 @@ spec:
               value: {{ $header.value }}
             {{- end }}
             path: /readyz
-            port: {{ $servicePort }}
+            port: {{ $telemetryPort }}
             scheme: {{ upper .Values.readinessProbe.httpGet.scheme }}
           initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
