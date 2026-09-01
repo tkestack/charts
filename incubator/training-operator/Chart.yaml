@@ -1,0 +1,13 @@
+apiVersion: v2
+appVersion: training-operator-1.5.0
+description: A Helm chart for Kubeflow Training Operator on Kubernetes
+home: https://github.com/tkestack/charts
+keywords:
+- kubeflow
+- training
+maintainers:
+- email: lucaswzhang@tencent.com
+  name: lucaswzhang
+name: training-operator
+version: 1.5.0
+kubeVersion: '>= 1.22.0-x'
