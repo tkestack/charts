@@ -1,4 +1,5 @@
-{{- if and (ne .Values.global.deployMode "leecher") (eq .Values.agent.trackerType "ntracker") }}
+{{- if and .Values.ntracker.enabled (ne .Values.global.deployMode "leecher") (eq .Values.agent.trackerType "ntracker") }}
+{{- include "p2pagent.ntracker.validateEligibleNodes" . }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -22,15 +23,13 @@ spec:
       tolerations:
 {{ toYaml .Values.tolerations.server | indent 8 }}
       affinity:
-{{ toYaml .Values.affinity.server | indent 8 }}
-        {{- if .Values.ntracker.hostNetwork }}
+{{ toYaml (.Values.affinity.ntracker | default .Values.affinity.server | default dict) | indent 8 }}
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
                 matchLabels:
                   app: ntracker
               topologyKey: kubernetes.io/hostname
-        {{- end }}
       containers:
         - name: ntracker
           image: "{{ .Values.images.ntracker.image }}:{{ .Values.images.ntracker.tag }}"

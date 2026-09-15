@@ -1,4 +1,34 @@
 {{/*
+Fail helm install/upgrade when Ready eligible nodes < ntracker.replicaCount.
+Eligible: tke.cloud.tencent.com/p2p-ntracker=true OR tke.cloud.tencent.com/p2p-role=seeder.
+lookup is empty for `helm template` / no API access; the check is skipped then.
+*/}}
+{{- define "p2pagent.ntracker.validateEligibleNodes" -}}
+{{- $replicas := int .Values.ntracker.replicaCount -}}
+{{- $nodes := lookup "v1" "Node" "" "" -}}
+{{- if $nodes -}}
+{{- $eligible := 0 -}}
+{{- range $nodes.items -}}
+{{- $labels := default dict .metadata.labels -}}
+{{- if or (eq (index $labels "tke.cloud.tencent.com/p2p-ntracker") "true") (eq (index $labels "tke.cloud.tencent.com/p2p-role") "seeder") -}}
+{{- $ready := false -}}
+{{- range .status.conditions -}}
+{{- if and (eq .type "Ready") (eq .status "True") -}}
+{{- $ready = true -}}
+{{- end -}}
+{{- end -}}
+{{- if and $ready (not .spec.unschedulable) -}}
+{{- $eligible = add $eligible 1 -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- if lt $eligible $replicas -}}
+{{- fail (printf "ntracker.replicaCount=%d exceeds eligible Ready nodes=%d (need tke.cloud.tencent.com/p2p-ntracker=true or tke.cloud.tencent.com/p2p-role=seeder)" $replicas $eligible) -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Generates DaemonSet and ConfigMap for a p2p-agent role.
 Context:
   - .root: The top-level chart context ($)
@@ -28,9 +58,20 @@ Context:
 {{- if and (gt (int $root.Values.ntracker.originMaxConcurrentPerSlice) 0) (ne $root.Values.agent.trackerType "ntracker") -}}
   {{- fail "ntracker.originMaxConcurrentPerSlice>0 only supports trackerType=ntracker" -}}
 {{- end -}}
+{{- if and $root.Values.spread.enabled (not $root.Values.watcher.enabled) -}}
+  {{- fail "spread.enabled=true requires watcher.enabled=true: spread reports hot layers to watcher" -}}
+{{- end -}}
 {{- $roleName := $role.name -}}
 {{- $daemonSetName := ( eq $roleName "" ) | ternary "p2p-agent" (printf "p2p-agent-%s" $roleName) -}}
 {{- $configMapName := ( eq $roleName "" ) | ternary "p2p-agent-config" (printf "p2p-agent-config-%s" $roleName) -}}
+{{/*
+effectiveRole is the actual role of these pods: the per-role name in mixed mode,
+otherwise the deployMode itself. It labels the pods so that the seeder/leecher
+headless services select the right nodes in every deploy mode (see 04-agent.yaml).
+It is NOT added to the DaemonSet selector: selectors are immutable, so adding it
+would break `helm upgrade` on an already installed non-mixed release.
+*/}}
+{{- $effectiveRole := $roleName | default $root.Values.global.deployMode -}}
 
 ---
 apiVersion: apps/v1
@@ -49,14 +90,11 @@ spec:
     metadata:
       labels:
         app: p2p-agent
-        {{- if $roleName }}
-        role: {{ $roleName }}
-        {{- end }}
+        role: {{ $effectiveRole }}
     spec:
       tolerations:
 {{ toYaml $root.Values.tolerations.agent | indent 8 }}
       affinity:
-        {{- $effectiveRole := $roleName | default $root.Values.global.deployMode -}}
         {{- if eq $effectiveRole "seeder" }}
 {{ toYaml $root.Values.affinity.seeder | indent 8 }}
         {{- else if eq $effectiveRole "leecher" }}
@@ -272,6 +310,9 @@ data:
       http_registry: "{{ $registryHttp }}"
       default_registry: "{{ $root.Values.agent.defaultRegistry }}"
       remote_mirror_cidr: "{{ $root.Values.agent.remoteMirrorCIDR }}"
+      enable_proxy_protocol: {{ default false $root.Values.agent.enableProxyProtocol }}
+      trusted_proxy_cidr: "{{ default "" $root.Values.agent.trustedProxyCIDR }}"
+      enable_blob_redirect: {{ default false $root.Values.agent.enableBlobRedirect }}
 
       # torrent file piecesize, default 1MB
       piece_size: 1
@@ -283,7 +324,7 @@ data:
       global_max_concurrent: {{ $root.Values.agent.globalMaxConcurrent }}
       origin_max_concurrent_per_slice: {{ $root.Values.ntracker.originMaxConcurrentPerSlice }}
       head_slices: {{ default 0 $root.Values.agent.headSlices }}
-      {{- if $role.leecherMode }}
+      {{- if or $role.leecherMode $root.Values.agent.reuseContainerdContentStore }}
       shuffle_size: 0
       {{- else }}
       shuffle_size: {{ $root.Values.agent.shuffleSize }}
@@ -300,6 +341,9 @@ data:
       {{- end }}
       min_layer_download_speed: {{ $root.Values.agent.minLayerDownloadSpeed }}
       lru_size_gb: {{ $root.Values.agent.LRUSizeGB }}
+      eviction_window_factor: {{ $root.Values.agent.evictionWindowFactor }}
+      eviction_min_slack_window: {{ $root.Values.agent.evictionMinSlackWindow }}
+      eviction_max_slack_window: {{ $root.Values.agent.evictionMaxSlackWindow }}
       namespace_whitelist: "{{ $root.Values.agent.namespaceWhitelist }}"
       namespace_blacklist: "{{ $root.Values.agent.namespaceBlacklist }}"
       repo_whitelist: "{{ $root.Values.agent.repoWhitelist }}"
@@ -316,6 +360,10 @@ data:
       path: {{ $root.Values.agent.logPath }}
       max_size: {{ $root.Values.agent.logMaxSize }}
       max_num: {{ $root.Values.agent.logMaxNum }}
+    spread:
+      enabled: {{ $root.Values.spread.enabled }}
+      hot_layer_window: {{ $root.Values.spread.agent.hotLayerWindow }}
+      hot_layer_threshold: {{ $root.Values.spread.agent.hotLayerThreshold }}
     metrics:
       enable_layer_p2p_metrics: {{ $root.Values.agent.enableLayerP2PMetrics }}
     pprof:
@@ -325,11 +373,13 @@ data:
     registry:
       username: {{ $root.Values.agent.registryAuth.username | quote }}
       password: {{ $root.Values.agent.registryAuth.password | quote }}
+    {{- if $root.Values.watcher.enabled }}
     watcher:
       watcher_url: "{{ $root.Values.agent.watcherUrl }}"
       watcher_heartbeat_interval: {{ $root.Values.agent.heartbeatInterval }}
       watcher_heartbeat_timeout: {{ $root.Values.agent.heartbeatTimeout }}
       watcher_max_failed_heartbeats: {{ $root.Values.agent.maxFailedHeartbeats }}
+    {{- end }}
     runtime:
       work_flow:
         limiter:
