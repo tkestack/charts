@@ -3,20 +3,29 @@
 ## 部署信息
 - 命名空间: {{ .Values.global.namespace }}
 - 部署模式: {{ .Values.global.deployMode }}
+- Tracker 类型: {{ .Values.agent.trackerType }}
 
 ## 验证部署
 kubectl get pods -n {{ .Values.global.namespace }}
+kubectl get ds,sts,svc -n {{ .Values.global.namespace }}
+
+{{- if eq .Values.global.deployMode "mixed" }}
+# mixed 模式应能看到 p2p-agent-seeder、p2p-agent-leecher{{- if eq .Values.agent.trackerType "ntracker" }} 和 ntracker{{- end }}
+{{- end }}
 
 ## 服务访问
-# Tracker 服务
-kubectl port-forward -n {{ .Values.global.namespace }} svc/tracker-service {{ .Values.tracker.nodePort }}:18951
-
-# SeedServer 服务
-kubectl port-forward -n {{ .Values.global.namespace }} svc/seed-server-service {{ .Values.seedServer.nodePort }}:11008
+{{- if eq .Values.agent.trackerType "ntracker" }}
+# NTracker（headless Service）
+kubectl port-forward -n {{ .Values.global.namespace }} svc/ntracker-service {{ .Values.ntracker.port }}:{{ .Values.ntracker.port }}
+{{- else }}
+# Tracker / SeedServer（仅 trackerType=tracker）
+kubectl port-forward -n {{ .Values.global.namespace }} svc/tracker-service {{ .Values.tracker.port }}:{{ .Values.tracker.port }}
+kubectl port-forward -n {{ .Values.global.namespace }} svc/seed-server-service {{ .Values.seedServer.port }}:{{ .Values.seedServer.port }}
+{{- end }}
 
 ## 故障排查
-# 查看日志
-kubectl logs <agent-pod> -n {{ .Values.global.namespace }}
-
-# 检查配置
+kubectl logs -n {{ .Values.global.namespace }} -l app=p2p-agent --tail=100
+{{- if eq .Values.agent.trackerType "ntracker" }}
+kubectl logs -n {{ .Values.global.namespace }} -l app=ntracker --tail=100
+{{- end }}
 kubectl get configmap -n {{ .Values.global.namespace }}

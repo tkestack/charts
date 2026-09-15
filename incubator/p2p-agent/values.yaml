@@ -2,33 +2,34 @@
 global:
   namespace: p2pagent
   imagePullPolicy: IfNotPresent
-  deployMode: "mixed"  # seeder/mixed/leecher
+  # seeder/mixed/leecher；leecher 走 memory 存储，不可与 stargz 按需拉取同时使用，
+  deployMode: "mixed"
 
 # === 镜像统一管理 ===
 images:
   agent:
     image: ccr.ccs.tencentyun.com/tke-market/p2p-agent
-    tag: 0.2.3
+    tag: 0.2.5
     pullPolicy: IfNotPresent
   tracker:
     image: ccr.ccs.tencentyun.com/tke-market/tracker
-    tag: 0.2.3
+    tag: 0.2.5
     pullPolicy: IfNotPresent
   seedServer:
     image: ccr.ccs.tencentyun.com/tke-market/seed-server
-    tag: 0.2.3
+    tag: 0.2.5
     pullPolicy: IfNotPresent
   watcher:
     image: ccr.ccs.tencentyun.com/tke-market/watcher
-    tag: 0.2.3
+    tag: 0.2.5
     pullPolicy: IfNotPresent
   ntracker:
     image: ccr.ccs.tencentyun.com/tke-market/ntracker
-    tag: 0.2.3
+    tag: 0.2.5
     pullPolicy: IfNotPresent
   mirrorSetup:
     image: ccr.ccs.tencentyun.com/tke-market/p2p-mirror-setup
-    tag: 0.2.3
+    tag: 0.2.5
     pullPolicy: IfNotPresent
   minio:
     image: quay.io/minio/minio
@@ -37,7 +38,7 @@ images:
   localPathProvisioner:
     image: rancher/local-path-provisioner
     tag: v0.0.24
-    pullPolicy: IfNotPreset
+    pullPolicy: IfNotPresent
   busybox:
     image: busybox
     tag: latest
@@ -80,7 +81,7 @@ affinity:
                 operator: In
                 values:
                   - "leecher"
-  server: # watcher/seedServer/tracker/ntracker
+  server: # watcher/seedServer/tracker(required seeder)
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
@@ -89,6 +90,30 @@ affinity:
                 operator: In
                 values:
                   - "seeder"
+  # Prefer ntracker nodes and fall back to seeder nodes.
+  # Helm install/upgrade fails when ready eligible nodes are fewer than ntracker.replicaCount.
+  ntracker:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: tke.cloud.tencent.com/p2p-ntracker
+                operator: In
+                values:
+                  - "true"
+          - matchExpressions:
+              - key: tke.cloud.tencent.com/p2p-role
+                operator: In
+                values:
+                  - "seeder"
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          preference:
+            matchExpressions:
+              - key: tke.cloud.tencent.com/p2p-ntracker
+                operator: In
+                values:
+                  - "true"
 
 # === 基础配置 ===
 imagePullSecrets: []
@@ -122,7 +147,7 @@ agent:
   maxConcurrent: 8
   globalMaxConcurrent: 32
   headSlices: 0
-  shuffleSize: 8
+  shuffleSize: 32
   minSliceSize: 4
   maxSliceSize: 128
   sliceSizeRate: 2.0
@@ -150,7 +175,6 @@ agent:
   registryHttps: "ccr.ccs.tencentyun.com"
   registryHttp: ""
   defaultRegistry: "ccr.ccs.tencentyun.com"
-  remoteMirrorCIDR: ""  # e.g. "10.0.0.0/8,172.16.0.0/12". Empty = deny all remote mirror requests.
   containerdProxyAutoConfig: false
   namespaceWhitelist: ""
   namespaceBlacklist: ""
@@ -159,9 +183,15 @@ agent:
   registryAuth:
     username: ""
     password: ""
+  # 允许来自其他节点的镜像代理请求，空表示拒绝所有远端 mirror
+  remoteMirrorCIDR: ""  # e.g. "10.0.0.0/8,172.16.0.0/12"
 
   # GC (LRU)
   LRUSizeGB: 50
+  # LRU 集群级近均匀淘汰窗口参数
+  evictionWindowFactor: 2.0
+  evictionMinSlackWindow: 64
+  evictionMaxSlackWindow: 50000
   protectionTime: 3600
   maxFilesNum: 200
   diskMinRemainRatio: 50
@@ -186,6 +216,7 @@ agent:
 
   # 其他配置
   enableLayerP2PMetrics: false
+  # stargz请求与contentstore模式冲突，不可同时使用
   reuseContainerdContentStore: false
   containerdContentDir: /var/lib/containerd/io.containerd.content.v1.content
 
@@ -223,6 +254,13 @@ watcher:
   nodePort: 30082
   preheatReplicas: 1
   preheatInterval: 15
+  preheatSuccessThreshold: 95
+  # Max concurrent layer trigger rounds. Lower for small seeder fleets
+  # (e.g. 1~2 for a single seeder) to avoid queueing past layer timeouts.
+  maxConcurrency: 10
+  maxLayerRetries: 5
+  imageRetryTTL: 15
+  summaryInterval: 300
   passivePreheatTimeWindow: 60
   passivePreheatThreshold: 2
   registryUsername: ""
@@ -231,7 +269,9 @@ watcher:
   logLevel: "info"
   manager:
     clusterId: 1
-    limit: 100
+    # Per-poll image/blob batch. Sized above pure cold-download capacity so
+    # shared-layer cache-hits can burst; queue watermark provides backpressure.
+    limit: 20
     token: ""
     endpoints: ["http://p2p-manager-service:8080"]
     seederCleanupInterval: 1200
@@ -246,7 +286,7 @@ watcher:
 
 # === NTracker 组件配置 ===
 ntracker:
-  enabled: false
+  enabled: true
   replicaCount: 1
   port: 58080
   nodePort: 30083
@@ -263,7 +303,7 @@ ntracker:
   hotCacheSize: 1000
   peerHotThreshold: 1000
   peerNumber: 8192
-  originMaxConcurrentPerSlice: 0
+  originMaxConcurrentPerSlice: 2
   originPermitLeaseTTL: 300
   logPath: "/app/ntracker.log"
   logLevel: "info"
@@ -274,6 +314,20 @@ ntracker:
   service:
     type: NodePort
     annotations: {}
+
+# === Spread (主动扩散) 配置 ===
+# enabled 为总开关，agent 端热点上报与 watcher 端扩散处理共用；开启时必须 watcher.enabled=true
+spread:
+  enabled: false
+  agent:
+    hotLayerWindow: 12
+    hotLayerThreshold: 3
+  watcher:
+    windowDuration: 15
+    cooldownPeriod: 120
+    pressureThreshold: 3
+    maxReplicasPerLayer: 30
+    maxGlobalReplicas: 20
 
 # === PodMonitor 配置 ===
 podMonitor:
@@ -288,4 +342,4 @@ localPathProvisioner:
 
 # === Minio 配置 ===
 minio:
-  enabled: true
+  enabled: false
