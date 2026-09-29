@@ -132,9 +132,6 @@ releases:
     timeout: 3600
     needs:
       - deploy-pre-check
-    values:
-      - init.enabled: true
-        postUpgrade.enabled: false
 
   #############################################################################
   # Layer 0: 基础设施（无 needs，最先部署）
@@ -512,7 +509,7 @@ releases:
   - name: adp-private-op
     chart: ./charts/adp-private-op
     namespace: default
-    installed: {{ env "ADP_PRIVATE_OP_ENABLED" | default "false" }}
+    installed: {{ env "ADP_PRIVATE_OP_ENABLED" | default "true" }}
     wait: true
     timeout: 600
     needs:
@@ -712,9 +709,6 @@ releases:
       - adp-workflow-exec
       - adp-app-channel-leader
       - adp-time-scheduler
-    values:
-      - init.enabled: false
-        postUpgrade.enabled: true
 
   #############################################################################
   # 独立服务（无 needs，不参与依赖链，可任意时机部署）

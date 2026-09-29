@@ -184,10 +184,6 @@ spec:
           volumeMounts:
             - mountPath: /etc/localtime
               name: localtime
-            {{- if and .Values.global.agentRuntime (not .Values.global.agentRuntime.disabled) .Values.global.agentRuntime.cfs }}
-            - mountPath: /users
-              name: nfs-user-data
-            {{- end }}
             - mountPath: /app/conf/infrastructure.yaml
               name: infrastructure
               subPath: infrastructure.yaml
@@ -197,12 +193,6 @@ spec:
         - hostPath:
             path: /etc/localtime
           name: localtime
-        {{- if and .Values.global.agentRuntime (not .Values.global.agentRuntime.disabled) .Values.global.agentRuntime.cfs }}
-        - name: nfs-user-data
-          nfs:
-            server: {{ .Values.global.agentRuntime.cfs.ip }}
-            path: {{ .Values.global.agentRuntime.cfs.path }}
-        {{- end }}
         - configMap:
             defaultMode: 420
             name: infrastructure

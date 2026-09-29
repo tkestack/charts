@@ -2,7 +2,7 @@ images:
   ti-gateway-filebeat-oss:
     url: "{{ .Values.global.imageRegistry }}/tke-market/ti-gateway-filebeat-oss:7.17.27_fixed"
   ti-gateway:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/ti-gateway:release_iaas_v4.0.3.0_9b1a3bed_20260731"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/ti-gateway:release_iaas_v4.0.3.0_fd102f93_20260813"
 namespace: ti-base
 authNamespace: ti-base
 imagePullSecretName: qcloudregistrykey

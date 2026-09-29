@@ -142,6 +142,22 @@ spec:
               memory: "1Gi"
           {{- end }}
           name: adp-model-token-count
+          livenessProbe:
+            failureThreshold: 2
+            initialDelaySeconds: 20
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 8000
+            timeoutSeconds: 2
+          readinessProbe:
+            failureThreshold: 2
+            initialDelaySeconds: 2
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 8000
+            timeoutSeconds: 2
           volumeMounts:
             - mountPath: /etc/localtime
               name: localtime

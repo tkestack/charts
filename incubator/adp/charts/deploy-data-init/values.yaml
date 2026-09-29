@@ -1,6 +1,15 @@
 enabled: true
 resourcesDir: ""
 
+# 注意：upgrade（data-init-job 内）与 post-upgrade（data-post-upgrade-job）仅在
+# global.is_upgrade=true（由父级 values 传入，表示本次为升级部署）时才会启动；
+# 未设置或为 false 时按首次安装处理，仅执行 init。
+
+
+# post-upgrade 阶段：全部服务部署完成后执行（post-install/post-upgrade hook，仅 global.is_upgrade=true 时渲染）
+# 依赖检查复用共享 helper（dependencyChecker.initContainer），从 helmfile.yaml 解析该 release 的 needs，
+# 轮询等待依赖服务 Pod 就绪；helmfileReleaseName 指向携带完整服务 needs 的 release
+helmfileReleaseName: deploy-data-init-post
 # init 阶段：安装/升级前初始化（pre-install/pre-upgrade hook，根据版本状态执行 init 或 upgrade）
 init:
   enabled: true
@@ -8,10 +17,16 @@ init:
 # post-upgrade 阶段：全部服务部署完成后执行（post-install/post-upgrade hook，根据版本状态执行 post-upgrade）
 postUpgrade:
   enabled: true
+  # 依赖检查：post-upgrade 执行前从 helmfile.yaml 解析 deploy-data-init-post 的 needs，
+  # 轮询等待依赖服务 Pod 就绪（复用 check-dependencies.sh 机制）
+  dependencyCheck:
+    enabled: true
 
 # cross-up 目标版本
 targetVersion: v4.0.3
 
 images:
   deploy-data-init:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/data-init:77__dev_v1.0.4_a5615d92_iaas"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/data-init:106__stable_v1.0.4_d82e85b0_iaas"
+  dependency_check:
+    url: "{{ .Values.global.imageRegistry }}/tke-market/kubectl:20260130"

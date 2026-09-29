@@ -112,6 +112,22 @@ spec:
           #command: ["sh","-c", "crond start; touch /var/log/log.txt && tail -f /var/log/log.txt"]
           #command: ["sh","/usr/local/app/start.sh"]
           name: adp-app-channel-proxy
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 8443
+            timeoutSeconds: 2
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 8443
+            timeoutSeconds: 2
           {{- if eq .Values.global.clusterSize "minimal" }}
           resources:
             limits:

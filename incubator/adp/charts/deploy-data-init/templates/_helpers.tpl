@@ -8,10 +8,21 @@ cross-up 公共环境变量（init / upgrade / post-upgrade 共用）
 使用方式：{{- include "dataInit.commonEnv" . | nindent 10 }}
 */}}
 {{- define "dataInit.commonEnv" -}}
+- name: IS_UPGRADE
+  value: {{ dig "is_upgrade" false .Values.global | toString | quote }}
 - name: DEPLOY_REGION
   value: _public
 - name: INSTALL_NS
   value: {{ .Release.Namespace }}
+# ---------- helm release identity（Phase 3 baseliner 需要）----------
+# baseliner (after_success 阶段) 通过读取 K8s Secret
+# sh.helm.release.v1.<release>.v<N> 拿到本次交付的 chart rendered manifest
+# 作为下一次升级 3-way merge 的 BASE。它需要知道 release 名字才能构造
+# label selector `owner=helm,name=<release>` 列出所有 rev 的 secret。
+# 直接注入 .Release.Name 是权威源，避免在 baseliner 里搞"扫 ns 里唯一
+# helm release"这种脆弱的探测逻辑。
+- name: ADP_HELM_RELEASE
+  value: {{ .Release.Name | quote }}
 # ---------- 应用基础URL（第三方插件 MCP 服务器地址） ----------
 - name: APP_BASE_URL
   value: {{ printf "%s://%s" (.Values.global.scheme | default "http") (.Values.global.clb | default "") | quote }}
@@ -29,6 +40,8 @@ cross-up 公共环境变量（init / upgrade / post-upgrade 共用）
   value: "{{ .Values.global.components.db.user }}"
 - name: DB_PASSWORD
   value: "{{ .Values.global.components.db.password }}"
+- name: DB_SCHEMA
+  value: "{{ .Values.global.components.db.providerType | default "mysql" }}"
 - name: DISABLE_SHARDKEY
   value: "{{ eq .Values.global.components.db.providerType "tdsql" | ternary "false" "true" }}"
 # ---------- Elasticsearch ----------
@@ -56,6 +69,16 @@ cross-up 公共环境变量（init / upgrade / post-upgrade 共用）
   value: {{ include "ex.s3_host" . | trim | quote }}
 - name: S3_RESOURCE_URL
   value: {{ include "ex.s3_resource_url" . | trim | quote }}
+{{/*
+     S3_REGION: 显式注入 region 字符串，供 baseliner 等下游工具在无法/不愿从
+     S3_HOST 解析出 region 时直接使用。走 chart 权威字段
+     .Values.global.components.s3.cos.region，避免 baseliner 在客户不同的
+     host 命名前缀（公网 cos.、VPC 内网 cos-internal.、自定义前缀）之间
+     还要各自适配解析。
+     仅在 cos providerType 下有意义；minio/csp 场景保留空字符串。
+*/}}
+- name: S3_REGION
+  value: {{ if eq .Values.global.components.s3.providerType "cos" }}{{ .Values.global.components.s3.cos.region | quote }}{{ else }}""{{ end }}
 {{- if .Values.global.components.s3.cos.enableSts }}
 # STS 模式：注入 STS 主凭证。INFRA_MIDDLEWARES_S3_COS_SECRETID/KEY 在此模式下已被
 # infra-credentials Secret 置空，data-init 需读取 ADP_ASSUME_ROLE_SECRET_ID/KEY

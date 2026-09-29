@@ -126,6 +126,22 @@ spec:
           #command: ["sh","-c", "crond start; touch /var/log/log.txt && tail -f /var/log/log.txt"]
           #command: ["sh","/usr/local/app/start.sh"]
           name: adp-app-evaluate
+          livenessProbe:
+            failureThreshold: 2
+            initialDelaySeconds: 20
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 8081
+            timeoutSeconds: 2
+          readinessProbe:
+            failureThreshold: 2
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 8081
+            timeoutSeconds: 2
           {{- if eq .Values.global.clusterSize "minimal" }}
           resources:
             limits:
