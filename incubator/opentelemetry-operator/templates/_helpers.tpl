@@ -147,7 +147,9 @@ Create an ordered name of the MutatingWebhookConfiguration
   "ap-shanghai-hq-uat-cft" "shhqcftfzhjccr.ccs.tencentyun.com"
   "ap-shanghai-wxzf" "shwxzfccr.ccs.tencentyun.com"
   "ap-shanghai-adc" "shadcccr.ccs.tencentyun.com"
-  "ap-taipei" "tpeccr.ccs.tencentyun.com" -}}
+  "ap-taipei" "tpeccr.ccs.tencentyun.com"
+  "me-saudi-arabia" "saccr.ccs.tencentyun.com"
+  "ap-johorbahru" "jbccr.ccs.tencentyun.com" -}}
 {{- $result := index $map $region | default "ccr.ccs.tencentyun.com" -}}
 {{- $result -}}
 {{- end -}}

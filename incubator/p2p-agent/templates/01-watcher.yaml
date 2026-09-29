@@ -78,6 +78,7 @@ data:
   watcher.yaml: |
     seedpeer:
       max_replicas: {{ .Values.watcher.preheatReplicas }}
+      success_threshold: {{ .Values.watcher.preheatSuccessThreshold | default 95 }}
     manager:
       cluster_id: {{ .Values.watcher.manager.clusterId }}
       token: {{ .Values.watcher.manager.token }}
@@ -86,8 +87,12 @@ data:
       seeder_cleanup_interval: {{ .Values.watcher.manager.seederCleanupInterval | default 1200 }}
     preheat:
       poll_interval: {{ .Values.watcher.preheatInterval }}
+      max_concurrency: {{ .Values.watcher.maxConcurrency | default 10 }}
       filter_time_window: {{ .Values.watcher.passivePreheatTimeWindow }}
       filter_threshold: {{ .Values.watcher.passivePreheatThreshold }}
+      max_layer_retries: {{ .Values.watcher.maxLayerRetries | default 5 }}
+      image_retry_ttl: {{ .Values.watcher.imageRetryTTL | default 15 }}
+      summary_interval: {{ .Values.watcher.summaryInterval | default 300 }}
     registry:
       username: "{{ .Values.watcher.registryUsername | default "" }}"
       password: "{{ .Values.watcher.registryPassword | default "" }}"
@@ -103,5 +108,12 @@ data:
       enabled: {{ .Values.watcher.persistence.enabled | default true }}
       snapshot_interval: {{ .Values.watcher.persistence.snapshotInterval | default 20 }}
       aof_sync_interval: {{ .Values.watcher.persistence.aofSyncInterval | default 1 }}
+    spread:
+      enabled: {{ .Values.spread.enabled | default false }}
+      window_duration: {{ .Values.spread.watcher.windowDuration | default 15 }}
+      cooldown_period: {{ .Values.spread.watcher.cooldownPeriod | default 120 }}
+      pressure_threshold: {{ .Values.spread.watcher.pressureThreshold | default 3 }}
+      max_replicas_per_layer: {{ .Values.spread.watcher.maxReplicasPerLayer | default 30 }}
+      max_global_replicas: {{ .Values.spread.watcher.maxGlobalReplicas | default 20 }}
 
 {{- end }}

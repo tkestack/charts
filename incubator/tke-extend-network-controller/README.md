@@ -82,7 +82,8 @@ Kubernetes: `>= 1.26.0-0`
 | affinity | object | `{}` |  |
 | apiRateLimit | object | `{"BatchDeregisterTargets":20,"BatchRegisterTargets":20,"CreateListener":20,"DeleteLoadBalancerListeners":20,"DescribeListeners":20,"DescribeLoadBalancers":20,"DescribeTargets":20,"DescribeTaskStatus":20}` | Precisely control the QPS of cloud API calls to avoid frequent over-limits in large-scale scenarios, resulting in excessive retries and reduced scaling speed. |
 | clusterID | string | `""` | Cluster ID of the current TKE Cluster. |
-| concurrency | object | `{"clbNodeBindingController":20,"clbPodBindingController":20,"clbPortPoolController":10,"dedicatedClbListenerController":20,"dedicatedClbServiceController":1,"nodeController":20,"podController":20}` | Concurrency options of the controller, in large-scale rapid expansion scenarios, the concurrency of the first 3 controllers can be appropriately increased (mainly by batch creating clb listeners and binding rs to speed up the process). |
+| concurrency | object | `{"clbNodeBindingController":20,"clbPodBindingController":20,"clbPortPoolController":10,"nodeController":20,"podController":20}` | Concurrency options of the controller, in large-scale rapid expansion scenarios, the concurrency of the first 3 controllers can be appropriately increased (mainly by batch creating clb listeners and binding rs to speed up the process). |
+| environment | string | `"prod"` | Cloud API environment. Supported values are prod and test. prod uses clb.internal.tencentcloudapi.com; test uses clb.internal.test.tencentcloudapi.com. |
 | fullnameOverride | string | `""` |  |
 | image | object | `{"pullPolicy":"IfNotPresent","repository":"imroc/tke-extend-network-controller","tag":""}` | Image of the controller |
 | image.pullPolicy | string | `"IfNotPresent"` | ImagePullPolicy of the controller |

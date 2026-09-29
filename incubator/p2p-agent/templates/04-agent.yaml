@@ -11,6 +11,16 @@
   {{- include "p2pagent.agent-resources" (dict "root" . "role" $role) | nindent 0 -}}
 {{- end }}
 
+{{/*
+Three headless services over the same pods, so a caller can pick the role it needs
+regardless of deployMode (the pods carry a `role` label in every mode):
+  - p2p-agent-service         : every agent
+  - p2p-agent-seeder-service  : seeders only (leechers hold no
+                                cache and must not serve cross-cluster traffic)
+  - p2p-agent-leecher-service : leechers only
+A service whose selector matches no pod is harmless: its DNS name simply resolves
+to nothing, so all three are rendered in every mode.
+*/}}
 ---
 apiVersion: v1
 kind: Service
@@ -21,6 +31,36 @@ spec:
   clusterIP: None
   selector:
     app: p2p-agent
+  ports:
+    - protocol: TCP
+      port: 80 # 实际没有转发作用
+      targetPort: {{ .Values.agent.portHTTP}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: p2p-agent-seeder-service
+  namespace: {{ .Values.global.namespace }}
+spec:
+  clusterIP: None
+  selector:
+    app: p2p-agent
+    role: seeder
+  ports:
+    - protocol: TCP
+      port: 80 # 实际没有转发作用
+      targetPort: {{ .Values.agent.portHTTP}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: p2p-agent-leecher-service
+  namespace: {{ .Values.global.namespace }}
+spec:
+  clusterIP: None
+  selector:
+    app: p2p-agent
+    role: leecher
   ports:
     - protocol: TCP
       port: 80 # 实际没有转发作用

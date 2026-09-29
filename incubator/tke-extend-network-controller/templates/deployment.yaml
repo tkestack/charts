@@ -1,5 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
+{{- $environment := "prod" }}
+{{- if hasKey .Values "environment" }}
+  {{- $environment = .Values.environment }}
+{{- else }}
+  {{- $environment = "prod" }}
+{{- end }}
+{{- if not (has $environment (list "prod" "test")) }}
+{{- fail "environment must be prod or test" }}
+{{- end }}
 metadata:
   labels:
     {{- include "tke-extend-network-controller.labels" . | nindent 4 }}
@@ -17,12 +26,6 @@ spec:
       labels:
         {{- include "tke-extend-network-controller.labels" . | nindent 8 }}
     spec:
-      hostAliases:
-      - hostnames:
-        {{- range $svc := list "clb" "vpc" "cam" "tag" }}
-        - {{ $svc }}{{ if $.Values.cloudAPI.endpointSuffix }}.{{ $.Values.cloudAPI.endpointSuffix }}{{ end }}.tencentcloudapi.com
-        {{- end }}
-        ip: {{ .Values.cloudAPI.hostAliasesIP }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -56,8 +59,8 @@ spec:
           value: "{{ .Values.concurrency.clbNodeBindingController }}"
         - name: WORKER_CLB_PORT_POOL_CONTROLLER
           value: "{{ .Values.concurrency.clbPortPoolController }}"
-        - name: CLOUD_API_ENDPOINT_SUFFIX
-          value: "{{ .Values.cloudAPI.endpointSuffix }}"
+        - name: CLOUD_API_ENVIRONMENT
+          value: "{{ $environment }}"
         - name: WORKER_POD_CONTROLLER
           value: "{{ .Values.concurrency.podController }}"
         - name: WORKER_NODE_CONTROLLER

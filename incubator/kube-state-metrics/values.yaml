@@ -4,7 +4,7 @@ image:
   registry: ccr.ccs.tencentyun.com
   repository: tke-market/kube-state-metrics
   # If unset use v + .Charts.appVersion
-  tag: "v2.13.0"
+  tag: "v2.18.0"
   sha: ""
   pullPolicy: IfNotPresent
 
