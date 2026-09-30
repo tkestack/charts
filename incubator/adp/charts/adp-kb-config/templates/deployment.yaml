@@ -151,6 +151,22 @@ spec:
               memory: "2Gi"
           {{- end }}
           name: adp-kb-config
+          livenessProbe:
+            failureThreshold: 2
+            initialDelaySeconds: 20
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 9090
+            timeoutSeconds: 2
+          readinessProbe:
+            failureThreshold: 2
+            initialDelaySeconds: 2
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 9090
+            timeoutSeconds: 2
           volumeMounts:
             - mountPath: /etc/localtime
               name: localtime

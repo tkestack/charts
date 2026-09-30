@@ -90,6 +90,22 @@ spec:
             - containerPort: 7001
               name: sidecar-7001
               protocol: TCP
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: 7001
+            timeoutSeconds: 2
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: 7001
+            timeoutSeconds: 2
           lifecycle:
             preStop:
               exec:
@@ -126,7 +142,6 @@ spec:
               add:
                 - SYS_RESOURCE
                 - NET_ADMIN
-                - SYS_ADMIN
                 - IPC_LOCK
                 - SYS_PTRACE
             privileged: false

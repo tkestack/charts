@@ -1,4 +1,4 @@
-{{- if and .Values.enabled .Values.init.enabled }}
+{{- if .Values.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -58,44 +58,22 @@ spec:
           - |
             TARGET_VERSION="{{ .Values.targetVersion }}"
 
-            # 版本比较函数：version_lt A B 返回 0 表示 A < B
-            version_lt() {
-              [ "$1" = "$2" ] && return 1
-              printf '%s\n%s\n' "$1" "$2" | sort -V -C 2>/dev/null
-            }
-
-            echo "=== Querying cluster data version ==="
-            VERSION_OUTPUT=$(/app/bin/cross-up --config /app/conf/trpc_go.yaml version 2>&1) || VERSION_OUTPUT=""
-
-            if [ -z "$VERSION_OUTPUT" ]; then
-              # 无版本数据 → 首次安装
-              echo "=== No version data found, running init ==="
-              /app/bin/cross-up --config /app/conf/trpc_go.yaml init --target ${TARGET_VERSION}
-              EXIT_CODE=$?
-            else
-              echo "$VERSION_OUTPUT"
-              # 仅提取形如 vX.Y.Z 或 vX.Y.Z.W 的有效版本号，未设置或占位符（如 "(未设置)"）会被视为空
-              # 精确匹配行，避免 "(upgrade)" 误命中 "(post_upgrade)"
-              VERSION_REGEX='v[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?'
-              INIT_VERSION=$(echo "$VERSION_OUTPUT" | awk '/\(init\)/'    | grep -oE "$VERSION_REGEX" | head -n1)
-              UPGRADE_VERSION=$(echo "$VERSION_OUTPUT" | awk '/\(upgrade\)/' | grep -oE "$VERSION_REGEX" | head -n1)
-
-              if [ -z "$INIT_VERSION" ]; then
-                # init 版本不存在 → 首次安装
-                echo "=== No init version found, running init ==="
-                /app/bin/cross-up --config /app/conf/trpc_go.yaml init --target ${TARGET_VERSION}
-                EXIT_CODE=$?
-              elif [ -z "$UPGRADE_VERSION" ] || version_lt "$UPGRADE_VERSION" "$TARGET_VERSION"; then
-                # init 已执行，但 upgrade 版本不存在或 < target → 执行 upgrade
-                echo "=== Upgrading (init=${INIT_VERSION}, upgrade=${UPGRADE_VERSION:-none}) to ${TARGET_VERSION} ==="
-                /app/bin/cross-up --config /app/conf/trpc_go.yaml upgrade --target ${TARGET_VERSION}
-                EXIT_CODE=$?
-              else
-                # init 已执行且 upgrade >= target → 跳过
-                echo "=== Already upgraded (init=${INIT_VERSION}, upgrade=${UPGRADE_VERSION}), target=${TARGET_VERSION}, skipping ==="
-                EXIT_CODE=0
+            # 升级部署（global.is_upgrade=true）执行 upgrade，否则执行 init（首次安装）
+            if [ "$IS_UPGRADE" = "true" ]; then
+              # 重入保护：先查询当前升级版本，若已是目标版本则直接退出，避免重复 upgrade 报错
+              CURRENT_VERSION=$(/app/bin/cross-up --config /app/conf/trpc_go.yaml version --type upgrade | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
+              echo "=== current upgrade version: ${CURRENT_VERSION}, target version: ${TARGET_VERSION} ==="
+              if [ -n "$CURRENT_VERSION" ] && [ "$CURRENT_VERSION" = "$TARGET_VERSION" ]; then
+                echo "=== already at target version ${TARGET_VERSION}, skip upgrade ==="
+                exit 0
               fi
+              echo "=== IS_UPGRADE=true, running upgrade to ${TARGET_VERSION} ==="
+              /app/bin/cross-up --config /app/conf/trpc_go.yaml upgrade --target ${TARGET_VERSION}
+            else
+              echo "=== IS_UPGRADE=${IS_UPGRADE}, running init to ${TARGET_VERSION} ==="
+              /app/bin/cross-up --config /app/conf/trpc_go.yaml init --target ${TARGET_VERSION}
             fi
+            EXIT_CODE=$?
 
             if [ $EXIT_CODE -ne 0 ]; then
               echo "=== FAILED with exit code $EXIT_CODE, sleeping 10min for debug ==="

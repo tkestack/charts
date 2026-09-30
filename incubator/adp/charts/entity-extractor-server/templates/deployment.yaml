@@ -189,7 +189,7 @@ spec:
               memory: "1Gi"
           {{- end }}
           securityContext:
-            privileged: true
+            privileged: false
           stdin: true
           tty: true
           volumeMounts:

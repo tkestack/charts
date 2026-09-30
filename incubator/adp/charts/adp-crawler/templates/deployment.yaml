@@ -104,6 +104,22 @@ spec:
           imagePullPolicy: Always
           name: adp-crawler
           command: ["bash","-c","./start_xvfb_and_run_cmd.sh && npm start --silent"]
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 7001
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 7001
+            timeoutSeconds: 5
           {{- if eq .Values.global.clusterSize "minimal" }}
           resources:
             limits:

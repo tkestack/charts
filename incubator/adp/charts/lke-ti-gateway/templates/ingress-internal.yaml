@@ -281,27 +281,6 @@ spec:
         pathType: ImplementationSpecific
       - backend:
           service:
-            name: ti-web-monitor
-            port:
-              number: 8080
-        path: /speed
-        pathType: ImplementationSpecific
-      - backend:
-          service:
-            name: ti-web-monitor
-            port:
-              number: 8080
-        path: /collect
-        pathType: ImplementationSpecific
-      - backend:
-          service:
-            name: ti-svapdoc-web
-            port:
-              number: 6598
-        path: /svapdocs/
-        pathType: ImplementationSpecific
-      - backend:
-          service:
             name: adp-plugin-exec
             port:
               number: 8001

@@ -1,3 +1,7 @@
+{{- if .Values.global }}          # 第一层：判断全局配置 global 是否存在
+  {{- if .Values.global.observability }}  # 第二层：判断可观测性配置 observability 是否存在
+    {{- if .Values.global.observability.prometheus }}  # 第三层：判断 Prometheus 配置节点是否存在
+      {{- if .Values.global.observability.prometheus.enabled }}
 {{- $tcs := (lookup "v1" "Service" "tce" "ocloud-tcenter-yunapi3-auth-server") }}
 {{- if $tcs }}
 apiVersion: infrastore.tce.io/v1
@@ -22,3 +26,7 @@ spec:
   selector:
     matchLabels:
       app: adp-unified-gateway
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}

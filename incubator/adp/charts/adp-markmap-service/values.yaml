@@ -1,6 +1,6 @@
 images:
   adp-markmap-service:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:markmap-stable_iaas_v4.0.3.0-5e4e6a0-81"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/webappchatbot:markmap-stable_iaas_v4.0.3.0-7a0b319-102"
 replicas: 1
 resources:
   limits:

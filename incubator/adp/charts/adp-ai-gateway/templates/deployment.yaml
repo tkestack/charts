@@ -126,6 +126,22 @@ spec:
           imagePullPolicy: Always
           command: ["/app/bin/ai-gateway", "-conf", "/app/conf/trpc_go.yaml"]
           name: adp-ai-gateway
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 9090
+            timeoutSeconds: 2
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 9090
+            timeoutSeconds: 2
           {{- if eq .Values.global.clusterSize "minimal" }}
           resources:
             limits:

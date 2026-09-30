@@ -3125,6 +3125,13 @@ data:
           protocol: adp-capi
           timeout: 30000
     plugins:
+      database:
+        redis:
+          max_idle: 200        # 最大空闲连接数（trpc-database/redis 默认 2048，plugin 配置不写会变成 0，必须显式写）
+          max_active: 5000     # 最大活跃连接数（默认 250*GOMAXPROCS，pod cpu limit=1 时约 250，压测易打穿）
+          idle_timeout: 60000  # 空闲连接回收时间，单位毫秒（默认 180000 = 3min）
+          default_timeout: 2000 # dial/read/write 超时，单位毫秒（默认 1000）
+          is_wait: true        # 连接池用尽时等待空闲连接，避免直接返回 connection pool exhausted（默认 false）
       telemetry:
         opentelemetry:
           addr: {{ ((.Values.global.observability).apm).otlp | default "" }}
