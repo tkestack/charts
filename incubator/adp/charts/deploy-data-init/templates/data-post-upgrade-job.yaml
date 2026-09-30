@@ -1,4 +1,5 @@
-{{- if and .Values.enabled .Values.postUpgrade.enabled }}
+{{- $isUpgrade := eq (dig "is_upgrade" false .Values.global | toString) "true" }}
+{{- if and .Values.enabled .Values.postUpgrade.enabled $isUpgrade }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -48,6 +49,33 @@ spec:
     spec:
       serviceAccountName: {{ .Release.Name }}-data-init-sa
       restartPolicy: Never
+      {{- if .Values.postUpgrade.dependencyCheck.enabled | default true }}
+      volumes:
+      - name: dependency-checker-script
+        configMap:
+          name: dependency-checker-script
+          defaultMode: 0755
+      - name: helmfile-config
+        configMap:
+          name: helmfile-config
+      initContainers:
+      - name: wait-for-dependencies
+        image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "dependency_check").url "context" .) }}
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: RELEASE_NAME
+            value: deploy-data-init-post
+          - name: NAMESPACE
+            value: {{ .Release.Namespace | quote }}
+        command:
+          - /bin/bash
+          - /scripts/check-dependencies.sh
+        volumeMounts:
+          - name: dependency-checker-script
+            mountPath: /scripts
+          - name: helmfile-config
+            mountPath: /helmfile
+      {{- end }}
       containers:
       - name: data-post-upgrade
         image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "deploy-data-init").url "context" .) }}

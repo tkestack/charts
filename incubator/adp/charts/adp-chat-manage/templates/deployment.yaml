@@ -158,7 +158,6 @@ spec:
               add:
                 - SYS_RESOURCE
                 - NET_ADMIN
-                - SYS_ADMIN
                 - IPC_LOCK
                 - SYS_PTRACE
             privileged: false

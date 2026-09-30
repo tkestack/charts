@@ -3591,7 +3591,7 @@ data:
       - lke.testsite.woa.com
       - adp-plugin-gray.testsite.woa.com
     ADP_APP_HOME_URL: "{{ .Values.global.scheme }}://{{ .Values.global.clb }}/adp"
-    ADP_APP_URL_TEMPLATE: "{{ .Values.global.scheme }}://{{ .Values.global.clb }}/adp/?spaceId={space_id}#/app/knowledge/app-config?appid={app_id}&spaceId={space_id}&openSideBar=open"
+    ADP_APP_URL_TEMPLATE: "{{ .Values.global.scheme }}://{{ .Values.global.clb }}/adp/?spaceId={space_id}#/app/knowledge/app-config?appid={app_id}&spaceId={space_id}"
     ADP_APP_UIN_BLACKLIST:
       - 100036138923
       - 100026975258

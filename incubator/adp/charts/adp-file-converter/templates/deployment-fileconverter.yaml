@@ -131,6 +131,22 @@ spec:
           imagePullPolicy: Always
           command: ["bash","-c","/usr/local/bin/start.sh"]
           name: adp-file-converter
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 30007
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 30007
+            timeoutSeconds: 5
           {{- if eq .Values.global.clusterSize "minimal" }}
           resources:
             limits:

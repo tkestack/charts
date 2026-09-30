@@ -214,69 +214,6 @@ spec:
             - mountPath: /app/conf/infrastructure.yaml
               name: infrastructure
               subPath: infrastructure.yaml
-        - env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: metadata.name
-          image: {{ include "resolveImageUrl" (dict "url" (index .Values.images "adp-plugin-exec-sidecar").url "context" .) }}
-          imagePullPolicy: Always
-          name: markmap-sidecar
-          # command: ["bash","/usr/local/bin/start.sh"]
-          # command: ["bash","-c","while true; do sleep 30; done"]
-          ports:
-            - containerPort: 7001
-              name: sidecar-7001
-              protocol: TCP
-          lifecycle:
-            preStop:
-              exec:
-                command:
-                  - sleep
-                  - '70'
-          {{- if eq .Values.global.clusterSize "minimal" }}
-          resources:
-            limits:
-              cpu: "500m"
-              memory: "1Gi"
-            requests:
-              cpu: "125m"
-              memory: "512Mi"
-          {{- else if eq .Values.global.clusterSize "standard" }}
-          resources:
-            limits:
-              cpu: "1"
-              memory: "1Gi"
-            requests:
-              cpu: "500m"
-              memory: "512Mi"
-          {{- else }}
-          resources:
-            limits:
-              cpu: "2"
-              memory: "4Gi"
-            requests:
-              cpu: "1"
-              memory: "2Gi"
-          {{- end }}
-          securityContext:
-            capabilities:
-              add:
-                - SYS_RESOURCE
-                - NET_ADMIN
-                - SYS_ADMIN
-                - IPC_LOCK
-                - SYS_PTRACE
-            privileged: false
-          stdin: true
-          tty: true
-          #volumeMounts:
-          #  - mountPath: /app/logs
-          #    name: markmap-sidecar-log
-          #  - mountPath: /usr/local/
-          #    name: markmap-public
-      restartPolicy: Always
       volumes:
         {{- include "dependencyChecker.volumes" . | nindent 8 }}
         - hostPath:
@@ -286,14 +223,6 @@ spec:
             path: /data/ti-platform/log/adp-plugin-exec
             type: DirectoryOrCreate
           name: logdata
-        #- hostPath:
-        #    path: /data/ti-platform/log/markmap-sidecar
-        #    type: DirectoryOrCreate
-        #  name: markmap-sidecar-log
-        #- hostPath:
-        #    path: /data/markmap
-        #    type: DirectoryOrCreate
-        #  name: markmap-public
         - configMap:
             defaultMode: 420
             name: {{ .Release.Name }}-plugin-exec

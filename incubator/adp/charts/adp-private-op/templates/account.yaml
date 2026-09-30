@@ -59,7 +59,7 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: adp-private-op-controllers-role
-  namespace: adp
+  namespace: {{ .Release.Namespace }}
 subjects:
   - kind: ServiceAccount
     name: adp-private-op-controllers

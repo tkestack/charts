@@ -136,6 +136,15 @@ spec:
                   fieldPath: metadata.name
             - name: PLATFORM
               value: {{ .Values.platform }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9093
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /health

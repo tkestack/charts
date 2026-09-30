@@ -114,6 +114,22 @@ spec:
           #command: ["sh","-c", "crond start; touch /var/log/log.txt && tail -f /var/log/log.txt"]
           #command: ["sh","/usr/local/app/start.sh"]
           name: adp-rag-exec
+          livenessProbe:
+            failureThreshold: 2
+            initialDelaySeconds: 20
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 8000
+            timeoutSeconds: 2
+          readinessProbe:
+            failureThreshold: 2
+            initialDelaySeconds: 2
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 8000
+            timeoutSeconds: 2
           {{- if eq .Values.global.clusterSize "minimal" }}
           resources:
             limits:
