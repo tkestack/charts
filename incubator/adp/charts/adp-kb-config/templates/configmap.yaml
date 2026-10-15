@@ -5291,7 +5291,7 @@ data:
     iaas_doc_parse_config:
       enabled: true
       client_name: adp.atomic.gateway
-      target: "dns://atomicapi.adp.qq.com:443"
+      target: "dns://api.adp.cloud.tencent.com:443"
       create_path: /v1/CreateSplitDocumentFlow
       result_path: /v1/GetSplitDocumentResult
       action_header: X-TC-Action

@@ -341,7 +341,7 @@ data:
     ti-apex,APEX服务,[resource]修改模型认证信息,fredshao,adp-apex,ModifyApiKeyCredential,2025-11-12,10006,12426,,,/v1/qbot/resource/modifyApiKeyCredential,arg_cmd=[Action],,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
     ti-apex,APEX服务,[resource]删除模型认证信息,fredshao,adp-apex,DeleteApiKeyCredential,2025-11-12,10006,12427,,,/v1/qbot/resource/deleteApiKeyCredential,arg_cmd=[Action],,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
     ti-apex,APEX服务,[resource]查询模型认证信息,fredshao,adp-apex,DescribeApiKeyCredential,2025-11-12,10006,12428,,,/v1/qbot/resource/describeApiKeyCredential,arg_cmd=[Action],,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-    ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+    ti-apex,APEX服务,查询文件预览结果,rodsonluo,adp-apex,DescribeFilePreview,2026-05-20,10006,14004,,,/v1/qbot/chat/renderfilecapi,arg_cmd=[Action],,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
     ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
     ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
     ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
