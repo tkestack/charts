@@ -1,3 +1,5 @@
+{{- /* global.clb 为 IP 时，K8s 校验不允许 spec.rules[].host 填写 IP，需省略 host（即匹配所有 Host） */ -}}
+{{- $isIP := regexMatch "^[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$" (.Values.global.clb | toString) -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -12,11 +14,11 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  {{- if eq (default .Values.global.scheme .Values.global.clbScheme) "https" }}
+  {{- if $isIP }}
+  - http:
+  {{- else }}
   - host: {{ .Values.global.clb }}
     http:
-  {{- else }}
-  - http:
   {{- end }}
       paths:
       - backend:
