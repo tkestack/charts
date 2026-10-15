@@ -3570,8 +3570,8 @@ data:
     MEDICAL_SEARCH_URL: "https://h5.baike.qq.com/trpcapi/SearchEmbDocs/SearchEmbDocs"
     TTS_DIR_NAME: tts/audio_file
     TMS_END_POINT: tms.tencentcloudapi.com
-    MIND_MAP_GENERATE_END_POINT: "markmap-sidecar.{{ .Release.Namespace }}.svc.cluster.local"
-    MIND_MAP_GENERATE_WHITE_URLS: ["allow_all", "markmap-sidecar.{{ .Release.Namespace }}.svc.cluster.local"]
+    MIND_MAP_GENERATE_END_POINT: "adp-markmap-service.{{ .Release.Namespace }}.svc.cluster.local"
+    MIND_MAP_GENERATE_WHITE_URLS: ["allow_all", "adp-markmap-service.{{ .Release.Namespace }}.svc.cluster.local"]
     WX_PAY_MCP_SERVER_URL: "https://1300986092-1vahi03ytv.in.ap-guangzhou.tencentscf.com/sse"
     VIDEO_UNDERSTAND_TIMEOUT: 120
     CHAT_SSE_URL: {{ .Values.global.scheme }}://{{ .Values.global.clb }}/adp/v2/chat
