@@ -5320,7 +5320,7 @@ data:
       sse_action: "SplitDocumentSSE"
       timeout: 10
       sse_timeout: 300
-      insecure_skip_verify: true
+      insecure_skip_verify: {{ .Values.global.atomic_doc_parse_config.insecure_skip_verify | default true }}
     agentic_rag:
       standard_search_config: ${MAIN_AGENTIC_RAG_STANDARD_SEARCH_CONFIG}
       broad_search_config: ${MAIN_AGENTIC_RAG_BROAD_SEARCH_CONFIG}

@@ -601,7 +601,7 @@ data:
       version: "2024-05-22"
       sse_action: "ReconstructDocumentSSE"
       sse_timeout: 600
-      insecure_skip_verify: true
+      insecure_skip_verify: {{ .Values.global.atomic_doc_parse_config.insecure_skip_verify | default true }}
       headers:
         X-TC-Source: plugin-exec
     api:
