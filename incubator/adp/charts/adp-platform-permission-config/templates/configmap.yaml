@@ -54,6 +54,7 @@ data:
       prompt_template: 提示词模板
       widget: Widget
       skill: 技能中心
+      custom_model: 模型管理
     super_admin_conf:
       necessary_permissions:
         lke:
@@ -530,6 +531,8 @@ data:
         - adpWidgetCenterView
       skill:
         - adpSkillsCenterView
+      custom_model:
+        - adpCustomModelView
     RESOURCE_EDIT_PERMISSION_IDS:
       app:
         - adpAppEdit
@@ -545,6 +548,8 @@ data:
         - adpOpenClawEdit
       skill:
         - adpSkillsCenterEdit
+      custom_model:
+        - adpCustomModelEdit
     RESOURCE_NO_PERMISSION_ID_MAP:
       app: adpAppNoPermission
       knowledge: adpKnowledgeBaseNoPermission
@@ -553,6 +558,7 @@ data:
       widget: adpWidgetCenterNoPermission
       openclaw: adpOpenClawNoPermission
       skill: adpSkillsCenterNoPermission
+      custom_model: adpCustomModelNoPermission
     PERMISSION_RESOURCE_TYPE_MAP:
       NoPermission:
         app: adpAppNoPermission
@@ -562,6 +568,7 @@ data:
         widget: adpWidgetCenterNoPermission
         openclaw: adpOpenClawNoPermission
         skill: adpSkillsCenterNoPermission
+        custom_model: adpCustomModelNoPermission
       View:
         app: adpAppView
         knowledge: adpKnowledgeBaseView
@@ -569,6 +576,7 @@ data:
         prompt_template: adpPromptTemplateView
         widget: adpWidgetCenterView
         skill: adpSkillsCenterView
+        custom_model: adpCustomModelView
       Edit:
         app: adpAppEdit
         knowledge: adpKnowledgeBaseEdit
@@ -577,6 +585,7 @@ data:
         widget: adpWidgetCenterEdit
         openclaw: adpOpenClawEdit
         skill: adpSkillsCenterEdit
+        custom_model: adpCustomModelEdit
       Custom:
         app: adpAppCustom
         knowledge: adpKnowledgeBaseCustom
@@ -585,6 +594,7 @@ data:
         widget: adpWidgetCenterCustom
         openclaw: adpOpenClawCustom
         skill: adpSkillsCenterCustom
+        custom_model: adpCustomModelCustom
       Authorize:
         app: adpAppAuthorize
         knowledge: adpKnowledgeBaseAuthorize

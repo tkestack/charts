@@ -109,6 +109,7 @@ data:
       widget: adpWidgetCenterEdit
       openclaw: adpOpenClawEdit
       skill: adpSkillsCenterEdit
+      custom_model: adpCustomModelEdit
     VIEW_RESC_PERMISSION_MAP:
       app: adpAppView
       knowledge: adpKnowledgeBaseView
@@ -117,6 +118,7 @@ data:
       widget: adpWidgetCenterView
       openclaw: adpOpenClawView
       skill: adpSkillsCenterView
+      custom_model: adpCustomModelView
     NO_RESC_PERMISSION_MAP:
       app: adpAppNoPermission
       knowledge: adpKnowledgeBaseNoPermission
@@ -125,6 +127,7 @@ data:
       widget: adpWidgetCenterNoPermission
       openclaw: adpOpenClawNoPermission
       skill: adpSkillsCenterNoPermission
+      custom_model: adpCustomModelNoPermission
     DISABLE_PERMISSION_LIST:
       - lkeApp.basic
       - lkeApp.copyApp

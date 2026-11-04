@@ -523,43 +523,13 @@ def check_object_storage() -> bool:
             print_info("已启用 enableProxy 代理模式，跳过 COS 子路径公有读权限检查")
             return True
 
-        subpath_clean = cos_subpath.strip('/')
-        subpath_url = f"https://{cos_bucket}.cos.{cos_region}.myqcloud.com/{subpath_clean}/"
-
-        print_info(f"检查子路径公有读权限: {subpath_url}")
-
-        try:
-            # 使用GET请求测试公有读权限
-            response = requests.get(subpath_url, timeout=10, allow_redirects=True)
-
-            if response.status_code == 200:
-                print_success(f"COS 子路径 '{cos_subpath}' 配置为公有读，验证通过")
-                return True
-            elif response.status_code == 404:
-                # 404可能是路径不存在，但如果是公有读的话应该能看到404页面
-                # 再次用HEAD请求确认
-                head_response = requests.head(subpath_url, timeout=10, allow_redirects=True)
-                if head_response.status_code == 404:
-                    print_success(f"COS 子路径 '{cos_subpath}' 配置为公有读（路径暂时为空）")
-                    return True
-                elif head_response.status_code == 403:
-                    print_error(f"COS 子路径 '{cos_subpath}' 不是公有读（HTTP 403 Forbidden）")
-                    print_error("请在腾讯云控制台将该子路径设置为公有读权限")
-                    return False
-                else:
-                    print_warning(f"COS 子路径访问返回状态码: {head_response.status_code}")
-                    return False
-            elif response.status_code == 403:
-                print_error(f"COS 子路径 '{cos_subpath}' 不是公有读（HTTP 403 Forbidden）")
-                print_error("请在腾讯云控制台将该子路径设置为公有读权限")
-                return False
-            else:
-                print_error(f"COS 子路径访问返回异常状态码: {response.status_code}")
-                return False
-
-        except requests.exceptions.RequestException as e:
-            print_error(f"COS 子路径连接失败: {e}")
-            return False
+        # STS 改造后：
+        #   - 业务读写 COS 全部走临时凭证 + 预签名 URL，不依赖子路径公有读；
+        #   - 公有读白名单由 data-init Job 的 init_s3.py 按前缀设置，不是桶级属性；
+        #   - 此处检查的 subpath 未必在白名单内，会误报，无实际价值。
+        # 因此跳过公有读校验，桶可达性（上一步 head bucket）已足够作为前置保障。
+        print_info("STS 模式下 COS 走临时凭证 + 预签名 URL，跳过子路径公有读检查")
+        return True
 
     except Exception as e:
         print_error(f"COS 验证失败: {e}")

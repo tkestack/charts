@@ -465,7 +465,9 @@ data:
         "KeyTokenPlanGuide": "腾讯云Token Plan",
         "KeyTokenPlanGuideContent": "接入腾讯云Token Plan，获得更强大的模型算力",
         "PromptTemplateModeClaw": "Claw模式",
-        "PromptTemplateTypeClaw": "Claw模式"
+        "PromptTemplateTypeClaw": "Claw模式",
+        "KeyProviderAliasNameAnthropicCompatible": "Anthropic Compatible",
+        "KeyProviderDescAnthropicCompatible": "支持通过兼容Anthropic Messages API协议的方式，灵活接入Claude系列及各类支持Anthropic协议的大模型服务"
     }
 
   client.yaml: |
@@ -2189,80 +2191,80 @@ data:
         name: Hunyuan/hunyuan-vision-1.5-instruct
         desc: |-
           效果全面显著升级，图像识别、创作、推理全面提升。支持发图秒回答、实体识别更精准、看图解题更高效。
-        icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
+        icon: /adp/static/templates/adp/lke/hunyuan.png
         finance_model_name: Hunyuan/hunyuan-turbos-vision
       - alias_name: youtu-mrc-pro
         name: Youtu/youtu-mrc-pro
         desc: |-
           针对企业知识问答场景精调训练，擅长多模态知识问答，适合图文表答案关联输出、数学计算、逻辑推理、表格问答等复杂场景有需求的场景。
         is_default: true
-        icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
+        icon: /adp/static/templates/adp/lke/hunyuan.png
       - alias_name: youtu-mrc-standard
         name: Youtu/youtu-mrc-standard
         desc: |-
           针对企业知识问答场景精调训练，擅长多模态知识问答。性价比相对更高，适合需要同时平衡效果、价格的场景。
-        icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
+        icon: /adp/static/templates/adp/lke/hunyuan.png
       - alias_name: youtu-mllm
         name: Youtu/youtu-mllm
         chat_words_limit: 14000
         desc:
-        icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
+        icon: /adp/static/templates/adp/lke/hunyuan.png
       - alias_name: hunyuan-pro
         name: Hunyuan/hunyuan
         desc: |-
           万亿级参数规模 MOE-32k 长文模型，具备复杂数学能力，支持 functioncall，在多语言翻译、金融法律医疗等领域应用重点优化。
-        icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
+        icon: /adp/static/templates/adp/lke/hunyuan.png
       - alias_name: hunyuan-standard
         name: Hunyuan/hunyuan-standard
         desc: |-
           采用更优的路由策略，同时缓解了负载均衡和专家趋同的问题， 性价比相对更高，在平衡效果、价格的同时，可对实现对长文本输入的处理。
-        icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
+        icon: /adp/static/templates/adp/lke/hunyuan.png
       - alias_name: hunyuan-turbo
         name: Hunyuan/hunyuan-turbo
         chat_words_limit: 2000
         desc: |-
           采用全新的混合专家模型（MoE）结构，相比混元大模型高级版推理效率更快，效果表现更强。
-        icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
+        icon: /adp/static/templates/adp/lke/hunyuan.png
       - alias_name: hunyuan-turbos-vision
         name: Hunyuan/hunyuan-turbos-vision
         chat_words_limit: 28000
         desc:
-        icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
+        icon: /adp/static/templates/adp/lke/hunyuan.png
       - alias_name: hunyuan-standard-256K
         name: Hunyuan/hunyuan-standard-256k
         desc: |-
           采用更优的路由策略，同时缓解了负载均衡和专家趋同的问题。长文方面，大海捞针指标达到99.9%。MOE-256k 在长度和效果上进一步突破，极大的扩展了可输入长度。
-        icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
+        icon: /adp/static/templates/adp/lke/hunyuan.png
       - alias_name: hunyuan-role-latest
         name: Hunyuan/hunyuan-role-latest
         chat_words_limit: 2000
         desc: |-
           混元最新版角色扮演模型，混元官方精调训练推出的角色扮演模型，基于混元模型结合角色扮演场景数据集进行增训，在角色扮演场景具有更好的基础效果。
-        icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
+        icon: /adp/static/templates/adp/lke/hunyuan.png
       - alias_name: youtu-mrc-finance
         name: finance-13b
         desc: |-
           基于金融领域数据进行预训练和精调训练，擅长金融领域知识问答，适用于投资知识问答、金融产品问答等应用场景。
-        icon: https://cdn.xiaowei.qq.com/static/lke/cloud.png
+        icon: /adp/static/templates/adp/lke/cloud.png
         is_close: true
       - alias_name: 教育行业大模型标准版
         name: sn-edu-13b
         desc: |-
           基于教育领域数据专项训练，适用于英语口语对话练习和教案场景。英语口语陪练场景中，支持教材课后对话练习、对话难度设定、语法分析等能力；教案场景中，支持教案生成、教案润色、教案题目生成。
-        icon: https://cdn.xiaowei.qq.com/static/lke/cloud.png
+        icon: /adp/static/templates/adp/lke/cloud.png
         is_close: true
       - alias_name: 教育行业大模型高级版
         name: sn-edu-70b
         chat_words_limit: 2000
         desc: |-
           基于教育领域数据专项训练，适用于对于英语口语对话练习自然度和任务遵循程度、教案生成丰富度的效果表现有需求的场景。
-        icon: https://cdn.xiaowei.qq.com/static/lke/cloud.png
+        icon: /adp/static/templates/adp/lke/cloud.png
         is_close: true
       - alias_name: youtu-mrc-medical
         name: medical-6b
         desc: |-
           基于医疗领域数据专项强化，擅长医疗领域知识问答，适用于医学实体抽取、医学对话总结、病历撰写等应用场景。
-        icon: https://cdn.xiaowei.qq.com/static/lke/cloud.png
+        icon: /adp/static/templates/adp/lke/cloud.png
         is_close: true
       - alias_name: hunyuan-turbos-latest
         name: Hunyuan/hunyuan-turbos
@@ -2287,7 +2289,7 @@ data:
         desc: 适用于同时配置问答、文档、工作流的场景，意图识别效果更佳，并且支持在角色指令中自定义配置意图。但可能会增加一定的对话耗时。
         is_default: true
         source: Hunyuan
-        icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
+        icon: "/adp/static/templates/adp/lke/hunyuan.png"
       - alias_name: hunyuan-turbos-latest
         name: Hunyuan/hunyuan-turbos
         desc: 混元旗舰大模型最新版本，具备更强的思考能力，更优的体验效果
@@ -2313,7 +2315,7 @@ data:
         desc: |-
           具备任务规划、工具选择调用以及反思纠错能力，能够支持复杂问题的规划与执行。
         source: Hunyuan
-        icon: https://cdn.xiaowei.qq.com/static/lke/hunyuan.png
+        icon: /adp/static/templates/adp/lke/hunyuan.png
       - alias_name: hunyuan-turbos-latest
         name: Hunyuan/hunyuan-turbos
         desc: |-
@@ -2329,7 +2331,7 @@ data:
         chat_words_limit: 14000
         is_default: true
         desc:
-        icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
+        icon: "/adp/static/templates/adp/lke/hunyuan.png"
     APP_RERANK_MODEL:
       - alias_name: youtu-reranker-llm
         name: Youtu/youtu-reranker-llm
@@ -2368,13 +2370,13 @@ data:
         name: Youtu/youtu-parsing-sync
         scene: realtime_fileparse
         desc:
-        icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
+        icon: "/adp/static/templates/adp/lke/hunyuan.png"
         finance_model_name: Youtu/youtu-parsing-sync
       - alias_name: youtu-parsing-async
         name: Youtu/youtu-parsing-async
         desc:
         is_default: true
-        icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
+        icon: "/adp/static/templates/adp/lke/hunyuan.png"
         finance_model_name: Youtu/youtu-parsing-sync
     APP_OPENCLAW_MODEL:
       - alias_name: hunyuan-turbos-latest
@@ -2865,6 +2867,12 @@ data:
       enum_values:
         - enabled
         - disabled
+    - name: top_k
+      type: int
+      min: 0
+      max: 1000
+      default: 0
+      visible_on: provider=Anthropic Compatible   # 新增
     EXPOSED_MODEL_PROPERTIES:
 
     EXPOSED_MODEL_PARAMETERS:

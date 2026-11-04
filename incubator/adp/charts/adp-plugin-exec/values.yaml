@@ -1,6 +1,6 @@
 images:
   adp-plugin-exec:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/plugin-exec:57_2607272024_stable_iaas_v4.0.3.0_965f6eca_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/plugin-exec:107_2611021927_stable_iaas_v4.0.3.1_a98f0fd6_private"
   adp-plugin-exec-sidecar:
     url: ''
 adppluginexec:

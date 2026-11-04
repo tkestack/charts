@@ -720,8 +720,8 @@ data:
         classify: 6000
       avatar: "https://${INFRA_MIDDLEWARES_S3_COS_BUCKET}.cos.${INFRA_MIDDLEWARES_S3_COS_REGION}.myqcloud.com/avatar.png"
       app_avatars:
-        - "https://cdn.xiaowei.qq.com/static/lke/app-default-avatar.png"
-        - "https://cdn.xiaowei.qq.com/static/adp/app-default-avatar.png"
+        - "/adp/static/templates/adp/lke/app-default-avatar.png"
+        - "/adp/static/templates/adp/adp/app-default-avatar.png"
       expire_time: 7
       transfer_keywords:
         - 转人工
@@ -763,18 +763,18 @@ data:
             desc: 适用于同时配置问答、文档、工作流的场景，意图识别效果更佳，并且支持在角色指令中自定义配置意图。但可能会增加一定的对话耗时。
             is_default: true
             source: Hunyuan
-            icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
+            icon: "/adp/static/templates/adp/lke/hunyuan.png"
             is_free: true
           - alias_name: DeepSeek-V3
             name: lke-deepseek-v3
             desc: "拥有6710 亿参数的混合专家（MoE）语言模型，采用多头潜在注意力（MLA）和 DeepSeekMoE 架构，结合无辅助损失的负载平衡策略，优化推理和训练效率。"
             source: Experience
-            icon: "https://cdn.xiaowei.qq.com/static/lke/ds.png"
+            icon: "/adp/static/templates/adp/lke/ds.png"
           - alias_name: DeepSeek-V3-0324
             name: lke-deepseek-v3-0324
             desc: DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
             source: Experience
-            icon: "https://cdn.xiaowei.qq.com/static/lke/ds.png"
+            icon: "/adp/static/templates/adp/lke/ds.png"
           - alias_name: Deepseek-V3.1
             name: lke-deepseek-v3.1
             desc: 采用混合推理架构，具备更高的思考效率，能在更短时间给出答案，需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。
@@ -793,30 +793,30 @@ data:
             name: workflow-merge-pro
             desc: 三合一模型
             source: Hunyuan
-            icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
+            icon: "/adp/static/templates/adp/lke/hunyuan.png"
           - alias_name: youtu-agent
             name: function-call-pro
             chat_words_limit: 2000
             desc: 具备任务规划、工具选择调用以及反思纠错能力，能够支持复杂问题的规划与执行。
             source: Hunyuan
-            icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
+            icon: "/adp/static/templates/adp/lke/hunyuan.png"
             is_free: true
           - alias_name: DeepSeek-R1-0528
             name: lke-deepseek-r1-0528-agent
             desc: Deepseek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。
             source: Experience
-            icon: "https://cdn.xiaowei.qq.com/static/lke/ds.png"
+            icon: "/adp/static/templates/adp/lke/ds.png"
             finance_model_name: lke-deepseek-r1-0528
           - alias_name: DeepSeek-R1
             name: lke-deepseek-r1
             desc: "强化学习（RL）驱动的推理模型，在数学、代码和推理任务中与 OpenAI-o1 表现相当。与DeepSeek助手深度思考模式为同款模型"
             source: Experience
-            icon: "https://cdn.xiaowei.qq.com/static/lke/ds.png"
+            icon: "/adp/static/templates/adp/lke/ds.png"
           - alias_name: DeepSeek-V3-0324
             name: lke-deepseek-v3-function-call
             desc: DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
             source: Experience
-            icon: "https://cdn.xiaowei.qq.com/static/lke/ds.png"
+            icon: "/adp/static/templates/adp/lke/ds.png"
             is_default: true
             finance_model_name: lke-deepseek-v3-0324
           - alias_name: Deepseek-V3.1
@@ -842,94 +842,94 @@ data:
           - alias_name: 三合一模型(32B)
             name: workflow-merge-pro
             desc: 三合一模型
-            icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
+            icon: "/adp/static/templates/adp/lke/hunyuan.png"
           - alias_name: youtu-mrc-pro
             name: cs-normal-70b
             chat_words_limit: 2000
             desc: 针对企业知识问答场景精调训练，擅长多模态知识问答，适合图文表答案关联输出、数学计算、逻辑推理、表格问答等复杂场景有需求的场景。
             is_default: true
-            icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
+            icon: "/adp/static/templates/adp/lke/hunyuan.png"
           - alias_name: youtu-mrc-standard
             name: cs-normal
             chat_words_limit: 2000
             desc: 针对企业知识问答场景精调训练，擅长多模态知识问答。性价比相对更高，适合需要同时平衡效果、价格的场景。
-            icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
+            icon: "/adp/static/templates/adp/lke/hunyuan.png"
           - alias_name: hunyuan-pro
             name: hunyuan
             chat_words_limit: 2000
             desc: "万亿级参数规模 MOE-32k 长文模型，具备复杂数学能力，支持 functioncall，在多语言翻译、金融法律医疗等领域应用重点优化。"
-            icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
+            icon: "/adp/static/templates/adp/lke/hunyuan.png"
           - alias_name: hunyuan-standard
             name: hunyuan-13B
             chat_words_limit: 2000
             desc: "采用更优的路由策略，同时缓解了负载均衡和专家趋同的问题， 性价比相对更高，在平衡效果、价格的同时，可对实现对长文本输入的处理。"
-            icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
+            icon: "/adp/static/templates/adp/lke/hunyuan.png"
           - alias_name: hunyuan-turbo
             name: hunyuan-turbo
             chat_words_limit: 2000
             desc: 采用全新的混合专家模型（MoE）结构，相比混元大模型高级版推理效率更快，效果表现更强。
-            icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
+            icon: "/adp/static/templates/adp/lke/hunyuan.png"
           - alias_name: hunyuan-standard-256K
             name: hunyuan-standard-256K
             chat_words_limit: 12000
             desc: "采用更优的路由策略，同时缓解了负载均衡和专家趋同的问题。长文方面，大海捞针指标达到99.9%。MOE-256k 在长度和效果上进一步突破，极大的扩展了可输入长度。"
-            icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
+            icon: "/adp/static/templates/adp/lke/hunyuan.png"
           - alias_name: hunyuan-role
             name: hunyuan-role
             chat_words_limit: 2000
             desc: 混元最新版角色扮演模型，混元官方精调训练推出的角色扮演模型，基于混元模型结合角色扮演场景数据集进行增训，在角色扮演场景具有更好的基础效果。
-            icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
+            icon: "/adp/static/templates/adp/lke/hunyuan.png"
           - alias_name: youtu-mrc-finance
             name: finance-13b
             chat_words_limit: 2000
             desc: 基于金融领域数据进行预训练和精调训练，擅长金融领域知识问答，适用于投资知识问答、金融产品问答等应用场景。
-            icon: "https://cdn.xiaowei.qq.com/static/lke/cloud.png"
+            icon: "/adp/static/templates/adp/lke/cloud.png"
             is_close: true
           - alias_name: 教育行业大模型标准版
             name: sn-edu-13b
             chat_words_limit: 2000
             desc: 基于教育领域数据专项训练，适用于英语口语对话练习和教案场景。英语口语陪练场景中，支持教材课后对话练习、对话难度设定、语法分析等能力；教案场景中，支持教案生成、教案润色、教案题目生成。
-            icon: "https://cdn.xiaowei.qq.com/static/lke/cloud.png"
+            icon: "/adp/static/templates/adp/lke/cloud.png"
             is_close: true
           - alias_name: 教育行业大模型高级版
             name: sn-edu-70b
             chat_words_limit: 2000
             desc: 基于教育领域数据专项训练，适用于对于英语口语对话练习自然度和任务遵循程度、教案生成丰富度的效果表现有需求的场景。
-            icon: "https://cdn.xiaowei.qq.com/static/lke/cloud.png"
+            icon: "/adp/static/templates/adp/lke/cloud.png"
             is_close: true
           - alias_name: youtu-mrc-medical
             name: medical-6b
             chat_words_limit: 2000
             desc: 基于医疗领域数据专项强化，擅长医疗领域知识问答，适用于医学实体抽取、医学对话总结、病历撰写等应用场景。
-            icon: "https://cdn.xiaowei.qq.com/static/lke/cloud.png"
+            icon: "/adp/static/templates/adp/lke/cloud.png"
             is_close: true
           - alias_name: hunyuan-pro-preview
             name: hunyuan-pro-preview
             desc:
-            icon: "https://cdn.xiaowei.qq.com/static/lke/hunyuan.png"
+            icon: "/adp/static/templates/adp/lke/hunyuan.png"
           - alias_name: Deepseek-R1-0528
             name: lke-deepseek-r1-0528
             desc: DeepSeek-R1模型最新版，在理解意图、文案生成、编程能力和逻辑推理方面均有显著提升。能更好地理解复杂指令中的约束条件和内在逻辑。支持长时思考，可以胜任更复杂、耗时的任务。
-            icon: "https://cdn.xiaowei.qq.com/static/lke/ds.png"
+            icon: "/adp/static/templates/adp/lke/ds.png"
           - alias_name: DeepSeek-R1
             name: lke-deepseek-r1
             desc: "强化学习（RL）驱动的推理模型，在数学、代码和推理任务中与 OpenAI-o1 表现相当。与DeepSeek助手深度思考模式为同款模型"
-            icon: "https://cdn.xiaowei.qq.com/static/lke/ds.png"
+            icon: "/adp/static/templates/adp/lke/ds.png"
           - alias_name: DeepSeek-V3
             name: lke-deepseek-v3
             desc: "拥有6710 亿参数的混合专家（MoE）语言模型，采用多头潜在注意力（MLA）和 DeepSeekMoE 架构，结合无辅助损失的负载平衡策略，优化推理和训练效率。"
-            icon: "https://cdn.xiaowei.qq.com/static/lke/ds.png"
+            icon: "/adp/static/templates/adp/lke/ds.png"
           - alias_name: DeepSeek-V3-0324
             name: lke-deepseek-v3-0324
             desc: DeepSeek-V3模型最新版本，基于创新的混合专家（MoE）架构与多头潜在注意力（MLA）技术，在推理能力、代码生成和中文语义理解三大核心领域实现全面升级。
-            icon: "https://cdn.xiaowei.qq.com/static/lke/ds.png"
+            icon: "/adp/static/templates/adp/lke/ds.png"
           - alias_name: Deepseek-V3.1
             name: lke-deepseek-v3.1
             desc: 采用混合推理架构，具备更高的思考效率，能在更短时间给出答案，需要多步推理的复杂搜索测试与多学科专家级难题测试上，性能已大幅提升。
           - alias_name: DeepSeek-R1精调版
             name: deepseek-r1-sft
             desc: 基于DeepSeek-R1精调，重点优化RAG场景阅读理解准确率、无关知识拒答准确率、多模态出图准确率。
-            icon: "https://cdn.xiaowei.qq.com/static/lke/ds.png"
+            icon: "/adp/static/templates/adp/lke/ds.png"
           - alias_name: hunyuan-turbos-latest
             name: hunyuan-turbos
             desc: 混元旗舰大模型最新版本，具备更强的思考能力，更优的体验效果
@@ -1703,15 +1703,15 @@ data:
       - permission_id: lkeRepository
         app_type: knowledge_qa
         name: 知识库问答
-        logo: "https://cdn.xiaowei.qq.com/static/lke/app-icon-knowledge_qa.png"
+        logo: "/adp/static/templates/adp/lke/app-icon-knowledge_qa.png"
       - permission_id: lkeSummary
         app_type: summary
         name: 知识摘要
-        logo: "https://cdn.xiaowei.qq.com/static/lke/app-icon-summary.png"
+        logo: "/adp/static/templates/adp/lke/app-icon-summary.png"
       - permission_id: lkeClassify
         app_type: classify
         name: 标签提取
-        logo: "https://cdn.xiaowei.qq.com/static/lke/app-icon-classify.png"
+        logo: "/adp/static/templates/adp/lke/app-icon-classify.png"
     trial:
       app_max_char_size: 1000000
       corp_app_quota: 1000

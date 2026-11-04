@@ -1,6 +1,6 @@
 images:
   adp-ai-gateway:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/ai-gateway:24_2607151109_stable_iaas_v4.0.3.0_3e6cd1e9_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/ai-gateway:29_2611021137_stable_iaas_v4.0.3.1_b0dd9faf_private"
 resources:
   limits:
     cpu: 2

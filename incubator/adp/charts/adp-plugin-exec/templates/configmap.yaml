@@ -589,6 +589,21 @@ data:
       model_name_llm: {{ .Values.adppluginexec.doc_model_name_llm }}
       assume_role:
         role_arn: "{{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}"
+    atomic_doc_parse_config:
+      enabled: {{ .Values.adppluginexec.atomic_doc_parse_enabled | default false }}
+      client_name: "adp.atomic.lkeap"
+      target: {{ .Values.adppluginexec.atomic_doc_parse_target | default "" | quote }}
+      host: {{ .Values.adppluginexec.atomic_doc_parse_host | default "" | quote }}
+      path: "/atomic"
+      secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
+      secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+      service: "lkeap"
+      version: "2024-05-22"
+      sse_action: "ReconstructDocumentSSE"
+      sse_timeout: 600
+      insecure_skip_verify: true
+      headers:
+        X-TC-Source: plugin-exec
     api:
       timeout: 120
       white_urls: ${API_WHITE_URLS}
