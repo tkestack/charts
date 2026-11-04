@@ -58,12 +58,24 @@ spec:
           - |
             TARGET_VERSION="{{ .Values.targetVersion }}"
 
+            # 版本归一化（3位扩4位兼容）：三位版本补 .0 对齐四位（v3.4.1 → v3.4.1.0、v4.0.3 → v4.0.3.0），
+            # 仅用于版本比较；传给 cross-up 的 --target 仍用原始 TARGET_VERSION
+            normalize_version() {
+              case "$1" in
+                v*.*.*.*) printf '%s' "$1" ;;
+                v*.*.*) printf '%s.0' "$1" ;;
+                *) printf '%s' "$1" ;;
+              esac
+            }
+
             # 升级部署（global.is_upgrade=true）执行 upgrade，否则执行 init（首次安装）
             if [ "$IS_UPGRADE" = "true" ]; then
               # 重入保护：先查询当前升级版本，若已是目标版本则直接退出，避免重复 upgrade 报错
-              CURRENT_VERSION=$(/app/bin/cross-up --config /app/conf/trpc_go.yaml version --type upgrade | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
-              echo "=== current upgrade version: ${CURRENT_VERSION}, target version: ${TARGET_VERSION} ==="
-              if [ -n "$CURRENT_VERSION" ] && [ "$CURRENT_VERSION" = "$TARGET_VERSION" ]; then
+              CURRENT_VERSION=$(/app/bin/cross-up --config /app/conf/trpc_go.yaml version --type upgrade | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?' | head -n 1)
+              CURRENT_VERSION=$(normalize_version "$CURRENT_VERSION")
+              COMPARE_TARGET=$(normalize_version "$TARGET_VERSION")
+              echo "=== current upgrade version: ${CURRENT_VERSION}, target version: ${COMPARE_TARGET} ==="
+              if [ -n "$CURRENT_VERSION" ] && [ "$CURRENT_VERSION" = "$COMPARE_TARGET" ]; then
                 echo "=== already at target version ${TARGET_VERSION}, skip upgrade ==="
                 exit 0
               fi

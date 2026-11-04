@@ -382,7 +382,7 @@ data:
         RequestLimitExceeded: 超过了每秒频率上限
         ClientError.NetworkError: 网络错误
         InvalidParameterValue.InvalidFileContentSize: 图片大小超限制
-      target: https://atomicapi.adp.qq.com:443
+      target: https://atomic.internal.cloud.tencent.com:443
       atomic_api_key: 
     xinan:
       path: /interface/request/json

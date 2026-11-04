@@ -112,7 +112,6 @@ data:
       cache_control: "public, max-age=300"
 
       debug: false
-
   client.yaml: |
     client:
       namespace: ${CLIENT_CLIENT_NAMESPACE}

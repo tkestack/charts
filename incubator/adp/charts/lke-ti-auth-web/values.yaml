@@ -5,7 +5,7 @@ tad:
     productType: lke
 images:
   ti-auth-web:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/ti-tiauth-prod-production:14_release_stable-v4.0.0.0_2607202230-19cd916"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/ti-tiauth-prod-production:18_release_stable-v4.0.0.0_2611031914-b518167"
 env: TEST
 namespace: ti-base
 imagePullSecretName: qcloudregistrykey

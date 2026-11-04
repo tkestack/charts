@@ -5291,7 +5291,8 @@ data:
     iaas_doc_parse_config:
       enabled: true
       client_name: adp.atomic.gateway
-      target: "dns://api.adp.cloud.tencent.com:443"
+      target: "dns://atomic.internal.cloud.tencent.com:443"
+      scheme: https
       create_path: /v1/CreateSplitDocumentFlow
       result_path: /v1/GetSplitDocumentResult
       action_header: X-TC-Action
@@ -5303,6 +5304,23 @@ data:
       transfer_file_url: true
       sse_path: /v1/SplitDocumentSSE
       sse_timeout: 300
+    atomic_doc_parse_config:
+      enabled: {{ .Values.global.atomic_doc_parse_config.enabled | default false }}
+      client_name: "adp.atomic.lkeap"
+      target: {{ .Values.global.atomic_doc_parse_config.target | default "" | quote }}
+      host: {{ .Values.global.atomic_doc_parse_config.host | default "" | quote }}
+      path: {{ .Values.global.atomic_doc_parse_config.path | default "/atomic" | quote }}
+      secret_id: {{ .Values.global.atomic_doc_parse_config.secret_id | default "" | quote }}
+      secret_key: {{ .Values.global.atomic_doc_parse_config.secret_key | default "" | quote }}
+      service: "lkeap"
+      version: "2024-05-22"
+      create_action: "CreateSplitDocumentFlow"
+      result_action: "GetSplitDocumentResult"
+      cancel_action: "CancelTask"
+      sse_action: "SplitDocumentSSE"
+      timeout: 10
+      sse_timeout: 300
+      insecure_skip_verify: {{ .Values.global.atomic_doc_parse_config.insecure_skip_verify | default true }}
     agentic_rag:
       standard_search_config: ${MAIN_AGENTIC_RAG_STANDARD_SEARCH_CONFIG}
       broad_search_config: ${MAIN_AGENTIC_RAG_BROAD_SEARCH_CONFIG}

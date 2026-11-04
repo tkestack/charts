@@ -453,7 +453,7 @@ data:
           desc: KeyDefaultContentSecurityLowDesc
           type: 1
           category: "81006"
-      target: https://atomicapi.adp.qq.com
+      target: https://atomic.internal.cloud.tencent.com
       atomic_api_key: 
     es_config:
       name: trpc.elasticsearch.lke.admin
@@ -2078,7 +2078,7 @@ data:
     AGENT_BACKGROUND:
     MSG_LOG_ES_WHITE_ALL_OPEN: true
     LICENSE_HOST:
-      adp: "https://adp.cloud.tencent.com/cgi/apex/adp/platform/CheckLicense"
+      adp: "https://adp.internal.cloud.tencent.com/v1/adp/platform/CheckLicense"
     PUBLIC_KEY: |
       -----BEGIN PUBLIC KEY-----
       MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAurReoU7qNrUu+hVIiCLM

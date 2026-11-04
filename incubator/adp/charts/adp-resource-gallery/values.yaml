@@ -1,6 +1,6 @@
 images:
   adp-resource-gallery:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/resource-gallery:33_2609161633_stable_iaas_v4.0.3.0_595a0e1a_private"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/resource-gallery:48_2610271636_stable_iaas_v4.0.3.1_2bf98914_private"
 resources:
   limits:
     cpu: 1

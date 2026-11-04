@@ -1809,15 +1809,15 @@ data:
       - permission_id: lkeRepository
         app_type: knowledge_qa
         name: 知识库问答
-        logo: "https://cdn.xiaowei.qq.com/static/lke/app-icon-knowledge_qa.png"
+        logo: "/adp/static/templates/adp/lke/app-icon-knowledge_qa.png"
       - permission_id: lkeSummary
         app_type: summary
         name: 知识摘要
-        logo: "https://cdn.xiaowei.qq.com/static/lke/app-icon-summary.png"
+        logo: "/adp/static/templates/adp/lke/app-icon-summary.png"
       - permission_id: lkeClassify
         app_type: classify
         name: 标签提取
-        logo: "https://cdn.xiaowei.qq.com/static/lke/app-icon-classify.png"
+        logo: "/adp/static/templates/adp/lke/app-icon-classify.png"
     MANAGED_ACCOUNT_IDS:
       - 1042
     ENV: lke
@@ -1839,8 +1839,8 @@ data:
     CHANNEL_WECOM_ROBOT_CALLBACK_URL: {{ .Values.global.scheme }}://{{ .Values.global.clb }}/online/channel/callback/wecomrobot/
     NO_DEFAULT_MODEL:
     APP_AVATARS:
-      - "https://cdn.xiaowei.qq.com/static/lke/app-default-avatar.png"
-      - "https://cdn.xiaowei.qq.com/static/adp/app-default-avatar.png"
+      - "/adp/static/templates/adp/lke/app-default-avatar.png"
+      - "/adp/static/templates/adp/adp/app-default-avatar.png"
       - "http://tke-iaas-testing.tencentcloudadp.com/adp/static/app-default-avatar.png"
     MODEL_NAMES:
     APP_CHAT_WORDS_LIMIT:
