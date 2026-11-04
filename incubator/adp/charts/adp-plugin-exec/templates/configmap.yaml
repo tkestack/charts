@@ -590,13 +590,13 @@ data:
       assume_role:
         role_arn: "{{ dig "components" "s3" "cos" "stsRoleArn" "" .Values.global }}"
     atomic_doc_parse_config:
-      enabled: {{ .Values.adppluginexec.atomic_doc_parse_enabled | default false }}
+      enabled: {{ .Values.global.atomic_doc_parse_config.enabled | default false }}
       client_name: "adp.atomic.lkeap"
-      target: {{ .Values.adppluginexec.atomic_doc_parse_target | default "" | quote }}
-      host: {{ .Values.adppluginexec.atomic_doc_parse_host | default "" | quote }}
-      path: "/atomic"
-      secret_id: ${INFRA_MIDDLEWARES_S3_COS_SECRETID}
-      secret_key: ${INFRA_MIDDLEWARES_S3_COS_SECRETKEY}
+      target: {{ .Values.global.atomic_doc_parse_config.target | default "" | quote }}
+      host: {{ .Values.global.atomic_doc_parse_config.host | default "" | quote }}
+      path: {{ .Values.global.atomic_doc_parse_config.path | default "/atomic" | quote }}
+      secret_id: {{ .Values.global.atomic_doc_parse_config.secret_id | default "" | quote }}
+      secret_key: {{ .Values.global.atomic_doc_parse_config.secret_key | default "" | quote }}
       service: "lkeap"
       version: "2024-05-22"
       sse_action: "ReconstructDocumentSSE"

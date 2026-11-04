@@ -27,6 +27,6 @@ targetVersion: v4.0.3.1
 
 images:
   deploy-data-init:
-    url: "{{ .Values.global.imageRegistry }}/tke-market/data-init:137__stable_v1.0.4.1_15b5df7b_iaas"
+    url: "{{ .Values.global.imageRegistry }}/tke-market/data-init:147__stable_v1.0.4.1_f519ee4a_iaas"
   dependency_check:
     url: "{{ .Values.global.imageRegistry }}/tke-market/kubectl:20260130"

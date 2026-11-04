@@ -5291,7 +5291,7 @@ data:
     iaas_doc_parse_config:
       enabled: true
       client_name: adp.atomic.gateway
-      target: "dns://api.adp.cloud.tencent.com:443"
+      target: "dns://atomic.internal.cloud.tencent.com:443"
       scheme: https
       create_path: /v1/CreateSplitDocumentFlow
       result_path: /v1/GetSplitDocumentResult
@@ -5305,13 +5305,13 @@ data:
       sse_path: /v1/SplitDocumentSSE
       sse_timeout: 300
     atomic_doc_parse_config:
-      enabled: {{ .Values.atomic_doc_parse_enabled }}
+      enabled: {{ .Values.global.atomic_doc_parse_config.enabled | default false }}
       client_name: "adp.atomic.lkeap"
-      target: "dns://4050sp3-arm-1015.adp-private.com:443"
-      host: "4050sp3-arm-1015.adp-private.com"
-      path: "/atomic"
-      secret_id: "MOCK_CAPI_SECRET_ID_VALUE"
-      secret_key: "MOCK_CAPI_SECRET_KEY_VALUE"
+      target: {{ .Values.global.atomic_doc_parse_config.target | default "" | quote }}
+      host: {{ .Values.global.atomic_doc_parse_config.host | default "" | quote }}
+      path: {{ .Values.global.atomic_doc_parse_config.path | default "/atomic" | quote }}
+      secret_id: {{ .Values.global.atomic_doc_parse_config.secret_id | default "" | quote }}
+      secret_key: {{ .Values.global.atomic_doc_parse_config.secret_key | default "" | quote }}
       service: "lkeap"
       version: "2024-05-22"
       create_action: "CreateSplitDocumentFlow"

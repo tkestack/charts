@@ -237,6 +237,22 @@ global:
     componentToken: "<YOUR_WECHAT_THIRD_PLATFORM_TOKEN>"
     componentAesKey: "<YOUR_WECHAT_THIRD_PLATFORM_AES_KEY>"
 
+
+  # ============================================================
+  # 原子能力文档解析服务（lkeap 风格网关）信息
+  # ============================================================
+  # IaaS 私有化文档解析（CreateSplitDocumentFlow）对接原子能力网关所需配置
+  # 在原子能力平台开通服务后，可获取以下网关地址与密钥
+  atomic_doc_parse_config:
+    enabled: false
+    client_name: "adp.atomic.lkeap"
+    target: "<YOUR_ATOMIC_DOC_PARSE_TARGET>"    # 网关地址，如 dns://xxx.adp-private.com:443
+    host: "<YOUR_ATOMIC_DOC_PARSE_HOST>"        # 网关域名，如 xxx.adp-private.com
+    path: "<YOUR_ATOMIC_DOC_PARSE_PATH>"        # 服务路径，如 /atomic
+    secret_id: "<YOUR_ATOMIC_CAPI_SECRET_ID>"   # 模型密钥 
+    secret_key: "<YOUR_ATOMIC_CAPI_SECRET_KEY>" # 模型密钥 
+    insecure_skip_verify: true                  # 是否跳过签名
+    
   # ============================
   # 业务配置 (从 tad.global 迁移)
   # ============================
@@ -287,3 +303,5 @@ global:
   #   envType: "PROD"
   customLabels:
     control-by: "helm"
+ 
+

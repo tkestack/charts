@@ -173,7 +173,7 @@ data:
       provider_guide_config: ${PROVIDER_GUIDE_CONFIG}
     api_key_config: ${API_KEY_CONFIG}
     adp_cloud:
-      model_list_url: "https://api.adp.cloud.tencent.com/v1/model/list"
+      model_list_url: "https://atomic.internal.cloud.tencent.com/v1/model/list"
       sync_disabled: true
     connectivity_test:
       default_max_tokens: 100

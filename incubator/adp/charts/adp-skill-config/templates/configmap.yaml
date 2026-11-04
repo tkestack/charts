@@ -36,6 +36,7 @@ data:
 
     skill_uin_whitelist:
       - "100020322809"
+      - "100000000000"
 
     storage:
       type: cos

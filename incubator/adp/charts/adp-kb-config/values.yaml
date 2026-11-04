@@ -22,5 +22,4 @@ qa_extract_model_name: cs-normal
 similar_question_model_name: cs-normal
 sync_vector_add_batch_size: 30
 sync_vector_deleted_batch_size: 100
-atomic_doc_parse_enabled: false
 replicas: 1
