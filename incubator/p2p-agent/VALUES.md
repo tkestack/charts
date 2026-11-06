@@ -13,23 +13,26 @@
 | 参数 | 默认值 | 类型 | 说明 |
 |------|--------|------|------|
 | `images.agent.image` | `ccr.ccs.tencentyun.com/tke-market/p2p-agent` | string | Agent 镜像地址 |
-| `images.agent.tag` | `0.2.5` | string | Agent 镜像版本 |
+| `images.agent.tag` | `0.2.6-rc2` | string | Agent 镜像版本 |
 | `images.agent.pullPolicy` | `IfNotPresent` | string | Agent 镜像拉取策略 |
 | `images.tracker.image` | `ccr.ccs.tencentyun.com/tke-market/tracker` | string | Tracker 镜像地址 |
-| `images.tracker.tag` | `0.2.5` | string | Tracker 镜像版本 |
+| `images.tracker.tag` | `0.2.6-rc2` | string | Tracker 镜像版本 |
 | `images.tracker.pullPolicy` | `IfNotPresent` | string | Tracker 镜像拉取策略 |
 | `images.seedServer.image` | `ccr.ccs.tencentyun.com/tke-market/seed-server` | string | SeedServer 镜像地址 |
-| `images.seedServer.tag` | `0.2.5` | string | SeedServer 镜像版本 |
+| `images.seedServer.tag` | `0.2.6-rc2` | string | SeedServer 镜像版本 |
 | `images.seedServer.pullPolicy` | `IfNotPresent` | string | SeedServer 镜像拉取策略 |
 | `images.watcher.image` | `ccr.ccs.tencentyun.com/tke-market/watcher` | string | Watcher 镜像地址 |
-| `images.watcher.tag` | `0.2.5` | string | Watcher 镜像版本 |
+| `images.watcher.tag` | `0.2.6-rc2` | string | Watcher 镜像版本 |
 | `images.watcher.pullPolicy` | `IfNotPresent` | string | Watcher 镜像拉取策略 |
 | `images.ntracker.image` | `ccr.ccs.tencentyun.com/tke-market/ntracker` | string | Ntracker 镜像地址 |
-| `images.ntracker.tag` | `0.2.5` | string | Ntracker 镜像版本 |
+| `images.ntracker.tag` | `0.2.6-rc2` | string | Ntracker 镜像版本 |
 | `images.ntracker.pullPolicy` | `IfNotPresent` | string | Ntracker 镜像拉取策略 |
 | `images.mirrorSetup.image` | `ccr.ccs.tencentyun.com/tke-market/p2p-mirror-setup` | string | Mirror Setup 镜像地址 |
-| `images.mirrorSetup.tag` | `0.2.5` | string | Mirror Setup 镜像版本 |
+| `images.mirrorSetup.tag` | `0.2.6-rc2` | string | Mirror Setup 镜像版本 |
 | `images.mirrorSetup.pullPolicy` | `IfNotPresent` | string | Mirror Setup 镜像拉取策略 |
+| `images.haproxy.image` | `haproxy` | string | HAProxy 镜像地址 |
+| `images.haproxy.tag` | `3.0-alpine` | string | HAProxy 镜像版本 |
+| `images.haproxy.pullPolicy` | `IfNotPresent` | string | HAProxy 镜像拉取策略 |
 
 ## 资源配置
 
@@ -43,6 +46,7 @@
 | `resources.watcher` | `{}` | Watcher Pod 资源限制 |
 | `resources.tracker` | `{}` | Tracker Pod 资源限制 |
 | `resources.seedServer` | `{}` | SeedServer Pod 资源限制 |
+| `resources.haproxy` | requests: `500m`/`256Mi`，limits: `2`/`1Gi` | HAProxy Pod 资源限制（作为跨集群流量入口默认保留资源） |
 
 配置示例：
 
@@ -83,6 +87,7 @@ tolerations:
 | `affinity.leecher` | 见下方 | object | Leecher 节点亲和性配置 |
 | `affinity.server` | 见下方 | object | 外围组件（watcher/seedServer/tracker）硬亲和性：必须调度到 seeder 节点 |
 | `affinity.ntracker` | 见下方 | object | ntracker 亲和性：硬约束为 ntracker 或 seeder 节点（OR），软亲和优先 `tke.cloud.tencent.com/p2p-ntracker=true`；无该标签时降级到 seeder |
+| `affinity.haproxy` | 见下方 | object | HAProxy 节点亲和性。DaemonSet 在每台匹配节点上跑一个 Pod，只选带 `tke.cloud.tencent.com/p2p-component-haproxy=true` 的节点 |
 
 **默认亲和性配置**：
 ```yaml
@@ -179,7 +184,7 @@ P2PAgent 通过 fnotify 和定期轮询检查配置文件更新，支持热更�
 
 | 参数 | 默认值 | 类型 | 说明 | 热更新 |
 |------|--------|------|------|:------:|
-| `agent.maxConcurrent` | `8` | int | 单层最大 slice worker 并发数 | 是 |
+| `agent.maxConcurrent` | `8` | int | 单层最大 slice worker 并发数。file 流式下载复用为下载并发度，其在飞 slice 上限按此值的 1.5 倍内部推导 | 是 |
 | `agent.globalMaxConcurrent` | `32` | int | 全局回源 slice 下载最大并发数 | 是 |
 | `agent.headSlices` | `0` | int | 打乱 slice 前保持顺序下发的头部 slice 数，0 或未配置表示关闭 | 是 |
 | `agent.shuffleSize` | `32` | int | 按特定组大小打乱下载数据，可避免p2p集群同时请求数据的同一段。0表示不打乱。Leecher 与 Content Store Seeder（`reuseContainerdContentStore`）强制为 0。预热场景下可以适当调小该值，以减少数据的响应延迟 | 是 |
@@ -188,7 +193,11 @@ P2PAgent 通过 fnotify 和定期轮询检查配置文件更新，支持热更�
 | `agent.sliceSizeRate` | `2.0` | float | 分片大小增长率 | 是 |
 | `agent.minP2PTimeout` | `10` | int | 最小 P2P 超时时间（秒） | 是 |
 | `agent.minP2PDownloadSpeed` | `2097152` | int | 最小 P2P 下载速度（字节/秒） | 是 |
-| `agent.minLayerDownloadSpeed` | `5242880` | int | 最小层级下载速度（字节/秒） | 是 |
+| `agent.minLayerDownloadSpeed` | `2097152` | int | 层下载最低平均速度（字节/秒），与 minTimeout 组成 max(120s, size/speed) | 是 |
+| `agent.registryRetryTimes` | `3` | int | 单个 slice 回源下载的最大尝试次数，耗尽后向 containerd 返回 503 回落上游 | 是 |
+| `agent.degradeTTL` | `"5s"` | string | layer 下载中途失败后的降级窗口，窗口内该 layer 直接返回 503，使 containerd 回落上游 | 是 |
+| `agent.originStallTimeout` | `60` | int | 回源无字节进展超时（秒），负数关闭 | 是 |
+| `agent.layerDownloadMinTimeout` | `120` | int | 层下载超时地板（秒），实际超时 = max(此项, size/minLayerDownloadSpeed) | 是 |
 | `agent.leecherReadRateLimit` | `500` | int | Leecher 读取限速（MB/s） | 是 |
 | `agent.leecherWriteRateLimit` | `750` | int | Leecher 写入限速（MB/s） | 是 |
 | `agent.seederReadRateLimit` | `500` | int | Seeder 读取限速（MB/s） | 是 |
@@ -210,10 +219,9 @@ P2PAgent 通过 fnotify 和定期轮询检查配置文件更新，支持热更�
 | 参数 | 默认值 | 类型 | 说明 | 热更新 |
 |------|--------|------|------|:------:|
 | `agent.registryHttps` | `"ccr.ccs.tencentyun.com"` | string | HTTPS 注册表列表 | 否 |
-| `agent.registryHttp` | `"ccr.ccs.tencentyun.com"` | string | HTTP 注册表列表；与 `agent.registryHttps` 重合时，Helm 渲染会从 HTTP 列表中移除重合项 | 否 |
+| `agent.registryHttp` | `""` | string | HTTP 注册表列表；与 `agent.registryHttps` 重合时，Helm 渲染会从 HTTP 列表中移除重合项 | 否 |
 | `agent.defaultRegistry` | `"ccr.ccs.tencentyun.com"` | string | 默认注册表 | 是 |
 | `agent.containerdProxyAutoConfig` | `false` | boolean | 启用 containerd certs.d mirror 代理方案。启用后通过 init container 配置 containerd 的 per-registry mirror，将镜像拉取请求转发到 P2P Agent。registryHttps/registryHttp 中的仓库会自动生成对应的 hosts.toml | 否 |
-| `agent.remoteMirrorCIDR` | `""` | string | 允许来自其他节点的镜像代理请求，逗号分隔 CIDR；空表示拒绝所有远端 mirror | 是 |
 | `agent.namespaceWhitelist` | `""` | string | 允许走 P2P 的 host/namespace，逗号分隔 | 是 |
 | `agent.namespaceBlacklist` | `""` | string | 禁止走 P2P 的 host/namespace，逗号分隔 | 是 |
 | `agent.repoWhitelist` | `""` | string | 允许走 P2P 的 host/namespace/repo，逗号分隔 | 是 |
@@ -249,6 +257,15 @@ agent:
   # 多个规则用逗号分隔
   namespaceWhitelist: "mirrors.tencent.com/llmapp,ccr.ccs.tencentyun.com/prod-*"
 ```
+
+### 无客户端相关配置
+
+| 参数 | 默认值 | 类型 | 说明 | 热更新 |
+|------|--------|------|------|:------:|
+| `agent.remoteMirrorCIDR` | `""` | string | 无客户端部署时，对该配置指定ip的无客户端节点进行请求代理，配置为CIDR，使用逗号分割，空表示禁用所有无客户端节点 | 是 |
+| `agent.enableProxyProtocol` | `false` | boolean | 是否还原无客户端节点的ip，true表示开启，false表示关闭，需和 remoteMirrorCIDR 配合使用，无客户端模式往往需和负载均衡组件一块使用，负载均衡组件可能会让无客户端节点的ip丢失，因此引入了此选项 | 否 |
+| `agent.trustedProxyCIDR` | `""` | string | 负载均衡组件的 CIDR 列表，逗号分隔。仅这些来源要求携带 PROXY 头(REQUIRE)，其余直连来源跳过(SKIP)以防伪造源 IP。仅在 enableProxyProtocol=true 时生效。**只填负载均衡组件自身地址，不得覆盖 `agent.remoteMirrorCIDR` 中的对端集群客户端网段**, 否则无客户端agent因无法直连seeder节点而无法下载 | 否 |
+| `agent.enableBlobRedirect` | `false` | boolean | 无客户端部署时，是否重定向blob请求以让客户端直连p2pagent。开启后对经 负载均衡组件转发来的远端 blob GET 请求返回 307 重定向到本节点 | 是 |
 
 ### GC (LRU)
 
@@ -377,7 +394,7 @@ agent:
 | `ntracker.shardCount` | `1024` | int | 分片锁数量 |
 | `ntracker.cleanupInterval` | `120` | int | 清理间隔（秒），定期检查过期数据 |
 | `ntracker.infoHashLimit` | `200000` | int | 最大 info hash 数量，超过则触发 LRU 清理 |
-| `ntracker.tombstoneTTL` | `1800` | int | 离线 peer 墓碑条目 TTL（秒），用于过滤已下线 peer，触发位图懒清理 |
+| `ntracker.tombstoneTTL` | `900` | int | 离线 peer 墓碑条目 TTL（秒），用于过滤已下线 peer，触发位图懒清理 |
 | `ntracker.unreachableWindow` | `20` | int | 判定 peer 不可达的时间窗口（秒） |
 | `ntracker.unreachableThreshold` | `2` | int | 窗口内失败次数达到该值后标记 peer 不可达 |
 | `ntracker.aofPath` | `"/app/data/ntracker.aof"` | string | AOF 持久化文件路径 |
@@ -395,6 +412,21 @@ agent:
 | `ntracker.persistence.storageClass` | `""` | string | 存储类名称，为空则使用集群默认存储类 |
 | `ntracker.service.type` | `NodePort` | string | 服务类型 |
 | `ntracker.service.annotations` | `{}` | object | 服务注解 |
+
+## HAProxy 组件配置
+
+HAProxy 是跨集群场景的镜像流量四层(TCP)入口，部署在【集群B】（hostNetwork 模式），把集群A的镜像拉取流量均衡到集群B的 seeder 节点，并通过 PROXY v2 透传真实源IP。默认关闭，仅跨集群场景需要开启。
+
+不支持 `global.deployMode=leecher`：leecher 集群没有可作为跨集群入口的 seeder，此组合在渲染时直接报错。
+
+| 参数 | 默认值 | 类型 | 说明 |
+|------|--------|------|------|
+| `haproxy.enabled` | `false` | boolean | 是否启用 HAProxy。以 DaemonSet 部署，数量等于带组件标签的节点数，不设副本数 |
+| `haproxy.registryPort` | `65003` | int | 镜像流量监听端口，集群A的 registry_mirror 指向 `<haproxy节点IP>:65003` |
+| `haproxy.statsPort` | `8404` | int | stats 观测页面端口，仅监听 `127.0.0.1`, 查看方式：`kubectl exec` 进 Pod 后 `curl http://127.0.0.1:8404/stats` |
+| `haproxy.maxBackendServers` | `500` | int | server-template 预留的后端槽位数，seeder 节点数超过该值时需调大 |
+
+给目标节点打标签后才会启动：`kubectl label node <node-name> tke.cloud.tencent.com/p2p-component-haproxy=true`。去掉标签后该节点上的 Pod 会被删除，不会在别处补一个。各节点对同一客户端选出同一 seeder，集群 B 可按顺序配置多个 HAProxy 地址做故障切换。
 
 ### Agent headless service
 
@@ -418,7 +450,7 @@ chart 在所有部署模式（`seeder`/`leecher`/`mixed`）下都会渲染三个
 | `spread.watcher.windowDuration` | `15` | int | watcher 扩散收集的窗口（秒），每窗口执行一次扩散 |
 | `spread.watcher.cooldownPeriod` | `120` | int | 特定层扩散成功后的冷却时间（秒），冷却期内忽略重复扩散请求 |
 | `spread.watcher.pressureThreshold` | `3` | int | 单副本目标服务节点数，用于计算需扩散的副本数(扩散后副本数尽量匹配服务节点数) |
-| `spread.watcher.maxReplicasPerLayer` | `30` | int | 单层一次扩散的最大副本数；调大时请同步调大 `maxGlobalReplicas`（建议 `maxGlobalReplicas >= maxReplicasPerLayer`） |
+| `spread.watcher.maxReplicasPerLayer` | `30` | int | 单层一次扩散的最大副本数；调大时请同步调大 `maxGlobalReplicas`（建议 `maxGlobalReplicas >= maxReplicasPerLayer`），此外建议 `maxReplicasPerLayer > preheatReplicas`, 否则起不到预热的效果 |
 | `spread.watcher.maxGlobalReplicas` | `20` | int | 单窗口内全局扩散副本总预算上限；调大时请与 `maxReplicasPerLayer` 同步，否则单层目标会被全局预算削掉 |
 
 ## PodMonitor 配置
@@ -428,6 +460,7 @@ chart 在所有部署模式（`seeder`/`leecher`/`mixed`）下都会渲染三个
 | `podMonitor.enabled` | `false` | boolean | 是否启用 PodMonitor |
 | `podMonitor.interval` | `30s` | string | 监控间隔 |
 | `podMonitor.scrapeTimeout` | `10s` | string | 抓取超时 |
+| `podMonitor.release` | `prometheus` | string | PodMonitor 的 `release` label,须与本集群 Prometheus 的 `podMonitorSelector` 匹配 |
 
 ## LocalPathProvisioner 配置
 

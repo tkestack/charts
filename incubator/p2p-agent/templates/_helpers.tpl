@@ -310,9 +310,9 @@ data:
       http_registry: "{{ $registryHttp }}"
       default_registry: "{{ $root.Values.agent.defaultRegistry }}"
       remote_mirror_cidr: "{{ $root.Values.agent.remoteMirrorCIDR }}"
-      enable_proxy_protocol: {{ default false $root.Values.agent.enableProxyProtocol }}
-      trusted_proxy_cidr: "{{ default "" $root.Values.agent.trustedProxyCIDR }}"
-      enable_blob_redirect: {{ default false $root.Values.agent.enableBlobRedirect }}
+      enable_proxy_protocol: {{ $root.Values.agent.enableProxyProtocol }}
+      trusted_proxy_cidr: "{{ $root.Values.agent.trustedProxyCIDR }}"
+      enable_blob_redirect: {{ $root.Values.agent.enableBlobRedirect }}
 
       # torrent file piecesize, default 1MB
       piece_size: 1
@@ -340,6 +340,10 @@ data:
       write_rate_limit: {{ $root.Values.agent.seederWriteRateLimit }}
       {{- end }}
       min_layer_download_speed: {{ $root.Values.agent.minLayerDownloadSpeed }}
+      registry_retry_times: {{ $root.Values.agent.registryRetryTimes }}
+      degrade_ttl: "{{ $root.Values.agent.degradeTTL }}"
+      origin_stall_timeout: {{ default 60 $root.Values.agent.originStallTimeout }}
+      layer_download_min_timeout: {{ default 120 $root.Values.agent.layerDownloadMinTimeout }}
       lru_size_gb: {{ $root.Values.agent.LRUSizeGB }}
       eviction_window_factor: {{ $root.Values.agent.evictionWindowFactor }}
       eviction_min_slack_window: {{ $root.Values.agent.evictionMinSlackWindow }}

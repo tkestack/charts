@@ -22,6 +22,11 @@ kubectl port-forward -n {{ .Values.global.namespace }} svc/ntracker-service {{ .
 kubectl port-forward -n {{ .Values.global.namespace }} svc/tracker-service {{ .Values.tracker.port }}:{{ .Values.tracker.port }}
 kubectl port-forward -n {{ .Values.global.namespace }} svc/seed-server-service {{ .Values.seedServer.port }}:{{ .Values.seedServer.port }}
 {{- end }}
+{{- if .Values.haproxy.enabled }}
+# HAProxy（跨集群入口，仅调度到带 tke.cloud.tencent.com/p2p-component-haproxy=true 标签的节点）
+# 对端集群 registry mirror 指向 <haproxy节点IP>:{{ .Values.haproxy.registryPort }}
+kubectl get ds p2p-haproxy -n {{ .Values.global.namespace }}
+{{- end }}
 
 ## 故障排查
 kubectl logs -n {{ .Values.global.namespace }} -l app=p2p-agent --tail=100
