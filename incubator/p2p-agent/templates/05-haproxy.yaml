@@ -1,0 +1,91 @@
+{{- if .Values.haproxy.enabled }}
+{{- if eq .Values.global.deployMode "leecher" }}
+  {{- fail "haproxy.enabled=true is not supported with global.deployMode=leecher: HAProxy fronts the seeders that serve cross-cluster image traffic, and a leecher-only cluster has none. Use deployMode seeder or mixed, or set haproxy.enabled=false" }}
+{{- end }}
+# HAProxy is a L4 TCP ingress for cross-cluster image traffic and uses hostNetwork.
+# One pod per node selected by affinity.haproxy; ClusterFirstWithHostNet is required
+# to resolve in-cluster headless services.
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: p2p-haproxy
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: p2p-haproxy
+spec:
+  selector:
+    matchLabels:
+      app: p2p-haproxy
+  template:
+    metadata:
+      labels:
+        app: p2p-haproxy
+      annotations:
+        checksum/config: {{ include "p2pagent.haproxyConfig" . | sha256sum }}
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      tolerations:
+{{ toYaml .Values.tolerations.server | indent 8 }}
+      affinity:
+{{ toYaml .Values.affinity.haproxy | indent 8 }}
+      containers:
+        - name: haproxy
+          image: "{{ .Values.images.haproxy.image }}:{{ .Values.images.haproxy.tag }}"
+          imagePullPolicy: {{ .Values.images.haproxy.pullPolicy }}
+          args: ["-f", "/usr/local/etc/haproxy/haproxy.cfg"]
+          ports:
+            - name: registry-in
+              containerPort: {{ .Values.haproxy.registryPort }}
+              hostPort: {{ .Values.haproxy.registryPort }}
+              protocol: TCP
+            {{/* stats 只监听 127.0.0.1，不声明 hostPort：运维面不对节点网络开放 */}}
+            - name: stats
+              containerPort: {{ .Values.haproxy.statsPort }}
+              protocol: TCP
+{{- with .Values.resources.haproxy }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+{{- end }}
+          {{/*
+          探针走 127.0.0.1：hostNetwork 下 Pod 与宿主机共享网络命名空间，
+          httpGet 的 host 默认是 podIP(=节点IP)，而 stats 只 bind 在回环地址上，
+          必须显式指定 host 否则探测会连不上。
+          */}}
+          livenessProbe:
+            tcpSocket:
+              host: 127.0.0.1
+              port: {{ .Values.haproxy.statsPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              host: 127.0.0.1
+              path: /stats
+              port: {{ .Values.haproxy.statsPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            - name: config
+              mountPath: /usr/local/etc/haproxy
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: p2p-haproxy-config
+---
+# HAProxy 配置：把集群A的镜像拉取流量四层(TCP)均衡到集群B的 seeder 节点，
+# 并通过 send-proxy-v2 透传集群A的真实源IP。
+#
+# 服务发现：复用本 chart 中 agent 的 seeder headless service（clusterIP: None）。
+# 由于 agent 是 hostNetwork，该 service 的 DNS A 记录就是各 seeder 的"节点IP"，
+# server-template 会动态解析。mixed 模式下 leecher 不在该 service 中。
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: p2p-haproxy-config
+  namespace: {{ .Values.global.namespace }}
+data:
+  haproxy.cfg: |
+{{- include "p2pagent.haproxyConfig" . | nindent 4 }}
+{{- end }}

@@ -310,9 +310,9 @@ data:
       http_registry: "{{ $registryHttp }}"
       default_registry: "{{ $root.Values.agent.defaultRegistry }}"
       remote_mirror_cidr: "{{ $root.Values.agent.remoteMirrorCIDR }}"
-      enable_proxy_protocol: {{ default false $root.Values.agent.enableProxyProtocol }}
-      trusted_proxy_cidr: "{{ default "" $root.Values.agent.trustedProxyCIDR }}"
-      enable_blob_redirect: {{ default false $root.Values.agent.enableBlobRedirect }}
+      enable_proxy_protocol: {{ $root.Values.agent.enableProxyProtocol }}
+      trusted_proxy_cidr: "{{ $root.Values.agent.trustedProxyCIDR }}"
+      enable_blob_redirect: {{ $root.Values.agent.enableBlobRedirect }}
 
       # torrent file piecesize, default 1MB
       piece_size: 1
@@ -340,6 +340,10 @@ data:
       write_rate_limit: {{ $root.Values.agent.seederWriteRateLimit }}
       {{- end }}
       min_layer_download_speed: {{ $root.Values.agent.minLayerDownloadSpeed }}
+      registry_retry_times: {{ $root.Values.agent.registryRetryTimes }}
+      degrade_ttl: "{{ $root.Values.agent.degradeTTL }}"
+      origin_stall_timeout: {{ default 60 $root.Values.agent.originStallTimeout }}
+      layer_download_min_timeout: {{ default 120 $root.Values.agent.layerDownloadMinTimeout }}
       lru_size_gb: {{ $root.Values.agent.LRUSizeGB }}
       eviction_window_factor: {{ $root.Values.agent.evictionWindowFactor }}
       eviction_min_slack_window: {{ $root.Values.agent.evictionMinSlackWindow }}
@@ -401,3 +405,72 @@ data:
         max_gc_num_when_disk_clear: {{ $root.Values.agent.maxGcNumWhenDiskClear }}
       update_check_interval: {{ $root.Values.agent.configCheckInterval }}
 {{- end -}}
+
+{{/* Shared by the ConfigMap and the DaemonSet checksum so a config edit rolls HAProxy. */}}
+{{- define "p2pagent.haproxyConfig" -}}
+global
+    log stdout format raw local0 info
+    maxconn 20000
+    stats socket /tmp/haproxy.sock mode 600 level admin
+    stats timeout 30s
+
+defaults
+    log     global
+    mode    tcp
+    option  tcplog
+    option  dontlognull
+    timeout connect 5s
+    timeout client  300s
+    timeout server  300s
+    retries 3
+
+# 通过 Pod 的 /etc/resolv.conf 读取 CoreDNS 地址进行动态解析。
+# 依赖 dnsPolicy: ClusterFirstWithHostNet（hostNetwork 下必须显式设置，
+# 否则 Pod 用宿主机 resolv.conf，无法解析 *.svc.cluster.local）。
+# parse-resolv-conf 需要 HAProxy >= 2.1。
+resolvers kube
+    parse-resolv-conf
+    resolve_retries 3
+    timeout resolve 1s
+    timeout retry  1s
+    hold valid    10s
+    hold obsolete  5s
+    hold nx        5s
+    hold timeout   5s
+    hold refused   5s
+
+# 运维观测：HAProxy stats 页面。仅监听回环地址，不对节点网络开放
+# 查看方式：kubectl exec 进 Pod 后 curl http://127.0.0.1:<statsPort>/stats，
+frontend stats
+    bind 127.0.0.1:{{ .Values.haproxy.statsPort }}
+    mode http
+    stats enable
+    stats uri /stats
+    stats refresh 10s
+    # HAProxy >= 3.0 only reports server addresses (CSV addr column) with show-legends.
+    stats show-legends
+
+# 集群A的 registry_mirror 指向 <haproxy节点IP>:<registryPort>
+frontend registry_in
+    bind *:{{ .Values.haproxy.registryPort }}
+    mode tcp
+    option tcplog
+    default_backend p2p_agents
+
+backend p2p_agents
+    mode tcp
+    balance source
+    hash-type consistent    # 一致性哈希，节点变动时只影响 1/N 的映射
+    # 说明：
+    #  - send-proxy-v2  ：数据连接前发送 PROXY v2 头，携带集群A真实源IP
+    #  - check-send-proxy：健康检查连接也带 PROXY 头，满足 agent 端 REQUIRE 策略
+    #                      （否则健康检查会被 agent 拒绝、后端全部被判 down）
+    #  - hash-key addr  ：按 seeder IP 落哈希环而非 DNS 填槽顺序，多副本对同一客户端选出同一 seeder，
+    #                      集群A可配置多个 HAProxy 地址做故障切换，切换后仍命中同一 seeder 的缓存
+    #  - check inter/fall/rise：TCP 健康检查，自动摘除/恢复故障 agent 节点
+    default-server check check-send-proxy send-proxy-v2 hash-key addr inter 3s fall 3 rise 2
+    # 动态发现：解析 seeder headless service 的 A 记录（= seeder 节点IP）。
+    # 只选 seeder：leecher 用 tmpfs 且不做种，作为跨集群入口没有缓存收益。
+    # 节点数超过 maxBackendServers 时调大该值。init-addr none 保证 DNS 未就绪时也能启动。
+    server-template agent {{ .Values.haproxy.maxBackendServers }} p2p-agent-seeder-service.{{ .Values.global.namespace }}.svc.cluster.local:{{ .Values.agent.portHTTP }} resolvers kube init-addr none
+{{- end }}

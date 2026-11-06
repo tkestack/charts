@@ -9,7 +9,7 @@ P2P Agent 是一个容器镜像与文件加速系统。节点之间按分片互�
 - **NTracker 调度**：高 QPS、可多副本高可用，按热度返回 Peer；限制集群同时回源的节点数，避免打爆源仓库
 - **镜像 P2P**：拦截 containerd / docker 的 registry 请求，按层分片在节点间传输
 - **文件 P2P**：对接 S3 / COS（含 path-style 自建站点），分片校验后互传
-- **多种部署形态**：Mixed / Seeder / Leecher
+- **Mixed 部署**：同一集群按节点标签同时部署 Seeder 与 Leecher
 - **胖瘦分离**：Leecher 使用内存缓存，降低磁盘占用；Seeder 可复用 containerd content store，避免再拷一份层数据
 - **自动接入**：可选自动配置 containerd registry mirror，把指定仓库的拉取转到本机 Agent
 - **热点扩散**：按下载热度主动增加副本（需开启 Watcher）
@@ -17,30 +17,38 @@ P2P Agent 是一个容器镜像与文件加速系统。节点之间按分片互�
 - **监控**：内置 Prometheus 指标
 - **镜像预热**：支持主动预热（腾讯内部功能，TCR 暂不支持）
 
-## 场景与部署模式
+## 部署模式
 
-### 推荐：Mixed 模式
+推荐使用 Mixed 模式（`global.deployMode=mixed`）：同一集群内按节点标签同时部署 Seeder 与 Leecher。
 
-单集群内同时部署 Seeder 与 Leecher，功能完整、延迟最低，适合绝大多数业务集群。
+```text
+同一 Kubernetes 集群
 
-- 资源充足的节点打 `p2p-role=seeder`：跑 Seeder Agent 和 NTracker，落盘做种
-- 资源受限的节点打 `p2p-role=leecher`：只跑 Leecher Agent，用内存做分片缓存
+       业务节点                      其他 seeder 节点
+[containerd / docker]
+          |
+      本机 mirror
+          v
+ [seeder / leecher] <-- 下载分片 -- [seeder 1] <-- 互传分片 --> [seeder 2]
+          |                              |                           |
+      查询分片位置                   查询 / 注册                 查询 / 注册
+          |                              |                           |
+          +------------------------------+---------------------------+
+                                         |
+                          +--------------+--------------+
+                          | 始终                        | 仅缺失分片
+                          v                             v
+                     [ntracker]                  [上游镜像仓库]
+```
 
-### 场景选择
+- 资源充足、愿意承担做种上传的节点打 `p2p-role=seeder`：落盘缓存并做种，NTracker 也调度到这类节点
+- 希望减少上传与长期缓存开销的节点打 `p2p-role=leecher`：用内存做分片缓冲，不做种
 
-- **单集群加速** → **Mixed**：默认推荐
-- **已有 Seeder 集群，本集群只要加速** → **Leecher**：本集群只部署 Agent，指向对端 NTracker
-- **给多个业务集群做集中加速** → **Seeder**：本集群部署 Seeder + NTracker
+两种角色都向 NTracker 查询分片位置，再从其他 Seeder 下载；Seeder 之间也互传分片。缺失分片时由 Agent 回源到上游镜像仓库。
 
-### 部署模式对比
-
-| 特性/场景 | **Mixed**（推荐） | **Leecher** | **Seeder** |
-|-----------|-------------------|-------------|------------|
-| **组件** | Agent + NTracker | 仅 Agent（Leecher） | Agent（Seeder）+ NTracker |
-| **目标** | 单个业务集群 | 已有 Seeder 集群 | 多个业务集群的加速源 |
-| **资源** | 中（按节点角色分配） | 低 | 高 |
-| **延迟** | 集群内，最低 | 跨集群，较高 | 作为对端源站 |
-| **推荐场景** | 默认方案 | 资源敏感 / 接入已有加速集群 | 集中式加速服务 |
+- **适用**：单个业务集群，可以在节点部署 Agent，按资源条件选择 Seeder 或 Leecher 角色
+- **优点**：同集群内节点网络一般互通，无需额外打通跨集群链路
+- **代价**：业务节点有 Agent 资源开销，Seeder 还要承担缓存与上传；缓存容量、带宽与业务共享
 
 旧版 `trackerType=tracker`（BitTorrent Tracker + SeedServer）仍可兼容，新部署请使用默认的 NTracker。
 
@@ -67,6 +75,7 @@ P2P Agent 是一个容器镜像与文件加速系统。节点之间按分片互�
 - **P2P Agent**（DaemonSet）：每个节点上的代理。Seeder 落盘做种并对外提供分片；Leecher 用内存缓存，向 Seeder / 其他 Peer 要数据。监听 `65001`（HTTP）/ `65002`（HTTPS），由 containerd / docker 的 registry mirror 接入。
 - **NTracker**（StatefulSet）：Peer 发现与调度。按热度返回节点，限制同一分片的回源并发，持久化注册信息，支持跨集群和崩溃恢复。默认调度到 `p2p-role=seeder` 节点；需要固定入口时再打 `tke.cloud.tencent.com/p2p-ntracker=true`。
 - **Watcher**（可选）：主动 / 旁路预热，以及热点层扩散。
+- **HAProxy**（可选，DaemonSet）：跨集群无客户端场景的四层入口，把对端集群的镜像流量均衡到本集群 Seeder。
 
 旧版组件 **Tracker / SeedServer / MinIO** 仅在 `agent.trackerType=tracker` 时部署。
 
@@ -163,12 +172,32 @@ sudo systemctl restart docker
 
 `agent.featureMode` 默认包含 `file`。客户端按 S3 协议下载时走 Agent，节点间分片互传；支持腾讯云 COS，以及 path-style 的自建站点。
 
-### 复用 containerd 层数据
+### 跨集群无客户端（HAProxy）
 
-Seeder 打开 `agent.reuseContainerdContentStore=true` 后，直接读取本机 containerd content store 做种，少占一份磁盘。仅 NTracker 模式可用，且不能与 stargz 按需拉取同时使用。
+对端集群不部署 Agent，直接把 registry mirror 指向本集群的 HAProxy：
 
-### 跨集群 Leecher
+```text
+业务集群                                 seeder 集群
+--------------------                     --------------------------------------
+[containerd / docker] --------mirror --> [haproxy]
+                                             |
+                                       转发镜像请求
+                                             v
+                                        [seeder 1] <-- 互传分片 --> [seeder 2]
+                                             |                           |
+                                         查询 / 注册                 查询 / 注册
+                                             +---------------------------+
+                                             |
+                              +--------------+--------------+
+                              | 始终                        | 仅缺失分片
+                              v                             v
+                         [ntracker]                  [上游镜像仓库]
 
-业务集群 `global.deployMode=leecher`，把 `agent.ntrackerDNS` 设为对端 NTracker 的 `IP:port` 列表（逗号分隔）。对端建议给稳定节点打 `tke.cloud.tencent.com/p2p-ntracker=true`，保证入口地址固定。
+可选 blob 直连：容器运行时 ----------> seeder
+```
+
+- 本集群设置 `haproxy.enabled=true`，并给入口节点打 `tke.cloud.tencent.com/p2p-component-haproxy=true`；HAProxy 监听 `65003`，按源地址一致性哈希转发到 Seeder，并用 PROXY v2 透传真实源 IP。
+- Agent 侧设置 `agent.remoteMirrorCIDR` 放行对端客户端网段；开启 `agent.enableProxyProtocol=true` 并把 `agent.trustedProxyCIDR` 设为 HAProxy 节点地址。
+- 可选 `agent.enableBlobRedirect=true`：大 blob 以 307 重定向让客户端直连 Seeder，数据面不再经过 HAProxy。
 
 详细配置见 [VALUES.md](./VALUES.md)。

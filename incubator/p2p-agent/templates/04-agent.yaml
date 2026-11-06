@@ -15,7 +15,7 @@
 Three headless services over the same pods, so a caller can pick the role it needs
 regardless of deployMode (the pods carry a `role` label in every mode):
   - p2p-agent-service         : every agent
-  - p2p-agent-seeder-service  : seeders only (leechers hold no
+  - p2p-agent-seeder-service  : seeders only (HAProxy backends — leechers hold no
                                 cache and must not serve cross-cluster traffic)
   - p2p-agent-leecher-service : leechers only
 A service whose selector matches no pod is harmless: its DNS name simply resolves
@@ -74,7 +74,7 @@ metadata:
   namespace: {{ .Values.global.namespace }}
   labels:
     app: p2p-agent
-    release: prometheus
+    release: {{ .Values.podMonitor.release | default "prometheus" | quote }}
 spec:
   selector:
     matchLabels:
