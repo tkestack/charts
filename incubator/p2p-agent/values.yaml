@@ -9,27 +9,27 @@ global:
 images:
   agent:
     image: ccr.ccs.tencentyun.com/tke-market/p2p-agent
-    tag: 0.2.5
+    tag: 0.2.6-rc2
     pullPolicy: IfNotPresent
   tracker:
     image: ccr.ccs.tencentyun.com/tke-market/tracker
-    tag: 0.2.5
+    tag: 0.2.6-rc2
     pullPolicy: IfNotPresent
   seedServer:
     image: ccr.ccs.tencentyun.com/tke-market/seed-server
-    tag: 0.2.5
+    tag: 0.2.6-rc2
     pullPolicy: IfNotPresent
   watcher:
     image: ccr.ccs.tencentyun.com/tke-market/watcher
-    tag: 0.2.5
+    tag: 0.2.6-rc2
     pullPolicy: IfNotPresent
   ntracker:
     image: ccr.ccs.tencentyun.com/tke-market/ntracker
-    tag: 0.2.5
+    tag: 0.2.6-rc2
     pullPolicy: IfNotPresent
   mirrorSetup:
     image: ccr.ccs.tencentyun.com/tke-market/p2p-mirror-setup
-    tag: 0.2.5
+    tag: 0.2.6-rc2
     pullPolicy: IfNotPresent
   minio:
     image: quay.io/minio/minio
@@ -43,6 +43,10 @@ images:
     image: busybox
     tag: latest
     pullPolicy: IfNotPresent
+  haproxy:
+    image: haproxy
+    tag: 3.0-alpine  # hash-key 需要 >= 3.0
+    pullPolicy: IfNotPresent
 
 # === 资源配置 ===
 resources:
@@ -51,6 +55,13 @@ resources:
   watcher: {}
   tracker: {}
   seedServer: {}
+  haproxy:
+    requests:
+      cpu: "500m"
+      memory: "256Mi"
+    limits:
+      cpu: "2"
+      memory: "1Gi"
 
 # === 容忍配置 ===
 tolerations:
@@ -114,6 +125,17 @@ affinity:
                 operator: In
                 values:
                   - "true"
+  # One HAProxy per node carrying this label. No seeder fallback: a DaemonSet
+  # would otherwise start HAProxy on every seeder.
+  haproxy:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: tke.cloud.tencent.com/p2p-component-haproxy
+                operator: In
+                values:
+                  - "true"
 
 # === 基础配置 ===
 imagePullSecrets: []
@@ -153,7 +175,11 @@ agent:
   sliceSizeRate: 2.0
   minP2PTimeout: 10
   minP2PDownloadSpeed: 2097152
-  minLayerDownloadSpeed: 5242880
+  minLayerDownloadSpeed: 2097152
+  registryRetryTimes: 3
+  degradeTTL: "5s"
+  originStallTimeout: 60
+  layerDownloadMinTimeout: 120
   leecherReadRateLimit: 500
   leecherWriteRateLimit: 750
   seederReadRateLimit: 500
@@ -183,8 +209,20 @@ agent:
   registryAuth:
     username: ""
     password: ""
+  # 无客户端相关配置
   # 允许来自其他节点的镜像代理请求，空表示拒绝所有远端 mirror
   remoteMirrorCIDR: ""  # e.g. "10.0.0.0/8,172.16.0.0/12"
+  # PROXY protocol: 当集群A通过 haproxy/LB 转发镜像请求到本 agent 时，开启后可从 PROXY 头
+  # 还原真实客户端 IP 到 RemoteAddr（供 remoteMirrorCIDR 白名单校验）。
+  enableProxyProtocol: false
+  # 可信上游代理(haproxy/LB)的 CIDR 列表，逗号分隔。仅这些来源的连接被要求携带 PROXY 头(REQUIRE)，
+  # 其余直连来源跳过 PROXY 协议(SKIP)以防伪造源 IP。仅在 enableProxyProtocol=true 时生效。
+  # 只填 LB 自身地址，不得覆盖 remoteMirrorCIDR 中的对端集群客户端网段，落入本列表的客户端一旦
+  # 不经 LB 直连（enableBlobRedirect 的 307 就会让它直连）请求中就会因缺少特定头被断开，agent 启动即报错
+  trustedProxyCIDR: ""  # e.g. "10.0.0.0/24"
+  # 数据面卸载：开启后，对经 haproxy/LB 转发来的远端 blob GET 请求，agent 返回 307 重定向到
+  # 本节点，客户端直连本节点下载大 blob，数据通路不再经过 L4 代理。manifest 等控制面请求仍走代理。
+  enableBlobRedirect: false
 
   # GC (LRU)
   LRUSizeGB: 50
@@ -294,7 +332,7 @@ ntracker:
   shardCount: 1024
   cleanupInterval: 120
   infoHashLimit: 200000
-  tombstoneTTL: 1800
+  tombstoneTTL: 900
   unreachableWindow: 20
   unreachableThreshold: 2
   aofPath: "/app/data/ntracker.aof"
@@ -315,6 +353,17 @@ ntracker:
     type: NodePort
     annotations: {}
 
+# === HAProxy 组件配置（无客户端模式使用，部署在p2p集群侧） ===
+# 不支持 global.deployMode=leecher（无 seeder 可作为跨集群入口），渲染时会直接报错。
+haproxy:
+  enabled: false
+  registryPort: 65003
+  # stats 观测端口，仅监听 127.0.0.1，不对节点网络开放；
+  # 查看：kubectl exec 进 Pod 后 curl http://127.0.0.1:<statsPort>/stats
+  statsPort: 8404
+  # server-template 预留的后端槽位数，seeder 节点数超过该值时需调大
+  maxBackendServers: 500
+
 # === Spread (主动扩散) 配置 ===
 # enabled 为总开关，agent 端热点上报与 watcher 端扩散处理共用；开启时必须 watcher.enabled=true
 spread:
@@ -334,6 +383,8 @@ podMonitor:
   enabled: false
   interval: 30s
   scrapeTimeout: 10s
+  # PodMonitor 的 release label,须与本集群 Prometheus 的 podMonitorSelector 匹配
+  release: prometheus
 
 # === LocalPathProvisioner 配置 ===
 localPathProvisioner:
